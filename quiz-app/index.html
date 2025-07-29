@@ -251,7 +251,8 @@
         
         function selectAnswer(e) {
             const selectedBtn = e.target;
-            const isCorrect = selectedBtn.innerText === questions[currentQuestionIndex].answer;
+            // After (The Fix)
+            const isCorrect = selectedBtn.innerText.trim().toLowerCase() === questions[currentQuestionIndex].answer.trim().toLowerCase();
             
             if (isCorrect) {
                 score++;
