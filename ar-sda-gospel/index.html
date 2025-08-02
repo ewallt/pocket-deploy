@@ -36,12 +36,10 @@
     /* Shared */
     .nav-container{margin-bottom:2rem}
     .nav-button{padding:.5rem 1rem;margin:.5rem .5rem .5rem 0;border-radius:.375rem;transition:all .2s;cursor:pointer}
-    #library-switcher,#topic-switcher{padding:.5rem;border-radius:.375rem;margin-bottom:1rem;width:100%;border:1px solid #ccc}
     .nav-buttons-wrapper{display:flex;flex-wrap:wrap;align-items:center;width:100%}
-    .flex-break{flex-basis:100%;height:0}
   </style>
 </head>
-<body class="font-newspaper newspaper-theme">
+<body class="font-newspaper newspaper-theme">  
   <script id="embedded-content" type="application/json">
   {
     "gospel-philosophies": {
@@ -75,7 +73,8 @@
             { "heading": "Universal Appeal and Corporate Inclusion", "content": "Wieland emphasizes that <strong>Christ lifted up exerts a corporate, worldwide magnetism</strong> that every soul must ultimately choose to accept or resist. His theology insists that ‘in Jesus all died’ (2 Cor 5:14), meaning the legal right to life has been secured for the entire human race before any individual response. This corporate inclusion in Christ’s death and victory means the gospel is truly universal—not limited to those who respond, but encompassing all humanity in its objective scope. The cross creates a new reality for the whole world, though personal faith is required to experience its benefits subjectively." },
             { "heading": "Corporate Guilt and Repentance", "content": "A distinctive aspect of Wieland’s gospel involves <strong>corporate repentance</strong>, particularly regarding the Seventh-day Adventist Church’s rejection of the 1888 message of righteousness by faith. He argues this corporate refusal has delayed the latter rain, loud cry, and Second Advent. For Wieland, the body of believers must acknowledge shared failure—not just individual sin—before Christ’s closing work can advance. This corporate dimension means the gospel calls not only for personal conversion but for communal acknowledgment of collective unfaithfulness to the cross-centered message of 1888." },
             { "heading": "Law and Covenant Fulfillment", "content": "Wieland’s understanding maintains that <strong>Calvary confirms the permanence of God’s law</strong> while providing the only means of harmony with it—the law is fulfilled, not relaxed. The cross demonstrates that new-covenant righteousness is God’s own pledge, realized when the heart truly sees and believes what happened at Calvary. This everlasting covenant promise means the gospel doesn’t lower God’s standards but provides divine resources to meet them. The cross reveals both the immutability of God’s character (reflected in His law) and His provision for fallen humanity to live in harmony with that character." },
-            { "heading": "Sanctuary and Eschatological Urgency", "content": "Wieland connects the cross to <strong>ongoing priestly ministry in the heavenly sanctuary</strong>, where the once-for-all sacrifice is being applied in the investigative judgment. The cleansing work there parallels the cleansing needed in God’s people on earth. For Wieland, accepting the 1888 message of righteousness by faith is prerequisite for the final atonement, latter rain, and Christ’s return. This creates eschatological urgency—the gospel is not merely about individual salvation but about corporate preparation for earth’s final crisis and harvest." },
+            { "heading": "Sanctuary and Eschatological Urgency", "content": "Wieland connects the cross to <strong>ongoing priestly ministry in the heavenly sanctuary</strong>,
+            where the once-for-all sacrifice is being applied in the investigative judgment. The cleansing work there parallels the cleansing needed in God’s people on earth. For Wieland, accepting the 1888 message of righteousness by faith is prerequisite for the final atonement, latter rain, and Christ’s return. This creates eschatological urgency—the gospel is not merely about individual salvation but about corporate preparation for earth’s final crisis and harvest." },
             { "heading": "Present Victory Through Cross-Appreciation", "content": "Wieland’s gospel promises that <strong>victory over sin is possible now</strong> when the heart truly ‘glories in the cross.’ His theology insists that genuine appreciation of Calvary’s love breaks temptation’s power, making holy living natural rather than forced. Service flows from grateful appreciation, not fear of punishment or hope of reward. This transformation occurs through beholding—the more clearly believers see the cross, the more they are changed into Christ’s image. The gospel thus provides both legal justification and moral transformation through the same divine love revealed at Calvary." },
             { "heading": "Mission in Agapē Love", "content": "For Wieland, proclaiming the true character of God—<strong>Calvary love—lightens the earth with glory</strong> as described in Revelation 18:1. His gospel emphasizes that the loud cry message centers on revealing God’s self-sacrificing love rather than fear-based appeals. Christ’s corporate solidarity with humanity, taking our fallen nature while remaining sinless, demonstrates God’s commitment to save. The mission flows from agapē—when God’s people truly understand and reflect the cross, their witness becomes irresistibly attractive, drawing others to the same love that conquered their own hearts." },
             { "heading": "Last-Generation Vindication", "content": "Wieland’s unifying principle connects corporate repentance to earth’s final harvest: <strong>agapē-driven corporate repentance leads to the Second Advent</strong>. He envisions a last generation that fully appreciates and reflects Calvary’s love, vindicating God’s character before the universe. The gospel is ‘good news too good to be true’—better than most Adventists imagine—because it promises complete transformation through beholding divine love. When God’s people corporately receive and proclaim this cross-centered message with its full power, the loud cry, latter rain, and Christ’s return will swiftly follow, completing the great controversy between good and evil." }
@@ -176,106 +175,104 @@
   <main id="app-container" class="prose dark:prose-invert mx-auto max-w-prose p-8"></main>
 
   <script>
-    /* ---------- state ---------- */
-    let masterLibrary=null,sortedLibraryIds=null,currentLibraryId=null
-    let libraryData=null,sortedTopicIds=null,currentTopicId=null
-    const app=document.getElementById('app-container')
+    // --- App State ---
+    let libraryData = null;
+    let sortedTopicIds = null;
+    let currentTopicId = null;
+    const app = document.getElementById('app-container');
 
-    /* ---------- rendering ---------- */
-    function render(){
-        if(!libraryData) return;
+    // --- UI Builders ---
+    const buildNav = (categories) => {
+        let html = '<div class="nav-container"><div class="nav-buttons-wrapper">';
+        sortedTopicIds.forEach(topicId => {
+            const topic = categories[topicId];
+            // This now correctly checks against the currentTopicId to set the active class
+            html += `<button class="nav-button article-btn ${topicId === currentTopicId ? 'active' : ''}" data-topic-id="${topicId}">${topic.display_name}</button>`;
+        });
+        return html + '</div></div>';
+    };
 
-        // Get the single root key from the data (e.g., "gospel-philosophies")
+    // --- Main Render Function ---
+    function render() {
+        if (!libraryData) {
+            app.innerHTML = '<h1>Error</h1><p>Data not loaded.</p>';
+            return;
+        }
+
         const rootKey = Object.keys(libraryData)[0];
-        if (!rootKey) return;
         const rootData = libraryData[rootKey];
 
-        // Set document title from the root data
         document.title = rootData.title || 'Adaptive Reader';
-      
-        // Get category keys and sort them by display_order
+        
         sortedTopicIds = Object.keys(rootData.categories || {}).sort((a, b) => (rootData.categories[a].display_order || 0) - (rootData.categories[b].display_order || 0));
 
-        // If currentTopicId is not set or invalid, default to the first one
-        if(!currentTopicId || !rootData.categories[currentTopicId]) {
+        if (!currentTopicId || !rootData.categories[currentTopicId]) {
             currentTopicId = sortedTopicIds[0];
         }
         
         const currentTopicData = rootData.categories[currentTopicId];
-        if (!currentTopicData) {
-            app.innerHTML = '<h1>Error</h1><p>Content could not be loaded for this topic.</p>';
-            return;
-        }
-
-        // Build the navigation buttons using the sorted list of topics
-        let navHtml = '<div class="nav-container"><div class="nav-buttons-wrapper">';
-        sortedTopicIds.forEach(topicId => {
-            const topic = rootData.categories[topicId];
-            navHtml += `<button class="nav-button article-btn ${topicId === currentTopicId ? 'active' : ''}" data-article-id="${topicId}">${topic.display_name}</button>`;
-        });
-        navHtml += '</div></div>';
         
-        // Build the main content area
-        let contentHtml = `<h1>${rootData.title}</h1>` +
-            navHtml +
-            `<h2>${currentTopicData.name || ''}</h2>` +
-            `${currentTopicData.introduction ? `<p class="!text-lg !italic">${currentTopicData.introduction}</p>` : ''}` +
-            (currentTopicData.paragraphs || []).map(p => `<h3>${p.heading}</h3><p>${p.content}</p>`).join('');
-
-        app.innerHTML = contentHtml;
+        // Build the entire page content
+        app.innerHTML = `
+            <h1>${rootData.title}</h1>
+            ${buildNav(rootData.categories)}
+            <h2>${currentTopicData.name || ''}</h2>
+            ${currentTopicData.introduction ? `<p class="!text-lg !italic">${currentTopicData.introduction}</p>` : ''}
+            ${(currentTopicData.paragraphs || []).map(p => `<h3>${p.heading}</h3><p>${p.content}</p>`).join('')}
+        `;
         
-        // Re-attach event listeners for the new navigation buttons
-        document.querySelectorAll('.nav-button[data-article-id]').forEach(btn => {
-            btn.onclick = e => {
-                currentTopicId = e.target.dataset.articleId;
-                render(); // Re-render the page with the new selection
-                // Optional: scroll to top
+        // Add event listeners to the navigation buttons
+        document.querySelectorAll('.nav-button[data-topic-id]').forEach(btn => {
+            btn.onclick = (e) => {
+                currentTopicId = e.target.dataset.topicId;
+                render();
                 window.scrollTo(0, 0);
             };
         });
 
-        // Activate the BLB Script Tagger
+        // Activate the Blue Letter Bible script tagger if it exists
         if (window.BLB) {
             BLB.Tagger.tag();
         }
     }
 
-    /* ---------- data load ---------- */
-    async function init(){
-      let raw=null;
-      try {
-        const embedded = document.getElementById('embedded-content').textContent.trim();
-        if (!embedded) throw new Error('No embedded data found');
-        raw = JSON.parse(embedded);
-      } catch(err) {
-        console.error("Failed to load or parse data:", err);
-        app.innerHTML='<h1>Error</h1><p>Could not load content.</p>';
-        return;
-      }
-
-      libraryData = raw;
-      render();
+    // --- App Initialization ---
+    function init() {
+        try {
+            const jsonString = document.getElementById('embedded-content').textContent;
+            libraryData = JSON.parse(jsonString);
+        } catch(err) {
+            console.error("Fatal Error: Could not load or parse JSON data.", err);
+            app.innerHTML = '<h1>Initialization Error</h1><p>The application could not start. Please check the console for details.</p>';
+            return;
+        }
+        render();
     }
 
-    /* ---------- theme ---------- */
-    const themeBtn=document.getElementById('theme-switcher-btn')
-    function applyTheme(t){
-      const dark=t==='dark'
-      document.documentElement.classList.toggle('dark',dark)
-      document.body.classList.toggle('dark-theme',dark)
-      document.body.classList.toggle('font-dark-theme',dark)
-      document.body.classList.toggle('newspaper-theme',!dark)
-      document.body.classList.toggle('font-newspaper',!dark)
-      document.getElementById('sun-icon').classList.toggle('hidden',dark)
-      document.getElementById('moon-icon').classList.toggle('hidden',!dark)
+    // --- Theme Switcher ---
+    const themeBtn = document.getElementById('theme-switcher-btn');
+    function applyTheme(theme) {
+        const isDark = theme === 'dark';
+        document.documentElement.classList.toggle('dark', isDark);
+        document.body.classList.toggle('dark-theme', isDark);
+        document.body.classList.toggle('font-dark-theme', isDark);
+        document.body.classList.toggle('newspaper-theme', !isDark);
+        document.body.classList.toggle('font-newspaper', !isDark);
+        document.getElementById('sun-icon').classList.toggle('hidden', isDark);
+        document.getElementById('moon-icon').classList.toggle('hidden', !isDark);
     }
-    themeBtn.onclick=()=>{const t=document.documentElement.classList.contains('dark')?'light':'dark';localStorage.setItem('theme',t);applyTheme(t)}
+    themeBtn.onclick = () => {
+        const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+        localStorage.setItem('theme', newTheme);
+        applyTheme(newTheme);
+    };
 
-    /* ---------- boot ---------- */
-    document.addEventListener('DOMContentLoaded',()=>{
-      applyTheme(localStorage.getItem('theme')||'light')
-      init().catch(err=>{console.error(err);app.innerHTML='<h1>Error</h1><p>Could not load content.</p>'})
-    })
+    // --- App Start ---
+    document.addEventListener('DOMContentLoaded', () => {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        applyTheme(savedTheme);
+        init();
+    });
   </script>
 </body>
 </html>
