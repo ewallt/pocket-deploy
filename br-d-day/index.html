@@ -65,8 +65,11 @@
             gap: 1rem;
             flex-wrap: wrap;
         }
+        
+        /* --- FINAL BUTTON RULES START --- */
 
-        .tab-button, #settings-btn {
+        /* Base style for ALL buttons */
+        .tab-button, #settings-btn, .sector-button {
             padding: 12px 24px;
             background: var(--ui-background);
             border: none;
@@ -78,23 +81,35 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
+        /* Specific settings for the icon */
         #settings-btn {
             font-size: 1.2rem;
             padding: 10px 15px;
         }
 
-        .tab-button:hover, #settings-btn:hover {
+        /* HOVER state for buttons */
+        .tab-button:hover, .sector-button:hover, #settings-btn:hover {
             background: var(--btn-gradient);
             transform: translateY(-2px);
         }
 
-        .tab-button.active {
+        /* ACTIVE state for selected buttons */
+        .tab-button.active, .sector-button.active {
             background: var(--btn-gradient);
             border-color: var(--accent-2);
             transform: translateY(-2px);
+            color: var(--btn-text-active);
         }
 
-
+        /* LOGIC-DRIVEN TEXT COLOR FOR HOVER AND ACTIVE STATES */
+        .btn-light-text:hover, .btn-light-text.active {
+             color: var(--text-primary);
+        }
+        .btn-dark-text:hover, .btn-dark-text.active {
+             color: var(--btn-text-active);
+        }
+        
+        /* --- FINAL BUTTON RULES END --- */
 
         .container {
             max-width: 1200px;
@@ -320,28 +335,6 @@
             margin-top: 1rem;
         }
 
-        .sector-button {
-            padding: 10px 20px;
-            background: var(--ui-background);
-            border: none;
-            color: var(--text-primary);
-            cursor: pointer;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .sector-button:hover {
-            background: var(--btn-gradient);
-        }
-
-        .sector-button.active {
-            background: var(--btn-gradient);
-            border-color: var(--accent-2);
-            transform: translateY(-2px);
-            color: var(--btn-text-active);
-        }
-
         .sector-detail {
             display: none;
             margin-top: 2rem;
@@ -378,7 +371,7 @@
     (function() {
         const DEFAULT_THEME_NAME = 'cyber-night';
     
-        const THEMES = {
+        let THEMES = {
     'cyber-night': {
         '--bg-gradient': 'linear-gradient(135deg,#0a0a23 0%,#1a1a3a 50%,#2e2e5e 100%)',
         '--accent-1': '#a8b8d0', '--accent-1-rgb': '168, 184, 208',
@@ -491,14 +484,41 @@
     }
     
 };
+
+        function finalizeThemes(themes) {
+            for (const themeName in themes) {
+                const theme = themes[themeName];
+                const gradient = theme['--btn-gradient'];
+
+                // Simple check for light/luminous hex codes in the gradient
+                if (gradient.includes('#d') || gradient.includes('#e') || gradient.includes('#f') || gradient.includes('#99e') || gradient.includes('#cd')) {
+                    theme.hover_style = 'btn-dark-text'; 
+                } else {
+                    theme.hover_style = 'btn-light-text';
+                }
+            }
+            return themes;
+        }
+
+        THEMES = finalizeThemes(THEMES);
     
         function applyTheme(name) {
             const theme = THEMES[name];
             if (theme) {
                 const root = document.documentElement;
                 for (const [key, value] of Object.entries(theme)) {
-                    root.style.setProperty(key, value);
+                    if(key !== 'hover_style') { // Don't try to set hover_style as a CSS variable
+                        root.style.setProperty(key, value);
+                    }
                 }
+
+                const buttons = document.querySelectorAll('.tab-button, .sector-button, #settings-btn');
+                buttons.forEach(button => {
+                    button.classList.remove('btn-light-text', 'btn-dark-text');
+                    if (theme.hover_style) {
+                        button.classList.add(theme.hover_style);
+                    }
+                });
             }
         }
     
@@ -507,7 +527,7 @@
             localStorage.setItem('dday-theme', name);
         }
     
-        const availableThemeNames = Object.keys(THEMES).slice(0, 7);
+        const availableThemeNames = Object.keys(THEMES);
         const savedTheme = localStorage.getItem('dday-theme');
         let themeToLoad = DEFAULT_THEME_NAME;
 
@@ -560,7 +580,7 @@
 
     <div class="container">
         <div id="overview" class="tab-content active">
-            <div class="section-card">
+             <div class="section-card">
                 <h2 class="section-title">Operation Overlord: The Normandy Invasion</h2>
                 <p style="font-size: 1.2rem; line-height: 1.8; margin-bottom: 2rem;">
                     On June 6, 1944, Allied forces launched the largest amphibious invasion in history, assaulting five Normandy beaches and conducting simultaneous airborne drops inland. This massive undertaking, known as Operation Overlord, marked the beginning of the liberation of Western Europe from Nazi occupation.
@@ -586,8 +606,8 @@
                 </div>
 
                 <div class="interactive-map">
-                    <h3 style="color: var(--accent-1); margin-bottom: 1rem;">The Five Landing Beaches</h3>
-                    <p>Click on each beach to learn more about the specific operations:</p>
+                    <h3 style="color: var(--accent-1); margin-bottom: 1rem;">The Five Landing Sectors</h3>
+                    <p>Click on each sector to learn more about the specific operations:</p>
                     <div class="sector-buttons">
                         <button class="sector-button" data-sector="utah">Utah Beach</button>
                         <button class="sector-button" data-sector="omaha">Omaha Beach</button>
@@ -600,35 +620,26 @@
                         <h4 style="color: var(--accent-1);">Utah Beach - U.S. 7th Infantry Division</h4>
                         <p><strong>Casualties:</strong> ~197 (lightest of all beaches)</p>
                         <p><strong>Key Objective:</strong> Secure beachhead around Merderet estuary and advance toward Sainte-Mère-Église</p>
-                        <p><strong>Outcome:</strong> Strong currents pushed forces south, resulting in lighter resistance. Successfully linked with 82nd Airborne by midday.</p>
                     </div>
-
                     <div id="omaha-detail" class="sector-detail">
                         <h4 style="color: var(--accent-1);">Omaha Beach - U.S. 1st & 29th Infantry Divisions</h4>
                         <p><strong>Casualties:</strong> ~2,000 (heaviest losses)</p>
                         <p><strong>Key Challenge:</strong> Heavily fortified with concrete casemates, 88mm artillery, and high bluffs</p>
-                        <p><strong>Outcome:</strong> Despite staggering losses, small units found gaps and secured beach exits by late afternoon.</p>
                     </div>
-
                     <div id="gold-detail" class="sector-detail">
                         <h4 style="color: var(--accent-1);">Gold Beach - British 50th Infantry Division</h4>
                         <p><strong>Casualties:</strong> ~400</p>
                         <p><strong>Key Objective:</strong> Capture Arromanches-les-Bains and link with Canadian forces</p>
-                        <p><strong>Outcome:</strong> Naval bombardment reduced resistance. 8km deep beachhead established by nightfall.</p>
                     </div>
-
                     <div id="juno-detail" class="sector-detail">
                         <h4 style="color: var(--accent-1);">Juno Beach - Canadian 3rd Infantry Division</h4>
                         <p><strong>Casualties:</strong> ~961</p>
                         <p><strong>Key Objective:</strong> Clear coastal villages and push toward Caen-Bayeux road</p>
-                        <p><strong>Outcome:</strong> Captured Courseulles by mid-morning and linked with British forces at Gold.</p>
                     </div>
-
                     <div id="sword-detail" class="sector-detail">
                         <h4 style="color: var(--accent-1);">Sword Beach - British 3rd Infantry Division</h4>
                         <p><strong>Casualties:</strong> ~630</p>
                         <p><strong>Key Objective:</strong> Capture Caen and link with airborne forces</p>
-                        <p><strong>Outcome:</strong> Overcame seawall defenses but German counterattacks delayed Caen's capture until July.</p>
                     </div>
                 </div>
             </div>
@@ -640,32 +651,23 @@
                 <div class="sector-grid">
                     <div class="sector-card">
                         <h3 class="sector-name">Strategic Objectives</h3>
-                        <h4>Primary Goal</h4>
                         <p>The chief aim of Operation Overlord was to secure a lodgment area on the northern coast of France from which Allied forces could advance eastward into Germany.</p>
-                        <h4>Wider Allied Aims</h4>
-                        <p>The invasion also sought to safeguard political unity among the Western Allies and reassure the Soviet Union of Western commitment.</p>
                     </div>
                     <div class="sector-card">
                         <h3 class="sector-name">Allied Command (SHAEF)</h3>
                         <p><strong>Supreme Commander:</strong> Gen. Dwight D. Eisenhower</p>
-                        <p><strong>Deputy Supreme Commander:</strong> Lt. Gen. Sir Arthur Tedder</p>
                         <p><strong>Ground Forces:</strong> Gen. Bernard Montgomery</p>
                         <p><strong>Naval Forces:</strong> Adm. Sir Bertram Ramsay</p>
-                        <p><strong>Air Forces:</strong> Air Chief Marshal Sir Trafford Leigh-Mallory</p>
                     </div>
                     <div class="sector-card">
                         <h3 class="sector-name">Intelligence and Deception</h3>
                         <h4>Operation Fortitude</h4>
-                        <p>To mislead German high command, the Allies created a fictitious army group under Gen. George Patton, implying an assault at Pas-de-Calais.</p>
-                        <h4>Ultra Intelligence</h4>
-                        <p>Allied cryptanalysis of German Enigma traffic provided detailed information on German defenses and the Atlantic Wall.</p>
+                        <p>A fictitious army group under Gen. George Patton was created to mislead the German high command about the true invasion site at Pas-de-Calais.</p>
                     </div>
-                    <div class="sector-card">
-                        <h3 class="sector-name">Weather and Timing</h3>
-                        <h4>Critical Decision Point</h4>
-                        <p>The initial invasion on June 5 was postponed 24 hours due to a storm. Allied meteorologists found a brief window of calm weather for June 6, prompting Eisenhower's final "go" order.</p>
-                        <p><strong>German forecasters expected poor weather to continue, a critical factor in the Allies' favor.</strong></p>
-                    </div>
+                </div>
+                <div class="casualties-highlight">
+                    <h4>Critical Decision Point</h4>
+                    <p>The initial invasion on June 5 was postponed 24 hours due to a storm. Allied meteorologists found a brief window of calm weather for June 6, prompting Eisenhower's final "go" order. German forecasters expected poor weather to continue—a critical factor in the Allies' favor.</p>
                 </div>
             </div>
         </div>
@@ -693,7 +695,7 @@
                     <div class="sector-card">
                         <div class="sector-name">Gold Beach</div>
                         <p><strong>Forces:</strong> British 50th Infantry Division</p>
-                        <p><strong>Outcome:</strong> Overcame initial resistance with armored support and established an 8km deep sector-head by nightfall, linking with Canadian forces.</p>
+                        <p><strong>Outcome:</strong> Overcame initial resistance with armored support and established a deep sector-head by nightfall, linking with Canadian forces.</p>
                         <div class="casualties-highlight">
                             <strong>Casualties:</strong> ~400
                         </div>
@@ -701,7 +703,7 @@
                     <div class="sector-card">
                         <div class="sector-name">Juno Beach</div>
                         <p><strong>Forces:</strong> Canadian 3rd Infantry Division</p>
-                        <p><strong>Outcome:</strong> After facing heavy resistance at Courseulles, Canadian troops pushed further inland than any other Allied force on D-Day.</p>
+                        <p><strong>Outcome:</strong> After facing heavy resistance, Canadian troops pushed further inland than any other Allied force on D-Day.</p>
                         <div class="casualties-highlight">
                             <strong>Casualties:</strong> ~961
                         </div>
@@ -724,24 +726,14 @@
                 <div class="sector-grid">
                     <div class="sector-card">
                         <h3 class="sector-name">American 82nd and 101st Airborne</h3>
-                        <h4>82nd Airborne Drop</h4>
-                        <p><strong>Objective:</strong> Secure causeways behind Utah Beach and capture Sainte-Mère-Église.</p>
-                        <p><strong>Outcome:</strong> Despite scattered drops, they captured Sainte-Mère-Église, the first town liberated in France.</p>
-                        <h4>101st Airborne Operations</h4>
-                        <p><strong>Objective:</strong> Secure exits from Utah and capture key crossroads.</p>
-                        <p><strong>Outcome:</strong> Seized critical causeways, preventing German reinforcements from reaching the beaches.</p>
+                        <p>Despite scattered drops, US paratroopers successfully captured the key town of Sainte-Mère-Église and secured vital causeways, preventing German reinforcements from reaching Utah Beach.</p>
                         <div class="casualties-highlight">
                             <strong>U.S. Airborne Casualties:</strong> ~1,400
                         </div>
                     </div>
                     <div class="sector-card">
                         <h3 class="sector-name">British 6th Airborne - Operation Tonga</h3>
-                        <h4>Pegasus Bridge Assault</h4>
-                        <p><strong>Objective:</strong> Capture key bridges over the Caen Canal and Orne River.</p>
-                        <p><strong>Outcome:</strong> A textbook glider assault captured the bridges intact within minutes, securing the eastern flank of the invasion.</p>
-                        <h4>Merville Battery Assault</h4>
-                        <p><strong>Objective:</strong> Destroy a heavily fortified German artillery battery threatening Sword Beach.</p>
-                        <p><strong>Outcome:</strong> After heavy fighting, the paratroopers successfully neutralized the guns.</p>
+                        <p>In a textbook glider assault, British forces captured the Pegasus and Horsa bridges intact, securing the eastern flank of the invasion. They also successfully neutralized the heavy guns of the Merville Battery.</p>
                         <div class="casualties-highlight">
                            <strong>British Airborne Casualties:</strong> ~500
                         </div>
@@ -796,19 +788,19 @@
                 <div class="sector-grid">
                      <div class="sector-card">
                         <h3 class="sector-name">Linking The Sectors</h3>
-                        <p>Within two days of the landing, Allied forces successfully linked the individual sectors, creating a continuous front approximately 50 miles long and several miles deep, which was essential for bringing in reinforcements and supplies.</p>
+                        <p>Within two days of the landing, Allied forces successfully linked the individual sectors, creating a continuous front approximately 50 miles long and several miles deep.</p>
                      </div>
                      <div class="sector-card">
                         <h3 class="sector-name">Mulberry Harbors</h3>
-                        <p>Two massive, prefabricated artificial harbors were towed across the English Channel. Though one was destroyed in a storm, "Mulberry B" at Arromanches became a vital lifeline, allowing the Allies to unload thousands of tons of supplies daily without having captured a major port.</p>
+                        <p>Two massive, prefabricated artificial harbors were towed across the English Channel. "Mulberry B" at Arromanches became a vital lifeline, allowing the Allies to unload thousands of tons of supplies daily.</p>
                      </div>
                      <div class="sector-card">
                         <h3 class="sector-name">The Battle for Normandy</h3>
-                        <p>D-Day was just the beginning. The subsequent Battle of Normandy lasted for over two months and involved brutal fighting in the dense "bocage" country. The capture of key cities like Caen and Cherbourg took much longer than planned.</p>
+                        <p>D-Day was just the beginning. The subsequent Battle for Normandy lasted for over two months and involved brutal fighting in the dense "bocage" country of France.</p>
                      </div>
                      <div class="sector-card">
                         <h3 class="sector-name">German Response</h3>
-                        <p>The German response was initially slow and confused, thanks to Allied deception operations and the disruption caused by paratroopers. While some units, like the 21st Panzer Division, launched counterattacks, they were unable to dislodge the Allied foothold.</p>
+                        <p>The German response was initially slow and confused, thanks to Allied deception operations. While some Panzer divisions launched counterattacks, they were unable to dislodge the Allied foothold.</p>
                     </div>
                 </div>
             </div>
@@ -933,23 +925,23 @@
             sectorButtons.forEach(button => {
                 button.addEventListener('click', function() {
                     const sectorName = this.getAttribute('data-sector');
-                    showSectorDetail(sectorName);
+                    showSectorDetail(sectorName, this);
                 });
             });
         }
 
-        function showSectorDetail(sector) {
+        function showSectorDetail(sector, clickedButton) {
             try {
                 const details = document.querySelectorAll('.sector-detail');
-                details.forEach(detail => {
-                    if (detail && detail.classList) {
-                        detail.classList.remove('show');
-                    }
-                });
+                details.forEach(detail => detail.classList.remove('show'));
+
+                const buttons = document.querySelectorAll('.sector-button');
+                buttons.forEach(button => button.classList.remove('active'));
 
                 const targetDetail = document.getElementById(sector + '-detail');
-                if (targetDetail && targetDetail.classList) {
+                if (targetDetail) {
                     targetDetail.classList.add('show');
+                    clickedButton.classList.add('active');
                 }
             } catch (error) {
                 console.error('Error in showSectorDetail:', error);
