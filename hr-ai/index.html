@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The AI Revolution: A Retrospective</title>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg,#2c3e50 0%,#34495e 100%);
+            --accent-1: #e74c3c;
+            --accent-2: #c03b2b;
+            --btn-gradient: linear-gradient(45deg,#e74c3c,#c0392b);
+            --accent-1-rgb: 231, 76, 60;
+            --accent-warning: #ffc107;
+            --accent-warning-rgb: 255, 193, 7;
+            --text-primary: #ecf0f1;
+            --text-secondary: #bdc3c7;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(0,0,0,0.3);
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 3px solid var(--accent-1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-top: 0;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, var(--accent-1), var(--accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            filter: drop-shadow(0 0 15px rgba(var(--accent-1-rgb), 0.3));
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0,0,0,0.2);
+            padding: 1rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        /* --- FINAL BUTTON RULES START --- */
+
+        /* Base style for ALL buttons */
+        .tab-button, #settings-btn, .sector-button {
+            padding: 12px 24px;
+            background: var(--ui-background);
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Specific settings for the icon */
+        #settings-btn {
+            font-size: 1.2rem;
+            padding: 10px 15px;
+        }
+
+        /* HOVER state for buttons */
+        .tab-button:hover, .sector-button:hover, #settings-btn:hover {
+            background: var(--btn-gradient);
+            transform: translateY(-2px);
+            color: var(--btn-text-hover);
+        }
+
+        /* ACTIVE state for selected buttons */
+        .tab-button.active, .sector-button.active {
+            background: var(--btn-gradient);
+            border-color: var(--accent-2);
+            transform: translateY(-2px);
+            color: var(--btn-text-active);
+        }
+        
+        /* --- FINAL BUTTON RULES END --- */
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #2c3e50;
+            padding: 2rem;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            text-align: center;
+            position: relative;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .modal-content h3 {
+            color: var(--accent-1);
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+        
+        .modal-content label {
+            font-size: 1.1rem;
+            margin-right: 10px;
+        }
+
+        #theme-select {
+            background-color: var(--ui-background);
+            color: var(--text-primary);
+            border: 1px solid var(--accent-2);
+            border-radius: 5px;
+            padding: 8px;
+            font-size: 1rem;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .section-title {
+            color: var(--accent-1);
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent-1);
+        }
+
+        .subsection {
+            margin: 1.5rem 0;
+        }
+
+        .subsection h3 {
+            color: var(--accent-1);
+            font-size: 1.3rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .subsection h4 {
+            color: var(--accent-2);
+            font-size: 1.1rem;
+            margin: 1rem 0 0.5rem 0;
+        }
+
+        .sector-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .sector-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 1.5rem;
+            border-left: 4px solid var(--accent-1);
+            transition: transform 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sector-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.1);
+        }
+
+        .sector-name {
+            color: var(--accent-1);
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .casualties-highlight {
+            background: rgba(var(--accent-warning-rgb), 0.15);
+            padding: 1rem;
+            border-radius: 5px;
+            border-left: 4px solid var(--accent-warning);
+            margin: 1rem 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+           .stat-card {
+            background: var(--ui-background-accent);
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--accent-1);
+            display: block;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+        
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+            margin-top: 2rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--accent-1);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2rem;
+            padding-left: 2rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2.05rem;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            background: var(--accent-1);
+            border-radius: 50%;
+            border: 2px solid var(--ui-background);
+        }
+
+        .timeline-time {
+            color: var(--accent-1);
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255,255,255,0.1);
+            color: var(--text-primary);
+            margin-bottom: 2rem;
+        }
+
+        .search-box::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .highlight {
+            background: rgba(var(--accent-1-rgb), 0.3);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .interactive-map {
+            background: var(--container-background-subtle);
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .sector-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .sector-detail {
+            display: none;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+        }
+
+        .sector-detail.show {
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            .nav-tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+            .container {
+                padding: 1rem;
+            }
+            .sector-grid {
+                grid-template-columns: 1fr;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <script>
+    // Self-executing function to manage all theme logic.
+    (function() {
+        const DEFAULT_THEME_NAME = 'cyber-night';
+    
+        let THEMES = {
+            'cyber-night': {
+                '--bg-gradient': 'linear-gradient(135deg,#0a0a23 0%,#1a1a3a 50%,#2e2e5e 100%)',
+                '--accent-1': '#a8b8d0', '--accent-1-rgb': '168, 184, 208',
+                '--accent-2': '#8899b3',
+                '--btn-gradient': 'linear-gradient(45deg,#1a1a3a,#2e2e5e)',
+                '--accent-warning': '#e8b339',
+                '--accent-warning-rgb': '232, 179, 57',
+                '--ui-background': '#34495e',
+                '--ui-background-accent': 'rgba(52, 73, 94, 0.8)',
+                '--container-background-subtle': 'rgba(0, 0, 0, 0.3)',
+                '--btn-text-active': '#ecf0f1',
+                '--btn-text-hover': '#ecf0f1'
+            },
+            'teal-matrix': {
+                '--bg-gradient': 'linear-gradient(135deg,#0a231c 0%,#1a3a31 50%,#2e5e50 100%)',
+                '--accent-1': '#ace0d5', '--accent-1-rgb': '172, 224, 213',
+                '--accent-2': '#92b3a9',
+                '--btn-gradient': 'linear-gradient(45deg,#1a3a31,#2e5e50)',
+                '--accent-warning': '#e8b339',
+                '--accent-warning-rgb': '232, 179, 57',
+                '--ui-background': '#345e55',
+                '--ui-background-accent': 'rgba(52, 94, 85, 0.8)',
+                '--container-background-subtle': 'rgba(0, 0, 0, 0.3)',
+                '--btn-text-active': '#ecf0f1',
+                '--btn-text-hover': '#ecf0f1'
+            },
+            'red-alert': {
+                '--bg-gradient': 'linear-gradient(135deg,#0a0a23 0%,#1a1a3a 50%,#2e2e5e 100%)',
+                '--ui-background': '#34495e',
+                '--ui-background-accent': 'rgba(52, 73, 94, 0.8)',
+                '--container-background-subtle': 'rgba(0, 0, 0, 0.3)',
+                '--accent-1': '#e74c3c',
+                '--accent-2': '#c03b2b',
+                '--btn-gradient': 'linear-gradient(45deg,#e74c3c,#c0392b)',
+                '--accent-1-rgb': '231, 76, 60',
+                '--accent-warning': '#e8b339',
+                '--accent-warning-rgb': '232, 179, 57',
+                '--btn-text-active': '#ffffff',
+                '--btn-text-hover': '#ffffff'
+            },
+            'scorched-gold': {
+                '--bg-gradient': 'linear-gradient(135deg,#0a231f 0%,#193a33 50%,#2e5e54 100%)',
+                '--ui-background': '#345e56',
+                '--ui-background-accent': 'rgba(52, 94, 86, 0.8)',
+                '--container-background-subtle': 'rgba(0, 0, 0, 0.3)',
+                '--accent-1': '#f0c475',
+                '--accent-2': '#d4a24c',
+                '--btn-gradient': 'linear-gradient(45deg,#f0c475,#d4a24c)',
+                '--accent-1-rgb': '240, 196, 117',
+                '--btn-text-active': '#2a1d15',
+                '--btn-text-hover': '#2a1d15',
+                '--accent-warning': '#e8b339',
+                '--accent-warning-rgb': '232, 179, 57'
+            },            
+            'emerald-cyber': {
+                '--bg-gradient': 'linear-gradient(135deg,#0a230a 0%,#1a3a1a 50%,#2e5e2e 100%)',
+                '--accent-1': '#a8d0b8', '--accent-1-rgb': '168, 208, 184',
+                '--accent-2': '#6a947a', '--btn-gradient': 'linear-gradient(45deg,#1a3a1a,#2e5e2e)',
+                '--accent-warning': '#ffc107', '--accent-warning-rgb': '255, 193, 7',
+                '--ui-background': '#34495e',
+                '--ui-background-accent': 'rgba(52, 73, 94, 0.8)',
+                '--container-background-subtle': 'rgba(0, 0, 0, 0.3)',
+                '--btn-text-active': '#ecf0f1',
+                '--btn-text-hover': '#ecf0f1'
+            },            
+            'emerald-night': {
+                '--bg-gradient': 'linear-gradient(135deg,#0a230a 0%,#1a3a1a 50%,#2e5e2e 100%)',
+                '--accent-1': '#a8d0b8', '--accent-1-rgb': '168, 208, 184',
+                '--accent-2': '#6a947a',
+                '--btn-gradient': 'linear-gradient(45deg,#1a3a1a,#2e5e2e)',
+                '--accent-warning': '#ffc107', '--accent-warning-rgb': '255, 193, 7',
+                '--ui-background': '#345e49',
+                '--ui-background-accent': 'rgba(52, 94, 73, 0.8)',
+                '--container-background-subtle': 'rgba(0, 0, 0, 0.3)',
+                '--btn-text-active': '#ecf0f1',
+                '--btn-text-hover': '#ecf0f1'
+            }
+        };
+    
+        function applyTheme(name) {
+            const theme = THEMES[name];
+            if (theme) {
+                const root = document.documentElement;
+                for (const [key, value] of Object.entries(theme)) {
+                    root.style.setProperty(key, value);
+                }
+            }
+        }
+    
+        window.setTheme = function(name) {
+            applyTheme(name);
+            localStorage.setItem('ai-theme', name); // Changed storage key
+        }
+    
+        const availableThemeNames = Object.keys(THEMES);
+        const savedTheme = localStorage.getItem('ai-theme'); // Changed storage key
+        let themeToLoad = DEFAULT_THEME_NAME;
+
+        if (savedTheme && availableThemeNames.includes(savedTheme)) {
+            themeToLoad = savedTheme;
+        }
+        
+        applyTheme(themeToLoad);
+    
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeSelect = document.getElementById('theme-select');
+            if (themeSelect) {
+                // Clear existing options before populating
+                themeSelect.innerHTML = '';
+                availableThemeNames.forEach(name => {
+                    const option = document.createElement('option');
+                    option.value = name;
+                    option.textContent = name.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                    themeSelect.appendChild(option);
+                });
+                themeSelect.value = themeToLoad;
+            }
+        });
+    })();
+    </script>
+</head>
+<body>
+    <div id="settings-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button id="close-modal-btn" class="close-btn">&times;</button>
+            <h3>Display Settings</h3>
+            <label for="theme-select">Theme:</label>
+            <select id="theme-select" onchange="setTheme(this.value)"></select>
+        </div>
+    </div>
+
+    <div class="header">
+        <h1>The AI Revolution</h1>
+        <p>A Retrospective from 2035 • The Age of Foundation Models</p>
+    </div>
+
+    <div class="nav-tabs">
+        <button class="tab-button active" data-tab="overview">Overview</button>
+        <button class="tab-button" data-tab="foundations">Foundational Models</button>
+        <button class="tab-button" data-tab="breakthroughs">Key Breakthroughs</button>
+        <button class="tab-button" data-tab="hardware">Hardware & Scale</button>
+        <button class="tab-button" data-tab="alignment">The Alignment Problem</button>
+        <button class="tab-button" data-tab="impact">Societal Impact</button>
+        <button class="tab-button" data-tab="future">The Future from Here</button>
+        <button id="settings-btn" title="Settings">⚙️</button>
+    </div>
+
+    <div class="container">
+        <div id="overview" class="tab-content active">
+             <div class="section-card">
+                <h2 class="section-title">The Decade That Changed Everything</h2>
+                <p style="font-size: 1.2rem; line-height: 1.8; margin-bottom: 2rem;">
+                    Looking back from 2035, the period between 2020 and 2030 is now understood as the most transformative decade in human history. The rapid scaling of foundation models, fueled by architectural breakthroughs and unprecedented computational power, moved Artificial Intelligence from a specialized tool to a pervasive, society-altering force. This period saw the emergence of proto-AGI, redefined global economies, and forced humanity to confront profound questions about its own future.
+                </p>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-number">100T+</span>
+                        <div class="stat-label">Parameters in Leading Models</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">ZettaFLOP</span>
+                        <div class="stat-label">Scale of Training Runs</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">>40%</span>
+                        <div class="stat-label">Global GDP Influenced by AI</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">~2028</span>
+                        <div class="stat-label">Year of Proto-AGI Emergence</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="foundations" class="tab-content">
+            <div class="section-card">
+                <h2 class="section-title">The Rise of Foundation Models</h2>
+                <div class="sector-grid">
+                    <div class="sector-card">
+                        <div class="sector-name">The Transformer Architecture</div>
+                        <p>The revolution began here. The self-attention mechanism allowed models to weigh the importance of different pieces of input data, enabling a deep understanding of context and relationships.</p>
+                        <div class="casualties-highlight">
+                            <strong>Key Paper:</strong> "Attention Is All You Need" (Vaswani et al., 2017)
+                        </div>
+                    </div>
+                    <div class="sector-card">
+                        <div class="sector-name">Scaling Laws</div>
+                        <p>Early research established a predictable relationship between model performance, dataset size, and the amount of compute used for training. This created a clear, albeit brutally expensive, roadmap for progress: more data and more compute led to better models.</p>
+                    </div>
+                    <div class="sector-card">
+                        <div class="sector-name">Multimodality</div>
+                        <p>The breakthrough from text-only models to systems that could seamlessly process and reason across text, images, audio, and video was a critical step. This allowed AI to understand the world in a more human-like, holistic way.</p>
+                    </div>
+                    <div class="sector-card">
+                        <div class="sector-name">Generative Pre-trained Models (GPT)</div>
+                        <p>The GPT series and its contemporaries (Gemini, Llama, Claude) proved the effectiveness of the pre-training and fine-tuning paradigm. By training on the entire internet, these models acquired a vast, general-purpose understanding of the world that could be adapted to specific tasks.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="breakthroughs" class="tab-content">
+            <div class="section-card">
+                <h2 class="section-title">Key Scientific and Technical Breakthroughs</h2>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-time">~2025</div>
+                        <h4>AI-Driven Protein Folding</h4>
+                        <p>Systems like AlphaFold 2 were just the beginning. By the mid-2020s, AI could design entirely novel proteins from scratch, leading to breakthroughs in medicine, materials science, and synthetic biology.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">~2027</div>
+                        <h4>Chain-of-Thought & Autonomous Agents</h4>
+                        <p>Models learned to "think step-by-step," breaking down complex problems into intermediate reasoning steps. This enabled the creation of autonomous AI agents that could use tools, browse the web, and execute complex, multi-step tasks to achieve a goal.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">~2028</div>
+                        <h4>The "Sparks of AGI" Moment</h4>
+                        <p>Researchers began observing emergent, un-trained capabilities in the largest models that demonstrated a surprising level of general reasoning. This sparked intense debate about the true nature of their intelligence and the proximity of Artificial General Intelligence.</p>
+                         <div class="casualties-highlight">
+                            <strong>Key Paper:</strong> "Sparks of Artificial General Intelligence" (Bubeck et al., 2023)
+                        </div>
+                    </div>
+                     <div class="timeline-item">
+                        <div class="timeline-time">~2030</div>
+                        <h4>Self-Improving Systems</h4>
+                        <p>The holy grail of AI research was achieved when models became capable of recursively improving their own architecture and training processes, leading to an exponential acceleration in capability and the dawn of the AGI era.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="hardware" class="tab-content">
+            <div class="section-card">
+                <h2 class="section-title">The Hardware That Powered the Revolution</h2>
+                <div class="sector-grid">
+                    <div class="sector-card">
+                        <h3 class="sector-name">Tensor Processing Units (TPUs)</h3>
+                        <p>Google's custom-designed hardware for neural network training proved to be a massive advantage. These chips, optimized for matrix multiplication, allowed for training runs at a scale and efficiency previously unimaginable.</p>
+                    </div>
+                    <div class="sector-card">
+                        <h3 class="sector-name">GPU Dominance</h3>
+                        <p>NVIDIA's dominance in the GPU market made them a central player in the AI boom. The parallel processing power of GPUs was perfectly suited for the demands of deep learning, and their CUDA software platform became the industry standard.</p>
+                    </div>
+                     <div class="sector-card">
+                        <h3 class="sector-name">Optical and Neuromorphic Computing</h3>
+                        <p>As silicon-based chips began to hit physical limits in the late 2020s, a new wave of hardware emerged. Optical computing, using photons instead of electrons, and neuromorphic chips, which mimic the structure of the human brain, offered orders-of-magnitude improvements in speed and energy efficiency.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="alignment" class="tab-content">
+            <div class="section-card">
+                <h2 class="section-title">The Alignment Problem: A Race Against Time</h2>
+                <p style="font-size: 1.1rem; line-height: 1.7;">
+                   As AI capabilities grew, the challenge of ensuring that these powerful systems acted in humanity's best interests became the single most important and difficult problem in computer science. Early methods laid the groundwork, but the alignment of superintelligent systems remains a frontier of active research.
+                </p>
+                <div class="sector-grid">
+                    <div class="sector-card">
+                        <h3 class="sector-name">Reinforcement Learning from Human Feedback (RLHF)</h3>
+                        <p>The primary technique used to align early large language models. By using human raters to rank model outputs, developers could fine-tune the AI to be more helpful, harmless, and honest.</p>
+                         <div class="casualties-highlight">
+                            <strong>Key Paper:</strong> "Training Language Models to Follow Instructions with Human Feedback" (Ouyang et al., 2022)
+                        </div>
+                    </div>
+                    <div class="sector-card">
+                        <h3 class="sector-name">Constitutional AI</h3>
+                        <p>A method developed by Anthropic where the AI is given an explicit set of principles (a "constitution") and is trained to self-correct its responses to better align with those principles, reducing the need for constant human oversight.</p>
+                    </div>
+                     <div class="sector-card">
+                        <h3 class="sector-name">Interpretability and Mechanistic Understanding</h3>
+                        <p>A major field of research focused on reverse-engineering neural networks to understand *how* they make decisions. Without being able to see inside the "black box," truly guaranteeing alignment was considered impossible.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="impact" class="tab-content">
+            <div class="section-card">
+                <h2 class="section-title">Societal Impact and Disruption</h2>
+                <div class="sector-grid">
+                     <div class="sector-card">
+                        <h3 class="sector-name">Economic Transformation</h3>
+                        <p>AI agents automated vast swaths of the knowledge economy, leading to massive productivity gains but also significant job displacement. The transition required the implementation of large-scale retraining programs and universal basic income pilots in several nations.</p>
+                     </div>
+                     <div class="sector-card">
+                        <h3 class="sector-name">Scientific Acceleration</h3>
+                        <p>AI became an indispensable tool for scientific discovery, solving complex problems in fields from climate science and fusion energy to mathematics and medicine, accelerating the rate of progress beyond all historical precedent.</p>
+                     </div>
+                     <div class="sector-card">
+                        <h3 class="sector-name">Information and Misinformation</h3>
+                        <p>The ability to generate hyper-realistic text, images, and video on a massive scale led to a crisis in the information ecosystem. The development of robust AI-driven fact-checking and content provenance systems became a critical societal priority.</p>
+                     </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="future" class="tab-content">
+            <div class="section-card">
+                <h2 class="section-title">The Future from 2035</h2>
+                <div class="sector-grid">
+                     <div class="sector-card">
+                        <h3 class="sector-name">The Path to AGI</h3>
+                        <p>While the systems of the early 2030s are incredibly powerful, the consensus is that true, human-level Artificial General Intelligence has not yet been achieved. The primary hurdles remain robust long-term planning, common-sense reasoning, and a deeper understanding of causality.</p>
+                     </div>
+                     <div class="sector-card">
+                        <h3 class="sector-name">Human-AI Collaboration</h3>
+                        <p>The dominant paradigm has shifted from AI as a tool to AI as a collaborative partner. In nearly every field, human experts now work alongside specialized AIs, augmenting their own creativity, intuition, and decision-making capabilities.</p>
+                     </div>
+                     <div class="sector-card">
+                        <h3 class="sector-name">Existential Questions</h3>
+                        <p>As we approach the AGI threshold, humanity continues to grapple with the ultimate questions first posed by pioneers like Turing and Von Neumann: What is the nature of consciousness? And what is humanity's role in a world with intelligence far greater than its own?</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="search" class="tab-content">
+            <div class="section-card">
+                <h2 class="section-title">Search the Knowledge Base</h2>
+                <input type="text" id="searchInput" class="search-box" placeholder="Search for models, papers, concepts...">
+                
+                <div id="searchResults">
+                    <p style="text-align: center; color: var(--text-secondary); font-style: italic; margin: 2rem 0;">
+                        Enter a search term above to explore the AI knowledge base.<br>
+                        Try searching for: "Transformer", "RLHF", "AGI", "Scaling Laws", "AlphaFold", etc.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Knowledge base for searching
+        const knowledgeBase = {
+            "Transformer": "The neural network architecture introduced in the 2017 paper 'Attention Is All You Need'. Its self-attention mechanism became the foundational technology for modern large language models.",
+            "Attention Is All You Need": "The 2017 paper by Vaswani et al. that introduced the Transformer architecture, which replaced recurrent and convolutional layers with self-attention mechanisms, enabling massive parallelization and superior performance on language tasks.",
+            "RLHF": "Reinforcement Learning from Human Feedback. A technique where human preferences are used to train a reward model, which is then used to fine-tune a language model to align its behavior with human values.",
+            "Scaling Laws": "A set of empirical findings that showed a predictable, power-law relationship between model performance, the number of model parameters, and the size of the training dataset. This guided the strategy of scaling up models.",
+            "AGI": "Artificial General Intelligence. A hypothetical type of AI that possesses the ability to understand or learn any intellectual task that a human being can. Its potential development was the central motivation and concern of the AI revolution.",
+            "Sparks of AGI": "A 2023 paper by Microsoft Research which argued that an early, multimodal version of GPT-4 demonstrated emergent behaviors and reasoning capabilities that could be considered 'sparks' of artificial general intelligence.",
+            "AlphaFold": "A deep learning system developed by DeepMind which made revolutionary breakthroughs in predicting the 3D structure of proteins from their amino acid sequence, solving a 50-year-old grand challenge in biology.",
+            "Constitutional AI": "An alignment technique developed by Anthropic where an AI is trained to adhere to a set of explicit principles (a 'constitution'), allowing it to supervise and correct itself without direct human feedback for every response."
+        };
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTabs();
+            initializeSectorButtons();
+            initializeSearch();
+            initializeModal();
+        });
+
+        function initializeModal() {
+            const modal = document.getElementById('settings-modal');
+            const openBtn = document.getElementById('settings-btn');
+            const closeBtn = document.getElementById('close-modal-btn');
+
+            if (modal && openBtn && closeBtn) {
+                openBtn.addEventListener('click', () => modal.classList.add('show'));
+                closeBtn.addEventListener('click', () => modal.classList.remove('show'));
+                modal.addEventListener('click', (event) => {
+                    if (event.target === modal) modal.classList.remove('show');
+                });
+            }
+        }
+
+        function initializeTabs() {
+            const tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const tabName = this.getAttribute('data-tab');
+                    showTab(tabName);
+                });
+            });
+        }
+
+        function showTab(tabName) {
+            try {
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                document.querySelectorAll('.tab-button').forEach(button => button.classList.remove('active'));
+                document.getElementById(tabName).classList.add('active');
+                document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            } catch (error) { console.error('Error in showTab:', error); }
+        }
+
+        function initializeSectorButtons() {
+            const sectorButtons = document.querySelectorAll('.sector-button');
+            sectorButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const sectorName = this.getAttribute('data-sector');
+                    showSectorDetail(sectorName, this);
+                });
+            });
+        }
+
+        function showSectorDetail(sector, clickedButton) {
+            try {
+                document.querySelectorAll('.sector-detail').forEach(detail => detail.classList.remove('show'));
+                document.querySelectorAll('.sector-button').forEach(button => button.classList.remove('active'));
+                const targetDetail = document.getElementById(sector + '-detail');
+                if (targetDetail) {
+                    targetDetail.classList.add('show');
+                    clickedButton.classList.add('active');
+                }
+            } catch (error) { console.error('Error in showSectorDetail:', error); }
+        }
+
+        function initializeSearch() {
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('keyup', searchContent);
+            }
+        }
+
+        function searchContent() {
+            try {
+                const searchInput = document.getElementById('searchInput');
+                const resultsDiv = document.getElementById('searchResults');
+                if (!searchInput || !resultsDiv) return;
+                
+                const searchTerm = searchInput.value.toLowerCase();
+
+                if (searchTerm.length < 2) {
+                    resultsDiv.innerHTML = `<p style="text-align: center; color: var(--text-secondary); font-style: italic; margin: 2rem 0;">Enter a search term above to explore the AI knowledge base.<br>Try searching for: "Transformer", "RLHF", "AGI", "Scaling Laws", "AlphaFold", etc.</p>`;
+                    return;
+                }
+
+                let results = [];
+                for (const key in knowledgeBase) {
+                    if (knowledgeBase.hasOwnProperty(key)) {
+                        const value = knowledgeBase[key];
+                        if (key.toLowerCase().includes(searchTerm) || value.toLowerCase().includes(searchTerm)) {
+                            results.push({
+                                title: key,
+                                content: value,
+                                relevance: key.toLowerCase().startsWith(searchTerm) ? 2 : 1
+                            });
+                        }
+                    }
+                }
+
+                results.sort((a, b) => b.relevance - a.relevance);
+
+                if (results.length === 0) {
+                    resultsDiv.innerHTML = `<div class="section-card"><h3 style="color: var(--accent-1);">No results found for "${searchInput.value}"</h3><p>Try searching for models, papers, or concepts.</p></div>`;
+                    return;
+                }
+
+                let resultHTML = `<h3 style="color: var(--accent-1); margin-bottom: 1.5rem;">Search Results for "${searchInput.value}"</h3>`;
+                for (let i = 0; i < results.length; i++) {
+                    const result = results[i];
+                    const highlightedContent = result.content.replace(new RegExp(searchTerm, 'gi'), `<span class="highlight">$&</span>`);
+                    resultHTML += `<div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid var(--accent-1);"><h4 style="color: var(--accent-1); margin-bottom: 0.8rem;">${result.title}</h4><p style="line-height: 1.6;">${highlightedContent}</p></div>`;
+                }
+
+                resultsDiv.innerHTML = resultHTML;
+            } catch (error) { console.error('Error in searchContent:', error); }
+        }
+    </script>
+</body>
+</html>
