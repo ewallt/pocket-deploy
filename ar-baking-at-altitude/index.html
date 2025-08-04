@@ -149,7 +149,6 @@
 
   <script>
     /* ---------- state ---------- */
-    let masterLibrary=null,sortedLibraryIds=null,currentLibraryId=null;
     let libraryData=null,currentTopicId=null;
     const app=document.getElementById('app-container');
 
@@ -214,4 +213,38 @@
       let raw = null;
       try {
         const embedded = document.getElementById('embedded-content').textContent.trim();
-        if (!embedded || embedded.startsWith('
+        if (!embedded) throw new Error('No embedded data found.');
+        raw = JSON.parse(embedded);
+        console.log("Data loaded successfully:", raw); // DEBUG: Confirm data is loaded
+      } catch(err) {
+        console.error("Failed to load or parse data:", err);
+        app.innerHTML = '<h1>Error</h1><p>Could not load content. Check browser console for details.</p>';
+        return;
+      }
+
+      libraryData = raw;
+      render(); // Initial render
+    }
+
+    /* ---------- theme ---------- */
+    const themeBtn=document.getElementById('theme-switcher-btn');
+    function applyTheme(t){
+      const dark = t === 'dark';
+      document.documentElement.classList.toggle('dark',dark);
+      document.body.classList.toggle('dark-theme',dark);
+      document.body.classList.toggle('font-dark-theme',dark);
+      document.body.classList.toggle('newspaper-theme',!dark);
+      document.body.classList.toggle('font-newspaper',!dark);
+      document.getElementById('sun-icon').classList.toggle('hidden',dark);
+      document.getElementById('moon-icon').classList.toggle('hidden',!dark);
+    }
+    themeBtn.onclick=()=>{const t=document.documentElement.classList.contains('dark')?'light':'dark';localStorage.setItem('theme',t);applyTheme(t)};
+
+    /* ---------- boot ---------- */
+    document.addEventListener('DOMContentLoaded',()=>{
+      applyTheme(localStorage.getItem('theme') || 'light');
+      init().catch(err=>{console.error(err);app.innerHTML='<h1>Error</h1><p>Could not load content due to an initialization error.</p>'});
+    });
+  </script>
+</body>
+</html>
