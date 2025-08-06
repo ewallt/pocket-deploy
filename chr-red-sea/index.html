@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Exodus Chronicle</title>
+  <style>
+    /* Global Reset & Base Styles */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: "Georgia", serif;
+      line-height: 1.6;
+      background-color: #EAEAEA;
+      color: #333333;
+    }
+
+    /* Top Bar & Mega-Menu Toggle */
+    #master-top-bar {
+      background-color: #2F4F4F;
+      padding: 0.75rem 1rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      display: flex; justify-content: space-between; align-items: center;
+      position: sticky; top: 0; z-index: 250;
+    }
+    #master-top-bar .site-title {
+      font-family:'Rockwell', 'Georgia', serif;
+      color:#E5E5E5;
+      font-size:1.5rem;
+      text-transform:uppercase;
+      letter-spacing:1px;
+      text-shadow:1px 1px 2px rgba(0,0,0,0.4);
+    }
+    #mega-menu-toggle {
+      background:#D3D3D3;color:#2F4F4F;border:2px solid #A9A9A9;border-radius:5px;
+      padding:0.6rem 1.2rem;cursor:pointer;font-family:"Impact",Haettenschweiler,"Arial Narrow Bold",sans-serif;
+      font-size:0.9rem;text-transform:uppercase;letter-spacing:1px;transition:.3s;
+    }
+    #mega-menu-toggle:hover{background:#A9A9A9;color:#fff}
+    #mega-menu-toggle.active{background:#B22222;color:#fff;border-color:#8B0000}
+
+    /* Mega-menu panel */
+    #mega-menu-panel{
+      display:none;position:fixed;top:60px;left:0;width:100%;height:calc(100vh - 60px);
+      background:rgba(47,79,79,.98);z-index:300;padding:2rem;overflow-y:auto;
+      box-shadow:0 5px 15px rgba(0,0,0,.3);animation:fadeInMega .3s ease-out;
+    }
+    @keyframes fadeInMega{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+    #mega-menu-panel.open{display:block}
+    .mega-menu-columns{display:flex;flex-wrap:wrap;gap:2rem;justify-content:space-around}
+    .mega-menu-column{flex:1;min-width:200px;margin-bottom:1rem}
+    .mega-menu-column .theater-heading{
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: #EAEAEA;
+      font-weight: bold;
+      font-size: 1.2rem;
+      margin-bottom: .75rem;
+      padding-bottom: .5rem;
+      border-bottom: 1px solid #778899;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .mega-menu-column .topic-link{
+      display:block;color:#EAEAEA;text-decoration:none;padding:.5rem .25rem;border-radius:2px;
+      transition:.2s;font-size:.95rem;
+    }
+    .mega-menu-column .topic-link:hover{background:#778899;color:#fff}
+    .mega-menu-column .topic-link.active-topic{background:#B22222;color:#fff;font-weight:bold}
+    #page-content{padding-top:60px}
+
+    /* Topic container */
+    .topic-container{
+      display:none;font-family:"Georgia",serif;line-height:1.6;color:#2c3e50;
+      background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+      animation:fadeInTopic .5s ease-in-out;padding:1px 0;min-height:calc(100vh - 60px);
+    }
+    .topic-container.active{display:block}
+    @keyframes fadeInTopic{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+    .topic-container .container{
+      max-width:1200px;margin:20px auto;background:rgba(255,255,255,.95);
+      backdrop-filter:blur(10px);border-radius:20px;box-shadow:0 20px 40px rgba(0,0,0,.1);overflow:hidden;
+    }
+    .topic-container .header{
+      background:linear-gradient(45deg,#1a237e,#3949ab);color:white;padding:3rem 2rem;text-align:center;
+      position:relative;overflow:hidden;
+    }
+    .topic-container .header::before{
+      content:"";position:absolute;top:-50%;left:-50%;width:200%;height:200%;
+      background:url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><circle cx=\"20\" cy=\"20\" r=\"2\" fill=\"rgba(255,255,255,0.05)\"/><circle cx=\"80\" cy=\"40\" r=\"1.5\" fill=\"rgba(255,255,255,0.05)\"/><circle cx=\"40\" cy=\"70\" r=\"1\" fill=\"rgba(255,255,255,0.05)\"/></svg>');
+      animation:float 20s infinite linear;opacity:.7;
+    }
+    @keyframes float{0%{transform:translate(-50px,-50px)}100%{transform:translate(50px,50px)}}
+    .topic-container .header h1{font-size:2.8rem;margin-bottom:.8rem;text-shadow:1px 1px 3px rgba(0,0,0,.4)}
+    .topic-container .header p{font-size:1.1rem;opacity:.85}
+
+    .topic-container .nav{background:#495057;padding:.9rem 0;position:sticky;top:60px;z-index:100}
+    .topic-container .nav-container{max-width:1200px;margin:0 auto;display:flex;justify-content:center;
+      flex-wrap:wrap;gap:.8rem;padding:0 1.5rem}
+    .topic-container .nav-btn{
+      background:linear-gradient(45deg,#5a7a99,#435c74);color:white;border:none;padding:.7rem 1.3rem;
+      border-radius:20px;cursor:pointer;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+      font-size:.85rem;font-weight:bold;transition:.3s;box-shadow:0 3px 12px rgba(0,0,0,.2);
+    }
+    .topic-container .nav-btn:hover{
+      transform:translateY(-2px);box-shadow:0 5px 18px rgba(0,0,0,.3);
+      background:linear-gradient(45deg,#435c74,#304252);
+    }
+    .topic-container .nav-btn.active{
+      background:linear-gradient(45deg,#c0392b,#a93226);box-shadow:0 3px 12px rgba(192,57,43,.4);
+    }
+
+    .topic-container .content{padding:2.5rem 2rem}
+    .topic-container .section{display:none;padding-bottom:1.5rem;margin-bottom:1.5rem;animation:fadeInSection .6s}
+    .topic-container .section.active{display:block}
+    @keyframes fadeInSection{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+
+    .topic-container .section h2{
+      font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;color:#23272a;font-size:2.3rem;
+      margin-bottom:1.8rem;text-align:center;position:relative;padding-bottom:8px;
+    }
+    .topic-container .section h2::after{
+      content:"";position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);
+      width:90px;height:3px;background:linear-gradient(45deg,#5a7a99,#c0392b);border-radius:1.5px;
+    }
+    .topic-container .section h3{
+      font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;color:#343a40;font-size:1.7rem;
+      border-left:3px solid #5a7a99;margin:1.8rem 0 .9rem;padding-left:.9rem;
+    }
+    .topic-container .section h4{
+      font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size: 1.3rem; margin-bottom: 0.9rem; color: #2c3e50;
+    }
+    .topic-container .section p{
+      font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;margin-bottom:1.3rem;font-size:1.05rem;
+      text-align:justify;line-height:1.7;color:#333;
+    }
+
+    /* Figure & impact cards */
+    .figure-grid,.impact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+      gap:1.8rem;margin:1.8rem 0;}
+    .figure-card,.impact-card{
+      background:linear-gradient(135deg,#fdfdfe,#f1f3f5);border-radius:12px;padding:1.8rem;
+      box-shadow:0 7px 20px rgba(0,0,0,.08);transition:.3s;border:1px solid rgba(0,0,0,.08);
+    }
+    .figure-card:hover,.impact-card:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(0,0,0,.12)}
+    .figure-card h4,.impact-card h4{
+      font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;color:#23272a;font-size:1.3rem;
+      margin-bottom:.9rem;padding-bottom:.4rem;border-bottom:2px solid #5a7a99;
+    }
+    .impact-card{text-align:center;border-top:3px solid}
+    .impact-card:nth-child(1){border-top-color:#007bff}.impact-card:nth-child(2){border-top-color:#6c757d}
+    .impact-card:nth-child(3){border-top-color:#ffc107}.impact-card:nth-child(4){border-top-color:#28a745}
+
+    /* Timeline */
+    .battle-timeline{position:relative;margin:2.5rem 0;padding-left:0}
+    .timeline-item{display:flex;margin-bottom:1.8rem;position:relative}
+    .timeline-item::before{
+      content:"";position:absolute;left:18px;top:0;bottom:-1.8rem;width:2px;
+      background:linear-gradient(to bottom,#5a7a99,#435c74);
+    }
+    .timeline-item:last-child::before{height:36px;bottom:auto}
+    .timeline-dot{
+      width:36px;height:36px;background:linear-gradient(45deg,#6c757d,#495057);border-radius:50%;
+      display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:.9em;
+      margin-right:1.8rem;box-shadow:0 3px 8px rgba(0,0,0,.25);flex-shrink:0;z-index:1;
+    }
+    .timeline-content{
+      background:white;padding:1.3rem;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.08);flex:1;
+      border-left:3px solid #5a7a99;
+    }
+    .timeline-content h4{color:#23272a;margin-bottom:.4rem;font-size:1.2rem}
+    .timeline-date{color:#6c757d;font-size:.85rem;font-weight:bold;margin-bottom:.4rem}
+
+    /* Badge Box Styles */
+    .badge-box {
+        background: linear-gradient(135deg,#3a3f44,#495057);
+        color: white;
+        padding: 1.8rem;
+        border-radius: 12px;
+        margin: 1.8rem 0;
+        box-shadow: 0 8px 25px rgba(0,0,0,.25);
+    }
+    .badge-box h4 {
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        color: #ffffff;
+        margin-bottom: .9rem;
+        font-size: 1.3rem;
+    }
+    .topic-container .section .badge-box h4 {
+        color: white;
+    }
+    .badge-box ul {
+        list-style: none;
+        padding-left: 0;
+    }
+    .badge-box li {
+        margin-bottom: .7rem;
+        padding-left: 1.3rem;
+        position: relative;
+    }
+    .badge-box li::before {
+        content: "»";
+        position: absolute;
+        left: 0;
+        color: #ffc107;
+        font-weight: bold;
+    }
+    .badge-box em {
+        color: #17a2b8;
+        font-style: italic;
+    }
+
+    /* Footer */
+    .footer{background:#23272a;color:white;text-align:center;padding:1.8rem;margin-top:2rem}
+
+    /* Responsive tweaks */
+    @media(max-width:768px){
+      #master-top-bar .site-title{font-size:1.2rem}
+      #mega-menu-toggle{font-size:.8rem;padding:.5rem .8rem}
+      #mega-menu-panel{padding:1rem;top:50px;height:calc(100vh - 50px)}
+      #page-content{padding-top:50px}
+      .topic-container .header h1{font-size:2rem}
+      .topic-container .nav{top:50px}
+      .topic-container .nav-container{flex-direction:column;align-items:center}
+      .topic-container .content{padding:1.5rem 1rem}
+      .topic-container .section h2{font-size:1.8rem}
+      .figure-grid{grid-template-columns:1fr}
+      .timeline-item{flex-direction:column}
+      .timeline-dot{margin-right:0;margin-bottom:.9rem;align-self:flex-start}
+    }
+  </style>
+</head>
+<body>
+
+  <header id="master-top-bar">
+    <span class="site-title">Exodus Chronicle</span>
+    <button id="mega-menu-toggle">Menu</button>
+  </header>
+
+  <nav id="mega-menu-panel">
+    <div class="mega-menu-columns">
+        <div class="mega-menu-column">
+            <h3 class="theater-heading">Passover → Sea (Altar → Laver)</h3>
+            <a href="#" class="topic-link" onclick="switchTopic('topic-altar-laver-logic',this)">Altar → Laver Logic</a>
+            <a href="#" class="topic-link" onclick="switchTopic('topic-household-to-nation',this)">Household to Nation</a>
+            <a href="#" class="topic-link" onclick="switchTopic('topic-baptized-into-moses',this)">Baptized into Moses</a>
+            <a href="#" class="topic-link" onclick="switchTopic('topic-mechanics-of-mercy',this)">Mechanics of Mercy</a>
+            <a href="#" class="topic-link" onclick="switchTopic('topic-calendrical-placement',this)">Calendrical Placement</a>
+        </div>
+        <div class="mega-menu-column">
+            <h3 class="theater-heading">Waters, Chaos, & New Creation</h3>
+            <a href="#" class="topic-link" onclick="switchTopic('topic-tehom-the-dragon',this)">Tĕhōm & the Dragon</a>
+            <a href="#" class="topic-link" onclick="switchTopic('topic-path-making-as-salvation',this)">Path-Making as Salvation</a>
+            <a href="#" class="topic-link" onclick="switchTopic('topic-living-waters-from-the-house',this)">Living Waters from the House</a>
+            <a href="#" class="topic-link" onclick="switchTopic('topic-baptism-death-birth',this)">Baptism: Death & Birth</a>
+            <a href="#" class="topic-link" onclick="switchTopic('topic-sea-scenes-in-the-gospels',this)">Sea Scenes in the Gospels</a>
+        </div>
+        <div class="mega-menu-column">
+            <h3 class="theater-heading">From Sea to Sinai (Toward Pentecost)</h3>
+            <a href="#" class="topic-link" onclick="switchTopic('topic-marah-manna-massah',this)">Marah, Manna, Massah</a>
+            <a href="#" class="topic-link" onclick="switchTopic('topic-amalek-intercession',this)">Amalek & Intercession</a>
+            <a href="#" class="topic-link" onclick="switchTopic('topic-arrival-at-sinai',this)">Arrival at Sinai</a>
+            <a href="#" class="topic-link" onclick="switchTopic('topic-weeks-pentecost-service-begins',this)">Weeks/Pentecost — Service Begins</a>
+            <a href="#" class="topic-link" onclick="switchTopic('topic-law-as-architecture-of-freedom',this)">Law as Architecture of Freedom</a>
+        </div>
+        <div class="mega-menu-column">
+            <h3 class="theater-heading">Song, Memory, and Formation<br></br></h3>
+            <a href="#" class="topic-link" onclick="switchTopic('topic-exodus-15-as-enthronement',this)">Exodus 15 as Enthronement</a>
+            <a href="#" class="topic-link" onclick="switchTopic('topic-doxology-teaches-ethics',this)">Doxology Teaches Ethics</a>
+            <a href="#" class="topic-link" onclick="switchTopic('topic-miriams-dance',this)">Miriam’s Dance</a>
+            <a href="#" class="topic-link" onclick="switchTopic('topic-memory-devices',this)">Memory Devices</a>
+            <a href="#" class="topic-link" onclick="switchTopic('topic-liturgy-life-in-the-wilderness',this)">Liturgy → Life in the Wilderness</a>
+        </div>
+        <div class="mega-menu-column">
+            <h3 class="theater-heading">Echoes & Fulfillment<br></br></h3>
+            <a href="#" class="topic-link" onclick="switchTopic('topic-jordan-recapitulation-josh-3-5',this)">Jordan Recapitulation (Josh 3–5)</a>
+            <a href="#" class="topic-link" onclick="switchTopic('topic-temple-sea-lavers',this)">Temple, Sea & Lavers</a>
+            <a href="#" class="topic-link" onclick="switchTopic('topic-jesus-exodus-at-passover',this)">Jesus’ Exodus at Passover</a>
+            <a href="#" class="topic-link" onclick="switchTopic('topic-church-baptism-mission',this)">Church Baptism & Mission</a>
+            <a href="#" class="topic-link" onclick="switchTopic('topic-sea-of-glass-the-end-of-the-sea',this)">Sea of Glass & the End of the Sea</a>
+        </div>
+    </div>
+</nav>
+
+  <div id="page-content">
+    <div id="topic-master-container" class="topic-container"></div>
+  </div>
+  <script>
+    /* ========== DATA ========== */
+    const masterDataObject = {
+      'topic-altar-laver-logic': {
+        title: 'Altar → Laver Logic',
+        subtitle: 'Explore the theological sequence of blood followed by water, from Passover to the Red Sea, as a template for salvation.',
+        nav: [
+          { id: 'why-water-follows-blood', text: 'Why Water Follows Blood' },
+          { id: 'jurisdiction-shift', text: 'Jurisdiction Shift' },
+          { id: 'priestly-analogy-altar-laver', text: 'Priestly Analogy (Altar→Laver)' },
+          { id: 'pauls-frame-1-cor-10-1-2', text: 'Paul’s Frame (1 Cor 10:1–2)' },
+          { id: 'objections-misreads', text: 'Objections & Misreads' },
+          { id: 'badge', text: 'Badge' },
+          { id: 'timeline', text: 'Timeline' }
+        ],
+        sections: [
+          { id: 'why-water-follows-blood', title: 'Why Water Follows Blood', content: `<h4>A Liturgy in Motion</h4><p>The Exodus unfolds like a liturgy in motion: blood, then water, then word. On Passover night Israel is distinguished by the lamb’s blood (Exod 12). That verdict is juridical—a household is declared under Yahweh’s mercy—yet the people are still trapped between Pharaoh and the sea. What begins at the altar must be sealed at the laver. The Red Sea is that second act: an embodied passage that separates a nation from bondage and constitutes it as a priestly people.</p><h4>The Sanctuary and the Sea</h4><p>Scripture itself makes this connection. Psalm 77 pairs two crucial lines: “Your way, O God, is in the sanctuary” (v.13) and “Your way was in the sea” (v.19). The same divine “way” that structures the sanctuary also structures the historical deliverance. The Red Sea, therefore, functions as the great laver in the Exodus drama, the cleansing and consecrating water that follows the atoning blood of the Passover altar.</p>` },
+          { id: 'jurisdiction-shift', title: 'Jurisdiction Shift', content: `<h3>From Household to Nation</h3><p>The sequence from altar to laver represents a shift in status and jurisdiction. The Passover blood marks individual households for mercy, but the passage through the sea constitutes them as a corporate nation, publicly transferred from Pharaoh’s dominion to Yahweh’s.</p><div class="impact-grid"><div class="impact-card"><h4>Corporate Consecration</h4><p>Paul interprets the event this way: “All were baptized into Moses in the cloud and in the sea” (1 Cor 10:1–2). This is not about individual piety but corporate consecration. An entire people passes through the waters and emerges under a new covenant head.</p></div><div class="impact-card"><h4>Liberation Follows Justification</h4><p>The sequence is theologically crucial. Deliverance is more than forgiveness. The Passover blood shields from judgment (justification), but the sea breaks Pharaoh’s claim (liberation). Baptism isn't about earning pardon; it publicly announces a transfer of lordship.</p></div><div class="impact-card"><h4>A Non-Violent Victory</h4><p>Israel does not defeat Egypt with weapons; God opens a way and then closes it. The crossing is not a military achievement but a national baptism. This forms an ethic: God's people are saved by a pathway, not by the sword.</p></div></div>` },
+          { id: 'priestly-analogy-altar-laver', title: 'Priestly Analogy (Altar→Laver)', content: `<h3>A Blueprint for Ministry</h3><p>The layout of the Israelite sanctuary provides a clear blueprint for this theological sequence. The laver, the bronze basin of water, stood in the courtyard between the altar of burnt offering and the entrance to the holy place (Exod 30:17–21).</p><div class="figure-grid"><div class="figure-card"><h4>Blood First, Then Water</h4><p>Priests who were already covered by the atoning blood of the altar were still required to wash their hands and feet at the laver before they could enter the tent to minister before the Lord. The penalty for failing to do so was death.</p></div><div class="figure-card"><h4>Consecration for Service</h4><p>This demonstrates that the water of the laver was not for initial pardon but for consecration for service. It was the rite of passage that moved a priest from a state of being forgiven to a state of being fit for ministry.</p></div><div class="figure-card"><h4>Israel as a Priestly Nation</h4><p>Israel, as a whole, is called to be a "kingdom of priests" (Exod 19:6). The Red Sea crossing is their national priestly washing, consecrating them for the covenant service they will receive at Sinai.</p></div></div>` },
+          { id: 'pauls-frame-1-cor-10-1-2', title: 'Paul’s Frame (1 Cor 10:1–2)', content: `<h4>A Typological Reading</h4><p>The Apostle Paul provides the key New Testament interpretation of the crossing. In his warning to the Corinthian church, he explicitly frames the event as a type of Christian baptism: "I do not want you to be unaware, brothers and sisters, that our ancestors were all under the cloud, and all passed through the sea, and all were baptized into Moses in the cloud and in the sea."</p><h4>Corporate Identity</h4><p>Paul's emphasis is on the corporate nature of the event. The word "all" is repeated five times. Just as the Corinthians were baptized into the one body of Christ, so the Israelites were collectively baptized "into Moses," their covenant mediator. The sea was the rite of passage that forged a disparate group of freed slaves into a single covenant people under a new leader.</p>` },
+          { id: 'objections-misreads', title: 'Objections & Misreads', content: `<h3>Common Misinterpretations</h3><p>The clarity of the altar-laver sequence can be obscured by common misreadings of the Exodus narrative and its New Testament application.</p><div class="impact-grid"><div class="impact-card"><h4>Conflating Forgiveness and Liberation</h4><p>A common mistake is to see baptism (the sea) as the moment of forgiveness. The Exodus pattern is clear: forgiveness is granted through blood at Passover. The sea is about liberation from bondage and consecration for a new life.</p></div><div class="impact-card"><h4>Individualism</h4><p>Reading these events through a modern individualistic lens misses the point. Both Passover and the Red Sea crossing were corporate, national events that forged a collective identity. Christian baptism, while personal, is also an entry into a corporate body.</p></div><div class="impact-card"><h4>Ignoring the Sequence</h4><p>Failing to see the deliberate sequence—blood, then water, then word (at Sinai)—flattens the narrative and misses the rich theological grammar that runs from Exodus through the sanctuary and into the New Testament sacraments.</p></div></div>` },
+          { id: 'badge', title: 'Badge', content: `<div class="badge-box"><h4>Key Concepts in the Altar-Laver Logic:</h4><ul><li><strong>Passover:</strong> The foundational act of atonement (altar), where blood provides judicial protection from judgment.</li><li><strong>Laver:</strong> The sanctuary basin for priestly washing, symbolizing the consecration for service that must follow atonement.</li><li><strong>“blood → water → word”:</strong> The core theological sequence of salvation history: justification by blood, consecration by water, and commission by the word.</li><li><strong>Pillar:</strong> The visible presence of God that guides, protects, and separates Israel from its enemies during the crossing.</li></ul></div>` },
+          { id: 'timeline', title: 'Timeline', content: `<div class="battle-timeline"><div class="timeline-item"><div class="timeline-dot">1</div><div class="timeline-content"><div class="timeline-date">Lamb selection → Passover</div><h4>Altar</h4><p>Each household is sheltered by the blood of the lamb, a juridical act of mercy.</p></div></div><div class="timeline-item"><div class="timeline-dot">2</div><div class="timeline-content"><div class="timeline-date">sea-camp → crossing</div><h4>Laver</h4><p>The people pass through the water, a public act of liberation and national consecration.</p></div></div></div>` }
+        ]
+      },
+      'topic-household-to-nation': {
+        title: 'Household to Nation',
+        subtitle: 'Trace the movement from private, domestic salvation at Passover to public, national constitution at the Red Sea.',
+        nav: [
+            { id: 'marked-homes', text: 'Marked Homes' },
+            { id: 'public-passage-as-nation-birth', text: 'Public Passage as Nation-Birth' },
+            { id: 'liminal-gate-doorposts-vs-sea-walls', text: 'Liminal Gate: Doorposts vs. Sea Walls' },
+            { id: 'badge', text: 'Badge' },
+            { id: 'timeline', text: 'Timeline' }
+        ],
+        sections: [
+            { id: 'marked-homes', title: 'Marked Homes', content: `<h4>Salvation in the Domestic Sphere</h4><p>The Passover rite is fundamentally a household event. The unit of salvation is the family, gathered inside a home marked by the blood of the lamb. The instructions in Exodus 12 are all directed at the household level: select a lamb for your house, apply the blood to your doorposts, eat the meal with your family. The deliverance is real but private, a hidden act of faith performed behind closed doors while judgment passes through the land.</p><h4>A People Not Yet Formed</h4><p>At the moment of the Passover, "Israel" as a unified nation does not yet exist. It is a collection of families and clans, a "mixed multitude" (Exod 12:38) united only by their shared history of bondage and their obedience to the command to mark their homes. The blood creates a protected people, but it does not yet create a public polity.</p>` },
+            { id: 'public-passage-as-nation-birth', title: 'Public Passage as Nation-Birth', content: `<h3>From Private to Public</h3><p>The Red Sea crossing is the public, visible act that transforms the collection of saved households into a constituted nation. It is an event that takes place in the open, in the sight of the Egyptian army and under the guidance of God's visible pillar of cloud and fire.</p><div class="impact-grid"><div class="impact-card"><h4>A Public Act</h4><p>Unlike the hidden Passover rite, the sea crossing is a dramatic, public spectacle. It is a national birth witnessed by the world, where God publicly claims this people as His own and breaks the authority of their former masters.</p></div><div class="impact-card"><h4>Corporate Identity</h4><p>The experience of passing through the sea together, between the walls of water, forges a powerful corporate identity. They enter the sea as a crowd of refugees and emerge on the other side as the redeemed people of Yahweh, bound together by a shared, miraculous memory.</p></div><div class="impact-card"><h4>The Song of the Nation</h4><p>The first thing Israel does as a new nation is sing a national anthem: the Song of the Sea (Exodus 15). The song is sung in the first-person plural—"I will sing to the Lord"—but it celebrates a collective deliverance, solidifying their new identity as a single people.</p></div></div>` },
+            { id: 'liminal-gate-doorposts-vs-sea-walls', title: 'Liminal Gate: Doorposts vs. Sea Walls', content: `<h3>Two Kinds of Thresholds</h3><p>Both the Passover and the Red Sea crossing are "liminal" events—thresholds that mark a passage from one state to another. However, they represent different kinds of gates, highlighting the progression from private salvation to public identity.</p><div class="figure-grid"><div class="figure-card"><h4>The Doorpost: A Private Gate</h4><p>The blood-marked doorpost is a private threshold. It separates the safety of the covenant household from the danger of the public street. Passing through it is an act of faith performed by an individual family.</p></div><div class="figure-card"><h4>The Sea Walls: A Public Gate</h4><p>The walls of water at the Red Sea form a massive, public gate. It is a national threshold that separates the land of bondage (Egypt) from the wilderness of promise. Passing through it is a corporate act that constitutes the nation.</p></div><div class="figure-card"><h4>From Mercy to Lordship</h4><p>The doorpost is a gate of mercy, protecting those inside from a judgment they deserve. The sea is a gate of lordship, transferring a people from the dominion of Pharaoh to the kingdom of Yahweh. Both are essential, but they serve different functions in the drama of redemption.</p></div></div>` },
+            { id: 'badge', title: 'Badge', content: `<div class="badge-box"><h4>Key Places & Symbols:</h4><ul><li><strong>Pillar of cloud/fire:</strong> The visible sign of God's presence that leads the people out of Egypt and protects them at the sea, acting as a divine shepherd for the new nation.</li><li><strong>Pi-hahiroth:</strong> The location where Israel is "hemmed in" between the sea and the desert, a place of apparent hopelessness that becomes the stage for God's deliverance.</li><li><strong>Baal-zephon:</strong> An Egyptian cultic site, likely dedicated to a storm god. By defeating Pharaoh at this location, Yahweh demonstrates his supremacy over the gods of Egypt.</li></ul></div>` },
+            { id: 'timeline', title: 'Timeline', content: `<div class="battle-timeline"><div class="timeline-item"><div class="timeline-dot">1</div><div class="timeline-content"><div class="timeline-date">Vigil → march</div><h4>From Home to Journey</h4><p>The private Passover vigil is completed, and the people begin their public march out of Egypt.</p></div></div><div class="timeline-item"><div class="timeline-dot">2</div><div class="timeline-content"><div class="timeline-date">hemmed-in → path opens</div><h4>From Crisis to Nationhood</h4><p>The moment of being trapped at the sea becomes the catalyst for the miraculous path-opening that constitutes them as a nation.</p></div></div></div>` }
+        ]
+      }
+    };
+
+    /* ========== RENDERING ========== */
+    function renderTopic(id){
+      const data = masterDataObject[id]; if(!data) return;
+      const master = document.getElementById('topic-master-container');
+      master.innerHTML = `
+        <div class="container">
+          <header class="header"><h1>${data.title}</h1><p>${data.subtitle}</p></header>
+          ${data.nav.length?`
+            <nav class="nav"><div class="nav-container">
+              ${data.nav.map((n,i)=>`<button class="nav-btn${i===0?' active':''}" 
+                onclick="showSection('${n.id}',this)">${n.text}</button>`).join('')}
+            </div></nav>`:''}
+          <main class="content">
+            ${data.sections.map((s,i)=>`<section id="${s.id}" class="section${i===0?' active':''}">
+              <h2>${s.title}</h2>${s.content}</section>`).join('')}
+          </main>
+          <footer class="footer"><p>© 2025 Exodus Chronicle</p></footer>
+        </div>`;
+      master.classList.add('active');
+    }
+
+    /* ========== NAVIGATION HANDLERS ========== */
+    function switchTopic(id,link){
+      event.preventDefault();
+      document.querySelectorAll('.topic-link').forEach(a=>a.classList.remove('active-topic'));
+      if(link) link.classList.add('active-topic');
+      renderTopic(id);
+
+      const panel=document.getElementById('mega-menu-panel');
+      const toggle=document.getElementById('mega-menu-toggle');
+      if(panel.classList.contains('open')){
+        panel.classList.remove('open');toggle.classList.remove('active');toggle.textContent='Menu';
+      }
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    function showSection(secId,btn){
+      const master=document.getElementById('topic-master-container');
+      master.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+      master.querySelector(`#${secId}`).classList.add('active');
+      master.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    /* ========== MEGA-MENU TOGGLE & INITIAL RENDER ========== */
+    document.addEventListener('DOMContentLoaded',()=>{
+      const toggle=document.getElementById('mega-menu-toggle');
+      const panel=document.getElementById('mega-menu-panel');
+      toggle.addEventListener('click',()=>{
+        panel.classList.toggle('open');toggle.classList.toggle('active');
+        toggle.textContent=panel.classList.contains('open')?'Close Menu ▲':'Menu';
+      });
+      document.addEventListener('click',e=>{
+        if(!panel.contains(e.target)&&!toggle.contains(e.target)&&panel.classList.contains('open')){
+          panel.classList.remove('open');toggle.classList.remove('active');toggle.textContent='Menu';
+        }
+      });
+      /* first topic */
+      renderTopic('topic-altar-laver-logic');
+      const firstLink = document.querySelector('.topic-link[onclick*="topic-altar-laver-logic"]');
+      if (firstLink) {
+        firstLink.classList.add('active-topic');
+      }
+    });
+  </script>
+
+</body>
+</html>
+
+
+
