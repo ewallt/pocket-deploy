@@ -18,7 +18,7 @@
         }
         .pattern-card {
             background-color: white;
-            border-radius: 1rem; /* rounded-2xl */
+            border-radius: 1rem;
             box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.07), 0 4px 6px -4px rgb(0 0 0 / 0.07);
             border: 1px solid #dbeafe; /* blue-200 */
             overflow: hidden;
@@ -46,106 +46,145 @@
         .layer-item {
             border-top: 1px solid #e0f2fe; /* cyan-100 */
         }
-        .layer-item:first-child {
-            border-top: none;
-        }
         .layer-title {
-            font-weight: 600; /* semibold */
+            font-weight: 600;
             color: #1e3a8a; /* blue-900 */
-            width: 140px; /* Fixed width for alignment */
+            width: 140px;
             flex-shrink: 0;
+        }
+        /* Scripture Reference & Tooltip Styling */
+        .scripture-ref {
+            color: #2563eb; /* blue-600 */
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: underline;
+            text-decoration-style: dotted;
+            text-underline-offset: 2px;
+        }
+        #scripture-tooltip {
+            position: fixed;
+            display: none;
+            background-color: #1e3a8a; /* blue-900 */
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            max-width: 350px;
+            z-index: 100;
+            font-family: 'Lora', serif;
+            line-height: 1.6;
         }
     </style>
 </head>
 <body class="p-4 sm:p-6 md:p-8">
 
+    <div id="scripture-tooltip"></div>
+
     <div class="max-w-4xl mx-auto">
-        <!-- Header -->
         <header class="text-center mb-8">
             <h1 class="text-3xl md:text-4xl font-bold text-blue-900">The Typological Patterns</h1>
             <p class="mt-2 text-lg text-blue-700 font-serif">Exploring the core sequences of salvation history.</p>
         </header>
 
-        <!-- Main container for pattern accordions -->
         <main id="patterns-container" class="space-y-4">
-            <!-- Pattern accordions will be dynamically inserted here -->
-        </main>
+            </main>
 
-        <!-- Footer -->
         <footer class="text-center mt-12 text-sm text-blue-600">
             <p>Based on the typological model by Waterhouse.</p>
         </footer>
     </div>
 
     <script>
-        // --- DATA STORE ---
+        // --- BIBLE TEXT DATABASE ---
+        // A simple object to act as our local Bible database for the plugin.
+        const bibleTexts = {
+            'Exodus 12:7': 'Then they are to take some of the blood and put it on the sides and tops of the doorframes of the houses where they eat the lambs.',
+            '1 Cor 5:7': '...For Christ, our Passover lamb, has been sacrificed.',
+            'Hebrews 9:22': 'In fact, the law requires that nearly everything be cleansed with blood, and without the shedding of blood there is no forgiveness.',
+            'Ephesians 1:7': 'In him we have redemption through his blood, the forgiveness of sins, in accordance with the riches of God’s grace.',
+            'Exodus 30:18': '“Make a bronze basin, with its bronze stand, for washing. Place it between the tent of meeting and the altar, and put water in it.”',
+            '1 Cor 10:2': 'They were all baptized into Moses in the cloud and in the sea.',
+            'Romans 6:4': 'We were therefore buried with him through baptism into death in order that, just as Christ was raised from the dead through the glory of the Father, we too may live a new life.',
+            'Colossians 2:12': '...having been buried with him in baptism, in which you were also raised with him through your faith in the working of God, who raised him from the dead.',
+            'Exodus 19:6': '...you will be for me a kingdom of priests and a holy nation. These are the words you are to speak to the Israelites.',
+            'Hebrews 8:1-2': '...We do have such a high priest, who sat down at the right hand of the throne of the Majesty in heaven, and who serves in the sanctuary, the true tabernacle set up by the Lord, not by a mere human being.',
+            'Acts 2:4': 'All of them were filled with the Holy Spirit and began to speak in other tongues as the Spirit enabled them.',
+            'James 5:7': 'Be patient, then, brothers and sisters, until the Lord’s coming. See how the farmer waits for the land to yield its valuable crop, patiently waiting for the autumn and spring rains.',
+            'Leviticus 16:34': 'This is to be a lasting ordinance for you: Atonement is to be made once a year for all the sins of the Israelites.',
+            'Revelation 14:15': 'Then another angel came out of the temple and called in a loud voice to him who was sitting on the cloud, "Take your sickle and reap, because the time to reap has come, for the harvest of the earth is ripe."',
+            'Revelation 18:1': 'After this I saw another angel coming down from heaven. He had great authority, and the earth was illuminated by his splendor.'
+        };
+
+        // --- PATTERN DATA with SCRIPTURES ---
         const patterns = [
             {
-                title: 'The Altar',
+                title: 'The Altar Pattern',
                 subtitle: 'Death & Justification',
                 description: 'The foundational act of atonement, dealing with the penalty of sin through a substitutionary death.',
                 layers: [
                     { title: 'Agricultural Year', text: 'The seed "dies" in the ground to produce life; the chaos-dragon of the flood recedes, leaving fertile soil.' },
-                    { title: 'Sanctuary', text: 'The **Altar of Sacrifice**, where blood is shed for legal justification.' },
-                    { title: 'Israel\'s Experience', text: 'The **Passover**, where the lamb\'s death provides legal protection from judgment.' },
-                    { title: 'Christ\'s Life', text: 'The **Cross**, the ultimate fulfillment of the altar sacrifice.' },
-                    { title: 'Believer\'s Experience', text: '**Forgiveness & Justification**, being legally declared "not guilty" through faith.' },
+                    { title: 'Sanctuary', text: 'The **Altar of Sacrifice**, where blood is shed for legal justification.', scriptures: ['Hebrews 9:22'] },
+                    { title: 'Israel\'s Experience', text: 'The **Passover**, where the lamb\'s death provides legal protection from judgment.', scriptures: ['Exodus 12:7'] },
+                    { title: 'Christ\'s Life', text: 'The **Cross**, the ultimate fulfillment of the altar sacrifice.', scriptures: ['1 Cor 5:7'] },
+                    { title: 'Believer\'s Experience', text: '**Forgiveness & Justification**, being legally declared "not guilty" through faith.', scriptures: ['Ephesians 1:7'] },
                     { title: 'The Church', text: 'The **Foundation** of the church, whose mission begins with proclaiming the cross.' }
                 ]
             },
             {
-                title: 'The Laver',
+                title: 'The Laver Pattern',
                 subtitle: 'New Life & Consecration',
                 description: 'The transformative act following atonement, dealing with the power of sin and cleansing for a new purpose.',
                 layers: [
                     { title: 'Agricultural Year', text: 'The **Harvest** springs forth—new life from the "dead" seed.' },
-                    { title: 'Sanctuary', text: 'The **Laver**, where washing represents cleansing and consecration for service.' },
-                    { title: 'Israel\'s Experience', text: 'The **Red Sea Crossing**, emerging from the water as a new, free nation.' },
-                    { title: 'Christ\'s Life', text: 'The **Resurrection**, emerging from the tomb in victory over death.' },
-                    { title: 'Believer\'s Experience', text: '**Baptism & New Life**, dying to the old self and being raised to walk in newness.' },
+                    { title: 'Sanctuary', text: 'The **Laver**, where washing represents cleansing and consecration for service.', scriptures: ['Exodus 30:18'] },
+                    { title: 'Israel\'s Experience', text: 'The **Red Sea Crossing**, emerging from the water as a new, free nation.', scriptures: ['1 Cor 10:2'] },
+                    { title: 'Christ\'s Life', text: 'The **Resurrection**, emerging from the tomb in victory over death.', scriptures: ['Romans 6:4'] },
+                    { title: 'Believer\'s Experience', text: '**Baptism & New Life**, dying to the old self and being raised to walk in newness.', scriptures: ['Colossians 2:12'] },
                     { title: 'The Church', text: 'A **Resurrected Community**, the body of Christ living out His new life.' }
                 ]
             },
             {
-                title: 'The Holy Place',
+                title: 'The Holy Place Pattern',
                 subtitle: 'Service & Commission',
                 description: 'The purposeful work that follows salvation, empowering the consecrated for active ministry and mission.',
                 layers: [
-                    { title: 'Agricultural Year', text: 'The **Early Rain** (Spring) begins the growth, followed by the ~3.5 month **Drought** of maturation.' },
+                    { title: 'Agricultural Year', text: 'The **Early Rain** (Spring) begins the growth, followed by the ~3.5 month **Drought** of maturation.', scriptures: ['James 5:7'] },
                     { title: 'Sanctuary', text: 'Entering the **Holy Place** to begin the work of ministry: tending the lamp, bread, and incense.' },
-                    { title: 'Israel\'s Experience', text: 'Receiving the Law at **Mt. Sinai** and being commissioned as a "kingdom of priests."' },
-                    { title: 'Christ\'s Life', text: 'The **Ascension** to begin His high-priestly ministry in the heavenly sanctuary.' },
+                    { title: 'Israel\'s Experience', text: 'Receiving the Law at **Mt. Sinai** and being commissioned as a "kingdom of priests."', scriptures: ['Exodus 19:6'] },
+                    { title: 'Christ\'s Life', text: 'The **Ascension** to begin His high-priestly ministry in the heavenly sanctuary.', scriptures: ['Hebrews 8:1-2'] },
                     { title: 'Believer\'s Experience', text: 'The **Baptism of the Holy Spirit**, receiving personal empowerment for service and witness.' },
-                    { title: 'The Church', text: '**Pentecost**, when the church was formally commissioned and empowered for its global mission.' }
+                    { title: 'The Church', text: '**Pentecost**, when the church was formally commissioned and empowered for its global mission.', scriptures: ['Acts 2:4'] }
                 ]
             },
              {
-                title: 'The Harvest',
+                title: 'The Harvest Pattern',
                 subtitle: 'Maturation & Ingathering',
                 description: 'The culmination of the entire cycle, where the long period of waiting ends and the final results are gathered.',
                 layers: [
                     { title: 'Agricultural Year', text: 'The **Latter Rain** (Fall) ripens the grain for the final **Harvest**.' },
-                    { title: 'Sanctuary', text: 'The **Most Holy Place** on the Day of Atonement; the final judgment and cleansing.' },
+                    { title: 'Sanctuary', text: 'The **Most Holy Place** on the Day of Atonement; the final judgment and cleansing.', scriptures: ['Leviticus 16:34'] },
                     { title: 'Israel\'s Experience', text: 'Entering the **Promised Land** after the wilderness wandering; the harvest of their journey.' },
-                    { title: 'Christ\'s Life', text: 'The **Second Coming**, returning as King to gather His people.' },
+                    { title: 'Christ\'s Life', text: 'The **Second Coming**, returning as King to gather His people.', scriptures: ['Revelation 14:15'] },
                     { title: 'Believer\'s Experience', text: '**Sanctification & Sealing**, being made ready and sealed for the final day.' },
-                    { title: 'The Church', text: 'The **Final Harvest of Souls**, empowered by the "Latter Rain" power (Rev 18:1).' }
+                    { title: 'The Church', text: 'The **Final Harvest of Souls**, empowered by the "Latter Rain" power.', scriptures: ['Revelation 18:1'] }
                 ]
             }
         ];
+        
+        const tooltip = document.getElementById('scripture-tooltip');
 
-        /**
-         * Creates and returns the HTML for a single pattern accordion.
-         * @param {object} patternData - The data object for a single pattern.
-         * @returns {string} - The complete HTML string for the accordion.
-         */
         function createPatternAccordion(patternData) {
-            const layersHTML = patternData.layers.map(layer => `
+            const layersHTML = patternData.layers.map(layer => {
+                let scriptureHTML = '';
+                if (layer.scriptures && layer.scriptures.length > 0) {
+                    scriptureHTML = ' ' + layer.scriptures.map(ref => `<span class="scripture-ref" data-ref="${ref}">${ref}</span>`).join(' ');
+                }
+                return `
                 <div class="layer-item p-4 flex flex-col sm:flex-row">
                     <h4 class="layer-title mb-1 sm:mb-0">${layer.title}</h4>
-                    <p class="font-serif text-slate-700">${layer.text}</p>
-                </div>
-            `).join('');
+                    <p class="font-serif text-slate-700">${layer.text}${scriptureHTML}</p>
+                </div>`;
+            }).join('');
 
             return `
                 <div class="pattern-card">
@@ -154,7 +193,7 @@
                             <h2 class="text-2xl font-bold">${patternData.title}</h2>
                             <p class="text-lg text-blue-200 font-serif">${patternData.subtitle}</p>
                         </div>
-                        <svg class="accordion-icon w-6 h-6 text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
+                        <svg class="accordion-icon w-6 h-6 text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
                     <div class="accordion-panel">
                         <div class="p-5 bg-blue-100/50">
@@ -167,18 +206,12 @@
                 </div>
             `;
         }
-
-        /**
-         * Renders all pattern accordions into the main container.
-         */
+        
         function renderPatterns() {
             const container = document.getElementById('patterns-container');
             container.innerHTML = patterns.map(createPatternAccordion).join('');
         }
 
-        /**
-         * Attaches click event listeners to all accordion headers.
-         */
         function setupAccordions() {
             const accordions = document.querySelectorAll('.accordion-header');
             accordions.forEach(acc => {
@@ -188,10 +221,41 @@
                     if (panel.style.maxHeight) {
                         panel.style.maxHeight = null;
                     } else {
-                        // Set max-height to the panel's scroll height to expand it
                         panel.style.maxHeight = panel.scrollHeight + "px";
                     }
                 });
+            });
+        }
+        
+        function setupTooltips() {
+            document.addEventListener('mouseover', function(e) {
+                if (e.target.classList.contains('scripture-ref')) {
+                    const ref = e.target.dataset.ref;
+                    const text = bibleTexts[ref];
+                    if (text) {
+                        tooltip.innerHTML = `<strong>${ref}</strong><br>${text}`;
+                        tooltip.style.display = 'block';
+                        
+                        // Position tooltip
+                        const rect = e.target.getBoundingClientRect();
+                        tooltip.style.left = `${rect.left}px`;
+                        tooltip.style.top = `${rect.bottom + 5}px`;
+
+                        // Reposition if it goes off-screen
+                        if(tooltip.offsetLeft + tooltip.offsetWidth > window.innerWidth){
+                            tooltip.style.left = `${window.innerWidth - tooltip.offsetWidth - 10}px`;
+                        }
+                         if(tooltip.offsetTop + tooltip.offsetHeight > window.innerHeight){
+                            tooltip.style.top = `${rect.top - tooltip.offsetHeight - 5}px`;
+                        }
+                    }
+                }
+            });
+
+            document.addEventListener('mouseout', function(e) {
+                if (e.target.classList.contains('scripture-ref')) {
+                    tooltip.style.display = 'none';
+                }
             });
         }
 
@@ -199,8 +263,8 @@
         document.addEventListener('DOMContentLoaded', () => {
             renderPatterns();
             setupAccordions();
+            setupTooltips();
         });
-
     </script>
 </body>
 </html>
