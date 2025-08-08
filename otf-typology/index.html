@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typological Pattern Explorer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Lora:ital,wght@0,400;0;600;1,400&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #eff6ff; /* blue-50 */
+        }
+        .font-serif {
+            font-family: 'Lora', serif;
+        }
+        .pattern-card {
+            background-color: white;
+            border-radius: 1rem; /* rounded-2xl */
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.07), 0 4px 6px -4px rgb(0 0 0 / 0.07);
+            border: 1px solid #dbeafe; /* blue-200 */
+            overflow: hidden;
+        }
+        .accordion-header {
+            background-color: #1e3a8a; /* blue-900 */
+            color: white;
+            transition: background-color 0.2s ease-in-out;
+        }
+        .accordion-header:hover {
+            background-color: #1e40af; /* blue-800 */
+        }
+        .accordion-panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+        .accordion-icon {
+            transition: transform 0.3s ease-in-out;
+            flex-shrink: 0;
+        }
+        .accordion-header.active .accordion-icon {
+            transform: rotate(180deg);
+        }
+        .layer-item {
+            border-top: 1px solid #e0f2fe; /* cyan-100 */
+        }
+        .layer-item:first-child {
+            border-top: none;
+        }
+        .layer-title {
+            font-weight: 600; /* semibold */
+            color: #1e3a8a; /* blue-900 */
+            width: 140px; /* Fixed width for alignment */
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-6 md:p-8">
+
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-blue-900">The Typological Patterns</h1>
+            <p class="mt-2 text-lg text-blue-700 font-serif">Exploring the core sequences of salvation history.</p>
+        </header>
+
+        <!-- Main container for pattern accordions -->
+        <main id="patterns-container" class="space-y-4">
+            <!-- Pattern accordions will be dynamically inserted here -->
+        </main>
+
+        <!-- Footer -->
+        <footer class="text-center mt-12 text-sm text-blue-600">
+            <p>Based on the typological model by Waterhouse.</p>
+        </footer>
+    </div>
+
+    <script>
+        // --- DATA STORE ---
+        const patterns = [
+            {
+                title: 'The Altar Pattern',
+                subtitle: 'Death & Justification',
+                description: 'The foundational act of atonement, dealing with the penalty of sin through a substitutionary death.',
+                layers: [
+                    { title: 'Agricultural Year', text: 'The seed "dies" in the ground to produce life; the chaos-dragon of the flood recedes, leaving fertile soil.' },
+                    { title: 'Sanctuary', text: 'The **Altar of Sacrifice**, where blood is shed for legal justification.' },
+                    { title: 'Israel\'s Experience', text: 'The **Passover**, where the lamb\'s death provides legal protection from judgment.' },
+                    { title: 'Christ\'s Life', text: 'The **Cross**, the ultimate fulfillment of the altar sacrifice.' },
+                    { title: 'Believer\'s Experience', text: '**Forgiveness & Justification**, being legally declared "not guilty" through faith.' },
+                    { title: 'The Church', text: 'The **Foundation** of the church, whose mission begins with proclaiming the cross.' }
+                ]
+            },
+            {
+                title: 'The Laver Pattern',
+                subtitle: 'New Life & Consecration',
+                description: 'The transformative act following atonement, dealing with the power of sin and cleansing for a new purpose.',
+                layers: [
+                    { title: 'Agricultural Year', text: 'The **Harvest** springs forth—new life from the "dead" seed.' },
+                    { title: 'Sanctuary', text: 'The **Laver**, where washing represents cleansing and consecration for service.' },
+                    { title: 'Israel\'s Experience', text: 'The **Red Sea Crossing**, emerging from the water as a new, free nation.' },
+                    { title: 'Christ\'s Life', text: 'The **Resurrection**, emerging from the tomb in victory over death.' },
+                    { title: 'Believer\'s Experience', text: '**Baptism & New Life**, dying to the old self and being raised to walk in newness.' },
+                    { title: 'The Church', text: 'A **Resurrected Community**, the body of Christ living out His new life.' }
+                ]
+            },
+            {
+                title: 'The Holy Place Pattern',
+                subtitle: 'Service & Commission',
+                description: 'The purposeful work that follows salvation, empowering the consecrated for active ministry and mission.',
+                layers: [
+                    { title: 'Agricultural Year', text: 'The **Early Rain** (Spring) begins the growth, followed by the ~3.5 month **Drought** of maturation.' },
+                    { title: 'Sanctuary', text: 'Entering the **Holy Place** to begin the work of ministry: tending the lamp, bread, and incense.' },
+                    { title: 'Israel\'s Experience', text: 'Receiving the Law at **Mt. Sinai** and being commissioned as a "kingdom of priests."' },
+                    { title: 'Christ\'s Life', text: 'The **Ascension** to begin His high-priestly ministry in the heavenly sanctuary.' },
+                    { title: 'Believer\'s Experience', text: 'The **Baptism of the Holy Spirit**, receiving personal empowerment for service and witness.' },
+                    { title: 'The Church', text: '**Pentecost**, when the church was formally commissioned and empowered for its global mission.' }
+                ]
+            },
+             {
+                title: 'The Harvest Pattern',
+                subtitle: 'Maturation & Ingathering',
+                description: 'The culmination of the entire cycle, where the long period of waiting ends and the final results are gathered.',
+                layers: [
+                    { title: 'Agricultural Year', text: 'The **Latter Rain** (Fall) ripens the grain for the final **Harvest**.' },
+                    { title: 'Sanctuary', text: 'The **Most Holy Place** on the Day of Atonement; the final judgment and cleansing.' },
+                    { title: 'Israel\'s Experience', text: 'Entering the **Promised Land** after the wilderness wandering; the harvest of their journey.' },
+                    { title: 'Christ\'s Life', text: 'The **Second Coming**, returning as King to gather His people.' },
+                    { title: 'Believer\'s Experience', text: '**Sanctification & Sealing**, being made ready and sealed for the final day.' },
+                    { title: 'The Church', text: 'The **Final Harvest of Souls**, empowered by the "Latter Rain" power (Rev 18:1).' }
+                ]
+            }
+        ];
+
+        /**
+         * Creates and returns the HTML for a single pattern accordion.
+         * @param {object} patternData - The data object for a single pattern.
+         * @returns {string} - The complete HTML string for the accordion.
+         */
+        function createPatternAccordion(patternData) {
+            const layersHTML = patternData.layers.map(layer => `
+                <div class="layer-item p-4 flex flex-col sm:flex-row">
+                    <h4 class="layer-title mb-1 sm:mb-0">${layer.title}</h4>
+                    <p class="font-serif text-slate-700">${layer.text}</p>
+                </div>
+            `).join('');
+
+            return `
+                <div class="pattern-card">
+                    <button class="accordion-header w-full text-left p-5 flex justify-between items-center">
+                        <div>
+                            <h2 class="text-2xl font-bold">${patternData.title}</h2>
+                            <p class="text-lg text-blue-200 font-serif">${patternData.subtitle}</p>
+                        </div>
+                        <svg class="accordion-icon w-6 h-6 text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div class="accordion-panel">
+                        <div class="p-5 bg-blue-100/50">
+                             <p class="font-serif italic text-blue-800">${patternData.description}</p>
+                        </div>
+                        <div class="bg-white">
+                            ${layersHTML}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        /**
+         * Renders all pattern accordions into the main container.
+         */
+        function renderPatterns() {
+            const container = document.getElementById('patterns-container');
+            container.innerHTML = patterns.map(createPatternAccordion).join('');
+        }
+
+        /**
+         * Attaches click event listeners to all accordion headers.
+         */
+        function setupAccordions() {
+            const accordions = document.querySelectorAll('.accordion-header');
+            accordions.forEach(acc => {
+                acc.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    const panel = this.nextElementSibling;
+                    if (panel.style.maxHeight) {
+                        panel.style.maxHeight = null;
+                    } else {
+                        // Set max-height to the panel's scroll height to expand it
+                        panel.style.maxHeight = panel.scrollHeight + "px";
+                    }
+                });
+            });
+        }
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderPatterns();
+            setupAccordions();
+        });
+
+    </script>
+</body>
+</html>
+
+
