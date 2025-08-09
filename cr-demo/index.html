@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Colorful Reader 1.5</title>
+<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+<script>
+tailwind.config = { darkMode: 'class' }
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+<style>
+.font-newspaper{font-family:'Lora',serif}
+html { scroll-behavior: smooth; }
+details[open] summary::after { content: "▲"; float: right; }
+details summary::after { content: "▼"; float: right; }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 font-newspaper">
+<div id="app" class="max-w-4xl mx-auto p-4">
+<header class="flex items-center justify-between mb-6">
+<h1 id="app-title" class="text-3xl font-bold">Colorful Reader</h1>
+<button id="theme-toggle" class="px-3 py-1 border rounded">Toggle Theme</button>
+</header>
+<nav id="topic-nav" class="mb-4 flex flex-wrap gap-2"></nav>
+<div id="article-nav" class="mb-4 flex flex-wrap gap-2"></div>
+<article id="content-area" class="prose dark:prose-invert max-w-none"></article>
+</div>
+<script id="embedded-content" type="application/json">
+{
+  "_schema": "cr:1",
+  "sample-topic": {
+    "display_order": 1,
+    "title": "Sample Topic",
+    "description": "A short description of the sample topic.",
+    "categories": {
+      "sample-article": {
+        "display_order": 1,
+        "name": "Sample Article",
+        "display_name": "Sample Article",
+        "introduction": "This is a short introduction to the sample article.",
+        "paragraphs": [
+          { "heading": "Section One", "content": "<p>This is the first section of the sample article.</p>" },
+          { "heading": "Section Two", "content": "<p>This is the second section, with more placeholder content.</p>" }
+        ]
+      }
+    }
+  }
+}
+</script>
+<script>
+// ---------- State ----------
+let library = null;
+let sortedTopicIds = [];
+let currentTopicId = null;
+let currentArticleId = null;
+let currentSectionSlug = null;
+
+// ---------- Helpers ----------
+const $ = (sel, root=document) => root.querySelector(sel);
+const $$ = (sel, root=document) => [...root.querySelectorAll(sel)];
+const slug = s => (s||'').toLowerCase().trim()
+  .replace(/[^\w\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-');
+
+function readHash(){
+  const p = new URLSearchParams(location.hash.slice(1));
+  currentTopicId    = p.get('t') || currentTopicId;
+  currentArticleId  = p.get('a') || currentArticleId;
+  currentSectionSlug= p.get('s') || null;
+}
+function setHash(){
+  const p = new URLSearchParams({
+    t: currentTopicId || '',
+    a: currentArticleId || '',
+    s: currentSectionSlug || ''
+  });
+  if(location.hash.slice(1)!==p.toString()) location.hash = p.toString();
+}
+window.addEventListener('hashchange', ()=>{ readHash(); render(); });
+
+function sectionKey(h){ return `cr15:sec:${currentTopicId}:${currentArticleId}:${slug(h)}`; }
+
+// ---------- Theme ----------
+function toggleTheme(){
+  const dark = document.documentElement.classList.toggle('dark');
+  localStorage.setItem('cr15:dark', dark ? '1' : '0');
+}
+function applyThemeFromStorage(){
+  const dark = localStorage.getItem('cr15:dark')==='1';
+  document.documentElement.classList.toggle('dark', dark);
+}
+
+// ---------- UI Builders ----------
+function buildTopicNav(){
+  const nav = $('#topic-nav');
+  nav.innerHTML = '';
+  sortedTopicIds.forEach(id=>{
+    const t = library[id];
+    const btn = document.createElement('button');
+    btn.className = `px-3 py-1 rounded border ${id===currentTopicId?'bg-gray-900 text-white dark:bg-white dark:text-gray-900':''}`;
+    btn.textContent = t.title || id;
+    btn.addEventListener('click', ()=>{
+      currentTopicId = id;
+      currentArticleId = null;
+      currentSectionSlug = null;
+      render();
+    });
+    nav.appendChild(btn);
+  });
+}
+
+function buildArticleNav(topic){
+  const nav = $('#article-nav');
+  nav.innerHTML = '';
+
+  const keys = Object.keys(topic.categories||{}).sort(
+    (a,b)=>(topic.categories[a].display_order||0)-(topic.categories[b].display_order||0)
+  );
+  if(!currentArticleId || !topic.categories[currentArticleId]) currentArticleId = keys[0] || null;
+
+  keys.forEach(k=>{
+    const a = topic.categories[k];
+    const btn = document.createElement('button');
+    btn.className = `px-3 py-1 rounded border ${k===currentArticleId?'bg-gray-900 text-white dark:bg-white dark:text-gray-900':''}`;
+    btn.textContent = a.display_name || a.name || k;
+    btn.addEventListener('click', ()=>{
+      currentArticleId = k;
+      currentSectionSlug = null;
+      render();
+    });
+    nav.appendChild(btn);
+  });
+}
+
+function buildContent(topic, article){
+  const area = $('#content-area');
+  const intro = article.introduction ? `<p>${article.introduction}</p>` : '';
+  const paras = (article.paragraphs||[]).map(p=>{
+    const s = slug(p.heading);
+    const open = localStorage.getItem(sectionKey(p.heading))==='1' || (currentSectionSlug===s);
+    return `
+      <details class="mb-3" data-sec="${s}" ${open?'open':''}>
+        <summary class="font-semibold cursor-pointer">${p.heading}</summary>
+        <div class="mt-2">
+          <div class="mb-2">
+            <button class="text-sm border px-2 py-0.5 rounded copy-link" data-sec="${s}">🔗 Copy link</button>
+          </div>
+          ${p.content}
+        </div>
+      </details>`;
+  }).join('');
+
+  area.innerHTML = `
+    <h2 class="mt-4">${article.display_name || article.name || ''}</h2>
+    ${intro}
+    ${paras}
+  `;
+
+  // persist open/close + set deep link on open
+  $$('#content-area details').forEach(d=>{
+    const s = d.getAttribute('data-sec');
+    const heading = $('summary', d)?.textContent?.trim() || '';
+    d.addEventListener('toggle', ()=>{
+      localStorage.setItem(sectionKey(heading), d.open?'1':'0');
+      if(d.open){
+        currentSectionSlug = s;
+        setHash();
+      }
+    });
+  });
+
+  // copy link buttons
+  $$('.copy-link').forEach(btn=>{
+    btn.addEventListener('click', async (e)=>{
+      const s = e.currentTarget.getAttribute('data-sec');
+      currentSectionSlug = s; setHash();
+      try{
+        await navigator.clipboard.writeText(location.href);
+        e.currentTarget.textContent = '✅ Copied';
+        setTimeout(()=>e.currentTarget.textContent='🔗 Copy link', 1200);
+      }catch{
+        alert('Link: '+location.href);
+      }
+    });
+  });
+
+  // scroll to deep-linked section if present
+  if(currentSectionSlug){
+    const target = $(`details[data-sec="${currentSectionSlug}"]`, area);
+    if(target) target.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+}
+
+// ---------- Render ----------
+function render(){
+  if(!library) return;
+
+  sortedTopicIds = Object.keys(library).sort((a,b)=>(library[a].display_order||0)-(library[b].display_order||0));
+  if(!currentTopicId || !library[currentTopicId]) currentTopicId = sortedTopicIds[0];
+
+  const topic = library[currentTopicId];
+  document.title = topic.title || 'Colorful Reader';
+  $('#app-title').textContent = topic.title || 'Colorful Reader';
+
+  buildTopicNav();
+  buildArticleNav(topic);
+  if(currentArticleId){
+    buildContent(topic, topic.categories[currentArticleId]);
+  }else{
+    $('#content-area').innerHTML = '<p>No article found.</p>';
+  }
+
+  setHash();
+}
+
+// ---------- Boot ----------
+(async function boot(){
+  applyThemeFromStorage();
+  $('#theme-toggle').addEventListener('click', toggleTheme);
+
+  // try external /data/content.json, else embedded
+  try{
+    const res = await fetch('./data/content.json', {cache:'no-store'});
+    if(!res.ok) throw new Error(String(res.status));
+    library = await res.json();
+  }catch{
+    const embedded = $('#embedded-content')?.textContent?.trim() || '';
+    library = embedded ? JSON.parse(embedded) : null;
+  }
+
+  if(!library){
+    $('#content-area').innerHTML = '<h2>Could not load content</h2><p>Provide /data/content.json or embedded JSON.</p>';
+    return;
+  }
+
+  readHash();
+  render();
+})();
+</script>
+<!-- (no more JS needed) -->
+</body>
+</html>
