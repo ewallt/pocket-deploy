@@ -53,8 +53,8 @@
       <div class="flex items-center gap-2">
         <label for="search" class="sr-only">Search</label>
         <input id="search" type="search" placeholder="Search…" class="hidden md:block w-56 rounded-xl border border-slate-300/70 dark:border-slate-700/70 bg-white/70 dark:bg-slate-900/60 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400" />
-        <button id="clearSearch" class="hidden md:inline-flex text-xs px-2 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900">Clear</button>
-        <button id="themeToggle" class="inline-flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-900" title="Toggle dark mode" aria-pressed="false">
+        <button id="clearSearch" type="button" class="hidden md:inline-flex text-xs px-2 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900">Clear</button>
+        <button id="themeToggle" type="button" class="inline-flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-900" title="Toggle dark mode" aria-pressed="false">
           <span class="inline md:hidden">Theme</span>
           <svg aria-hidden="true" class="w-5 h-5 hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
           <svg aria-hidden="true" class="w-5 h-5 dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
@@ -78,8 +78,8 @@
         <h2 class="text-sm font-semibold mb-2">Sections</h2>
         <ol id="toc" class="space-y-1 text-sm"></ol>
         <hr class="my-4 border-slate-200 dark:border-slate-800" />
-        <button id="expandAll" class="w-full text-xs px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900">Expand All</button>
-        <button id="collapseAll" class="mt-2 w-full text-xs px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900">Collapse All</button>
+        <button id="expandAll" type="button" class="w-full text-xs px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900">Expand All</button>
+        <button id="collapseAll" type="button" class="mt-2 w-full text-xs px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900">Collapse All</button>
       </nav>
     </aside>
 
@@ -194,8 +194,13 @@
         if(collapseBtn) collapseBtn.hidden = true;
       }
       
-      expandBtn?.addEventListener('click', () => detailsAll().forEach(d => d.open = true));
-      collapseBtn?.addEventListener('click', () => detailsAll().forEach(d => d.open = false));
+      const detailsSel = '#content details';
+      document.getElementById('expandAll')?.addEventListener('click', () => {
+        document.querySelectorAll(detailsSel).forEach(d => d.setAttribute('open', ''));
+      });
+      document.getElementById('collapseAll')?.addEventListener('click', () => {
+        document.querySelectorAll(detailsSel).forEach(d => d.removeAttribute('open'));
+      });
       
       (function addBackToTopLinks(){
         $$('#content > article').forEach((article, index, arr) => {
@@ -267,6 +272,7 @@
         if (coda && FEATURE.TIMELINE_CODA) coda.innerHTML = FEATURE.TIMELINE_CODA;
       })();
       
+      // Search highlighter
       (function searchHL(){
         const input = document.getElementById('search');
         const clearBtn = document.getElementById('clearSearch');
