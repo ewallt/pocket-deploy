@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Art of Storytelling: A Brief Guide</title>
+
+  <!-- Theme Bootstrap (runs before page paint to prevent flicker) -->
+  <script>
+  (function () {
+    const root = document.documentElement;
+    try {
+      const saved = localStorage.getItem('theme');
+      const isDark = saved !== 'light'; // Default to dark if no preference is saved
+      root.classList.toggle('dark', isDark);
+    } catch (_) {}
+  })();
+  </script>
+
+  <!-- Tailwind (with Typography) -->
+  <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' };
+  </script>
+
+  <!-- Google Font (optional) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+
+  <style>
+    :root { color-scheme: light dark; }
+    html { scroll-behavior: smooth; }
+    .font-newspaper { font-family: 'Lora', serif; }
+    .hero { background: radial-gradient(50% 120% at 10% 10%, rgba(49,46,129,.12), transparent 60%),
+                     radial-gradient(80% 140% at 90% 10%, rgba(234,88,12,.12), transparent 70%),
+                     linear-gradient(180deg, rgba(14,165,233,.08), transparent 35%); }
+    :where(h2,h3,h4){ scroll-margin-top: 84px; }
+    mark { background: #fde68a; padding: .1em .2em; border-radius: .2rem; }
+    @media (max-width: 380px){ .prose { font-size: .96rem; } }
+    .active-link { color: rgb(59,130,246); font-weight: 700; }
+  </style>
+</head>
+<body class="bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 pb-[env(safe-area-inset-bottom)]">
+
+  <!-- Header -->
+  <header id="top" class="hero border-b border-slate-200/60 dark:border-slate-800/60">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-between gap-4">
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-bold font-newspaper tracking-tight">The Art of Storytelling: A Brief Guide</h1>
+        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400">Exploring the fundamental elements that make narratives compelling and memorable.</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <label for="search" class="sr-only">Search</label>
+        <input id="search" type="search" placeholder="Search…" class="hidden md:block w-56 rounded-xl border border-slate-300/70 dark:border-slate-700/70 bg-white/70 dark:bg-slate-900/60 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400" />
+        <button id="clearSearch" class="hidden md:inline-flex text-xs px-2 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900">Clear</button>
+        <button id="themeToggle" class="inline-flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-900" title="Toggle dark mode" aria-pressed="false">
+          <span class="inline md:hidden">Theme</span>
+          <svg aria-hidden="true" class="w-5 h-5 hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg aria-hidden="true" class="w-5 h-5 dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6" id="timelineWrap" hidden>
+      <nav aria-label="Journey timeline" class="text-slate-500 dark:text-slate-400">
+        <ol id="timeline" class="grid grid-cols-3 sm:grid-cols-6 items-center gap-x-2 gap-y-1 text-[11px] sm:text-sm"></ol>
+        <div id="timelineCoda" class="mt-2 text-[11px] sm:text-xs"></div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)] gap-8">
+    <!-- Sidebar -->
+    <aside class="lg:sticky lg:top-4 h-max">
+      <nav aria-label="On this page" class="rounded-2xl border border-slate-200 dark:border-slate-800 p-4">
+        <h2 class="text-sm font-semibold mb-2">Sections</h2>
+        <ol id="toc" class="space-y-1 text-sm"></ol>
+        <hr class="my-4 border-slate-200 dark:border-slate-800" />
+        <button id="expandAll" class="w-full text-xs px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900">Expand All</button>
+        <button id="collapseAll" class="mt-2 w-full text-xs px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900">Collapse All</button>
+      </nav>
+    </aside>
+
+    <!-- CONTENT -->
+    <section id="content" class="prose prose-slate dark:prose-invert max-w-none">
+      <article class="rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+        <h2>Introduction: Why Stories Matter</h2>
+        <p>From ancient myths shared around a fire to modern blockbusters, storytelling is a fundamental human practice. Stories are not mere entertainment; they are the primary way we make sense of the world, convey values, share experiences, and connect with one another. A well-told story can change minds, inspire action, and endure for generations.</p>
+        <p>This guide explores the essential components that give stories their power, providing a framework for both understanding and crafting compelling narratives.</p>
+      </article>
+
+      <article class="mt-6 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+        <h2>The Three Pillars of Narrative</h2>
+        <p>At the core of every memorable story, regardless of genre or medium, lie three indispensable pillars: Character, Plot, and Setting. Mastering the interplay between these elements is the foundation of effective storytelling.</p>
+        <h3>A. Character: The Heart of the Story</h3>
+        <p>Characters are the vessels through which the audience experiences the narrative. A story without compelling characters is merely a sequence of events. To be effective, a character needs a clear desire or goal, and they must face significant obstacles in achieving it. It is the character's struggle, their choices under pressure, and their ultimate transformation (or failure to transform) that creates an emotional connection with the audience.</p>
+        <h3>B. Plot: The Engine of the Story</h3>
+        <p>Plot is the causal chain of events that unfolds in a narrative. It is more than just "what happens next"; it is the intricate design of cause and effect. A typical plot structure involves an initial state of equilibrium, an inciting incident that disrupts it, a series of rising actions and conflicts, a climax where the central conflict is resolved, and a final resolution or new equilibrium. The plot provides momentum and suspense, keeping the audience engaged and eager to discover the outcome.</p>
+        <h3>C. Setting: The World of the Story</h3>
+        <p>Setting is the time and place in which the story occurs, but it is much more than a simple backdrop. A well-realized setting can influence the mood, reveal character, and even act as an antagonist. Whether it's a futuristic cityscape, a magical forest, or a familiar suburban neighborhood, the setting provides the rules and context for the characters' actions and the unfolding plot.</p>
+      </article>
+
+      <article class="mt-6 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+        <h2>Advanced Techniques</h2>
+        <p>Beyond the fundamental pillars, skilled storytellers employ a variety of techniques to add depth, nuance, and impact to their narratives. These tools can elevate a simple story into a work of art.</p>
+        <details class="mt-4">
+          <summary class="font-semibold">Technique: Show, Don't Tell</summary>
+          <div class="pt-2">
+            This is perhaps the most famous rule in creative writing. Instead of telling the audience a character is brave, show them performing a brave act. Instead of telling them a city is oppressive, describe the surveillance drones and the fearful glances of its citizens. This technique allows the audience to draw their own conclusions, making the experience more immersive and the emotional impact more profound.
+          </div>
+        </details>
+        <details class="mt-4">
+          <summary class="font-semibold">Technique: Foreshadowing</summary>
+          <div class="pt-2">
+            Foreshadowing is the subtle art of planting clues or hints early in a story that will pay off later. It can be a seemingly casual line of dialogue, a recurring object, or a specific detail in the setting. When the later plot point is revealed, the audience experiences a satisfying sense of recognition and appreciates the deliberate craftsmanship of the narrative, making the story feel cohesive and inevitable.
+          </div>
+        </details>
+      </article>
+
+      <article class="mt-6 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+        <h2>Conclusion</h2>
+        <p>Whether crafting a simple anecdote or an epic novel, the principles remain the same. A compelling story is a carefully constructed harmony of relatable characters pursuing meaningful goals, a logical and engaging plot, and a setting that enriches the narrative. By mastering these elements, a storyteller can create worlds, evoke powerful emotions, and leave a lasting impression on their audience.</p>
+      </article>
+
+      <div class="mt-8 flex items-center justify-between">
+        <a href="#top" class="text-sm underline decoration-dotted">Back to top</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 text-xs text-slate-500 dark:text-slate-400">
+    Threaded Reader — a single-file template
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // ===== Feature toggles (edit these) =====
+      const FEATURE = {
+        TIMELINE: true,
+        TIMELINE_STEPS: [
+          'introduction-why-stories-matter',
+          'the-three-pillars-of-narrative',
+          'advanced-techniques',
+          'conclusion'
+        ],
+        TIMELINE_LABELS: {
+          'introduction-why-stories-matter': 'Introduction',
+          'the-three-pillars-of-narrative': 'Pillars',
+          'advanced-techniques': 'Techniques'
+        },
+        TIMELINE_CODA: '',
+      };
+
+      // ===== Utilities =====
+      const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+      const slug = s => s.toLowerCase().replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-');
+      
+      // ===== Theme Handling =====
+      const themeBtn = document.getElementById('themeToggle');
+      if(themeBtn) {
+        themeBtn.setAttribute('aria-pressed', String(document.documentElement.classList.contains('dark')));
+      }
+      themeBtn?.addEventListener('click', () => {
+        const root = document.documentElement;
+        const isDark = root.classList.toggle('dark');
+        try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch(_){ }
+        themeBtn.setAttribute('aria-pressed', String(isDark));
+      });
+      try {
+        const mq = matchMedia('(prefers-color-scheme: dark)');
+        const onChange = (e) => {
+          if (!localStorage.getItem('theme')) {
+            const isDark = e.matches;
+            document.documentElement.classList.toggle('dark', isDark);
+            themeBtn?.setAttribute('aria-pressed', String(isDark));
+          }
+        };
+        if (mq.addEventListener) {
+          mq.addEventListener('change', onChange);
+        } else if (mq.addListener) {
+          mq.addListener(onChange); // Safari <14
+        }
+      } catch (_) {}
+
+      // ===== Page Interactions =====
+      const detailsAll = () => $$('#content details');
+      const expandBtn = document.getElementById('expandAll');
+      const collapseBtn = document.getElementById('collapseAll');
+      
+      if (detailsAll().length < 2) {
+        if(expandBtn) expandBtn.hidden = true;
+        if(collapseBtn) collapseBtn.hidden = true;
+      }
+      
+      expandBtn?.addEventListener('click', () => detailsAll().forEach(d => d.open = true));
+      collapseBtn?.addEventListener('click', () => detailsAll().forEach(d => d.open = false));
+      
+      (function addBackToTopLinks(){
+        $$('#content > article').forEach((article, index, arr) => {
+            if (index === arr.length - 1) return;
+            const wrapper = document.createElement('div');
+            wrapper.className = 'mt-6 flex justify-end';
+            wrapper.innerHTML = `<a href="#top" class="text-sm underline decoration-dotted">Back to top</a>`;
+            article.appendChild(wrapper);
+        });
+      })();
+
+      // ===== Dynamic Content Builders =====
+      function buildTOC(){
+        const toc = document.getElementById('toc');
+        if (!toc) return;
+        const headings = $$('#content h2, #content h3');
+        const items = headings.map(h => {
+          if (!h.id) h.id = slug(h.textContent);
+          return { id: h.id, text: h.textContent.trim(), level: h.tagName.toLowerCase() };
+        });
+        toc.innerHTML = items.map(({id, text, level}) => {
+          const pad = level === 'h3' ? ' pl-4' : '';
+          return `<li><a href="#${id}" class="block px-2 py-1.5 rounded hover:bg-slate-50 dark:hover:bg-slate-900${pad}">${text}</a></li>`;
+        }).join('');
+
+        const links = $$('#toc a');
+        const sections = items.map(i => document.getElementById(i.id));
+        const obs = new IntersectionObserver(entries => {
+          entries.forEach(e => {
+            if (e.isIntersecting) {
+              links.forEach(a => a.classList.remove('active-link'));
+              const id = '#' + e.target.id;
+              const active = links.find(a => a.getAttribute('href') === id);
+              active?.classList.add('active-link');
+            }
+          });
+        }, { rootMargin: '-40% 0px -55% 0px', threshold: 0.01 });
+        sections.forEach(sec => sec && obs.observe(sec));
+      }
+      buildTOC();
+
+      (function buildTimeline(){
+        if (!FEATURE.TIMELINE) {
+          document.getElementById('timelineWrap')?.setAttribute('hidden', '');
+          return;
+        };
+        const steps = FEATURE.TIMELINE_STEPS.filter(Boolean);
+        const wrap = document.getElementById('timelineWrap');
+        const list = document.getElementById('timeline');
+        const coda = document.getElementById('timelineCoda');
+        if (!wrap || !list || !steps.length) { 
+            if(wrap) wrap.hidden = true; 
+            return; 
+        }
+        wrap.hidden = false;
+
+        const mkStep = (id, label) => (
+          `<li class="flex items-center gap-2"><span class="inline-block w-[14px] h-[14px] rounded-full border-2 border-current bg-current"></span><a href="#${id}" class="hover:underline">${label}</a></li>`
+        );
+        const segments = [];
+        steps.forEach((id, idx) => {
+          const el = $$('#content h2, #content h3').find(h => slug(h.textContent) === id);
+          if (el && !el.id) el.id = id;
+          const label = FEATURE.TIMELINE_LABELS[id] || (el?.textContent || id.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()));
+          segments.push(mkStep(id, label));
+          if (idx !== steps.length - 1) segments.push('<li class="h-[2px] bg-current opacity-35"></li>');
+        });
+        list.innerHTML = segments.join('');
+        if (coda && FEATURE.TIMELINE_CODA) coda.innerHTML = FEATURE.TIMELINE_CODA;
+      })();
+      
+      (function searchHL(){
+        const input = document.getElementById('search');
+        const clearBtn = document.getElementById('clearSearch');
+        const content = document.getElementById('content');
+        if (!input || !content) return;
+        let originalHTML = '';
+        function restore(){ 
+          if (originalHTML) {
+            content.innerHTML = originalHTML; 
+            buildTOC(); 
+          }
+        }
+        function highlight(term){
+          if (!originalHTML) originalHTML = content.innerHTML;
+          restore();
+          if (!term) return;
+          const esc = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+          const re = new RegExp(`(${esc})(?![^<]*>)`, 'gi');
+          content.innerHTML = content.innerHTML.replace(re, '<mark>$1</mark>');
+          buildTOC();
+        }
+        let t; 
+        input.addEventListener('input', (e) => { 
+          clearTimeout(t); 
+          t = setTimeout(() => highlight(e.target.value.trim()), 120); 
+        });
+        clearBtn?.addEventListener('click', () => { 
+          if (input) input.value=''; 
+          restore(); 
+        });
+      })();
+    });
+  </script>
+</body>
+</html>
