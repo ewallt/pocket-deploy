@@ -1,3 +1,21 @@
+That is a much more intelligent and robust approach than simply removing the buttons. I agree completely. Conditionally displaying the buttons based on the content is the ideal solution.
+
+I have implemented all three changes we discussed:
+
+Conditional Expand/Collapse Buttons: The buttons are now controlled by JavaScript. They will only be visible if the document contains two or more <details> blocks. Since the current document has none, they will be hidden.
+
+Removed Tip Text: The instructional "Tip: ..." text below the sidebar has been deleted.
+
+Updated Footer Text: The instructional text in the footer has been replaced with a cleaner, more professional credit line, consistent with the other templates.
+
+Here is the complete and final HTML file with these refinements.
+
+code
+Html
+download
+content_copy
+expand_less
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,8 +29,7 @@
     const root = document.documentElement;
     try {
       const saved = localStorage.getItem('theme');
-      // If a preference is saved, use it. Otherwise, default to dark mode.
-      const isDark = saved !== 'light';
+      const isDark = saved !== 'light'; // Default to dark if no preference is saved
       root.classList.toggle('dark', isDark);
     } catch (_) {}
   })();
@@ -33,15 +50,11 @@
     :root { color-scheme: light dark; }
     html { scroll-behavior: smooth; }
     .font-newspaper { font-family: 'Lora', serif; }
-    /* Header gradient */
     .hero { background: radial-gradient(50% 120% at 10% 10%, rgba(49,46,129,.12), transparent 60%),
                      radial-gradient(80% 140% at 90% 10%, rgba(234,88,12,.12), transparent 70%),
                      linear-gradient(180deg, rgba(14,165,233,.08), transparent 35%); }
-    /* Anchor comfort */
     :where(h2,h3,h4){ scroll-margin-top: 84px; }
-    /* Highlight */
     mark { background: #fde68a; padding: .1em .2em; border-radius: .2rem; }
-    /* Tiny screens */
     @media (max-width: 380px){ .prose { font-size: .96rem; } }
     .active-link { color: rgb(59,130,246); font-weight: 700; }
   </style>
@@ -67,7 +80,7 @@
       </div>
     </div>
 
-    <!-- Optional TIMELINE -->
+    <!-- Timeline -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6" id="timelineWrap" hidden>
       <nav aria-label="Journey timeline" class="text-slate-500 dark:text-slate-400">
         <ol id="timeline" class="grid grid-cols-3 sm:grid-cols-6 items-center gap-x-2 gap-y-1 text-[11px] sm:text-sm"></ol>
@@ -86,9 +99,6 @@
         <button id="expandAll" class="w-full text-xs px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900">Expand All</button>
         <button id="collapseAll" class="mt-2 w-full text-xs px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900">Collapse All</button>
       </nav>
-      <div class="mt-4 text-xs text-slate-500 dark:text-slate-400">
-        Tip: Search highlights terms. Auto‑TOC builds from your H2/H3 headings.
-      </div>
     </aside>
 
     <!-- CONTENT -->
@@ -99,22 +109,22 @@
         <h3>A. The Dangers of Ultra-Processed Foods (UPFs)</h3>
         <p>Ultra-Processed Foods (UPFs) are identified as "alien, industrially produced, unnatural substances; they're not even food." These foods are characterized by:</p>
         <ul>
-            <li><strong>Chemical Additives:</strong> Including coloring agents, various sweeteners (e.g., high-fructose corn syrup, maltodextrin), hydrogenated oils, palm oil, and emulsifiers (e.g., soy lecithin, xanthan gum).</li>
-            <li><strong>Physical Alterations:</strong> Manufacturing processes like molding, extrusion, and prefrying maximize digestibility and accelerate absorption, leading to "spikes in blood glucose and insulin." This is in contrast to dietary fiber, which "slows digestion, reduces glucose spikes, and does us a lot of good."</li>
-            <li><strong>Health Consequences:</strong> UPFs are associated with a wide array of severe health issues, including "fatty liver disease, most types of cancer, sleep disorders, inflammatory bowel disease, depression, and dementia." A significant statistic states, "A 62 percent increase in all-cause mortality is linked to more than four servings per day of UPF."</li>
-            <li><strong>Weight Gain and Addiction:</strong> A randomized trial demonstrated that participants consuming UPF diets gained weight, while those on unprocessed diets lost weight (Figure 3.1, Diet). An individual experiment showed a 15-pound weight gain in a month, accompanied by "enormous changes in connectivity between the habit, automatic behavior bits at the back in the cerebellum and the reward addiction bits in the middle of the limbic system and associated brain regions," and elevated hunger hormones (leptin) and inflammation (C-reactive protein).</li>
+          <li><strong>Chemical Additives:</strong> Including coloring agents, various sweeteners (e.g., high-fructose corn syrup, maltodextrin), hydrogenated oils, palm oil, and emulsifiers (e.g., soy lecithin, xanthan gum).</li>
+          <li><strong>Physical Alterations:</strong> Manufacturing processes like molding, extrusion, and prefrying maximize digestibility and accelerate absorption, leading to "spikes in blood glucose and insulin." This is in contrast to dietary fiber, which "slows digestion, reduces glucose spikes, and does us a lot of good."</li>
+          <li><strong>Health Consequences:</strong> UPFs are associated with a wide array of severe health issues, including "fatty liver disease, most types of cancer, sleep disorders, inflammatory bowel disease, depression, and dementia." A significant statistic states, "A 62 percent increase in all-cause mortality is linked to more than four servings per day of UPF."</li>
+          <li><strong>Weight Gain and Addiction:</strong> A randomized trial demonstrated that participants consuming UPF diets gained weight, while those on unprocessed diets lost weight (Figure 3.1, Diet). An individual experiment showed a 15-pound weight gain in a month, accompanied by "enormous changes in connectivity between the habit, automatic behavior bits at the back in the cerebellum and the reward addiction bits in the middle of the limbic system and associated brain regions," and elevated hunger hormones (leptin) and inflammation (C-reactive protein).</li>
         </ul>
         <h3>B. Macronutrient Considerations: Carbs, Protein, and Fat</h3>
         <p><strong>Carbohydrates:</strong> "Carbotoxicity" refers to the risks of excessive carbohydrate intake. Moderation is key, as both very low (&lt;40%) and very high (&gt;70%) daily caloric intake from carbs are linked to increased all-cause mortality. The quality of carbohydrates matters:</p>
         <ul>
-            <li><strong>Good Carbs:</strong> Resistant starch and high-quality dietary fiber (25-30 grams per day) are associated with a "15-30 percent reduced all-cause and cardiovascular mortality, type 2 diabetes, and colon cancer."</li>
-            <li><strong>Low-Quality Carbs:</strong> Fast-digesting sugars, potato products, and refined grains have a high glycemic load, raising insulin levels and promoting weight gain.</li>
+          <li><strong>Good Carbs:</strong> Resistant starch and high-quality dietary fiber (25-30 grams per day) are associated with a "15-30 percent reduced all-cause and cardiovascular mortality, type 2 diabetes, and colon cancer."</li>
+          <li><strong>Low-Quality Carbs:</strong> Fast-digesting sugars, potato products, and refined grains have a high glycemic load, raising insulin levels and promoting weight gain.</li>
         </ul>
         <p><strong>Protein:</strong> Plant-based proteins are consistently shown to be healthier. Substitution of plant for animal protein for 3% of caloric intake was associated with a "40 percent less cancer-related mortality."</p>
         <p><strong>Fat:</strong> The "quality of the fat, not so much the content level" is crucial.</p>
         <ul>
-            <li><strong>Harmful Fats:</strong> Trans fat and saturated fat are linked to increased total mortality (Figure 3.2, Diet).</li>
-            <li><strong>Beneficial Fats:</strong> Monounsaturated and polyunsaturated fats are associated with reduced total mortality (Figure 3.2, Diet).</li>
+          <li><strong>Harmful Fats:</strong> Trans fat and saturated fat are linked to increased total mortality (Figure 3.2, Diet).</li>
+          <li><strong>Beneficial Fats:</strong> Monounsaturated and polyunsaturated fats are associated with reduced total mortality (Figure 3.2, Diet).</li>
         </ul>
         <p><strong>Ketogenic Diet:</strong> While popular for weight loss, it's associated with "higher cholesterol and cardiovascular risk, brain fog, flu-like illness (keto-flu), and promoting fatty liver disease." A randomized trial showed a plant-based, low-fat diet led to more weight loss than a ketogenic diet, with participants on the ketogenic diet ingesting ~700 more calories daily. High-fat diets have also been linked to mitochondrial dysfunction transmitted epigenetically.</p>
         <p><strong>Dairy:</strong> Despite historical guidance towards low-fat dairy, recent reports suggest consumption of "two or more servings of dairy daily was associated with 22 percent less cardiovascular disease and 17 percent less all-cause mortality," particularly for yogurt (without sweeteners) and hard cheeses.</p>
@@ -125,9 +135,9 @@
         <p><strong>Fiber:</strong> Found in fruits, vegetables, legumes, whole grains, nuts, and seeds. It is the "polar opposite of ultra-processed foods—it slows digestion, lessens glucose spikes, and helps reduce cholesterol." A high-fiber diet is associated with "31 percent less heart disease and 16 percent less type 2 diabetes or colon cancer."</p>
         <p><strong>Healthy Fats (Olive Oil, Nuts/Seeds, Fatty Fish):</strong></p>
         <ul>
-            <li><strong>Olive Oil:</strong> Consumption is tied to a "20 percent lower all-cause mortality," and reductions in cardiovascular, cancer, and neurodegenerative-related deaths. Daily consumption of 7 grams (half a tablespoon) or more of olive oil was associated with a "28 percent less risk of dementia."</li>
-            <li><strong>Nuts and Seeds:</strong> A handful per day is associated with a "20 percent lower risk of cardiovascular disease" and can be linked to lower risks of obesity and weight gain despite caloric density.</li>
-            <li><strong>Fatty Fish:</strong> Rich in omega-3 fatty acids, contributing to overall health.</li>
+          <li><strong>Olive Oil:</strong> Consumption is tied to a "20 percent lower all-cause mortality," and reductions in cardiovascular, cancer, and neurodegenerative-related deaths. Daily consumption of 7 grams (half a tablespoon) or more of olive oil was associated with a "28 percent less risk of dementia."</li>
+          <li><strong>Nuts and Seeds:</strong> A handful per day is associated with a "20 percent lower risk of cardiovascular disease" and can be linked to lower risks of obesity and weight gain despite caloric density.</li>
+          <li><strong>Fatty Fish:</strong> Rich in omega-3 fatty acids, contributing to overall health.</li>
         </ul>
         <p><strong>Mediterranean Diet:</strong> Considered the "whole package," it is robustly supported by numerous randomized trials and observational studies, showing significant reductions in "death from any cause—cardiovascular diseases, coronary heart disease, myocardial infarction, cancer, neurodegenerative diseases, and diabetes." Even for individuals with established heart disease, it reduced cardiovascular events by 26-33%. The "green MED diet," with added walnuts, green tea, and plant-based protein shakes, showed some advantages over the standard Mediterranean diet in preliminary studies.</p>
         <p><strong>Taurine:</strong> This amino acid, primarily found in animal products, decreases with age and its deficiency is linked to several diseases. Supplementation in rhesus monkeys showed "health span" benefits, including reduced fasting glucose and improved mitochondrial function. However, human randomized trials are needed to establish its role in healthy aging.</p>
@@ -136,9 +146,9 @@
         <h3>F. The Emergence of the AI Diet (Personalized Nutrition)</h3>
         <p>The concept of a "one-size-fits-all universal diet—one that is optimal for all people—is naive." Personalized nutrition recognizes individual uniqueness based on "genome, metabolism, gut microbiome, and environment."</p>
         <ul>
-            <li><strong>Glucose Spikes:</strong> Continuous Glucose Monitors (CGMs) can measure individual glucose spikes in response to food, exercise, sleep, and stress, providing a "window into an individual's nutritional health." While preventing spikes is a popular idea, clear data linking spike avoidance to fewer disease outcomes is still needed.</li>
-            <li><strong>Gut Microbiome as Key Determinant:</strong> A landmark 2015 study found the "key determinant [of glucose spikes] turned out to be the person's gut microbiome," which is shaped by diet, genetics, social contacts, and medications. This was reinforced by a UK study that also looked at triglyceride response, noting no correlation between glucose and triglyceride responses, suggesting glucose tracking alone is insufficient for full personalized nutrition.</li>
-            <li><strong>Proteomic Signatures for Dietary Adherence:</strong> New research uses plasma proteomic signatures to objectively assess adherence to dietary patterns, providing a more robust measure than self-reported food diaries. This approach has shown potential in estimating years of life gained based on adherence to diets like Mediterranean, DASH, and plant-based diets.</li>
+          <li><strong>Glucose Spikes:</strong> Continuous Glucose Monitors (CGMs) can measure individual glucose spikes in response to food, exercise, sleep, and stress, providing a "window into an individual's nutritional health." While preventing spikes is a popular idea, clear data linking spike avoidance to fewer disease outcomes is still needed.</li>
+          <li><strong>Gut Microbiome as Key Determinant:</strong> A landmark 2015 study found the "key determinant [of glucose spikes] turned out to be the person's gut microbiome," which is shaped by diet, genetics, social contacts, and medications. This was reinforced by a UK study that also looked at triglyceride response, noting no correlation between glucose and triglyceride responses, suggesting glucose tracking alone is insufficient for full personalized nutrition.</li>
+          <li><strong>Proteomic Signatures for Dietary Adherence:</strong> New research uses plasma proteomic signatures to objectively assess adherence to dietary patterns, providing a more robust measure than self-reported food diaries. This approach has shown potential in estimating years of life gained based on adherence to diets like Mediterranean, DASH, and plant-based diets.</li>
         </ul>
       </article>
 
@@ -148,24 +158,24 @@
         <h3>A. Comprehensive Benefits</h3>
         <p>Regular exercise leads to favorable adaptations in numerous organ systems, including the "cardiovascular system, brain, pancreas, skeletal muscle, gastrointestinal tract... liver, adipose tissue, gut microbiome, and peripheral blood vessels." Specific benefits include:</p>
         <ul>
-            <li><strong>Metabolic Improvement:</strong> Increased insulin sensitivity, protection against atherosclerosis, and improved cardiovascular function.</li>
-            <li><strong>Anti-inflammatory and Immune Support:</strong> Reduces body-wide and brain inflammation, improves immune system responsiveness, and enhances mitochondrial function.</li>
-            <li><strong>Stress Resilience:</strong> It appears to condition the body to deal with stress at a cellular level, enhancing "repair mechanisms."</li>
-            <li><strong>Multi-Omics Insights:</strong> Extensive rat studies, involving "nine and a half thousand assays, 19 tissues, 25 different measurement platforms," reveal profound, comprehensive changes across the body when exercising regularly.</li>
+          <li><strong>Metabolic Improvement:</strong> Increased insulin sensitivity, protection against atherosclerosis, and improved cardiovascular function.</li>
+          <li><strong>Anti-inflammatory and Immune Support:</strong> Reduces body-wide and brain inflammation, improves immune system responsiveness, and enhances mitochondrial function.</li>
+          <li><strong>Stress Resilience:</strong> It appears to condition the body to deal with stress at a cellular level, enhancing "repair mechanisms."</li>
+          <li><strong>Multi-Omics Insights:</strong> Extensive rat studies, involving "nine and a half thousand assays, 19 tissues, 25 different measurement platforms," reveal profound, comprehensive changes across the body when exercising regularly.</li>
         </ul>
         <h3>B. Types and Intensity of Exercise</h3>
         <ul>
-            <li><strong>Aerobic Exercise:</strong> Long considered important for cardiovascular fitness.</li>
-            <li><strong>Strength, Resistance, and Balance Training:</strong> Crucially important, especially with age-related muscle loss. Activities like push-ups, squats, lunges, and using weights/bands are recommended. "Sixty minutes per week may represent a plateau" for resistance training's impact on all-cause mortality.</li>
-            <li><strong>Grip Strength:</strong> A significant prognostic metric, representative of overall strength. "Every 5 kilograms of hand grip makes a difference," and strengthening it can be achieved through simple exercises.</li>
-            <li><strong>Walking:</strong> Even lower step counts show benefits; 2,700 steps/day for older women showed reduced all-cause mortality, plateauing around 7,500 steps/day. A meta-analysis showed benefits starting at 2,500 steps/day (8% mortality reduction) and progressing up to 8,800 steps/day (60% reduction). Faster walking speeds offer more protection from type 2 diabetes.</li>
-            <li><strong>Intensity:</strong> Higher intensity exercise may offer additional benefits, though not necessarily recommended for everyone.</li>
-            <li><strong>Sex-Specific Findings:</strong> Research shows "profound" differences in exercise's impact on fat tissue between males and females, with implications for insulin signaling and metabolism.</li>
+          <li><strong>Aerobic Exercise:</strong> Long considered important for cardiovascular fitness.</li>
+          <li><strong>Strength, Resistance, and Balance Training:</strong> Crucially important, especially with age-related muscle loss. Activities like push-ups, squats, lunges, and using weights/bands are recommended. "Sixty minutes per week may represent a plateau" for resistance training's impact on all-cause mortality.</li>
+          <li><strong>Grip Strength:</strong> A significant prognostic metric, representative of overall strength. "Every 5 kilograms of hand grip makes a difference," and strengthening it can be achieved through simple exercises.</li>
+          <li><strong>Walking:</strong> Even lower step counts show benefits; 2,700 steps/day for older women showed reduced all-cause mortality, plateauing around 7,500 steps/day. A meta-analysis showed benefits starting at 2,500 steps/day (8% mortality reduction) and progressing up to 8,800 steps/day (60% reduction). Faster walking speeds offer more protection from type 2 diabetes.</li>
+          <li><strong>Intensity:</strong> Higher intensity exercise may offer additional benefits, though not necessarily recommended for everyone.</li>
+          <li><strong>Sex-Specific Findings:</strong> Research shows "profound" differences in exercise's impact on fat tissue between males and females, with implications for insulin signaling and metabolism.</li>
         </ul>
         <h3>C. Emerging Areas in Exercise Science</h3>
         <ul>
-            <li><strong>Exerkines and Extracellular Vesicles (EVs):</strong> Proteins secreted with exercise are under investigation for their roles in mediating exercise benefits.</li>
-            <li><strong>Individualized Exercise:</strong> Companies like Svexa are developing products to "individualize training" based on sensor data (heart rate, heart rate variability, accelerometry) and potentially blood markers like lactate and glucose.</li>
+          <li><strong>Exerkines and Extracellular Vesicles (EVs):</strong> Proteins secreted with exercise are under investigation for their roles in mediating exercise benefits.</li>
+          <li><strong>Individualized Exercise:</strong> Companies like Svexa are developing products to "individualize training" based on sensor data (heart rate, heart rate variability, accelerometry) and potentially blood markers like lactate and glucose.</li>
         </ul>
       </article>
 
@@ -177,15 +187,15 @@
         <h3>B. Optimal Sleep Duration</h3>
         <p>Approximately seven hours is identified as the optimal sleep duration.</p>
         <ul>
-            <li><strong>Short Sleep:</strong> Less than 6.5 hours of sleep at ages 50-60 was associated with a "30 percent increased risk of dementia." Short sleep can also lead to increased caloric intake and "deleterious pro-inflammatory changes." Losing even one hour of sleep (e.g., due to daylight savings) has been linked to a "significant rise in heart attacks."</li>
-            <li><strong>Long Sleep:</strong> More than eight hours of sleep is associated with "cognitive and mental health decline, as well as unfavorable changes in brain structure," and a "heightened all-cause mortality (by approximately 30%)."</li>
-            <li><strong>Cardiovascular Risk:</strong> Every one-hour decrease in sleep below the 7-8 hour threshold is associated with a 6% higher risk of total cardiovascular disease.</li>
+          <li><strong>Short Sleep:</strong> Less than 6.5 hours of sleep at ages 50-60 was associated with a "30 percent increased risk of dementia." Short sleep can also lead to increased caloric intake and "deleterious pro-inflammatory changes." Losing even one hour of sleep (e.g., due to daylight savings) has been linked to a "significant rise in heart attacks."</li>
+          <li><strong>Long Sleep:</strong> More than eight hours of sleep is associated with "cognitive and mental health decline, as well as unfavorable changes in brain structure," and a "heightened all-cause mortality (by approximately 30%)."</li>
+          <li><strong>Cardiovascular Risk:</strong> Every one-hour decrease in sleep below the 7-8 hour threshold is associated with a 6% higher risk of total cardiovascular disease.</li>
         </ul>
         <h3>C. Brain Waste Clearance (Glymphatics)</h3>
         <p>Non-REM sleep, particularly "stage 3 slow-wave deep sleep," is critical for the brain's "glymphatic" drainage system, which efficiently removes metabolic waste.</p>
         <ul>
-            <li><strong>Impaired Clearance:</strong> Diminished drainage is prominent in aged brains and neurodegenerative diseases like Alzheimer's (β-amyloid and tau accumulation) and Parkinson's (alpha-synuclein).</li>
-            <li><strong>Medication Impact:</strong> Alarmingly, commonly used sleep aids like Ambien (a benzodiazepine) "backfires and actually suppresses waste disposal," and are associated with a "heightened risk of Alzheimer’s disease and dementia."</li>
+          <li><strong>Impaired Clearance:</strong> Diminished drainage is prominent in aged brains and neurodegenerative diseases like Alzheimer's (β-amyloid and tau accumulation) and Parkinson's (alpha-synuclein).</li>
+          <li><strong>Medication Impact:</strong> Alarmingly, commonly used sleep aids like Ambien (a benzodiazepine) "backfires and actually suppresses waste disposal," and are associated with a "heightened risk of Alzheimer’s disease and dementia."</li>
         </ul>
       </article>
 
@@ -194,18 +204,18 @@
         <p>Environmental toxins, particularly air pollution and microplastics, pose significant and pervasive health hazards.</p>
         <h3>A. Air Pollution</h3>
         <ul>
-            <li><strong>Leading Contributor to Disease Burden:</strong> "Particulate matter air pollution was the leading contributor to the global disease burden."</li>
-            <li><strong>Health Impacts:</strong> Short-term exposure to fine particulate matter (PM2.5 and PM10) is linked to "increased all-cause, cardiovascular, and respiratory mortality," accounting for "About one million deaths globally per year."</li>
-            <li><strong>No Safe Threshold:</strong> "No safe threshold has been identified for chronic effect of PM2.5 on cardiovascular health."</li>
-            <li><strong>Broader Consequences:</strong> Chronic exposure to PM2.5 is related to an estimated "20 percent of type 2 diabetes." Air pollution is also associated with "cognitive decline, a reduced immune response to COVID-19 vaccination, and increased blood pressure." Mechanisms include "body-wide inflammation, compromised immune function, increased oxidative stress."</li>
+          <li><strong>Leading Contributor to Disease Burden:</strong> "Particulate matter air pollution was the leading contributor to the global disease burden."</li>
+          <li><strong>Health Impacts:</strong> Short-term exposure to fine particulate matter (PM2.5 and PM10) is linked to "increased all-cause, cardiovascular, and respiratory mortality," accounting for "About one million deaths globally per year."</li>
+          <li><strong>No Safe Threshold:</strong> "No safe threshold has been identified for chronic effect of PM2.5 on cardiovascular health."</li>
+          <li><strong>Broader Consequences:</strong> Chronic exposure to PM2.5 is related to an estimated "20 percent of type 2 diabetes." Air pollution is also associated with "cognitive decline, a reduced immune response to COVID-19 vaccination, and increased blood pressure." Mechanisms include "body-wide inflammation, compromised immune function, increased oxidative stress."</li>
         </ul>
         <h3>B. Noise Pollution</h3>
         <p>Chronic noise pollution, especially at night, is associated with "increased stress hormones, body-wide inflammation, high blood pressure, heart disease, and type 2 diabetes."</p>
         <h3>C. Microplastics and Nanoplastics (MNPs)</h3>
         <p>MNPs are ubiquitous, carrying "over ten thousand chemicals such as bisphenols and phthalates," and are found in our environment, food, air, water, and bottled water.</p>
         <ul>
-            <li><strong>Pervasive Human Presence:</strong> MNPs have been detected in various human tissues and organs, including "arteries, brains, blood clots, liver, gut, lung, placentas, testicles, and other tissues." In bottled water, "over 240,000 particles" per liter, with 90% being nanoplastics.</li>
-            <li><strong>Severe Health Hazards:</strong> The presence of MNPs in atherosclerotic plaque was found in 58% of patients undergoing carotid artery surgery, correlating with "marked inflammation of the arteries" and a "more than fourfold heightened risk of heart attack, stroke, or death" over three years. Polyethylene was present in 58% and polyvinyl chloride in 12% of patients' plaques. Detected in all twenty-three men's testes studied, associated with "less weight of the testes and lower sperm count." Elevated fecal microplastics were found in patients with inflammatory bowel disease, correlating with disease severity. Cancer cells spread at an accelerated rate and transfer MNPs to daughter cells in response to exposure. MNPs are associated with an "increased risk of asthma, various cancers, interstitial lung disease, cognitive decline, cardiometabolic disease, neurodevelopmental delay, premature births, and infertility." MNPs have been detected within human brain cells, including in patients with brain tumors. Brains of individuals with dementia showed "2 to 10-times higher" MNP concentrations (median 26,076 μg g−1) compared to normal brains (median 4,917 μg g−1).</li>
+          <li><strong>Pervasive Human Presence:</strong> MNPs have been detected in various human tissues and organs, including "arteries, brains, blood clots, liver, gut, lung, placentas, testicles, and other tissues." In bottled water, "over 240,000 particles" per liter, with 90% being nanoplastics.</li>
+          <li><strong>Severe Health Hazards:</strong> The presence of MNPs in atherosclerotic plaque was found in 58% of patients undergoing carotid artery surgery, correlating with "marked inflammation of the arteries" and a "more than fourfold heightened risk of heart attack, stroke, or death" over three years. Polyethylene was present in 58% and polyvinyl chloride in 12% of patients' plaques. Detected in all twenty-three men's testes studied, associated with "less weight of the testes and lower sperm count." Elevated fecal microplastics were found in patients with inflammatory bowel disease, correlating with disease severity. Cancer cells spread at an accelerated rate and transfer MNPs to daughter cells in response to exposure. MNPs are associated with an "increased risk of asthma, various cancers, interstitial lung disease, cognitive decline, cardiometabolic disease, neurodevelopmental delay, premature births, and infertility." MNPs have been detected within human brain cells, including in patients with brain tumors. Brains of individuals with dementia showed "2 to 10-times higher" MNP concentrations (median 26,076 μg g−1) compared to normal brains (median 4,917 μg g−1).</li>
         </ul>
       </article>
 
@@ -215,9 +225,9 @@
         <h3>A. Organ Age Clocks</h3>
         <p>Blood protein analysis can now reveal "organ age gaps," indicating how much older or younger specific organs are compared to chronological age.</p>
         <ul>
-            <li><strong>Individual Variability:</strong> "About 1 in 5 individuals were an 'extreme ager' for at least 1 organ, but only 2% had accelerated aging for multiple organs."</li>
-            <li><strong>Predictive Power:</strong> Accelerated organ aging predicts future disease risk: "accelerated heart agers were 5-fold more likely to develop heart failure, the brain agers to more likely to manifest Alzheimer’s disease, muscle aging predicted gait impairment, and kidney aging predicted metabolic syndrome and high blood pressure."</li>
-            <li><strong>Mortality Link:</strong> A gap between chronological age and organ age is associated with "increased mortality during 15-year follow-up" (Figure, The Emergence of Protein Organ Clocks).</li>
+          <li><strong>Individual Variability:</strong> "About 1 in 5 individuals were an 'extreme ager' for at least 1 organ, but only 2% had accelerated aging for multiple organs."</li>
+          <li><strong>Predictive Power:</strong> Accelerated organ aging predicts future disease risk: "accelerated heart agers were 5-fold more likely to develop heart failure, the brain agers to more likely to manifest Alzheimer’s disease, muscle aging predicted gait impairment, and kidney aging predicted metabolic syndrome and high blood pressure."</li>
+          <li><strong>Mortality Link:</strong> A gap between chronological age and organ age is associated with "increased mortality during 15-year follow-up" (Figure, The Emergence of Protein Organ Clocks).</li>
         </ul>
         <h3>B. Alzheimer's Disease Biomarker (p-Tau217)</h3>
         <p>A "breakthrough discovery" is the highly accurate plasma biomarker, p-Tau217, for tracking brain neuropathology associated with Alzheimer's disease. This blood test has the potential to guide interventions for lowering Alzheimer's risk, similar to how cholesterol levels guide statin use.</p>
@@ -238,7 +248,7 @@
   </main>
 
   <footer class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 text-xs text-slate-500 dark:text-slate-400">
-    Paste content → tweak title/subtitle → (optional) set timeline steps → done.
+    Threaded Reader — single-file study
   </footer>
 
   <script>
@@ -297,12 +307,23 @@
 
       // ===== Page Interactions =====
       const detailsAll = () => $$('#content details');
-      document.getElementById('expandAll')?.addEventListener('click', () => detailsAll().forEach(d => d.open = true));
-      document.getElementById('collapseAll')?.addEventListener('click', () => detailsAll().forEach(d => d.open = false));
+      const expandBtn = document.getElementById('expandAll');
+      const collapseBtn = document.getElementById('collapseAll');
       
-      // NEW: Add "Back to top" links
+      // Conditionally hide expand/collapse buttons if less than 2 <details> elements exist
+      if (detailsAll().length < 2) {
+        if(expandBtn) expandBtn.hidden = true;
+        if(collapseBtn) collapseBtn.hidden = true;
+      }
+      
+      expandBtn?.addEventListener('click', () => detailsAll().forEach(d => d.open = true));
+      collapseBtn?.addEventListener('click', () => detailsAll().forEach(d => d.open = false));
+      
+      // Add "Back to top" links to each article
       (function addBackToTopLinks(){
-        $$('#content > article').forEach(article => {
+        $$('#content > article').forEach((article, index, arr) => {
+            // Don't add a link to the very last article
+            if (index === arr.length - 1) return;
             const wrapper = document.createElement('div');
             wrapper.className = 'mt-6 flex justify-end';
             wrapper.innerHTML = `<a href="#top" class="text-sm underline decoration-dotted">Back to top</a>`;
@@ -365,7 +386,6 @@
         if (coda && FEATURE.TIMELINE_CODA) coda.innerHTML = FEATURE.TIMELINE_CODA;
       })();
       
-      // Search highlighter
       (function searchHL(){
         const input = document.getElementById('search');
         const clearBtn = document.getElementById('clearSearch');
