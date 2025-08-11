@@ -5,18 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Threaded Reader</title>
 
-  <!-- Theme Bootstrap (runs before page paint to prevent flicker) -->
+  <!-- Prepaint bootstrap: set dark + theme class before paint to avoid flicker -->
   <script>
   (function () {
     const root = document.documentElement;
     try {
-      const savedTheme = localStorage.getItem('theme');
-      const savedColor = localStorage.getItem('colorScheme');
-      const isDark = savedTheme !== 'light'; // Default to dark if no preference is saved
+      const savedTheme = localStorage.getItem('theme');            // 'light' | 'dark' | null
+      const savedColor = localStorage.getItem('colorScheme');      // 'slate' | 'emerald' | future
+      const isDark = savedTheme !== 'light';                       // default to dark if unset
       root.classList.toggle('dark', isDark);
-      if (savedColor === 'emerald') {
-        root.classList.add('emerald-theme');
-      }
+      root.classList.toggle('theme-emerald', savedColor === 'emerald');
     } catch (_) {}
   })();
   </script>
@@ -33,41 +31,140 @@
   <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
 
   <style>
-    :root { color-scheme: light dark; }
-    html { scroll-behavior: smooth; }
-    .font-newspaper { font-family: 'Lora', serif; }
-    .hero { background: radial-gradient(50% 120% at 10% 10%, rgba(49,46,129,.12), transparent 60%),
-                     radial-gradient(80% 140% at 90% 10%, rgba(234,88,12,.12), transparent 70%),
-                     linear-gradient(180deg, rgba(14,165,233,.08), transparent 35%); }
-    :where(h2,h3,h4){ scroll-margin-top: 84px; }
-    mark { background: #fde68a; padding: .1em .2em; border-radius: .2rem; }
-    @media (max-width: 380px){ .prose { font-size: .96rem; } }
-    
-    /* Default Blue Theme */
-    .active-link { color: rgb(59,130,246); font-weight: 700; }
-    
-    /* Emerald Theme - Active links */
-    .emerald-theme .active-link { 
-      color: #10b981 !important; 
-      font-weight: 700; 
-    }
-  </style>
+  :root { color-scheme: light dark; }
+  html { scroll-behavior: smooth; }
+  .font-newspaper { font-family: 'Lora', serif; }
+  :where(h2,h3,h4){ scroll-margin-top: 84px; }
+  mark { background: #fde68a; padding: .1em .2em; border-radius: .2rem; }
+  @media (max-width: 380px){ .prose { font-size: .96rem; } }
+
+  /* ---------- Semantic surfaces (read from CSS variables) ---------- */
+.hero {
+  /* give the header an explicit base fill so gradient blends to the right hue */
+  background-color: var(--hero-base);
+  background:
+    radial-gradient(50% 120% at 10% 10%, var(--hero-r1), transparent 60%),
+    radial-gradient(80% 140% at 90% 10%, var(--hero-r2), transparent 70%),
+    linear-gradient(180deg, var(--hero-wash), transparent 35%);
+}
+.border-var { border-color: var(--border) !important; }
+.surface { border-width: 1px; border-style: solid; border-color: var(--border); }
+.hr-var { border-color: var(--border); }
+.subtitle { color: var(--subtitle-fg); }
+.timeline-fg { color: var(--timeline-fg); }
+.footer-note { color: var(--footer-fg); }
+.active-link { color: var(--active); font-weight: 700; }
+
+.input-surface {
+  border: 1px solid var(--input-border);
+  background-color: var(--input-bg);
+}
+.btn-surface { border: 1px solid var(--btn-border); }
+.btn-surface:hover { background: var(--btn-hover-bg); }
+.toc-link:hover { background: var(--hover-bg); }
+
+/* ---------- Slate (default) variables ---------- */
+:root{
+  /* accents / inks */
+  --active: rgb(59,130,246);                      /* sky-500 */
+  --subtitle-fg: rgb(71,85,105);                  /* slate-600 */
+  --timeline-fg: rgb(100,116,139);                /* slate-500 */
+  --footer-fg: rgb(100,116,139);                  /* slate-500 */
+
+  /* surfaces */
+  --border: rgb(226,232,240);                     /* slate-200 */
+  --hover-bg: rgb(248,250,252);                   /* slate-50 */
+  --btn-border: rgb(203,213,225);                 /* slate-300 */
+  --btn-hover-bg: rgb(248,250,252);               /* slate-50 */
+  --input-border: rgba(203,213,225,0.7);          /* slate-300/70 */
+  --input-bg: rgba(255,255,255,0.7);              /* white/70 */
+
+  /* hero base & gradient (light) */
+  --hero-base: transparent;                       /* keep light header airy */
+  --hero-r1: rgba(49,46,129,.12);                 /* indigo-700 */
+  --hero-r2: rgba(234,88,12,.12);                 /* orange-600 hint */
+  --hero-wash: rgba(14,165,233,.08);              /* sky-500 wash */
+}
+.dark{
+  --subtitle-fg: rgb(203,213,225);                /* slate-300 */
+  --timeline-fg: rgb(148,163,184);                /* slate-400 */
+  --footer-fg: rgb(148,163,184);                  /* slate-400 */
+
+  --border: rgb(30,41,59);                        /* slate-800 */
+  --hover-bg: rgb(15,23,42);                      /* slate-900 */
+  --btn-border: rgb(51,65,85);                    /* slate-700 */
+  --btn-hover-bg: rgb(15,23,42);                  /* slate-900 */
+  --input-border: rgba(51,65,85,0.7);             /* slate-700/70 */
+  --input-bg: rgba(2,6,23,0.6);                   /* slate-950/60 */
+
+  /* hero base & gradient (dark) */
+  --hero-base: rgb(2,6,23);                       /* slate-950 */
+  --hero-r1: rgba(49,46,129,.12);
+  --hero-r2: rgba(234,88,12,.12);
+  --hero-wash: rgba(14,165,233,.08);
+}
+
+/* ---------- Emerald theme overrides (light & dark) ---------- */
+.theme-emerald{
+  --active: #10b981;                              /* emerald-500 */
+
+  --border: rgb(187,247,208);                     /* emerald-200 */
+  --hover-bg: rgb(240,253,244);                   /* emerald-50 */
+  --btn-border: rgb(187,247,208);                 /* emerald-200 */
+  --btn-hover-bg: rgb(240,253,244);               /* emerald-50 */
+  --input-border: rgba(110,231,183,0.7);          /* emerald-300/70 */
+  --input-bg: rgba(255,255,255,0.7);              /* white/70 */
+
+  /* keep subtitles/timeline neutral for readability over hero */
+  --subtitle-fg: rgb(71,85,105);                  /* slate-600 */
+  --timeline-fg: rgb(71,85,105);                  /* slate-600 */
+  --footer-fg: rgb(16,185,129);                   /* emerald-500 */
+
+  /* hero base & gradient (emerald light) */
+  --hero-base: transparent;
+  --hero-r1: rgba(16,185,129,.14);                /* emerald-500 */
+  --hero-r2: rgba(163,230,53,.12);                /* lime-400 */
+  --hero-wash: rgba(5,150,105,.10);               /* emerald-600 wash */
+}
+.dark.theme-emerald{
+  --border: rgb(15,118,110);                      /* emerald-800 */
+  --hover-bg: rgb(6,78,59);                       /* emerald-900 */
+  --btn-border: rgb(15,118,110);                  /* emerald-800 */
+  --btn-hover-bg: rgb(6,78,59);                   /* emerald-900 */
+  --input-border: rgba(21,128,61,0.7);            /* green-ish/70 */
+  --input-bg: rgba(6,95,70,0.60);                 /* emerald-900/60 */
+
+  /* ↑ keep footer accent, but make subtitle/timeline brighter for readability */
+  --footer-fg: rgb(110,231,183);                  /* emerald-300/400 */
+  --subtitle-fg: rgb(226,252,236);                /* emerald-100 */
+  --timeline-fg: rgb(187,247,208);                /* emerald-200 */
+
+  /* hero base & gradient (emerald dark) */
+  --hero-base: rgb(2,44,34);                      /* emerald-950 (#022c22) */
+  --hero-r1: rgba(16,185,129,.14);
+  --hero-r2: rgba(163,230,53,.12);
+  --hero-wash: rgba(5,150,105,.10);
+}
+
+</style>
+
 </head>
 
-<body class="bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 pb-[env(safe-area-inset-bottom)]">
+<body class="app-root pb-[env(safe-area-inset-bottom)]">
+
 
   <!-- Header -->
-  <header id="top" class="hero border-b border-slate-200/60 dark:border-slate-800/60">
+  <header id="top" class="hero border-b border-var">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-between gap-4">
       <div>
         <h1 id="docTitle" class="text-2xl sm:text-3xl font-bold font-newspaper tracking-tight">Loading...</h1>
-        <p id="docSubtitle" class="text-sm sm:text-base text-slate-600 dark:text-slate-400"></p>
+        <p id="docSubtitle" class="subtitle text-sm sm:text-base"></p>
       </div>
       <div class="flex items-center gap-2">
         <label for="search" class="sr-only">Search</label>
-        <input id="search" type="search" placeholder="Search…" class="hidden md:block w-56 rounded-xl border border-slate-300/70 dark:border-slate-700/70 bg-white/70 dark:bg-slate-900/60 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400" />
-        <button id="clearSearch" type="button" class="hidden md:inline-flex text-xs px-2 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900">Clear</button>
-        <button id="colorSchemeToggle" type="button" class="inline-flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-900" title="Change color scheme">
+        <input id="search" type="search" placeholder="Search…" class="hidden md:block w-56 rounded-xl input-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400" />
+        <button id="clearSearch" type="button" class="hidden md:inline-flex text-xs px-2 py-2 rounded-lg btn-surface">Clear</button>
+        <button id="colorSchemeToggle" type="button" class="inline-flex items-center justify-center rounded-xl btn-surface px-3 py-2 text-sm" title="Change color scheme">
           <span class="inline md:hidden">Colors</span>
           <svg aria-hidden="true" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/>
@@ -77,7 +174,7 @@
             <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 7.012 17.461 2 12 2z"/>
           </svg>
         </button>
-        <button id="themeToggle" type="button" class="inline-flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-900" title="Toggle dark mode" aria-pressed="false">
+        <button id="themeToggle" type="button" class="inline-flex items-center justify-center rounded-xl btn-surface px-3 py-2 text-sm" title="Toggle dark mode" aria-pressed="false">
           <span class="inline md:hidden">Theme</span>
           <svg aria-hidden="true" class="w-5 h-5 hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
           <svg aria-hidden="true" class="w-5 h-5 dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
@@ -87,7 +184,7 @@
 
     <!-- Timeline -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6" id="timelineWrap" hidden>
-      <nav aria-label="Journey timeline" id="timelineNav" class="text-slate-500 dark:text-slate-400">
+      <nav aria-label="Journey timeline" id="timelineNav" class="timeline-fg">
         <ol id="timeline" class="grid grid-cols-3 sm:grid-cols-6 items-center gap-x-2 gap-y-1 text-[11px] sm:text-sm"></ol>
         <div id="timelineCoda" class="mt-2 text-[11px] sm:text-xs"></div>
       </nav>
@@ -97,19 +194,19 @@
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)] gap-8">
     <!-- Sidebar -->
     <aside class="lg:sticky lg:top-4 h-max">
-      <nav aria-label="On this page" class="rounded-2xl border border-slate-200 dark:border-slate-800 p-4">
+      <nav aria-label="On this page" class="rounded-2xl surface p-4">
         <h2 class="text-sm font-semibold mb-2">Sections</h2>
         <ol id="toc" class="space-y-1 text-sm"></ol>
-        <hr class="my-4 border-slate-200 dark:border-slate-800" />
-        <button id="expandAll" type="button" class="w-full text-xs px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900">Expand All</button>
-        <button id="collapseAll" type="button" class="mt-2 w-full text-xs px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900">Collapse All</button>
+        <hr class="my-4 hr-var" />
+        <button id="expandAll" type="button" class="w-full text-xs px-3 py-2 rounded-lg btn-surface">Expand All</button>
+        <button id="collapseAll" type="button" class="mt-2 w-full text-xs px-3 py-2 rounded-lg btn-surface">Collapse All</button>
       </nav>
     </aside>
 
     <!-- ============ CONTENT DROP ZONE ============ -->
     <section id="content" class="prose prose-slate dark:prose-invert max-w-none">
       <!-- DROP ARTICLE HERE -->
-      
+
 <article class="rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
 <meta name="doc-title" content="The Modern Guide to Eating for Healthy Aging">
 <meta name="doc-subtitle" content="An evidence-based look at what to eat and what to avoid, from the dangers of ultra-processed foods to the proven benefits of the Mediterranean diet.">
@@ -198,7 +295,7 @@
     </section>
   </main>
 
-  <footer class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 text-xs text-slate-500 dark:text-slate-400">
+  <footer class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 text-xs footer-note">
     Threaded Reader — a single-file template
   </footer>
 
@@ -207,119 +304,81 @@
       // ===== Utilities =====
       const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
       const slug = s => s.toLowerCase().replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-');
-      
-      // ===== Theme Definitions =====
-      const themes = {
-        slate: {
-          body: 'bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 pb-[env(safe-area-inset-bottom)]',
-          header: 'hero border-b border-slate-200/60 dark:border-slate-800/60',
-          subtitle: 'text-sm sm:text-base text-slate-600 dark:text-slate-400',
-          timeline: 'text-slate-500 dark:text-slate-400',
-          searchInput: 'hidden md:block w-56 rounded-xl border border-slate-300/70 dark:border-slate-700/70 bg-white/70 dark:bg-slate-900/60 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400',
-          clearButton: 'hidden md:inline-flex text-xs px-2 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900',
-          colorButton: 'inline-flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-900',
-          themeButton: 'inline-flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-900',
-          sidebar: 'rounded-2xl border border-slate-200 dark:border-slate-800 p-4',
-          sidebarHr: 'my-4 border-slate-200 dark:border-slate-800',
-          expandButton: 'w-full text-xs px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900',
-          collapseButton: 'mt-2 w-full text-xs px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900',
-          prose: 'prose prose-slate dark:prose-invert max-w-none',
-          footer: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 text-xs text-slate-500 dark:text-slate-400',
-          tocHover: 'hover:bg-slate-50 dark:hover:bg-slate-900'
-        },
-        emerald: {
-          body: 'bg-white text-emerald-900 dark:bg-emerald-950 dark:text-emerald-100 pb-[env(safe-area-inset-bottom)] emerald-theme',
-          header: 'hero border-b border-emerald-200/60 dark:border-emerald-800/60',
-          subtitle: 'text-sm sm:text-base text-slate-700 dark:text-slate-300',
-          timeline: 'text-sm sm:text-base text-slate-700 dark:text-slate-300',
-          searchInput: 'hidden md:block w-56 rounded-xl border border-emerald-300/70 dark:border-emerald-700/70 bg-white/70 dark:bg-emerald-900/60 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400',
-          clearButton: 'hidden md:inline-flex text-xs px-2 py-2 rounded-lg border border-emerald-200 dark:border-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-900',
-          colorButton: 'inline-flex items-center justify-center rounded-xl border border-emerald-200 dark:border-emerald-700 px-3 py-2 text-sm hover:bg-emerald-50 dark:hover:bg-emerald-900',
-          themeButton: 'inline-flex items-center justify-center rounded-xl border border-emerald-200 dark:border-emerald-700 px-3 py-2 text-sm hover:bg-emerald-50 dark:hover:bg-emerald-900',
-          sidebar: 'rounded-2xl border border-emerald-200 dark:border-emerald-800 p-4',
-          sidebarHr: 'my-4 border-emerald-200 dark:border-emerald-800',
-          expandButton: 'w-full text-xs px-3 py-2 rounded-lg border border-emerald-200 dark:border-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-900',
-          collapseButton: 'mt-2 w-full text-xs px-3 py-2 rounded-lg border border-emerald-200 dark:border-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-900',
-          prose: 'prose prose-emerald dark:prose-invert max-w-none',
-          footer: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 text-xs text-emerald-500 dark:text-emerald-400',
-          tocHover: 'hover:bg-emerald-50 dark:hover:bg-emerald-900'
-        }
-      };
-      
-      // ===== Apply Theme Classes =====
-      function applyThemeClasses() {
-        const currentTheme = document.documentElement.classList.contains('emerald-theme') ? 'emerald' : 'slate';
-        const theme = themes[currentTheme];
-        
-        document.body.className = theme.body;
-        document.querySelector('header').className = theme.header;
-        document.getElementById('docSubtitle').className = theme.subtitle;
-        document.getElementById('timelineNav').className = theme.timeline;
-        document.getElementById('search').className = theme.searchInput;
-        document.getElementById('clearSearch').className = theme.clearButton;
-        document.getElementById('colorSchemeToggle').className = theme.colorButton;
-        document.getElementById('themeToggle').className = theme.themeButton;
-        document.querySelector('aside nav').className = theme.sidebar;
-        document.querySelector('aside hr').className = theme.sidebarHr;
-        document.getElementById('expandAll').className = theme.expandButton;
-        document.getElementById('collapseAll').className = theme.collapseButton;
-        document.getElementById('content').className = theme.prose;
-        document.querySelector('footer').className = theme.footer;
-      }
-      
+
       // ===== Read Metadata from Content =====
       const firstArticle = document.querySelector('#content article');
       const docTitle = firstArticle?.querySelector('meta[name="doc-title"]')?.content || 'Untitled Document';
       const docSubtitle = firstArticle?.querySelector('meta[name="doc-subtitle"]')?.content || '';
       const timelineStepsData = firstArticle?.querySelector('meta[name="timeline-steps"]')?.content;
       const timelineLabelsData = firstArticle?.querySelector('meta[name="timeline-labels"]')?.content;
-      
+
       // ===== Populate Header from Metadata =====
       document.getElementById('docTitle').textContent = docTitle;
       document.getElementById('docSubtitle').textContent = docSubtitle;
       document.title = docTitle; // Also update browser tab title
-      
-      // ===== Color Scheme Handling =====
-      const availableThemes = Object.keys(themes);
-      let currentThemeIndex = 0;
-      
+
+      // ===== Theme packs: only control article "prose-*" family
+      // ===== Theme packs: control article prose family AND base <body> ink/background
+const THEME_PACKS = {
+  slate: {
+    proseClass: 'prose-slate',
+    bodyClass: 'bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 pb-[env(safe-area-inset-bottom)]'
+  },
+  emerald: {
+    proseClass: 'prose-emerald',
+    bodyClass: 'bg-white text-emerald-900 dark:bg-emerald-950 dark:text-emerald-100 pb-[env(safe-area-inset-bottom)]'
+  }
+};
+const availableThemes = Object.keys(THEME_PACKS);
+
+
+      function applyTheme(themeKey){
+  const pack = THEME_PACKS[themeKey] || THEME_PACKS.slate;
+
+  // Toggle a single class on <html> to switch CSS variables for the chrome (hero, borders, hovers, etc.)
+  document.documentElement.classList.toggle('theme-emerald', themeKey === 'emerald');
+
+  // Swap the base page ink/background so the hero’s transparent wash reveals the correct hue
+  document.body.className = pack.bodyClass;
+
+  // Swap the prose color family for the article
+  const content = document.getElementById('content');
+  content.className = `prose ${pack.proseClass} dark:prose-invert max-w-none`;
+
+  // Persist
+  try { localStorage.setItem('colorScheme', themeKey); } catch(_) {}
+}
+
+
       // Initialize from localStorage
+      let currentThemeIndex = 0;
       try {
         const saved = localStorage.getItem('colorScheme');
-        if (saved && themes[saved]) {
-          currentThemeIndex = availableThemes.indexOf(saved);
-          if (currentThemeIndex === -1) currentThemeIndex = 0;
-        }
-      } catch (_) {}
-      
+        if (saved && THEME_PACKS[saved]) currentThemeIndex = availableThemes.indexOf(saved);
+      } catch(_) {}
+
+      // ===== Color Scheme Toggle =====
       const colorBtn = document.getElementById('colorSchemeToggle');
       colorBtn?.addEventListener('click', () => {
         const root = document.documentElement;
-        
-        // Cycle to next theme
+
+        // If user is in light mode, flip to dark first so accent differences are visible
+        if (!root.classList.contains('dark')) {
+          root.classList.add('dark');
+          try { localStorage.setItem('theme','dark'); } catch(_){}
+          document.getElementById('themeToggle')?.setAttribute('aria-pressed','true');
+        }
+
+        // Cycle theme
         currentThemeIndex = (currentThemeIndex + 1) % availableThemes.length;
         const newTheme = availableThemes[currentThemeIndex];
-        
-        // Update HTML class (for now, keeping the old logic for emerald)
-        if (newTheme === 'emerald') {
-          root.classList.add('emerald-theme');
-        } else {
-          root.classList.remove('emerald-theme');
-        }
-        
-        // Save preference
-        try { 
-          localStorage.setItem('colorScheme', newTheme); 
-        } catch(_) {}
-        
-        // Apply theme classes
-        applyThemeClasses();
-        
-        // Rebuild TOC to apply new hover styles
+        applyTheme(newTheme);
+
+        // Rebuild TOC (not strictly required now, but harmless)
         buildTOC();
       });
-      
-      // ===== Theme Handling =====
+
+      // ===== Theme (dark/light) Handling =====
       const themeBtn = document.getElementById('themeToggle');
       if(themeBtn) {
         themeBtn.setAttribute('aria-pressed', String(document.documentElement.classList.contains('dark')));
@@ -339,40 +398,31 @@
             themeBtn?.setAttribute('aria-pressed', String(isDark));
           }
         };
-        if (mq.addEventListener) {
-          mq.addEventListener('change', onChange);
-        } else if (mq.addListener) {
-          mq.addListener(onChange); // Safari <14
-        }
+        if (mq.addEventListener) mq.addEventListener('change', onChange);
+        else if (mq.addListener) mq.addListener(onChange); // Safari <14
       } catch (_) {}
 
       // ===== Expand/Collapse Functionality =====
       const getDetails = () => document.querySelectorAll('#content details');
       const expandBtn = document.getElementById('expandAll');
       const collapseBtn = document.getElementById('collapseAll');
-      
-      // Only show buttons if there are details elements
+
       if (getDetails().length === 0) {
         if(expandBtn) expandBtn.hidden = true;
         if(collapseBtn) collapseBtn.hidden = true;
       } else {
-        expandBtn?.addEventListener('click', () => {
-          getDetails().forEach(d => { d.open = true; });
-        });
-        
-        collapseBtn?.addEventListener('click', () => {
-          getDetails().forEach(d => { d.open = false; });
-        });
+        expandBtn?.addEventListener('click', () => { getDetails().forEach(d => d.open = true); });
+        collapseBtn?.addEventListener('click', () => { getDetails().forEach(d => d.open = false); });
       }
-      
+
       // ===== Add Back to Top Links =====
       (function addBackToTopLinks(){
         $$('#content > article').forEach((article, index, arr) => {
-            if (index === arr.length - 1) return;
-            const wrapper = document.createElement('div');
-            wrapper.className = 'mt-6 flex justify-end';
-            wrapper.innerHTML = `<a href="#top" class="text-sm underline decoration-dotted">Back to top</a>`;
-            article.appendChild(wrapper);
+          if (index === arr.length - 1) return;
+          const wrapper = document.createElement('div');
+          wrapper.className = 'mt-6 flex justify-end';
+          wrapper.innerHTML = `<a href="#top" class="text-sm underline decoration-dotted">Back to top</a>`;
+          article.appendChild(wrapper);
         });
       })();
 
@@ -386,12 +436,9 @@
           return { id: h.id, text: h.textContent.trim(), level: h.tagName.toLowerCase() };
         });
 
-        const isEmerald = document.documentElement.classList.contains('emerald-theme');
-        const hoverClasses = themes[isEmerald ? 'emerald' : 'slate'].tocHover;
-
         toc.innerHTML = items.map(({id, text, level}) => {
           const pad = level === 'h3' ? ' pl-4' : '';
-          return `<li><a href="#${id}" class="block px-2 py-1.5 rounded ${hoverClasses}${pad}">${text}</a></li>`;
+          return `<li><a href="#${id}" class="toc-link block px-2 py-1.5 rounded${pad}">${text}</a></li>`;
         }).join('');
 
         const links = $$('#toc a');
@@ -415,28 +462,19 @@
         const wrap = document.getElementById('timelineWrap');
         const list = document.getElementById('timeline');
         const coda = document.getElementById('timelineCoda');
-        
-        // Check if timeline metadata exists
-        if (!timelineStepsData || !wrap || !list) {
-          if(wrap) wrap.hidden = true;
-          return;
-        }
-        
-        // Parse timeline data
+
+        if (!timelineStepsData || !wrap || !list) { if(wrap) wrap.hidden = true; return; }
+
         const steps = timelineStepsData.split(',').map(s => s.trim());
         const labels = timelineLabelsData ? timelineLabelsData.split(',').map(s => s.trim()) : [];
-        
-        if (steps.length === 0) {
-          wrap.hidden = true;
-          return;
-        }
-        
+
+        if (!steps.length) { wrap.hidden = true; return; }
         wrap.hidden = false;
 
         const mkStep = (id, label) => (
           `<li class="flex items-center gap-2"><span class="inline-block w-[14px] h-[14px] rounded-full border-2 border-current bg-current"></span><a href="#${id}" class="hover:underline">${label}</a></li>`
         );
-        
+
         const segments = [];
         steps.forEach((id, idx) => {
           const el = $$('#content h2, #content h3').find(h => slug(h.textContent) === id);
@@ -447,7 +485,7 @@
         });
         list.innerHTML = segments.join('');
       })();
-      
+
       // ===== Search Highlighter =====
       (function searchHL(){
         const input = document.getElementById('search');
@@ -480,9 +518,14 @@
           restore(); 
         });
       })();
-      
-      // ===== Apply initial theme classes =====
-      applyThemeClasses();
+
+      // ===== Apply initial theme pack to prose =====
+      try {
+        const saved = localStorage.getItem('colorScheme');
+        applyTheme(saved && THEME_PACKS[saved] ? saved : 'slate');
+      } catch(_){
+        applyTheme('slate');
+      }
     });
   </script>
 </body>
