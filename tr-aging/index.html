@@ -280,14 +280,36 @@
       document.title = docTitle; // Also update browser tab title
       
       // ===== Color Scheme Handling =====
+      const availableThemes = Object.keys(themes);
+      let currentThemeIndex = 0;
+      
+      // Initialize from localStorage
+      try {
+        const saved = localStorage.getItem('colorScheme');
+        if (saved && themes[saved]) {
+          currentThemeIndex = availableThemes.indexOf(saved);
+          if (currentThemeIndex === -1) currentThemeIndex = 0;
+        }
+      } catch (_) {}
+      
       const colorBtn = document.getElementById('colorSchemeToggle');
       colorBtn?.addEventListener('click', () => {
         const root = document.documentElement;
-        const isEmerald = root.classList.toggle('emerald-theme');
+        
+        // Cycle to next theme
+        currentThemeIndex = (currentThemeIndex + 1) % availableThemes.length;
+        const newTheme = availableThemes[currentThemeIndex];
+        
+        // Update HTML class (for now, keeping the old logic for emerald)
+        if (newTheme === 'emerald') {
+          root.classList.add('emerald-theme');
+        } else {
+          root.classList.remove('emerald-theme');
+        }
         
         // Save preference
         try { 
-          localStorage.setItem('colorScheme', isEmerald ? 'emerald' : 'slate'); 
+          localStorage.setItem('colorScheme', newTheme); 
         } catch(_) {}
         
         // Apply theme classes
