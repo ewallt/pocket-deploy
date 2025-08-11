@@ -34,6 +34,10 @@
     .dark-theme .nav-button{background:#3c3c3c;border:1px solid #4a4a4a;color:#ccc}
     .dark-theme .nav-button:hover{background:#4a4a4a}
     .dark-theme .nav-button.active{background:#fff;color:#2d2d30}
+
+.nav-button:focus-visible{outline:2px solid var(--nav-border);outline-offset:2px}
+.variable-theme .prose a{color:var(--accent-text);text-underline-offset:2px}
+
     
     /* --- New Variable-Based Theme Engine --- */
     :root {
@@ -537,24 +541,55 @@
         hover_style: 'btn-light-text'
       },
       'teal-matrix': {
-        name: 'Teal Matrix', type: 'variable', isDark: true,
-        vars: {
-          '--bg-gradient': 'linear-gradient(135deg,#0a231c 0%,#1a3a31 50%,#2e5e50 100%)',
-          '--text': '#ecf0f1', '--accent-text': '#ace0d5',
-          '--nav-bg': '#345e55', '--nav-border': '#92b3a9', '--nav-text': '#ecf0f1',
-          '--nav-hover-bg': '#427569', '--nav-active-bg': '#0a231c', '--nav-active-text': '#ecf0f1'
-        },
-        hover_style: 'btn-light-text'
-      },
+  name: 'Teal Matrix', type: 'variable', isDark: true,
+  vars: {
+    '--bg-gradient': 'linear-gradient(135deg,#07201b 0%,#0d2f27 45%,#135348 100%)',
+    '--text': '#eaf6f3',
+    '--accent-text': '#9de8d9',
+    '--nav-bg': '#13433a',
+    '--nav-border': '#6fb7a7',
+    '--nav-text': '#eaf6f3',
+    '--nav-hover-bg': '#175247',
+    '--nav-active-bg': '#0a2b24',
+    '--nav-active-text': '#ffffff'
+  },
+  hover_style: 'btn-light-text'
+}
+,'emerald-paper': {
+  name:'Emerald Paper', type:'variable', isDark:false,
+  vars:{
+    '--bg-gradient':'#f7fbf9',
+    '--text':'#1e2b28',
+    '--accent-text':'#0f7f6d',
+    '--nav-bg':'#e7f3ef',
+    '--nav-border':'#86c8ba',
+    '--nav-text':'#1e2b28',
+    '--nav-hover-bg':'#d7ece6',
+    '--nav-active-bg':'#bfe3d9',
+    '--nav-active-text':'#1e2b28'
+  },
+  hover_style:'btn-dark-text'
+},
       'scorched-gold': {
-        name: 'Scorched Gold', type: 'variable', isDark: false,
-        vars: {
-          '--bg-gradient': '#fdfbf5', '--text': '#2a1d15', '--accent-text': '#d4a24c',
-          '--nav-bg': '#f8f4e8', '--nav-border': '#d4a24c', '--nav-text': '#2a1d15',
-          '--nav-hover-bg': '#f0c475', '--nav-active-bg': '#f0c475', '--nav-active-text': '#2a1d15'
-        },
-        hover_style: 'btn-dark-text'
-      }
+  name: 'Scorched Gold', type: 'variable', isDark: false,
+  vars: {
+    '--bg-gradient': '#fdfbf5',
+    '--text': '#2a1d15',
+
+    /* Deeper ochre for headings/accents (≥4.5:1 on bg) */
+    '--accent-text': '#996515',
+
+    /* Nav: clearer separation + distinct hover vs active */
+    '--nav-bg': '#f8f4e8',
+    '--nav-border': '#996515',   // stronger, matches accent (≈4.52:1 vs nav bg)
+    '--nav-text': '#2a1d15',
+    '--nav-hover-bg': '#f3cd86', // lighter than active
+    '--nav-active-bg': '#c48b2b',// darker than hover
+    '--nav-active-text': '#2a1d15'
+  },
+  hover_style: 'btn-dark-text'
+}
+
     };
     
     function applyThemeClasses(themeName) {
