@@ -3,16 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Health and Longevity: Key Themes from Recent Research</title>
+  <title>Threaded Reader</title>
 
   <!-- Theme Bootstrap (runs before page paint to prevent flicker) -->
   <script>
   (function () {
     const root = document.documentElement;
     try {
-      const saved = localStorage.getItem('theme');
-      const isDark = saved !== 'light'; // Default to dark if no preference is saved
+      const savedTheme = localStorage.getItem('theme');
+      const savedColor = localStorage.getItem('colorScheme');
+      const isDark = savedTheme !== 'light'; // Default to dark if no preference is saved
       root.classList.toggle('dark', isDark);
+      if (savedColor === 'emerald') {
+        root.classList.add('emerald-theme');
+      }
     } catch (_) {}
   })();
   </script>
@@ -38,24 +42,43 @@
     :where(h2,h3,h4){ scroll-margin-top: 84px; }
     mark { background: #fde68a; padding: .1em .2em; border-radius: .2rem; }
     @media (max-width: 380px){ .prose { font-size: .96rem; } }
+    
+    /* Default Blue Theme */
     .active-link { color: rgb(59,130,246); font-weight: 700; }
+    
+    /* Emerald Theme - Active links */
+    .emerald-theme .active-link { 
+      color: #10b981 !important; 
+      font-weight: 700; 
+    }
   </style>
 </head>
+
 <body class="bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 pb-[env(safe-area-inset-bottom)]">
 
   <!-- Header -->
   <header id="top" class="hero border-b border-slate-200/60 dark:border-slate-800/60">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-between gap-4">
       <div>
-        <h1 class="text-2xl sm:text-3xl font-bold font-newspaper tracking-tight">Health and Longevity: Key Themes from Recent Research</h1>
-        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400">This briefing synthesizes key themes and findings from the provided sources regarding diet, exercise, sleep, and environmental toxins, highlighting their profound impact on health, aging, and disease prevention.</p>
+        <h1 id="docTitle" class="text-2xl sm:text-3xl font-bold font-newspaper tracking-tight">Loading...</h1>
+        <p id="docSubtitle" class="text-sm sm:text-base text-slate-600 dark:text-slate-400"></p>
       </div>
       <div class="flex items-center gap-2">
         <label for="search" class="sr-only">Search</label>
         <input id="search" type="search" placeholder="Search…" class="hidden md:block w-56 rounded-xl border border-slate-300/70 dark:border-slate-700/70 bg-white/70 dark:bg-slate-900/60 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400" />
-        <button id="clearSearch" class="hidden md:inline-flex text-xs px-2 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900">Clear</button>
-        <button id="themeToggle" class="inline-flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-900" title="Toggle dark mode" aria-pressed="false">
-          <span class="inline md:hidden"></span>
+        <button id="clearSearch" type="button" class="hidden md:inline-flex text-xs px-2 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900">Clear</button>
+        <button id="colorSchemeToggle" type="button" class="inline-flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-900" title="Change color scheme">
+          <span class="inline md:hidden">Colors</span>
+          <svg aria-hidden="true" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/>
+            <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/>
+            <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/>
+            <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/>
+            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 7.012 17.461 2 12 2z"/>
+          </svg>
+        </button>
+        <button id="themeToggle" type="button" class="inline-flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-900" title="Toggle dark mode" aria-pressed="false">
+          <span class="inline md:hidden">Theme</span>
           <svg aria-hidden="true" class="w-5 h-5 hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
           <svg aria-hidden="true" class="w-5 h-5 dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
         </button>
@@ -64,7 +87,7 @@
 
     <!-- Timeline -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6" id="timelineWrap" hidden>
-      <nav aria-label="Journey timeline" class="text-slate-500 dark:text-slate-400">
+      <nav aria-label="Journey timeline" id="timelineNav" class="text-slate-500 dark:text-slate-400">
         <ol id="timeline" class="grid grid-cols-3 sm:grid-cols-6 items-center gap-x-2 gap-y-1 text-[11px] sm:text-sm"></ol>
         <div id="timelineCoda" class="mt-2 text-[11px] sm:text-xs"></div>
       </nav>
@@ -78,187 +101,201 @@
         <h2 class="text-sm font-semibold mb-2">Sections</h2>
         <ol id="toc" class="space-y-1 text-sm"></ol>
         <hr class="my-4 border-slate-200 dark:border-slate-800" />
-        <button id="expandAll" class="w-full text-xs px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900">Expand All</button>
-        <button id="collapseAll" class="mt-2 w-full text-xs px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900">Collapse All</button>
+        <button id="expandAll" type="button" class="w-full text-xs px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900">Expand All</button>
+        <button id="collapseAll" type="button" class="mt-2 w-full text-xs px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900">Collapse All</button>
       </nav>
     </aside>
 
-    <!-- CONTENT -->
+    <!-- ============ CONTENT DROP ZONE ============ -->
     <section id="content" class="prose prose-slate dark:prose-invert max-w-none">
-      <article class="rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
-        <h2>I. The Critical Role of Diet in Health and Disease</h2>
-        <p>Diet is fundamentally linked to health outcomes, with a poor diet contributing to a significant portion of global deaths. The concept of a "one-size-fits-all" diet is being challenged by the advent of personalized nutrition.</p>
-        <h3>A. The Dangers of Ultra-Processed Foods (UPFs)</h3>
-        <p>Ultra-Processed Foods (UPFs) are identified as "alien, industrially produced, unnatural substances; they're not even food." These foods are characterized by:</p>
-        <ul>
-          <li><strong>Chemical Additives:</strong> Including coloring agents, various sweeteners (e.g., high-fructose corn syrup, maltodextrin), hydrogenated oils, palm oil, and emulsifiers (e.g., soy lecithin, xanthan gum).</li>
-          <li><strong>Physical Alterations:</strong> Manufacturing processes like molding, extrusion, and prefrying maximize digestibility and accelerate absorption, leading to "spikes in blood glucose and insulin." This is in contrast to dietary fiber, which "slows digestion, reduces glucose spikes, and does us a lot of good."</li>
-          <li><strong>Health Consequences:</strong> UPFs are associated with a wide array of severe health issues, including "fatty liver disease, most types of cancer, sleep disorders, inflammatory bowel disease, depression, and dementia." A significant statistic states, "A 62 percent increase in all-cause mortality is linked to more than four servings per day of UPF."</li>
-          <li><strong>Weight Gain and Addiction:</strong> A randomized trial demonstrated that participants consuming UPF diets gained weight, while those on unprocessed diets lost weight (Figure 3.1, Diet). An individual experiment showed a 15-pound weight gain in a month, accompanied by "enormous changes in connectivity between the habit, automatic behavior bits at the back in the cerebellum and the reward addiction bits in the middle of the limbic system and associated brain regions," and elevated hunger hormones (leptin) and inflammation (C-reactive protein).</li>
-        </ul>
-        <h3>B. Macronutrient Considerations: Carbs, Protein, and Fat</h3>
-        <p><strong>Carbohydrates:</strong> "Carbotoxicity" refers to the risks of excessive carbohydrate intake. Moderation is key, as both very low (&lt;40%) and very high (&gt;70%) daily caloric intake from carbs are linked to increased all-cause mortality. The quality of carbohydrates matters:</p>
-        <ul>
-          <li><strong>Good Carbs:</strong> Resistant starch and high-quality dietary fiber (25-30 grams per day) are associated with a "15-30 percent reduced all-cause and cardiovascular mortality, type 2 diabetes, and colon cancer."</li>
-          <li><strong>Low-Quality Carbs:</strong> Fast-digesting sugars, potato products, and refined grains have a high glycemic load, raising insulin levels and promoting weight gain.</li>
-        </ul>
-        <p><strong>Protein:</strong> Plant-based proteins are consistently shown to be healthier. Substitution of plant for animal protein for 3% of caloric intake was associated with a "40 percent less cancer-related mortality."</p>
-        <p><strong>Fat:</strong> The "quality of the fat, not so much the content level" is crucial.</p>
-        <ul>
-          <li><strong>Harmful Fats:</strong> Trans fat and saturated fat are linked to increased total mortality (Figure 3.2, Diet).</li>
-          <li><strong>Beneficial Fats:</strong> Monounsaturated and polyunsaturated fats are associated with reduced total mortality (Figure 3.2, Diet).</li>
-        </ul>
-        <p><strong>Ketogenic Diet:</strong> While popular for weight loss, it's associated with "higher cholesterol and cardiovascular risk, brain fog, flu-like illness (keto-flu), and promoting fatty liver disease." A randomized trial showed a plant-based, low-fat diet led to more weight loss than a ketogenic diet, with participants on the ketogenic diet ingesting ~700 more calories daily. High-fat diets have also been linked to mitochondrial dysfunction transmitted epigenetically.</p>
-        <p><strong>Dairy:</strong> Despite historical guidance towards low-fat dairy, recent reports suggest consumption of "two or more servings of dairy daily was associated with 22 percent less cardiovascular disease and 17 percent less all-cause mortality," particularly for yogurt (without sweeteners) and hard cheeses.</p>
-        <h3>C. Salt Intake</h3>
-        <p>The link between sodium intake and hypertension is clear, though the magnitude of effect can vary. Moderate consumption (1-2 teaspoons of salt/day, or 2g sodium) is generally not problematic, but "increased cardiovascular risk became obvious at levels of more than 5 grams of sodium per day." The average American's intake is about 3.5 grams. High salt diets can also reduce blood flow to the brain and potentially impair cognition. Using potassium chloride salt substitutes has shown promising results in reducing hypertension (40% reduction) and all-cause/cardiovascular mortality.</p>
-        <h3>D. Beneficial Dietary Patterns and Components</h3>
-        <p><strong>Plant-Based Diets:</strong> "Plant-based foods are plainly healthier." They are linked to reduced risk of type 2 diabetes (23%), all-cause mortality, cardiovascular deaths, and cancer. A vegan diet enhanced immune system responsiveness compared to a ketogenic diet.</p>
-        <p><strong>Fiber:</strong> Found in fruits, vegetables, legumes, whole grains, nuts, and seeds. It is the "polar opposite of ultra-processed foods—it slows digestion, lessens glucose spikes, and helps reduce cholesterol." A high-fiber diet is associated with "31 percent less heart disease and 16 percent less type 2 diabetes or colon cancer."</p>
-        <p><strong>Healthy Fats (Olive Oil, Nuts/Seeds, Fatty Fish):</strong></p>
-        <ul>
-          <li><strong>Olive Oil:</strong> Consumption is tied to a "20 percent lower all-cause mortality," and reductions in cardiovascular, cancer, and neurodegenerative-related deaths. Daily consumption of 7 grams (half a tablespoon) or more of olive oil was associated with a "28 percent less risk of dementia."</li>
-          <li><strong>Nuts and Seeds:</strong> A handful per day is associated with a "20 percent lower risk of cardiovascular disease" and can be linked to lower risks of obesity and weight gain despite caloric density.</li>
-          <li><strong>Fatty Fish:</strong> Rich in omega-3 fatty acids, contributing to overall health.</li>
-        </ul>
-        <p><strong>Mediterranean Diet:</strong> Considered the "whole package," it is robustly supported by numerous randomized trials and observational studies, showing significant reductions in "death from any cause—cardiovascular diseases, coronary heart disease, myocardial infarction, cancer, neurodegenerative diseases, and diabetes." Even for individuals with established heart disease, it reduced cardiovascular events by 26-33%. The "green MED diet," with added walnuts, green tea, and plant-based protein shakes, showed some advantages over the standard Mediterranean diet in preliminary studies.</p>
-        <p><strong>Taurine:</strong> This amino acid, primarily found in animal products, decreases with age and its deficiency is linked to several diseases. Supplementation in rhesus monkeys showed "health span" benefits, including reduced fasting glucose and improved mitochondrial function. However, human randomized trials are needed to establish its role in healthy aging.</p>
-        <h3>E. Caloric Restriction and Time-Restricted Eating</h3>
-        <p>Calorie reduction (20-50%) and time-restricted eating (e.g., 16:8 schedule or 5:2 intermittent fasting) are intensely studied for promoting longevity and have shown benefits on insulin-signaling and other pathways, often mirroring the effects of more extreme calorie restriction. While some trials show similar weight loss and metabolic improvements between calorie-restriction and time-restricted diets, others indicate that early-day time restriction can be superior for weight loss and fat mass reduction.</p>
-        <h3>F. The Emergence of the AI Diet (Personalized Nutrition)</h3>
-        <p>The concept of a "one-size-fits-all universal diet—one that is optimal for all people—is naive." Personalized nutrition recognizes individual uniqueness based on "genome, metabolism, gut microbiome, and environment."</p>
-        <ul>
-          <li><strong>Glucose Spikes:</strong> Continuous Glucose Monitors (CGMs) can measure individual glucose spikes in response to food, exercise, sleep, and stress, providing a "window into an individual's nutritional health." While preventing spikes is a popular idea, clear data linking spike avoidance to fewer disease outcomes is still needed.</li>
-          <li><strong>Gut Microbiome as Key Determinant:</strong> A landmark 2015 study found the "key determinant [of glucose spikes] turned out to be the person's gut microbiome," which is shaped by diet, genetics, social contacts, and medications. This was reinforced by a UK study that also looked at triglyceride response, noting no correlation between glucose and triglyceride responses, suggesting glucose tracking alone is insufficient for full personalized nutrition.</li>
-          <li><strong>Proteomic Signatures for Dietary Adherence:</strong> New research uses plasma proteomic signatures to objectively assess adherence to dietary patterns, providing a more robust measure than self-reported food diaries. This approach has shown potential in estimating years of life gained based on adherence to diets like Mediterranean, DASH, and plant-based diets.</li>
-        </ul>
-      </article>
-
-      <article class="mt-6 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
-        <h2>II. Exercise: The "Most Potent Medical Intervention"</h2>
-        <p>Exercise is championed as "the single most effective medical intervention that we know," offering "diverse potent salutary health impacts across all our organ systems."</p>
-        <h3>A. Comprehensive Benefits</h3>
-        <p>Regular exercise leads to favorable adaptations in numerous organ systems, including the "cardiovascular system, brain, pancreas, skeletal muscle, gastrointestinal tract... liver, adipose tissue, gut microbiome, and peripheral blood vessels." Specific benefits include:</p>
-        <ul>
-          <li><strong>Metabolic Improvement:</strong> Increased insulin sensitivity, protection against atherosclerosis, and improved cardiovascular function.</li>
-          <li><strong>Anti-inflammatory and Immune Support:</strong> Reduces body-wide and brain inflammation, improves immune system responsiveness, and enhances mitochondrial function.</li>
-          <li><strong>Stress Resilience:</strong> It appears to condition the body to deal with stress at a cellular level, enhancing "repair mechanisms."</li>
-          <li><strong>Multi-Omics Insights:</strong> Extensive rat studies, involving "nine and a half thousand assays, 19 tissues, 25 different measurement platforms," reveal profound, comprehensive changes across the body when exercising regularly.</li>
-        </ul>
-        <h3>B. Types and Intensity of Exercise</h3>
-        <ul>
-          <li><strong>Aerobic Exercise:</strong> Long considered important for cardiovascular fitness.</li>
-          <li><strong>Strength, Resistance, and Balance Training:</strong> Crucially important, especially with age-related muscle loss. Activities like push-ups, squats, lunges, and using weights/bands are recommended. "Sixty minutes per week may represent a plateau" for resistance training's impact on all-cause mortality.</li>
-          <li><strong>Grip Strength:</strong> A significant prognostic metric, representative of overall strength. "Every 5 kilograms of hand grip makes a difference," and strengthening it can be achieved through simple exercises.</li>
-          <li><strong>Walking:</strong> Even lower step counts show benefits; 2,700 steps/day for older women showed reduced all-cause mortality, plateauing around 7,500 steps/day. A meta-analysis showed benefits starting at 2,500 steps/day (8% mortality reduction) and progressing up to 8,800 steps/day (60% reduction). Faster walking speeds offer more protection from type 2 diabetes.</li>
-          <li><strong>Intensity:</strong> Higher intensity exercise may offer additional benefits, though not necessarily recommended for everyone.</li>
-          <li><strong>Sex-Specific Findings:</strong> Research shows "profound" differences in exercise's impact on fat tissue between males and females, with implications for insulin signaling and metabolism.</li>
-        </ul>
-        <h3>C. Emerging Areas in Exercise Science</h3>
-        <ul>
-          <li><strong>Exerkines and Extracellular Vesicles (EVs):</strong> Proteins secreted with exercise are under investigation for their roles in mediating exercise benefits.</li>
-          <li><strong>Individualized Exercise:</strong> Companies like Svexa are developing products to "individualize training" based on sensor data (heart rate, heart rate variability, accelerometry) and potentially blood markers like lactate and glucose.</li>
-        </ul>
-      </article>
-
-      <article class="mt-6 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
-        <h2>III. Sleep: A Pillar of Health and Waste Clearance</h2>
-        <p>Sleep is essential for health, with regularity and optimal duration playing crucial roles in longevity and cognitive function.</p>
-        <h3>A. Sleep Regularity and Mortality</h3>
-        <p>The "sleep regularity index (SRI)" is strongly correlated with "all-cause, cardiovascular, and cancer mortality" (Figure 3.9, Sleep). Consistent sleep patterns are vital for overall health.</p>
-        <h3>B. Optimal Sleep Duration</h3>
-        <p>Approximately seven hours is identified as the optimal sleep duration.</p>
-        <ul>
-          <li><strong>Short Sleep:</strong> Less than 6.5 hours of sleep at ages 50-60 was associated with a "30 percent increased risk of dementia." Short sleep can also lead to increased caloric intake and "deleterious pro-inflammatory changes." Losing even one hour of sleep (e.g., due to daylight savings) has been linked to a "significant rise in heart attacks."</li>
-          <li><strong>Long Sleep:</strong> More than eight hours of sleep is associated with "cognitive and mental health decline, as well as unfavorable changes in brain structure," and a "heightened all-cause mortality (by approximately 30%)."</li>
-          <li><strong>Cardiovascular Risk:</strong> Every one-hour decrease in sleep below the 7-8 hour threshold is associated with a 6% higher risk of total cardiovascular disease.</li>
-        </ul>
-        <h3>C. Brain Waste Clearance (Glymphatics)</h3>
-        <p>Non-REM sleep, particularly "stage 3 slow-wave deep sleep," is critical for the brain's "glymphatic" drainage system, which efficiently removes metabolic waste.</p>
-        <ul>
-          <li><strong>Impaired Clearance:</strong> Diminished drainage is prominent in aged brains and neurodegenerative diseases like Alzheimer's (β-amyloid and tau accumulation) and Parkinson's (alpha-synuclein).</li>
-          <li><strong>Medication Impact:</strong> Alarmingly, commonly used sleep aids like Ambien (a benzodiazepine) "backfires and actually suppresses waste disposal," and are associated with a "heightened risk of Alzheimer’s disease and dementia."</li>
-        </ul>
-      </article>
-
-      <article class="mt-6 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
-        <h2>IV. Environmental Toxins: A Growing Threat</h2>
-        <p>Environmental toxins, particularly air pollution and microplastics, pose significant and pervasive health hazards.</p>
-        <h3>A. Air Pollution</h3>
-        <ul>
-          <li><strong>Leading Contributor to Disease Burden:</strong> "Particulate matter air pollution was the leading contributor to the global disease burden."</li>
-          <li><strong>Health Impacts:</strong> Short-term exposure to fine particulate matter (PM2.5 and PM10) is linked to "increased all-cause, cardiovascular, and respiratory mortality," accounting for "About one million deaths globally per year."</li>
-          <li><strong>No Safe Threshold:</strong> "No safe threshold has been identified for chronic effect of PM2.5 on cardiovascular health."</li>
-          <li><strong>Broader Consequences:</strong> Chronic exposure to PM2.5 is related to an estimated "20 percent of type 2 diabetes." Air pollution is also associated with "cognitive decline, a reduced immune response to COVID-19 vaccination, and increased blood pressure." Mechanisms include "body-wide inflammation, compromised immune function, increased oxidative stress."</li>
-        </ul>
-        <h3>B. Noise Pollution</h3>
-        <p>Chronic noise pollution, especially at night, is associated with "increased stress hormones, body-wide inflammation, high blood pressure, heart disease, and type 2 diabetes."</p>
-        <h3>C. Microplastics and Nanoplastics (MNPs)</h3>
-        <p>MNPs are ubiquitous, carrying "over ten thousand chemicals such as bisphenols and phthalates," and are found in our environment, food, air, water, and bottled water.</p>
-        <ul>
-          <li><strong>Pervasive Human Presence:</strong> MNPs have been detected in various human tissues and organs, including "arteries, brains, blood clots, liver, gut, lung, placentas, testicles, and other tissues." In bottled water, "over 240,000 particles" per liter, with 90% being nanoplastics.</li>
-          <li><strong>Severe Health Hazards:</strong> The presence of MNPs in atherosclerotic plaque was found in 58% of patients undergoing carotid artery surgery, correlating with "marked inflammation of the arteries" and a "more than fourfold heightened risk of heart attack, stroke, or death" over three years. Polyethylene was present in 58% and polyvinyl chloride in 12% of patients' plaques. Detected in all twenty-three men's testes studied, associated with "less weight of the testes and lower sperm count." Elevated fecal microplastics were found in patients with inflammatory bowel disease, correlating with disease severity. Cancer cells spread at an accelerated rate and transfer MNPs to daughter cells in response to exposure. MNPs are associated with an "increased risk of asthma, various cancers, interstitial lung disease, cognitive decline, cardiometabolic disease, neurodevelopmental delay, premature births, and infertility." MNPs have been detected within human brain cells, including in patients with brain tumors. Brains of individuals with dementia showed "2 to 10-times higher" MNP concentrations (median 26,076 μg g−1) compared to normal brains (median 4,917 μg g−1).</li>
-        </ul>
-      </article>
-
-      <article class="mt-6 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
-        <h2>V. Advancements in Understanding Aging and Disease Risk</h2>
-        <p>New technologies are providing unprecedented insights into health and disease, enabling more personalized approaches.</p>
-        <h3>A. Organ Age Clocks</h3>
-        <p>Blood protein analysis can now reveal "organ age gaps," indicating how much older or younger specific organs are compared to chronological age.</p>
-        <ul>
-          <li><strong>Individual Variability:</strong> "About 1 in 5 individuals were an 'extreme ager' for at least 1 organ, but only 2% had accelerated aging for multiple organs."</li>
-          <li><strong>Predictive Power:</strong> Accelerated organ aging predicts future disease risk: "accelerated heart agers were 5-fold more likely to develop heart failure, the brain agers to more likely to manifest Alzheimer’s disease, muscle aging predicted gait impairment, and kidney aging predicted metabolic syndrome and high blood pressure."</li>
-          <li><strong>Mortality Link:</strong> A gap between chronological age and organ age is associated with "increased mortality during 15-year follow-up" (Figure, The Emergence of Protein Organ Clocks).</li>
-        </ul>
-        <h3>B. Alzheimer's Disease Biomarker (p-Tau217)</h3>
-        <p>A "breakthrough discovery" is the highly accurate plasma biomarker, p-Tau217, for tracking brain neuropathology associated with Alzheimer's disease. This blood test has the potential to guide interventions for lowering Alzheimer's risk, similar to how cholesterol levels guide statin use.</p>
-        <h3>C. Genomics vs. Proteomics</h3>
-        <p>While genomics (DNA variants) provides crucial information about disease risk, it's "incomplete." Proteomics, metabolomics, epigenomics, and microbiome data offer a more comprehensive understanding of individual health and susceptibility to conditions, especially as technology allows for the assay of an increasing number of plasma proteins (now up to 11,000).</p>
-      </article>
+      <!-- DROP ARTICLE HERE -->
       
-      <article class="mt-6 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
-        <h2>Conclusion</h2>
-        <p>The sources collectively underscore the multi-faceted nature of healthy aging and disease prevention. While diet, exercise, and sleep remain foundational pillars, their intricate biological mechanisms are being elucidated with advanced "omics" technologies. Furthermore, the pervasive and detrimental impact of environmental toxins, particularly ultra-processed foods, air pollution, and microplastics, represents a significant and urgent public health challenge. The future of health interventions appears to lie in personalized strategies, informed by comprehensive biological data, to counteract these threats and promote optimal well-being.</p>
-      </article>
+<article class="rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+<meta name="doc-title" content="The Modern Guide to Eating for Healthy Aging">
+<meta name="doc-subtitle" content="An evidence-based look at what to eat and what to avoid, from the dangers of ultra-processed foods to the proven benefits of the Mediterranean diet.">
+<meta name="timeline-steps" content="ultra-processed-foods-the-modern-dietary-threat,additives-essentials-sugar-salt,macronutrients-carbs-protein-and-fat,lifestyle-habits-caffeine-alcohol,food-choices-meat-vs-plants,the-gold-standard-the-mediterranean-diet,eating-patterns-supplements">
+<meta name="timeline-labels" content="UPFs,Additives,Macros,Habits,Choices,Med Diet,Patterns">
 
-      <div class="mt-8 flex items-center justify-between">
-        <a href="#top" class="text-sm underline decoration-dotted">Back to top</a>
-        <span class="text-xs text-slate-500 dark:text-slate-400">Threaded Reader — single‑file template</span>
-      </div>
+<h2>Ultra-Processed Foods: The Modern Dietary Threat</h2>
+<p>The saying “You are what you eat” has been around since 1826, and for good reason. A massive assessment across 195 countries concluded that a <strong>poor diet is linked to 22 percent of all deaths worldwide</strong>. That’s more than tobacco, cancer, or any other single health risk. What is clear is that the global epidemic of diabetes and obesity has been fueled, at least in part, by what we're eating, often under the heavy influence of "Big Food"—an oligopoly of multinational corporations.</p>
+<p>Big Food makes a lot of these. <strong>Ultra-processed foods (UPFs)</strong> are like UFOs; they're alien, industrially produced substances that barely qualify as food. They're damaged by industrial processing in two main ways: chemically and physically.</p>
+<p>First, they're loaded with chemical additives. Second, the physical manufacturing process—molding, extrusion, and pre-frying—is designed to make these foods hyper-digestible. This causes sharp spikes in your blood glucose and insulin, which is the exact opposite of what dietary fiber does.</p>
+<details class="mt-4">
+<summary class="font-semibold cursor-pointer">Common UPF Additives & Ingredients to Avoid</summary>
+<div class="pt-2">
+<p>This is a partial list of common industrial ingredients found in UPFs: coloring agents, sweeteners such as maltodextrin, high-fructose corn syrup, fruit juice concentrates, dextrose, lactose, artificial sweeteners, hydrogenated oils, palm oil, calcium propionate, soy protein isolate, modified starches such as maltitol, calcium caseinate, hydrolyzed beef gelatin, and emulsifiers such as soy lecithin, xanthan gum, guar gum, and diacetyl tartaric acid esters of mono- and diglycerides.</p>
+</div>
+</details>
+<details class="mt-4">
+<summary class="font-semibold cursor-pointer">Understanding the NOVA Food Classification</summary>
+<div class="pt-2">
+<p>The NOVA food classification system is a helpful guide. It categorizes food into four groups:</p>
+<ul>
+<li><strong>Group 1:</strong> Unprocessed or minimally processed foods.</li>
+<li><strong>Group 2:</strong> Processed culinary ingredients (like oils and salt).</li>
+<li><strong>Group 3:</strong> Processed foods (canned fish, simple breads).</li>
+<li><strong>Group 4:</strong> Ultra-processed foods.</li>
+</ul>
+</div>
+</details>
+<p class="mt-4">In a well-known randomized trial from the NIH, researchers let two groups eat as much as they wanted for two weeks. The UPF group ate an <strong>extra 500 calories a day</strong> and gained a significant amount of weight, likely because UPFs disrupt the gut-brain signals that tell you when you're full.</p>
+<p>Eating a diet rich in these foods is linked to a shocking list of problems: an 80% higher risk of metabolic syndrome, a 40% higher risk of type 2 diabetes, and a 66% higher risk of death from cardiovascular disease. For healthy aging, you have to restrict UPFs as much as possible. It’s likely that in the future, UPFs will be viewed much like cigarettes are today.</p>
+</article>
+
+<article class="mt-6 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+<h2>Additives & Essentials: Sugar & Salt</h2>
+<p>Sugar activates our brain's reward circuits, but too much is clearly bad. The biggest culprit is <strong>sugar-sweetened beverages</strong>. One large study found that high consumption of sugary drinks, including fruit juices, was associated with a 24% increased risk of death from any cause. 🍭</p>
+<p>The story for <strong>artificial sweeteners</strong> is a bit more complicated. While some reviews find no compelling evidence of risk, other research shows some can impair how your body handles glucose, partly by altering your gut microbiome. Overall, the data on artificial sweeteners is unfavorable, though not as worrying as for high sugar.</p>
+<p>The link between high <strong>sodium (salt)</strong> intake and hypertension is clear. 🧂 The average American eats about 3.5 grams of sodium per day, but studies suggest that cardiovascular risk increases significantly above 5 grams. An interesting alternative for those without kidney disease is a potassium chloride salt substitute, which one trial found reduced the incidence of hypertension by 40%.</p>
+</article>
+
+<article class="mt-6 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+<h2>Macronutrients: Carbs, Protein, and Fat</h2>
+<p>The term <strong>carbotoxicity</strong> highlights the risks of eating too many carbohydrates. Both very low-carb and very high-carb diets are linked with increased mortality. The <strong>type of carb</strong> is what really matters. Good carbs come from dietary fiber, while bad carbs are fast-digesting sugars and refined grains.</p>
+<h3>Protein</h3>
+<p>When it comes to <strong>protein</strong>, the current recommended daily allowance (RDA) is likely too low, especially for older adults trying to prevent age-related muscle loss (sarcopenia). While higher intake is needed, high-protein diets, especially from leucine-rich animal sources, have been linked to promoting atherosclerosis. A reasonable goal might be up to 1.2 grams per kilogram of body weight.</p>
+<h3>Fat</h3>
+<p>For <strong>fat</strong>, the old advice to choose low-fat dairy is outdated. Recent studies found that people who ate more whole-fat dairy, especially yogurt and cheese, had a <em>lower</em> risk of cardiovascular disease. Like with other macronutrients, the <strong>quality of the fat</strong> matters more than the quantity. Shifting from saturated fats to plant-based unsaturated fats (found in olive oil and avocados) is key.</p>
+</article>
+
+<article class="mt-6 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+<h2>Lifestyle Habits: Caffeine & Alcohol</h2>
+<p>Good news for coffee lovers. ☕ Many large studies link coffee consumption—typically around four cups a day—with up to a <strong>30% reduced mortality</strong> and a lower risk of many diseases. While this is a correlation, not proven causation, the data is compelling. For decades, doctors warned patients to avoid coffee for fear of heart rhythm disturbances, but recent studies show this fear is largely unfounded. The totality of the data suggests coffee is not hazardous and may even offer health benefits.</p>
+<p>The evidence on <strong>alcohol</strong> is less blurry: both moderate and heavy drinking do you no good. 🍷 The old myth about the health benefits of red wine has been largely refuted. Alcohol is classified as a carcinogen. Most studies show a J-curve relationship—a potential tiny benefit at very light intake (like two drinks per week), but the risk of high blood pressure and cardiovascular disease rises quickly beyond that.</p>
+</article>
+
+<article class="mt-6 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+<h2>Food Choices: Meat vs. Plants</h2>
+<p>These two are at opposite ends of the health spectrum. <strong>Processed meats</strong> like hot dogs and bacon are classified as carcinogenic by the World Health Organization. <strong>Unprocessed red meats</strong> like beef and pork are labeled "probably carcinogenic." While some reviews argue the risk is small, the data consistently points in the wrong direction.</p>
+<p>In contrast, <strong>plant-based foods</strong> are plainly healthier. They're linked to a 23% lower risk of type 2 diabetes and substantial protection from all-cause and cardiovascular mortality. In one fascinating randomized trial of identical twins, a plant-based diet was shown to slow the pace of epigenetic aging compared to an omnivore diet. The bottom line: the more red meat you eat, especially processed kinds, the less healthy you are likely to be.</p>
+</article>
+
+<article class="mt-6 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+<h2>The Gold Standard: The Mediterranean Diet</h2>
+<p>So what does "healthy eating" actually mean? We know it includes fruits, vegetables, legumes, whole grains, nuts, seeds, healthy fats like olive oil, and fatty fish like salmon. The whole package of all these goodies is known as the <strong>Mediterranean diet</strong>. This is one of the few diets that has been rigorously tested in multiple randomized trials.</p>
+<p>The data provides robust support for its benefits in reducing death from nearly every major cause. One of the largest nutrition trials in history found that the Mediterranean diet led to a <strong>30% lower risk of heart attack, stroke, or cardiovascular death</strong> compared to a low-fat diet. It also promotes a healthy gut microbiome in older adults, which is linked to less frailty and better cognitive function. While there may be healthier diets out there, the Mediterranean diet is the best we've validated so far.</p>
+<details class="mt-4">
+<summary class="font-semibold cursor-pointer">Intriguing (But Unproven) Nutrients: Taurine & Choline</summary>
+<div class="pt-2">
+<p>A couple of other nutrients deserve more attention. <strong>Taurine</strong> is an amino acid that decreases as we age. Supplementing it in aged monkeys led to notable health improvements. <strong>Choline</strong> is an essential nutrient important for brain function, found in eggs, beef, and fish. While both show promise, we need human randomized trials to confirm their benefits for healthy aging.</p>
+</div>
+</details>
+</article>
+
+<article class="mt-6 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+<h2>Eating Patterns & Supplements</h2>
+<p>There's been a lot of interest in whether eating less (<strong>caloric restriction</strong>) or eating within a specific time window (<strong>time-restricted eating</strong>) can promote longevity. While these approaches work in some animal models, the results in humans are contradictory. Some trials show benefits, while others show no difference. No fasting diet has been definitively proven to provide anti-aging properties in humans. A sensible piece of advice is simply to eat an early dinner and maintain a regular eating schedule from day to day.</p>
+<p>Finally, a word on <strong>supplements</strong>. Despite heavy marketing, there's little to no hard evidence that taking most vitamins or supplements is beneficial, especially if you're already eating a healthy diet. In fact, some evidence suggests potential harm from certain supplements.</p>
+<details class="mt-4">
+<summary class="font-semibold cursor-pointer">A Look at the Evidence on Common Supplements</summary>
+<div class="pt-2">
+<p>Large, high-quality trials of Vitamin D and omega-3 fatty acids failed to show any benefit for preventing cardiovascular disease or cancer. The evidence for multivitamins slowing cognitive decline is weak and contested. Some evidence suggests an increased stroke risk from calcium plus vitamin D. For now, it's best to get your nutrients from real food and take any claims about "longevity vitamins" with a grain of salt.</p>
+</div>
+</details>
+</article>
+
+      <!-- DO NOT PASTE ANYTHING AFTER THIS POINT -->
     </section>
   </main>
 
   <footer class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 text-xs text-slate-500 dark:text-slate-400">
-    Threaded Reader — single-file study
+    Threaded Reader — a single-file template
   </footer>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // ===== Feature toggles (edit these) =====
-      const FEATURE = {
-        TIMELINE: true,
-        TIMELINE_STEPS: [
-          'i-the-critical-role-of-diet-in-health-and-disease',
-          'ii-exercise-the-most-potent-medical-intervention',
-          'iii-sleep-a-pillar-of-health-and-waste-clearance',
-          'iv-environmental-toxins-a-growing-threat',
-          'v-advancements-in-understanding-aging-and-disease-risk',
-          'conclusion'
-        ],
-        TIMELINE_LABELS: {
-          'i-the-critical-role-of-diet-in-health-and-disease': 'Diet',
-          'ii-exercise-the-most-potent-medical-intervention': 'Exercise',
-          'iii-sleep-a-pillar-of-health-and-waste-clearance': 'Sleep',
-          'iv-environmental-toxins-a-growing-threat': 'Toxins',
-          'v-advancements-in-understanding-aging-and-disease-risk': 'Advancements'
-        },
-        TIMELINE_CODA: '',
-      };
-
       // ===== Utilities =====
       const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
       const slug = s => s.toLowerCase().replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-');
+      
+      // ===== Theme Definitions =====
+      const themes = {
+        slate: {
+          body: 'bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 pb-[env(safe-area-inset-bottom)]',
+          header: 'hero border-b border-slate-200/60 dark:border-slate-800/60',
+          subtitle: 'text-sm sm:text-base text-slate-600 dark:text-slate-400',
+          timeline: 'text-slate-500 dark:text-slate-400',
+          searchInput: 'hidden md:block w-56 rounded-xl border border-slate-300/70 dark:border-slate-700/70 bg-white/70 dark:bg-slate-900/60 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400',
+          clearButton: 'hidden md:inline-flex text-xs px-2 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900',
+          colorButton: 'inline-flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-900',
+          themeButton: 'inline-flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-900',
+          sidebar: 'rounded-2xl border border-slate-200 dark:border-slate-800 p-4',
+          sidebarHr: 'my-4 border-slate-200 dark:border-slate-800',
+          expandButton: 'w-full text-xs px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900',
+          collapseButton: 'mt-2 w-full text-xs px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900',
+          prose: 'prose prose-slate dark:prose-invert max-w-none',
+          footer: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 text-xs text-slate-500 dark:text-slate-400',
+          tocHover: 'hover:bg-slate-50 dark:hover:bg-slate-900'
+        },
+        emerald: {
+          body: 'bg-white text-emerald-900 dark:bg-emerald-950 dark:text-emerald-100 pb-[env(safe-area-inset-bottom)] emerald-theme',
+          header: 'hero border-b border-emerald-200/60 dark:border-emerald-800/60',
+          subtitle: 'text-sm sm:text-base text-slate-700 dark:text-slate-300',
+          timeline: 'text-sm sm:text-base text-slate-700 dark:text-slate-300',
+          searchInput: 'hidden md:block w-56 rounded-xl border border-emerald-300/70 dark:border-emerald-700/70 bg-white/70 dark:bg-emerald-900/60 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400',
+          clearButton: 'hidden md:inline-flex text-xs px-2 py-2 rounded-lg border border-emerald-200 dark:border-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-900',
+          colorButton: 'inline-flex items-center justify-center rounded-xl border border-emerald-200 dark:border-emerald-700 px-3 py-2 text-sm hover:bg-emerald-50 dark:hover:bg-emerald-900',
+          themeButton: 'inline-flex items-center justify-center rounded-xl border border-emerald-200 dark:border-emerald-700 px-3 py-2 text-sm hover:bg-emerald-50 dark:hover:bg-emerald-900',
+          sidebar: 'rounded-2xl border border-emerald-200 dark:border-emerald-800 p-4',
+          sidebarHr: 'my-4 border-emerald-200 dark:border-emerald-800',
+          expandButton: 'w-full text-xs px-3 py-2 rounded-lg border border-emerald-200 dark:border-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-900',
+          collapseButton: 'mt-2 w-full text-xs px-3 py-2 rounded-lg border border-emerald-200 dark:border-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-900',
+          prose: 'prose prose-emerald dark:prose-invert max-w-none',
+          footer: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 text-xs text-emerald-500 dark:text-emerald-400',
+          tocHover: 'hover:bg-emerald-50 dark:hover:bg-emerald-900'
+        }
+      };
+      
+      // ===== Apply Theme Classes =====
+      function applyThemeClasses() {
+        const currentTheme = document.documentElement.classList.contains('emerald-theme') ? 'emerald' : 'slate';
+        const theme = themes[currentTheme];
+        
+        document.body.className = theme.body;
+        document.querySelector('header').className = theme.header;
+        document.getElementById('docSubtitle').className = theme.subtitle;
+        document.getElementById('timelineNav').className = theme.timeline;
+        document.getElementById('search').className = theme.searchInput;
+        document.getElementById('clearSearch').className = theme.clearButton;
+        document.getElementById('colorSchemeToggle').className = theme.colorButton;
+        document.getElementById('themeToggle').className = theme.themeButton;
+        document.querySelector('aside nav').className = theme.sidebar;
+        document.querySelector('aside hr').className = theme.sidebarHr;
+        document.getElementById('expandAll').className = theme.expandButton;
+        document.getElementById('collapseAll').className = theme.collapseButton;
+        document.getElementById('content').className = theme.prose;
+        document.querySelector('footer').className = theme.footer;
+      }
+      
+      // ===== Read Metadata from Content =====
+      const firstArticle = document.querySelector('#content article');
+      const docTitle = firstArticle?.querySelector('meta[name="doc-title"]')?.content || 'Untitled Document';
+      const docSubtitle = firstArticle?.querySelector('meta[name="doc-subtitle"]')?.content || '';
+      const timelineStepsData = firstArticle?.querySelector('meta[name="timeline-steps"]')?.content;
+      const timelineLabelsData = firstArticle?.querySelector('meta[name="timeline-labels"]')?.content;
+      
+      // ===== Populate Header from Metadata =====
+      document.getElementById('docTitle').textContent = docTitle;
+      document.getElementById('docSubtitle').textContent = docSubtitle;
+      document.title = docTitle; // Also update browser tab title
+      
+      // ===== Color Scheme Handling =====
+      const colorBtn = document.getElementById('colorSchemeToggle');
+      colorBtn?.addEventListener('click', () => {
+        const root = document.documentElement;
+        const isEmerald = root.classList.toggle('emerald-theme');
+        
+        // Save preference
+        try { 
+          localStorage.setItem('colorScheme', isEmerald ? 'emerald' : 'slate'); 
+        } catch(_) {}
+        
+        // Apply theme classes
+        applyThemeClasses();
+        
+        // Rebuild TOC to apply new hover styles
+        buildTOC();
+      });
       
       // ===== Theme Handling =====
       const themeBtn = document.getElementById('themeToggle');
@@ -287,24 +324,28 @@
         }
       } catch (_) {}
 
-      // ===== Page Interactions =====
-      const detailsAll = () => $$('#content details');
+      // ===== Expand/Collapse Functionality =====
+      const getDetails = () => document.querySelectorAll('#content details');
       const expandBtn = document.getElementById('expandAll');
       const collapseBtn = document.getElementById('collapseAll');
       
-      // Conditionally hide expand/collapse buttons if less than 2 <details> elements exist
-      if (detailsAll().length < 2) {
+      // Only show buttons if there are details elements
+      if (getDetails().length === 0) {
         if(expandBtn) expandBtn.hidden = true;
         if(collapseBtn) collapseBtn.hidden = true;
+      } else {
+        expandBtn?.addEventListener('click', () => {
+          getDetails().forEach(d => { d.open = true; });
+        });
+        
+        collapseBtn?.addEventListener('click', () => {
+          getDetails().forEach(d => { d.open = false; });
+        });
       }
       
-      expandBtn?.addEventListener('click', () => detailsAll().forEach(d => d.open = true));
-      collapseBtn?.addEventListener('click', () => detailsAll().forEach(d => d.open = false));
-      
-      // Add "Back to top" links to each article
+      // ===== Add Back to Top Links =====
       (function addBackToTopLinks(){
         $$('#content > article').forEach((article, index, arr) => {
-            // Don't add a link to the very last article
             if (index === arr.length - 1) return;
             const wrapper = document.createElement('div');
             wrapper.className = 'mt-6 flex justify-end';
@@ -313,7 +354,7 @@
         });
       })();
 
-      // ===== Dynamic Content Builders =====
+      // ===== Build Table of Contents =====
       function buildTOC(){
         const toc = document.getElementById('toc');
         if (!toc) return;
@@ -322,9 +363,13 @@
           if (!h.id) h.id = slug(h.textContent);
           return { id: h.id, text: h.textContent.trim(), level: h.tagName.toLowerCase() };
         });
+
+        const isEmerald = document.documentElement.classList.contains('emerald-theme');
+        const hoverClasses = themes[isEmerald ? 'emerald' : 'slate'].tocHover;
+
         toc.innerHTML = items.map(({id, text, level}) => {
           const pad = level === 'h3' ? ' pl-4' : '';
-          return `<li><a href="#${id}" class="block px-2 py-1.5 rounded hover:bg-slate-50 dark:hover:bg-slate-900${pad}">${text}</a></li>`;
+          return `<li><a href="#${id}" class="block px-2 py-1.5 rounded ${hoverClasses}${pad}">${text}</a></li>`;
         }).join('');
 
         const links = $$('#toc a');
@@ -343,31 +388,45 @@
       }
       buildTOC();
 
+      // ===== Build Timeline from Metadata =====
       (function buildTimeline(){
-        if (!FEATURE.TIMELINE) return;
-        const steps = FEATURE.TIMELINE_STEPS.filter(Boolean);
         const wrap = document.getElementById('timelineWrap');
         const list = document.getElementById('timeline');
         const coda = document.getElementById('timelineCoda');
-        if (!wrap || !list) return;
-        if (!steps.length) { wrap.hidden = true; return; }
+        
+        // Check if timeline metadata exists
+        if (!timelineStepsData || !wrap || !list) {
+          if(wrap) wrap.hidden = true;
+          return;
+        }
+        
+        // Parse timeline data
+        const steps = timelineStepsData.split(',').map(s => s.trim());
+        const labels = timelineLabelsData ? timelineLabelsData.split(',').map(s => s.trim()) : [];
+        
+        if (steps.length === 0) {
+          wrap.hidden = true;
+          return;
+        }
+        
         wrap.hidden = false;
 
         const mkStep = (id, label) => (
           `<li class="flex items-center gap-2"><span class="inline-block w-[14px] h-[14px] rounded-full border-2 border-current bg-current"></span><a href="#${id}" class="hover:underline">${label}</a></li>`
         );
+        
         const segments = [];
         steps.forEach((id, idx) => {
           const el = $$('#content h2, #content h3').find(h => slug(h.textContent) === id);
           if (el && !el.id) el.id = id;
-          const label = FEATURE.TIMELINE_LABELS[id] || (el?.textContent || id.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()));
+          const label = labels[idx] || (el?.textContent || id.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()));
           segments.push(mkStep(id, label));
           if (idx !== steps.length - 1) segments.push('<li class="h-[2px] bg-current opacity-35"></li>');
         });
         list.innerHTML = segments.join('');
-        if (coda && FEATURE.TIMELINE_CODA) coda.innerHTML = FEATURE.TIMELINE_CODA;
       })();
       
+      // ===== Search Highlighter =====
       (function searchHL(){
         const input = document.getElementById('search');
         const clearBtn = document.getElementById('clearSearch');
@@ -399,6 +458,9 @@
           restore(); 
         });
       })();
+      
+      // ===== Apply initial theme classes =====
+      applyThemeClasses();
     });
   </script>
 </body>
