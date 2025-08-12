@@ -10,11 +10,12 @@
   (function () {
     const root = document.documentElement;
     try {
-      const savedTheme = localStorage.getItem('theme');            // 'light' | 'dark' | null
-      const savedColor = localStorage.getItem('colorScheme');      // 'slate' | 'emerald' | future
-      const isDark = savedTheme !== 'light';                       // default to dark if unset
+      const savedTheme = localStorage.getItem('theme');       // 'light' | 'dark' | null
+      const savedColor = localStorage.getItem('colorScheme'); // 'slate' | 'emerald' | future
+      const isDark = savedTheme !== 'light';                  // default to dark if unset
       root.classList.toggle('dark', isDark);
-      root.classList.toggle('theme-emerald', savedColor === 'emerald');
+      // Apply colored theme classes ONLY in dark mode; light is always neutral slate
+      root.classList.toggle('theme-emerald', isDark && savedColor === 'emerald');
     } catch (_) {}
   })();
   </script>
@@ -27,7 +28,7 @@
 
   <!-- Google Font (optional) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
 
   <style>
@@ -127,20 +128,21 @@
   --hero-wash: rgba(5,150,105,.10);               /* emerald-600 wash */
 }
 .dark.theme-emerald{
-  --border: rgb(15,118,110);                      /* emerald-800 */
-  --hover-bg: rgb(6,78,59);                       /* emerald-900 */
-  --btn-border: rgb(15,118,110);                  /* emerald-800 */
-  --btn-hover-bg: rgb(6,78,59);                   /* emerald-900 */
-  --input-border: rgba(21,128,61,0.7);            /* green-ish/70 */
-  --input-bg: rgba(6,95,70,0.60);                 /* emerald-900/60 */
+  /* ↑ Give borders enough contrast on dark emerald surfaces */
+  --border: rgba(110,231,183,0.55);                /* emerald-300 @ 55% */
+  --hover-bg: rgb(6,78,59);                        /* emerald-900 */
+  --btn-border: rgba(110,231,183,0.45);            /* slightly softer than borders */
+  --btn-hover-bg: rgb(6,78,59);                    /* emerald-900 */
+  --input-border: rgba(110,231,183,0.55);          /* match border contrast */
+  --input-bg: rgba(6,95,70,0.60);                  /* emerald-900/60 */
 
-  /* ↑ keep footer accent, but make subtitle/timeline brighter for readability */
-  --footer-fg: rgb(110,231,183);                  /* emerald-300/400 */
-  --subtitle-fg: rgb(226,252,236);                /* emerald-100 */
-  --timeline-fg: rgb(187,247,208);                /* emerald-200 */
+  /* text accents for readability */
+  --footer-fg: rgb(110,231,183);                   /* emerald-300/400 */
+  --subtitle-fg: rgb(226,252,236);                 /* emerald-100 */
+  --timeline-fg: rgb(187,247,208);                 /* emerald-200 */
 
-  /* hero base & gradient (emerald dark) */
-  --hero-base: rgb(2,44,34);                      /* emerald-950 (#022c22) */
+  /* hero base & gradient (unchanged, stays emerald) */
+  --hero-base: rgb(2,44,34);                       /* emerald-950 (#022c22) */
   --hero-r1: rgba(16,185,129,.14);
   --hero-r2: rgba(163,230,53,.12);
   --hero-wash: rgba(5,150,105,.10);
@@ -150,7 +152,8 @@
 
 </head>
 
-<body class="app-root pb-[env(safe-area-inset-bottom)]">
+<body class="bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 pb-[env(safe-area-inset-bottom)]">
+
 
 
   <!-- Header -->
@@ -203,11 +206,16 @@
       </nav>
     </aside>
 
+    <section id="content" class="prose prose-slate dark:prose-invert max-w-none">
+      <!-- DROP ARTICLE HERE -->
+
+
+
     <!-- ============ CONTENT DROP ZONE ============ -->
     <section id="content" class="prose prose-slate dark:prose-invert max-w-none">
       <!-- DROP ARTICLE HERE -->
 
-<article class="rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+<article class="rounded-2xl surface p-6">
 <meta name="doc-title" content="The Modern Guide to Eating for Healthy Aging">
 <meta name="doc-subtitle" content="An evidence-based look at what to eat and what to avoid, from the dangers of ultra-processed foods to the proven benefits of the Mediterranean diet.">
 <meta name="timeline-steps" content="ultra-processed-foods-the-modern-dietary-threat,additives-essentials-sugar-salt,macronutrients-carbs-protein-and-fat,lifestyle-habits-caffeine-alcohol,food-choices-meat-vs-plants,the-gold-standard-the-mediterranean-diet,eating-patterns-supplements">
@@ -239,14 +247,14 @@
 <p>Eating a diet rich in these foods is linked to a shocking list of problems: an 80% higher risk of metabolic syndrome, a 40% higher risk of type 2 diabetes, and a 66% higher risk of death from cardiovascular disease. For healthy aging, you have to restrict UPFs as much as possible. It’s likely that in the future, UPFs will be viewed much like cigarettes are today.</p>
 </article>
 
-<article class="mt-6 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+<article class="rounded-2xl surface p-6">
 <h2>Additives & Essentials: Sugar & Salt</h2>
 <p>Sugar activates our brain's reward circuits, but too much is clearly bad. The biggest culprit is <strong>sugar-sweetened beverages</strong>. One large study found that high consumption of sugary drinks, including fruit juices, was associated with a 24% increased risk of death from any cause. 🍭</p>
 <p>The story for <strong>artificial sweeteners</strong> is a bit more complicated. While some reviews find no compelling evidence of risk, other research shows some can impair how your body handles glucose, partly by altering your gut microbiome. Overall, the data on artificial sweeteners is unfavorable, though not as worrying as for high sugar.</p>
 <p>The link between high <strong>sodium (salt)</strong> intake and hypertension is clear. 🧂 The average American eats about 3.5 grams of sodium per day, but studies suggest that cardiovascular risk increases significantly above 5 grams. An interesting alternative for those without kidney disease is a potassium chloride salt substitute, which one trial found reduced the incidence of hypertension by 40%.</p>
 </article>
 
-<article class="mt-6 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+<article class="rounded-2xl surface p-6">
 <h2>Macronutrients: Carbs, Protein, and Fat</h2>
 <p>The term <strong>carbotoxicity</strong> highlights the risks of eating too many carbohydrates. Both very low-carb and very high-carb diets are linked with increased mortality. The <strong>type of carb</strong> is what really matters. Good carbs come from dietary fiber, while bad carbs are fast-digesting sugars and refined grains.</p>
 <h3>Protein</h3>
@@ -255,19 +263,19 @@
 <p>For <strong>fat</strong>, the old advice to choose low-fat dairy is outdated. Recent studies found that people who ate more whole-fat dairy, especially yogurt and cheese, had a <em>lower</em> risk of cardiovascular disease. Like with other macronutrients, the <strong>quality of the fat</strong> matters more than the quantity. Shifting from saturated fats to plant-based unsaturated fats (found in olive oil and avocados) is key.</p>
 </article>
 
-<article class="mt-6 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+<article class="rounded-2xl surface p-6">
 <h2>Lifestyle Habits: Caffeine & Alcohol</h2>
 <p>Good news for coffee lovers. ☕ Many large studies link coffee consumption—typically around four cups a day—with up to a <strong>30% reduced mortality</strong> and a lower risk of many diseases. While this is a correlation, not proven causation, the data is compelling. For decades, doctors warned patients to avoid coffee for fear of heart rhythm disturbances, but recent studies show this fear is largely unfounded. The totality of the data suggests coffee is not hazardous and may even offer health benefits.</p>
 <p>The evidence on <strong>alcohol</strong> is less blurry: both moderate and heavy drinking do you no good. 🍷 The old myth about the health benefits of red wine has been largely refuted. Alcohol is classified as a carcinogen. Most studies show a J-curve relationship—a potential tiny benefit at very light intake (like two drinks per week), but the risk of high blood pressure and cardiovascular disease rises quickly beyond that.</p>
 </article>
 
-<article class="mt-6 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+<article class="rounded-2xl surface p-6">
 <h2>Food Choices: Meat vs. Plants</h2>
 <p>These two are at opposite ends of the health spectrum. <strong>Processed meats</strong> like hot dogs and bacon are classified as carcinogenic by the World Health Organization. <strong>Unprocessed red meats</strong> like beef and pork are labeled "probably carcinogenic." While some reviews argue the risk is small, the data consistently points in the wrong direction.</p>
 <p>In contrast, <strong>plant-based foods</strong> are plainly healthier. They're linked to a 23% lower risk of type 2 diabetes and substantial protection from all-cause and cardiovascular mortality. In one fascinating randomized trial of identical twins, a plant-based diet was shown to slow the pace of epigenetic aging compared to an omnivore diet. The bottom line: the more red meat you eat, especially processed kinds, the less healthy you are likely to be.</p>
 </article>
 
-<article class="mt-6 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+<article class="rounded-2xl surface p-6">
 <h2>The Gold Standard: The Mediterranean Diet</h2>
 <p>So what does "healthy eating" actually mean? We know it includes fruits, vegetables, legumes, whole grains, nuts, seeds, healthy fats like olive oil, and fatty fish like salmon. The whole package of all these goodies is known as the <strong>Mediterranean diet</strong>. This is one of the few diets that has been rigorously tested in multiple randomized trials.</p>
 <p>The data provides robust support for its benefits in reducing death from nearly every major cause. One of the largest nutrition trials in history found that the Mediterranean diet led to a <strong>30% lower risk of heart attack, stroke, or cardiovascular death</strong> compared to a low-fat diet. It also promotes a healthy gut microbiome in older adults, which is linked to less frailty and better cognitive function. While there may be healthier diets out there, the Mediterranean diet is the best we've validated so far.</p>
@@ -279,7 +287,7 @@
 </details>
 </article>
 
-<article class="mt-6 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+<article class="rounded-2xl surface p-6">
 <h2>Eating Patterns & Supplements</h2>
 <p>There's been a lot of interest in whether eating less (<strong>caloric restriction</strong>) or eating within a specific time window (<strong>time-restricted eating</strong>) can promote longevity. While these approaches work in some animal models, the results in humans are contradictory. Some trials show benefits, while others show no difference. No fasting diet has been definitively proven to provide anti-aging properties in humans. A sensible piece of advice is simply to eat an early dinner and maintain a regular eating schedule from day to day.</p>
 <p>Finally, a word on <strong>supplements</strong>. Despite heavy marketing, there's little to no hard evidence that taking most vitamins or supplements is beneficial, especially if you're already eating a healthy diet. In fact, some evidence suggests potential harm from certain supplements.</p>
@@ -290,6 +298,8 @@
 </div>
 </details>
 </article>
+
+  
 
       <!-- DO NOT PASTE ANYTHING AFTER THIS POINT -->
     </section>
@@ -332,22 +342,37 @@ const THEME_PACKS = {
 const availableThemes = Object.keys(THEME_PACKS);
 
 
-      function applyTheme(themeKey){
+function applyTheme(themeKey){
+  const root = document.documentElement;
+  const isDark = root.classList.contains('dark');
+
+  const THEME_PACKS = {
+    slate: {
+      proseClass: 'prose-slate',
+      bodyClass: 'bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 pb-[env(safe-area-inset-bottom)]'
+    },
+    emerald: {
+      proseClass: 'prose-emerald',
+      bodyClass: 'bg-white text-emerald-900 dark:bg-emerald-950 dark:text-emerald-100 pb-[env(safe-area-inset-bottom)]'
+    }
+  };
+
   const pack = THEME_PACKS[themeKey] || THEME_PACKS.slate;
 
-  // Toggle a single class on <html> to switch CSS variables for the chrome (hero, borders, hovers, etc.)
-  document.documentElement.classList.toggle('theme-emerald', themeKey === 'emerald');
+  // Color theme classes only attach in DARK; LIGHT is always neutral slate
+  root.classList.toggle('theme-emerald', isDark && themeKey === 'emerald');
 
-  // Swap the base page ink/background so the hero’s transparent wash reveals the correct hue
-  document.body.className = pack.bodyClass;
+  // Body ink/background:
+  document.body.className = isDark ? pack.bodyClass : THEME_PACKS.slate.bodyClass;
 
-  // Swap the prose color family for the article
+  // Article prose color family (ok to vary by theme in both modes; change if you want neutral):
   const content = document.getElementById('content');
   content.className = `prose ${pack.proseClass} dark:prose-invert max-w-none`;
 
-  // Persist
-  try { localStorage.setItem('colorScheme', themeKey); } catch(_) {}
+  // Persist choice (used when you return to dark)
+  try { localStorage.setItem('colorScheme', themeKey); } catch(_){}
 }
+
 
 
       // Initialize from localStorage
@@ -358,49 +383,77 @@ const availableThemes = Object.keys(THEME_PACKS);
       } catch(_) {}
 
       // ===== Color Scheme Toggle =====
-      const colorBtn = document.getElementById('colorSchemeToggle');
-      colorBtn?.addEventListener('click', () => {
-        const root = document.documentElement;
+const colorBtn = document.getElementById('colorSchemeToggle');
+colorBtn?.addEventListener('click', () => {
+  const root = document.documentElement;
 
-        // If user is in light mode, flip to dark first so accent differences are visible
-        if (!root.classList.contains('dark')) {
-          root.classList.add('dark');
-          try { localStorage.setItem('theme','dark'); } catch(_){}
-          document.getElementById('themeToggle')?.setAttribute('aria-pressed','true');
-        }
+  // If we're in LIGHT mode, switch to DARK and stop here (do NOT cycle color yet)
+  if (!root.classList.contains('dark')) {
+    root.classList.add('dark');
+    try { localStorage.setItem('theme','dark'); } catch(_){}
+    document.getElementById('themeToggle')?.setAttribute('aria-pressed','true');
+    return; // first click behaves like the theme toggle only
+  }
 
-        // Cycle theme
-        currentThemeIndex = (currentThemeIndex + 1) % availableThemes.length;
-        const newTheme = availableThemes[currentThemeIndex];
-        applyTheme(newTheme);
+  // Already DARK: now cycle to the next color scheme
+  currentThemeIndex = (currentThemeIndex + 1) % availableThemes.length;
+  const newTheme = availableThemes[currentThemeIndex];
+  applyTheme(newTheme);
 
-        // Rebuild TOC (not strictly required now, but harmless)
-        buildTOC();
-      });
+  // Rebuild TOC (keeps hover styles consistent with the new scheme)
+  buildTOC();
+});
+
 
       // ===== Theme (dark/light) Handling =====
-      const themeBtn = document.getElementById('themeToggle');
-      if(themeBtn) {
-        themeBtn.setAttribute('aria-pressed', String(document.documentElement.classList.contains('dark')));
+const themeBtn = document.getElementById('themeToggle');
+if (themeBtn) {
+  themeBtn.setAttribute('aria-pressed', String(document.documentElement.classList.contains('dark')));
+}
+themeBtn?.addEventListener('click', () => {
+  const root = document.documentElement;
+  const isDark = root.classList.toggle('dark');
+  try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch(_){}
+  themeBtn.setAttribute('aria-pressed', String(isDark));
+
+  if (!isDark) {
+    // Going to LIGHT → always neutralize to slate
+    root.classList.remove('theme-emerald');
+    try { localStorage.setItem('colorScheme','slate'); } catch(_){}
+    applyTheme('slate');
+  } else {
+    // Back to DARK → reapply saved (or default) color
+    let saved = 'slate';
+    try { const s = localStorage.getItem('colorScheme'); if (s) saved = s; } catch(_){}
+    applyTheme(saved);
+  }
+  buildTOC();
+});
+
+try {
+  const mq = matchMedia('(prefers-color-scheme: dark)');
+  const onChange = (e) => {
+    if (!localStorage.getItem('theme')) { // only if user hasn't forced a theme
+      const isDark = e.matches;
+      const root = document.documentElement;
+      root.classList.toggle('dark', isDark);
+      themeBtn?.setAttribute('aria-pressed', String(isDark));
+
+      if (!isDark) {
+        root.classList.remove('theme-emerald');
+        try { localStorage.setItem('colorScheme','slate'); } catch(_){}
+        applyTheme('slate');
+      } else {
+        let saved = 'slate';
+        try { const s = localStorage.getItem('colorScheme'); if (s) saved = s; } catch(_){}
+        applyTheme(saved);
       }
-      themeBtn?.addEventListener('click', () => {
-        const root = document.documentElement;
-        const isDark = root.classList.toggle('dark');
-        try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch(_){ }
-        themeBtn.setAttribute('aria-pressed', String(isDark));
-      });
-      try {
-        const mq = matchMedia('(prefers-color-scheme: dark)');
-        const onChange = (e) => {
-          if (!localStorage.getItem('theme')) {
-            const isDark = e.matches;
-            document.documentElement.classList.toggle('dark', isDark);
-            themeBtn?.setAttribute('aria-pressed', String(isDark));
-          }
-        };
-        if (mq.addEventListener) mq.addEventListener('change', onChange);
-        else if (mq.addListener) mq.addListener(onChange); // Safari <14
-      } catch (_) {}
+      buildTOC();
+    }
+  };
+  if (mq.addEventListener) mq.addEventListener('change', onChange);
+  else if (mq.addListener) mq.addListener(onChange); // Safari <14
+} catch (_) {}
 
       // ===== Expand/Collapse Functionality =====
       const getDetails = () => document.querySelectorAll('#content details');
@@ -530,3 +583,4 @@ const availableThemes = Object.keys(THEME_PACKS);
   </script>
 </body>
 </html>
+
