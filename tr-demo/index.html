@@ -5,18 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Threaded Reader</title>
 
-  <!-- Theme Bootstrap (runs before page paint to prevent flicker) -->
+  <!-- Prepaint bootstrap: set dark + theme class before paint to avoid flicker -->
   <script>
   (function () {
     const root = document.documentElement;
     try {
-      const savedTheme = localStorage.getItem('theme');
-      const savedColor = localStorage.getItem('colorScheme');
-      const isDark = savedTheme !== 'light'; // Default to dark if no preference is saved
+      const savedTheme = localStorage.getItem('theme');       // 'light' | 'dark' | null
+      const savedColor = localStorage.getItem('colorScheme'); // 'slate' | 'emerald' | future
+      const isDark = savedTheme !== 'light';                  // default to dark if unset
       root.classList.toggle('dark', isDark);
-      if (savedColor === 'emerald') {
-        root.classList.add('emerald-theme');
-      }
+      // Apply colored theme classes ONLY in dark mode; light is always neutral slate
+      root.classList.toggle('theme-emerald', isDark && savedColor === 'emerald');
     } catch (_) {}
   })();
   </script>
@@ -29,45 +28,145 @@
 
   <!-- Google Font (optional) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
 
   <style>
-    :root { color-scheme: light dark; }
-    html { scroll-behavior: smooth; }
-    .font-newspaper { font-family: 'Lora', serif; }
-    .hero { background: radial-gradient(50% 120% at 10% 10%, rgba(49,46,129,.12), transparent 60%),
-                     radial-gradient(80% 140% at 90% 10%, rgba(234,88,12,.12), transparent 70%),
-                     linear-gradient(180deg, rgba(14,165,233,.08), transparent 35%); }
-    :where(h2,h3,h4){ scroll-margin-top: 84px; }
-    mark { background: #fde68a; padding: .1em .2em; border-radius: .2rem; }
-    @media (max-width: 380px){ .prose { font-size: .96rem; } }
-    
-    /* Default Blue Theme */
-    .active-link { color: rgb(59,130,246); font-weight: 700; }
-    
-    /* Emerald Theme - Active links */
-    .emerald-theme .active-link { 
-      color: #10b981 !important; 
-      font-weight: 700; 
-    }
-  </style>
+  :root { color-scheme: light dark; }
+  html { scroll-behavior: smooth; }
+  .font-newspaper { font-family: 'Lora', serif; }
+  :where(h2,h3,h4){ scroll-margin-top: 84px; }
+  mark { background: #fde68a; padding: .1em .2em; border-radius: .2rem; }
+  @media (max-width: 380px){ .prose { font-size: .96rem; } }
+
+  /* ---------- Semantic surfaces (read from CSS variables) ---------- */
+.hero {
+  /* give the header an explicit base fill so gradient blends to the right hue */
+  background-color: var(--hero-base);
+  background:
+    radial-gradient(50% 120% at 10% 10%, var(--hero-r1), transparent 60%),
+    radial-gradient(80% 140% at 90% 10%, var(--hero-r2), transparent 70%),
+    linear-gradient(180deg, var(--hero-wash), transparent 35%);
+}
+.border-var { border-color: var(--border) !important; }
+.surface { border-width: 1px; border-style: solid; border-color: var(--border); }
+.hr-var { border-color: var(--border); }
+.subtitle { color: var(--subtitle-fg); }
+.timeline-fg { color: var(--timeline-fg); }
+.footer-note { color: var(--footer-fg); }
+.active-link { color: var(--active); font-weight: 700; }
+
+.input-surface {
+  border: 1px solid var(--input-border);
+  background-color: var(--input-bg);
+}
+.btn-surface { border: 1px solid var(--btn-border); }
+.btn-surface:hover { background: var(--btn-hover-bg); }
+.toc-link:hover { background: var(--hover-bg); }
+
+/* ---------- Slate (default) variables ---------- */
+:root{
+  /* accents / inks */
+  --active: rgb(59,130,246);                      /* sky-500 */
+  --subtitle-fg: rgb(71,85,105);                  /* slate-600 */
+  --timeline-fg: rgb(100,116,139);                /* slate-500 */
+  --footer-fg: rgb(100,116,139);                  /* slate-500 */
+
+  /* surfaces */
+  --border: rgb(226,232,240);                     /* slate-200 */
+  --hover-bg: rgb(248,250,252);                   /* slate-50 */
+  --btn-border: rgb(203,213,225);                 /* slate-300 */
+  --btn-hover-bg: rgb(248,250,252);               /* slate-50 */
+  --input-border: rgba(203,213,225,0.7);          /* slate-300/70 */
+  --input-bg: rgba(255,255,255,0.7);              /* white/70 */
+
+  /* hero base & gradient (light) */
+  --hero-base: transparent;                       /* keep light header airy */
+  --hero-r1: rgba(49,46,129,.12);                 /* indigo-700 */
+  --hero-r2: rgba(234,88,12,.12);                 /* orange-600 hint */
+  --hero-wash: rgba(14,165,233,.08);              /* sky-500 wash */
+}
+.dark{
+  --subtitle-fg: rgb(203,213,225);                /* slate-300 */
+  --timeline-fg: rgb(148,163,184);                /* slate-400 */
+  --footer-fg: rgb(148,163,184);                  /* slate-400 */
+
+  --border: rgb(30,41,59);                        /* slate-800 */
+  --hover-bg: rgb(15,23,42);                      /* slate-900 */
+  --btn-border: rgb(51,65,85);                    /* slate-700 */
+  --btn-hover-bg: rgb(15,23,42);                  /* slate-900 */
+  --input-border: rgba(51,65,85,0.7);             /* slate-700/70 */
+  --input-bg: rgba(2,6,23,0.6);                   /* slate-950/60 */
+
+  /* hero base & gradient (dark) */
+  --hero-base: rgb(2,6,23);                       /* slate-950 */
+  --hero-r1: rgba(49,46,129,.12);
+  --hero-r2: rgba(234,88,12,.12);
+  --hero-wash: rgba(14,165,233,.08);
+}
+
+/* ---------- Emerald theme overrides (light & dark) ---------- */
+.theme-emerald{
+  --active: #10b981;                              /* emerald-500 */
+
+  --border: rgb(187,247,208);                     /* emerald-200 */
+  --hover-bg: rgb(240,253,244);                   /* emerald-50 */
+  --btn-border: rgb(187,247,208);                 /* emerald-200 */
+  --btn-hover-bg: rgb(240,253,244);               /* emerald-50 */
+  --input-border: rgba(110,231,183,0.7);          /* emerald-300/70 */
+  --input-bg: rgba(255,255,255,0.7);              /* white/70 */
+
+  /* keep subtitles/timeline neutral for readability over hero */
+  --subtitle-fg: rgb(71,85,105);                  /* slate-600 */
+  --timeline-fg: rgb(71,85,105);                  /* slate-600 */
+  --footer-fg: rgb(16,185,129);                   /* emerald-500 */
+
+  /* hero base & gradient (emerald light) */
+  --hero-base: transparent;
+  --hero-r1: rgba(16,185,129,.14);                /* emerald-500 */
+  --hero-r2: rgba(163,230,53,.12);                /* lime-400 */
+  --hero-wash: rgba(5,150,105,.10);               /* emerald-600 wash */
+}
+.dark.theme-emerald{
+  --border: rgb(15,118,110);                      /* emerald-800 */
+  --hover-bg: rgb(6,78,59);                       /* emerald-900 */
+  --btn-border: rgb(15,118,110);                  /* emerald-800 */
+  --btn-hover-bg: rgb(6,78,59);                   /* emerald-900 */
+  --input-border: rgba(21,128,61,0.7);            /* green-ish/70 */
+  --input-bg: rgba(6,95,70,0.60);                 /* emerald-900/60 */
+
+  /* ↑ keep footer accent, but make subtitle/timeline brighter for readability */
+  --footer-fg: rgb(110,231,183);                  /* emerald-300/400 */
+  --subtitle-fg: rgb(226,252,236);                /* emerald-100 */
+  --timeline-fg: rgb(187,247,208);                /* emerald-200 */
+
+  /* hero base & gradient (emerald dark) */
+  --hero-base: rgb(2,44,34);                      /* emerald-950 (#022c22) */
+  --hero-r1: rgba(16,185,129,.14);
+  --hero-r2: rgba(163,230,53,.12);
+  --hero-wash: rgba(5,150,105,.10);
+}
+
+</style>
+
 </head>
 
 <body class="bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 pb-[env(safe-area-inset-bottom)]">
 
+
+
   <!-- Header -->
-  <header id="top" class="hero border-b border-slate-200/60 dark:border-slate-800/60">
+  <header id="top" class="hero border-b border-var">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-between gap-4">
       <div>
         <h1 id="docTitle" class="text-2xl sm:text-3xl font-bold font-newspaper tracking-tight">Loading...</h1>
-        <p id="docSubtitle" class="text-sm sm:text-base text-slate-600 dark:text-slate-400"></p>
+        <p id="docSubtitle" class="subtitle text-sm sm:text-base"></p>
       </div>
       <div class="flex items-center gap-2">
         <label for="search" class="sr-only">Search</label>
-        <input id="search" type="search" placeholder="Search…" class="hidden md:block w-56 rounded-xl border border-slate-300/70 dark:border-slate-700/70 bg-white/70 dark:bg-slate-900/60 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400" />
-        <button id="clearSearch" type="button" class="hidden md:inline-flex text-xs px-2 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900">Clear</button>
-        <button id="colorSchemeToggle" type="button" class="inline-flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-900" title="Change color scheme">
+        <input id="search" type="search" placeholder="Search…" class="hidden md:block w-56 rounded-xl input-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400" />
+        <button id="clearSearch" type="button" class="hidden md:inline-flex text-xs px-2 py-2 rounded-lg btn-surface">Clear</button>
+        <button id="colorSchemeToggle" type="button" class="inline-flex items-center justify-center rounded-xl btn-surface px-3 py-2 text-sm" title="Change color scheme">
           <span class="inline md:hidden">Colors</span>
           <svg aria-hidden="true" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/>
@@ -77,7 +176,7 @@
             <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 7.012 17.461 2 12 2z"/>
           </svg>
         </button>
-        <button id="themeToggle" type="button" class="inline-flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-900" title="Toggle dark mode" aria-pressed="false">
+        <button id="themeToggle" type="button" class="inline-flex items-center justify-center rounded-xl btn-surface px-3 py-2 text-sm" title="Toggle dark mode" aria-pressed="false">
           <span class="inline md:hidden">Theme</span>
           <svg aria-hidden="true" class="w-5 h-5 hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
           <svg aria-hidden="true" class="w-5 h-5 dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
@@ -87,7 +186,7 @@
 
     <!-- Timeline -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6" id="timelineWrap" hidden>
-      <nav aria-label="Journey timeline" id="timelineNav" class="text-slate-500 dark:text-slate-400">
+      <nav aria-label="Journey timeline" id="timelineNav" class="timeline-fg">
         <ol id="timeline" class="grid grid-cols-3 sm:grid-cols-6 items-center gap-x-2 gap-y-1 text-[11px] sm:text-sm"></ol>
         <div id="timelineCoda" class="mt-2 text-[11px] sm:text-xs"></div>
       </nav>
@@ -97,141 +196,73 @@
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)] gap-8">
     <!-- Sidebar -->
     <aside class="lg:sticky lg:top-4 h-max">
-      <nav aria-label="On this page" class="rounded-2xl border border-slate-200 dark:border-slate-800 p-4">
+      <nav aria-label="On this page" class="rounded-2xl surface p-4">
         <h2 class="text-sm font-semibold mb-2">Sections</h2>
         <ol id="toc" class="space-y-1 text-sm"></ol>
-        <hr class="my-4 border-slate-200 dark:border-slate-800" />
-        <button id="expandAll" type="button" class="w-full text-xs px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900">Expand All</button>
-        <button id="collapseAll" type="button" class="mt-2 w-full text-xs px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900">Collapse All</button>
+        <hr class="my-4 hr-var" />
+        <button id="expandAll" type="button" class="w-full text-xs px-3 py-2 rounded-lg btn-surface">Expand All</button>
+        <button id="collapseAll" type="button" class="mt-2 w-full text-xs px-3 py-2 rounded-lg btn-surface">Collapse All</button>
       </nav>
     </aside>
 
-    <!-- ============ CONTENT DROP ZONE ============ -->
     <section id="content" class="prose prose-slate dark:prose-invert max-w-none">
       <!-- DROP ARTICLE HERE -->
-      
+
 <article class="rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
-<meta name="doc-title" content="The Complete Guide to Remote Work Success">
-<meta name="doc-subtitle" content="Essential strategies, tools, and mindset shifts for thriving in a distributed work environment">
-<meta name="timeline-steps" content="setting-up-your-workspace,mastering-communication,time-management-strategies,building-relationships,staying-motivated,tools-and-technology">
-<meta name="timeline-labels" content="Workspace,Communication,Time Management,Relationships,Motivation,Tools">
+        <meta name="doc-title" content="The Art of Storytelling: A Brief Guide">
+        <meta name="doc-subtitle" content="Exploring the fundamental elements that make narratives compelling and memorable">
+        <meta name="timeline-steps" content="introduction-why-stories-matter,the-three-pillars-of-narrative,advanced-techniques,conclusion">
+        <meta name="timeline-labels" content="Introduction,Pillars,Techniques,Conclusion">
+        
+        <h2>Introduction: Why Stories Matter</h2>
+        <p>From ancient myths shared around a fire to modern blockbusters, storytelling is a fundamental human practice. Stories are not mere entertainment; they are the primary way we make sense of the world, convey values, share experiences, and connect with one another. A well-told story can change minds, inspire action, and endure for generations.</p>
+        <p>This guide explores the essential components that give stories their power, providing a framework for both understanding and crafting compelling narratives.</p>
+      </article>
 
-<h2>Setting Up Your Workspace</h2>
-<p>Your physical environment plays a crucial role in remote work success. A dedicated workspace helps create boundaries between work and personal life, even in a small apartment. The key is consistency—having the same spot where you "go to work" each day.</p>
+      <article class="mt-6 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+        <h2>The Three Pillars of Narrative</h2>
+        <p>At the core of every memorable story, regardless of genre or medium, lie three indispensable pillars: Character, Plot, and Setting. Mastering the interplay between these elements is the foundation of effective storytelling.</p>
+        <h3>A. Character: The Heart of the Story</h3>
+        <p>Characters are the vessels through which the audience experiences the narrative. A story without compelling characters is merely a sequence of events. To be effective, a character needs a clear desire or goal, and they must face significant obstacles in achieving it. It is the character's struggle, their choices under pressure, and their ultimate transformation (or failure to transform) that creates an emotional connection with the audience.</p>
+        <h3>B. Plot: The Engine of the Story</h3>
+        <p>Plot is the causal chain of events that unfolds in a narrative. It is more than just "what happens next"; it is the intricate design of cause and effect. A typical plot structure involves an initial state of equilibrium, an inciting incident that disrupts it, a series of rising actions and conflicts, a climax where the central conflict is resolved, and a final resolution or new equilibrium. The plot provides momentum and suspense, keeping the audience engaged and eager to discover the outcome.</p>
+        <h3>C. Setting: The World of the Story</h3>
+        <p>Setting is the time and place in which the story occurs, but it is much more than a simple backdrop. A well-realized setting can influence the mood, reveal character, and even act as an antagonist. Whether it's a futuristic cityscape, a magical forest, or a familiar suburban neighborhood, the setting provides the rules and context for the characters' actions and the unfolding plot.</p>
+      </article>
 
-<p><strong>Essential elements include:</strong> proper lighting (ideally near a window), an ergonomic chair that supports good posture, and a desk at the right height. Many remote workers underestimate the importance of good lighting—it affects both your mood and video call appearance.</p>
+      <article class="mt-6 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+        <h2>Advanced Techniques</h2>
+        <p>Beyond the fundamental pillars, skilled storytellers employ a variety of techniques to add depth, nuance, and impact to their narratives. These tools can elevate a simple story into a work of art.</p>
+        <details class="mt-4">
+          <summary class="font-semibold cursor-pointer">Technique: Show, Don't Tell</summary>
+          <div class="pt-2">
+            This is perhaps the most famous rule in creative writing. Instead of telling the audience a character is brave, show them performing a brave act. Instead of telling them a city is oppressive, describe the surveillance drones and the fearful glances of its citizens. This technique allows the audience to draw their own conclusions, making the experience more immersive and the emotional impact more profound.
+          </div>
+        </details>
+        <details class="mt-4">
+          <summary class="font-semibold cursor-pointer">Technique: Foreshadowing</summary>
+          <div class="pt-2">
+            Foreshadowing is the subtle art of planting clues or hints early in a story that will pay off later. It can be a seemingly casual line of dialogue, a recurring object, or a specific detail in the setting. When the later plot point is revealed, the audience experiences a satisfying sense of recognition and appreciates the deliberate craftsmanship of the narrative, making the story feel cohesive and inevitable.
+          </div>
+        </details>
+        <details class="mt-4">
+          <summary class="font-semibold cursor-pointer">Technique: Conflict and Tension</summary>
+          <div class="pt-2">
+            Conflict is the engine that drives narrative forward. It can be external (character vs. character, character vs. nature, character vs. society) or internal (character vs. self). Effective storytellers layer multiple types of conflict to create depth and maintain tension throughout the narrative. The key is to escalate conflicts gradually, building toward a climactic resolution that feels both surprising and inevitable.
+          </div>
+        </details>
+      </article>
 
-<details class="mt-4">
-<summary class="font-semibold cursor-pointer">Quick Workspace Setup Checklist</summary>
-<div class="pt-2">
-<ul>
-<li>✅ Dedicated space (even if it's just a corner of a room)</li>
-<li>✅ Reliable internet connection with backup plan</li>
-<li>✅ Proper lighting for video calls</li>
-<li>✅ Noise-canceling headphones</li>
-<li>✅ External monitor (game-changer for productivity)</li>
-<li>✅ Plants or personal items to make the space inviting</li>
-</ul>
-</div>
-</details>
-
-<p class="mt-4">Remember, your workspace doesn't need to be perfect from day one. Start with the basics and improve over time as you discover what works best for your specific needs and work style.</p>
-</article>
-
-<article class="mt-6 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
-<h2>Mastering Communication</h2>
-<p>Remote work transforms how we communicate. Without casual hallway conversations and in-person meetings, intentional communication becomes critical. <strong>Over-communication is often better than under-communication</strong> in remote settings.</p>
-
-<h3>Written Communication</h3>
-<p>Most remote communication happens in writing—emails, Slack messages, project updates. Clear, concise writing becomes a superpower. Always include context, be specific about what you need, and use formatting (bold, bullets) to make messages scannable.</p>
-
-<h3>Video Meetings</h3>
-<p>Video calls require different skills than in-person meetings. Start with small talk to build rapport, use the mute button strategically, and have good lighting so people can see your facial expressions. 📹</p>
-
-<p><em>Pro tip:</em> Record important meetings when possible. It helps remote team members in different time zones and serves as documentation for decisions made.</p>
-</article>
-
-<article class="mt-6 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
-<h2>Time Management Strategies</h2>
-<p>Remote work blurs the line between work and personal time. Without the natural boundaries of commuting and office hours, many remote workers struggle with either working too much or too little. Structure becomes your friend. ⏰</p>
-
-<p>The <strong>Pomodoro Technique</strong> works particularly well for remote work—25 minutes of focused work followed by a 5-minute break. It creates natural stopping points and helps maintain energy throughout the day.</p>
-
-<details class="mt-4">
-<summary class="font-semibold cursor-pointer">Popular Time Management Methods for Remote Workers</summary>
-<div class="pt-2">
-<p><strong>Time Blocking:</strong> Schedule specific blocks of time for different types of work. Deep work in the morning, meetings in the afternoon.</p>
-<p><strong>The Two-Minute Rule:</strong> If something takes less than two minutes, do it immediately rather than adding it to your to-do list.</p>
-<p><strong>Batch Processing:</strong> Group similar tasks together—respond to all emails at once, make all your calls in sequence.</p>
-</div>
-</details>
-
-<p class="mt-4">Don't forget to schedule breaks and stick to them. Remote workers often skip lunch or work through breaks, leading to burnout. Your break time is just as important as your work time.</p>
-</article>
-
-<article class="mt-6 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
-<h2>Building Relationships</h2>
-<p>One of the biggest challenges in remote work is building meaningful relationships with colleagues. Without spontaneous conversations and shared coffee breaks, relationship-building requires more intentional effort.</p>
-
-<p><strong>Virtual coffee chats</strong> are invaluable—schedule 15-30 minute informal video calls with teammates just to catch up. These conversations often lead to better collaboration and understanding of each other's work styles.</p>
-
-<p>Participate in virtual team activities when possible, even if they feel awkward at first. Virtual happy hours, online game sessions, or book clubs help create the social connections that make work more enjoyable and teams more cohesive.</p>
-
-<p>Remember that building trust remotely takes time. Be patient, consistent in your communications, and always follow through on commitments. Small gestures like remembering personal details about colleagues' lives can make a big difference.</p>
-</article>
-
-<article class="mt-6 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
-<h2>Staying Motivated</h2>
-<p>Motivation can be challenging when working alone. Without the energy of a bustling office or colleagues nearby, it's easy to feel isolated or lose momentum on projects.</p>
-
-<p>Create artificial deadlines and accountability systems. Share your goals with teammates, use project management tools to track progress visually, and celebrate small wins along the way. 🎉</p>
-
-<h3>Combating Isolation</h3>
-<p>Work from different locations occasionally—a coffee shop, library, or co-working space. The change of scenery can boost creativity and energy. Some remote workers also find "body doubling" helpful—working on video with a colleague, even if you're doing different tasks.</p>
-
-<details class="mt-4">
-<summary class="font-semibold cursor-pointer">Signs You Might Need a Motivation Boost</summary>
-<div class="pt-2">
-<ul>
-<li>Procrastinating on important tasks more than usual</li>
-<li>Feeling disconnected from your team or company mission</li>
-<li>Working in pajamas every day (comfort is good, but getting dressed can help mindset)</li>
-<li>Skipping team meetings or social interactions</li>
-<li>Difficulty concentrating for normal periods of time</li>
-</ul>
-</div>
-</details>
-</article>
-
-<article class="mt-6 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
-<h2>Tools and Technology</h2>
-<p>The right tools can make remote work seamless, while the wrong ones create friction and frustration. Focus on mastering a core set of tools rather than trying every new productivity app that comes along.</p>
-
-<p><strong>Essential categories:</strong> Communication (Slack, Teams), video conferencing (Zoom, Google Meet), project management (Asana, Trello), file sharing (Google Drive, Dropbox), and password management (1Password, Bitwarden).</p>
-
-<h3>The Power of Automation</h3>
-<p>Automate repetitive tasks wherever possible. Set up email filters, use calendar scheduling tools like Calendly, and create templates for common communications. The time you invest in setting up automation pays dividends in the long run.</p>
-
-<p>Keep your tools updated and learn keyboard shortcuts for the apps you use most. Small efficiency gains compound over time and reduce the friction of daily work.</p>
-
-<details class="mt-4">
-<summary class="font-semibold cursor-pointer">Recommended Tool Stack for Remote Workers</summary>
-<div class="pt-2">
-<p><strong>Communication:</strong> Slack for instant messaging, Zoom for video calls</p>
-<p><strong>Productivity:</strong> Notion or Obsidian for notes, Todoist for task management</p>
-<p><strong>Focus:</strong> Freedom or Cold Turkey for website blocking, Noisli for background sounds</p>
-<p><strong>Wellness:</strong> Time Out for break reminders, f.lux for screen color adjustment</p>
-</div>
-</details>
-
-<p class="mt-4">Remember: tools should serve you, not the other way around. If a tool creates more work than it saves, it's time to find an alternative or simplify your workflow.</p>
-</article>
+      <article class="mt-6 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+        <h2>Conclusion</h2>
+        <p>Whether crafting a simple anecdote or an epic novel, the principles remain the same. A compelling story is a carefully constructed harmony of relatable characters pursuing meaningful goals, a logical and engaging plot, and a setting that enriches the narrative. By mastering these elements, a storyteller can create worlds, evoke powerful emotions, and leave a lasting impression on their audience.</p>
+      </article>
 
       <!-- DO NOT PASTE ANYTHING AFTER THIS POINT -->
     </section>
   </main>
 
-  <footer class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 text-xs text-slate-500 dark:text-slate-400">
+  <footer class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 text-xs footer-note">
     Threaded Reader — a single-file template
   </footer>
 
@@ -240,172 +271,168 @@
       // ===== Utilities =====
       const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
       const slug = s => s.toLowerCase().replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-');
-      
-      // ===== Theme Definitions =====
-      const themes = {
-        slate: {
-          body: 'bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 pb-[env(safe-area-inset-bottom)]',
-          header: 'hero border-b border-slate-200/60 dark:border-slate-800/60',
-          subtitle: 'text-sm sm:text-base text-slate-600 dark:text-slate-400',
-          timeline: 'text-slate-500 dark:text-slate-400',
-          searchInput: 'hidden md:block w-56 rounded-xl border border-slate-300/70 dark:border-slate-700/70 bg-white/70 dark:bg-slate-900/60 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400',
-          clearButton: 'hidden md:inline-flex text-xs px-2 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900',
-          colorButton: 'inline-flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-900',
-          themeButton: 'inline-flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-900',
-          sidebar: 'rounded-2xl border border-slate-200 dark:border-slate-800 p-4',
-          sidebarHr: 'my-4 border-slate-200 dark:border-slate-800',
-          expandButton: 'w-full text-xs px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900',
-          collapseButton: 'mt-2 w-full text-xs px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900',
-          prose: 'prose prose-slate dark:prose-invert max-w-none',
-          footer: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 text-xs text-slate-500 dark:text-slate-400',
-          tocHover: 'hover:bg-slate-50 dark:hover:bg-slate-900'
-        },
-        emerald: {
-          body: 'bg-white text-emerald-900 dark:bg-emerald-950 dark:text-emerald-100 pb-[env(safe-area-inset-bottom)] emerald-theme',
-          header: 'hero border-b border-emerald-200/60 dark:border-emerald-800/60',
-          subtitle: 'text-sm sm:text-base text-slate-700 dark:text-slate-300',
-          timeline: 'text-sm sm:text-base text-slate-700 dark:text-slate-300',
-          searchInput: 'hidden md:block w-56 rounded-xl border border-emerald-300/70 dark:border-emerald-700/70 bg-white/70 dark:bg-emerald-900/60 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400',
-          clearButton: 'hidden md:inline-flex text-xs px-2 py-2 rounded-lg border border-emerald-200 dark:border-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-900',
-          colorButton: 'inline-flex items-center justify-center rounded-xl border border-emerald-200 dark:border-emerald-700 px-3 py-2 text-sm hover:bg-emerald-50 dark:hover:bg-emerald-900',
-          themeButton: 'inline-flex items-center justify-center rounded-xl border border-emerald-200 dark:border-emerald-700 px-3 py-2 text-sm hover:bg-emerald-50 dark:hover:bg-emerald-900',
-          sidebar: 'rounded-2xl border border-emerald-200 dark:border-emerald-800 p-4',
-          sidebarHr: 'my-4 border-emerald-200 dark:border-emerald-800',
-          expandButton: 'w-full text-xs px-3 py-2 rounded-lg border border-emerald-200 dark:border-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-900',
-          collapseButton: 'mt-2 w-full text-xs px-3 py-2 rounded-lg border border-emerald-200 dark:border-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-900',
-          prose: 'prose prose-emerald dark:prose-invert max-w-none',
-          footer: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 text-xs text-emerald-500 dark:text-emerald-400',
-          tocHover: 'hover:bg-emerald-50 dark:hover:bg-emerald-900'
-        }
-      };
-      
-      // ===== Apply Theme Classes =====
-      function applyThemeClasses() {
-        const currentTheme = document.documentElement.classList.contains('emerald-theme') ? 'emerald' : 'slate';
-        const theme = themes[currentTheme];
-        
-        document.body.className = theme.body;
-        document.querySelector('header').className = theme.header;
-        document.getElementById('docSubtitle').className = theme.subtitle;
-        document.getElementById('timelineNav').className = theme.timeline;
-        document.getElementById('search').className = theme.searchInput;
-        document.getElementById('clearSearch').className = theme.clearButton;
-        document.getElementById('colorSchemeToggle').className = theme.colorButton;
-        document.getElementById('themeToggle').className = theme.themeButton;
-        document.querySelector('aside nav').className = theme.sidebar;
-        document.querySelector('aside hr').className = theme.sidebarHr;
-        document.getElementById('expandAll').className = theme.expandButton;
-        document.getElementById('collapseAll').className = theme.collapseButton;
-        document.getElementById('content').className = theme.prose;
-        document.querySelector('footer').className = theme.footer;
-      }
-      
+
       // ===== Read Metadata from Content =====
       const firstArticle = document.querySelector('#content article');
       const docTitle = firstArticle?.querySelector('meta[name="doc-title"]')?.content || 'Untitled Document';
       const docSubtitle = firstArticle?.querySelector('meta[name="doc-subtitle"]')?.content || '';
       const timelineStepsData = firstArticle?.querySelector('meta[name="timeline-steps"]')?.content;
       const timelineLabelsData = firstArticle?.querySelector('meta[name="timeline-labels"]')?.content;
-      
+
       // ===== Populate Header from Metadata =====
       document.getElementById('docTitle').textContent = docTitle;
       document.getElementById('docSubtitle').textContent = docSubtitle;
       document.title = docTitle; // Also update browser tab title
-      
-      // ===== Color Scheme Handling =====
-      const availableThemes = Object.keys(themes);
-      let currentThemeIndex = 0;
-      
+
+      // ===== Theme packs: only control article "prose-*" family
+      // ===== Theme packs: control article prose family AND base <body> ink/background
+const THEME_PACKS = {
+  slate: {
+    proseClass: 'prose-slate',
+    bodyClass: 'bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 pb-[env(safe-area-inset-bottom)]'
+  },
+  emerald: {
+    proseClass: 'prose-emerald',
+    bodyClass: 'bg-white text-emerald-900 dark:bg-emerald-950 dark:text-emerald-100 pb-[env(safe-area-inset-bottom)]'
+  }
+};
+const availableThemes = Object.keys(THEME_PACKS);
+
+
+function applyTheme(themeKey){
+  const root = document.documentElement;
+  const isDark = root.classList.contains('dark');
+
+  const THEME_PACKS = {
+    slate: {
+      proseClass: 'prose-slate',
+      bodyClass: 'bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 pb-[env(safe-area-inset-bottom)]'
+    },
+    emerald: {
+      proseClass: 'prose-emerald',
+      bodyClass: 'bg-white text-emerald-900 dark:bg-emerald-950 dark:text-emerald-100 pb-[env(safe-area-inset-bottom)]'
+    }
+  };
+
+  const pack = THEME_PACKS[themeKey] || THEME_PACKS.slate;
+
+  // Color theme classes only attach in DARK; LIGHT is always neutral slate
+  root.classList.toggle('theme-emerald', isDark && themeKey === 'emerald');
+
+  // Body ink/background:
+  document.body.className = isDark ? pack.bodyClass : THEME_PACKS.slate.bodyClass;
+
+  // Article prose color family (ok to vary by theme in both modes; change if you want neutral):
+  const content = document.getElementById('content');
+  content.className = `prose ${pack.proseClass} dark:prose-invert max-w-none`;
+
+  // Persist choice (used when you return to dark)
+  try { localStorage.setItem('colorScheme', themeKey); } catch(_){}
+}
+
+
+
       // Initialize from localStorage
+      let currentThemeIndex = 0;
       try {
         const saved = localStorage.getItem('colorScheme');
-        if (saved && themes[saved]) {
-          currentThemeIndex = availableThemes.indexOf(saved);
-          if (currentThemeIndex === -1) currentThemeIndex = 0;
-        }
-      } catch (_) {}
-      
-      const colorBtn = document.getElementById('colorSchemeToggle');
-      colorBtn?.addEventListener('click', () => {
-        const root = document.documentElement;
-        
-        // Cycle to next theme
-        currentThemeIndex = (currentThemeIndex + 1) % availableThemes.length;
-        const newTheme = availableThemes[currentThemeIndex];
-        
-        // Update HTML class (for now, keeping the old logic for emerald)
-        if (newTheme === 'emerald') {
-          root.classList.add('emerald-theme');
-        } else {
-          root.classList.remove('emerald-theme');
-        }
-        
-        // Save preference
-        try { 
-          localStorage.setItem('colorScheme', newTheme); 
-        } catch(_) {}
-        
-        // Apply theme classes
-        applyThemeClasses();
-        
-        // Rebuild TOC to apply new hover styles
-        buildTOC();
-      });
-      
-      // ===== Theme Handling =====
-      const themeBtn = document.getElementById('themeToggle');
-      if(themeBtn) {
-        themeBtn.setAttribute('aria-pressed', String(document.documentElement.classList.contains('dark')));
+        if (saved && THEME_PACKS[saved]) currentThemeIndex = availableThemes.indexOf(saved);
+      } catch(_) {}
+
+      // ===== Color Scheme Toggle =====
+const colorBtn = document.getElementById('colorSchemeToggle');
+colorBtn?.addEventListener('click', () => {
+  const root = document.documentElement;
+
+  // If we're in LIGHT mode, switch to DARK and stop here (do NOT cycle color yet)
+  if (!root.classList.contains('dark')) {
+    root.classList.add('dark');
+    try { localStorage.setItem('theme','dark'); } catch(_){}
+    document.getElementById('themeToggle')?.setAttribute('aria-pressed','true');
+    return; // first click behaves like the theme toggle only
+  }
+
+  // Already DARK: now cycle to the next color scheme
+  currentThemeIndex = (currentThemeIndex + 1) % availableThemes.length;
+  const newTheme = availableThemes[currentThemeIndex];
+  applyTheme(newTheme);
+
+  // Rebuild TOC (keeps hover styles consistent with the new scheme)
+  buildTOC();
+});
+
+
+      // ===== Theme (dark/light) Handling =====
+const themeBtn = document.getElementById('themeToggle');
+if (themeBtn) {
+  themeBtn.setAttribute('aria-pressed', String(document.documentElement.classList.contains('dark')));
+}
+themeBtn?.addEventListener('click', () => {
+  const root = document.documentElement;
+  const isDark = root.classList.toggle('dark');
+  try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch(_){}
+  themeBtn.setAttribute('aria-pressed', String(isDark));
+
+  if (!isDark) {
+    // Going to LIGHT → always neutralize to slate
+    root.classList.remove('theme-emerald');
+    try { localStorage.setItem('colorScheme','slate'); } catch(_){}
+    applyTheme('slate');
+  } else {
+    // Back to DARK → reapply saved (or default) color
+    let saved = 'slate';
+    try { const s = localStorage.getItem('colorScheme'); if (s) saved = s; } catch(_){}
+    applyTheme(saved);
+  }
+  buildTOC();
+});
+
+try {
+  const mq = matchMedia('(prefers-color-scheme: dark)');
+  const onChange = (e) => {
+    if (!localStorage.getItem('theme')) { // only if user hasn't forced a theme
+      const isDark = e.matches;
+      const root = document.documentElement;
+      root.classList.toggle('dark', isDark);
+      themeBtn?.setAttribute('aria-pressed', String(isDark));
+
+      if (!isDark) {
+        root.classList.remove('theme-emerald');
+        try { localStorage.setItem('colorScheme','slate'); } catch(_){}
+        applyTheme('slate');
+      } else {
+        let saved = 'slate';
+        try { const s = localStorage.getItem('colorScheme'); if (s) saved = s; } catch(_){}
+        applyTheme(saved);
       }
-      themeBtn?.addEventListener('click', () => {
-        const root = document.documentElement;
-        const isDark = root.classList.toggle('dark');
-        try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch(_){ }
-        themeBtn.setAttribute('aria-pressed', String(isDark));
-      });
-      try {
-        const mq = matchMedia('(prefers-color-scheme: dark)');
-        const onChange = (e) => {
-          if (!localStorage.getItem('theme')) {
-            const isDark = e.matches;
-            document.documentElement.classList.toggle('dark', isDark);
-            themeBtn?.setAttribute('aria-pressed', String(isDark));
-          }
-        };
-        if (mq.addEventListener) {
-          mq.addEventListener('change', onChange);
-        } else if (mq.addListener) {
-          mq.addListener(onChange); // Safari <14
-        }
-      } catch (_) {}
+      buildTOC();
+    }
+  };
+  if (mq.addEventListener) mq.addEventListener('change', onChange);
+  else if (mq.addListener) mq.addListener(onChange); // Safari <14
+} catch (_) {}
 
       // ===== Expand/Collapse Functionality =====
       const getDetails = () => document.querySelectorAll('#content details');
       const expandBtn = document.getElementById('expandAll');
       const collapseBtn = document.getElementById('collapseAll');
-      
-      // Only show buttons if there are details elements
+
       if (getDetails().length === 0) {
         if(expandBtn) expandBtn.hidden = true;
         if(collapseBtn) collapseBtn.hidden = true;
       } else {
-        expandBtn?.addEventListener('click', () => {
-          getDetails().forEach(d => { d.open = true; });
-        });
-        
-        collapseBtn?.addEventListener('click', () => {
-          getDetails().forEach(d => { d.open = false; });
-        });
+        expandBtn?.addEventListener('click', () => { getDetails().forEach(d => d.open = true); });
+        collapseBtn?.addEventListener('click', () => { getDetails().forEach(d => d.open = false); });
       }
-      
+
       // ===== Add Back to Top Links =====
       (function addBackToTopLinks(){
         $$('#content > article').forEach((article, index, arr) => {
-            if (index === arr.length - 1) return;
-            const wrapper = document.createElement('div');
-            wrapper.className = 'mt-6 flex justify-end';
-            wrapper.innerHTML = `<a href="#top" class="text-sm underline decoration-dotted">Back to top</a>`;
-            article.appendChild(wrapper);
+          if (index === arr.length - 1) return;
+          const wrapper = document.createElement('div');
+          wrapper.className = 'mt-6 flex justify-end';
+          wrapper.innerHTML = `<a href="#top" class="text-sm underline decoration-dotted">Back to top</a>`;
+          article.appendChild(wrapper);
         });
       })();
 
@@ -419,12 +446,9 @@
           return { id: h.id, text: h.textContent.trim(), level: h.tagName.toLowerCase() };
         });
 
-        const isEmerald = document.documentElement.classList.contains('emerald-theme');
-        const hoverClasses = themes[isEmerald ? 'emerald' : 'slate'].tocHover;
-
         toc.innerHTML = items.map(({id, text, level}) => {
           const pad = level === 'h3' ? ' pl-4' : '';
-          return `<li><a href="#${id}" class="block px-2 py-1.5 rounded ${hoverClasses}${pad}">${text}</a></li>`;
+          return `<li><a href="#${id}" class="toc-link block px-2 py-1.5 rounded${pad}">${text}</a></li>`;
         }).join('');
 
         const links = $$('#toc a');
@@ -448,28 +472,19 @@
         const wrap = document.getElementById('timelineWrap');
         const list = document.getElementById('timeline');
         const coda = document.getElementById('timelineCoda');
-        
-        // Check if timeline metadata exists
-        if (!timelineStepsData || !wrap || !list) {
-          if(wrap) wrap.hidden = true;
-          return;
-        }
-        
-        // Parse timeline data
+
+        if (!timelineStepsData || !wrap || !list) { if(wrap) wrap.hidden = true; return; }
+
         const steps = timelineStepsData.split(',').map(s => s.trim());
         const labels = timelineLabelsData ? timelineLabelsData.split(',').map(s => s.trim()) : [];
-        
-        if (steps.length === 0) {
-          wrap.hidden = true;
-          return;
-        }
-        
+
+        if (!steps.length) { wrap.hidden = true; return; }
         wrap.hidden = false;
 
         const mkStep = (id, label) => (
           `<li class="flex items-center gap-2"><span class="inline-block w-[14px] h-[14px] rounded-full border-2 border-current bg-current"></span><a href="#${id}" class="hover:underline">${label}</a></li>`
         );
-        
+
         const segments = [];
         steps.forEach((id, idx) => {
           const el = $$('#content h2, #content h3').find(h => slug(h.textContent) === id);
@@ -480,7 +495,7 @@
         });
         list.innerHTML = segments.join('');
       })();
-      
+
       // ===== Search Highlighter =====
       (function searchHL(){
         const input = document.getElementById('search');
@@ -513,11 +528,15 @@
           restore(); 
         });
       })();
-      
-      // ===== Apply initial theme classes =====
-      applyThemeClasses();
+
+      // ===== Apply initial theme pack to prose =====
+      try {
+        const saved = localStorage.getItem('colorScheme');
+        applyTheme(saved && THEME_PACKS[saved] ? saved : 'slate');
+      } catch(_){
+        applyTheme('slate');
+      }
     });
   </script>
 </body>
 </html>
-
