@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Battle of Saratoga Knowledge Base Explorer</title>
+<style>
+:root {
+    --bg-gradient: linear-gradient(135deg,#1c2833 0%,#273746 100%);
+    --accent-1: #e67e22;
+    --accent-2: #d35400;
+    --btn-gradient: linear-gradient(45deg,#e67e22,#d35400);
+    --accent-1-rgb: 230, 126, 34;
+    --accent-warning: #f1c40f;
+    --accent-warning-rgb: 241, 196, 15;
+    --text-primary: #ecf0f1;
+    --text-secondary: #bdc3c7;
+    --ui-background: #34495e;
+    --ui-background-accent: rgba(52, 73, 94, 0.8);
+    --container-background-subtle: rgba(0, 0, 0, 0.3);
+    --btn-text-active: #ffffff;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: 'Georgia', serif;
+    background: var(--bg-gradient);
+    color: var(--text-primary);
+    min-height: 100vh;
+}
+.header {
+    background: rgba(0,0,0,0.3);
+    padding: 2rem;
+    text-align: center;
+    border-bottom: 3px solid var(--accent-1);
+}
+.header h1 {
+    font-size: 2.5rem;
+    background: var(--btn-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+.header p { font-size: 1.2rem; color: var(--text-secondary); font-style: italic; }
+.nav-tabs {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    background: rgba(0,0,0,0.2);
+    padding: 1rem;
+}
+.tab-button {
+    padding: 10px 20px;
+    background: var(--ui-background);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: var(--text-primary);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.tab-button:hover, .tab-button.active {
+    background: var(--btn-gradient);
+}
+.container { max-width: 1200px; margin: auto; padding: 2rem; }
+.tab-content { display: none; animation: fadeIn 0.5s ease; }
+.tab-content.active { display: block; }
+.section-card {
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+.section-title {
+    color: var(--accent-1);
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid var(--accent-1);
+    padding-bottom: 0.5rem;
+}
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+.stat-card {
+    background: var(--ui-background-accent);
+    padding: 1.5rem;
+    border-radius: 8px;
+    text-align: center;
+}
+.stat-number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--accent-1);
+}
+.stat-label { color: var(--text-secondary); margin-top: 0.5rem; }
+.sector-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+.sector-button {
+    padding: 10px 20px;
+    border-radius: 5px;
+    background: var(--ui-background);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: var(--text-primary);
+    cursor: pointer;
+}
+.sector-button:hover, .sector-button.active {
+    background: var(--btn-gradient);
+}
+.sector-detail {
+    display: none;
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    background: rgba(255,255,255,0.05);
+    border-radius: 8px;
+}
+.sector-detail.show { display: block; }
+.search-box {
+    width: 100%;
+    padding: 12px;
+    border-radius: 5px;
+    background: rgba(255,255,255,0.1);
+    color: var(--text-primary);
+    border: none;
+    margin-bottom: 1rem;
+}
+.search-box::placeholder { color: var(--text-secondary); }
+.highlight {
+    background: rgba(var(--accent-1-rgb),0.3);
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+@keyframes fadeIn { from {opacity: 0; transform: translateY(20px);} to {opacity: 1; transform: translateY(0);} }
+@media(max-width:768px) {
+    .header h1 { font-size: 2rem; }
+    .container { padding: 1rem; }
+}
+</style>
+</head>
+<body>
+<div class="header">
+    <h1>Battle of Saratoga</h1>
+    <p>September–October 1777 • Turning Point of the American Revolution</p>
+</div>
+<div class="nav-tabs">
+    <button class="tab-button active" data-tab="overview">Overview</button>
+    <button class="tab-button" data-tab="prelude">Prelude</button>
+    <button class="tab-button" data-tab="sectors">Key Engagements</button>
+    <button class="tab-button" data-tab="aftermath">Aftermath</button>
+    <button class="tab-button" data-tab="search">Search</button>
+</div>
+<div class="container">
+    <div id="overview" class="tab-content active">
+        <div class="section-card">
+            <h2 class="section-title">A Pivotal Victory</h2>
+            <p style="font-size:1.2rem; line-height:1.8;">
+                The Battle of Saratoga was a decisive American victory during the Revolutionary War, fought in two engagements: the Battle of Freeman’s Farm on September 19 and the Battle of Bemis Heights on October 7, 1777. The American forces under General Horatio Gates and Benedict Arnold repelled British General John Burgoyne’s advance from Canada, forcing his surrender.
+            </p>
+            <div class="stats-grid">
+                <div class="stat-card"><span class="stat-number">~9,000</span><div class="stat-label">American Forces</div></div>
+                <div class="stat-card"><span class="stat-number">~7,200</span><div class="stat-label">British Forces</div></div>
+                <div class="stat-card"><span class="stat-number">~1,500</span><div class="stat-label">American Casualties</div></div>
+                <div class="stat-card"><span class="stat-number">~1,100</span><div class="stat-label">British Casualties</div></div>
+            </div>
+            <div class="sector-buttons">
+                <button class="sector-button" data-sector="freemans">Freeman’s Farm</button>
+                <button class="sector-button" data-sector="bemis">Bemis Heights</button>
+            </div>
+            <div id="freemans-detail" class="sector-detail">
+                <h4 style="color: var(--accent-1);">Battle of Freeman’s Farm</h4>
+                <p>On September 19, Burgoyne’s forces clashed with American troops in dense woods. The battle was tactically indecisive, but inflicted heavy casualties on the British.</p>
+            </div>
+            <div id="bemis-detail" class="sector-detail">
+                <h4 style="color: var(--accent-1);">Battle of Bemis Heights</h4>
+                <p>On October 7, an American counterattack led by Benedict Arnold broke the British lines, compelling Burgoyne to retreat and ultimately surrender.</p>
+            </div>
+        </div>
+    </div>
+    <div id="prelude" class="tab-content">
+        <div class="section-card">
+            <h2 class="section-title">Burgoyne’s Campaign</h2>
+            <p>British strategy in 1777 aimed to cut off New England from the other colonies by controlling the Hudson River. Burgoyne’s army advanced south from Canada, capturing Fort Ticonderoga but becoming bogged down in the wilderness.</p>
+        </div>
+    </div>
+    <div id="sectors" class="tab-content">
+        <div class="section-card">
+            <h2 class="section-title">Key Engagements</h2>
+            <p>Two major battles defined Saratoga:</p>
+            <ul>
+                <li><strong>Freeman’s Farm:</strong> Fierce fighting in wooded terrain, where American riflemen inflicted significant damage.</li>
+                <li><strong>Bemis Heights:</strong> A decisive assault that forced the British retreat and surrender.</li>
+            </ul>
+        </div>
+    </div>
+    <div id="aftermath" class="tab-content">
+        <div class="section-card">
+            <h2 class="section-title">Global Impact</h2>
+            <p>The victory at Saratoga convinced France to formally ally with the United States, bringing vital military aid. Burgoyne’s surrender marked a turning point in the war, boosting American morale and international support.</p>
+        </div>
+    </div>
+    <div id="search" class="tab-content">
+        <div class="section-card">
+            <h2 class="section-title">Search the Knowledge Base</h2>
+            <input type="text" id="searchInput" class="search-box" placeholder="Search for commanders, battles, or terms...">
+            <div id="searchResults" style="color: var(--text-secondary); font-style: italic;">Enter a search term above to explore.</div>
+        </div>
+    </div>
+</div>
+<script>
+const knowledgeBase = {
+    "Horatio Gates": "Commander of the American forces at Saratoga, credited with the victory.",
+    "Benedict Arnold": "American general whose aggressive leadership at Bemis Heights helped secure the win.",
+    "John Burgoyne": "British general whose surrender ended the Saratoga campaign.",
+    "Freeman’s Farm": "First battle of Saratoga, September 19, 1777.",
+    "Bemis Heights": "Second battle, October 7, 1777, decisive American victory.",
+    "France": "Allied with the United States after the Saratoga victory.",
+    "Hudson River": "Key strategic objective in Burgoyne's campaign.",
+    "Fort Ticonderoga": "Captured by Burgoyne in July 1777 before Saratoga."
+};
+document.querySelectorAll('.tab-button').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+        document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+        document.querySelectorAll('.tab-button').forEach(b=>b.classList.remove('active'));
+        document.getElementById(btn.dataset.tab).classList.add('active');
+        btn.classList.add('active');
+    });
+});
+document.querySelectorAll('.sector-button').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+        document.querySelectorAll('.sector-detail').forEach(d=>d.classList.remove('show'));
+        document.querySelectorAll('.sector-button').forEach(b=>b.classList.remove('active'));
+        document.getElementById(btn.dataset.sector+'-detail').classList.add('show');
+        btn.classList.add('active');
+    });
+});
+document.getElementById('searchInput').addEventListener('keyup',()=>{
+    const term = document.getElementById('searchInput').value.toLowerCase();
+    const resultsDiv = document.getElementById('searchResults');
+    if(term.length<2){ resultsDiv.innerHTML='Enter a search term above to explore.'; return; }
+    let results = [];
+    for(const key in knowledgeBase){
+        if(key.toLowerCase().includes(term) || knowledgeBase[key].toLowerCase().includes(term)){
+            results.push(`<div><strong>${key}</strong>: ${knowledgeBase[key]}</div>`);
+        }
+    }
+    resultsDiv.innerHTML = results.length ? results.join('<hr>') : 'No results found.';
+});
+</script>
+</body>
+</html>
