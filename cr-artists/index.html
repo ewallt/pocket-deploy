@@ -1,34 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Colorful Reader 1.5</title>
-<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
-<script>
-tailwind.config = { darkMode: 'class' }
-</script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
-<style>
-.font-newspaper{font-family:'Lora',serif}
-html { scroll-behavior: smooth; }
-details[open] summary::after { content: "▲"; float: right; }
-details summary::after { content: "▼"; float: right; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Colorful Reader</title>
+
+  <!-- Tailwind + typography -->
+  <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+  <script>tailwind.config = { darkMode: 'class' }</script>
+
+  <!-- Optional BLB tagger (safe to leave in) -->
+  <script src="https://www.blueletterbible.org/scripts/blbToolTip/BLB_ScriptTagger-min.js"></script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+
+  <style>
+    /* Typography */
+    .font-newspaper{font-family:'Lora',serif}
+    .font-dark-theme{font-family:'Lora',serif}
+    body{transition:background .3s,color .3s}
+    .prose h1{min-height:7.5rem}
+
+    /* --- Classic Themes (Original) --- */
+    .newspaper-theme{background:#fdfdfd;color:#1a1a1a}
+    .newspaper-theme .nav-button{background:#f8f9fa;border:1px solid #dee2e6;color:#212529}
+    .newspaper-theme .nav-button:hover{background:#e9ecef}
+    .newspaper-theme .nav-button.active{background:#1a1a1a;color:#fdfdfd}
+
+    .dark-theme{background:#2d2d30;color:#fff}
+    .dark-theme .nav-button{background:#3c3c3c;border:1px solid #4a4a4a;color:#ccc}
+    .dark-theme .nav-button:hover{background:#4a4a4a}
+    .dark-theme .nav-button.active{background:#fff;color:#2d2d30}
+    
+    /* --- New Variable-Based Theme Engine --- */
+    :root {
+        --bg-gradient: #fdfdfd;
+        --text: #1a1a1a;
+        --accent-text: #1a1a1a;
+        --nav-bg: #f8f9fa;
+        --nav-border: #dee2e6;
+        --nav-text: #212529;
+        --nav-hover-bg: #e9ecef;
+        --nav-active-bg: #1a1a1a;
+        --nav-active-text: #fdfdfd;
+    }
+    
+    .variable-theme {
+        background: var(--bg-gradient);
+        color: var(--text);
+        font-family: 'Lora', serif;
+    }
+    .variable-theme .prose h1,
+    .variable-theme .prose h2,
+    .variable-theme .prose h3 {
+        color: var(--accent-text);
+    }
+    .variable-theme .nav-button {
+        background-color: var(--nav-bg);
+        border: 1px solid var(--nav-border);
+        color: var(--nav-text);
+    }
+    .variable-theme .nav-button:hover {
+        background-color: var(--nav-hover-bg);
+    }
+    .variable-theme .nav-button.active {
+        background-color: var(--nav-active-bg);
+        color: var(--nav-active-text);
+    }
+    .variable-theme .nav-button.btn-dark-text.active,
+    .variable-theme .nav-button.btn-dark-text:hover {
+        color: var(--nav-active-text);
+    }
+    .variable-theme .nav-button.btn-light-text.active,
+    .variable-theme .nav-button.btn-light-text:hover {
+        color: var(--nav-active-text);
+    }
+
+    /* --- Shared & Modal Styles --- */
+    .nav-container{margin-bottom:2rem}
+    .nav-button{padding:.5rem 1rem;margin:.5rem .5rem .5rem 0;border-radius:.375rem;transition:all .2s;cursor:pointer}
+    #library-switcher,#topic-switcher{padding:.5rem;border-radius:.375rem;margin-bottom:1rem;width:100%;border:1px solid #ccc}
+    .nav-buttons-wrapper{display:flex;flex-wrap:wrap;align-items:center;width:100%}
+    .flex-break{flex-basis:100%;height:0}
+
+    .modal-overlay {
+        display: none; position: fixed; z-index: 1000; left: 0; top: 0;
+        width: 100%; height: 100%;
+        background-color: rgba(0,0,0,0.6);
+        justify-content: center; align-items: center;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal-content {
+        background: #fff; color: #2d2d30; padding: 2rem; border-radius: 8px;
+        text-align: center; position: relative; width: 90%; max-width: 400px;
+    }
+    .dark .modal-content { background: #2d2d30; color: #fff; }
+    .modal-content h3 { font-size: 1.5rem; margin-bottom: 1.5rem; }
+    .modal-content label { font-size: 1.1rem; margin-right: 10px; }
+    #theme-select {
+        background-color: #f0f0f0; color: #2d2d30;
+        border: 1px solid #ccc; border-radius: 5px; padding: 8px; font-size: 1rem;
+    }
+    .dark #theme-select {
+        background-color: #3c3c3c; color: #fff; border-color: #4a4a4a;
+    }
+    .close-btn {
+        position: absolute; top: 10px; right: 15px; color: #aaa;
+        font-size: 28px; font-weight: bold; background: none;
+        border: none; cursor: pointer;
+    }
+  </style>
 </head>
-<body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 font-newspaper">
-<div id="app" class="max-w-4xl mx-auto p-4">
-<header class="flex items-center justify-between mb-6">
-<h1 id="app-title" class="text-3xl font-bold">Colorful Reader</h1>
-<button id="theme-toggle" class="px-3 py-1 border rounded">Toggle Theme</button>
-</header>
-<nav id="topic-nav" class="mb-4 flex flex-wrap gap-2"></nav>
-<div id="article-nav" class="mb-4 flex flex-wrap gap-2"></div>
-<article id="content-area" class="prose dark:prose-invert max-w-none"></article>
-</div>
-<script id="embedded-content" type="application/json">
+<body class="font-newspaper newspaper-theme">
+
+  <script id="embedded-content" type="application/json">
 {
   "late-19th-century-masters": {
     "display_order": 10,
@@ -506,195 +594,227 @@ details summary::after { content: "▼"; float: right; }
     }
   }
 }
-</script>
-<script>
-// ---------- State ----------
-let library = null;
-let sortedTopicIds = [];
-let currentTopicId = null;
-let currentArticleId = null;
-let currentSectionSlug = null;
+  </script>
 
-// ---------- Helpers ----------
-const $ = (sel, root=document) => root.querySelector(sel);
-const $$ = (sel, root=document) => [...root.querySelectorAll(sel)];
-const slug = s => (s||'').toLowerCase().trim()
-  .replace(/[^\w\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-');
+  <div class="fixed top-4 right-4 z-50">
+    <button id="settings-btn" class="p-2 rounded-full" aria-label="toggle settings">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.096 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+    </button>
+  </div>
 
-function readHash(){
-  const p = new URLSearchParams(location.hash.slice(1));
-  currentTopicId    = p.get('t') || currentTopicId;
-  currentArticleId  = p.get('a') || currentArticleId;
-  currentSectionSlug= p.get('s') || null;
-}
-function setHash(){
-  const p = new URLSearchParams({
-    t: currentTopicId || '',
-    a: currentArticleId || '',
-    s: currentSectionSlug || ''
-  });
-  if(location.hash.slice(1)!==p.toString()) location.hash = p.toString();
-}
-window.addEventListener('hashchange', ()=>{ readHash(); render(); });
+  <div id="settings-modal" class="modal-overlay">
+    <div class="modal-content">
+        <button id="close-modal-btn" class="close-btn">×</button>
+        <h3>Display Settings</h3>
+        <label for="theme-select">Theme:</label>
+        <select id="theme-select"></select>
+    </div>
+  </div>
 
-function sectionKey(h){ return `cr15:sec:${currentTopicId}:${currentArticleId}:${slug(h)}`; }
+  <main id="app-container" class="prose dark:prose-invert mx-auto max-w-prose p-8"></main>
 
-// ---------- Theme ----------
-function toggleTheme(){
-  const dark = document.documentElement.classList.toggle('dark');
-  localStorage.setItem('cr15:dark', dark ? '1' : '0');
-}
-function applyThemeFromStorage(){
-  const dark = localStorage.getItem('cr15:dark')==='1';
-  document.documentElement.classList.toggle('dark', dark);
-}
+  <script>
+    /* ---------- state ---------- */
+    let masterLibrary=null,sortedLibraryIds=null,currentLibraryId=null
+    let libraryData=null,sortedTopicIds=null,currentTopicId=null,currentArticleId=null
+    const app=document.getElementById('app-container')
 
-// ---------- UI Builders ----------
-function buildTopicNav(){
-  const nav = $('#topic-nav');
-  nav.innerHTML = '';
-  sortedTopicIds.forEach(id=>{
-    const t = library[id];
-    const btn = document.createElement('button');
-    btn.className = `px-3 py-1 rounded border ${id===currentTopicId?'bg-gray-900 text-white dark:bg-white dark:text-gray-900':''}`;
-    btn.textContent = t.title || id;
-    btn.addEventListener('click', ()=>{
-      currentTopicId = id;
-      currentArticleId = null;
-      currentSectionSlug = null;
-      render();
-    });
-    nav.appendChild(btn);
-  });
-}
+    /* ---------- helpers ---------- */
+    const looksLikeTopic=o=>o&&typeof o==='object'&&('categories'in o||'title'in o)
 
-function buildArticleNav(topic){
-  const nav = $('#article-nav');
-  nav.innerHTML = '';
+    /* ---------- rendering ---------- */
+    const buildLibrarySwitch=()=>!sortedLibraryIds||sortedLibraryIds.length<2?'':`
+      <div class="nav-container">
+        <select id="library-switcher" class="nav-button">
+          ${sortedLibraryIds.map(id=>{
+            const label=id.replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase())
+            return `<option value="${id}" ${id===currentLibraryId?'selected':''}>${label}</option>`
+          }).join('')}
+        </select>
+      </div>`
 
-  const keys = Object.keys(topic.categories||{}).sort(
-    (a,b)=>(topic.categories[a].display_order||0)-(topic.categories[b].display_order||0)
-  );
-  if(!currentArticleId || !topic.categories[currentArticleId]) currentArticleId = keys[0] || null;
+    const buildTopicSwitch=()=>`
+      <div class="nav-container">
+        <select id="topic-switcher" class="nav-button">
+          ${sortedTopicIds.map(tid=>{
+            const t=libraryData[tid];return `<option value="${tid}" ${tid===currentTopicId?'selected':''}>${t.title}</option>`
+          }).join('')}
+        </select>
+      </div>`
 
-  keys.forEach(k=>{
-    const a = topic.categories[k];
-    const btn = document.createElement('button');
-    btn.className = `px-3 py-1 rounded border ${k===currentArticleId?'bg-gray-900 text-white dark:bg-white dark:text-gray-900':''}`;
-    btn.textContent = a.display_name || a.name || k;
-    btn.addEventListener('click', ()=>{
-      currentArticleId = k;
-      currentSectionSlug = null;
-      render();
-    });
-    nav.appendChild(btn);
-  });
-}
+    const buildNav=(cats,keys)=>{
+      let html='<div class="nav-container"><h3>Select Article:</h3><div class="nav-buttons-wrapper">'
+      keys.forEach(k=>{
+        const a=cats[k]
+        html+=`<button class="nav-button article-btn ${k===currentArticleId?'active':''}" data-article-id="${k}">${a.display_name}</button>`
+        if(a.breakAfter)html+='<div class="flex-break"></div>'
+      })
+      return html+'</div></div>'
+    }
 
-function buildContent(topic, article){
-  const area = $('#content-area');
-  const intro = article.introduction ? `<p>${article.introduction}</p>` : '';
-  const paras = (article.paragraphs||[]).map(p=>{
-    const s = slug(p.heading);
-    const open = localStorage.getItem(sectionKey(p.heading))==='1' || (currentSectionSlug===s);
-    return `
-      <details class="mb-3" data-sec="${s}" ${open?'open':''}>
-        <summary class="font-semibold cursor-pointer">${p.heading}</summary>
-        <div class="mt-2">
-          <div class="mb-2">
-            <button class="text-sm border px-2 py-0.5 rounded copy-link" data-sec="${s}">🔗 Copy link</button>
-          </div>
-          ${p.content}
-        </div>
-      </details>`;
-  }).join('');
+    function render(){
+      if(!libraryData)return
+      sortedTopicIds=Object.keys(libraryData).sort((a,b)=>(libraryData[a].display_order||0)-(libraryData[b].display_order||0))
+      if(!currentTopicId||!libraryData[currentTopicId])currentTopicId=sortedTopicIds[0]
+      const topic=libraryData[currentTopicId]
+      const artKeys=Object.keys(topic.categories||{}).sort((a,b)=>(topic.categories[a].display_order||0)-(topic.categories[b].display_order||0))
+      if(!currentArticleId||!topic.categories[currentArticleId])currentArticleId=artKeys[0]
+      const art=topic.categories[currentArticleId]
 
-  area.innerHTML = `
-    <h2 class="mt-4">${article.display_name || article.name || ''}</h2>
-    ${intro}
-    ${paras}
-  `;
+      app.innerHTML=buildLibrarySwitch()+`<h1>${topic.title}</h1>`+buildTopicSwitch()+buildNav(topic.categories,artKeys)+
+        `<h2>${art.name||art.display_name||''}</h2>${art.introduction?`<p>${art.introduction}</p>`:''}`+
+        (art.paragraphs||[]).map(p=>`<h3>${p.heading}</h3><div>${p.content}</div>`).join('')
+      document.title=topic.title||'Colorful Reader'
 
-  // persist open/close + set deep link on open
-  $$('#content-area details').forEach(d=>{
-    const s = d.getAttribute('data-sec');
-    const heading = $('summary', d)?.textContent?.trim() || '';
-    d.addEventListener('toggle', ()=>{
-      localStorage.setItem(sectionKey(heading), d.open?'1':'0');
-      if(d.open){
-        currentSectionSlug = s;
-        setHash();
+      document.querySelectorAll('.article-btn').forEach(btn=>btn.onclick=e=>{
+        currentArticleId=e.target.dataset.articleId;render()
+      })
+      const ts=document.getElementById('topic-switcher')
+      if(ts)ts.onchange=e=>{currentTopicId=e.target.value;currentArticleId=null;render()}
+      const ls=document.getElementById('library-switcher')
+      if(ls)ls.onchange=e=>{
+        currentLibraryId=e.target.value
+        localStorage.setItem('readerLibraryId',currentLibraryId)
+        libraryData=masterLibrary[currentLibraryId];currentTopicId=currentArticleId=null;render()
       }
-    });
-  });
+      
+      const themeName = localStorage.getItem('theme') || 'newspaper';
+      applyThemeClasses(themeName);
+    }
 
-  // copy link buttons
-  $$('.copy-link').forEach(btn=>{
-    btn.addEventListener('click', async (e)=>{
-      const s = e.currentTarget.getAttribute('data-sec');
-      currentSectionSlug = s; setHash();
+    /* ---------- data load ---------- */
+    async function init(){
+      let raw=null
       try{
-        await navigator.clipboard.writeText(location.href);
-        e.currentTarget.textContent = '✅ Copied';
-        setTimeout(()=>e.currentTarget.textContent='🔗 Copy link', 1200);
+        const res=await fetch('./data/content.json',{cache:'no-store'})
+        if(!res.ok)throw new Error('not ok');raw=await res.json()
       }catch{
-        alert('Link: '+location.href);
+        const embedded=document.getElementById('embedded-content').textContent.trim()
+        if(!embedded)throw new Error('no data');raw=JSON.parse(embedded)
       }
-    });
-  });
 
-  // scroll to deep-linked section if present
-  if(currentSectionSlug){
-    const target = $(`details[data-sec="${currentSectionSlug}"]`, area);
-    if(target) target.scrollIntoView({behavior:'smooth', block:'start'});
-  }
-}
+      const keys=Object.keys(raw)
+      if(!keys.length)throw new Error('empty data')
+      if(looksLikeTopic(raw[keys[0]])){
+        masterLibrary=null;sortedLibraryIds=null;currentLibraryId=null
+        libraryData=raw
+      }else{
+        masterLibrary=raw
+        sortedLibraryIds=keys.sort()
+        currentLibraryId=localStorage.getItem('readerLibraryId')
+        if(!currentLibraryId||!masterLibrary[currentLibraryId])currentLibraryId=sortedLibraryIds[0]
+        libraryData=masterLibrary[currentLibraryId]
+      }
+      currentTopicId=currentArticleId=null
+      render()
+    }
 
-// ---------- Render ----------
-function render(){
-  if(!library) return;
 
-  sortedTopicIds = Object.keys(library).sort((a,b)=>(library[a].display_order||0)-(library[b].display_order||0));
-  if(!currentTopicId || !library[currentTopicId]) currentTopicId = sortedTopicIds[0];
+    /* ---------- FINAL THEME ENGINE --- */
+    const THEMES = {
+      'newspaper': { name: 'Newspaper', type: 'classic', isDark: false },
+      'dark': { name: 'Dark', type: 'classic', isDark: true },
+      'cyber-blue': {
+        name: 'Cyber Blue', type: 'variable', isDark: true,
+        vars: {
+          '--bg-gradient': 'linear-gradient(135deg,#0a0a23 0%,#1a1a3a 50%,#2e2e5e 100%)',
+          '--text': '#ecf0f1', '--accent-text': '#a8b8d0',
+          '--nav-bg': '#34495e', '--nav-border': '#4a4a4a', '--nav-text': '#ecf0f1',
+          '--nav-hover-bg': '#4a6078', '--nav-active-bg': '#2e2e5e', '--nav-active-text': '#ecf0f1'
+        },
+        hover_style: 'btn-light-text'
+      },
+      'teal-matrix': {
+        name: 'Teal Matrix', type: 'variable', isDark: true,
+        vars: {
+          '--bg-gradient': 'linear-gradient(135deg,#0a231c 0%,#1a3a31 50%,#2e5e50 100%)',
+          '--text': '#ecf0f1', '--accent-text': '#ace0d5',
+          '--nav-bg': '#345e55', '--nav-border': '#92b3a9', '--nav-text': '#ecf0f1',
+          '--nav-hover-bg': '#427569', '--nav-active-bg': '#0a231c', '--nav-active-text': '#ecf0f1'
+        },
+        hover_style: 'btn-light-text'
+      },
+      'scorched-gold': {
+        name: 'Scorched Gold', type: 'variable', isDark: false,
+        vars: {
+          '--bg-gradient': '#fdfbf5', '--text': '#2a1d15', '--accent-text': '#d4a24c',
+          '--nav-bg': '#f8f4e8', '--nav-border': '#d4a24c', '--nav-text': '#2a1d15',
+          '--nav-hover-bg': '#f0c475', '--nav-active-bg': '#f0c475', '--nav-active-text': '#2a1d15'
+        },
+        hover_style: 'btn-dark-text'
+      }
+    };
+    
+    function applyThemeClasses(themeName) {
+        const theme = THEMES[themeName];
+        if (!theme) return;
 
-  const topic = library[currentTopicId];
-  document.title = topic.title || 'Colorful Reader';
-  $('#app-title').textContent = topic.title || 'Colorful Reader';
+        document.body.classList.remove('newspaper-theme', 'dark-theme', 'variable-theme', 'font-newspaper', 'font-dark-theme');
+        document.querySelectorAll('.nav-button').forEach(b => b.classList.remove('btn-light-text', 'btn-dark-text'));
 
-  buildTopicNav();
-  buildArticleNav(topic);
-  if(currentArticleId){
-    buildContent(topic, topic.categories[currentArticleId]);
-  }else{
-    $('#content-area').innerHTML = '<p>No article found.</p>';
-  }
+        if (theme.type === 'classic') {
+            document.body.classList.add(theme.isDark ? 'dark-theme' : 'newspaper-theme');
+            document.body.classList.add(theme.isDark ? 'font-dark-theme' : 'font-newspaper');
+        } else {
+            document.body.classList.add('variable-theme');
+            if (theme.hover_style) {
+                document.querySelectorAll('.nav-button').forEach(button => button.classList.add(theme.hover_style));
+            }
+        }
+    }
 
-  setHash();
-}
+    function applyThemeVariables(name) {
+      const theme = THEMES[name] || THEMES['newspaper'];
+      
+      document.documentElement.classList.toggle('dark', theme.isDark);
 
-// ---------- Boot ----------
-(async function boot(){
-  applyThemeFromStorage();
-  $('#theme-toggle').addEventListener('click', toggleTheme);
+      if (theme.type === 'variable') {
+        for (const [key, value] of Object.entries(theme.vars)) {
+          document.documentElement.style.setProperty(key, value);
+        }
+      } else { 
+        const sampleVars = THEMES['cyber-blue'].vars;
+        Object.keys(sampleVars).forEach(varName => {
+            document.documentElement.style.removeProperty(varName);
+        });
+      }
+    }
 
-  // try external /data/content.json, else embedded
-  try{
-    const res = await fetch('./data/content.json', {cache:'no-store'});
-    if(!res.ok) throw new Error(String(res.status));
-    library = await res.json();
-  }catch{
-    const embedded = $('#embedded-content')?.textContent?.trim() || '';
-    library = embedded ? JSON.parse(embedded) : null;
-  }
+    function setTheme(name) {
+      if (THEMES[name]) {
+        localStorage.setItem('theme', name);
+        applyThemeVariables(name);
+        applyThemeClasses(name);
+      }
+    }
 
-  if(!library){
-    $('#content-area').innerHTML = '<h2>Could not load content</h2><p>Provide /data/content.json or embedded JSON.</p>';
-    return;
-  }
+    function initializeModal() {
+        const modal = document.getElementById('settings-modal');
+        const openBtn = document.getElementById('settings-btn');
+        const closeBtn = document.getElementById('close-modal-btn');
+        const themeSelect = document.getElementById('theme-select');
+        
+        const currentTheme = localStorage.getItem('theme') || 'newspaper';
+        themeSelect.innerHTML = Object.keys(THEMES).map(key => {
+            const theme = THEMES[key];
+            return `<option value="${key}" ${key === currentTheme ? 'selected' : ''}>${theme.name}</option>`
+        }).join('');
 
-  readHash();
-  render();
-})();
-</script>
+        openBtn.onclick = () => modal.classList.add('show');
+        closeBtn.onclick = () => modal.classList.remove('show');
+        modal.onclick = (event) => { if (event.target === modal) modal.classList.remove('show'); };
+        themeSelect.onchange = (e) => setTheme(e.target.value);
+    }
+
+    /* ---------- boot ---------- */
+    document.addEventListener('DOMContentLoaded',()=>{
+      const currentTheme = localStorage.getItem('theme') || 'newspaper';
+      applyThemeVariables(currentTheme);
+      applyThemeClasses(currentTheme);
+      
+      initializeModal();
+      init().catch(err=>{console.error(err);app.innerHTML='<h1>Error</h1><p>Could not load content.</p>'})
+    })
+  </script>
 </body>
 </html>
