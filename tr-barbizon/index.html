@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Threaded Reader</title>
+
+  <!-- Prepaint bootstrap: set dark + theme class before paint to avoid flicker -->
+  <script>
+  (function () {
+    const root = document.documentElement;
+    try {
+      const savedTheme = localStorage.getItem('theme');       // 'light' | 'dark' | null
+      const savedColor = localStorage.getItem('colorScheme'); // 'slate' | 'emerald' | future
+      const isDark = savedTheme !== 'light';                  // default to dark if unset
+      root.classList.toggle('dark', isDark);
+      // Apply colored theme classes ONLY in dark mode; light is always neutral slate
+      root.classList.toggle('theme-emerald', isDark && savedColor === 'emerald');
+    } catch (_) {}
+  })();
+  </script>
+
+  <!-- Tailwind (with Typography) -->
+  <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' };
+  </script>
+
+  <!-- Google Font (optional) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+
+  <style>
+  :root { color-scheme: light dark; }
+  html { scroll-behavior: smooth; }
+  .font-newspaper { font-family: 'Lora', serif; }
+  :where(h2,h3,h4){ scroll-margin-top: 84px; }
+  mark { background: #fde68a; padding: .1em .2em; border-radius: .2rem; }
+  @media (max-width: 380px){ .prose { font-size: .96rem; } }
+
+  /* ---------- Semantic surfaces (read from CSS variables) ---------- */
+.hero {
+  /* give the header an explicit base fill so gradient blends to the right hue */
+  background-color: var(--hero-base);
+  background:
+    radial-gradient(50% 120% at 10% 10%, var(--hero-r1), transparent 60%),
+    radial-gradient(80% 140% at 90% 10%, var(--hero-r2), transparent 70%),
+    linear-gradient(180deg, var(--hero-wash), transparent 35%);
+}
+.border-var { border-color: var(--border) !important; }
+.surface { border-width: 1px; border-style: solid; border-color: var(--border); }
+.hr-var { border-color: var(--border); }
+.subtitle { color: var(--subtitle-fg); }
+.timeline-fg { color: var(--timeline-fg); }
+.footer-note { color: var(--footer-fg); }
+.active-link { color: var(--active); font-weight: 700; }
+
+.input-surface {
+  border: 1px solid var(--input-border);
+  background-color: var(--input-bg);
+}
+.btn-surface { border: 1px solid var(--btn-border); }
+.btn-surface:hover { background: var(--btn-hover-bg); }
+.toc-link:hover { background: var(--hover-bg); }
+
+/* ---------- Slate (default) variables ---------- */
+:root{
+  /* accents / inks */
+  --active: rgb(59,130,246);                      /* sky-500 */
+  --subtitle-fg: rgb(71,85,105);                  /* slate-600 */
+  --timeline-fg: rgb(100,116,139);                /* slate-500 */
+  --footer-fg: rgb(100,116,139);                  /* slate-500 */
+
+  /* surfaces */
+  --border: rgb(226,232,240);                     /* slate-200 */
+  --hover-bg: rgb(248,250,252);                   /* slate-50 */
+  --btn-border: rgb(203,213,225);                 /* slate-300 */
+  --btn-hover-bg: rgb(248,250,252);               /* slate-50 */
+  --input-border: rgba(203,213,225,0.7);          /* slate-300/70 */
+  --input-bg: rgba(255,255,255,0.7);              /* white/70 */
+
+  /* hero base & gradient (light) */
+  --hero-base: transparent;                       /* keep light header airy */
+  --hero-r1: rgba(49,46,129,.12);                 /* indigo-700 */
+  --hero-r2: rgba(234,88,12,.12);                 /* orange-600 hint */
+  --hero-wash: rgba(14,165,233,.08);              /* sky-500 wash */
+}
+.dark{
+  --subtitle-fg: rgb(203,213,225);                /* slate-300 */
+  --timeline-fg: rgb(148,163,184);                /* slate-400 */
+  --footer-fg: rgb(148,163,184);                  /* slate-400 */
+
+  --border: rgb(30,41,59);                        /* slate-800 */
+  --hover-bg: rgb(15,23,42);                      /* slate-900 */
+  --btn-border: rgb(51,65,85);                    /* slate-700 */
+  --btn-hover-bg: rgb(15,23,42);                  /* slate-900 */
+  --input-border: rgba(51,65,85,0.7);             /* slate-700/70 */
+  --input-bg: rgba(2,6,23,0.6);                   /* slate-950/60 */
+
+  /* hero base & gradient (dark) */
+  --hero-base: rgb(2,6,23);                       /* slate-950 */
+  --hero-r1: rgba(49,46,129,.12);
+  --hero-r2: rgba(234,88,12,.12);
+  --hero-wash: rgba(14,165,233,.08);
+}
+
+/* ---------- Emerald theme overrides (light & dark) ---------- */
+.theme-emerald{
+  --active: #10b981;                              /* emerald-500 */
+
+  --border: rgb(187,247,208);                     /* emerald-200 */
+  --hover-bg: rgb(240,253,244);                   /* emerald-50 */
+  --btn-border: rgb(187,247,208);                 /* emerald-200 */
+  --btn-hover-bg: rgb(240,253,244);               /* emerald-50 */
+  --input-border: rgba(110,231,183,0.7);          /* emerald-300/70 */
+  --input-bg: rgba(255,255,255,0.7);              /* white/70 */
+
+  /* keep subtitles/timeline neutral for readability over hero */
+  --subtitle-fg: rgb(71,85,105);                  /* slate-600 */
+  --timeline-fg: rgb(71,85,105);                  /* slate-600 */
+  --footer-fg: rgb(16,185,129);                   /* emerald-500 */
+
+  /* hero base & gradient (emerald light) */
+  --hero-base: transparent;
+  --hero-r1: rgba(16,185,129,.14);                /* emerald-500 */
+  --hero-r2: rgba(163,230,53,.12);                /* lime-400 */
+  --hero-wash: rgba(5,150,105,.10);               /* emerald-600 wash */
+}
+.dark.theme-emerald{
+  /* ↑ Give borders enough contrast on dark emerald surfaces */
+  --border: rgba(110,231,183,0.55);                /* emerald-300 @ 55% */
+  --hover-bg: rgb(6,78,59);                        /* emerald-900 */
+  --btn-border: rgba(110,231,183,0.45);            /* slightly softer than borders */
+  --btn-hover-bg: rgb(6,78,59);                    /* emerald-900 */
+  --input-border: rgba(110,231,183,0.55);          /* match border contrast */
+  --input-bg: rgba(6,95,70,0.60);                  /* emerald-900/60 */
+
+  /* text accents for readability */
+  --footer-fg: rgb(110,231,183);                   /* emerald-300/400 */
+  --subtitle-fg: rgb(226,252,236);                 /* emerald-100 */
+  --timeline-fg: rgb(187,247,208);                 /* emerald-200 */
+
+  /* hero base & gradient (unchanged, stays emerald) */
+  --hero-base: rgb(2,44,34);                       /* emerald-950 (#022c22) */
+  --hero-r1: rgba(16,185,129,.14);
+  --hero-r2: rgba(163,230,53,.12);
+  --hero-wash: rgba(5,150,105,.10);
+}
+
+</style>
+
+</head>
+
+<body class="bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 pb-[env(safe-area-inset-bottom)]">
+
+  <!-- Header -->
+  <header id="top" class="hero border-b border-var">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-between gap-4">
+      <div>
+        <h1 id="docTitle" class="text-2xl sm:text-3xl font-bold font-newspaper tracking-tight">Loading...</h1>
+        <p id="docSubtitle" class="subtitle text-sm sm:text-base"></p>
+      </div>
+      <div class="flex items-center gap-2">
+        <label for="search" class="sr-only">Search</label>
+        <input id="search" type="search" placeholder="Search…" class="hidden md:block w-56 rounded-xl input-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400" />
+        <button id="clearSearch" type="button" class="hidden md:inline-flex text-xs px-2 py-2 rounded-lg btn-surface">Clear</button>
+        <button id="colorSchemeToggle" type="button" class="inline-flex items-center justify-center rounded-xl btn-surface px-3 py-2 text-sm" title="Change color scheme">
+          <span class="inline md:hidden">Colors</span>
+          <svg aria-hidden="true" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/>
+            <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/>
+            <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/>
+            <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/>
+            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 7.012 17.461 2 12 2z"/>
+          </svg>
+        </button>
+        <button id="themeToggle" type="button" class="inline-flex items-center justify-center rounded-xl btn-surface px-3 py-2 text-sm" title="Toggle dark mode" aria-pressed="false">
+          <span class="inline md:hidden">Theme</span>
+          <svg aria-hidden="true" class="w-5 h-5 hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg aria-hidden="true" class="w-5 h-5 dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6" id="timelineWrap" hidden>
+      <nav aria-label="Journey timeline" id="timelineNav" class="timeline-fg">
+        <ol id="timeline" class="grid grid-cols-3 sm:grid-cols-6 items-center gap-x-2 gap-y-1 text-[11px] sm:text-sm"></ol>
+        <div id="timelineCoda" class="mt-2 text-[11px] sm:text-xs"></div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)] gap-8">
+    <!-- Sidebar -->
+    <aside class="lg:sticky lg:top-4 h-max">
+      <nav aria-label="On this page" class="rounded-2xl surface p-4">
+        <h2 class="text-sm font-semibold mb-2">Sections</h2>
+        <ol id="toc" class="space-y-1 text-sm"></ol>
+        <hr class="my-4 hr-var" />
+        <button id="expandAll" type="button" class="w-full text-xs px-3 py-2 rounded-lg btn-surface">Expand All</button>
+        <button id="collapseAll" type="button" class="mt-2 w-full text-xs px-3 py-2 rounded-lg btn-surface">Collapse All</button>
+      </nav>
+    </aside>
+
+    <section id="content" class="prose prose-slate dark:prose-invert max-w-none">
+      <!-- Content is generated by script from JSON -->
+    </section>
+  </main>
+
+  <footer class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 text-xs footer-note">
+    Threaded Reader — a single-file template
+  </footer>
+
+  <script id="embedded-json" type="application/json">
+    {
+      "title": "The Barbizon School: The Quiet Revolution",
+      "description": "An exploration of the Barbizon School, the group of French landscape painters who rejected academic tradition to pioneer a new realism, finding truth and beauty in the humble countryside and paving the way for Impressionism.",
+      "articles": [
+        {
+          "title": "The Rejection of the Academy",
+          "introduction": "This article sets the stage, explaining the rigid art world the Barbizon painters rebelled against and the new philosophy that drew them to the Forest of Fontainebleau.",
+          "threads": [
+            {
+              "title": "The Tyranny of the Salon",
+              "content": "<p>In the early 19th century, the French art world was dominated by the Académie des Beaux-Arts and its official exhibition, the Paris Salon. The Academy championed a rigid hierarchy of genres, placing <strong>Neoclassical history painting</strong>—with its idealized figures and grand mythological or historical themes—at the pinnacle. Landscape was considered a minor, decorative genre, and artists were expected to create composed, artificial scenes in the studio, not to paint the raw, imperfect reality of the world outside.</p>"
+            },
+            {
+              "title": "A New Philosophy: Finding Truth in Nature",
+              "content": "<p>The Barbizon painters represented a radical departure from this tradition. Influenced by Romanticism's emphasis on emotion and individualism, they believed that <strong>authentic spiritual and artistic truth</strong> could be found in the direct, honest observation of nature. They rejected the Academy's artificiality, arguing that the humble French countryside was a more meaningful subject than any contrived scene from Greek mythology. This philosophy elevated the status of landscape painting from a mere backdrop to a primary subject worthy of serious artistic exploration.</p>"
+            },
+            {
+              "title": "The Forest of Fontainebleau: An Outdoor Studio",
+              "content": "<p>The movement found its physical and spiritual home in the ancient Forest of Fontainebleau, just southeast of Paris. The forest provided an ideal setting: it was easily accessible yet offered a landscape that was rugged, diverse, and largely untouched by industrialization. With its ancient oak trees, rocky gorges, and tranquil marshes, it became a vast <strong>outdoor studio</strong> where artists could directly confront the complexities of nature and hone their skills of observation away from the strictures of the city.</p>"
+            },
+            {
+              "title": "Influence from Abroad: Constable and Dutch Masters",
+              "content": "<p>The Barbizon artists did not emerge from a vacuum. They were deeply inspired by the atmospheric, naturalistic landscapes of the English painter <strong>John Constable</strong>, whose work had been a sensation in Paris in 1824. They also looked back to the 17th-century Dutch masters, who had a long tradition of depicting the local landscape and rural life with unidealized realism. These influences provided a historical precedent for their own rebellion against academic convention.</p>"
+            },
+            {
+              "title": "A 'School' of Individuals",
+              "content": "<p>It is important to note that the Barbizon School was not a formal institution with a single, unified style. It was a <strong>loose association of like-minded individuals</strong> who gathered in and around the village of Barbizon to live, work, and support one another. While they shared a common commitment to realism and painting from nature, each artist—from the meticulous Rousseau to the poetic Corot—maintained a highly distinct and personal style.</p>"
+            },
+            {
+              "title": "The Struggle for Recognition",
+              "content": "<p>For years, the Barbizon painters struggled for acceptance. The official Salon juries frequently rejected their work, criticizing it as <strong>'ugly,' 'common,' and 'unfinished.'</strong> The critics, accustomed to the polished surfaces and noble subjects of academic art, were often baffled by the earthy palettes and visible brushwork of the Barbizon painters. It took decades of persistent effort before their quiet revolution was finally recognized and their works were celebrated as masterpieces of a new, modern realism.</p>"
+            },
+            {
+              "title": "The Dignity of the Rural Landscape",
+              "content": "<p>The most profound contribution of the Barbizon School was its revolutionary assertion that the everyday rural world was a subject of immense dignity and importance. Their paintings insisted that <strong>a simple oak tree, a muddy field, or a peasant tending sheep</strong> could be as profound and moving as a scene from the Trojan War. This democratic shift in subject matter was a crucial step in the development of modern art, paving the way for the Impressionists to find beauty in the even more contemporary scenes of Parisian life.</p>"
+            }
+          ]
+        },
+        {
+          "title": "The Masters of Barbizon",
+          "introduction": "This article introduces the key figures of the movement, highlighting their individual styles and contributions to the group's shared vision.",
+          "threads": [
+            {
+              "title": "Théodore Rousseau: The Soul of the Forest",
+              "content": "<p>Théodore Rousseau (1812-1867) was the group's unofficial leader and perhaps its most passionate advocate. He was known for his intense, almost obsessive, studies of the Forest of Fontainebleau, particularly its ancient oak trees, which he painted as if they were portraits of noble, enduring individuals. His work is characterized by its meticulous detail, rich, earthy textures, and a profound, often somber and melancholic, mood. For years he was known as 'le grand refusé' for his constant rejection by the Salon.</p>"
+            },
+            {
+              "title": "Jean-François Millet: The Painter of Peasants",
+              "content": "<p>While his colleagues focused on the landscape itself, Jean-François Millet (1814-1875) is best known for depicting the people who worked it. His paintings, such as the world-famous *The Gleaners* and *The Angelus*, portray rural laborers with a stark, monumental dignity that was unprecedented. He neither sentimentalized nor politicized his subjects, instead capturing the harsh realities and quiet piety of peasant life. His work was controversial, with some critics accusing him of socialist sympathies, but it profoundly influenced later artists like Vincent van Gogh.</p>"
+            },
+            {
+              "title": "Jean-Baptiste-Camille Corot: The Poet of Light",
+              "content": "<p>Jean-Baptiste-Camille Corot (1796-1875) is often associated with the Barbizon School, though he was older and more established. He was a crucial transitional figure, admired by both the Academy and the avant-garde. While his formal Salon paintings were more traditional, his private, outdoor studies were revolutionary. His mastery of capturing silvery light, his feathery, delicate brushwork, and his ability to evoke a quiet, poetic mood had a direct and powerful influence on the future Impressionists, particularly Pissarro and Monet.</p>"
+            },
+            {
+              "title": "Charles-François Daubigny: The Innovator on the River",
+              "content": "<p>Charles-François Daubigny (1817-1878) was one of the most innovative members of the group. To better capture the fleeting effects of light on water, he converted a ferry into a floating studio, named 'Le Botin' (The Little Box), from which he painted directly on the rivers of northern France. This commitment to painting *en plein air* from the water's perspective, and his increasingly loose, sketch-like brushwork, made him a direct forerunner of Impressionism. Claude Monet would later build his own studio boat in direct emulation of Daubigny.</p>"
+            },
+            {
+              "title": "Constant Troyon: Master of Animal Painting",
+              "content": "<p>Constant Troyon (1810-1865) was another key figure who specialized in a genre that the Barbizon School elevated: animal painting. Inspired by 17th-century Dutch masters, he brought a new level of realism and atmospheric truth to his depictions of cattle and other livestock in the landscape. He masterfully captured the weight and texture of the animals, as well as the specific quality of light and air that surrounded them, integrating them fully into the natural environment.</p>"
+            },
+            {
+              "title": "Narcisse Diaz de la Peña: Dappled Light and Shadow",
+              "content": "<p>Narcisse Diaz de la Peña (1807-1876) was particularly celebrated for his ability to capture the dramatic effects of sunlight filtering through the dense canopy of the forest. His paintings are often filled with rich, jewel-like colors and a dynamic interplay of dappled light and deep shadow. This fascination with capturing broken color and the texture of sunlit foliage would later be a key interest for the Impressionists, particularly Renoir, who admired Diaz's work.</p>"
+            },
+            {
+              "title": "Shared Vision, Individual Styles",
+              "content": "<p>While they all gathered in the same small village and shared a revolutionary commitment to painting nature truthfully, the Barbizon masters were not a monolithic group. They each brought a unique temperament and style to their shared project. The movement's strength came from this diversity, encompassing Rousseau's detailed solemnity, Millet's humanistic gravity, Corot's poetic lyricism, and Daubigny's innovative directness, creating a rich and multifaceted vision of the French landscape.</p>"
+            }
+          ]
+        },
+        {
+          "title": "Painting the Truth of Nature",
+          "introduction": "This article delves into the specific techniques and artistic practices that made the Barbizon School's work revolutionary for its time.",
+          "threads": [
+            {
+              "title": "En Plein Air: The Practice of Outdoor Painting",
+              "content": "<p>The most important innovation of the Barbizon School was their commitment to painting *en plein air*, or 'in the open air.' This practice was made possible by the recent invention of pre-packaged tubes of paint. By taking their easels directly into the forest and fields, they could capture the immediate and authentic effects of light, shadow, and weather. This was a radical break from the academic tradition of composing idealized landscapes entirely within the confines of the studio.</p>"
+            },
+            {
+              "title": "The Muted Palette: Earth, Sky, and Mood",
+              "content": "<p>The Barbizon painters are known for their use of a subdued, tonal palette dominated by earthy browns, muted greens, and soft grays. This was a deliberate choice to capture the true, often somber, colors and mood of the northern French landscape. They rejected the bright, artificial colors of academic painting, instead seeking a harmonious and realistic depiction of nature's quiet, everyday beauty.</p>"
+            },
+            {
+              "title": "Capturing Atmosphere and 'L'Effet'",
+              "content": "<p>A key goal for the Barbizon artists was to capture the 'effet'—the overall feeling or impression of a landscape at a specific moment. They were less interested in a precise, topographical record of a place than in conveying its unique atmosphere. Whether it was the damp air of a misty morning, the golden glow of a sunset, or the heavy feeling before a storm, capturing this fleeting mood was central to their artistic project.</p>"
+            },
+            {
+              "title": "The Sketch vs. The Finished Work",
+              "content": "<p>The Barbizon painters pioneered the use of the small, quickly executed oil sketch as a key part of their process. They would make these spontaneous sketches outdoors to capture the immediate 'effet' of a scene. Often, these sketches were then used as reference material to create larger, more carefully composed paintings back in the studio. However, the fresh, spontaneous quality of the sketches was so revolutionary that it began to influence the look of their finished works, leading to a looser and more 'unfinished' aesthetic that shocked conservative critics.</p>"
+_`
+            },
+            {
+              "title": "Focus on the Commonplace",
+              "content": "<p>The Barbizon painters' choice of subject matter was, in itself, a revolutionary act. They turned away from the grand and the historical to focus on the simple and the commonplace. They found profound beauty in a muddy path, a moss-covered rock, a tangle of undergrowth, or a simple clearing in the woods. By doing so, they elevated the humble, everyday landscape to the status of high art, insisting that truth and beauty were to be found in one's immediate surroundings.</p>"
+            },
+            {
+              "title": "The Human Figure in Nature",
+              "content": "<p>When figures appear in Barbizon landscapes, they are not gods or goddesses, but peasants, woodcutters, and shepherds. Artists like Millet and Jules Breton integrated these figures seamlessly into the landscape, depicting them as an organic part of the rural world. Their postures and labors are shown as being shaped by the rhythms of nature, creating a powerful vision of the deep, often difficult, connection between humanity and the land.</p>"
+            },
+            {
+              "title": "A New Kind of Realism",
+              "content": "<p>The realism of the Barbizon School was different from the sharp-focus, highly detailed realism that came before it. It was a realism of impression and feeling. By prioritizing the overall mood, atmosphere, and light of a scene over a meticulous inventory of details, they created a more subjective and emotionally resonant form of landscape painting. This focus on the truth of perception, rather than just the truth of fact, was their most crucial legacy to the Impressionists who would follow.</p>"
+            }
+          ]
+        },
+        {
+          "title": "The Seeds of Modernism",
+          "introduction": "This final article traces the profound and lasting influence of the Barbizon School, positioning them as the essential link between Romanticism and Impressionism.",
+          "threads": [
+            {
+              "title": "The Direct Precursor to Impressionism",
+              "content": "<p>The Barbizon School is universally recognized as the most important and direct precursor to Impressionism. Their foundational principles—painting outdoors, capturing the fleeting effects of light and atmosphere, and choosing subjects from modern life—were all adopted and pushed even further by the next generation. The Barbizon painters did the hard work of breaking from the Academy, clearing a path that the Impressionists would then charge down with revolutionary fervor.</p>"
+            },
+            {
+              "title": "Mentors to a New Generation",
+              "content": "<p>The connection between the two movements was direct and personal. In the 1860s, young, aspiring artists like Claude Monet, Pierre-Auguste Renoir, Alfred Sisley, and Frédéric Bazille all made pilgrimages to the Forest of Fontainebleau. There, they painted alongside the older Barbizon masters, absorbing their techniques and philosophy firsthand. The Barbizon painters served as crucial mentors, providing a living example of an alternative to the rigid academic system.</p>"
+            },
+            {
+              "title": "Influence on American Art: The Tonalists",
+              "content": "<p>The influence of the Barbizon School extended across the Atlantic. American artists who studied in France, such as William Morris Hunt, brought Barbizon ideas back to the United States. This inspired the American Tonalist movement, which adapted the Barbizon preference for intimate scenes, muted palettes, and evocative moods to the American landscape. Artists like George Inness and Albert Pinkham Ryder created a distinctly American version of Barbizon's poetic, introspective naturalism.</p>"
+            },
+            {
+              "title": "Shifting the Subject of Art Forever",
+              "content": "<p>Perhaps the most significant legacy of the Barbizon School was its permanent shift in what was considered a worthy subject for art. By rejecting the grand hierarchy of the Academy and insisting on the profound beauty of the local and the ordinary, they democratized art. After Barbizon, the idea that a simple landscape or a scene of everyday life could be a masterpiece was no longer a radical proposition but an accepted foundation of modern art.</p>"
+            },
+            {
+              "title": "Creating a New Art Market",
+              "content": "<p>The Barbizon painters also played a key role in developing the modern art market. Their smaller, more intimate canvases were perfectly suited for the domestic interiors of the rising bourgeois class, rather than the grand palaces of the aristocracy. This created a new system of art patronage, reliant on private dealers and collectors, that would become the standard for the Impressionists and all subsequent modern artists.</p>"
+            },
+            {
+              "title": "A Legacy of Realism",
+              "content": "<p>The Barbizon School was part of a broader mid-19th-century cultural shift toward Realism, which included writers like Émile Zola and Gustave Flaubert and the painter Gustave Courbet. Like them, the Barbizon artists sought to represent the world around them with unflinching honesty. Their specific contribution was to apply this realist ethos to the landscape, stripping it of classical artifice and revealing its authentic character.</p>"
+            },
+            {
+              "title": "The Bridge from Romanticism to Modernity",
+              "content": "<p>In the grand narrative of art history, the Barbizon School serves as the essential bridge between the emotional intensity of Romanticism and the observational science of Impressionism. They took the Romantic love of nature and grounded it in a direct, empirical study of the real world. By doing so, they forged a new path for art, one that valued personal observation and authenticity above all else, thereby laying the indispensable foundation for the birth of modern art.</p>"
+            }
+          ]
+        }
+      ]
+    }
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // ===== Utilities =====
+      const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+      const slug = s => s.toLowerCase().replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-');
+
+      // ===== Read Metadata from JSON =====
+      let jsonData = {};
+      try {
+        jsonData = JSON.parse(document.getElementById('embedded-json').textContent);
+      } catch (e) {
+        console.error("Error parsing embedded JSON:", e);
+        document.getElementById('docTitle').textContent = 'Error Loading Content';
+        return;
+      }
+      const docTitle = jsonData.title || 'Untitled Document';
+      const docSubtitle = jsonData.description || '';
+      const timelineStepsData = jsonData.timeline_steps;
+      const timelineLabelsData = jsonData.timeline_labels;
+      
+      // ===== Populate Header from Metadata =====
+      document.getElementById('docTitle').textContent = docTitle;
+      document.getElementById('docSubtitle').textContent = docSubtitle;
+      document.title = docTitle;
+
+      // ===== Build Content from JSON =====
+      const contentSection = document.getElementById('content');
+      let contentHtml = '';
+      if (jsonData.articles) {
+        jsonData.articles.forEach(article => {
+          contentHtml += `<article id="${slug(article.title)}">`;
+          contentHtml += `<h2>${article.title}</h2>`;
+          if (article.introduction) {
+            contentHtml += `<p>${article.introduction}</p>`;
+          }
+          if (article.threads) {
+            article.threads.forEach(thread => {
+              contentHtml += `<details open>`;
+              contentHtml += `<summary><h3>${thread.title}</h3></summary>`;
+              if (thread.content) {
+                contentHtml += `<div class="pl-4 border-l-2 border-var">${thread.content}</div>`;
+              }
+              contentHtml += `</details>`;
+            });
+          }
+          contentHtml += `</article>`;
+        });
+      }
+      contentSection.innerHTML = contentHtml;
+
+      // ===== Theme packs =====
+      const THEME_PACKS = {
+        slate: {
+          proseClass: 'prose-slate',
+          bodyClass: 'bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 pb-[env(safe-area-inset-bottom)]'
+        },
+        emerald: {
+          proseClass: 'prose-emerald',
+          bodyClass: 'bg-white text-emerald-900 dark:bg-emerald-950 dark:text-emerald-100 pb-[env(safe-area-inset-bottom)]'
+        }
+      };
+      const availableThemes = Object.keys(THEME_PACKS);
+
+      function applyTheme(themeKey){
+        const root = document.documentElement;
+        const isDark = root.classList.contains('dark');
+        const pack = THEME_PACKS[themeKey] || THEME_PACKS.slate;
+        root.classList.toggle('theme-emerald', isDark && themeKey === 'emerald');
+        document.body.className = isDark ? pack.bodyClass : THEME_PACKS.slate.bodyClass;
+        contentSection.className = `prose ${pack.proseClass} dark:prose-invert max-w-none`;
+        try { localStorage.setItem('colorScheme', themeKey); } catch(_){}
+      }
+
+      let currentThemeIndex = 0;
+      try {
+        const saved = localStorage.getItem('colorScheme');
+        if (saved && THEME_PACKS[saved]) currentThemeIndex = availableThemes.indexOf(saved);
+      } catch(_) {}
+      
+      const colorBtn = document.getElementById('colorSchemeToggle');
+      colorBtn?.addEventListener('click', () => {
+        const root = document.documentElement;
+        if (!root.classList.contains('dark')) {
+          root.classList.add('dark');
+          try { localStorage.setItem('theme','dark'); } catch(_){}
+          document.getElementById('themeToggle')?.setAttribute('aria-pressed','true');
+          applyTheme(availableThemes[currentThemeIndex]); // apply color when switching to dark
+          return;
+        }
+        currentThemeIndex = (currentThemeIndex + 1) % availableThemes.length;
+        const newTheme = availableThemes[currentThemeIndex];
+        applyTheme(newTheme);
+        buildTOC();
+      });
+
+      const themeBtn = document.getElementById('themeToggle');
+      if (themeBtn) {
+        themeBtn.setAttribute('aria-pressed', String(document.documentElement.classList.contains('dark')));
+      }
+      themeBtn?.addEventListener('click', () => {
+        const root = document.documentElement;
+        const isDark = root.classList.toggle('dark');
+        try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch(_){}
+        themeBtn.setAttribute('aria-pressed', String(isDark));
+
+        if (!isDark) {
+          root.classList.remove('theme-emerald');
+          applyTheme('slate');
+        } else {
+          let saved = 'slate';
+          try { const s = localStorage.getItem('colorScheme'); if (s) saved = s; } catch(_){}
+          applyTheme(saved);
+        }
+        buildTOC();
+      });
+
+      // ===== Expand/Collapse, TOC, Timeline, Search (Functions now use the dynamically generated content) =====
+      const getDetails = () => document.querySelectorAll('#content details');
+      const expandBtn = document.getElementById('expandAll');
+      const collapseBtn = document.getElementById('collapseAll');
+
+      if (getDetails().length === 0) {
+        if(expandBtn) expandBtn.hidden = true;
+        if(collapseBtn) collapseBtn.hidden = true;
+      } else {
+        expandBtn?.addEventListener('click', () => { getDetails().forEach(d => d.open = true); });
+        collapseBtn?.addEventListener('click', () => { getDetails().forEach(d => d.open = false); });
+      }
+
+      (function addBackToTopLinks(){
+        $$('#content > article').forEach((article, index, arr) => {
+          if (index === arr.length - 1) return;
+          const wrapper = document.createElement('div');
+          wrapper.className = 'mt-6 flex justify-end';
+          wrapper.innerHTML = `<a href="#top" class="text-sm underline decoration-dotted">Back to top</a>`;
+          article.appendChild(wrapper);
+        });
+      })();
+
+      function buildTOC(){
+        const toc = document.getElementById('toc');
+        if (!toc) return;
+        const headings = $$('#content h2, #content h3');
+        const items = headings.map(h => {
+          const parentArticle = h.closest('article');
+          const parentSlug = parentArticle ? parentArticle.id : '';
+          if (!h.id) h.id = parentSlug + '-' + slug(h.textContent);
+          return { id: h.id, text: h.textContent.trim(), level: h.tagName.toLowerCase() };
+        });
+
+        toc.innerHTML = items.map(({id, text, level}) => {
+          const pad = level === 'h3' ? ' pl-4' : '';
+          return `<li><a href="#${id}" class="toc-link block px-2 py-1.5 rounded${pad}">${text}</a></li>`;
+        }).join('');
+
+        const links = $$('#toc a');
+        const sections = items.map(i => document.getElementById(i.id));
+        const obs = new IntersectionObserver(entries => {
+          entries.forEach(e => {
+            if (e.isIntersecting) {
+              links.forEach(a => a.classList.remove('active-link'));
+              const id = '#' + e.target.id;
+              const active = links.find(a => a.getAttribute('href') === id);
+              active?.classList.add('active-link');
+            }
+          });
+        }, { rootMargin: '-40% 0px -55% 0px', threshold: 0.01 });
+        sections.forEach(sec => sec && obs.observe(sec));
+      }
+      
+      (function buildTimeline(){
+        const wrap = document.getElementById('timelineWrap');
+        const list = document.getElementById('timeline');
+        const coda = document.getElementById('timelineCoda');
+
+        if (!timelineStepsData || !wrap || !list) { if(wrap) wrap.hidden = true; return; }
+        const steps = timelineStepsData.split(',').map(s => s.trim());
+        const labels = timelineLabelsData ? timelineLabelsData.split(',').map(s => s.trim()) : [];
+        if (!steps.length) { wrap.hidden = true; return; }
+        wrap.hidden = false;
+
+        const mkStep = (id, label) => (
+          `<li class="flex items-center gap-2"><span class="inline-block w-[14px] h-[14px] rounded-full border-2 border-current bg-current"></span><a href="#${id}" class="hover:underline">${label}</a></li>`
+        );
+        const segments = [];
+        steps.forEach((id, idx) => {
+          const el = $$('#content h2, #content h3').find(h => slug(h.textContent) === id);
+          if (el && !el.id) el.id = id;
+          const label = labels[idx] || (el?.textContent || id.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()));
+          segments.push(mkStep(id, label));
+          if (idx !== steps.length - 1) segments.push('<li class="h-[2px] bg-current opacity-35"></li>');
+        });
+        list.innerHTML = segments.join('');
+      })();
+
+      (function searchHL(){
+        const input = document.getElementById('search');
+        const clearBtn = document.getElementById('clearSearch');
+        if (!input || !contentSection) return;
+        let originalHTML = '';
+        function restore(){ 
+          if (originalHTML) {
+            contentSection.innerHTML = originalHTML; 
+            buildTOC(); // Rebuild TOC to reattach observers
+          }
+        }
+        function highlight(term){
+          if (!originalHTML) originalHTML = contentSection.innerHTML;
+          restore();
+          if (!term) return;
+          const esc = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+          const re = new RegExp(`(${esc})(?![^<]*>)`, 'gi');
+          contentSection.innerHTML = contentSection.innerHTML.replace(re, '<mark>$1</mark>');
+          buildTOC();
+        }
+        let t; 
+        input.addEventListener('input', (e) => { 
+          clearTimeout(t); 
+          t = setTimeout(() => highlight(e.target.value.trim()), 120); 
+        });
+        clearBtn?.addEventListener('click', () => { 
+          if (input) input.value=''; 
+          restore(); 
+        });
+      })();
+
+      buildTOC();
+      try {
+        const saved = localStorage.getItem('colorScheme');
+        applyTheme(saved && THEME_PACKS[saved] ? saved : 'slate');
+      } catch(_){
+        applyTheme('slate');
+      }
+    });
+  </script>
+</body>
+</html>
