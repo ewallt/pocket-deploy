@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Barbizon School - The Quiet Revolution</title>
+
+    <title>The Roman Empire - A Legacy in Stone</title>
     <style>
         :root {
             --bg-gradient: linear-gradient(135deg,#2c3e50 0%,#34495e 100%);
@@ -255,7 +256,7 @@
             margin-bottom: 0.5rem;
         }
 
-        .highlight-box {
+        .casualties-highlight {
             background: rgba(var(--accent-warning-rgb), 0.15);
             padding: 1rem;
             border-radius: 5px;
@@ -293,7 +294,7 @@
         .timeline {
             position: relative;
             padding-left: 2rem;
-            margin-top: 2rem; /* Added margin for spacing */
+            margin-top: 2rem;
         }
 
         .timeline::before {
@@ -315,20 +316,20 @@
         .timeline-item::before {
             content: '';
             position: absolute;
-            left: -2.05rem; /* Adjusted for alignment */
-            top: 5px;       /* Adjusted for alignment */
+            left: -2.05rem;
+            top: 5px;
             width: 12px;
             height: 12px;
             background: var(--accent-1);
             border-radius: 50%;
-            border: 2px solid var(--ui-background); /* Helps dot stand out */
+            border: 2px solid var(--ui-background);
         }
 
         .timeline-time {
             color: var(--accent-1);
             font-weight: bold;
             font-size: 1.1rem;
-            margin-bottom: 0.5rem; /* Added margin for spacing */
+            margin-bottom: 0.5rem;
         }
 
         .search-box {
@@ -352,7 +353,7 @@
             border-radius: 3px;
         }
 
-        .interactive-section {
+        .interactive-map {
             background: var(--container-background-subtle);
             padding: 2rem;
             border-radius: 10px;
@@ -403,20 +404,9 @@
     <script>
     // Self-executing function to manage all theme logic.
     (function() {
-        const DEFAULT_THEME_NAME = 'emerald-night';
+        const DEFAULT_THEME_NAME = 'cyber-night';
     
         let THEMES = {
-            'emerald-night': {
-                '--bg-gradient': 'linear-gradient(135deg,#0a230a 0%,#1a3a1a 50%,#2e5e2e 100%)',
-                '--accent-1': '#a8d0b8', '--accent-1-rgb': '168, 208, 184',
-                '--accent-2': '#6a947a',
-                '--btn-gradient': 'linear-gradient(45deg,#1a3a1a,#2e5e2e)',
-                '--accent-warning': '#ffc107', '--accent-warning-rgb': '255, 193, 7',
-                '--ui-background': '#345e49',
-                '--ui-background-accent': 'rgba(52, 94, 73, 0.8)',
-                '--container-background-subtle': 'rgba(0, 0, 0, 0.3)',
-                '--btn-text-active': '#ecf0f1'
-            },
             'cyber-night': {
                 '--bg-gradient': 'linear-gradient(135deg,#0a0a23 0%,#1a1a3a 50%,#2e2e5e 100%)',
                 '--accent-1': '#a8b8d0', '--accent-1-rgb': '168, 184, 208',
@@ -426,6 +416,18 @@
                 '--accent-warning-rgb': '232, 179, 57',
                 '--ui-background': '#34495e',
                 '--ui-background-accent': 'rgba(52, 73, 94, 0.8)',
+                '--container-background-subtle': 'rgba(0, 0, 0, 0.3)',
+                '--btn-text-active': '#ecf0f1'
+            },
+            'teal-matrix': {
+                '--bg-gradient': 'linear-gradient(135deg,#0a231c 0%,#1a3a31 50%,#2e5e50 100%)',
+                '--accent-1': '#ace0d5', '--accent-1-rgb': '172, 224, 213',
+                '--accent-2': '#92b3a9',
+                '--btn-gradient': 'linear-gradient(45deg,#1a3a31,#2e5e50)',
+                '--accent-warning': '#e8b339',
+                '--accent-warning-rgb': '232, 179, 57',
+                '--ui-background': '#345e55',
+                '--ui-background-accent': 'rgba(52, 94, 85, 0.8)',
                 '--container-background-subtle': 'rgba(0, 0, 0, 0.3)',
                 '--btn-text-active': '#ecf0f1'
             },
@@ -442,19 +444,19 @@
                 '--accent-warning-rgb': '232, 179, 57',
                 '--btn-text-active': '#ffffff'
             },
-            'scorched-copper': {
+            'scorched-gold': {
                 '--bg-gradient': 'linear-gradient(135deg,#2a1d15 0%,#4e3427 50%,#5a4032 100%)',
                 '--ui-background': '#5a4032',
                 '--ui-background-accent': 'rgba(90, 64, 50, 0.8)',
                 '--container-background-subtle': 'rgba(26, 15, 8, 0.3)',
-                '--accent-1': '#d4af37',
-                '--accent-2': '#b87333',
-                '--btn-gradient': 'linear-gradient(45deg,#d4af37,#b87333)',
-                '--accent-1-rgb': '212, 175, 55',
+                '--accent-1': '#f0c475',
+                '--accent-2': '#d4a24c',
+                '--btn-gradient': 'linear-gradient(45deg,#f0c475,#d4a24c)',
+                '--accent-1-rgb': '240, 196, 117',
                 '--btn-text-active': '#2a1d15',
                 '--btn-text-hover': '#2a1d15',
-                '--accent-warning': '#f0e68c',
-                '--accent-warning-rgb': '240, 230, 140'
+                '--accent-warning': '#e8b339',
+                '--accent-warning-rgb': '232, 179, 57'
             }
         };
 
@@ -482,11 +484,11 @@
     
         window.setTheme = function(name) {
             applyTheme(name);
-            localStorage.setItem('art-history-theme', name);
+            localStorage.setItem('roman-theme', name); // Changed storage key
         }
     
         const availableThemeNames = Object.keys(THEMES);
-        const savedTheme = localStorage.getItem('art-history-theme');
+        const savedTheme = localStorage.getItem('roman-theme'); // Changed storage key
         let themeToLoad = DEFAULT_THEME_NAME;
 
         if (savedTheme && availableThemeNames.includes(savedTheme)) {
@@ -521,178 +523,152 @@
     </div>
 
     <div class="header">
-        <h1>The Barbizon School</h1>
-        <p>1830 – 1870 • The Quiet Revolution in French Landscape • Knowledge Base</p>
+        <h1>The Roman Empire</h1>
+        <p>c. 753 BC – 476 AD • Senātus Populusque Rōmānus • Knowledge Base</p>
     </div>
 
     <div class="nav-tabs">
         <button class="tab-button active" data-tab="overview">Overview</button>
-        <button class="tab-button" data-tab="artists">Key Artists</button>
-        <button class="tab-button" data-tab="millet">Millet & The Gleaners</button>
-        <button class="tab-button" data-tab="technique">The Technique</button>
-        <button class="tab-button" data-tab="artist-list">The Artists</button>
+        <button class="tab-button" data-tab="republic">The Republic</button>
+        <button class="tab-button" data-tab="empire">The Empire</button>
+        <button class="tab-button" data-tab="figures">Key Figures</button>
+        <button class="tab-button" data-tab="innovations">Innovations</button>
         <button class="tab-button" data-tab="search">Search</button>
-        <button id="settings-btn" title="Settings">🎨</button>
+        <button id="settings-btn" title="Settings">⚙️</button>
     </div>
 
     <div class="container">
         <div id="overview" class="tab-content active">
              <div class="section-card">
-                <h2 class="section-title">A Quiet Revolution</h2>
+                <h2 class="section-title">The Eternal City and Its Legacy</h2>
                 <p style="font-size: 1.2rem; line-height: 1.8; margin-bottom: 2rem;">
-                    The Barbizon School was a movement of French landscape painters active from about 1830 to 1870. They rejected the idealized, classical landscapes of the French Academy, choosing instead to paint directly from nature. By finding profound beauty in the humble, everyday scenery of the Forest of Fontainebleau, they pioneered a new form of realism and laid the essential groundwork for the Impressionist revolution that would follow.
+                    From its mythical founding to its eventual decline, the history of Rome spans over a millennium, leaving an indelible mark on Western civilization. Evolving from a small city-state into a vast republic and then a dominant empire, Rome's innovations in law, governance, engineering, and language continue to influence the modern world.
                 </p>
-
+                
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <span class="stat-number">c. 1830-1870</span>
-                        <div class="stat-label">Years Active</div>
+                        <span class="stat-number">>1,200</span>
+                        <div class="stat-label">Years of History</div>
                     </div>
                     <div class="stat-card">
-                        <span class="stat-number">7+</span>
-                        <div class="stat-label">Key Artists</div>
+                        <span class="stat-number">~60M</span>
+                        <div class="stat-label">Peak Population</div>
                     </div>
                     <div class="stat-card">
-                        <span class="stat-number">Fontainebleau</span>
-                        <div class="stat-label">Primary Location</div>
+                        <span class="stat-number">>50,000</span>
+                        <div class="stat-label">Miles of Roads Built</div>
                     </div>
                     <div class="stat-card">
-                        <span class="stat-number">Impressionism</span>
-                        <div class="stat-label">Key Influence On</div>
-                    </div>
-                </div>
-
-                <div class="interactive-section">
-                    <h3 style="color: var(--accent-1); margin-bottom: 1rem;">Core Philosophies</h3>
-                    <p>Click on a concept to learn more:</p>
-                    <div class="sector-buttons">
-                        <button class="sector-button" data-sector="realism">Realism</button>
-                        <button class="sector-button" data-sector="plein-air">Plein Air</button>
-                        <button class="sector-button" data-sector="mood">Mood & Atmosphere</button>
-                    </div>
-
-                    <div id="realism-detail" class="sector-detail">
-                        <h4 style="color: var(--accent-1);">Truth to Nature</h4>
-                        <p>The Barbizon painters believed that art should be based on the direct, honest observation of the natural world. They rejected the artificial, idealized landscapes of the Academy, choosing instead to paint the humble reality of the French countryside, including its peasants, forests, and farms, as a subject worthy of serious art.</p>
-                    </div>
-                    <div id="plein-air-detail" class="sector-detail">
-                        <h4 style="color: var(--accent-1);">Painting Outdoors</h4>
-                        <p>A central practice of the school was painting *en plein air*, or in the open air. Aided by the invention of pre-packaged paint tubes, artists left the studio to capture the immediate and fleeting effects of natural light, weather, and atmosphere, a radical departure from traditional methods and a direct precursor to Impressionism.</p>
-                    </div>
-                    <div id="mood-detail" class="sector-detail">
-                        <h4 style="color: var(--accent-1);">Capturing 'L'Effet'</h4>
-                        <p>The artists were less concerned with a precise, topographical record of a place than with capturing its 'effet'—the overall feeling or impression of a scene at a specific moment. Their work is known for its evocative, often somber and poetic mood, using a tonal palette to convey the atmosphere of a misty morning or a heavy sky.</p>
+                        <span class="stat-number">22%</span>
+                        <div class="stat-label">of World Population (at peak)</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div id="artists" class="tab-content">
+        <div id="republic" class="tab-content">
             <div class="section-card">
-                <h2 class="section-title">Timeline of Key Artists</h2>
+                <h2 class="section-title">The Roman Republic (509 BC – 27 BC)</h2>
                 <div class="timeline">
                     <div class="timeline-item">
-                        <div class="timeline-time">Théodore Rousseau (1812-1867)</div>
-                        <h4>The Soul of the Forest</h4>
-                        <p>Considered the group's leader, Rousseau was known for his intense, detailed, and often melancholic depictions of the Forest of Fontainebleau, especially its majestic oak trees.</p>
+                        <div class="timeline-time">509 BC</div>
+                        <h4>Founding of the Republic</h4>
+                        <p>The overthrow of the last Roman king, Lucius Tarquinius Superbus, marks the establishment of the Republic. Power is vested in elected officials, principally two consuls, and the Senate.</p>
                     </div>
                     <div class="timeline-item">
-                        <div class="timeline-time">Jean-François Millet (1814-1875)</div>
-                        <h4>The Painter of Peasants</h4>
-                        <p>Millet focused on the human element, creating powerful and dignified portrayals of rural laborers that captured the harsh realities and quiet piety of peasant life.</p>
+                        <div class="timeline-time">264–146 BC</div>
+                        <h4>The Punic Wars</h4>
+                        <p>A series of three major wars fought between Rome and its rival, Carthage. Rome's ultimate victory, despite Hannibal's brilliant campaigns, established its dominance over the Mediterranean.</p>
                     </div>
                     <div class="timeline-item">
-                        <div class="timeline-time">Charles-François Daubigny (1817-1878)</div>
-                        <h4>The Innovator on the River</h4>
-                        <p>A key forerunner of Impressionism, Daubigny used a floating studio-boat to paint directly on the river, capturing fleeting reflections with a new, sketch-like freedom.</p>
+                        <div class="timeline-time">73 BC</div>
+                        <h4>Spartacus' Revolt</h4>
+                        <p>The most famous slave revolt in Roman history, led by the gladiator Spartacus. Though ultimately crushed by the legions of Crassus, the rebellion shook the Republic to its core.</p>
                     </div>
                     <div class="timeline-item">
-                        <div class="timeline-time">Jean-Baptiste-Camille Corot (1796-1875)</div>
-                        <h4>The Poet of Light</h4>
-                        <p>A pivotal figure linked to the group, Corot was admired for his masterful handling of silvery light and poetic atmosphere, directly inspiring the younger Impressionists.</p>
+                        <div class="timeline-time">44 BC</div>
+                        <h4>Assassination of Julius Caesar</h4>
+                        <p>After being declared "dictator in perpetuity," Caesar is assassinated by a group of senators fearing his power. His death plunges Rome into a new series of civil wars.</p>
+                    </div>
+                     <div class="timeline-item">
+                        <div class="timeline-time">27 BC</div>
+                        <h4>Rise of Augustus</h4>
+                        <p>After defeating Mark Antony and Cleopatra, Caesar's heir Octavian is granted the title "Augustus" by the Senate, marking the end of the Republic and the beginning of the Roman Empire.</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div id="millet" class="tab-content">
+        <div id="empire" class="tab-content">
             <div class="section-card">
-                <h2 class="section-title">Millet & The Gleaners</h2>
+                <h2 class="section-title">The Roman Empire (27 BC – 476 AD)</h2>
                 <div class="sector-grid">
                     <div class="sector-card">
-                        <div class="sector-name">The Artist</div>
-                        <p><strong>Jean-François Millet</strong> was unique among the Barbizon painters for his primary focus on the human figure within the landscape. He grew up in a peasant family in Normandy and his work is defined by a deep empathy for the struggles and dignity of rural laborers.</p>
-                        <div class="highlight-box">
-                            <strong>Painted:</strong> 1857
+                        <div class="sector-name">Pax Romana (27 BC - 180 AD)</div>
+                        <p>The "Roman Peace," a two-century period of unprecedented stability, prosperity, and imperial expansion. The Empire reached its greatest extent under Emperor Trajan, stretching from Britain to Mesopotamia.</p>
+                    </div>
+                    <div class="sector-card">
+                        <div class="sector-name">The Five Good Emperors</div>
+                        <p>A succession of rulers (Nerva, Trajan, Hadrian, Antoninus Pius, and Marcus Aurelius) who presided over the peak of the Empire's power and prosperity, noted for their administrative skill and peaceful successions.</p>
+                    </div>
+                    <div class="sector-card">
+                        <div class="sector-name">Crisis of the Third Century</div>
+                        <p>A period of intense political instability, civil war, plague, and economic depression that nearly caused the collapse of the Empire. Order was eventually restored by emperors like Diocletian.</p>
+                        <div class="casualties-highlight">
+                            <strong>Result:</strong> Empire split into Eastern and Western halves for easier administration.
                         </div>
                     </div>
                     <div class="sector-card">
-                        <div class="sector-name">The Painting</div>
-                        <p>*The Gleaners* depicts three peasant women performing the back-breaking work of gleaning—collecting leftover grains after the harvest, a right granted to the rural poor. The figures are monumental and sculptural, their forms rhyming with the haystacks in the sunlit background, lending them a timeless, almost biblical, gravity.</p>
-                    </div>
-                    <div class="sector-card">
-                        <div class="sector-name">Social Context</div>
-                        <p>When exhibited at the 1857 Paris Salon, the painting was highly controversial. In the wake of recent peasant uprisings, wealthy urban critics saw a socialist political statement in its unidealized depiction of rural poverty. They were unsettled by the painting's stark realism and the monumental scale given to the lowest class of society.</p>
-                    </div>
-                    <div class="sector-card">
-                        <div class="sector-name">Artistic Impact</div>
-                        <p>Despite the controversy, *The Gleaners* became one of the most famous works of the 19th century. Millet's ability to imbue the harsh reality of peasant life with a profound sense of dignity and humanity had a massive influence on later artists, most notably Vincent van Gogh, who deeply admired and copied Millet's work.</p>
+                        <div class="sector-name">The Fall of the West</div>
+                        <p>A combination of internal decay, economic troubles, and constant invasions by barbarian tribes led to the gradual decline of the Western Roman Empire, culminating in the deposition of the last emperor, Romulus Augustulus, in 476 AD.</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div id="technique" class="tab-content">
+        <div id="figures" class="tab-content">
             <div class="section-card">
-                <h2 class="section-title">The Barbizon Technique</h2>
+                <h2 class="section-title">Key Figures</h2>
                 <div class="sector-grid">
                     <div class="sector-card">
-                        <h3 class="sector-name">En Plein Air</h3>
-                        <p>The practice of painting outdoors to directly capture the effects of light and atmosphere. This was a radical departure from the studio-based methods of the Academy and was made possible by the invention of paint in tubes.</p>
+                        <h3 class="sector-name">Julius Caesar</h3>
+                        <p>A brilliant general and politician who conquered Gaul and played a critical role in the events that led to the demise of the Roman Republic and the rise of the Empire.</p>
                     </div>
                     <div class="sector-card">
-                        <h3 class="sector-name">Tonalism</h3>
-                        <p>A preference for a muted, earthy palette of browns, greens, and grays to convey a harmonious and realistic mood. They avoided the bright, artificial colors favored by academic and romantic painters.</p>
+                        <h3 class="sector-name">Augustus (Octavian)</h3>
+                        <p>The first Roman Emperor. He ended a century of civil wars and initiated the Pax Romana, transforming Rome with massive building projects and reforms.</p>
                     </div>
                     <div class="sector-card">
-                        <h3 class="sector-name">The Oil Sketch</h3>
-                        <p>Small, spontaneous oil studies made outdoors were used as references for larger studio works. The energy and freedom of these sketches began to influence the final paintings, leading to a looser, more "unfinished" look.</p>
+                        <h3 class="sector-name">Constantine the Great</h3>
+                        <p>Emperor who reunited the Empire, moved the capital to Constantinople, and became the first emperor to convert to Christianity, profoundly changing the course of Roman and European history.</p>
                     </div>
                      <div class="sector-card">
-                        <h3 class="sector-name">Visible Brushwork</h3>
-                        <p>Unlike the polished, invisible finish of academic painting, many Barbizon artists allowed their brushstrokes to remain visible, conveying texture and the artist's personal touch. This was a crucial step towards the techniques of Impressionism.</p>
+                        <h3 class="sector-name">Cicero</h3>
+                        <p>A renowned statesman, lawyer, and philosopher. His writings and speeches are considered some of the greatest examples of Latin prose and were hugely influential on later European thought.</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div id="artist-list" class="tab-content">
+        <div id="innovations" class="tab-content">
             <div class="section-card">
-                <h2 class="section-title">Key Figures of the School</h2>
+                <h2 class="section-title">Roman Innovations</h2>
                 <div class="sector-grid">
-                    <div class="sector-card">
-                        <h3 class="sector-name">Théodore Rousseau</h3>
-                        <p>The passionate leader; focused on the character of trees and the forest interior.</p>
-                    </div>
                      <div class="sector-card">
-                        <h3 class="sector-name">Jean-François Millet</h3>
-                        <p>The humanist; known for his dignified portrayals of peasant laborers.</p>
-                    </div>
+                        <h3 class="sector-name">Roman Law</h3>
+                        <p>Developed sophisticated legal principles like "innocent until proven guilty" and the concept of a written legal code (The Twelve Tables), which form the basis of many modern legal systems.</p>
+                     </div>
                      <div class="sector-card">
-                        <h3 class="sector-name">Jean-Baptiste-Camille Corot</h3>
-                        <p>The poet of light; his feathery style was a bridge to Impressionism.</p>
-                    </div>
+                        <h3 class="sector-name">Concrete & The Arch</h3>
+                        <p>Mastery of these two technologies allowed the Romans to build massive, durable structures like the Colosseum, Pantheon, and extensive aqueduct systems that still stand today. </p>
+                     </div>
                      <div class="sector-card">
-                        <h3 class="sector-name">Charles-François Daubigny</h3>
-                        <p>The river painter; used a studio-boat to capture water and reflections.</p>
-                    </div>
+                        <h3 class="sector-name">Roads and Highways</h3>
+                        <p>The Romans constructed over 50,000 miles of paved roads ("All roads lead to Rome") to facilitate rapid troop movement, trade, and communication across their vast empire.</p>
+                     </div>
                      <div class="sector-card">
-                        <h3 class="sector-name">Constant Troyon</h3>
-                        <p>The animal painter; specialized in realistic depictions of cattle in the landscape.</p>
-                    </div>
-                     <div class="sector-card">
-                        <h3 class="sector-name">Narcisse Diaz de la Peña</h3>
-                        <p>The specialist in dappled light filtering through the forest canopy.</p>
+                        <h3 class="sector-name">Julian Calendar</h3>
+                        <p>Introduced by Julius Caesar, this calendar, with its system of 365 days and a leap year, was the standard in the Western world for over 1,600 years and is the basis for our modern Gregorian calendar.</p>
                     </div>
                 </div>
             </div>
@@ -701,12 +677,12 @@
         <div id="search" class="tab-content">
             <div class="section-card">
                 <h2 class="section-title">Search the Knowledge Base</h2>
-                <input type="text" id="searchInput" class="search-box" placeholder="Search for artists, techniques, locations...">
+                <input type="text" id="searchInput" class="search-box" placeholder="Search for emperors, battles, innovations...">
                 
                 <div id="searchResults">
                     <p style="text-align: center; color: var(--text-secondary); font-style: italic; margin: 2rem 0;">
-                        Enter a search term above to explore the Barbizon School knowledge base.<br>
-                        Try searching for: "Millet", "Plein Air", "Fontainebleau", "Corot", "The Gleaners", etc.
+                        Enter a search term above to explore Roman history.<br>
+                        Try searching for: "Caesar", "Colosseum", "Punic Wars", "Augustus", "Concrete", etc.
                     </p>
                 </div>
             </div>
@@ -716,15 +692,15 @@
     <script>
         // Knowledge base for searching
         const knowledgeBase = {
-            "Barbizon": "A village on the edge of the Forest of Fontainebleau in France, which became the gathering place for a group of landscape painters who rejected academic tradition in favor of realism and painting from nature.",
-            "Plein Air": "The practice of painting outdoors, or 'en plein air,' was a core tenet of the Barbizon School. It allowed artists to capture the immediate and fleeting effects of light and atmosphere, a radical departure from studio-based academic methods.",
-            "Théodore Rousseau": "Considered the leader of the Barbizon School, Rousseau was known for his detailed and moody paintings of the Forest of Fontainebleau, particularly his powerful depictions of oak trees.",
-            "Jean-François Millet": "A key Barbizon artist famous for his dignified and realistic portrayals of French peasant life. His most famous work, *The Gleaners*, was controversial at the time for its honest depiction of rural poverty.",
-            "The Gleaners": "A masterpiece by Jean-François Millet from 1857, depicting three peasant women collecting leftover grain after the harvest. It is celebrated for its monumental and unsentimental portrayal of rural labor.",
-            "Camille Corot": "A pivotal artist associated with the Barbizon School, admired for his poetic, silvery landscapes. His soft, feathery brushwork and focus on light made him a direct inspiration for the Impressionists.",
-            "Charles-François Daubigny": "An innovative Barbizon painter who used a converted ferry as a floating studio, called 'Le Botin,' to paint river scenes directly from the water. This practice was later adopted by Claude Monet.",
-            "Fontainebleau": "The vast, ancient forest near Paris that served as the primary subject and outdoor studio for the Barbizon painters. Its rugged, natural scenery was a perfect contrast to the idealized landscapes of the Academy.",
-            "Salon": "The official art exhibition of the Académie des Beaux-Arts in Paris. For much of the 19th century, success at the Salon was crucial for an artist's career. The Barbizon painters frequently had their more realistic works rejected by the conservative Salon juries."
+            "Caesar": "Gaius Julius Caesar was a Roman general and statesman who played a critical role in the events that led to the demise of the Roman Republic and the rise of the Roman Empire.",
+            "Augustus": "The founder of the Roman Empire and its first Emperor, ruling from 27 BC until his death in AD 14. He initiated an era of relative peace known as the Pax Romana.",
+            "Punic Wars": "A series of three wars fought between Rome and Carthage from 264 to 146 BC. They were among the largest wars of the ancient world and resulted in Roman dominance over the Mediterranean.",
+            "Colosseum": "An oval amphitheater in the center of Rome, Italy. Built of travertine limestone, tuff, and brick-faced concrete, it was the largest amphitheater ever built at the time and held 50,000–80,000 spectators.",
+            "Concrete": "Roman concrete (Opus caementicium) was a material used in construction during the late Roman Republic and the Empire. Its durability allowed for the construction of massive structures like the Pantheon dome.",
+            "Aqueducts": "Romans constructed numerous aqueducts to bring water from distant sources into their cities and towns, supplying public baths, latrines, fountains, and private households.",
+            "Legions": "The Roman legion was the largest military unit of the Roman army. It was a highly organized and disciplined force that was key to Rome's military supremacy.",
+            "Constantine": "Constantine the Great was a Roman emperor from AD 306 to 337. He was the first Roman emperor to convert to Christianity and played an influential role in the proclamation of the Edict of Milan in 313, which declared religious tolerance for Christianity in the Roman empire.",
+            "SPQR": "An abbreviation for Senātus Populusque Rōmānus ('The Roman Senate and People'), referring to the government of the ancient Roman Republic."
         };
 
         // Initialize the application
@@ -806,7 +782,7 @@
                 const searchTerm = searchInput.value.toLowerCase();
 
                 if (searchTerm.length < 2) {
-                    resultsDiv.innerHTML = `<p style="text-align: center; color: var(--text-secondary); font-style: italic; margin: 2rem 0;">Enter a search term above to explore the Barbizon School knowledge base.<br>Try searching for: "Millet", "Plein Air", "Fontainebleau", "Corot", "The Gleaners", etc.</p>`;
+                    resultsDiv.innerHTML = `<p style="text-align: center; color: var(--text-secondary); font-style: italic; margin: 2rem 0;">Enter a search term above to explore Roman history.<br>Try searching for: "Caesar", "Colosseum", "Punic Wars", "Augustus", "Concrete", etc.</p>`;
                     return;
                 }
 
@@ -827,7 +803,7 @@
                 results.sort((a, b) => b.relevance - a.relevance);
 
                 if (results.length === 0) {
-                    resultsDiv.innerHTML = `<div class="section-card"><h3 style="color: var(--accent-1);">No results found for "${searchInput.value}"</h3><p>Try searching for artists, techniques, or key terms.</p></div>`;
+                    resultsDiv.innerHTML = `<div class="section-card"><h3 style="color: var(--accent-1);">No results found for "${searchInput.value}"</h3><p>Try searching for emperors, battles, or innovations.</p></div>`;
                     return;
                 }
 
