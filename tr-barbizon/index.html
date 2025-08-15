@@ -148,7 +148,10 @@
   --hero-wash: rgba(5,150,105,.10);
 }
 
-</style>
+/* ===== Mobile FAB quick settings (Option A) ===== */
+#fabPanel.show { display:block; animation: fadeUp .14s ease-out; }
+@keyframes fadeUp { from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:translateY(0)} }
+  </style>
 
 </head>
 
@@ -165,7 +168,9 @@
         <label for="search" class="sr-only">Search</label>
         <input id="search" type="search" placeholder="Search…" class="hidden md:block w-56 rounded-xl input-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400" />
         <button id="clearSearch" type="button" class="hidden md:inline-flex text-xs px-2 py-2 rounded-lg btn-surface">Clear</button>
-        <button id="colorSchemeToggle" type="button" class="inline-flex items-center justify-center rounded-xl btn-surface px-3 py-2 text-sm" title="Change color scheme">
+
+        <!-- Header controls: hidden on small screens -->
+        <button id="colorSchemeToggle" type="button" class="hidden sm:inline-flex items-center justify-center rounded-xl btn-surface px-3 py-2 text-sm" title="Change color scheme">
           <span class="inline md:hidden">Colors</span>
           <svg aria-hidden="true" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/>
@@ -175,7 +180,7 @@
             <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 7.012 17.461 2 12 2z"/>
           </svg>
         </button>
-        <button id="themeToggle" type="button" class="inline-flex items-center justify-center rounded-xl btn-surface px-3 py-2 text-sm" title="Toggle dark mode" aria-pressed="false">
+        <button id="themeToggle" type="button" class="hidden sm:inline-flex items-center justify-center rounded-xl btn-surface px-3 py-2 text-sm" title="Toggle dark mode" aria-pressed="false">
           <span class="inline md:hidden">Theme</span>
           <svg aria-hidden="true" class="w-5 h-5 hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
           <svg aria-hidden="true" class="w-5 h-5 dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
@@ -212,6 +217,16 @@
   <footer class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 text-xs footer-note">
     Threaded Reader — a single-file template
   </footer>
+
+  <!-- Mobile quick settings FAB + Panel -->
+  <button id="fab" class="fixed z-40 bottom-4 right-4 sm:hidden rounded-full shadow-lg px-4 py-3 text-sm btn-surface backdrop-blur">
+    ⚙️
+  </button>
+  <div id="fabPanel" class="sm:hidden fixed z-40 bottom-20 right-4 w-56 rounded-xl surface p-3 hidden">
+    <div class="text-xs mb-2 opacity-80">Quick settings</div>
+    <button id="fabTheme" class="w-full text-sm px-3 py-2 rounded-lg btn-surface mb-2">Toggle Theme</button>
+    <button id="fabColor" class="w-full text-sm px-3 py-2 rounded-lg btn-surface">Cycle Colors</button>
+  </div>
 
   <script id="embedded-json" type="application/json">
     {
@@ -474,7 +489,7 @@
         buildTOC();
       });
 
-      // ===== Expand/Collapse, TOC, Timeline, Search (Functions now use the dynamically generated content) =====
+      // ===== Expand/Collapse, TOC, Timeline, Search =====
       const getDetails = () => document.querySelectorAll('#content details');
       const expandBtn = document.getElementById('expandAll');
       const collapseBtn = document.getElementById('collapseAll');
@@ -591,6 +606,19 @@
       } catch(_){
         applyTheme('slate');
       }
+
+      // ===== Mobile FAB wiring (Option A) =====
+      const fab = document.getElementById('fab');
+      const fabPanel = document.getElementById('fabPanel');
+      const fabTheme = document.getElementById('fabTheme');
+      const fabColor = document.getElementById('fabColor');
+
+      fab?.addEventListener('click', () => fabPanel.classList.toggle('show'));
+      document.addEventListener('click', (e)=>{
+        if (!fabPanel.contains(e.target) && !fab.contains(e.target)) fabPanel.classList.remove('show');
+      });
+      fabTheme?.addEventListener('click', () => document.getElementById('themeToggle')?.click());
+      fabColor?.addEventListener('click', () => document.getElementById('colorSchemeToggle')?.click());
     });
   </script>
 </body>
