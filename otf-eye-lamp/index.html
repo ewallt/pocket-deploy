@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>When Light Becomes Darkness: Eye, Judgment, Cross</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+```
+    body {
+        font-family: 'Georgia', 'Times New Roman', serif;
+        line-height: 1.7;
+        color: #2c3e50;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+        padding: 20px;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        animation: fadeIn 1s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 40px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        animation: shimmer 4s ease-in-out infinite;
+    }
+
+    @keyframes shimmer {
+        0%, 100% { transform: rotate(0deg); }
+        50% { transform: rotate(180deg); }
+    }
+
+    .title {
+        font-size: 2.2rem;
+        font-weight: normal;
+        margin-bottom: 10px;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        position: relative;
+        z-index: 2;
+    }
+
+    .subtitle {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        font-style: italic;
+        position: relative;
+        z-index: 2;
+    }
+
+    .content {
+        padding: 50px;
+        font-size: 1.1rem;
+    }
+
+    .essay-text {
+        text-align: justify;
+        hyphens: auto;
+    }
+
+    .essay-text p {
+        margin-bottom: 1.5rem;
+        text-indent: 1.5rem;
+    }
+
+    .essay-text p:first-child {
+        text-indent: 0;
+        font-size: 1.15rem;
+        font-weight: 500;
+    }
+
+    .scripture {
+        font-style: italic;
+        color: #5a67d8;
+        font-weight: 500;
+    }
+
+    .reading-progress {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 0%;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        z-index: 1000;
+        transition: width 0.3s ease;
+    }
+
+    .controls {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        display: flex;
+        gap: 10px;
+        z-index: 100;
+    }
+
+    .control-btn {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        border: none;
+        background: rgba(102, 126, 234, 0.9);
+        color: white;
+        cursor: pointer;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(10px);
+    }
+
+    .control-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .reading-time {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 10px 15px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        color: #666;
+        backdrop-filter: blur(10px);
+    }
+
+    @media (max-width: 768px) {
+        .content {
+            padding: 30px 25px;
+        }
+        
+        .header {
+            padding: 30px 20px;
+        }
+        
+        .title {
+            font-size: 1.8rem;
+        }
+        
+        .controls {
+            bottom: 20px;
+            right: 20px;
+        }
+    }
+
+    .dark-mode {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    }
+
+    .dark-mode .container {
+        background: rgba(30, 42, 71, 0.95);
+        color: #e2e8f0;
+    }
+
+    .dark-mode .content {
+        color: #e2e8f0;
+    }
+
+    .dark-mode .scripture {
+        color: #9f7aea;
+    }
+
+    .font-large {
+        font-size: 1.3rem;
+    }
+
+    .font-large .content {
+        font-size: 1.3rem;
+    }
+</style>
+```
+
+</head>
+<body>
+    <div class="reading-progress" id="progress"></div>
+
+```
+<div class="container">
+    <div class="reading-time">~7 min read</div>
+    
+    <header class="header">
+        <h1 class="title">When Light Becomes Darkness</h1>
+        <p class="subtitle">Eye, Judgment, Cross</p>
+    </header>
+
+    <main class="content">
+        <div class="essay-text">
+            <p>There is perhaps no more dangerous spiritual condition than thinking we see clearly when we are actually blind. Jesus speaks of this peril when he describes the eye as the lamp of the body—a teaching that cuts straight to the heart of how we perceive ourselves, others, and God himself.</p>
+
+            <p>The eye Jesus describes is not the physical organ that processes light waves, but something far more fundamental: our spiritual and moral perception. <span class="scripture">"The eye is the lamp of the body,"</span> he says. <span class="scripture">"If your eyes are healthy, your whole body will be full of light. But if your eyes are unhealthy, your whole body will be full of darkness."</span> Picture a house at evening. When the lamp burns bright and clean, every corner is illuminated, every piece of furniture visible and useful. But when the lamp sputters with bad oil or a dirty wick, it fills the house not with light but with choking smoke. The very thing meant to illuminate becomes the source of obscurity.</p>
+
+            <p>This is precisely what happens to our moral vision. A healthy eye sees truly—it perceives God's character accurately, recognizes sin honestly, and responds with appropriate humility and grace. But the unhealthy eye, while still convinced it sees clearly, actually fills the person with darkness masquerading as light. And here Jesus delivers his most chilling warning: <span class="scripture">"If then the light within you is darkness, how great is that darkness!"</span></p>
+
+            <p>Nothing illustrates this spiritual blindness more clearly than our tendency to judge others. Jesus' command, <span class="scripture">"Do not judge, or you too will be judged,"</span> is not merely about manners or tolerance. It is a diagnosis of diseased vision. The person quick to point out the speck in another's eye while ignoring the log in his own has suffered a catastrophic failure of spiritual sight. He believes he sees with perfect clarity—indeed, his confidence in his own moral vision is precisely what drives his criticism of others. But this supposed light is actually darkness, and its effects are devastating.</p>
+
+            <p>Consider how this false light spreads. The judgmental person, convinced of his own righteousness, creates an atmosphere of condemnation wherever he goes. Relationships wither under the heat of his perpetual evaluation. Community becomes impossible when grace is absent. Like a lamp giving off toxic fumes instead of clean light, his presence poisons rather than illuminates. He destroys the very thing he claims to protect. This is sin's cruelest trick: it makes us feel most righteous precisely when we are most destructive.</p>
+
+            <p>But there is another vision altogether, one that flows from seeing God as he truly is. <span class="scripture">"God's kindness is meant to lead you to repentance,"</span> Paul reminds us. When we grasp the inexhaustible goodness of the Father—his patience with our own failures, his mercy toward our repeated stumbles, his gentle persistence in drawing us home—our eye becomes healthy. We begin to see others not as projects to fix or competitors to defeat, but as fellow recipients of the same undeserved grace that sustains our own lives.</p>
+
+            <p>At Golgotha, these two visions meet in stark contrast. Around the cross stand those whose eyes are full of darkness disguised as light. The religious leaders, certain of their moral clarity, demand death for the one they cannot recognize as Life itself. The crowds, swept up in righteous indignation, cry for crucifixion. Even the disciples, sure they understand God's purposes, flee when those purposes don't match their expectations. All are convinced they see truly. All are catastrophically blind.</p>
+
+            <p>But from the cross comes a different vision entirely. <span class="scripture">"Father, forgive them, for they do not know what they are doing."</span> Here is the healthy eye in perfect focus—seeing past the hatred to the blindness beneath, past the cruelty to the lostness that drives it, past the immediate injury to the eternal need for mercy. Christ's vision is filled not with the darkness of condemnation but with the light of understanding love. He sees his tormentors more clearly than they see themselves, and what he sees moves him not to judgment but to intercession.</p>
+
+            <p>This is the lamp that can truly illuminate our inner house. When we fix our gaze on the goodness of God revealed in Christ's merciful death, when we let that vision of radical grace fill our spiritual eye, everything changes. We begin to see ourselves as we are—recipients of mercy we never earned. We begin to see others as they are—fellow strugglers in need of the same grace we've received. The light that fills us then is genuine light, and it produces not judgment but mercy, not condemnation but restoration.</p>
+
+            <p>The question that remains is uncomfortably personal: What fills the lamp of your inner eye? When you look at those who fail, who disappoint, who fall short of your standards, what do you see? Are you sure that what feels like clarity isn't actually the choking smoke of self-righteous darkness? And if Christ were to examine the quality of light within you, would he find the clean flame of mercy or the toxic fumes of judgment?</p>
+        </div>
+    </main>
+</div>
+
+<div class="controls">
+    <button class="control-btn" onclick="toggleDarkMode()" title="Toggle Dark Mode">🌙</button>
+    <button class="control-btn" onclick="toggleFontSize()" title="Toggle Font Size">A</button>
+    <button class="control-btn" onclick="scrollToTop()" title="Scroll to Top">↑</button>
+</div>
+
+<script>
+    // Reading progress indicator
+    function updateProgress() {
+        const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrolled = (winScroll / height) * 100;
+        document.getElementById("progress").style.width = scrolled + "%";
+    }
+
+    window.addEventListener('scroll', updateProgress);
+
+    // Dark mode toggle
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+        const isDark = document.body.classList.contains('dark-mode');
+        localStorage.setItem('darkMode', isDark);
+    }
+
+    // Font size toggle
+    function toggleFontSize() {
+        document.body.classList.toggle('font-large');
+        const isLarge = document.body.classList.contains('font-large');
+        localStorage.setItem('fontSize', isLarge ? 'large' : 'normal');
+    }
+
+    // Scroll to top
+    function scrollToTop() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }
+
+    // Load saved preferences
+    document.addEventListener('DOMContentLoaded', function() {
+        // Note: localStorage not available in Claude artifacts, using defaults
+        // In a real environment, these would persist user preferences
+    });
+
+    // Smooth scroll behavior for better reading experience
+    document.documentElement.style.scrollBehavior = 'smooth';
+
+    // Add subtle animations to scripture quotes
+    document.addEventListener('DOMContentLoaded', function() {
+        const scriptureElements = document.querySelectorAll('.scripture');
+        scriptureElements.forEach((element, index) => {
+            element.style.animationDelay = `${index * 0.1}s`;
+            element.classList.add('scripture-animate');
+        });
+    });
+
+    // Add CSS animation for scripture elements
+    const style = document.createElement('style');
+    style.textContent = `
+        .scripture-animate {
+            animation: subtleGlow 0.5s ease-out forwards;
+        }
+        
+        @keyframes subtleGlow {
+            from { 
+                background-color: transparent; 
+            }
+            to { 
+                background-color: rgba(90, 103, 216, 0.1);
+                border-radius: 3px;
+                padding: 0 2px;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+</script>
+
+</body>
+</html>
