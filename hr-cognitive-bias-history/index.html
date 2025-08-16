@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cognitive Biases - A History Report</title>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg,#2c3e50 0%,#34495e 100%);
+            --accent-1: #e74c3c;
+            --accent-2: #c03b2b;
+            --btn-gradient: linear-gradient(45deg,#e74c3c,#c0392b);
+            --accent-1-rgb: 231, 76, 60;
+            --accent-warning: #ffc107;
+            --accent-warning-rgb: 255, 193, 7;
+            --text-primary: #ecf0f1;
+            --text-secondary: #bdc3c7;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(0,0,0,0.3);
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 3px solid var(--accent-1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-top: 0;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, var(--accent-1), var(--accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            filter: drop-shadow(0 0 15px rgba(var(--accent-1-rgb), 0.3));
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0,0,0,0.2);
+            padding: 1rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        /* --- FINAL BUTTON RULES START --- */
+
+        /* Base style for ALL buttons */
+        .tab-button, #settings-btn, .sector-button {
+            padding: 12px 24px;
+            background: var(--ui-background);
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Specific settings for the icon */
+        #settings-btn {
+            font-size: 1.2rem;
+            padding: 10px 15px;
+        }
+
+        /* HOVER state for buttons */
+        .tab-button:hover, .sector-button:hover, #settings-btn:hover {
+            background: var(--btn-gradient);
+            transform: translateY(-2px);
+            color: var(--btn-text-hover);
+        }
+
+        /* ACTIVE state for selected buttons */
+        .tab-button.active, .sector-button.active {
+            background: var(--btn-gradient);
+            border-color: var(--accent-2);
+            transform: translateY(-2px);
+            color: var(--btn-text-active);
+        }
+        
+        /* --- FINAL BUTTON RULES END --- */
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #2c3e50;
+            padding: 2rem;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            text-align: center;
+            position: relative;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .modal-content h3 {
+            color: var(--accent-1);
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+        
+        .modal-content label {
+            font-size: 1.1rem;
+            margin-right: 10px;
+        }
+
+        #theme-select {
+            background-color: var(--ui-background);
+            color: var(--text-primary);
+            border: 1px solid var(--accent-2);
+            border-radius: 5px;
+            padding: 8px;
+            font-size: 1rem;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .section-title {
+            color: var(--accent-1);
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent-1);
+        }
+
+        .subsection {
+            margin: 1.5rem 0;
+        }
+
+        .subsection h3 {
+            color: var(--accent-1);
+            font-size: 1.3rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .subsection h4 {
+            color: var(--accent-2);
+            font-size: 1.1rem;
+            margin: 1rem 0 0.5rem 0;
+        }
+
+        .sector-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .sector-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 1.5rem;
+            border-left: 4px solid var(--accent-1);
+            transition: transform 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sector-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.1);
+        }
+
+        .sector-name {
+            color: var(--accent-1);
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .casualties-highlight {
+            background: rgba(var(--accent-warning-rgb), 0.15);
+            padding: 1rem;
+            border-radius: 5px;
+            border-left: 4px solid var(--accent-warning);
+            margin: 1rem 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+           .stat-card {
+            background: var(--ui-background-accent);
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--accent-1);
+            display: block;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+        
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+            margin-top: 2rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--accent-1);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2rem;
+            padding-left: 2rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2.05rem;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            background: var(--accent-1);
+            border-radius: 50%;
+            border: 2px solid var(--ui-background);
+        }
+
+        .timeline-time {
+            color: var(--accent-1);
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255,255,255,0.1);
+            color: var(--text-primary);
+            margin-bottom: 2rem;
+        }
+
+        .search-box::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .highlight {
+            background: rgba(var(--accent-1-rgb), 0.3);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .interactive-map {
+            background: var(--container-background-subtle);
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .sector-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .sector-detail {
+            display: none;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+        }
+
+        .sector-detail.show {
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            .nav-tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+            .container {
+                padding: 1rem;
+            }
+            .sector-grid {
+                grid-template-columns: 1fr;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <script>
+    // Self-executing function to manage all theme logic.
+    (function() {
+        const DEFAULT_THEME_NAME = 'cyber-night';
+    
+        let THEMES = {
+            'cyber-night': {
+                '--bg-gradient': 'linear-gradient(135deg,#0a0a23 0%,#1a1a3a 50%,#2e2e5e 100%)',
+                '--accent-1': '#a8b8d0', '--accent-1-rgb': '168, 184, 208',
+                '--accent-2': '#8899b3',
+                '--btn-gradient': 'linear-gradient(45deg,#1a1a3a,#2e2e5e)',
+                '--accent-warning': '#e8b339',
+                '--accent-warning-rgb': '232, 179, 57',
+                '--ui-background': '#34495e',
+                '--ui-background-accent': 'rgba(52, 73, 94, 0.8)',
+                '--container-background-subtle': 'rgba(0, 0, 0, 0.3)',
+                '--btn-text-active': '#ecf0f1'
+            },
+            'scorched-gold': {
+                '--bg-gradient': 'linear-gradient(135deg,#0a231f 0%,#193a33 50%,#2e5e54 100%)',
+                '--ui-background': '#345e56',
+                '--ui-background-accent': 'rgba(52, 94, 86, 0.8)',
+                '--container-background-subtle': 'rgba(0, 0, 0, 0.3)',
+                '--accent-1': '#f0c475',
+                '--accent-2': '#d4a24c',
+                '--btn-gradient': 'linear-gradient(45deg,#f0c475,#d4a24c)',
+                '--accent-1-rgb': '240, 196, 117',
+                '--btn-text-active': '#2a1d15',
+                '--btn-text-hover': '#2a1d15',
+                '--accent-warning': '#e8b339',
+                '--accent-warning-rgb': '232, 179, 57'
+            },
+            'red-alert': {
+                '--bg-gradient': 'linear-gradient(135deg,#0a0a23 0%,#1a1a3a 50%,#2e2e5e 100%)',
+                '--ui-background': '#34495e',
+                '--ui-background-accent': 'rgba(52, 73, 94, 0.8)',
+                '--container-background-subtle': 'rgba(0, 0, 0, 0.3)',
+                '--accent-1': '#e74c3c',
+                '--accent-2': '#c03b2b',
+                '--btn-gradient': 'linear-gradient(45deg,#e74c3c,#c0392b)',
+                '--accent-1-rgb': '231, 76, 60',
+                '--accent-warning': '#e8b339',
+                '--accent-warning-rgb': '232, 179, 57',
+                '--btn-text-active': '#ffffff'
+            },
+            'teal-matrix': {
+                '--bg-gradient': 'linear-gradient(135deg,#0a231c 0%,#1a3a31 50%,#2e5e50 100%)',
+                '--accent-1': '#ace0d5', '--accent-1-rgb': '172, 224, 213',
+                '--accent-2': '#92b3a9',
+                '--btn-gradient': 'linear-gradient(45deg,#1a3a31,#2e5e50)',
+                '--accent-warning': '#e8b339',
+                '--accent-warning-rgb': '232, 179, 57',
+                '--ui-background': '#345e55',
+                '--ui-background-accent': 'rgba(52, 94, 85, 0.8)',
+                '--container-background-subtle': 'rgba(0, 0, 0, 0.3)',
+                '--btn-text-active': '#ecf0f1'
+            }
+        };
+
+        function applyTheme(name) {
+            const theme = THEMES[name];
+            if (theme) {
+                const root = document.documentElement;
+                for (const [key, value] of Object.entries(theme)) {
+                    root.style.setProperty(key, value);
+                }
+            }
+        }
+    
+        window.setTheme = function(name) {
+            applyTheme(name);
+            localStorage.setItem('cb-history-theme', name);
+        }
+    
+        const availableThemeNames = Object.keys(THEMES);
+        const savedTheme = localStorage.getItem('cb-history-theme');
+        let themeToLoad = DEFAULT_THEME_NAME;
+
+        if (savedTheme && availableThemeNames.includes(savedTheme)) {
+            themeToLoad = savedTheme;
+        }
+        
+        applyTheme(themeToLoad);
+    
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeSelect = document.getElementById('theme-select');
+            if (themeSelect) {
+                availableThemeNames.forEach(name => {
+                    const option = document.createElement('option');
+                    option.value = name;
+                    option.textContent = name.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                    themeSelect.appendChild(option);
+                });
+                themeSelect.value = themeToLoad;
+            }
+        });
+    })();
+    </script>
+</head>
+<body>
+    <div id="settings-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button id="close-modal-btn" class="close-btn">&times;</button>
+            <h3>Display Settings</h3>
+            <label for="theme-select">Theme:</label>
+            <select id="theme-select" onchange="setTheme(this.value)"></select>
+        </div>
+    </div>
+
+    <div class="header">
+        <h1>A Brief History of Cognitive Biases</h1>
+        <p>From Early Psychology to the Behavioral Revolution • Knowledge Base</p>
+    </div>
+
+    <div class="nav-tabs">
+        <button class="tab-button active" data-tab="overview">Overview</button>
+        <button class="tab-button" data-tab="foundations">Foundations</button>
+        <button class="tab-button" data-tab="revolution">Behavioral Revolution</button>
+        <button class="tab-button" data-tab="key-figures">Key Figures</button>
+        <button class="tab-button" data-tab="core-concepts">Core Concepts</button>
+        <button class="tab-button" data-tab="search">Search</button>
+        <button id="settings-btn" title="Settings">⚙️</button>
+    </div>
+
+    <div class="container">
+        <div id="overview" class="tab-content active">
+             <div class="section-card">
+                <h2 class="section-title">The Mind's Hidden Architecture</h2>
+                <p style="font-size: 1.2rem; line-height: 1.8; margin-bottom: 2rem;">
+                    For centuries, Western thought was dominated by the idea of humans as rational actors. The study of cognitive biases, however, has revealed the hidden architecture of our minds: a system of mental shortcuts (heuristics) that, while often efficient, lead to predictable errors in judgment. This report provides a high-level overview of the discovery and classification of these biases, which has transformed our understanding of human decision-making.
+                </p>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-number">1979</span>
+                        <div class="stat-label">Prospect Theory Published</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">2002</span>
+                        <div class="stat-label">Nobel Prize for Kahneman</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">180+</span>
+                        <div class="stat-label">Known Cognitive Biases</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">2:1</span>
+                        <div class="stat-label">Ratio of Loss Aversion</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="foundations" class="tab-content">
+            <div class="section-card">
+                <h2 class="section-title">Foundations (1920s – 1960s)</h2>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-time">1920</div>
+                        <h4>The Halo Effect</h4>
+                        <p>Psychologist Edward Thorndike coins the term "Halo Effect," noticing how a single positive trait in a person can color an observer's entire perception of them. This was an early formal identification of a specific judgment bias.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">1932</div>
+                        <h4>Memory as Reconstruction</h4>
+                        <p>Frederic Bartlett's "War of the Ghosts" study demonstrates that memory is not a perfect recording but a reconstructive process, where individuals alter stories to fit their own cultural schemas.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">1951</div>
+                        <h4>Conformity Bias</h4>
+                        <p>Solomon Asch's famous line experiments show that people will deny the evidence of their own senses to conform with a group, revealing the immense power of social pressure on individual judgment.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">1960</div>
+                        <h4>Confirmation Bias</h4>
+                        <p>Peter Wason's "2-4-6" task provides the first clear experimental evidence for confirmation bias, showing that people preferentially seek evidence that confirms their hypotheses rather than evidence that would falsify them.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="revolution" class="tab-content">
+            <div class="section-card">
+                <h2 class="section-title">The Behavioral Revolution (1970s – Present)</h2>
+                <div class="sector-grid">
+                    <div class="sector-card">
+                        <div class="sector-name">Heuristics & Biases Program</div>
+                        <p>Beginning in the early 1970s, Daniel Kahneman and Amos Tversky launch a research program that systematically identifies numerous mental shortcuts (heuristics) and the predictable errors (biases) they cause.</p>
+                    </div>
+                    <div class="sector-card">
+                        <div class="sector-name">Prospect Theory</div>
+                        <p>In 1979, Kahneman and Tversky publish Prospect Theory, a groundbreaking descriptive model of decision-making under risk. Its concepts of loss aversion and reference points shatter the traditional economic model of a rational actor.</p>
+                    </div>
+                    <div class="sector-card">
+                        <div class="sector-name">The Rise of Behavioral Economics</div>
+                        <p>In the 1980s and 90s, economists like Richard Thaler begin applying these psychological insights to economic behavior, explaining market anomalies and consumer choices that traditional models could not. The field of behavioral economics is born.</p>
+                        <div class="casualties-highlight">
+                            <strong>Impact:</strong> This revolution culminated in Nobel Prizes for Kahneman (2002) and Thaler (2017), cementing the importance of psychology in economic thought.
+                        </div>
+                    </div>
+                    <div class="sector-card">
+                        <div class="sector-name">Nudge and Choice Architecture</div>
+                        <p>In the 2000s, the focus shifts to application. Thaler and Cass Sunstein's book "Nudge" (2008) shows how understanding biases can be used to design better "choice architectures" (like default options) that guide people to better decisions without restricting their freedom.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="key-figures" class="tab-content">
+            <div class="section-card">
+                <h2 class="section-title">Key Figures</h2>
+                <div class="sector-grid">
+                    <div class="sector-card">
+                        <h3 class="sector-name">Kahneman & Tversky</h3>
+                        <p>The Israeli psychologists whose legendary collaboration founded the field of behavioral economics. They identified dozens of biases and developed Prospect Theory.</p>
+                    </div>
+                    <div class="sector-card">
+                        <h3 class="sector-name">Richard Thaler</h3>
+                        <p>An economist who bridged the gap between psychology and economics, popularizing the concept of "Nudge Theory" and applying it to public policy and finance.</p>
+                    </div>
+                    <div class="sector-card">
+                        <h3 class="sector-name">Charlie Munger</h3>
+                        <p>An investor and polymath who independently developed a list of psychological biases and championed the use of a "latticework of mental models" to improve real-world decision-making.</p>
+                    </div>
+                     <div class="sector-card">
+                        <h3 class="sector-name">Nassim Nicholas Taleb</h3>
+                        <p>A philosopher of randomness and risk whose work on "Black Swans" and the "Narrative Fallacy" provides a powerful critique of our predictive abilities in a complex world.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="core-concepts" class="tab-content">
+            <div class="section-card">
+                <h2 class="section-title">Four Foundational Biases</h2>
+                <div class="sector-grid">
+                     <div class="sector-card">
+                        <h3 class="sector-name">Confirmation Bias</h3>
+                        <p>The tendency to search for, interpret, and recall information in a way that confirms one's pre-existing beliefs. Often called the "mother of all biases."</p>
+                     </div>
+                     <div class="sector-card">
+                        <h3 class="sector-name">Anchoring</h3>
+                        <p>The tendency to rely too heavily on the first piece of information offered (the "anchor") when making decisions, with insufficient adjustment from that starting point.</p>
+                     </div>
+                     <div class="sector-card">
+                        <h3 class="sector-name">Loss Aversion</h3>
+                        <p>The psychological principle that the pain of a loss is about twice as powerful as the pleasure of an equivalent gain, leading to risk-averse behavior for gains and risk-seeking for losses.</p>
+                     </div>
+                     <div class="sector-card">
+                        <h3 class="sector-name">Survivorship Bias</h3>
+                        <p>The error of concentrating on the people or things that "survived" a process while overlooking the silent, invisible failures, leading to overly optimistic conclusions.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="search" class="tab-content">
+            <div class="section-card">
+                <h2 class="section-title">Search the Knowledge Base</h2>
+                <input type="text" id="searchInput" class="search-box" placeholder="Search for biases, thinkers, concepts...">
+                
+                <div id="searchResults">
+                    <p style="text-align: center; color: var(--text-secondary); font-style: italic; margin: 2rem 0;">
+                        Enter a search term above to explore the history of cognitive biases.<br>
+                        Try searching for: "Kahneman", "Nudge", "Anchoring", "Prospect Theory", etc.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Knowledge base for searching
+        const knowledgeBase = {
+            "Kahneman": "Daniel Kahneman, along with Amos Tversky, is a founding father of behavioral economics. His work on heuristics, biases, and Prospect Theory earned him the Nobel Prize in 2002.",
+            "Tversky": "Amos Tversky was a cognitive and mathematical psychologist and a key figure in the discovery of systematic human cognitive bias. His collaboration with Daniel Kahneman was legendary.",
+            "Anchoring": "A cognitive bias where an individual relies too heavily on an initial piece of information offered when making decisions. For example, the first price stated in a negotiation.",
+            "Confirmation Bias": "The tendency to search for, interpret, favor, and recall information in a way that confirms or supports one's preexisting beliefs or hypotheses.",
+            "Loss Aversion": "A core concept of Prospect Theory, it's the tendency to prefer avoiding losses to acquiring equivalent gains. The pain of losing is about twice as powerful as the pleasure of winning.",
+            "Nudge": "A concept in behavioral science, popularized by Richard Thaler and Cass Sunstein. A nudge is a subtle intervention in choice architecture that influences people's behavior in a predictable way without forbidding any options.",
+            "Prospect Theory": "A theory of decision-making under risk, published by Kahneman and Tversky in 1979. It describes how people choose between probabilistic alternatives that involve risk, where the probabilities of outcomes are known.",
+            "Survivorship Bias": "A logical error of concentrating on the things that survived a process and overlooking those that did not. A famous example is reinforcing bombers based on the bullet holes on planes that returned from missions.",
+            "Heuristics": "Mental shortcuts that ease the cognitive load of making a decision. Examples include the Availability Heuristic and the Representativeness Heuristic. They are fast and efficient but can lead to biases.",
+            "Thaler": "Richard Thaler is an American economist and Nobel laureate known as a theorist in behavioral economics. He is the author of 'Nudge' and a pioneer in applying psychological insights to economic behavior."
+        };
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTabs();
+            initializeSectorButtons();
+            initializeSearch();
+            initializeModal();
+        });
+
+        function initializeModal() {
+            const modal = document.getElementById('settings-modal');
+            const openBtn = document.getElementById('settings-btn');
+            const closeBtn = document.getElementById('close-modal-btn');
+
+            if (modal && openBtn && closeBtn) {
+                openBtn.addEventListener('click', () => modal.classList.add('show'));
+                closeBtn.addEventListener('click', () => modal.classList.remove('show'));
+                modal.addEventListener('click', (event) => {
+                    if (event.target === modal) modal.classList.remove('show');
+                });
+            }
+        }
+
+        function initializeTabs() {
+            const tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const tabName = this.getAttribute('data-tab');
+                    showTab(tabName);
+                });
+            });
+        }
+
+        function showTab(tabName) {
+            try {
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                document.querySelectorAll('.tab-button').forEach(button => button.classList.remove('active'));
+                document.getElementById(tabName).classList.add('active');
+                document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            } catch (error) { console.error('Error in showTab:', error); }
+        }
+
+        function initializeSectorButtons() {
+            const sectorButtons = document.querySelectorAll('.sector-button');
+            sectorButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const sectorName = this.getAttribute('data-sector');
+                    showSectorDetail(sectorName, this);
+                });
+            });
+        }
+
+        function showSectorDetail(sector, clickedButton) {
+            try {
+                document.querySelectorAll('.sector-detail').forEach(detail => detail.classList.remove('show'));
+                document.querySelectorAll('.sector-button').forEach(button => button.classList.remove('active'));
+                const targetDetail = document.getElementById(sector + '-detail');
+                if (targetDetail) {
+                    targetDetail.classList.add('show');
+                    clickedButton.classList.add('active');
+                }
+            } catch (error) { console.error('Error in showSectorDetail:', error); }
+        }
+
+        function initializeSearch() {
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('keyup', searchContent);
+            }
+        }
+
+        function searchContent() {
+            try {
+                const searchInput = document.getElementById('searchInput');
+                const resultsDiv = document.getElementById('searchResults');
+                if (!searchInput || !resultsDiv) return;
+                
+                const searchTerm = searchInput.value.toLowerCase();
+
+                if (searchTerm.length < 2) {
+                    resultsDiv.innerHTML = `<p style="text-align: center; color: var(--text-secondary); font-style: italic; margin: 2rem 0;">Enter a search term above to explore the history of cognitive biases.<br>Try searching for: "Kahneman", "Nudge", "Anchoring", "Prospect Theory", etc.</p>`;
+                    return;
+                }
+
+                let results = [];
+                for (const key in knowledgeBase) {
+                    if (knowledgeBase.hasOwnProperty(key)) {
+                        const value = knowledgeBase[key];
+                        if (key.toLowerCase().includes(searchTerm) || value.toLowerCase().includes(searchTerm)) {
+                            results.push({
+                                title: key,
+                                content: value,
+                                relevance: key.toLowerCase().startsWith(searchTerm) ? 2 : 1
+                            });
+                        }
+                    }
+                }
+
+                results.sort((a, b) => b.relevance - a.relevance);
+
+                if (results.length === 0) {
+                    resultsDiv.innerHTML = `<div class="section-card"><h3 style="color: var(--accent-1);">No results found for "${searchInput.value}"</h3><p>Try searching for biases, thinkers, or concepts.</p></div>`;
+                    return;
+                }
+
+                let resultHTML = `<h3 style="color: var(--accent-1); margin-bottom: 1.5rem;">Search Results for "${searchInput.value}"</h3>`;
+                for (let i = 0; i < results.length; i++) {
+                    const result = results[i];
+                    const highlightedContent = result.content.replace(new RegExp(searchTerm, 'gi'), `<span class="highlight">$&</span>`);
+                    resultHTML += `<div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid var(--accent-1);"><h4 style="color: var(--accent-1); margin-bottom: 0.8rem;">${result.title}</h4><p style="line-height: 1.6;">${highlightedContent}</p></div>`;
+                }
+
+                resultsDiv.innerHTML = resultHTML;
+            } catch (error) { console.error('Error in searchContent:', error); }
+        }
+    </script>
+</body>
+</html>
