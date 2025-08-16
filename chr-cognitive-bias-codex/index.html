@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Cognitive Bias Codex</title>
+  <style>
+    /* Global Reset & Base Styles */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: "Georgia", serif;
+      line-height: 1.6;
+      background-color: #EAEAEA;
+      color: #333333;
+    }
+
+    /* Top Bar & Mega-Menu Toggle */
+    #master-top-bar {
+      background-color: #2F4F4F;
+      padding: 0.75rem 1rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      display: flex; justify-content: space-between; align-items: center;
+      position: sticky; top: 0; z-index: 250;
+    }
+    #master-top-bar .site-title {
+      font-family:'Rockwell', 'Georgia', serif;
+      color:#E5E5E5;
+      font-size:1.5rem;
+      text-transform:uppercase;
+      letter-spacing:1px;
+      text-shadow:1px 1px 2px rgba(0,0,0,0.4);
+    }
+    #mega-menu-toggle {
+      background:#D3D3D3;color:#2F4F4F;border:2px solid #A9A9A9;border-radius:5px;
+      padding:0.6rem 1.2rem;cursor:pointer;font-family:"Impact",Haettenschweiler,"Arial Narrow Bold",sans-serif;
+      font-size:0.9rem;text-transform:uppercase;letter-spacing:1px;transition:.3s;
+    }
+    #mega-menu-toggle:hover{background:#A9A9A9;color:#fff}
+    #mega-menu-toggle.active{background:#B22222;color:#fff;border-color:#8B0000}
+
+    /* Mega-menu panel */
+    #mega-menu-panel{
+      display:none;position:fixed;top:60px;left:0;width:100%;height:calc(100vh - 60px);
+      background:rgba(47,79,79,.98);z-index:300;padding:2rem;overflow-y:auto;
+      box-shadow:0 5px 15px rgba(0,0,0,.3);animation:fadeInMega .3s ease-out;
+    }
+    @keyframes fadeInMega{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+    #mega-menu-panel.open{display:block}
+    .mega-menu-columns{display:flex;flex-wrap:wrap;gap:2rem;justify-content:space-around}
+    .mega-menu-column{flex:1;min-width:200px;margin-bottom:1rem}
+    .mega-menu-column .theater-heading{
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: #EAEAEA;
+      font-weight: bold;
+      font-size: 1.2rem;
+      margin-bottom: .75rem;
+      padding-bottom: .5rem;
+      border-bottom: 1px solid #778899;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .mega-menu-column .topic-link{
+      display:block;color:#EAEAEA;text-decoration:none;padding:.5rem .25rem;border-radius:2px;
+      transition:.2s;font-size:.95rem;
+    }
+    .mega-menu-column .topic-link:hover{background:#778899;color:#fff}
+    .mega-menu-column .topic-link.active-topic{background:#B22222;color:#fff;font-weight:bold}
+    #page-content{padding-top:60px}
+
+    /* Topic container */
+    .topic-container{
+      display:none;font-family:"Georgia",serif;line-height:1.6;color:#2c3e50;
+      background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+      animation:fadeInTopic .5s ease-in-out;padding:1px 0;min-height:calc(100vh - 60px);
+    }
+    .topic-container.active{display:block}
+    @keyframes fadeInTopic{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+    .topic-container .container{
+      max-width:1200px;margin:20px auto;background:rgba(255,255,255,.95);
+      backdrop-filter:blur(10px);border-radius:20px;box-shadow:0 20px 40px rgba(0,0,0,.1);overflow:hidden;
+    }
+    .topic-container .header{
+      background:linear-gradient(45deg,#1a237e,#3949ab);color:white;padding:3rem 2rem;text-align:center;
+      position:relative;overflow:hidden;
+    }
+    .topic-container .header::before{
+      content:"";position:absolute;top:-50%;left:-50%;width:200%;height:200%;
+      background:url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><circle cx=\"20\" cy=\"20\" r=\"2\" fill=\"rgba(255,255,255,0.05)\"/><circle cx=\"80\" cy=\"40\" r=\"1.5\" fill=\"rgba(255,255,255,0.05)\"/><circle cx=\"40\" cy=\"70\" r=\"1\" fill=\"rgba(255,255,255,0.05)\"/></svg>');
+      animation:float 20s infinite linear;opacity:.7;
+    }
+    @keyframes float{0%{transform:translate(-50px,-50px)}100%{transform:translate(50px,50px)}}
+    .topic-container .header h1{font-size:2.8rem;margin-bottom:.8rem;text-shadow:1px 1px 3px rgba(0,0,0,.4)}
+    .topic-container .header p{font-size:1.1rem;opacity:.85}
+
+    .topic-container .nav{background:#495057;padding:.9rem 0;position:sticky;top:60px;z-index:100}
+    .topic-container .nav-container{max-width:1200px;margin:0 auto;display:flex;justify-content:center;
+      flex-wrap:wrap;gap:.8rem;padding:0 1.5rem}
+    .topic-container .nav-btn{
+      background:linear-gradient(45deg,#5a7a99,#435c74);color:white;border:none;padding:.7rem 1.3rem;
+      border-radius:20px;cursor:pointer;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+      font-size:.85rem;font-weight:bold;transition:.3s;box-shadow:0 3px 12px rgba(0,0,0,.2);
+    }
+    .topic-container .nav-btn:hover{
+      transform:translateY(-2px);box-shadow:0 5px 18px rgba(0,0,0,.3);
+      background:linear-gradient(45deg,#435c74,#304252);
+    }
+    .topic-container .nav-btn.active{
+      background:linear-gradient(45deg,#c0392b,#a93226);box-shadow:0 3px 12px rgba(192,57,43,.4);
+    }
+
+    .topic-container .content{padding:2.5rem 2rem}
+    .topic-container .section{display:none;padding-bottom:1.5rem;margin-bottom:1.5rem;animation:fadeInSection .6s}
+    .topic-container .section.active{display:block}
+    @keyframes fadeInSection{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+
+    .topic-container .section h2{
+      font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;color:#23272a;font-size:2.3rem;
+      margin-bottom:1.8rem;text-align:center;position:relative;padding-bottom:8px;
+    }
+    .topic-container .section h2::after{
+      content:"";position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);
+      width:90px;height:3px;background:linear-gradient(45deg,#5a7a99,#c0392b);border-radius:1.5px;
+    }
+    .topic-container .section h3{
+      font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;color:#343a40;font-size:1.7rem;
+      border-left:3px solid #5a7a99;margin:1.8rem 0 .9rem;padding-left:.9rem;
+    }
+    .topic-container .section h4{
+      font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size: 1.3rem; margin-bottom: 0.9rem; color: #2c3e50;
+    }
+    .topic-container .section p{
+      font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;margin-bottom:1.3rem;font-size:1.05rem;
+      text-align:justify;line-height:1.7;color:#333;
+    }
+
+    /* Figure & impact cards */
+    .figure-grid,.impact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+      gap:1.8rem;margin:1.8rem 0;}
+    .figure-card,.impact-card{
+      background:linear-gradient(135deg,#fdfdfe,#f1f3f5);border-radius:12px;padding:1.8rem;
+      box-shadow:0 7px 20px rgba(0,0,0,.08);transition:.3s;border:1px solid rgba(0,0,0,.08);
+    }
+    .figure-card:hover,.impact-card:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(0,0,0,.12)}
+    .figure-card h4,.impact-card h4{
+      font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;color:#23272a;font-size:1.3rem;
+      margin-bottom:.9rem;padding-bottom:.4rem;border-bottom:2px solid #5a7a99;
+    }
+    .impact-card{text-align:center;border-top:3px solid}
+    .impact-card:nth-child(1){border-top-color:#007bff}.impact-card:nth-child(2){border-top-color:#6c757d}
+    .impact-card:nth-child(3){border-top-color:#ffc107}.impact-card:nth-child(4){border-top-color:#28a745}
+
+    /* Timeline */
+    .battle-timeline{position:relative;margin:2.5rem 0;padding-left:0}
+    .timeline-item{display:flex;margin-bottom:1.8rem;position:relative}
+    .timeline-item::before{
+      content:"";position:absolute;left:18px;top:0;bottom:-1.8rem;width:2px;
+      background:linear-gradient(to bottom,#5a7a99,#435c74);
+    }
+    .timeline-item:last-child::before{height:36px;bottom:auto}
+    .timeline-dot{
+      width:36px;height:36px;background:linear-gradient(45deg,#6c757d,#495057);border-radius:50%;
+      display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:.9em;
+      margin-right:1.8rem;box-shadow:0 3px 8px rgba(0,0,0,.25);flex-shrink:0;z-index:1;
+    }
+    .timeline-content{
+      background:white;padding:1.3rem;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.08);flex:1;
+      border-left:3px solid #5a7a99;
+    }
+    .timeline-content h4{color:#23272a;margin-bottom:.4rem;font-size:1.2rem}
+    .timeline-date{color:#6c757d;font-size:.85rem;font-weight:bold;margin-bottom:.4rem}
+
+    /* Badge Box Styles */
+    .badge-box {
+        background: linear-gradient(135deg,#3a3f44,#495057);
+        color: white;
+        padding: 1.8rem;
+        border-radius: 12px;
+        margin: 1.8rem 0;
+        box-shadow: 0 8px 25px rgba(0,0,0,.25);
+    }
+    .badge-box h4 {
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        color: #ffffff;
+        margin-bottom: .9rem;
+        font-size: 1.3rem;
+    }
+    .topic-container .section .badge-box h4 {
+        color: white;
+    }
+    .badge-box ul {
+        list-style: none;
+        padding-left: 0;
+    }
+    .badge-box li {
+        margin-bottom: .7rem;
+        padding-left: 1.3rem;
+        position: relative;
+    }
+    .badge-box li::before {
+        content: "»";
+        position: absolute;
+        left: 0;
+        color: #ffc107;
+        font-weight: bold;
+    }
+    .badge-box em {
+        color: #17a2b8;
+        font-style: italic;
+    }
+
+    /* Footer */
+    .footer{background:#23272a;color:white;text-align:center;padding:1.8rem;margin-top:2rem}
+
+    /* Responsive tweaks */
+    @media(max-width:768px){
+      #master-top-bar .site-title{font-size:1.2rem}
+      #mega-menu-toggle{font-size:.8rem;padding:.5rem .8rem}
+      #mega-menu-panel{padding:1rem;top:50px;height:calc(100vh - 50px)}
+      #page-content{padding-top:50px}
+      .topic-container .header h1{font-size:2rem}
+      .topic-container .nav{top:50px}
+      .topic-container .nav-container{flex-direction:column;align-items:center}
+      .topic-container .content{padding:1.5rem 1rem}
+      .topic-container .section h2{font-size:1.8rem}
+      .figure-grid{grid-template-columns:1fr}
+      .timeline-item{flex-direction:column}
+      .timeline-dot{margin-right:0;margin-bottom:.9rem;align-self:flex-start}
+    }
+  </style>
+</head>
+<body>
+
+  <header id="master-top-bar">
+    <span class="site-title">The Cognitive Bias Codex</span>
+    <button id="mega-menu-toggle">Menu</button>
+  </header>
+
+  <nav id="mega-menu-panel">
+    <div id="mega-menu-container" class="mega-menu-columns">
+      <!-- This content is generated by the script -->
+    </div>
+  </nav>
+
+  <div id="page-content">
+    <div id="topic-master-container" class="topic-container">
+      <!-- This content is generated by the script -->
+    </div>
+  </div>
+
+  <script>
+    /*
+    ==================================================================
+    ==                  START: PASTE YOUR DATA HERE                 ==
+    ==================================================================
+    */
+
+    const menuData = [
+      {
+        heading: 'Memory & Story Construction',
+        topics: [
+          { id: 'topic-hindsight-bias', text: 'Hindsight Bias' },
+          { id: 'topic-availability-heuristic', text: 'Availability Heuristic' },
+          { id: 'topic-rosy-retrospection', text: 'Rosy Retrospection' },
+          { id: 'topic-peak-end-rule', text: 'Peak-End Rule' },
+          { id: 'topic-consistency-bias', text: 'Consistency Bias' }
+        ]
+      },
+      {
+        heading: 'Social Perception & Belonging',
+        topics: [
+          { id: 'topic-fundamental-attribution-error', text: 'Fundamental Attribution Error' },
+          { id: 'topic-halo-effect', text: 'Halo Effect' },
+          { id: 'topic-in-group-bias', text: 'In-group Bias' },
+          { id: 'topic-conformity-bias', text: 'Conformity Bias' },
+          { id: 'topic-bystander-effect', text: 'Bystander Effect' }
+        ]
+      },
+      {
+        heading: 'Decision Architecture',
+        topics: [
+          { id: 'topic-anchoring', text: 'Anchoring' },
+          { id: 'topic-framing-effects', text: 'Framing Effects' },
+          { id: 'topic-loss-aversion', text: 'Loss Aversion' },
+          { id: 'topic-sunk-cost-fallacy', text: 'Sunk Cost Fallacy' },
+          { id: 'topic-paradox-of-choice', text: 'Paradox of Choice' }
+        ]
+      },
+      {
+        heading: 'Pattern Recognition Gone Wrong',
+        topics: [
+          { id: 'topic-confirmation-bias', text: 'Confirmation Bias' },
+          { id: 'topic-clustering-illusion', text: 'Clustering Illusion' },
+          { id: 'topic-gamblers-fallacy', text: 'Gambler’s Fallacy' },
+          { id: 'topic-survivorship-bias', text: 'Survivorship Bias' },
+          { id: 'topic-apophenia', text: 'Apophenia' }
+        ]
+      }
+    ];
+
+    const masterDataObject = {
+      'topic-hindsight-bias': {
+        title: 'Hindsight Bias',
+        subtitle: 'The "I-knew-it-all-along" phenomenon that distorts our memory of past predictions and events.',
+        nav: [
+          { id: 'hindsight-core-concept', text: 'Core Concept' },
+          { id: 'hindsight-real-world-example', text: 'Real-World Example' },
+          { id: 'hindsight-psychological-roots', text: 'Psychological Roots' },
+          { id: 'hindsight-impact-consequences', text: 'Impact & Consequences' },
+          { id: 'hindsight-debiasing-strategies', text: 'Debiasing Strategies' }
+        ],
+        sections: [
+          {
+            id: 'hindsight-core-concept',
+            title: 'Core Concept',
+            content: `<h4>The Inevitable Outcome</h4><p>Hindsight Bias is the tendency, after an event has occurred, to see the event as having been predictable, despite there having been little or no objective basis for predicting it. Once we know the outcome, our brain skillfully rewrites the past to make that outcome seem like the only logical conclusion. We don't just misremember our own predictions; we feel that the outcome was obvious from the start.</p>`
+          },
+          {
+            id: 'hindsight-real-world-example',
+            title: 'Real-World Example',
+            content: `<h3>The Challenger Disaster</h3><p>After the Space Shuttle Challenger exploded in 1986, it became clear that cold weather had caused the O-rings to fail. In the aftermath, many people—from the public to NASA officials—felt the disaster had been obvious and predictable. They would say, "Of course, launching in such cold was a terrible idea." However, before the launch, the data was ambiguous and the decision was highly complex. Hindsight bias made a difficult, uncertain decision seem like a simple, obvious mistake.</p><div class="impact-grid"><div class="impact-card"><h4>Financial Markets</h4><p>After a market crash, pundits and investors often claim the "signs were everywhere," pointing to specific indicators that now seem like clear warnings, even though thousands of contradictory signals existed before the crash.</p></div><div class="impact-card"><h4>Medical Diagnosis</h4><p>When a doctor learns the true cause of a patient's illness, they may overestimate their ability to have diagnosed it correctly from the start, potentially leading to unfair judgments about other physicians' performance.</p></div></div>`
+          },
+          {
+            id: 'hindsight-psychological-roots',
+            title: 'Psychological Roots',
+            content: `<h4>The Need for a Coherent Story</h4><p>Our minds crave narrative coherence. An unpredictable world is frightening, so we subconsciously edit our memories to make events seem orderly and predictable. Hindsight bias serves a psychological need to believe the world is more knowable than it actually is. It protects our ego by making us feel like better predictors than we are. Neurologically, when we retrieve a memory, we are also re-encoding it. Knowing the outcome provides a powerful new piece of data that gets woven into the fabric of the old memory, changing its texture and meaning.</p>`
+          },
+          {
+            id: 'hindsight-impact-consequences',
+            title: 'Impact & Consequences',
+            content: `<h4>Why It's Dangerous</h4><p>Hindsight bias is dangerous because it prevents us from learning from our mistakes. If we believe we "knew it all along," we fail to analyze the true reasons for an outcome, especially our own forecasting errors. It leads to overconfidence in our future judgments and promotes unfair blame, as we judge others for failing to see what now appears obvious. In policy, business, and law, this can lead to punishing good decisions that had bad outcomes and rewarding poor decisions that got lucky.</p>`
+          },
+          {
+            id: 'hindsight-debiasing-strategies',
+            title: 'Debiasing Strategies',
+            content: `<h3>Fighting the Fog of Retrospection</h3><div class="figure-grid"><div class="figure-card"><h4>Keep a Decision Journal</h4><p>The most powerful tool against hindsight bias is to write down your predictions, your reasoning, and your confidence level *before* an outcome is known. This creates an undeniable record of your past mental state, making it impossible to rewrite history.</p></div><div class="figure-card"><h4>Conduct a "Pre-Mortem"</h4><p>Before making a decision, imagine that it has failed and have the team generate reasons for the failure. This forces consideration of negative outcomes before they become "obvious" in hindsight.</p></div><div class="figure-card"><h4>Evaluate the Process, Not Just the Outcome</h4><p>When reviewing past decisions, focus on whether the decision-making process was sound based on the information available *at the time*, rather than judging it solely by whether the outcome was good or bad.</p></div></div>`
+          }
+        ]
+      },
+      'topic-availability-heuristic': {
+        title: 'Availability Heuristic',
+        subtitle: 'The mental shortcut where we judge the likelihood of an event by how easily examples come to mind.',
+        nav: [
+          { id: 'availability-core-concept', text: 'Core Concept' },
+          { id: 'availability-real-world-example', text: 'Real-World Example' },
+          { id: 'availability-psychological-roots', text: 'Psychological Roots' },
+          { id: 'availability-impact-consequences', text: 'Impact & Consequences' },
+          { id: 'availability-debiasing-strategies', text: 'Debiasing Strategies' }
+        ],
+        sections: [
+          {
+            id: 'availability-core-concept',
+            title: 'Core Concept',
+            content: `<h4>If You Can Think of It, It Must Be Important</h4><p>The Availability Heuristic is a mental shortcut that relies on immediate examples that come to a given person's mind when evaluating a specific topic, concept, method or decision. The process operates on the notion that if something can be recalled, it must be important, or at least more important than alternative solutions which are not as readily recalled. Consequently, we tend to be biased by information that is recent, vivid, or emotionally charged.</p>`
+          },
+          {
+            id: 'availability-real-world-example',
+            title: 'Real-World Example',
+            content: `<h3>Shark Attacks vs. Coconuts</h3><p>After a widely publicized shark attack, people's fear of swimming in the ocean skyrockets. The vivid, terrifying image of the attack is highly "available" in their minds, making the event seem common. However, statistically, you are far more likely to be killed by a falling coconut than by a shark. Because falling coconut deaths are not dramatic and rarely make the news, they are not mentally available, and we therefore drastically underestimate their frequency.</p><div class="impact-grid"><div class="impact-card"><h4>Corporate Risk Assessment</h4><p>Managers may over-invest in protecting against a specific type of cyberattack they recently read about in the news, while neglecting more mundane but statistically more probable risks like employee error.</p></div><div class="impact-card"><h4>Personal Finance</h4><p>Investors might rush to buy a stock that has been getting a lot of positive media attention, overestimating its potential while ignoring less "available" but perhaps more solid investments.</p></div></div>`
+          },
+          {
+            id: 'availability-psychological-roots',
+            title: 'Psychological Roots',
+            content: `<h4>A Shortcut for a Complex World</h4><p>Our brains evolved to use ease of recall as a rough proxy for frequency. In our ancestral environment, things that were easy to remember—a lion's roar, the location of a water source—were often the most important for survival. The heuristic is an efficient, energy-saving shortcut. The problem is that in the modern world, what is mentally available is often determined by media coverage, advertising, and dramatic storytelling, not by actual statistical frequency. Our brains haven't caught up to this new reality.</p>`
+          },
+          {
+            id: 'availability-impact-consequences',
+            title: 'Impact & Consequences',
+            content: `<h4>Distorted Priorities</h4><p>The availability heuristic systematically distorts our sense of risk and priority. It leads to misallocation of resources, both personal and public. We may have intense public fear and policy action around terrorism (highly available) while neglecting far deadlier but less vivid public health issues like heart disease. It can lead to poor decision-making by causing us to overweight dramatic but rare events and underweight common but mundane ones.</p>`
+          },
+          {
+            id: 'availability-debiasing-strategies',
+            title: 'Debiasing Strategies',
+            content: `<h3>Thinking Beyond the Headline</h3><div class="figure-grid"><div class="figure-card"><h4>Seek Out Base Rates</h4><p>Before making a judgment, actively look for the actual statistics or "base rates" of an event. Ask, "How often does this actually happen?" instead of relying on memory.</p></div><div class="figure-card"><h4>Consider the Opposite</h4><p>When a vivid example comes to mind, force yourself to search for and consider less dramatic counter-examples. If you think of a start-up that became a billion-dollar success, spend time researching the thousands that failed.</p></div><div class="figure-card"><h4>Implement a "Cooling-Off" Period</h4><p>If a decision is being driven by a recent, emotional event, it's wise to implement a waiting period to let the emotional "availability" of the event fade before making a final choice.</p></div></div>`
+          }
+        ]
+      },
+      'topic-rosy-retrospection': {
+        title: 'Rosy Retrospection',
+        subtitle: 'The tendency to remember past events as being more positive than they were in reality.',
+        nav: [
+          { id: 'rosy-core-concept', text: 'Core Concept' },
+          { id: 'rosy-real-world-example', text: 'Real-World Example' },
+          { id: 'rosy-psychological-roots', text: 'Psychological Roots' },
+          { id: 'rosy-impact-consequences', text: 'Impact & Consequences' },
+          { id: 'rosy-debiasing-strategies', text: 'Debiasing Strategies' }
+        ],
+        sections: [
+          {
+            id: 'rosy-core-concept',
+            title: 'Core Concept',
+            content: `<h4>The Good Old Days</h4><p>Rosy Retrospection is the cognitive bias that causes us to judge the past disproportionately more positively than we judge the present. Our minds have a built-in filter that tends to downplay the negative or mundane aspects of past experiences while amplifying the positive ones. This creates a nostalgic glow, making "the good old days" seem much better in memory than they actually were at the time.</p>`
+          },
+          {
+            id: 'rosy-real-world-example',
+            title: 'Real-World Example',
+            content: `<h3>The Disastrous Vacation</h3><p>Consider a family vacation that, at the time, was filled with frustration: a delayed flight, rainy weather, bad food, and bored children. When recalling the trip years later, the family members are likely to forget the constant annoyances and instead focus on the one sunny afternoon they spent on the beach or a particularly funny moment. Their memory of the vacation becomes a highlight reel of positive moments, and they might even say, "We should go back there, we had such a great time!"</p><div class="impact-grid"><div class="impact-card"><h4>Alumni Reunions</h4><p>People often remember their school days with great fondness, forgetting the stress of exams, social anxiety, and daily tedium. They recall the proms and football games, creating an idealized version of their past.</p></div><div class="impact-card"><h4>Political Nostalgia</h4><p>Voters often look back on previous political eras as times of greater unity, prosperity, or morality, conveniently forgetting the scandals, economic downturns, and social conflicts of that period.</p></div></div>`
+          },
+          {
+            id: 'rosy-psychological-roots',
+            title: 'Psychological Roots',
+            content: `<h4>A Self-Esteem Defense Mechanism</h4><p>Rosy retrospection may serve a positive psychological function. By curating our past into a collection of positive stories, we protect our self-esteem and maintain a more optimistic outlook on life. It allows us to feel that our life has been, on the whole, a good and meaningful journey. Neurologically, this may be linked to the way emotional memories are consolidated over time. The sharp, negative emotions associated with an event may fade faster than the general, positive context, leaving a rosier overall impression.</p>`
+          },
+          {
+            id: 'rosy-impact-consequences',
+            title: 'Impact & Consequences',
+            content: `<h4>The Danger of Idealizing the Past</h4><p>While often harmless, rosy retrospection can lead to poor decisions. It can cause us to repeat past mistakes by inaccurately remembering the consequences. It can lead to persistent dissatisfaction with the present, as the current reality can never live up to the idealized, curated version of the past. In relationships, it can cause people to return to unhealthy dynamics because they only remember the good times. Socially, it can fuel a reactionary impulse, a desire to return to a "golden age" that never truly existed.</p>`
+          },
+          {
+            id: 'rosy-debiasing-strategies',
+            title: 'Debiasing Strategies',
+            content: `<h3>Remembering More Accurately</h3><div class="figure-grid"><div class="figure-card"><h4>Consult Your Records</h4><p>The most effective antidote is contemporaneous evidence. Before making a decision based on a past experience, consult old journals, calendars, photos, or emails from that time. This provides a less filtered view of the actual experience.</p></div><div class="figure-card"><h4>Ask "What Was the Downside?"</h4><p>When you find yourself feeling nostalgic, actively prompt yourself or your group to recall the negative aspects of the past event. The goal is not to be cynical, but to create a more balanced and complete picture.</p></div><div class="figure-card"><h4>Focus on Trajectories, Not Snapshots</h4><p>Instead of comparing an idealized past snapshot to the messy present, evaluate progress over time. Acknowledge the genuine improvements that have been made, even if the present moment is imperfect.</p></div></div>`
+          }
+        ]
+      },
+      'topic-peak-end-rule': {
+        title: 'Peak-End Rule',
+        subtitle: 'How our memory of an experience is disproportionately shaped by its most intense point and its ending.',
+        nav: [
+          { id: 'peak-end-core-concept', text: 'Core Concept' },
+          { id: 'peak-end-real-world-example', text: 'Real-World Example' },
+          { id: 'peak-end-psychological-roots', text: 'Psychological Roots' },
+          { id: 'peak-end-impact-consequences', text: 'Impact & Consequences' },
+          { id: 'peak-end-debiasing-strategies', text: 'Debiasing Strategies' }
+        ],
+        sections: [
+          {
+            id: 'peak-end-core-concept',
+            title: 'Core Concept',
+            content: `<h4>Ignoring the Duration</h4><p>The Peak-End Rule is a psychological heuristic in which people judge an experience largely based on how they felt at its peak (i.e., its most intense point) and at its end, rather than based on the total sum or average of every moment of the experience. The duration of the experience is almost entirely disregarded. We don't remember experiences moment by moment; we remember a few key snapshots.</p>`
+          },
+          {
+            id: 'peak-end-real-world-example',
+            title: 'Real-World Example',
+            content: `<h3>The Painful Medical Procedure</h3><p>In a classic experiment by Daniel Kahneman, patients undergoing a painful colonoscopy were divided into two groups. Group A endured a standard procedure of a certain duration. Group B endured the same procedure, plus a few extra minutes at the end where the scope was left in place but not moved—a state that was uncomfortable but significantly less painful. Counterintuitively, patients in Group B, who experienced more total pain over a longer duration, rated the experience as less unpleasant. Why? Because the less painful ending shaped their overall memory, overriding the memory of the peak pain and the longer duration.</p><div class="impact-grid"><div class="impact-card"><h4>Customer Service</h4><p>A customer who has a terrible experience with a product but then receives exceptional, friendly, and effective support at the end may remember the company more favorably than a customer who had a mediocre, forgettable experience throughout.</p></div><div class="impact-card"><h4>Vacations</h4><p>A two-week vacation that is mostly mediocre can be "saved" in memory by a single, amazing peak experience (like seeing a stunning landmark) and a smooth, pleasant final day.</p></div></div>`
+          },
+          {
+            id: 'peak-end-psychological-roots',
+            title: 'Psychological Roots',
+            content: `<h4>The Storytelling Brain</h4><p>This rule is another manifestation of our mind's tendency to create stories rather than log data. A story is defined by its high points, low points, and its conclusion. The long, boring parts in the middle are edited out. The peak provides the emotional climax, and the end provides the resolution. The Peak-End Rule is an efficient way for the brain to summarize an experience, creating a simple, portable memory that can guide future choices without needing to store every single detail.</p>`
+          },
+          {
+            id: 'peak-end-impact-consequences',
+            title: 'Impact & Consequences',
+            content: `<h4>Manipulating Memory</h4><p>Understanding the Peak-End Rule allows for the conscious design of experiences that can shape memory. Businesses can use it to improve customer satisfaction by focusing on creating a strong positive ending to a service interaction. However, it can also lead us to make poor choices. We might repeat an overall negative experience (like a toxic relationship) because we are drawn to the memory of its intense emotional peaks, or because it ended on a deceptively calm note. It causes us to misjudge what will actually make us happy over the long term.</p>`
+          },
+          {
+            id: 'peak-end-debiasing-strategies',
+            title: 'Debiasing Strategies',
+            content: `<h3>Remembering the Whole Story</h3><div class="figure-grid"><div class="figure-card"><h4>Focus on the Average</h4><p>When evaluating a past experience, consciously try to ignore the peak and the end. Instead, ask yourself, "On average, from moment to moment, how did I feel?" This forces a more holistic evaluation.</p></div><div class="figure-card"><h4>Keep a Log or Journal</h4><p>For recurring experiences (like a job), keeping a brief daily log of your satisfaction level can provide a much more accurate picture of the overall experience than relying on your memory's highlight reel.</p></div><div class="figure-card"><h4>Design Better Endings</h4><p>In a practical sense, you can "hack" this bias for your own benefit. Intentionally end projects, meetings, or even your workday on a positive, organized, and successful note. This will improve your retrospective judgment of the entire experience.</p></div></div>`
+          }
+        ]
+      },
+      'topic-consistency-bias': {
+        title: 'Consistency Bias',
+        subtitle: 'The tendency to incorrectly remember our past attitudes and behavior as resembling our present ones.',
+        nav: [
+          { id: 'consistency-core-concept', text: 'Core Concept' },
+          { id: 'consistency-real-world-example', text: 'Real-World Example' },
+          { id: 'consistency-psychological-roots', text: 'Psychological Roots' },
+          { id: 'consistency-impact-consequences', text: 'Impact & Consequences' },
+          { id: 'consistency-debiasing-strategies', text: 'Debiasing Strategies' }
+        ],
+        sections: [
+          {
+            id: 'consistency-core-concept',
+            title: 'Core Concept',
+            content: `<h4>The Illusion of a Stable Self</h4><p>Consistency Bias is a form of memory distortion where we unconsciously edit our past to fit our present self-image. If we have a strong political belief today, we are likely to misremember ourselves as having held that same belief with the same conviction years ago, even if we were actually ambivalent or held the opposite view. We see our past self through the lens of our current self, creating an illusion of lifelong consistency in our beliefs, attitudes, and personality.</p>`
+          },
+          {
+            id: 'consistency-real-world-example',
+            title: 'Real-World Example',
+            content: `<h3>Political Evolution</h3><p>Consider a person who, in their youth, held very liberal political views but has become much more conservative with age. When asked about their past, they are unlikely to say, "I was a fiery liberal." Instead, they are more likely to misremember their younger self as having been "always a bit of a skeptic" or "more moderate than my friends." They will selectively recall past events and opinions that align with their current conservative identity and forget or downplay the ones that don't. The memory is reconstructed to create a smooth, consistent life story.</p><div class="impact-grid"><div class="impact-card"><h4>Relationships</h4><p>After a painful breakup, a person might remember the beginning of the relationship as having had "red flags from the start," even if they were genuinely happy and optimistic at the time. Their current negative feelings rewrite their memory of the past.</p></div><div class="impact-card"><h4>Health Habits</h4><p>Someone who has recently become very health-conscious might misremember their past eating habits as being healthier than they actually were, minimizing the scale of their personal transformation.</p></div></div>`
+          },
+          {
+            id: 'consistency-psychological-roots',
+            title: 'Psychological Roots',
+            content: `<h4>Ego Protection and Cognitive Dissonance</h4><p>This bias serves a powerful ego-protective function. Acknowledging that we have changed our minds on important issues can create cognitive dissonance—the uncomfortable feeling of holding contradictory beliefs. To resolve this, it's easier to edit the past than to grapple with the inconsistency. It allows us to maintain a stable and coherent self-image. We want to believe we are, and have always been, a single, rational person, so our memory obliges by smoothing out the inconvenient wrinkles of our personal evolution.</p>`
+          },
+          {
+            id: 'consistency-impact-consequences',
+            title: 'Impact & Consequences',
+            content: `<h4>A Barrier to Growth and Empathy</h4><p>Consistency bias is a significant barrier to personal growth because it prevents us from accurately seeing how much we have changed and learned. If we believe we've "always known" what we know now, we can't appreciate our own progress. It also damages our ability to have empathy for others who hold views we once held. If we can't remember our own past uncertainty or differing opinions, we are more likely to see those who disagree with us now as foolish or immoral, rather than as people who are on their own journey of discovery.</p>`
+          },
+          {
+            id: 'consistency-debiasing-strategies',
+            title: 'Debiasing Strategies',
+            content: `<h3>Embracing Your Former Selves</h3><div class="figure-grid"><div class="figure-card"><h4>Consult Old Journals or Emails</h4><p>Like with other memory biases, the best antidote is a written record. Reading your own words from the past is a powerful and often humbling way to confront how much your views have actually changed.</p></div><div class="figure-card"><h4>Talk to Old Friends</h4><p>Engage with people who knew you in the past and ask them about your shared history and your old opinions. Their memories can provide an external check on your own reconstructed narrative.</p></div><div class="figure-card"><h4>Value the Idea of "Updating"</h4><p>Instead of viewing changing your mind as a sign of weakness, reframe it as a sign of intellectual growth. Celebrate the ability to "update" your beliefs when presented with new evidence, just as you would update software.</p></div></div>`
+          }
+        ]
+      },
+      'topic-fundamental-attribution-error': {
+        title: 'Fundamental Attribution Error',
+        subtitle: 'The tendency to explain others\' behavior by their personality while explaining our own by the situation.',
+        nav: [
+          { id: 'fae-core-concept', text: 'Core Concept' },
+          { id: 'fae-real-world-example', text: 'Real-World Example' },
+          { id: 'fae-psychological-roots', text: 'Psychological Roots' },
+          { id: 'fae-impact-consequences', text: 'Impact & Consequences' },
+          { id: 'fae-debiasing-strategies', text: 'Debiasing Strategies' }
+        ],
+        sections: [
+          {
+            id: 'fae-core-concept',
+            title: 'Core Concept',
+            content: `<h4>Character vs. Circumstance</h4><p>The Fundamental Attribution Error is our tendency to over-emphasize personality-based explanations for behaviors observed in others while under-emphasizing situational explanations. When we see someone act, we are quick to assume their actions reflect their fundamental character. However, when we perform the same action, we are keenly aware of the situational factors that influenced us. In short: we judge others by their actions, but we judge ourselves by our intentions and circumstances.</p>`
+          },
+          {
+            id: 'fae-real-world-example',
+            title: 'Real-World Example',
+            content: `<h3>The Reckless Driver</h3><p>If another driver cuts you off in traffic, your immediate thought is likely, "What a jerk! That person is a reckless, inconsiderate driver." You've made an attribution about their fundamental character. However, if you were to cut someone off, you would have a ready situational explanation: "I'm late for a critical meeting," "I didn't see them in my blind spot," or "I'm rushing to the hospital." Your action was caused by the situation; their action was caused by their flawed personality.</p><div class="impact-grid"><div class="impact-card"><h4>Workplace Performance</h4><p>If a colleague misses a deadline, we might assume they are lazy or disorganized. If we miss a deadline, we attribute it to an overwhelming workload or unclear instructions from our boss.</p></div><div class="impact-card"><h4>Social Issues</h4><p>When observing someone in poverty, an observer might attribute their situation to poor life choices or lack of ambition (character), rather than considering factors like a lack of economic opportunity or systemic barriers (situation).</p></div></div>`
+          },
+          {
+            id: 'fae-psychological-roots',
+            title: 'Psychological Roots',
+            content: `<h4>Focus of Attention</h4><p>This bias stems from our perceptual focus. When we observe another person, they are the main object of our attention. The surrounding situation is just the background. Therefore, we attribute causality to the most salient thing—the person. When we are the ones acting, our attention is focused outward on the situation we are navigating. The situation is the foreground, and our own self is the background. What we focus on is what we blame or credit.</p>`
+          },
+          {
+            id: 'fae-impact-consequences',
+            title: 'Impact & Consequences',
+            content: `<h4>A Barrier to Empathy</h4><p>The Fundamental Attribution Error is a major source of conflict and a profound barrier to empathy. It leads us to make harsh, simplistic judgments about others while letting ourselves off the hook. It makes it difficult to understand different perspectives and fosters a polarized, judgmental view of the world. It can poison relationships, create toxic workplace cultures, and prevent us from addressing the systemic, situational causes of social problems.</p>`
+          },
+          {
+            id: 'fae-debiasing-strategies',
+            title: 'Debiasing Strategies',
+            content: `<h3>Putting Yourself in Their Shoes</h3><div class="figure-grid"><div class="figure-card"><h4>Actively Consider the Situation</h4><p>When you see someone behave in a way you disapprove of, pause and actively ask, "What situational pressures might be causing this person to act this way?" Force yourself to generate at least two possible external explanations.</p></div><div class="figure-card"><h4>Increase Your Awareness of Your Own Behavior</h4><p>Conversely, when you explain your own failures, ask yourself if you are over-relying on the situation. Ask, "What role did my own choices or character play in this outcome?"</p></div><div class="figure-card"><h4>Cultivate Empathy</h4><p>Engaging with stories, literature, and people from different walks of life helps us build a more nuanced understanding of how powerfully circumstances shape behavior, making us less prone to simplistic character judgments.</p></div></div>`
+          }
+        ]
+      },
+      'topic-halo-effect': {
+        title: 'Halo Effect',
+        subtitle: 'How our overall impression of a person influences our evaluations of their specific traits.',
+        nav: [
+          { id: 'halo-core-concept', text: 'Core Concept' },
+          { id: 'halo-real-world-example', text: 'Real-World Example' },
+          { id: 'halo-psychological-roots', text: 'Psychological Roots' },
+          { id: 'halo-impact-consequences', text: 'Impact & Consequences' },
+          { id: 'halo-debiasing-strategies', text: 'Debiasing Strategies' }
+        ],
+        sections: [
+          {
+            id: 'halo-core-concept',
+            title: 'Core Concept',
+            content: `<h4>One Great Trait Colors Everything</h4><p>The Halo Effect is a cognitive bias where our overall impression of a person, brand, or product in one area influences our feelings and thoughts about their character or properties in other areas. A single positive trait can cast a "halo" over all other traits, causing us to judge them more favorably. The opposite is also true; a single negative trait can create a "Horns Effect," where we judge other traits more harshly.</p>`
+          },
+          {
+            id: 'halo-real-world-example',
+            title: 'Real-World Example',
+            content: `<h3>The Attractive Candidate</h3><p>In hiring decisions, the Halo Effect is rampant. A physically attractive job candidate is often perceived by interviewers as being more intelligent, competent, and trustworthy than a less attractive candidate, even if they have identical qualifications. The positive impression of their appearance creates a halo that influences the evaluation of their professional abilities. The same effect is seen with charisma; a charming and eloquent speaker is often assumed to be more correct or intelligent than a less polished speaker.</p><div class="impact-grid"><div class="impact-card"><h4>Branding</h4><p>Consumers who have a positive experience with one Apple product (like an iPhone) are likely to assume that other Apple products (like a laptop or watch) are also high-quality, even without direct experience.</p></div><div class="impact-card"><h4>Celebrity Endorsements</h4><p>We assume that a famous actor or athlete, because they are skilled in their field, must also have sound judgment on unrelated topics like politics or nutrition.</p></div></div>`
+          },
+          {
+            id: 'halo-psychological-roots',
+            title: 'Psychological Roots',
+            content: `<h4>The Brain's Aversion to Ambiguity</h4><p>The Halo Effect is another mental shortcut our brain uses to simplify a complex world. It's cognitively easier to maintain a simple, consistent impression of someone than to grapple with a nuanced, contradictory picture. If we like someone, we want to believe they are good in all aspects. The bias helps us make faster judgments and reduce cognitive dissonance. It's a way of quickly creating a coherent, if overly simplistic, story about a person or thing.</p>`
+          },
+          {
+            id: 'halo-impact-consequences',
+            title: 'Impact & Consequences',
+            content: `<h4>Unfair and Inaccurate Judgments</h4><p>The Halo Effect is a major source of unfairness and error in judgment. It can lead to discrimination in hiring and promotions, and it can cause us to place our trust in incompetent but charismatic leaders or advisors. It prevents us from making accurate assessments because we allow one salient trait to overshadow all other relevant information. In performance reviews, a manager might give a likeable but mediocre employee a better rating than a difficult but highly effective one.</p>`
+          },
+          {
+            id: 'halo-debiasing-strategies',
+            title: 'Debiasing Strategies',
+            content: `<h3>Evaluating Traits Independently</h3><div class="figure-grid"><div class="figure-card"><h4>Evaluate Traits Separately</h4><p>When assessing a person or idea, break down the evaluation into specific, independent traits. Judge each component on its own merits before forming an overall impression. Use a structured scorecard for interviews rather than relying on general "feel."</p></div><div class="figure-card"><h4>Blind the Process</h4><p>Where possible, remove the information that could create a halo. For example, some orchestras conduct "blind" auditions where the musician performs behind a screen to ensure the judges are evaluating only the music, not the performer's appearance or reputation.</p></div><div class="figure-card"><h4>Delay Your Overall Judgment</h4><p>Make a conscious effort to gather all the specific data points first. Form your overall impression at the very end of the process, rather than at the beginning, to prevent an initial halo from coloring the rest of your evaluation.</p></div></div>`
+          }
+        ]
+      },
+      'topic-in-group-bias': {
+        title: 'In-group Bias',
+        subtitle: 'The tendency for people to give preferential treatment to others they perceive as members of their own group.',
+        nav: [
+          { id: 'ingroup-core-concept', text: 'Core Concept' },
+          { id: 'ingroup-real-world-example', text: 'Real-World Example' },
+          { id: 'ingroup-psychological-roots', text: 'Psychological Roots' },
+          { id: 'ingroup-impact-consequences', text: 'Impact & Consequences' },
+          { id: 'ingroup-debiasing-strategies', text: 'Debiasing Strategies' }
+        ],
+        sections: [
+          {
+            id: 'ingroup-core-concept',
+            title: 'Core Concept',
+            content: `<h4>Us vs. Them</h4><p>In-group Bias (also known as in-group favoritism) is the tendency to favor members of one's own group over out-group members. This favoritism can manifest in evaluation, resource allocation, and trust. The "group" can be defined by any number of characteristics: nationality, religion, sports team affiliation, political party, or even arbitrary, minimal distinctions.</p>`
+          },
+          {
+            id: 'ingroup-real-world-example',
+            title: 'Real-World Example',
+            content: `<h3>The Minimal Group Paradigm</h3><p>In classic experiments by Henri Tajfel, participants were randomly assigned to groups based on a trivial criterion, such as their preference for one abstract painter over another. Even with these meaningless "minimal groups," when asked to distribute points or rewards, participants consistently gave more to members of their own group than to members of the other group. This demonstrated that the bias is not based on deep-seated animosity, but on a fundamental, almost automatic, tendency to favor "us" over "them," no matter how arbitrarily "us" is defined.</p><div class="impact-grid"><div class="impact-card"><h4>Hiring and Promotions</h4><p>Managers may unconsciously favor candidates who attended the same university or share similar hobbies, perceiving them as more competent and a better "cultural fit."</p></div><div class="impact-card"><h4>Politics</h4><p>Voters are more likely to overlook flaws in a candidate from their own political party while judging a candidate from the opposing party with intense scrutiny for the same behavior.</p></div></div>`
+          },
+          {
+            id: 'ingroup-psychological-roots',
+            title: 'Psychological Roots',
+            content: `<h4>The Evolutionary Roots of Belonging</h4><p>In our evolutionary past, survival depended on cooperation within a small, cohesive group. Favoring one's own kin and tribe was a crucial survival strategy. Our self-esteem is also tied to the status of our groups; when our group succeeds, we feel a sense of pride. In-group bias is the modern manifestation of this deep-seated tribal psychology. It is a powerful, often unconscious, drive to support the team we see ourselves as being on.</p>`
+          },
+          {
+            id: 'ingroup-impact-consequences',
+            title: 'Impact & Consequences',
+            content: `<h4>The Foundation of Prejudice and Discrimination</h4><p>While stemming from a natural desire for belonging, in-group bias is the root of prejudice, discrimination, and intergroup conflict. It can lead to systemic inequalities in workplaces, legal systems, and societies. It causes us to misjudge ideas, trusting a weak argument from an in-group member over a strong one from an outsider. At its worst, it can be used to justify dehumanizing out-groups, providing the psychological foundation for conflict and violence.</p>`
+          },
+          {
+            id: 'ingroup-debiasing-strategies',
+            title: 'Debiasing Strategies',
+            content: `<h3>Expanding the Circle of "Us"</h3><div class="figure-grid"><div class="figure-card"><h4>Find a Common Superordinate Group</h4><p>The most effective strategy is to re-draw the group boundaries. When two competing departments are in conflict, a leader can emphasize their shared identity as members of the same company with a common goal. Finding a shared, higher-level identity can dissolve the "us vs. them" dynamic.</p></div><div class="figure-card"><h4>Increase Intergroup Contact</h4><p>Under the right conditions (equal status, common goals, institutional support), positive contact and cooperation between members of different groups can reduce bias and build empathy.</p></div><div class="figure-card"><h4>Focus on Individual Merits</h4><p>Implement structured, objective criteria for decisions like hiring or resource allocation. By focusing on individual qualifications rather than group affiliation, you can mitigate the influence of the bias.</p></div></div>`
+          }
+        ]
+      },
+      'topic-conformity-bias': {
+        title: 'Conformity Bias',
+        subtitle: 'The tendency to act and think like the people around us, even when it conflicts with our own judgment.',
+        nav: [
+          { id: 'conformity-core-concept', text: 'Core Concept' },
+          { id: 'conformity-real-world-example', text: 'Real-World Example' },
+          { id: 'conformity-psychological-roots', text: 'Psychological Roots' },
+          { id: 'conformity-impact-consequences', text: 'Impact & Consequences' },
+          { id: 'conformity-debiasing-strategies', text: 'Debiasing Strategies' }
+        ],
+        sections: [
+          {
+            id: 'conformity-core-concept',
+            title: 'Core Concept',
+            content: `<h4>The Pressure of the Crowd</h4><p>Conformity Bias is the tendency for individuals to align their attitudes, beliefs, and behaviors with those of the people around them. This social pressure can be explicit or implicit, but its effect is powerful. We often conform not because we are convinced by the group's argument, but simply because we want to fit in and avoid the discomfort of standing alone.</p>`
+          },
+          {
+            id: 'conformity-real-world-example',
+            title: 'Real-World Example',
+            content: `<h3>The Asch Line Experiment</h3><p>In the 1950s, psychologist Solomon Asch conducted a series of now-famous experiments. He placed a single real participant in a room with a group of actors. They were all shown a line and then asked to match it to one of three comparison lines. The task was trivially easy. However, the actors were instructed to all give the same, obviously wrong answer. When it was the real participant's turn, a shocking 75% of them conformed to the clearly incorrect group consensus at least once, simply to avoid the discomfort of being the lone dissenter. The experiment powerfully demonstrated that social pressure can lead people to deny the evidence of their own eyes.</p><div class="impact-grid"><div class="impact-card"><h4>Corporate Meetings</h4><p>An employee may have serious doubts about a proposed strategy but will remain silent if all their senior colleagues express enthusiastic support. This is often described as "going along to get along."</p></div><div class="impact-card"><h4>Social Trends</h4><p>People may adopt certain fashions, opinions, or lifestyles not out of genuine preference, but because those choices are popular within their social circle or are amplified on social media.</p></div></div>`
+          },
+          {
+            id: 'conformity-psychological-roots',
+            title: 'Psychological Roots',
+            content: `<h4>The Pain of Ostracism</h4><p>Our brains are hardwired to seek social acceptance and avoid social rejection. For our ancestors, being ostracized from the tribe was a death sentence. Neuroimaging studies show that social exclusion activates the same brain regions as physical pain. Conformity is often a subconscious strategy to avoid this pain. There are two main drivers: <br>1) <strong>Informational Conformity:</strong> We believe the group knows something we don't. <br>2) <strong>Normative Conformity:</strong> We want to be liked and accepted by the group.</p>`
+          },
+          {
+            id: 'conformity-impact-consequences',
+            title: 'Impact & Consequences',
+            content: `<h4>The Enemy of Innovation and Truth</h4><p>Conformity is a primary ingredient in groupthink and a major obstacle to innovation, creativity, and moral courage. It silences diverse perspectives, which are the lifeblood of a wise crowd. It can cause teams to persist in flawed strategies and societies to accept unjust norms. It leads to a fragile consensus, where many people may privately disagree but are too afraid to speak up, creating a state of pluralistic ignorance.</p>`
+          },
+          {
+            id: 'conformity-debiasing-strategies',
+            title: 'Debiasing Strategies',
+            content: `<h3>Strengthening Independent Thought</h3><div class="figure-grid"><div class="figure-card"><h4>Encourage Dissent</h4><p>Leaders can actively create an environment where disagreement is not only tolerated but encouraged. Formally assigning a devil's advocate can make dissent feel safer.</p></div><div class="figure-card"><h4>Use Private Ballots</h4><p>Before a group discussion, have individuals write down their initial opinions privately. This commits them to their independent judgment before being exposed to group pressure.</p></div><div class="figure-card"><h4>Find an Ally</h4><p>Asch's experiments also showed that if just one other person in the group broke from the majority, the real participant's conformity rate dropped dramatically. Having even a single ally can give people the courage to voice their true opinion.</p></div></div>`
+          }
+        ]
+      },
+      'topic-bystander-effect': {
+        title: 'Bystander Effect',
+        subtitle: 'The social psychological phenomenon where individuals are less likely to offer help to a victim when other people are present.',
+        nav: [
+          { id: 'bystander-core-concept', text: 'Core Concept' },
+          { id: 'bystander-real-world-example', text: 'Real-World Example' },
+          { id: 'bystander-psychological-roots', text: 'Psychological Roots' },
+          { id: 'bystander-impact-consequences', text: 'Impact & Consequences' },
+          { id: 'bystander-debiasing-strategies', text: 'Debiasing Strategies' }
+        ],
+        sections: [
+          {
+            id: 'bystander-core-concept',
+            title: 'Core Concept',
+            content: `<h4>Safety in Numbers?</h4><p>The Bystander Effect is a counterintuitive social phenomenon where the greater the number of people present, the less likely it is that any one of them will intervene in an emergency situation. The presence of others creates a psychological paralysis that can prevent people from helping, even when they know they should.</p>`
+          },
+          {
+            id: 'bystander-real-world-example',
+            title: 'Real-World Example',
+            content: `<h3>The Kitty Genovese Case</h3><p>The term was coined after the infamous 1964 murder of Kitty Genovese in New York City, where initial newspaper reports claimed that 38 witnesses saw or heard the attack but did not intervene or call the police. While the details of the story were later found to be exaggerated, the case spurred psychologists Bibb Latané and John Darley to investigate the phenomenon. Their experiments consistently confirmed the effect: participants who believed they were the only witness to an emergency (like an actor faking a seizure) were far more likely to help than participants who believed other people were also present.</p><div class="impact-grid"><div class="impact-card"><h4>Workplace Issues</h4><p>In a meeting where a colleague is being unfairly criticized or harassed, many people might witness it, but each may fail to speak up, assuming someone else will or should.</p></div><div class="impact-card"><h4>Online Cyberbullying</h4><p>On a social media platform, hundreds or thousands of people might see a person being bullied, but the vast majority will simply scroll past, leading to a diffusion of responsibility.</p></div></div>`
+          },
+          {
+            id: 'bystander-psychological-roots',
+            title: 'Psychological Roots',
+            content: `<h4>Three Psychological Blocks</h4><p>The Bystander Effect is driven by three main psychological mechanisms: <br>1) <strong>Diffusion of Responsibility:</strong> When others are present, the personal responsibility to act is diluted. Each person thinks, "Someone else will surely do something." <br>2) <strong>Social Influence (Pluralistic Ignorance):</strong> We look to others for cues on how to act. If no one else is reacting to a situation, we conclude that it must not be an emergency, even if our own instincts say otherwise. Everyone is frozen, waiting for someone else to act first. <br>3) <strong>Evaluation Apprehension:</strong> We fear being judged for overreacting or for intervening incorrectly. The fear of social embarrassment can be a powerful inhibitor of action.</p>`
+          },
+          {
+            id: 'bystander-impact-consequences',
+            title: 'Impact & Consequences',
+            content: `<h4>The Cost of Inaction</h4><p>The most severe consequence of the bystander effect is physical harm or death to victims who could have been helped. But it also has a corrosive effect on communities and organizations. It undermines trust, enables unethical behavior, and creates a culture of passive indifference. It erodes our sense of individual responsibility and moral agency.</p>`
+          },
+          {
+            id: 'bystander-debiasing-strategies',
+            title: 'Debiasing Strategies',
+            content: `<h3>How to Break the Spell</h3><div class="figure-grid"><div class="figure-card"><h4>Single Someone Out</h4><p>If you are the victim in an emergency, the most effective strategy is to overcome the diffusion of responsibility by assigning a specific task to a specific person. Don't shout "Someone call 911!" Instead, point to an individual and say, "You in the blue shirt, call 911!"</p></div><div class="figure-card"><h4>Be the First to Act</h4><p>If you are a bystander, understand that your own inaction is a signal to others that the situation is not serious. By being the first person to clearly and decisively intervene, you break the spell of pluralistic ignorance and make it much more likely that others will join in to help.</p></div><div class="figure-card"><h4>Awareness Is Key</h4><p>Simply being aware of the Bystander Effect can help you recognize it in real-time and override its paralyzing influence. Knowing about the bias can inoculate you against it.</p></div></div>`
+          }
+        ]
+      },
+      'topic-anchoring': {
+        title: 'Anchoring',
+        subtitle: 'The tendency to rely too heavily on the first piece of information offered when making decisions.',
+        nav: [
+          { id: 'anchoring-core-concept', text: 'Core Concept' },
+          { id: 'anchoring-real-world-example', text: 'Real-World Example' },
+          { id: 'anchoring-psychological-roots', text: 'Psychological Roots' },
+          { id: 'anchoring-impact-consequences', text: 'Impact & Consequences' },
+          { id: 'anchoring-debiasing-strategies', text: 'Debiasing Strategies' }
+        ],
+        sections: [
+          {
+            id: 'anchoring-core-concept',
+            title: 'Core Concept',
+            content: `<h4>The First Number Sticks</h4><p>Anchoring is a cognitive bias where an individual depends too heavily on an initial piece of information offered (considered to be the "anchor") to make subsequent judgments during decision making. Once the anchor is set, other judgments are made by adjusting away from that anchor, and there is a bias toward interpreting other information around the anchor. These adjustments are usually insufficient, giving the initial piece of information a powerful, lingering influence.</p>`
+          },
+          {
+            id: 'anchoring-real-world-example',
+            title: 'Real-World Example',
+            content: `<h3>Pricing and Negotiation</h3><p>Anchoring is a cornerstone of negotiation tactics. The first price mentioned in a negotiation sets the anchor. If a seller asks for a very high initial price for a used car, that high number becomes the anchor. Even if the buyer negotiates the price down significantly, the final price is likely to be higher than if the negotiation had started with a more reasonable initial offer. The first number frames the entire negotiation. Retailers use this by showing a high "original" price next to a lower "sale" price, making the sale price seem like a great deal by anchoring you to the higher number.</p><div class="impact-grid"><div class="impact-card"><h4>Legal Sentences</h4><p>Studies have shown that even irrelevant numbers can anchor judges. In one experiment, judges who were asked to roll a pair of dice and got a high number subsequently recommended longer prison sentences for a hypothetical crime than judges who rolled a low number.</p></div><div class="impact-card"><h4>Salary Negotiations</h4><p>The first person to name a number in a salary negotiation has a significant advantage. The first number mentioned, whether it's the candidate's request or the company's offer, becomes the anchor from which all subsequent offers are adjusted.</p></div></div>`
+          },
+          {
+            id: 'anchoring-psychological-roots',
+            title: 'Psychological Roots',
+            content: `<h4>Adjusting is Hard Work</h4><p>There are two main theories for why anchoring occurs. The first is the "anchor-and-adjust" hypothesis. We start with the anchor and then make incremental adjustments based on other information. However, we tend to stop adjusting too soon, because it is cognitively taxing. The second theory involves "selective accessibility." The initial anchor makes information consistent with it more accessible in our minds. If you're anchored to a high price, you are more likely to think about the product's positive features that justify that price.</p>`
+          },
+          {
+            id: 'anchoring-impact-consequences',
+            title: 'Impact & Consequences',
+            content: `<h4>Distorted Valuations</h4><p>Anchoring systematically distorts our ability to make accurate estimates and valuations. It can lead us to overpay for products, accept lower salaries, or make flawed judgments in legal and medical contexts. It is particularly dangerous because even when we are aware of the anchor and believe we are ignoring it, it still subconsciously influences our judgment. Even completely random, arbitrary numbers can act as powerful anchors.</p>`
+          },
+          {
+            id: 'anchoring-debiasing-strategies',
+            title: 'Debiasing Strategies',
+            content: `<h3>Dropping Your Own Anchor</h3><div class="figure-grid"><div class="figure-card"><h4>Make the First Offer</h4><p>In a negotiation, if you are well-informed, you should try to be the one to make the first offer. This allows you to set the anchor in your favor.</p></div><div class="figure-card"><h4>Actively Consider Alternatives</h4><p>Before making a judgment, force yourself to consider reasons why the anchor might be wrong. If a seller gives you a high price, spend time thinking about all the reasons the item might be worth much less.</p></div><div class="figure-card"><h4>Create a New Anchor</h4><p>If someone presents you with an anchor you don't like, don't just adjust from it. Explicitly call it out as unreasonable and then introduce a new anchor based on objective data. This attempts to reset the negotiation around a new, more favorable starting point.</p></div></div>`
+          }
+        ]
+      },
+      'topic-framing-effects': {
+        title: 'Framing Effects',
+        subtitle: 'How the way information is presented, rather than the information itself, can influence decisions.',
+        nav: [
+          { id: 'framing-core-concept', text: 'Core Concept' },
+          { id: 'framing-real-world-example', text: 'Real-World Example' },
+          { id: 'framing-psychological-roots', text: 'Psychological Roots' },
+          { id: 'framing-impact-consequences', text: 'Impact & Consequences' },
+          { id: 'framing-debiasing-strategies', text: 'Debiasing Strategies' }
+        ],
+        sections: [
+          {
+            id: 'framing-core-concept',
+            title: 'Core Concept',
+            content: `<h4>The Same Picture, A Different Frame</h4><p>The Framing Effect is a cognitive bias where people decide on options based on whether the options are presented with positive or negative connotations; e.g. as a loss or as a gain. People tend to avoid risk when a positive frame is presented but seek risks when a negative frame is presented. The key insight is that the objective facts of a situation can remain identical, but changing the "frame" around those facts can dramatically change people's choices.</p>`
+          },
+          {
+            id: 'framing-real-world-example',
+            title: 'Real-World Example',
+            content: `<h3>The Medical Treatment Decision</h3><p>In a famous study by Tversky and Kahneman, participants were asked to choose between two treatments for a deadly disease expected to kill 600 people. <br><strong>Group 1 (Positive Frame):</strong> <br> - Option A: "Saves 200 lives." <br> - Option B: "A 33% chance of saving all 600 people, and a 67% chance of saving no one." <br> In this group, 72% chose the certain Option A. <br><strong>Group 2 (Negative Frame):</strong> <br> - Option C: "400 people will die." <br> - Option D: "A 33% chance that nobody will die, and a 67% chance that all 600 will die." <br> In this group, 78% chose the risky Option D. <br>Notice that Options A and C are identical, as are B and D. The only difference was the frame—"lives saved" vs. "people will die." The positive frame made people risk-averse, while the negative frame made them risk-seeking.</p>`
+          },
+          {
+            id: 'framing-psychological-roots',
+            title: 'Psychological Roots',
+            content: `<h4>Loss Aversion is Key</h4><p>Framing effects are closely tied to Loss Aversion, our tendency to feel the pain of a loss more strongly than the pleasure of an equivalent gain. When an option is framed in terms of gains (lives saved), we want to lock in that certain gain and avoid the risk of getting nothing. This makes us risk-averse. When an option is framed in terms of losses (people will die), the certain loss feels so painful that we are willing to take a risk on the chance of avoiding that loss entirely. This makes us risk-seeking.</p>`
+          },
+          {
+            id: 'framing-impact-consequences',
+            title: 'Impact & Consequences',
+            content: `<h4>Manipulation Through Presentation</h4><p>Framing is one of the most powerful tools of persuasion and manipulation. Marketers frame a product as "95% fat-free" rather than "5% fat." Politicians frame policies in terms of the benefits they provide rather than the taxes required to fund them. The media can frame the same protest as a "demonstration for civil rights" or a "riot against public order." Framing can systematically steer public and private decisions in ways that may not align with the objective facts.</p>`
+          },
+          {
+            id: 'framing-debiasing-strategies',
+            title: 'Debiasing Strategies',
+            content: `<h3>Looking at the Picture from Both Sides</h3><div class="figure-grid"><div class="figure-card"><h4>Reframe the Problem</h4><p>When presented with a choice, actively try to reframe it in the opposite way. If it's presented in terms of gains, ask yourself what the equivalent losses are. If it's framed as a loss, rephrase it in terms of gains. If your decision remains the same regardless of the frame, it is more likely to be a robust one.</p></div><div class="figure-card"><h4>Focus on Absolute Values</h4><p>Try to ignore the relative language and focus on the absolute, objective numbers. Instead of "saves 200," think "200 live, 400 die." This neutral framing can strip away the emotional power of the frame.</p></div><div class="figure-card"><h4>Consider the Source</h4><p>Be aware that the person presenting the information has an interest in how you decide. Ask yourself why they might have chosen that particular frame and what other frames they could have used.</p></div></div>`
+          }
+        ]
+      },
+      'topic-loss-aversion': {
+        title: 'Loss Aversion',
+        subtitle: 'The principle that for individuals, the pain of losing is psychologically about twice as powerful as the pleasure of gaining.',
+        nav: [
+          { id: 'loss-aversion-core-concept', text: 'Core Concept' },
+          { id: 'loss-aversion-real-world-example', text: 'Real-World Example' },
+          { id: 'loss-aversion-psychological-roots', text: 'Psychological Roots' },
+          { id: 'loss-aversion-impact-consequences', text: 'Impact & Consequences' },
+          { id: 'loss-aversion-debiasing-strategies', text: 'Debiasing Strategies' }
+        ],
+        sections: [
+          {
+            id: 'loss-aversion-core-concept',
+            title: 'Core Concept',
+            content: `<h4>The Pain of a Loss is Greater than the Joy of a Gain</h4><p>Loss Aversion, a core concept of Prospect Theory, refers to our tendency to strongly prefer avoiding losses to acquiring equivalent gains. For most people, the psychological sting of losing $100 is significantly more intense than the pleasure of finding $100. Studies suggest the ratio is about two to one: we feel the pain of a loss twice as powerfully as the pleasure of an equal gain. This asymmetry is a fundamental feature of our decision-making architecture.</p>`
+          },
+          {
+            id: 'loss-aversion-real-world-example',
+            title: 'Real-World Example',
+            content: `<h3>The Endowment Effect</h3><p>Loss aversion gives rise to the Endowment Effect, where we place a higher value on an object that we own than the same object if we do not own it. In a classic experiment, participants were given a coffee mug and then asked for the lowest price at which they would sell it. Another group, the "buyers," were asked for the highest price they would pay for the same mug. Consistently, the sellers' asking price was about twice as high as the buyers' offer price. Once the mug became part of their "endowment," losing it felt like a painful loss, so they demanded a higher price to part with it.</p><div class="impact-grid"><div class="impact-card"><h4>Investing</h4><p>Investors often hold on to losing stocks for too long, unwilling to "realize the loss," while being too quick to sell winning stocks to "lock in a gain." This is the opposite of the rational "cut your losses, let your winners run" strategy.</p></div><div class="impact-card"><h4>Free Trials</h4><p>Companies offer free trials for services because they know once you have incorporated the service into your life, cancelling it will feel like a loss, making you more likely to subscribe.</p></div></div>`
+          },
+          {
+            id: 'loss-aversion-psychological-roots',
+            title: 'Psychological Roots',
+            content: `<h4>Survival Depends on Keeping What You Have</h4><p>From an evolutionary perspective, loss aversion makes perfect sense. For an organism living on the edge of survival, the loss of a day's food could mean death, whereas the gain of an extra day's food is only a small benefit. The organisms that were most sensitive to potential losses were more likely to survive and reproduce. Our brains are therefore wired with an alarm system that goes off much more loudly for potential threats (losses) than for potential opportunities (gains).</p>`
+          },
+          {
+            id: 'loss-aversion-impact-consequences',
+            title: 'Impact & Consequences',
+            content: `<h4>A Powerful Force for Inertia</h4><p>Loss aversion makes us irrationally biased toward the status quo. The potential loss from making a change looms larger than the potential gain, even if the change is objectively better. This can lead to personal and organizational paralysis, preventing us from taking beneficial risks, leaving bad jobs, ending unhealthy relationships, or abandoning failing strategies. It is a powerful force that keeps us stuck in suboptimal situations.</p>`
+          },
+          {
+            id: 'loss-aversion-debiasing-strategies',
+            title: 'Debiasing Strategies',
+            content: `<h3>Overcoming the Fear of Loss</h3><div class="figure-grid"><div class="figure-card"><h4>Reframe as an Opportunity Cost</h4><p>Instead of thinking about what you might lose by making a change, frame it as what you are losing by *not* making the change. Sticking with a bad investment isn't "avoiding a loss"; it's incurring an "opportunity cost" by not putting that money into a better investment.</p></div><div class="figure-card"><h4>Use a "Third-Person" Perspective</h4><p>Ask yourself, "What would I advise a friend to do in this situation?" By taking an outside perspective, you can detach from the emotional feeling of ownership and loss, allowing for a more rational evaluation.</p></div><div class="figure-card"><h4>Automate Your Decisions</h4><p>Pre-commit to a course of action. For example, in investing, you can set a "stop-loss" order to automatically sell a stock if it falls by a certain percentage. This removes the emotional pain of the decision from the equation.</p></div></div>`
+          }
+        ]
+      },
+      'topic-sunk-cost-fallacy': {
+        title: 'Sunk Cost Fallacy',
+        subtitle: 'The tendency to continue an endeavor once an investment in money, effort, or time has been made.',
+        nav: [
+          { id: 'sunk-cost-core-concept', text: 'Core Concept' },
+          { id: 'sunk-cost-real-world-example', text: 'Real-World Example' },
+          { id: 'sunk-cost-psychological-roots', text: 'Psychological Roots' },
+          { id: 'sunk-cost-impact-consequences', text: 'Impact & Consequences' },
+          { id: 'sunk-cost-debiasing-strategies', text: 'Debiasing Strategies' }
+        ],
+        sections: [
+          {
+            id: 'sunk-cost-core-concept',
+            title: 'Core Concept',
+            content: `<h4>Throwing Good Money After Bad</h4><p>The Sunk Cost Fallacy is our tendency to follow through on an endeavor if we have already invested time, effort, or money in it, whether or not the current costs outweigh the benefits. The sunk costs are irrelevant to the future, yet they weigh heavily on our minds, causing us to make irrational decisions to "honor" the past investment.</p>`
+          },
+          {
+            id: 'sunk-cost-real-world-example',
+            title: 'Real-World Example',
+            content: `<h3>The Concorde Fallacy</h3><p>The fallacy is often called the "Concorde Fallacy" after the supersonic passenger jet. The British and French governments continued to fund the development of the Concorde long after it became clear that the project was not economically viable. They had already invested so much money and national prestige that they felt they couldn't possibly abandon it. They were honoring the past investment rather than making a rational decision based on future prospects, and ended up wasting billions more.</p><div class="impact-grid"><div class="impact-card"><h4>Finishing a Bad Movie</h4><p>You're an hour into a movie you are not enjoying. You think, "I've already invested an hour, I might as well finish it." The hour is gone forever. The rational choice is to stop and use the next hour for something more enjoyable.</p></div><div class="impact-card"><h4>Failing Business Projects</h4><p>A company continues to pour resources into a failing project because "we've already spent millions on it." The rational decision is to evaluate the project based only on its future potential for success, regardless of past investment.</p></div></div>`
+          },
+          {
+            id: 'sunk-cost-psychological-roots',
+            title: 'Psychological Roots',
+            content: `<h4>The Desire to Not Be Wasteful</h4><p>This bias is deeply connected to loss aversion. To stop a project is to admit that the past investment was a loss, which is psychologically painful. Continuing with it offers the hope, however slim, that the initial investment might still pay off. It is also tied to a desire for consistency and the ego-protective need to not admit a past mistake. We want to prove our initial decision was a good one, so we stick with it even when all evidence points to the contrary.</p>`
+          },
+          {
+            id: 'sunk-cost-impact-consequences',
+            title: 'Impact & Consequences',
+            content: `<h4>Entrapment in Losing Ventures</h4><p>The Sunk Cost Fallacy is a major driver of waste and failure in both personal and professional life. It can keep people in bad jobs, toxic relationships, and unprofitable business ventures for years. It causes governments to continue funding "bridges to nowhere" and wars with no clear path to victory. It traps us in the past, preventing us from making clear-eyed decisions about the future.</p>`
+          },
+          {
+            id: 'sunk-cost-debiasing-strategies',
+            title: 'Debiasing Strategies',
+            content: `<h3>Ignoring the Irrecoverable</h3><div class="figure-grid"><div class="figure-card"><h4>Focus Only on the Future</h4><p>When making a decision about a project, train yourself to ignore all past costs. Ask the question: "If I were starting from scratch today, with the knowledge I have now, would I invest in this?" If the answer is no, then you should cut your losses.</p></div><div class="figure-card"><h4>Seek an Outside Opinion</h4><p>Bring in a fresh perspective from someone who is not emotionally or financially invested in the past decisions. They can evaluate the situation based purely on its future merits without being weighed down by the baggage of sunk costs.</p></div><div class="figure-card"><h4>Reframe Abandonment as Courage</h4><p>Instead of viewing the cancellation of a project as a failure, reframe it as a courageous and disciplined decision to reallocate resources toward a more promising future. Reward teams for making smart cuts, not just for seeing projects through to the bitter end.</p></div></div>`
+          }
+        ]
+      },
+      'topic-paradox-of-choice': {
+        title: 'Paradox of Choice',
+        subtitle: 'The observation that while we desire choice, having too many options can lead to decision paralysis and dissatisfaction.',
+        nav: [
+          { id: 'choice-core-concept', text: 'Core Concept' },
+          { id: 'choice-real-world-example', text: 'Real-World Example' },
+          { id: 'choice-psychological-roots', text: 'Psychological Roots' },
+          { id: 'choice-impact-consequences', text: 'Impact & Consequences' },
+          { id: 'choice-debiasing-strategies', text: 'Debiasing Strategies' }
+        ],
+        sections: [
+          {
+            id: 'choice-core-concept',
+            title: 'Core Concept',
+            content: `<h4>More Is Less</h4><p>The Paradox of Choice, popularized by psychologist Barry Schwartz, describes the phenomenon where having more options, which we intuitively believe is better, can actually lead to negative consequences. An overabundance of choice can cause anxiety, decision paralysis (not choosing at all), and reduced satisfaction with the choice we finally make. While some choice is good, more choice is not always better.</p>`
+          },
+          {
+            id: 'choice-real-world-example',
+            title: 'Real-World Example',
+            content: `<h3>The Jam Study</h3><p>In a famous experiment, researchers set up a tasting booth for high-quality jams in a grocery store. On one day, they offered 24 different varieties of jam. On another day, they offered only 6. The large display with 24 jams attracted more shoppers to the booth. However, the small display with only 6 jams resulted in far more purchases. People who stopped at the large display were ten times less likely to buy a jar of jam than those who stopped at the small one. The sheer number of options was overwhelming and led to decision paralysis.</p><div class="impact-grid"><div class="impact-card"><h4>Streaming Services</h4><p>The experience of endlessly scrolling through hundreds of options on Netflix without being able to choose one is a perfect example of the paradox of choice in modern life.</p></div><div class="impact-card"><h4>Retirement Plans</h4><p>Studies have shown that the more investment fund options a company offers in its retirement plan, the less likely employees are to participate at all. The complexity of the choice leads to inaction.</p></div></div>`
+          },
+          {
+            id: 'choice-psychological-roots',
+            title: 'Psychological Roots',
+            content: `<h4>The Burden of Optimization</h4><p>There are several psychological mechanisms at play. First, having too many options increases the cognitive load of making a decision, which can be mentally exhausting. Second, it raises our expectations. With so many choices, we expect to find the "perfect" one, making us more likely to be disappointed with a merely "good" one. Third, it increases the potential for regret. With every option you choose, you are also rejecting hundreds of others, and it's easy to imagine that one of the rejected options might have been better, which reduces your satisfaction with your final choice.</p>`
+          },
+          {
+            id: 'choice-impact-consequences',
+            title: 'Impact & Consequences',
+            content: `<h4>Anxiety and Dissatisfaction</h4><p>The paradox of choice can lead to a chronic state of anxiety and dissatisfaction in a world of abundant options. It can make simple decisions feel like high-stakes exams that we are bound to fail. This can lead to procrastination, regret, and a general decrease in well-being, even amidst material abundance. It shows that the architecture of a choice can be more important than the number of choices themselves.</p>`
+          },
+          {
+            id: 'choice-debiasing-strategies',
+            title: 'Debiasing Strategies',
+            content: `<h3>Choosing How to Choose</h3><div class="figure-grid"><div class="figure-card"><h4>Be a "Satisficer," Not a "Maximizer"</h4><p>Recognize the difference between trying to find the absolute best option (maximizing) and finding an option that is "good enough" (satisficing). For most decisions, satisficing leads to less stress and greater satisfaction. Set your criteria and pick the first option that meets them.</p></div><div class="figure-card"><h4>Reduce the Number of Options</h4><p>Intentionally limit your choice set. Instead of researching every single camera on the market, decide to only look at the top 3 from a trusted review site. This makes the decision manageable.</p></div><div class="figure-card"><h4>Make More Decisions Irreversible</h4><p>We are often less happy with choices we can change. Making a decision final (a "no returns" policy with yourself) can increase your satisfaction with it because you stop second-guessing and start psychologically adapting to and justifying your choice.</p></div></div>`
+          }
+        ]
+      },
+      'topic-confirmation-bias': {
+        title: 'Confirmation Bias',
+        subtitle: 'The tendency to search for, interpret, favor, and recall information that confirms or supports one\'s preexisting beliefs.',
+        nav: [
+          { id: 'confirmation-core-concept', text: 'Core Concept' },
+          { id: 'confirmation-real-world-example', text: 'Real-World Example' },
+          { id: 'confirmation-psychological-roots', text: 'Psychological Roots' },
+          { id: 'confirmation-impact-consequences', text: 'Impact & Consequences' },
+          { id: 'confirmation-debiasing-strategies', text: 'Debiasing Strategies' }
+        ],
+        sections: [
+          {
+            id: 'confirmation-core-concept',
+            title: 'Core Concept',
+            content: `<h4>Seeking to Be Right</h4><p>Confirmation Bias is perhaps the most pervasive and fundamental of all cognitive biases. It is the tendency to seek out, interpret, and remember information in a way that confirms our existing beliefs or hypotheses, while giving disproportionately less consideration to alternative possibilities. We don't approach the world like a neutral scientist; we approach it like a lawyer, building a case for what we already believe.</p>`
+          },
+          {
+            id: 'confirmation-real-world-example',
+            title: 'Real-World Example',
+            content: `<h3>The Social Media Echo Chamber</h3><p>Modern social media platforms are powerful engines for confirmation bias. If you hold a particular political view, the algorithms are designed to show you content that you will like and engage with—which is overwhelmingly content that confirms your existing views. You will be fed a steady diet of articles, videos, and posts from like-minded people. At the same time, you are likely to unfriend or block those who post opposing views. The result is an "echo chamber" where your beliefs are constantly reinforced and rarely challenged, making you more certain of your rightness and less able to understand opposing perspectives.</p><div class="impact-grid"><div class="impact-card"><h4>Medical Diagnosis</h4><p>A doctor who has an initial hypothesis about a patient's illness may subconsciously look for and focus on the symptoms that confirm that diagnosis, while overlooking evidence that points to a different condition.</p></div><div class="impact-card"><h4>Hiring Decisions</h4><p>An interviewer who forms a positive first impression of a candidate will tend to ask questions that confirm that impression, while an interviewer who forms a negative impression will ask questions designed to expose flaws.</p></div></div>`
+          },
+          {
+            id: 'confirmation-psychological-roots',
+            title: 'Psychological Roots',
+            content: `<h4>The Efficiency of Belief</h4><p>Our brains are wired to be efficient. Constantly questioning our core beliefs is cognitively exhausting. Confirmation bias is a shortcut that allows us to process information more quickly by fitting it into our existing mental frameworks. It also protects our ego and self-esteem. Being wrong is uncomfortable and can feel threatening to our identity. Confirmation bias helps us avoid the cognitive dissonance of having our cherished beliefs challenged.</p>`
+          },
+          {
+            id: 'confirmation-impact-consequences',
+            title: 'Impact & Consequences',
+            content: `<h4>The Root of Polarization and Bad Decisions</h4><p>Confirmation bias is a primary driver of political and social polarization, as it locks people into their ideological bubbles. It is a major obstacle to scientific progress and personal learning, as it prevents us from updating our beliefs in the face of new evidence. In business and policy, it leads to flawed decisions, as leaders surround themselves with people who confirm their existing strategies and ignore warning signs and disconfirming data.</p>`
+          },
+          {
+            id: 'confirmation-debiasing-strategies',
+            title: 'Debiasing Strategies',
+            content: `<h3>How to Think Like a Scout</h3><div class="figure-grid"><div class="figure-card"><h4>Actively Seek Disconfirming Evidence</h4><p>The most powerful antidote is to intentionally look for evidence that would prove you wrong. When you are researching a topic, don't just search for "evidence for X"; also search for "evidence against X." Steel-man the opposing argument by trying to make the strongest possible case for it.</p></div><div class="figure-card"><h4>Consider the Opposite</h4><p>Before making a decision, take a moment to ask yourself, "What if my initial belief is wrong? What would that look like?" This mental exercise can help break the grip of your initial hypothesis and open you up to alternative possibilities.</p></div><div class="figure-card"><h4>Surround Yourself with Cognitive Diversity</h4><p>Build relationships with people who think differently than you and have different perspectives. Make a genuine effort to understand their reasoning. This exposes you to challenging information in a context of trust rather than conflict.</p></div></div>`
+          }
+        ]
+      },
+      'topic-clustering-illusion': {
+        title: 'Clustering Illusion',
+        subtitle: 'The tendency to erroneously perceive clusters or streaks in random sequences of data.',
+        nav: [
+          { id: 'clustering-core-concept', text: 'Core Concept' },
+          { id: 'clustering-real-world-example', text: 'Real-World Example' },
+          { id: 'clustering-psychological-roots', text: 'Psychological Roots' },
+          { id: 'clustering-impact-consequences', text: 'Impact & Consequences' },
+          { id: 'clustering-debiasing-strategies', text: 'Debiasing Strategies' }
+        ],
+        sections: [
+          {
+            id: 'clustering-core-concept',
+            title: 'Core Concept',
+            content: `<h4>Seeing Patterns in the Noise</h4><p>The Clustering Illusion is our ingrained tendency to see patterns in random data. When faced with a sequence of random events, we often underestimate how much clustering will naturally occur. Our pattern-seeking minds interpret these inevitable clusters as evidence of a special cause or a meaningful streak, when in fact they are just statistical noise.</p>`
+          },
+          {
+            id: 'clustering-real-world-example',
+            title: 'Real-World Example',
+            content: `<h3>The "Hot Hand" in Basketball</h3><p>The belief in the "hot hand" is a classic example. When a basketball player makes several shots in a row, fans, players, and coaches all tend to believe the player is "hot" and is more likely to make their next shot. However, rigorous statistical analysis of millions of shots by psychologists Amos Tversky and Thomas Gilovich found that there is no such thing as the hot hand. A player's chance of making a shot is independent of their previous shots. The "streaks" are simply the random clusters that you would expect to see in any sequence of coin flips. We see a pattern where none exists.</p><div class="impact-grid"><div class="impact-card"><h4>Cancer Clusters</h4><p>People may become alarmed if several cases of cancer appear in their neighborhood, assuming an environmental cause. While sometimes true, it's often the case that these are statistically expected random clusters.</p></div><div class="impact-card"><h4>Stock Market "Trends"</h4><p>Traders may see a stock going up for three days in a row and perceive it as a meaningful upward trend, when it is often just random fluctuation or "noise" in the market.</p></div></div>`
+          },
+          {
+            id: 'clustering-psychological-roots',
+            title: 'Psychological Roots',
+            content: `<h4>The Brain as a Pattern-Seeking Engine</h4><p>Our brain is a pattern-detection machine that evolved to find signal in the noise of the natural world. This ability is crucial for survival. However, this system is overly sensitive. We have a poor intuitive grasp of randomness and probability. A truly random sequence doesn't look random to us; it looks clumpy and streaky. We expect randomness to be evenly dispersed, but that is not how it works. The illusion is a byproduct of our otherwise adaptive ability to find meaningful patterns.</p>`
+          },
+          {
+            id: 'clustering-impact-consequences',
+            title: 'Impact & Consequences',
+            content: `<h4>Chasing Ghosts in the Data</h4><p>The clustering illusion can lead us to make poor decisions by causing us to react to noise as if it were a signal. Investors might buy or sell based on meaningless short-term trends. Businesses might change a successful strategy because of a short-term dip in sales that is just random variation. It can cause us to waste time and resources trying to find explanations for phenomena that don't need explaining.</p>`
+          },
+          {
+            id: 'clustering-debiasing-strategies',
+            title: 'Debiasing Strategies',
+            content: `<h3>Distinguishing Signal from Noise</h3><div class="figure-grid"><div class="figure-card"><h4>Understand the Nature of Randomness</h4><p>Take the time to learn about basic probability. Flipping a coin 100 times and seeing a streak of six heads in a row is not unusual; it's statistically likely. Understanding this can temper your urge to find a special cause.</p></div><div class="figure-card"><h4>Increase the Sample Size</h4><p>Don't draw conclusions from small amounts of data. A player's "streak" over 5 shots is likely noise. Their shooting percentage over 500 shots is a much more reliable signal of their true ability.</p></div><div class="figure-card"><h4>Use Statistical Tools</h4><p>When the stakes are high, don't rely on your intuition. Use statistical tests to determine if a perceived cluster is more significant than what would be expected by random chance alone. This provides an objective check on your pattern-seeking brain.</p></div></div>`
+          }
+        ]
+      },
+      'topic-gamblers-fallacy': {
+        title: 'Gambler’s Fallacy',
+        subtitle: 'The mistaken belief that if a particular event occurs more frequently than normal during the past it is less likely to happen in the future.',
+        nav: [
+          { id: 'gamblers-core-concept', text: 'Core Concept' },
+          { id: 'gamblers-real-world-example', text: 'Real-World Example' },
+          { id: 'gamblers-psychological-roots', text: 'Psychological Roots' },
+          { id: 'gamblers-impact-consequences', text: 'Impact & Consequences' },
+          { id: 'gamblers-debiasing-strategies', text: 'Debiasing Strategies' }
+        ],
+        sections: [
+          {
+            id: 'gamblers-core-concept',
+            title: 'Core Concept',
+            content: `<h4>"It's Due for a Change"</h4><p>The Gambler's Fallacy is the erroneous belief that if a particular outcome of an independent random event has occurred frequently in the recent past, it is less likely to occur in the near future (or vice versa). We have a deep-seated belief that chance is a self-correcting process and that a streak of one outcome must be "balanced out" by the opposite outcome. This is a fundamental misunderstanding of probability.</p>`
+          },
+          {
+            id: 'gamblers-real-world-example',
+            title: 'Real-World Example',
+            content: `<h3>The Roulette Wheel</h3><p>The fallacy gets its name from the casino. A roulette player might see the ball land on red five times in a row and believe that the next spin is "due" to be black. They might dramatically increase their bet on black, feeling that the outcome is now more likely. In reality, the roulette wheel has no memory. Each spin is an independent event. The probability of landing on black is exactly the same on every single spin, regardless of the previous outcomes. The past has no influence on the future.</p><div class="impact-grid"><div class="impact-card"><h4>Having Children</h4><p>A couple that has had three boys in a row might feel they are "due" for a girl. The probability of having a girl on the fourth pregnancy remains approximately 50%.</p></div><div class="impact-card"><h4>Stock Market Predictions</h4><p>An investor might see a stock go down for several days in a row and believe it is "due for a bounce," even if there is no new information to suggest a change in the company's fundamentals.</p></div></div>`
+          },
+          {
+            id: 'gamblers-psychological-roots',
+            title: 'Psychological Roots',
+            content: `<h4>The Representativeness Heuristic</h4><p>The Gambler's Fallacy stems from the Representativeness Heuristic, a mental shortcut where we expect short sequences of random events to be "representative" of longer, more typical sequences. We know that in the long run, a coin will land on heads about 50% of the time. So, when we see a short sequence like H-H-H-H-H, it doesn't look representative of that 50/50 balance. Our mind incorrectly expects this short-term imbalance to be immediately corrected to look more like the long-term average, forgetting that random processes can have long and lumpy streaks.</p>`
+          },
+          {
+            id: 'gamblers-impact-consequences',
+            title: 'Impact & Consequences',
+            content: `<h4>Poor Decision-Making Under Uncertainty</h4><p>As the name suggests, this fallacy can lead to significant financial losses in gambling and investing, as people make large bets based on a flawed understanding of probability. It can also lead to poor reasoning in other areas of life, causing us to see corrective patterns where none exist and to misinterpret the nature of random, independent events.</p>`
+          },
+          {
+            id: 'gamblers-debiasing-strategies',
+            title: 'Debiasing Strategies',
+            content: `<h3>Respecting Independence</h3><div class="figure-grid"><div class="figure-card"><h4>Internalize the Concept of Independence</h4><p>The core debiasing strategy is to deeply understand the concept of independent events. Drill it into your mind: a coin has no memory, a die has no memory, a roulette wheel has no memory. Past random events do not influence future ones.</p></div><div class="figure-card"><h4>Don't Confuse Process with Outcome</h4><p>Separate the process generating the outcome from the outcomes themselves. The process (a fair coin flip) is stable. The outcomes (a streak of heads) are random. Don't assume a change in the short-term outcomes means the underlying process has changed.</p></div><div class="figure-card"><h4>Consider the "Hot Hand Fallacy"</h4><p>Interestingly, the Gambler's Fallacy is the flip side of the "Hot Hand Fallacy" (a form of the Clustering Illusion). With the Gambler's Fallacy, we expect a streak to reverse. With the Hot Hand, we expect it to continue. Both are wrong because they assume past random events predict future ones. Recognizing that these two common but opposite fallacies exist highlights the unreliability of our intuitions about streaks.</p></div></div>`
+          }
+        ]
+      },
+      'topic-survivorship-bias': {
+        title: 'Survivorship Bias',
+        subtitle: 'The logical error of concentrating on the people or things that "survived" a process and inadvertently overlooking those that did not because of their lack of visibility.',
+        nav: [
+          { id: 'survivorship-core-concept', text: 'Core Concept' },
+          { id: 'survivorship-real-world-example', text: 'Real-World Example' },
+          { id: 'survivorship-psychological-roots', text: 'Psychological Roots' },
+          { id: 'survivorship-impact-consequences', text: 'Impact & Consequences' },
+          { id: 'survivorship-debiasing-strategies', text: 'Debiasing Strategies' }
+        ],
+        sections: [
+          {
+            id: 'survivorship-core-concept',
+            title: 'Core Concept',
+            content: `<h4>The Silent Evidence</h4><p>Survivorship Bias is a form of selection bias where we draw conclusions based on an incomplete set of data, because the "losing" or "failed" data points are no longer visible. We see the successes and learn from them, but we fail to see the much larger group of failures because they are silent. This leads to an overly optimistic and often dangerously incomplete understanding of reality.</p>`
+          },
+          {
+            id: 'survivorship-real-world-example',
+            title: 'Real-World Example',
+            content: `<h3>The World War II Bombers</h3><p>The classic story of survivorship bias comes from World War II. The Allied forces wanted to add armor to their bombers to make them more resilient to enemy fire. They examined the bombers that returned from missions and noted where they had the most bullet holes. The initial impulse was to reinforce those heavily damaged areas. However, statistician Abraham Wald made a brilliant counter-intuitive point. The military was only looking at the planes that *survived*. The logical conclusion was that the areas with the *fewest* bullet holes on the returning planes were the most critical. Planes hit in those spots (like the engine or cockpit) were the ones that didn't make it back. The armor should be added where the bullet holes *weren't*, because that was the silent evidence of what was truly fatal.</p>`
+          },
+          {
+            id: 'survivorship-impact-consequences',
+            title: 'Impact & Consequences',
+            content: `<h4>Learning the Wrong Lessons</h4><p>Survivorship bias is a major source of flawed decision-making because it leads us to learn the wrong lessons from the past. By only studying success, we get a distorted and romanticized picture of what it takes to succeed, and we fail to appreciate the role of luck and the many hidden pitfalls that lead to failure. This leads to bad business strategies, flawed investment advice, and a poor understanding of history.</p><div class="impact-grid"><div class="impact-card"><h4>Business "Gurus"</h4><p>We study the habits of college-dropout billionaires like Bill Gates and Mark Zuckerberg, thinking their path is a blueprint for success. We ignore the millions of college dropouts who did not become billionaires. The "secret" to success may lie in understanding why the much larger group failed.</p></div><div class="impact-card"><h4>Architecture</h4><p>We admire the beautiful, well-built old buildings that are still standing in our cities and may conclude that they "used to build things better." We don't see the thousands of poorly constructed old buildings that collapsed or were torn down long ago.</p></div></div>`
+          },
+          {
+            id: 'survivorship-psychological-roots',
+            title: 'Psychological Roots',
+            content: `<h4>What You See Is All There Is</h4><p>This bias is driven by the fact that our minds work with the data we have, not the data we're missing. The failures are invisible, so they don't enter into our mental calculations. It's a simple case of "out of sight, out of mind." The stories of the survivors are also more compelling and available, which ties into the Availability Heuristic. Success stories are told and retold, while failure stories are quietly forgotten.</p>`
+          },
+          {
+            id: 'survivorship-debiasing-strategies',
+            title: 'Debiasing Strategies',
+            content: `<h3>Looking for the Graveyard</h3><div class="figure-grid"><div class="figure-card"><h4>Actively Search for the Failures</h4><p>When analyzing a situation, don't just ask "What did the winners do?" Ask, "What did the losers do, and what's the difference?" Make a conscious effort to find the "graveyard" of data—the failed projects, the defunct companies, the unsuccessful applicants.</p></div><div class="figure-card"><h4>Consider the Role of Luck</h4><p>Recognize that in any successful outcome, luck often plays a significant role. Many of the failures may have had equally good strategies as the successes but were simply unlucky. Don't attribute every success solely to skill.</p></div><div class="figure-card"><h4>Conduct a "Pre-Mortem"</h4><p>This technique is also useful here. By imagining failure from the start, you force yourself and your team to consider the many paths that lead to non-survival, providing a more balanced view of the risks involved.</p></div></div>`
+          }
+        ]
+      },
+      'topic-apophenia': {
+        title: 'Apophenia',
+        subtitle: 'The tendency to perceive meaningful connections between unrelated things.',
+        nav: [
+          { id: 'apophenia-core-concept', text: 'Core Concept' },
+          { id: 'apophenia-real-world-example', text: 'Real-World Example' },
+          { id: 'apophenia-psychological-roots', text: 'Psychological Roots' },
+          { id: 'apophenia-impact-consequences', text: 'Impact & Consequences' },
+          { id: 'apophenia-debiasing-strategies', text: 'Debiasing Strategies' }
+        ],
+        sections: [
+          {
+            id: 'apophenia-core-concept',
+            title: 'Core Concept',
+            content: `<h4>The Overarching Pattern Bias</h4><p>Apophenia is the general human tendency to perceive meaningful patterns or connections in random or meaningless data. It is the broader umbrella under which biases like the Clustering Illusion and the Gambler's Fallacy sit. While those biases relate to specific types of data (clusters, sequences), apophenia is the generalized drive to find meaning and causality in unrelated phenomena—to see a story where there is only coincidence.</p>`
+          },
+          {
+            id: 'apophenia-real-world-example',
+            title: 'Real-World Example',
+            content: `<h3>Conspiracy Theories</h3><p>Conspiracy theories are a grand form of apophenia. A theorist will take a collection of unrelated, random, or ambiguous events—a politician's strange turn of phrase, a blurry photograph, a stock market fluctuation—and weave them together into a vast, coherent narrative of a hidden plot. They see connections everywhere. Contradictory evidence is not seen as disproof, but as further evidence of the conspiracy's sophistication. Every random data point is interpreted as a meaningful piece of the puzzle.</p><div class="impact-grid"><div class="impact-card"><h4>Superstitions</h4><p>An athlete wears a particular pair of socks and has a great game. They then perceive a causal link between the socks and their performance, even though it was pure coincidence.</p></div><div class="impact-card"><h4>Pareidolia</h4><p>A specific type of apophenia is Pareidolia, the tendency to see faces in random objects, like seeing the Man in the Moon or Jesus in a piece of toast.</p></div></div>`
+          },
+          {
+            id: 'apophenia-psychological-roots',
+            title: 'Psychological Roots',
+            content: `<h4>A Universe of Meaning</h4><p>Apophenia stems from the same evolutionary pressure that drives all pattern-recognition biases: the survival advantage of assuming patterns exist. A world without meaning or causality is chaotic and frightening. Our brains are predisposed to create narratives that make sense of the world, providing a feeling of control and understanding. Apophenia is the byproduct of this powerful meaning-making drive operating in overdrive, especially in situations of high uncertainty or anxiety.</p>`
+          },
+          {
+            id: 'apophenia-impact-consequences',
+            title: 'Impact & Consequences',
+            content: `<h4>Detachment from Reality</h4><p>While often harmless, apophenia can lead to a serious detachment from reality. It can fuel paranoia, delusional thinking, and an inability to accept the role of randomness and coincidence in life. It can cause people to make major life decisions based on perceived "signs" and "omens" that have no basis in fact. In its most extreme forms, it can underpin entire belief systems that are disconnected from evidence and resistant to falsification.</p>`
+          },
+          {
+            id: 'apophenia-debiasing-strategies',
+            title: 'Debiasing Strategies',
+            content: `<h3>Embracing Coincidence</h3><div class="figure-grid"><div class="figure-card"><h4>Apply Occam's Razor</h4><p>The principle of Occam's Razor states that the simplest explanation is usually the best one. Before jumping to a complex explanation involving hidden connections, ask if simple coincidence or randomness could be a more plausible cause.</p></div><div class="figure-card"><h4>Demand Proportional Evidence</h4><p>As Carl Sagan said, "Extraordinary claims require extraordinary evidence." The more grand and complex the perceived pattern is, the higher the burden of proof should be to accept it as real.</p></div><div class="figure-card"><h4>Develop an Appreciation for Randomness</h4><p>Instead of trying to eliminate randomness from your worldview, learn to appreciate it. Understand that coincidence is a natural and constant feature of the universe. Not every event needs to be woven into a grand narrative. Sometimes, things just happen.</p></div></div>`
+          }
+        ]
+      }
+    };
+
+    /*
+    ==================================================================
+    ==                   END: PASTE YOUR DATA HERE                  ==
+    ==                                                              ==
+    ==     DO NOT MODIFY THE APPLICATION LOGIC BELOW THIS LINE      ==
+    ==================================================================
+    */
+
+
+    /* ========== RENDERING LOGIC ========== */
+
+    function renderMegaMenu(data) {
+      const container = document.getElementById('mega-menu-container');
+      if (!container) return;
+      container.innerHTML = data.map(column => `
+        <div class="mega-menu-column">
+          <h3 class="theater-heading">${column.heading}</h3>
+          ${column.topics.map(topic => `
+            <a href="#" class="topic-link" onclick="switchTopic(event, '${topic.id}', this)">${topic.text}</a>
+          `).join('')}
+        </div>
+      `).join('');
+    }
+
+    function renderTopic(id){
+      const data = masterDataObject[id];
+      if (!data) {
+        const master = document.getElementById('topic-master-container');
+        master.innerHTML = '';
+        master.classList.remove('active');
+        return;
+      }
+      const master = document.getElementById('topic-master-container');
+      master.innerHTML = `
+        <div class="container">
+          <header class="header"><h1>${data.title}</h1><p>${data.subtitle}</p></header>
+          ${data.nav && data.nav.length ? `
+            <nav class="nav"><div class="nav-container">
+              ${data.nav.map((n,i)=>`<button class="nav-btn${i===0?' active':''}"
+                onclick="showSection('${n.id}',this)">${n.text}</button>`).join('')}
+            </div></nav>`:''}
+          <main class="content">
+            ${data.sections.map((s,i)=>`<section id="${s.id}" class="section${i===0?' active':''}">
+              <h2>${s.title}</h2>${s.content}</section>`).join('')}
+          </main>
+          <footer class="footer"><p>© 2025 The Cognitive Bias Codex</p></footer>
+        </div>`;
+      master.classList.add('active');
+    }
+
+
+    /* ========== NAVIGATION HANDLERS ========== */
+
+    function switchTopic(event, id, link){
+      event.preventDefault();
+      document.querySelectorAll('.topic-link').forEach(a => a.classList.remove('active-topic'));
+      if (link) link.classList.add('active-topic');
+      renderTopic(id);
+
+      const panel = document.getElementById('mega-menu-panel');
+      const toggle = document.getElementById('mega-menu-toggle');
+      if (panel.classList.contains('open')) {
+        panel.classList.remove('open');
+        toggle.classList.remove('active');
+        toggle.textContent = 'Menu';
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showSection(secId, btn){
+      const master = document.getElementById('topic-master-container');
+      master.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      master.querySelector(`#${secId}`).classList.add('active');
+      master.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+
+    /* ========== APP INITIALIZATION ========== */
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderMegaMenu(menuData);
+
+      const toggle = document.getElementById('mega-menu-toggle');
+      const panel = document.getElementById('mega-menu-panel');
+      toggle.addEventListener('click', () => {
+        panel.classList.toggle('open');
+        toggle.classList.toggle('active');
+        toggle.textContent = panel.classList.contains('open') ? 'Close Menu ▲' : 'Menu';
+      });
+
+      document.addEventListener('click', e => {
+        if (!panel.contains(e.target) && !toggle.contains(e.target) && panel.classList.contains('open')) {
+          panel.classList.remove('open');
+          toggle.classList.remove('active');
+          toggle.textContent = 'Menu';
+        }
+      });
+
+      if (menuData.length > 0 && menuData[0].topics.length > 0) {
+        const firstTopicId = menuData[0].topics[0].id;
+        if (masterDataObject[firstTopicId]) {
+            renderTopic(firstTopicId);
+            setTimeout(() => {
+                const firstLink = document.querySelector(`.topic-link[onclick*="${firstTopicId}"]`);
+                if (firstLink) {
+                    firstLink.classList.add('active-topic');
+                }
+            }, 0);
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>
