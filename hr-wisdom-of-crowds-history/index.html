@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wisdom of Crowds - A History Report</title>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg,#2c3e50 0%,#34495e 100%);
+            --accent-1: #e74c3c;
+            --accent-2: #c03b2b;
+            --btn-gradient: linear-gradient(45deg,#e74c3c,#c0392b);
+            --accent-1-rgb: 231, 76, 60;
+            --accent-warning: #ffc107;
+            --accent-warning-rgb: 255, 193, 7;
+            --text-primary: #ecf0f1;
+            --text-secondary: #bdc3c7;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(0,0,0,0.3);
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 3px solid var(--accent-1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-top: 0;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, var(--accent-1), var(--accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            filter: drop-shadow(0 0 15px rgba(var(--accent-1-rgb), 0.3));
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0,0,0,0.2);
+            padding: 1rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        /* --- FINAL BUTTON RULES START --- */
+
+        /* Base style for ALL buttons */
+        .tab-button, #settings-btn, .sector-button {
+            padding: 12px 24px;
+            background: var(--ui-background);
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Specific settings for the icon */
+        #settings-btn {
+            font-size: 1.2rem;
+            padding: 10px 15px;
+        }
+
+        /* HOVER state for buttons */
+        .tab-button:hover, .sector-button:hover, #settings-btn:hover {
+            background: var(--btn-gradient);
+            transform: translateY(-2px);
+            color: var(--btn-text-hover);
+        }
+
+        /* ACTIVE state for selected buttons */
+        .tab-button.active, .sector-button.active {
+            background: var(--btn-gradient);
+            border-color: var(--accent-2);
+            transform: translateY(-2px);
+            color: var(--btn-text-active);
+        }
+        
+        /* --- FINAL BUTTON RULES END --- */
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #2c3e50;
+            padding: 2rem;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            text-align: center;
+            position: relative;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .modal-content h3 {
+            color: var(--accent-1);
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+        
+        .modal-content label {
+            font-size: 1.1rem;
+            margin-right: 10px;
+        }
+
+        #theme-select {
+            background-color: var(--ui-background);
+            color: var(--text-primary);
+            border: 1px solid var(--accent-2);
+            border-radius: 5px;
+            padding: 8px;
+            font-size: 1rem;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .section-title {
+            color: var(--accent-1);
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent-1);
+        }
+
+        .subsection {
+            margin: 1.5rem 0;
+        }
+
+        .subsection h3 {
+            color: var(--accent-1);
+            font-size: 1.3rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .subsection h4 {
+            color: var(--accent-2);
+            font-size: 1.1rem;
+            margin: 1rem 0 0.5rem 0;
+        }
+
+        .sector-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .sector-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 1.5rem;
+            border-left: 4px solid var(--accent-1);
+            transition: transform 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sector-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.1);
+        }
+
+        .sector-name {
+            color: var(--accent-1);
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .casualties-highlight {
+            background: rgba(var(--accent-warning-rgb), 0.15);
+            padding: 1rem;
+            border-radius: 5px;
+            border-left: 4px solid var(--accent-warning);
+            margin: 1rem 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+           .stat-card {
+            background: var(--ui-background-accent);
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--accent-1);
+            display: block;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+        
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+            margin-top: 2rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--accent-1);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2rem;
+            padding-left: 2rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2.05rem;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            background: var(--accent-1);
+            border-radius: 50%;
+            border: 2px solid var(--ui-background);
+        }
+
+        .timeline-time {
+            color: var(--accent-1);
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255,255,255,0.1);
+            color: var(--text-primary);
+            margin-bottom: 2rem;
+        }
+
+        .search-box::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .highlight {
+            background: rgba(var(--accent-1-rgb), 0.3);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .interactive-map {
+            background: var(--container-background-subtle);
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .sector-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .sector-detail {
+            display: none;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+        }
+
+        .sector-detail.show {
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            .nav-tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+            .container {
+                padding: 1rem;
+            }
+            .sector-grid {
+                grid-template-columns: 1fr;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <script>
+    // Self-executing function to manage all theme logic.
+    (function() {
+        const DEFAULT_THEME_NAME = 'cyber-night';
+    
+        let THEMES = {
+            'cyber-night': {
+                '--bg-gradient': 'linear-gradient(135deg,#0a0a23 0%,#1a1a3a 50%,#2e2e5e 100%)',
+                '--accent-1': '#a8b8d0', '--accent-1-rgb': '168, 184, 208',
+                '--accent-2': '#8899b3',
+                '--btn-gradient': 'linear-gradient(45deg,#1a1a3a,#2e2e5e)',
+                '--accent-warning': '#e8b339',
+                '--accent-warning-rgb': '232, 179, 57',
+                '--ui-background': '#34495e',
+                '--ui-background-accent': 'rgba(52, 73, 94, 0.8)',
+                '--container-background-subtle': 'rgba(0, 0, 0, 0.3)',
+                '--btn-text-active': '#ecf0f1'
+            },
+            'teal-matrix': {
+                '--bg-gradient': 'linear-gradient(135deg,#0a231c 0%,#1a3a31 50%,#2e5e50 100%)',
+                '--accent-1': '#ace0d5', '--accent-1-rgb': '172, 224, 213',
+                '--accent-2': '#92b3a9',
+                '--btn-gradient': 'linear-gradient(45deg,#1a3a31,#2e5e50)',
+                '--accent-warning': '#e8b339',
+                '--accent-warning-rgb': '232, 179, 57',
+                '--ui-background': '#345e55',
+                '--ui-background-accent': 'rgba(52, 94, 85, 0.8)',
+                '--container-background-subtle': 'rgba(0, 0, 0, 0.3)',
+                '--btn-text-active': '#ecf0f1'
+            },
+            'red-alert': {
+                '--bg-gradient': 'linear-gradient(135deg,#0a0a23 0%,#1a1a3a 50%,#2e2e5e 100%)',
+                '--ui-background': '#34495e',
+                '--ui-background-accent': 'rgba(52, 73, 94, 0.8)',
+                '--container-background-subtle': 'rgba(0, 0, 0, 0.3)',
+                '--accent-1': '#e74c3c',
+                '--accent-2': '#c03b2b',
+                '--btn-gradient': 'linear-gradient(45deg,#e74c3c,#c0392b)',
+                '--accent-1-rgb': '231, 76, 60',
+                '--accent-warning': '#e8b339',
+                '--accent-warning-rgb': '232, 179, 57',
+                '--btn-text-active': '#ffffff'
+            },
+            'scorched-gold': {
+                '--bg-gradient': 'linear-gradient(135deg,#0a231f 0%,#193a33 50%,#2e5e54 100%)',
+                '--ui-background': '#345e56',
+                '--ui-background-accent': 'rgba(52, 94, 86, 0.8)',
+                '--container-background-subtle': 'rgba(0, 0, 0, 0.3)',
+                '--accent-1': '#f0c475',
+                '--accent-2': '#d4a24c',
+                '--btn-gradient': 'linear-gradient(45deg,#f0c475,#d4a24c)',
+                '--accent-1-rgb': '240, 196, 117',
+                '--btn-text-active': '#2a1d15',
+                '--btn-text-hover': '#2a1d15',
+                '--accent-warning': '#e8b339',
+                '--accent-warning-rgb': '232, 179, 57'
+            },
+            'crimson-emerald': {
+                '--bg-gradient': 'linear-gradient(135deg,#0a230a 0%,#1a3a1a 50%,#2e5e2e 100%)',
+                '--ui-background': '#345e49',
+                '--ui-background-accent': 'rgba(52, 94, 73, 0.8)',
+                '--container-background-subtle': 'rgba(0, 0, 0, 0.3)',
+                '--accent-1': '#e04f7f',
+                '--accent-2': '#c73363',
+                '--btn-gradient': 'linear-gradient(45deg,#e04f7f,#c73363)',
+                '--accent-1-rgb': '224, 79, 127',
+                '--accent-warning': '#e8b339',
+                '--accent-warning-rgb': '232, 179, 57',
+                '--btn-text-active': '#ffffff'
+            },
+            'emerald-cyber': {
+                '--bg-gradient': 'linear-gradient(135deg,#0a230a 0%,#1a3a1a 50%,#2e5e2e 100%)',
+                '--accent-1': '#a8d0b8', '--accent-1-rgb': '168, 208, 184',
+                '--accent-2': '#6a947a', '--btn-gradient': 'linear-gradient(45deg,#1a3a1a,#2e5e2e)',
+                '--accent-warning': '#ffc107', '--accent-warning-rgb': '255, 193, 7',
+                '--ui-background': '#34495e',
+                '--ui-background-accent': 'rgba(52, 73, 94, 0.8)',
+                '--container-background-subtle': 'rgba(0, 0, 0, 0.3)'
+            },
+            'scorched-copper': {
+                '--bg-gradient': 'linear-gradient(135deg,#2a1d15 0%,#4e3427 50%,#5a4032 100%)',
+                '--ui-background': '#5a4032',
+                '--ui-background-accent': 'rgba(90, 64, 50, 0.8)',
+                '--container-background-subtle': 'rgba(26, 15, 8, 0.3)',
+                '--accent-1': '#d4af37',
+                '--accent-2': '#b87333',
+                '--btn-gradient': 'linear-gradient(45deg,#d4af37,#b87333)',
+                '--accent-1-rgb': '212, 175, 55',
+                '--btn-text-active': '#2a1d15',
+                '--btn-text-hover': '#2a1d15',
+                '--accent-warning': '#f0e68c',
+                '--accent-warning-rgb': '240, 230, 140'
+            },
+            'emerald-night': {
+                '--bg-gradient': 'linear-gradient(135deg,#0a230a 0%,#1a3a1a 50%,#2e5e2e 100%)',
+                '--accent-1': '#a8d0b8', '--accent-1-rgb': '168, 208, 184',
+                '--accent-2': '#6a947a',
+                '--btn-gradient': 'linear-gradient(45deg,#1a3a1a,#2e5e2e)',
+                '--accent-warning': '#ffc107', '--accent-warning-rgb': '255, 193, 7',
+                '--ui-background': '#345e49',
+                '--ui-background-accent': 'rgba(52, 94, 73, 0.8)',
+                '--container-background-subtle': 'rgba(0, 0, 0, 0.3)',
+                '--btn-text-active': '#ecf0f1'
+            }
+        };
+
+        function applyTheme(name) {
+            const theme = THEMES[name];
+            if (theme) {
+                const root = document.documentElement;
+                for (const [key, value] of Object.entries(theme)) {
+                    root.style.setProperty(key, value);
+                }
+            }
+        }
+    
+        window.setTheme = function(name) {
+            applyTheme(name);
+            localStorage.setItem('woc-history-theme', name);
+        }
+    
+        const availableThemeNames = Object.keys(THEMES);
+        const savedTheme = localStorage.getItem('woc-history-theme');
+        let themeToLoad = DEFAULT_THEME_NAME;
+
+        if (savedTheme && availableThemeNames.includes(savedTheme)) {
+            themeToLoad = savedTheme;
+        }
+        
+        applyTheme(themeToLoad);
+    
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeSelect = document.getElementById('theme-select');
+            if (themeSelect) {
+                availableThemeNames.forEach(name => {
+                    const option = document.createElement('option');
+                    option.value = name;
+                    option.textContent = name.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                    themeSelect.appendChild(option);
+                });
+                themeSelect.value = themeToLoad;
+            }
+        });
+    })();
+    </script>
+</head>
+<body>
+    <div id="settings-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button id="close-modal-btn" class="close-btn">&times;</button>
+            <h3>Display Settings</h3>
+            <label for="theme-select">Theme:</label>
+            <select id="theme-select" onchange="setTheme(this.value)"></select>
+        </div>
+    </div>
+
+    <div class="header">
+        <h1>A Brief History of Collective Intelligence</h1>
+        <p>From Ancient Juries to Modern Markets • Knowledge Base</p>
+    </div>
+
+    <div class="nav-tabs">
+        <button class="tab-button active" data-tab="overview">Overview</button>
+        <button class="tab-button" data-tab="early-roots">Early Roots</button>
+        <button class="tab-button" data-tab="modern-era">Modern Era</button>
+        <button class="tab-button" data-tab="key-thinkers">Key Thinkers</button>
+        <button class="tab-button" data-tab="core-concepts">Core Concepts</button>
+        <button class="tab-button" data-tab="search">Search</button>
+        <button id="settings-btn" title="Settings">⚙️</button>
+    </div>
+
+    <div class="container">
+        <div id="overview" class="tab-content active">
+             <div class="section-card">
+                <h2 class="section-title">The Power of the Many</h2>
+                <p style="font-size: 1.2rem; line-height: 1.8; margin-bottom: 2rem;">
+                    The idea that groups of individuals can exhibit a collective intelligence greater than any single member is as old as democracy itself. From the surprising accuracy of a crowd guessing an ox's weight to the complex problem-solving of the internet, this principle has been observed for centuries. This report provides a high-level overview of the key milestones, figures, and concepts that define our understanding of the Wisdom of Crowds.
+                </p>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-number">1906</span>
+                        <div class="stat-label">Galton's Ox Experiment</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">99.9%</span>
+                        <div class="stat-label">Accuracy of the Crowd's Guess</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">4</span>
+                        <div class="stat-label">Conditions for a Wise Crowd</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">$1M</span>
+                        <div class="stat-label">The Netflix Prize (2006)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="early-roots" class="tab-content">
+            <div class="section-card">
+                <h2 class="section-title">Early Roots (500 BC – 1960s)</h2>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-time">c. 508 BC</div>
+                        <h4>Athenian Democracy</h4>
+                        <p>The Athenian practice of using large, randomly selected juries (Dikasteria) and citizen assemblies was an early, large-scale experiment in collective decision-making and justice.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">1785</div>
+                        <h4>Condorcet's Jury Theorem</h4>
+                        <p>The Marquis de Condorcet provides the first mathematical proof that if individuals are more than 50% likely to be right, a larger group is almost certain to make the correct decision.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">1906</div>
+                        <h4>Galton's Ox Experiment</h4>
+                        <p>Francis Galton, a skeptic of democracy, is shocked to discover that the average guess of a crowd at a country fair is nearly perfect at predicting an ox's weight, providing the foundational anecdote for the field.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">1945</div>
+                        <h4>Hayek's "Use of Knowledge in Society"</h4>
+                        <p>Economist Friedrich Hayek argues that a market's price system is a mechanism for aggregating the dispersed, local knowledge of millions of individuals, a task no central planner could ever accomplish.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="modern-era" class="tab-content">
+            <div class="section-card">
+                <h2 class="section-title">The Modern Era (1980s – Present)</h2>
+                <div class="sector-grid">
+                    <div class="sector-card">
+                        <div class="sector-name">Prediction Markets</div>
+                        <p>Beginning with the Iowa Electronic Markets in 1988, these platforms harness the crowd to create uncannily accurate forecasts on everything from elections to corporate sales by allowing people to bet on outcomes.</p>
+                    </div>
+                    <div class="sector-card">
+                        <div class="sector-name">Open Source Software</div>
+                        <p>The rise of projects like Linux (1991) demonstrates that a globally distributed, volunteer crowd can build and maintain incredibly complex systems more effectively than traditional corporate hierarchies.</p>
+                    </div>
+                    <div class="sector-card">
+                        <div class="sector-name">Crowdsourcing & The Web</div>
+                        <p>The launch of Wikipedia (2001) becomes the quintessential example of large-scale content creation. Platforms like Kaggle (2010) and Mechanical Turk further formalize crowdsourcing as a problem-solving tool.</p>
+                        <div class="casualties-highlight">
+                            <strong>Challenge:</strong> The same platforms can also create echo chambers and groupthink, demonstrating the dark side of collective behavior online.
+                        </div>
+                    </div>
+                    <div class="sector-card">
+                        <div class="sector-name">AI & Collective Intelligence</div>
+                        <p>Modern AI systems, especially large language models, can be seen as a form of collective intelligence, as they are trained on the aggregated knowledge of a vast portion of the public internet created by millions of humans.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="key-thinkers" class="tab-content">
+            <div class="section-card">
+                <h2 class="section-title">Key Thinkers</h2>
+                <div class="sector-grid">
+                    <div class="sector-card">
+                        <h3 class="sector-name">Francis Galton</h3>
+                        <p>A statistician and eugenicist who, in studying the average guess of a crowd in 1906, inadvertently provided the first powerful empirical evidence for the wisdom of crowds.</p>
+                    </div>
+                    <div class="sector-card">
+                        <h3 class="sector-name">Friedrich Hayek</h3>
+                        <p>An Austrian economist who argued in the 1940s that market prices were a form of collective computation, solving a problem of knowledge distribution that no central authority could match.</p>
+                    </div>
+                    <div class="sector-card">
+                        <h3 class="sector-name">James Surowiecki</h3>
+                        <p>A journalist whose 2004 book, "The Wisdom of Crowds," synthesized decades of research and popularized the idea for a mass audience, defining the four key conditions for a wise crowd.</p>
+                    </div>
+                     <div class="sector-card">
+                        <h3 class="sector-name">Scott Page</h3>
+                        <p>A contemporary researcher on complex systems whose "Diversity Trumps Ability" theorem provides mathematical proof for why cognitive diversity is often more important than individual expertise for group problem-solving.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="core-concepts" class="tab-content">
+            <div class="section-card">
+                <h2 class="section-title">The Four Conditions for a Wise Crowd</h2>
+                <div class="sector-grid">
+                     <div class="sector-card">
+                        <h3 class="sector-name">Diversity of Opinion</h3>
+                        <p>The group must possess a wide range of perspectives, backgrounds, and private information. Homogenous groups are prone to correlated errors and collective blind spots.</p>
+                     </div>
+                     <div class="sector-card">
+                        <h3 class="sector-name">Independence</h3>
+                        <p>Individuals in the group must form their own judgments without being influenced by the choices of those around them. This prevents cascades and herding behavior.</p>
+                     </div>
+                     <div class="sector-card">
+                        <h3 class="sector-name">Decentralization</h3>
+                        <p>Individuals should be able to draw on their own local, specialized knowledge. Power and information should not be overly centralized in a single authority.</p>
+                     </div>
+                     <div class="sector-card">
+                        <h3 class="sector-name">Aggregation</h3>
+                        <p>There must be a mechanism, like a voting system, a market price, or a simple average, to turn the private judgments of individuals into a single, collective decision.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="search" class="tab-content">
+            <div class="section-card">
+                <h2 class="section-title">Search the Knowledge Base</h2>
+                <input type="text" id="searchInput" class="search-box" placeholder="Search for thinkers, concepts, events...">
+                
+                <div id="searchResults">
+                    <p style="text-align: center; color: var(--text-secondary); font-style: italic; margin: 2rem 0;">
+                        Enter a search term above to explore the history of collective intelligence.<br>
+                        Try searching for: "Galton", "Surowiecki", "Prediction Market", "Diversity", etc.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Knowledge base for searching
+        const knowledgeBase = {
+            "Galton": "Sir Francis Galton's 1906 experiment with an ox at a country fair is the foundational anecdote for the wisdom of crowds. The crowd's average guess of the ox's weight was nearly perfect.",
+            "Surowiecki": "James Surowiecki is the author of the 2004 book 'The Wisdom of Crowds,' which popularized the concept and defined the four key conditions: Diversity, Independence, Decentralization, and Aggregation.",
+            "Prediction Market": "A speculative market created to forecast future events. The market price of a contract on an event is considered to be the crowd's collective probability estimate. The Iowa Electronic Markets (1988) was a pioneering example.",
+            "Diversity": "Cognitive diversity is a key condition for a wise crowd. A group with a wide range of perspectives and problem-solving approaches can often outperform a group of like-minded experts.",
+            "Independence": "For a crowd's errors to cancel out, their judgments must be independent. If people are just copying each other, the crowd becomes a herd and its collective intelligence collapses.",
+            "Aggregation": "A mechanism for turning private judgments into a collective decision. Examples include voting systems, market prices, or simply averaging individual estimates.",
+            "Decentralization": "The principle that individuals should be able to draw on their own local, specialized knowledge. It ensures that information is not concentrated in one place and that a wider range of data is included.",
+            "Open Source": "Projects like Linux demonstrate how a decentralized, independent crowd of volunteers can collaboratively build and maintain highly complex and reliable systems.",
+            "Wikipedia": "The online encyclopedia is a prime example of crowdsourcing, where millions of individuals contribute and edit content to create a vast repository of collective knowledge.",
+            "Condorcet": "The Marquis de Condorcet's Jury Theorem (1785) was an early mathematical proof showing that if individuals are more likely to be right than wrong, a larger group will be more accurate than any single member."
+        };
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTabs();
+            initializeSectorButtons();
+            initializeSearch();
+            initializeModal();
+        });
+
+        function initializeModal() {
+            const modal = document.getElementById('settings-modal');
+            const openBtn = document.getElementById('settings-btn');
+            const closeBtn = document.getElementById('close-modal-btn');
+
+            if (modal && openBtn && closeBtn) {
+                openBtn.addEventListener('click', () => modal.classList.add('show'));
+                closeBtn.addEventListener('click', () => modal.classList.remove('show'));
+                modal.addEventListener('click', (event) => {
+                    if (event.target === modal) modal.classList.remove('show');
+                });
+            }
+        }
+
+        function initializeTabs() {
+            const tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const tabName = this.getAttribute('data-tab');
+                    showTab(tabName);
+                });
+            });
+        }
+
+        function showTab(tabName) {
+            try {
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                document.querySelectorAll('.tab-button').forEach(button => button.classList.remove('active'));
+                document.getElementById(tabName).classList.add('active');
+                document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            } catch (error) { console.error('Error in showTab:', error); }
+        }
+
+        function initializeSectorButtons() {
+            const sectorButtons = document.querySelectorAll('.sector-button');
+            sectorButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const sectorName = this.getAttribute('data-sector');
+                    showSectorDetail(sectorName, this);
+                });
+            });
+        }
+
+        function showSectorDetail(sector, clickedButton) {
+            try {
+                document.querySelectorAll('.sector-detail').forEach(detail => detail.classList.remove('show'));
+                document.querySelectorAll('.sector-button').forEach(button => button.classList.remove('active'));
+                const targetDetail = document.getElementById(sector + '-detail');
+                if (targetDetail) {
+                    targetDetail.classList.add('show');
+                    clickedButton.classList.add('active');
+                }
+            } catch (error) { console.error('Error in showSectorDetail:', error); }
+        }
+
+        function initializeSearch() {
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('keyup', searchContent);
+            }
+        }
+
+        function searchContent() {
+            try {
+                const searchInput = document.getElementById('searchInput');
+                const resultsDiv = document.getElementById('searchResults');
+                if (!searchInput || !resultsDiv) return;
+                
+                const searchTerm = searchInput.value.toLowerCase();
+
+                if (searchTerm.length < 2) {
+                    resultsDiv.innerHTML = `<p style="text-align: center; color: var(--text-secondary); font-style: italic; margin: 2rem 0;">Enter a search term above to explore the history of collective intelligence.<br>Try searching for: "Galton", "Surowiecki", "Prediction Market", "Diversity", etc.</p>`;
+                    return;
+                }
+
+                let results = [];
+                for (const key in knowledgeBase) {
+                    if (knowledgeBase.hasOwnProperty(key)) {
+                        const value = knowledgeBase[key];
+                        if (key.toLowerCase().includes(searchTerm) || value.toLowerCase().includes(searchTerm)) {
+                            results.push({
+                                title: key,
+                                content: value,
+                                relevance: key.toLowerCase().startsWith(searchTerm) ? 2 : 1
+                            });
+                        }
+                    }
+                }
+
+                results.sort((a, b) => b.relevance - a.relevance);
+
+                if (results.length === 0) {
+                    resultsDiv.innerHTML = `<div class="section-card"><h3 style="color: var(--accent-1);">No results found for "${searchInput.value}"</h3><p>Try searching for thinkers, concepts, or events.</p></div>`;
+                    return;
+                }
+
+                let resultHTML = `<h3 style="color: var(--accent-1); margin-bottom: 1.5rem;">Search Results for "${searchInput.value}"</h3>`;
+                for (let i = 0; i < results.length; i++) {
+                    const result = results[i];
+                    const highlightedContent = result.content.replace(new RegExp(searchTerm, 'gi'), `<span class="highlight">$&</span>`);
+                    resultHTML += `<div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid var(--accent-1);"><h4 style="color: var(--accent-1); margin-bottom: 0.8rem;">${result.title}</h4><p style="line-height: 1.6;">${highlightedContent}</p></div>`;
+                }
+
+                resultsDiv.innerHTML = resultHTML;
+            } catch (error) { console.error('Error in searchContent:', error); }
+        }
+    </script>
+</body>
+</html>
