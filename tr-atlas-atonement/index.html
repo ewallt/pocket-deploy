@@ -319,8 +319,11 @@
         if (!root.classList.contains('dark')) {
           root.classList.add('dark');
           try { localStorage.setItem('theme','dark'); } catch(_){}
+          // On first switch to dark, apply the SAVED color scheme, not the next one
+          applyTheme(availableThemes[currentThemeIndex]);
           return;
         }
+        // If already dark, cycle to the next theme
         currentThemeIndex = (currentThemeIndex + 1) % availableThemes.length;
         const newTheme = availableThemes[currentThemeIndex];
         applyTheme(newTheme);
