@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Cruciform Life</title>
+
+  <!-- Prepaint bootstrap: set dark + theme class before paint to avoid flicker -->
+  <script>
+  (function () {
+    const root = document.documentElement;
+    try {
+      const savedTheme = localStorage.getItem('theme');       // 'light' | 'dark' | null
+      const savedColor = localStorage.getItem('colorScheme'); // 'slate' | 'emerald' | future
+      const isDark = savedTheme !== 'light';                  // default to dark if unset
+      root.classList.toggle('dark', isDark);
+      // Apply colored theme classes ONLY in dark mode; light is always neutral slate
+      root.classList.toggle('theme-emerald', isDark && savedColor === 'emerald');
+    } catch (_) {}
+  })();
+  </script>
+
+  <!-- Tailwind (with Typography) -->
+  <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' };
+  </script>
+
+  <!-- Google Font (optional) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+
+  <style>
+  :root { color-scheme: light dark; }
+  html { scroll-behavior: smooth; }
+  .font-newspaper { font-family: 'Lora', serif; }
+  :where(h2,h3,h4){ scroll-margin-top: 84px; }
+  mark { background: #fde68a; padding: .1em .2em; border-radius: .2rem; }
+  @media (max-width: 380px){ .prose { font-size: .96rem; } }
+
+  /* ---------- Semantic surfaces (read from CSS variables) ---------- */
+.hero {
+  /* give the header an explicit base fill so gradient blends to the right hue */
+  background-color: var(--hero-base);
+  background:
+    radial-gradient(50% 120% at 10% 10%, var(--hero-r1), transparent 60%),
+    radial-gradient(80% 140% at 90% 10%, var(--hero-r2), transparent 70%),
+    linear-gradient(180deg, var(--hero-wash), transparent 35%);
+}
+.border-var { border-color: var(--border) !important; }
+.surface { border-width: 1px; border-style: solid; border-color: var(--border); }
+.hr-var { border-color: var(--border); }
+.subtitle { color: var(--subtitle-fg); }
+.timeline-fg { color: var(--timeline-fg); }
+.footer-note { color: var(--footer-fg); }
+.active-link { color: var(--active); font-weight: 700; }
+
+.input-surface {
+  border: 1px solid var(--input-border);
+  background-color: var(--input-bg);
+}
+.btn-surface { border: 1px solid var(--btn-border); }
+.btn-surface:hover { background: var(--btn-hover-bg); }
+.toc-link:hover { background: var(--hover-bg); }
+
+/* ---------- Slate (default) variables ---------- */
+:root{
+  /* accents / inks */
+  --active: rgb(59,130,246);                      /* sky-500 */
+  --subtitle-fg: rgb(71,85,105);                  /* slate-600 */
+  --timeline-fg: rgb(100,116,139);                /* slate-500 */
+  --footer-fg: rgb(100,116,139);                  /* slate-500 */
+
+  /* surfaces */
+  --border: rgb(226,232,240);                     /* slate-200 */
+  --hover-bg: rgb(248,250,252);                   /* slate-50 */
+  --btn-border: rgb(203,213,225);                 /* slate-300 */
+  --btn-hover-bg: rgb(248,250,252);               /* slate-50 */
+  --input-border: rgba(203,213,225,0.7);          /* slate-300/70 */
+  --input-bg: rgba(255,255,255,0.7);              /* white/70 */
+
+  /* hero base & gradient (light) */
+  --hero-base: transparent;                       /* keep light header airy */
+  --hero-r1: rgba(49,46,129,.12);                 /* indigo-700 */
+  --hero-r2: rgba(234,88,12,.12);                 /* orange-600 hint */
+  --hero-wash: rgba(14,165,233,.08);              /* sky-500 wash */
+}
+.dark{
+  --subtitle-fg: rgb(203,213,225);                /* slate-300 */
+  --timeline-fg: rgb(148,163,184);                /* slate-400 */
+  --footer-fg: rgb(148,163,184);                  /* slate-400 */
+
+  --border: rgb(30,41,59);                        /* slate-800 */
+  --hover-bg: rgb(15,23,42);                      /* slate-900 */
+  --btn-border: rgb(51,65,85);                    /* slate-700 */
+  --btn-hover-bg: rgb(15,23,42);                  /* slate-900 */
+  --input-border: rgba(51,65,85,0.7);             /* slate-700/70 */
+  --input-bg: rgba(2,6,23,0.6);                   /* slate-950/60 */
+
+  /* hero base & gradient (dark) */
+  --hero-base: rgb(2,6,23);                       /* slate-950 */
+  --hero-r1: rgba(49,46,129,.12);
+  --hero-r2: rgba(234,88,12,.12);
+  --hero-wash: rgba(14,165,233,.08);
+}
+
+/* ---------- Emerald theme overrides (light & dark) ---------- */
+.theme-emerald{
+  --active: #10b981;                              /* emerald-500 */
+
+  --border: rgb(187,247,208);                     /* emerald-200 */
+  --hover-bg: rgb(240,253,244);                   /* emerald-50 */
+  --btn-border: rgb(187,247,208);                 /* emerald-200 */
+  --btn-hover-bg: rgb(240,253,244);               /* emerald-50 */
+  --input-border: rgba(110,231,183,0.7);          /* emerald-300/70 */
+  --input-bg: rgba(255,255,255,0.7);              /* white/70 */
+
+  /* keep subtitles/timeline neutral for readability over hero */
+  --subtitle-fg: rgb(71,85,105);                  /* slate-600 */
+  --timeline-fg: rgb(71,85,105);                  /* slate-600 */
+  --footer-fg: rgb(16,185,129);                   /* emerald-500 */
+
+  /* hero base & gradient (emerald light) */
+  --hero-base: transparent;
+  --hero-r1: rgba(16,185,129,.14);                /* emerald-500 */
+  --hero-r2: rgba(163,230,53,.12);                /* lime-400 */
+  --hero-wash: rgba(5,150,105,.10);               /* emerald-600 wash */
+}
+.dark.theme-emerald{
+  /* ↑ Give borders enough contrast on dark emerald surfaces */
+  --border: rgba(110,231,183,0.55);                /* emerald-300 @ 55% */
+  --hover-bg: rgb(6,78,59);                        /* emerald-900 */
+  --btn-border: rgba(110,231,183,0.45);            /* slightly softer than borders */
+  --btn-hover-bg: rgb(6,78,59);                    /* emerald-900 */
+  --input-border: rgba(110,231,183,0.55);          /* match border contrast */
+  --input-bg: rgba(6,95,70,0.60);                  /* emerald-900/60 */
+
+  /* text accents for readability */
+  --footer-fg: rgb(110,231,183);                   /* emerald-300/400 */
+  --subtitle-fg: rgb(226,252,236);                 /* emerald-100 */
+  --timeline-fg: rgb(187,247,208);                 /* emerald-200 */
+
+  /* hero base & gradient (unchanged, stays emerald) */
+  --hero-base: rgb(2,44,34);                       /* emerald-950 (#022c22) */
+  --hero-r1: rgba(16,185,129,.14);
+  --hero-r2: rgba(163,230,53,.12);
+  --hero-wash: rgba(5,150,105,.10);
+}
+
+/* ===== Modal Styles ===== */
+.modal-overlay {
+    display: none; position: fixed; z-index: 1000; left: 0; top: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.6);
+    justify-content: center; align-items: center;
+}
+.modal-overlay.show { display: flex; }
+.modal-content {
+    background: #fff; color: #1e293b; /* slate-800 */
+    padding: 2rem; border-radius: 8px;
+    text-align: center; position: relative; width: 90%; max-width: 400px;
+}
+.dark .modal-content { background: #1e293b; color: #f8fafc; } /* slate-800, slate-50 */
+.modal-content h3 { font-size: 1.5rem; margin-bottom: 1.5rem; }
+.close-btn {
+    position: absolute; top: 10px; right: 15px; color: #94a3b8; /* slate-400 */
+    font-size: 28px; font-weight: bold; background: none;
+    border: none; cursor: pointer;
+}
+.dark .close-btn { color: #64748b; } /* slate-500 */
+</style>
+
+</head>
+
+<body class="bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 pb-[env(safe-area-inset-bottom)]">
+
+  <!-- Modal Theme Switcher HTML -->
+  <div class="fixed top-4 right-4 z-50">
+    <button id="settings-btn" class="p-2 rounded-full shadow-lg bg-white/70 dark:bg-slate-800/70 backdrop-blur" aria-label="toggle settings">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.096 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+    </button>
+  </div>
+  <div id="settings-modal" class="modal-overlay">
+    <div class="modal-content surface">
+        <button id="close-modal-btn" class="close-btn">×</button>
+        <h3>Display Settings</h3>
+        <button id="modalThemeBtn" class="w-full text-sm px-3 py-2 rounded-lg btn-surface mb-2">Toggle Light/Dark</button>
+        <button id="modalColorBtn" class="w-full text-sm px-3 py-2 rounded-lg btn-surface">Change Color Scheme</button>
+    </div>
+  </div>
+
+
+  <!-- Header -->
+  <header id="top" class="hero border-b border-var">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-between gap-4">
+      <div>
+        <h1 id="docTitle" class="text-2xl sm:text-3xl font-bold font-newspaper tracking-tight">Loading...</h1>
+        <p id="docSubtitle" class="subtitle text-sm sm:text-base"></p>
+      </div>
+      <div class="flex items-center gap-2">
+        <label for="search" class="sr-only">Search</label>
+        <input id="search" type="search" placeholder="Search…" class="hidden md:block w-56 rounded-xl input-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400" />
+        <button id="clearSearch" type="button" class="hidden md:inline-flex text-xs px-2 py-2 rounded-lg btn-surface">Clear</button>
+      </div>
+    </div>
+
+    <!-- Timeline / Sections Nav -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6" id="timelineWrap" hidden>
+      <nav aria-label="Journey timeline" id="timelineNav" class="timeline-fg">
+        <ol id="timeline" class="grid grid-cols-3 sm:grid-cols-3 items-center gap-x-2 gap-y-1 text-[11px] sm:text-sm"></ol>
+        <div id="timelineCoda" class="mt-2 text-[11px] sm:text-xs"></div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)] gap-8">
+    <!-- Sidebar -->
+    <aside class="lg:sticky lg:top-4 h-max">
+      <nav aria-label="On this page" class="rounded-2xl surface p-4">
+        <h2 class="text-sm font-semibold mb-2">Sections</h2>
+        <ol id="toc" class="space-y-1 text-sm"></ol>
+        <hr class="my-4 hr-var" />
+        <button id="expandAll" type="button" class="w-full text-xs px-3 py-2 rounded-lg btn-surface">Expand All</button>
+        <button id="collapseAll" type="button" class="mt-2 w-full text-xs px-3 py-2 rounded-lg btn-surface">Collapse All</button>
+      </nav>
+    </aside>
+
+    <section id="content" class="prose prose-slate dark:prose-invert max-w-none">
+      <!-- Article Content Starts Here -->
+
+<article class="rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+  <meta name="doc-title" content="The Cruciform Life">
+  <meta name="doc-subtitle" content="How the central practices of the Church are shaped by the cross.">
+  <meta name="timeline-steps" content="the-eucharist,confession-and-forgiveness,baptism">
+  <meta name="timeline-labels" content="The Eucharist,Confession,Baptism">
+
+  <h2>The Eucharist</h2>
+  <p class="lead">The Eucharist, or Lord's Supper, is the central, recurring practice where the church remembers, proclaims, and participates in the meaning of the cross. It is not merely a memorial, but a formative rehearsal of the gospel where the community is nourished and shaped by the reality of Christ's atoning work.</p>
+  
+  <h3>"This Is My Body, Broken for You"</h3>
+  <p>The core of the Eucharist is Jesus's words of institution. When he takes the bread and says, "This is my body, broken for you," he is interpreting his impending death as a <mark>voluntary, substitutionary sacrifice</mark>. He is not a passive victim; he is an active priest, offering himself on behalf of his people. The breaking of the bread becomes a tangible, weekly sermon on the costly nature of our forgiveness.</p>
+
+  <h3>Proclaiming the Lord's Death</h3>
+  <p>Paul tells the Corinthian church that whenever they eat the bread and drink the cup, they "proclaim the Lord's death until he comes" (1 Corinthians 11:26). The Eucharist is a public proclamation. It is a visible gospel that declares to the world—and reminds the church—that our hope is founded upon the historical event of Christ's death. It is a defiant statement that the victory of God was won through the apparent defeat of the cross.</p>
+  
+  <h3>A Meal of Reconciliation</h3>
+  <p>The Eucharist is both a vertical and a horizontal meal. Vertically, it signifies our communion with Christ. Horizontally, it signifies our communion with one another. To share in the one loaf is to be one body (1 Corinthians 10:17). It is a meal of reconciliation, where divisions are to be healed and unity is to be expressed. To partake in the supper while harboring enmity toward a brother or sister is to misunderstand the very peace the cross achieved.</p>
+
+  <h3>The Foretaste of the Wedding Feast</h3>
+  <p>Finally, the Eucharist is a meal of hope. It looks backward to the cross and forward to the "marriage supper of the Lamb" (Revelation 19:9). Every time the church celebrates the Lord's Supper, it is a <mark>foretaste of the final heavenly banquet</mark>. It fuels the church's life with the promise that the reconciliation and fellowship we experience now in part will one day be consummated in the new creation.</p>
+</article>
+
+<article class="mt-6 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+  <h2>Confession and Forgiveness</h2>
+  <p class="lead">If the Eucharist is the rehearsal of our reconciliation with God, then the regular practice of confession and forgiveness is how that reconciliation is lived out horizontally within the community. The cross provides both the model and the motivation for a communal life marked by grace, truth-telling, and restoration.</p>
+
+  <h3>The Rhythm of Confession and Absolution</h3>
+  <p>A community shaped by the cross is one that takes sin seriously but does not live in fear of it. The regular, corporate practice of confessing sin acknowledges our ongoing need for grace. The subsequent "absolution," or declaration of forgiveness, is a powerful reminder that our standing is based not on our performance, but on Christ's finished work. This rhythm prevents both self-righteousness and despair, creating a culture of humility and assurance.</p>
+  
+  <h3>The Ministry of Reconciliation</h3>
+  <p>Paul states that God, having reconciled us to himself through Christ, has given us the "ministry of reconciliation" (2 Corinthians 5:18). This is not a task for a select few, but the vocation of the entire church. We are to be ambassadors of the peace that was made by the blood of the cross. This involves actively seeking to heal broken relationships, both within the church and in the wider world, embodying the same grace we have received.</p>
+  
+  <h3>Forgiving as We Have Been Forgiven</h3>
+  <p>The logic of the cross creates a powerful imperative for forgiveness. The New Testament's consistent command is to "forgive one another, as God in Christ forgave you" (Ephesians 4:32). The sheer magnitude of the debt Christ's death has canceled for us (as in Jesus's parable of the unforgiving servant) makes any debt owed to us pale in comparison. <mark>Our forgiveness of others is the human echo of a divine reality.</mark></p>
+
+  <h3>The Practice of Restorative Justice</h3>
+  <p>A truly cruciform approach to justice moves beyond mere retribution. It seeks restoration. This involves telling the truth about the harm done, holding offenders accountable for their actions, and seeking the repair of the damage and the healing of the community. This pattern of truth, accountability, and new life mirrors the way the cross deals with sin: it does not ignore the offense, but bears its cost in order to create a renewed future.</p>
+</article>
+
+<article class="mt-6 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+  <h2>Baptism</h2>
+  <p class="lead">Baptism is the church's rite of initiation, a public and dramatic portrayal of a person's entrance into the Christian life. More than just a symbol, the New Testament presents it as a profound participation in the death and resurrection of Jesus Christ. It is the visible sign of a person being united to Christ's atoning work.</p>
+
+  <h3>Buried with Christ in Baptism</h3>
+  <p>The primary imagery of baptism, particularly by immersion, is death and burial. Paul explains, "We were buried therefore with him by baptism into death" (Romans 6:4). The act of going under the water symbolizes the death of the old self—the self that was enslaved to sin. It is a dramatic re-enactment of our co-crucifixion with Christ. In baptism, we identify so fully with Jesus's death that it is counted as our own.</p>
+  
+  <h3>Raised to Walk in Newness of Life</h3>
+  <p>Just as baptism unites us to Christ's death, it also unites us to his resurrection. Coming up out of the water symbolizes being "raised with Christ" to a new kind of life. This is not just a future hope, but a present reality. "Just as Christ was raised from the dead by the glory of the Father, we too might walk in <mark>newness of life</mark>" (Romans 6:4). Baptism marks the beginning of a transformed existence, empowered by the same Spirit that raised Jesus from the dead.</p>
+  
+  <h3>Clothed with Christ</h3>
+  <p>Another powerful metaphor for baptism is that of being "clothed with Christ" (Galatians 3:27). This signifies a complete change in identity. Our old identity, defined by sin and separation, is removed. Our new identity is found entirely in Christ. In the ancient world, a person's clothing signified their status and role. To be clothed with Christ means that when God looks at us, he sees the status and righteousness of his Son.</p>
+
+  <h3>Union with His Death and Resurrection</h3>
+  <p>Ultimately, baptism is the sign and seal of our union with Christ. This mystical union is the heart of salvation. We are not just saved by a distant, historical event. We are saved by being incorporated *into* the person who performed that event. Baptism makes this invisible reality visible. It is the moment the church formally recognizes that a person has been joined to Christ, sharing in both the benefits of his atoning death and the power of his resurrection life.</p>
+</article>
+
+      <!-- DO NOT PASTE ANYTHING AFTER THIS POINT -->
+    </section>
+  </main>
+
+  <footer class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 text-xs footer-note">
+    Threaded Reader — a single-file template
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // ===== Utilities =====
+      const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+      const slug = s => s.toLowerCase().replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-');
+
+      // ===== Read Metadata from Content =====
+      const firstArticle = document.querySelector('#content article');
+      const docTitle = firstArticle?.querySelector('meta[name="doc-title"]')?.content || 'Untitled Document';
+      const docSubtitle = firstArticle?.querySelector('meta[name="doc-subtitle"]')?.content || '';
+      const timelineStepsData = firstArticle?.querySelector('meta[name="timeline-steps"]')?.content;
+      const timelineLabelsData = firstArticle?.querySelector('meta[name="timeline-labels"]')?.content;
+
+      // ===== Populate Header from Metadata =====
+      document.getElementById('docTitle').textContent = docTitle;
+      document.getElementById('docSubtitle').textContent = docSubtitle;
+      document.title = docTitle;
+
+      // ===== THEME ENGINE =====
+      const THEME_PACKS = {
+        slate: {
+          proseClass: 'prose-slate',
+          bodyClass: 'bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 pb-[env(safe-area-inset-bottom)]'
+        },
+        emerald: {
+          proseClass: 'prose-emerald',
+          bodyClass: 'bg-white text-emerald-900 dark:bg-emerald-950 dark:text-emerald-100 pb-[env(safe-area-inset-bottom)]'
+        }
+      };
+      const availableThemes = Object.keys(THEME_PACKS);
+      let currentThemeIndex = 0;
+      try {
+        const saved = localStorage.getItem('colorScheme');
+        if (saved && THEME_PACKS[saved]) currentThemeIndex = availableThemes.indexOf(saved);
+      } catch(_) {}
+
+      function applyTheme(themeKey){
+        const root = document.documentElement;
+        const isDark = root.classList.contains('dark');
+        const pack = THEME_PACKS[themeKey] || THEME_PACKS.slate;
+        root.classList.toggle('theme-emerald', isDark && themeKey === 'emerald');
+        document.body.className = isDark ? pack.bodyClass : THEME_PACKS.slate.bodyClass;
+        document.getElementById('content').className = `prose ${pack.proseClass} dark:prose-invert max-w-none`;
+        try { localStorage.setItem('colorScheme', themeKey); } catch(_){}
+      }
+      
+      function toggleLightDark() {
+          const root = document.documentElement;
+          const isDark = root.classList.toggle('dark');
+          try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch(_){}
+
+          if (!isDark) {
+            root.classList.remove('theme-emerald');
+            applyTheme('slate');
+          } else {
+            let saved = 'slate';
+            try { const s = localStorage.getItem('colorScheme'); if (s) saved = s; } catch(_){}
+            applyTheme(saved);
+          }
+          buildTOC();
+      }
+
+      function cycleColorScheme() {
+          const root = document.documentElement;
+          if (!root.classList.contains('dark')) {
+            toggleLightDark();
+            return;
+          }
+          currentThemeIndex = (currentThemeIndex + 1) % availableThemes.length;
+          const newTheme = availableThemes[currentThemeIndex];
+          applyTheme(newTheme);
+          buildTOC();
+      }
+      
+      // ===== MODAL WIRING =====
+      function initializeModal() {
+        const modal = document.getElementById('settings-modal');
+        const openBtn = document.getElementById('settings-btn');
+        const closeBtn = document.getElementById('close-modal-btn');
+        const modalThemeBtn = document.getElementById('modalThemeBtn');
+        const modalColorBtn = document.getElementById('modalColorBtn');
+        
+        openBtn.onclick = () => modal.classList.add('show');
+        closeBtn.onclick = () => modal.classList.remove('show');
+        modal.onclick = (event) => { if (event.target === modal) modal.classList.remove('show'); };
+        modalThemeBtn.onclick = () => toggleLightDark();
+        modalColorBtn.onclick = () => cycleColorScheme();
+      }
+      initializeModal();
+
+      // ===== Expand/Collapse, TOC, Timeline, Search =====
+      const getDetails = () => document.querySelectorAll('#content details');
+      const expandBtn = document.getElementById('expandAll');
+      const collapseBtn = document.getElementById('collapseAll');
+
+      if (getDetails().length === 0) {
+        if(expandBtn) expandBtn.hidden = true;
+        if(collapseBtn) collapseBtn.hidden = true;
+      } else {
+        expandBtn?.addEventListener('click', () => { getDetails().forEach(d => d.open = true); });
+        collapseBtn?.addEventListener('click', () => { getDetails().forEach(d => d.open = false); });
+      }
+
+      (function addBackToTopLinks(){
+        $$('#content > article').forEach((article, index, arr) => {
+          if (index === arr.length - 1) return;
+          const wrapper = document.createElement('div');
+          wrapper.className = 'mt-6 flex justify-end';
+          wrapper.innerHTML = `<a href="#top" class="text-sm underline decoration-dotted">Back to top</a>`;
+          article.appendChild(wrapper);
+        });
+      })();
+
+      function buildTOC(){
+        const toc = document.getElementById('toc');
+        if (!toc) return;
+        const headings = $$('#content h2, #content h3');
+        const items = headings.map(h => {
+          if (!h.id) h.id = slug(h.textContent);
+          return { id: h.id, text: h.textContent.trim(), level: h.tagName.toLowerCase() };
+        });
+
+        toc.innerHTML = items.map(({id, text, level}) => {
+          const pad = level === 'h3' ? ' pl-4' : '';
+          return `<li><a href="#${id}" class="toc-link block px-2 py-1.5 rounded${pad}">${text}</a></li>`;
+        }).join('');
+
+        const links = $$('#toc a');
+        const sections = items.map(i => document.getElementById(i.id));
+        const obs = new IntersectionObserver(entries => {
+          entries.forEach(e => {
+            if (e.isIntersecting) {
+              links.forEach(a => a.classList.remove('active-link'));
+              const id = '#' + e.target.id;
+              const active = links.find(a => a.getAttribute('href') === id);
+              active?.classList.add('active-link');
+            }
+          });
+        }, { rootMargin: '-40% 0px -55% 0px', threshold: 0.01 });
+        sections.forEach(sec => sec && obs.observe(sec));
+      }
+      
+      (function buildTimeline(){
+        const wrap = document.getElementById('timelineWrap');
+        const list = document.getElementById('timeline');
+        const coda = document.getElementById('timelineCoda');
+
+        if (!timelineStepsData || !wrap || !list) { if(wrap) wrap.hidden = true; return; }
+        const steps = timelineStepsData.split(',').map(s => s.trim());
+        const labels = timelineLabelsData ? timelineLabelsData.split(',').map(s => s.trim()) : [];
+        if (!steps.length) { wrap.hidden = true; return; }
+        wrap.hidden = false;
+
+        const mkStep = (id, label) => (
+          `<li class="flex items-center gap-2"><span class="inline-block w-[14px] h-[14px] rounded-full border-2 border-current bg-current"></span><a href="#${id}" class="hover:underline">${label}</a></li>`
+        );
+        const segments = [];
+        steps.forEach((id, idx) => {
+          const el = $$('#content h2, #content h3').find(h => slug(h.textContent) === id);
+          if (el && !el.id) el.id = id;
+          const label = labels[idx] || (el?.textContent || id.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()));
+          segments.push(mkStep(id, label));
+          if (idx !== steps.length - 1) segments.push('<li class="h-[2px] bg-current opacity-35"></li>');
+        });
+        list.innerHTML = segments.join('');
+      })();
+
+      (function searchHL(){
+        const input = document.getElementById('search');
+        const clearBtn = document.getElementById('clearSearch');
+        const content = document.getElementById('content');
+        if (!input || !content) return;
+        let originalHTML = '';
+        function restore(){ 
+          if (originalHTML) {
+            content.innerHTML = originalHTML; 
+            buildTOC(); 
+          }
+        }
+        function highlight(term){
+          if (!originalHTML) originalHTML = content.innerHTML;
+          restore();
+          if (!term) return;
+          const esc = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+          const re = new RegExp(`(${esc})(?![^<]*>)`, 'gi');
+          content.innerHTML = content.innerHTML.replace(re, '<mark>$1</mark>');
+          buildTOC();
+        }
+        let t; 
+        input.addEventListener('input', (e) => { 
+          clearTimeout(t); 
+          t = setTimeout(() => highlight(e.target.value.trim()), 120); 
+        });
+        clearBtn?.addEventListener('click', () => { 
+          if (input) input.value=''; 
+          restore(); 
+        });
+      })();
+
+      buildTOC();
+      try {
+        const saved = localStorage.getItem('colorScheme');
+        applyTheme(saved && THEME_PACKS[saved] ? saved : 'slate');
+      } catch(_){
+        applyTheme('slate');
+      }
+    });
+  </script>
+</body>
+</html>
