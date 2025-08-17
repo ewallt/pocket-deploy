@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>An Atlas of Atonement</title>
+
+  <!-- Prepaint bootstrap: set dark + theme class before paint to avoid flicker -->
+  <script>
+  (function () {
+    const root = document.documentElement;
+    try {
+      const savedTheme = localStorage.getItem('theme');       // 'light' | 'dark' | null
+      const savedColor = localStorage.getItem('colorScheme'); // 'slate' | 'emerald' | future
+      const isDark = savedTheme !== 'light';                  // default to dark if unset
+      root.classList.toggle('dark', isDark);
+      // Apply colored theme classes ONLY in dark mode; light is always neutral slate
+      root.classList.toggle('theme-emerald', isDark && savedColor === 'emerald');
+    } catch (_) {}
+  })();
+  </script>
+
+  <!-- Tailwind (with Typography) -->
+  <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' };
+  </script>
+
+  <!-- Google Font (optional) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+
+  <style>
+  :root { color-scheme: light dark; }
+  html { scroll-behavior: smooth; }
+  .font-newspaper { font-family: 'Lora', serif; }
+  :where(h2,h3,h4){ scroll-margin-top: 84px; }
+  mark { background: #fde68a; padding: .1em .2em; border-radius: .2rem; }
+  @media (max-width: 380px){ .prose { font-size: .96rem; } }
+
+  /* ---------- Semantic surfaces (read from CSS variables) ---------- */
+.hero {
+  /* give the header an explicit base fill so gradient blends to the right hue */
+  background-color: var(--hero-base);
+  background:
+    radial-gradient(50% 120% at 10% 10%, var(--hero-r1), transparent 60%),
+    radial-gradient(80% 140% at 90% 10%, var(--hero-r2), transparent 70%),
+    linear-gradient(180deg, var(--hero-wash), transparent 35%);
+}
+.border-var { border-color: var(--border) !important; }
+.surface { border-width: 1px; border-style: solid; border-color: var(--border); }
+.hr-var { border-color: var(--border); }
+.subtitle { color: var(--subtitle-fg); }
+.timeline-fg { color: var(--timeline-fg); }
+.footer-note { color: var(--footer-fg); }
+.active-link { color: var(--active); font-weight: 700; }
+
+.input-surface {
+  border: 1px solid var(--input-border);
+  background-color: var(--input-bg);
+}
+.btn-surface { border: 1px solid var(--btn-border); }
+.btn-surface:hover { background: var(--btn-hover-bg); }
+.toc-link:hover { background: var(--hover-bg); }
+
+/* ---------- Slate (default) variables ---------- */
+:root{
+  /* accents / inks */
+  --active: rgb(59,130,246);                      /* sky-500 */
+  --subtitle-fg: rgb(71,85,105);                  /* slate-600 */
+  --timeline-fg: rgb(100,116,139);                /* slate-500 */
+  --footer-fg: rgb(100,116,139);                  /* slate-500 */
+
+  /* surfaces */
+  --border: rgb(226,232,240);                     /* slate-200 */
+  --hover-bg: rgb(248,250,252);                   /* slate-50 */
+  --btn-border: rgb(203,213,225);                 /* slate-300 */
+  --btn-hover-bg: rgb(248,250,252);               /* slate-50 */
+  --input-border: rgba(203,213,225,0.7);          /* slate-300/70 */
+  --input-bg: rgba(255,255,225,0.7);              /* white/70 */
+
+  /* hero base & gradient (light) */
+  --hero-base: transparent;                       /* keep light header airy */
+  --hero-r1: rgba(49,46,129,.12);                 /* indigo-700 */
+  --hero-r2: rgba(234,88,12,.12);                 /* orange-600 hint */
+  --hero-wash: rgba(14,165,233,.08);              /* sky-500 wash */
+}
+.dark{
+  --subtitle-fg: rgb(203,213,225);                /* slate-300 */
+  --timeline-fg: rgb(148,163,184);                /* slate-400 */
+  --footer-fg: rgb(148,163,184);                  /* slate-400 */
+
+  --border: rgb(30,41,59);                        /* slate-800 */
+  --hover-bg: rgb(15,23,42);                      /* slate-900 */
+  --btn-border: rgb(51,65,85);                    /* slate-700 */
+  --btn-hover-bg: rgb(15,23,42);                  /* slate-900 */
+  --input-border: rgba(51,65,85,0.7);             /* slate-700/70 */
+  --input-bg: rgba(2,6,23,0.6);                   /* slate-950/60 */
+
+  /* hero base & gradient (dark) */
+  --hero-base: rgb(2,6,23);                       /* slate-950 */
+  --hero-r1: rgba(49,46,129,.12);
+  --hero-r2: rgba(234,88,12,.12);
+  --hero-wash: rgba(14,165,233,.08);
+}
+
+/* ---------- Emerald theme overrides (light & dark) ---------- */
+.theme-emerald{
+  --active: #10b981;                              /* emerald-500 */
+
+  --border: rgb(187,247,208);                     /* emerald-200 */
+  --hover-bg: rgb(240,253,244);                   /* emerald-50 */
+  --btn-border: rgb(187,247,208);                 /* emerald-200 */
+  --btn-hover-bg: rgb(240,253,244);               /* emerald-50 */
+  --input-border: rgba(110,231,183,0.7);          /* emerald-300/70 */
+  --input-bg: rgba(255,255,255,0.7);              /* white/70 */
+
+  /* keep subtitles/timeline neutral for readability over hero */
+  --subtitle-fg: rgb(71,85,105);                  /* slate-600 */
+  --timeline-fg: rgb(71,85,105);                  /* slate-600 */
+  --footer-fg: rgb(16,185,129);                   /* emerald-500 */
+
+  /* hero base & gradient (emerald light) */
+  --hero-base: transparent;
+  --hero-r1: rgba(16,185,129,.14);                /* emerald-500 */
+  --hero-r2: rgba(163,230,53,.12);                /* lime-400 */
+  --hero-wash: rgba(5,150,105,.10);               /* emerald-600 wash */
+}
+.dark.theme-emerald{
+  /* ↑ Give borders enough contrast on dark emerald surfaces */
+  --border: rgba(110,231,183,0.55);                /* emerald-300 @ 55% */
+  --hover-bg: rgb(6,78,59);                        /* emerald-900 */
+  --btn-border: rgba(110,231,183,0.45);            /* slightly softer than borders */
+  --btn-hover-bg: rgb(6,78,59);                    /* emerald-900 */
+  --input-border: rgba(110,231,183,0.55);          /* match border contrast */
+  --input-bg: rgba(6,95,70,0.60);                  /* emerald-900/60 */
+
+  /* text accents for readability */
+  --footer-fg: rgb(110,231,183);                   /* emerald-300/400 */
+  --subtitle-fg: rgb(226,252,236);                 /* emerald-100 */
+  --timeline-fg: rgb(187,247,208);                 /* emerald-200 */
+
+  /* hero base & gradient (unchanged, stays emerald) */
+  --hero-base: rgb(2,44,34);                       /* emerald-950 (#022c22) */
+  --hero-r1: rgba(16,185,129,.14);
+  --hero-r2: rgba(163,230,53,.12);
+  --hero-wash: rgba(5,150,105,.10);
+}
+
+</style>
+
+</head>
+
+<body class="bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 pb-[env(safe-area-inset-bottom)]">
+
+  <!-- Header -->
+  <header id="top" class="hero border-b border-var">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-between gap-4">
+      <div>
+        <h1 id="docTitle" class="text-2xl sm:text-3xl font-bold font-newspaper tracking-tight">Loading...</h1>
+        <p id="docSubtitle" class="subtitle text-sm sm:text-base"></p>
+      </div>
+      <div class="flex items-center gap-2">
+        <label for="search" class="sr-only">Search</label>
+        <input id="search" type="search" placeholder="Search…" class="hidden md:block w-56 rounded-xl input-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400" />
+        <button id="clearSearch" type="button" class="hidden md:inline-flex text-xs px-2 py-2 rounded-lg btn-surface">Clear</button>
+        <button id="colorSchemeToggle" type="button" class="inline-flex items-center justify-center rounded-xl btn-surface px-3 py-2 text-sm" title="Change color scheme">
+          <span class="inline md:hidden">Colors</span>
+          <svg aria-hidden="true" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/>
+            <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/>
+            <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/>
+            <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/>
+            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 7.012 17.461 2 12 2z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Timeline / Sections Nav -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6" id="timelineWrap" hidden>
+      <nav aria-label="Journey timeline" id="timelineNav" class="timeline-fg">
+        <ol id="timeline" class="grid grid-cols-2 sm:grid-cols-4 items-center gap-x-2 gap-y-1 text-[11px] sm:text-sm"></ol>
+        <div id="timelineCoda" class="mt-2 text-[11px] sm:text-xs"></div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)] gap-8">
+    <!-- Sidebar -->
+    <aside class="lg:sticky lg:top-4 h-max">
+      <nav aria-label="On this page" class="rounded-2xl surface p-4">
+        <h2 class="text-sm font-semibold mb-2">Sections</h2>
+        <ol id="toc" class="space-y-1 text-sm"></ol>
+        <hr class="my-4 hr-var" />
+        <button id="expandAll" type="button" class="w-full text-xs px-3 py-2 rounded-lg btn-surface">Expand All</button>
+        <button id="collapseAll" type="button" class="mt-2 w-full text-xs px-3 py-2 rounded-lg btn-surface">Collapse All</button>
+      </nav>
+    </aside>
+
+    <section id="content" class="prose prose-slate dark:prose-invert max-w-none">
+      <!-- Article Content Starts Here -->
+
+<article class="rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+  <meta name="doc-title" content="An Atlas of Atonement">
+  <meta name="doc-subtitle" content="Mapping the Core Metaphors of Salvation">
+  <meta name="timeline-steps" content="the-courtroom-legal-metaphors,the-marketplace-commercial-metaphors,the-battlefield-military-metaphors,the-temple-sacrificial-metaphors">
+  <meta name="timeline-labels" content="Courtroom,Marketplace,Battlefield,Temple">
+
+  <h2>The Courtroom (Legal Metaphors)</h2>
+  <p class="lead">The language of law provides one of the most powerful and enduring sets of metaphors for the cross. This "forensic" imagery pictures God as a righteous judge, humanity as guilty defendants, and sin as a capital crime. The cross becomes the stunning scene where the judge himself absorbs the penalty to declare the guilty righteous.</p>
+  
+  <h3>Justification: The Divine Verdict</h3>
+  <p>At the heart of the legal model is justification. This is not a process of making someone righteous, but a <mark>declarative act</mark> of God. It is the legal verdict, spoken over the sinner who has faith in Christ, that they are now considered "not guilty" and are in right standing with the court. As Paul argues in Romans, God is both 'just and the justifier' of the one who has faith in Jesus (Romans 3:26).</p>
+  
+  <h3>Propitiation: Satisfying Divine Justice</h3>
+  <p>Propitiation is a term that refers to the satisfaction of God's holy justice. Sin, as a violation of God's perfect law, incurs his righteous wrath—his settled, holy opposition to evil. The cross is the place where this wrath is dealt with. Christ's sacrifice is the propitiation, absorbing the just consequences of sin so that God can extend mercy without compromising his righteousness. It is a work God provides himself out of love (1 John 4:10).</p>
+  
+  <h3>Righteousness: A Gift, Not a Goal</h3>
+  <p>In the divine courtroom, the righteousness we need to be acquitted is not one we achieve, but one we receive. The New Testament speaks of an "alien righteousness"—the perfect righteousness of Christ himself—that is <mark>imputed or credited</mark> to the believer's account through faith. Our legal standing changes not because we become perfect, but because Christ's perfect record is counted as ours (2 Corinthians 5:21).</p>
+  
+  <h3>Advocate: Our Defense Attorney</h3>
+  <p>The legal imagery extends beyond the initial verdict. John speaks of Jesus as our "advocate with the Father" (1 John 2:1). If we, as believers, sin, we have a defense attorney in the heavenly court. He does not argue our innocence, but points to his own atoning sacrifice as the permanent, standing basis for our forgiveness. His propitiation is the unshakable foundation of our continued acceptance before God.</p>
+</article>
+
+<article class="mt-6 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+  <h2>The Marketplace (Commercial Metaphors)</h2>
+  <p class="lead">The ancient marketplace, with its dynamics of slavery, debt, and payment, provides a second vivid set of metaphors for salvation. Here, humanity is pictured not as criminals, but as slaves or debtors, hopelessly bound and unable to pay what they owe. The cross is a divine financial transaction where an infinite price is paid to set the captives free.</p>
+  
+  <h3>Redemption: Buying Back from Slavery</h3>
+  <p>Redemption (*apolutrosis*) is the act of buying a slave's freedom. The New Testament uses this word to describe salvation as God's act of purchasing us out of our bondage to sin and death. We were enslaved to a power we could not escape on our own. The price of this freedom was the "precious blood of Christ" (1 Peter 1:18-19). This metaphor emphasizes our total helplessness and the <mark>high cost of our liberation</mark>.</p>
+  
+  <h3>Ransom: The Price of Freedom</h3>
+  <p>Closely related to redemption is the concept of ransom (*lutron*). Jesus himself uses this language, stating that the Son of Man came "to give his life as a ransom for many" (Mark 10:45). A ransom is the specific price paid to achieve a release. While theologians have debated to whom the ransom was paid (God's justice? the devil?), the main point is clear: our freedom was not free. A price had to be paid, and Christ paid it himself.</p>
+  
+  <h3>Debt: Paid in Full</h3>
+  <p>Paul uses the imagery of a certificate of debt to describe the law's case against us. In Colossians 2:14, he says that God has "canceled the record of debt that stood against us with its legal demands. This he set aside, <mark>nailing it to the cross</mark>." The cross is the place where the record of all our moral and spiritual debts is stamped "Paid in Full." The legal claims that sin held against us are fully satisfied and annulled.</p>
+  
+  <h3>Inheritance: The Riches of Grace</h3>
+  <p>The outcome of this great transaction is not just freedom, but unimaginable wealth. Believers are said to have an "inheritance" (Ephesians 1:11). Having been redeemed, we are adopted as children and now have a share in all the riches of God's grace. Our status changes from bankrupt slaves to heirs of an eternal kingdom. The marketplace metaphor, therefore, moves from the cost of our freedom to the infinite value of our new position.</p>
+</article>
+
+<article class="mt-6 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+  <h2>The Battlefield (Military Metaphors)</h2>
+  <p class="lead">A third image-world is that of cosmic warfare. This dramatic metaphor, often called *Christus Victor*, portrays the universe as a battlefield where hostile spiritual powers—Sin, Death, and the Devil—have usurped authority and hold humanity captive. The cross is not a courtroom or a marketplace, but the site of the decisive battle where God in Christ wages war on these tyrants and wins a definitive victory.</p>
+  
+  <h3>Christus Victor: The Triumphant King</h3>
+  <p>This model, prevalent in the early church, emphasizes the cross as God's triumph. It is the moment when Christ, the divine warrior-king, engages the enemy on his own turf. While it looks like a moment of weakness and defeat, it is in fact a strategic victory. By dying, Christ enters the realm of death and shatters its power from the inside. The resurrection is God's public declaration of this victory to the entire cosmos.</p>
+  
+  <h3>Disarming the Powers</h3>
+  <p>Paul provides the definitive image for this victory in Colossians 2:15. Speaking of the cross, he says God "disarmed the rulers and authorities and put them to open shame, by <mark>triumphing over them in him</mark>." This evokes the picture of a Roman Triumphal March, where a victorious general would parade his defeated, disarmed captives through the streets. The cross is the place where the spiritual forces of evil that accused and oppressed humanity were decisively defeated and stripped of their ultimate power.</p>
+  
+  <h3>Destroying the Power of Death</h3>
+  <p>The author of Hebrews specifies the primary enemy defeated at the cross. Christ became human so that "through death he might destroy the one who has the power of death, that is, the devil" (Hebrews 2:14). Death was the devil's greatest weapon, the tool by which he held humanity in "lifelong slavery." By entering death and emerging victorious in the resurrection, Christ broke this weapon and defanged the enemy.</p>
+  
+  <h3>Liberation from Captivity</h3>
+  <p>The ultimate goal of this divine battle is the liberation of captives. The New Testament is filled with the language of being transferred from one kingdom to another. We have been "delivered from the domain of darkness and transferred to the kingdom of his beloved Son" (Colossians 1:13). Salvation, in this metaphor, is emancipation. It is a <mark>cosmic D-Day</mark> that breaks the enemy's dominion and brings us into the freedom of God's kingdom.</p>
+</article>
+
+<article class="mt-6 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+  <h2>The Temple (Sacrificial Metaphors)</h2>
+  <p class="lead">Perhaps the oldest and most foundational set of metaphors comes from the world of the temple and the sacrificial system. This imagery portrays God as perfectly holy, humanity as ritually unclean and unable to enter His presence, and sin as a defiling stain. The cross is the ultimate altar, where the perfect sacrifice is offered by the perfect high priest, cleansing us and reconciling us to God.</p>
+  
+  <h3>Christ as High Priest</h3>
+  <p>The book of Hebrews develops this metaphor most fully, presenting Jesus as the great High Priest. Unlike the priests of ancient Israel, who had to offer sacrifices repeatedly for their own sins and the sins of the people, Jesus is both sinless and eternal. He is the perfect mediator who, after offering himself, "sat down at the right hand of the Majesty on high" (Hebrews 1:3), where he now <mark>perpetually intercedes</mark> for his people.</p>
+  
+  <h3>Christ as the Perfect Sacrifice</h3>
+  <p>Jesus is not only the priest but also the sacrifice itself. He is the "Lamb of God who takes away the sin of the world" (John 1:29). The entire Old Testament sacrificial system, with its bulls and goats, is presented as a shadow pointing to the substance that is Christ. His sacrifice is perfect and final, and thus it never needs to be repeated. It accomplishes what the blood of animals never could: the actual cleansing of the human conscience (Hebrews 9:14).</p>
+  
+  <h3>Expiation: Cleansing from Defilement</h3>
+  <p>Expiation refers to the act of cleansing or purification. In the temple, sin was seen as a stain that defiled a person and made them unfit to approach God. The blood of the sacrifice was the cleansing agent. John writes, "the blood of Jesus his Son <mark>cleanses us from all sin</mark>" (1 John 1:7). The cross is the divine remedy for our moral and spiritual pollution, making us holy and fit for fellowship with a holy God.</p>
+
+  <h3>Reconciliation: Making Peace at the Altar</h3>
+  <p>The final goal of the temple's work was reconciliation—the restoration of a broken relationship. Sin creates enmity between humanity and God. The cross is the ultimate act of peacemaking. Paul says that through Christ, God was pleased "to reconcile to himself all things, whether on earth or in heaven, <mark>making peace by the blood of his cross</mark>" (Colossians 1:20). The altar of the cross becomes the meeting place where enemies are made friends, and humanity is welcomed back into the family of God.</p>
+</article>
+
+
+      <!-- DO NOT PASTE ANYTHING AFTER THIS POINT -->
+    </section>
+  </main>
+
+  <footer class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 text-xs footer-note">
+    Threaded Reader — a single-file template
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // ===== Utilities =====
+      const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+      const slug = s => s.toLowerCase().replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-');
+
+      // ===== Read Metadata from Content =====
+      const firstArticle = document.querySelector('#content article');
+      const docTitle = firstArticle?.querySelector('meta[name="doc-title"]')?.content || 'Untitled Document';
+      const docSubtitle = firstArticle?.querySelector('meta[name="doc-subtitle"]')?.content || '';
+      const timelineStepsData = firstArticle?.querySelector('meta[name="timeline-steps"]')?.content;
+      const timelineLabelsData = firstArticle?.querySelector('meta[name="timeline-labels"]')?.content;
+
+      // ===== Populate Header from Metadata =====
+      document.getElementById('docTitle').textContent = docTitle;
+      document.getElementById('docSubtitle').textContent = docSubtitle;
+      document.title = docTitle; // Also update browser tab title
+
+      // ===== Theme packs =====
+      const THEME_PACKS = {
+        slate: {
+          proseClass: 'prose-slate',
+          bodyClass: 'bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 pb-[env(safe-area-inset-bottom)]'
+        },
+        emerald: {
+          proseClass: 'prose-emerald',
+          bodyClass: 'bg-white text-emerald-900 dark:bg-emerald-950 dark:text-emerald-100 pb-[env(safe-area-inset-bottom)]'
+        }
+      };
+      const availableThemes = Object.keys(THEME_PACKS);
+
+      function applyTheme(themeKey){
+        const root = document.documentElement;
+        const isDark = root.classList.contains('dark');
+        const pack = THEME_PACKS[themeKey] || THEME_PACKS.slate;
+        root.classList.toggle('theme-emerald', isDark && themeKey === 'emerald');
+        document.body.className = isDark ? pack.bodyClass : THEME_PACKS.slate.bodyClass;
+        document.getElementById('content').className = `prose ${pack.proseClass} dark:prose-invert max-w-none`;
+        try { localStorage.setItem('colorScheme', themeKey); } catch(_){}
+      }
+
+      let currentThemeIndex = 0;
+      try {
+        const saved = localStorage.getItem('colorScheme');
+        if (saved && THEME_PACKS[saved]) currentThemeIndex = availableThemes.indexOf(saved);
+      } catch(_) {}
+      
+      const colorBtn = document.getElementById('colorSchemeToggle');
+      colorBtn?.addEventListener('click', () => {
+        const root = document.documentElement;
+        if (!root.classList.contains('dark')) {
+          root.classList.add('dark');
+          try { localStorage.setItem('theme','dark'); } catch(_){}
+          applyTheme(availableThemes[currentThemeIndex]);
+          return;
+        }
+        currentThemeIndex = (currentThemeIndex + 1) % availableThemes.length;
+        const newTheme = availableThemes[currentThemeIndex];
+        applyTheme(newTheme);
+        buildTOC();
+      });
+
+      // ===== Expand/Collapse, TOC, Timeline, Search =====
+      const getDetails = () => document.querySelectorAll('#content details');
+      const expandBtn = document.getElementById('expandAll');
+      const collapseBtn = document.getElementById('collapseAll');
+
+      if (getDetails().length === 0) {
+        if(expandBtn) expandBtn.hidden = true;
+        if(collapseBtn) collapseBtn.hidden = true;
+      } else {
+        expandBtn?.addEventListener('click', () => { getDetails().forEach(d => d.open = true); });
+        collapseBtn?.addEventListener('click', () => { getDetails().forEach(d => d.open = false); });
+      }
+
+      (function addBackToTopLinks(){
+        $$('#content > article').forEach((article, index, arr) => {
+          if (index === arr.length - 1) return;
+          const wrapper = document.createElement('div');
+          wrapper.className = 'mt-6 flex justify-end';
+          wrapper.innerHTML = `<a href="#top" class="text-sm underline decoration-dotted">Back to top</a>`;
+          article.appendChild(wrapper);
+        });
+      })();
+
+      function buildTOC(){
+        const toc = document.getElementById('toc');
+        if (!toc) return;
+        const headings = $$('#content h2, #content h3');
+        const items = headings.map(h => {
+          if (!h.id) h.id = slug(h.textContent);
+          return { id: h.id, text: h.textContent.trim(), level: h.tagName.toLowerCase() };
+        });
+
+        toc.innerHTML = items.map(({id, text, level}) => {
+          const pad = level === 'h3' ? ' pl-4' : '';
+          return `<li><a href="#${id}" class="toc-link block px-2 py-1.5 rounded${pad}">${text}</a></li>`;
+        }).join('');
+
+        const links = $$('#toc a');
+        const sections = items.map(i => document.getElementById(i.id));
+        const obs = new IntersectionObserver(entries => {
+          entries.forEach(e => {
+            if (e.isIntersecting) {
+              links.forEach(a => a.classList.remove('active-link'));
+              const id = '#' + e.target.id;
+              const active = links.find(a => a.getAttribute('href') === id);
+              active?.classList.add('active-link');
+            }
+          });
+        }, { rootMargin: '-40% 0px -55% 0px', threshold: 0.01 });
+        sections.forEach(sec => sec && obs.observe(sec));
+      }
+      
+      (function buildTimeline(){
+        const wrap = document.getElementById('timelineWrap');
+        const list = document.getElementById('timeline');
+        const coda = document.getElementById('timelineCoda');
+
+        if (!timelineStepsData || !wrap || !list) { if(wrap) wrap.hidden = true; return; }
+        const steps = timelineStepsData.split(',').map(s => s.trim());
+        const labels = timelineLabelsData ? timelineLabelsData.split(',').map(s => s.trim()) : [];
+        if (!steps.length) { wrap.hidden = true; return; }
+        wrap.hidden = false;
+
+        const mkStep = (id, label) => (
+          `<li class="flex items-center gap-2"><span class="inline-block w-[14px] h-[14px] rounded-full border-2 border-current bg-current"></span><a href="#${id}" class="hover:underline">${label}</a></li>`
+        );
+        const segments = [];
+        steps.forEach((id, idx) => {
+          const el = $$('#content h2, #content h3').find(h => slug(h.textContent) === id);
+          if (el && !el.id) el.id = id;
+          const label = labels[idx] || (el?.textContent || id.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()));
+          segments.push(mkStep(id, label));
+          if (idx !== steps.length - 1) segments.push('<li class="h-[2px] bg-current opacity-35"></li>');
+        });
+        list.innerHTML = segments.join('');
+      })();
+
+      (function searchHL(){
+        const input = document.getElementById('search');
+        const clearBtn = document.getElementById('clearSearch');
+        const content = document.getElementById('content');
+        if (!input || !content) return;
+        let originalHTML = '';
+        function restore(){ 
+          if (originalHTML) {
+            content.innerHTML = originalHTML; 
+            buildTOC(); 
+          }
+        }
+        function highlight(term){
+          if (!originalHTML) originalHTML = content.innerHTML;
+          restore();
+          if (!term) return;
+          const esc = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+          const re = new RegExp(`(${esc})(?![^<]*>)`, 'gi');
+          content.innerHTML = content.innerHTML.replace(re, '<mark>$1</mark>');
+          buildTOC();
+        }
+        let t; 
+        input.addEventListener('input', (e) => { 
+          clearTimeout(t); 
+          t = setTimeout(() => highlight(e.target.value.trim()), 120); 
+        });
+        clearBtn?.addEventListener('click', () => { 
+          if (input) input.value=''; 
+          restore(); 
+        });
+      })();
+
+      buildTOC();
+      try {
+        const saved = localStorage.getItem('colorScheme');
+        applyTheme(saved && THEME_PACKS[saved] ? saved : 'slate');
+      } catch(_){
+        applyTheme('slate');
+      }
+    });
+  </script>
+</body>
+</html>
