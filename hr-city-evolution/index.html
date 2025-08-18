@@ -61,7 +61,7 @@
             flex-wrap: wrap;
         }
 
-```
+
     /* --- FINAL BUTTON RULES START --- */
     /* Base style for ALL buttons */
     .tab-button, #settings-btn, .sector-button {
@@ -483,7 +483,6 @@
     });
 })();
 </script>
-```
 
 </head>
 <body>
@@ -652,4 +651,229 @@
                 </div>
             </div>
         </div>
-        <div id="economic" class
+        <div id="economic" class="tab-content">
+            <div class="section-card">
+                <h2 class="section-title">Economic Forces Shaping Cities</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-number">70%</span>
+                        <div class="stat-label">Global GDP from Cities</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">600</span>
+                        <div class="stat-label">Cities Generate 60% of GDP</div>
+                    </div>
+                     <div class="stat-card">
+                        <span class="stat-number">80%</span>
+                        <div class="stat-label">Economic Growth in Cities</div>
+                    </div>
+                </div>
+                <div class="sector-grid">
+                    <div class="sector-card">
+                        <h3 class="sector-name">Medieval Market Towns</h3>
+                        <p>Weekly markets and annual fairs drove urban growth. Guilds controlled production and trade. Market squares became civic centers. Cities gained charters for self-governance through economic power.</p>
+                    </div>
+                     <div class="sector-card">
+                        <h3 class="sector-name">Port Cities & Maritime Trade</h3>
+                         <p>Venice, Amsterdam, and London dominated global trade. Warehouses, docks, and merchant quarters shaped waterfronts. Colonial trade created vast wealth and cosmopolitan populations.</p>
+                    </div>
+                     <div class="sector-card">
+                        <h3 class="sector-name">Industrial Districts</h3>
+                         <p>Manchester's cotton mills, Detroit's auto plants, and Pittsburgh's steel works created specialized industrial cities. Factory zones, worker housing, and rail yards defined urban geography.</p>
+                    </div>
+                     <div class="sector-card">
+                        <h3 class="sector-name">Financial Centers</h3>
+                         <p>Wall Street, the City of London, and Hong Kong Central became global financial hubs. Skyscrapers housed banks and exchanges. Service economies replaced manufacturing in city centers.</p>
+                    </div>
+                     <div class="sector-card">
+                        <h3 class="sector-name">Tech Hubs & Innovation Districts</h3>
+                         <p>Silicon Valley pioneered the tech cluster model. Cities now cultivate innovation districts mixing research, startups, and urban amenities. Knowledge economy reshapes urban development.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="search" class="tab-content">
+            <div class="section-card">
+                <h2 class="section-title">Search the Urban History Database</h2>
+                <input type="text" id="searchInput" class="search-box" placeholder="Search for cities, concepts, time periods, or urban features...">
+
+```
+            <div id="searchResults">
+                <p style="text-align: center; color: var(--text-secondary); font-style: italic; margin: 2rem 0;">
+                    Enter a search term above to explore the urban development knowledge base.<br>
+                    Try searching for: "Rome", "Industrial", "Mesopotamia", "Transit", "Sprawl", etc.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    // Knowledge base for searching
+    const knowledgeBase = {
+        "Rome": "Ancient Rome pioneered urban planning on a massive scale, reaching 1 million inhabitants by 100 CE. Romans developed concrete, aqueducts, sewers, and monumental architecture. The Roman forum model influenced city centers for millennia.",
+        "Mesopotamia": "The birthplace of cities around 3500 BCE. Sumerian cities like Uruk and Ur created the first urban institutions: temples, palaces, markets, and schools. These cities invented writing, mathematics, and urban administration.",
+        "Industrial Revolution": "Transformed cities between 1750-1900. Factory systems concentrated workers in unprecedented numbers. Cities like Manchester grew from 25,000 to 500,000 people. Railways, canals, and worker housing reshaped urban geography.",
+        "Grid Plan": "An urban planning pattern using perpendicular streets. Used in ancient Harappa, Greek colonies, Roman camps, and American cities. Manhattan's 1811 grid plan became the model for American urban expansion.",
+        "Sprawl": "Low-density, automobile-dependent urban expansion characteristic of post-1945 development. Enabled by highways and cars, sprawl created edge cities, strip malls, and segregated land uses. Now criticized for environmental and social costs.",
+        "Transit": "Mass transportation systems that shaped urban form. Horse-drawn omnibuses (1820s), streetcars (1880s), subways (1860s), and buses (1920s) each enabled different patterns of urban growth and suburban development.",
+        "Zoning": "Legal mechanism to separate land uses, introduced in New York (1916). Zoning segregated residential, commercial, and industrial areas, shaping modern urban form but also contributing to social segregation.",
+        "Garden City": "Urban planning concept by Ebenezer Howard (1898) combining city and country benefits. Influenced suburban development and new towns worldwide. Letchworth and Welwyn were the first garden cities.",
+        "Medieval": "Medieval cities (500-1500 CE) were compact, walled settlements centered on markets and cathedrals. Narrow, winding streets followed organic patterns. Guilds controlled economic life. Population rarely exceeded 50,000.",
+        "Skyscraper": "Tall buildings enabled by steel frames and elevators, first appearing in Chicago (1880s). Skyscrapers concentrated activities vertically, creating dense central business districts and iconic skylines.",
+        "Suburb": "Residential areas on city peripheries. Elite suburbs emerged with railways (1850s), streetcar suburbs followed (1890s), then automobile suburbs (1920s). Post-WWII suburbanization transformed metropolitan areas.",
+        "Agora": "Central public space in ancient Greek cities serving as marketplace and civic center. The agora was essential to democratic life, hosting political debates, commerce, and social interaction.",
+        "Forum": "Roman adaptation of the Greek agora, serving as the city's civic, commercial, and religious center. Forums featured basilicas, temples, and markets, establishing a model for European city centers.",
+        "Bazaar": "Traditional Middle Eastern and Asian marketplace, often covered. Bazaars like Istanbul's Grand Bazaar or Tehran's Grand Bazaar remain vital urban centers, mixing commerce, craft production, and social life.",
+        "Venice": "Medieval maritime republic built on lagoon islands. Venice pioneered international banking, maritime law, and urban density. Its canal system and pedestrian network offer alternative urban models.",
+        "Paris": "Baron Haussmann's renovation (1853-1870) created modern Paris with broad boulevards, parks, and monuments. This transformation became the model for urban renewal worldwide, though controversial for displacing poor residents.",
+        "New York": "America's first megacity, growing from 60,000 (1800) to 3.4 million (1900). The 1811 grid plan, Central Park, skyscrapers, and subway system established patterns for American urbanization.",
+        "Tokyo": "World's largest metropolitan area with 37 million people. Tokyo demonstrates extreme density with efficient public transit, mixed-use development, and distinctive neighborhood villages within the megacity.",
+        "Brasília": "Planned capital of Brazil (1960) designed by Oscar Niemeyer and Lucio Costa. Modernist urban planning created a city shaped like an airplane, demonstrating both possibilities and limitations of top-down city design.",
+        "Çatalhöyük": "Neolithic proto-city in Turkey (7500 BCE) with 10,000 residents. Houses were accessed through roofs, with no streets. Demonstrates early experiments in dense urban living before the rise of true cities.",
+        "Harappa": "Major city of the Indus Valley Civilization (2600-1900 BCE). Featured grid planning, standardized brick construction, sophisticated drainage, and public baths. Among history's first planned cities.",
+        "Constantinople": "Capital of Byzantine and Ottoman Empires, now Istanbul. Strategic location between Europe and Asia made it a crucial trade hub. Its walls, cisterns, and monuments influenced urban fortification and design.",
+        "Aqueduct": "Water supply systems perfected by Romans. Aqueducts enabled cities to grow beyond local water sources. Rome had 11 aqueducts supplying 1 million people with 1 cubic meter of water per person daily.",
+        "Silk Road": "Trade network connecting East and West (130 BCE - 1453 CE). Cities along the route like Samarkand, Bukhara, and Xi'an became wealthy cosmopolitan centers, spreading ideas, technologies, and cultures.",
+        "Gentrification": "Process of neighborhood change involving displacement of lower-income residents by wealthier newcomers. Common in post-industrial cities as former industrial areas become desirable for their character and location.",
+        "Smart City": "Cities using digital technology to improve services and quality of life. Sensors, data analytics, and connectivity optimize traffic, energy use, and city services. Singapore and Barcelona lead smart city initiatives.",
+        "Megacity": "Urban areas with over 10 million inhabitants. In 1950, only Tokyo and New York qualified. By 2020, 43 megacities existed, mostly in Asia, Africa, and Latin America, presenting unprecedented management challenges.",
+        "Urban Heat Island": "Cities are typically 2-5°F warmer than surrounding areas due to concrete, asphalt, and reduced vegetation. This effect increases energy consumption and health risks, driving interest in green infrastructure."
+    };
+    // Initialize the application
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeTabs();
+        initializeSectorButtons();
+        initializeSearch();
+        initializeModal();
+    });
+    function initializeModal() {
+        const modal = document.getElementById('settings-modal');
+        const openBtn = document.getElementById('settings-btn');
+        const closeBtn = document.getElementById('close-modal-btn');
+        if (modal && openBtn && closeBtn) {
+            openBtn.addEventListener('click', () => {
+                modal.classList.add('show');
+            });
+            closeBtn.addEventListener('click', () => {
+                modal.classList.remove('show');
+            });
+            modal.addEventListener('click', (event) => {
+                if (event.target === modal) {
+                    modal.classList.remove('show');
+                }
+            });
+        }
+    }
+    function initializeTabs() {
+        const tabButtons = document.querySelectorAll('.tab-button');
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const tabName = this.getAttribute('data-tab');
+                showTab(tabName);
+            });
+        });
+    }
+    function showTab(tabName) {
+        try {
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => {
+                if (content && content.classList) {
+                    content.classList.remove('active');
+                }
+            });
+            const tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach(button => {
+                if (button && button.classList) {
+                    button.classList.remove('active');
+                }
+            });
+            const targetTab = document.getElementById(tabName);
+            if (targetTab && targetTab.classList) {
+                targetTab.classList.add('active');
+            }
+            const activeButton = document.querySelector(`[data-tab="${tabName}"]`);
+            if (activeButton && activeButton.classList) {
+                activeButton.classList.add('active');
+            }
+        } catch (error) {
+            console.error('Error in showTab:', error);
+        }
+    }
+    function initializeSectorButtons() {
+        const sectorButtons = document.querySelectorAll('.sector-button');
+        sectorButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const sectorName = this.getAttribute('data-sector');
+                showSectorDetail(sectorName, this);
+            });
+        });
+    }
+    function showSectorDetail(sector, clickedButton) {
+        try {
+            const details = document.querySelectorAll('.sector-detail');
+            details.forEach(detail => detail.classList.remove('show'));
+            const buttons = document.querySelectorAll('.sector-button');
+            buttons.forEach(button => button.classList.remove('active'));
+            const targetDetail = document.getElementById(sector + '-detail');
+            if (targetDetail) {
+                targetDetail.classList.add('show');
+                clickedButton.classList.add('active');
+            }
+        } catch (error) {
+            console.error('Error in showSectorDetail:', error);
+        }
+    }
+    function initializeSearch() {
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.addEventListener('keyup', searchContent);
+        }
+    }
+    function searchContent() {
+        try {
+            const searchInput = document.getElementById('searchInput');
+            const resultsDiv = document.getElementById('searchResults');
+            
+            if (!searchInput || !resultsDiv) return;
+            
+            const searchTerm = searchInput.value.toLowerCase();
+            if (searchTerm.length < 2) {
+                resultsDiv.innerHTML = '<p style="text-align: center; color: var(--text-secondary); font-style: italic; margin: 2rem 0;">Enter a search term above to explore the urban development knowledge base.<br>Try searching for: "Rome", "Industrial", "Mesopotamia", "Transit", "Sprawl", etc.</p>';
+                return;
+            }
+            let results = [];
+            
+            for (const key in knowledgeBase) {
+                if (knowledgeBase.hasOwnProperty(key)) {
+                    const value = knowledgeBase[key];
+                    if (key.toLowerCase().includes(searchTerm) || value.toLowerCase().includes(searchTerm)) {
+                        results.push({
+                            title: key,
+                            content: value,
+                            relevance: key.toLowerCase().startsWith(searchTerm) ? 2 : 1
+                        });
+                    }
+                }
+            }
+            results.sort((a, b) => b.relevance - a.relevance);
+            if (results.length === 0) {
+                resultsDiv.innerHTML = `<div class="section-card"><h3 style="color: var(--accent-1);">No results found for "${searchInput.value}"</h3><p>Try searching for city names, historical periods, urban concepts, or development patterns.</p></div>`;
+                return;
+            }
+            let resultHTML = `<h3 style="color: var(--accent-1); margin-bottom: 1.5rem;">Search Results for "${searchInput.value}"</h3>`;
+            
+            for (let i = 0; i < results.length; i++) {
+                const result = results[i];
+                const highlightedContent = result.content.replace(new RegExp(searchTerm, 'gi'), '<span class="highlight">$&</span>');
+                
+                resultHTML += `<div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid var(--accent-1);"><h4 style="color: var(--accent-1); margin-bottom: 0.8rem;">${result.title}</h4><p style="line-height: 1.6;">${highlightedContent}</p></div>`;
+            }
+            resultsDiv.innerHTML = resultHTML;
+        } catch (error) {
+            console.error('Error in searchContent:', error);
+        }
+    }
+</script>
+
+</body>
+</html>
