@@ -1,73 +1,68 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>City Evolution Mapper</title>
-<style>
-:root {
---bg-gradient: linear-gradient(135deg,#2c3e50 0%,#34495e 100%);
---accent-1: #e74c3c;
---accent-2: #c03b2b;
---btn-gradient: linear-gradient(45deg,#e74c3c,#c0392b);
---accent-1-rgb: 231, 76, 60;
---accent-warning: #ffc107;
---accent-warning-rgb: 255, 193, 7;
---text-primary: #ecf0f1;
---text-secondary: #bdc3c7;
-}
-* {
-margin: 0;
-padding: 0;
-box-sizing: border-box;
-}
-body {
-font-family: 'Georgia', serif;
-background: var(--bg-gradient);
-color: var(--text-primary);
-min-height: 100vh;
-}
-.header {
-background: rgba(0,0,0,0.3);
-padding: 2rem;
-text-align: center;
-border-bottom: 3px solid var(--accent-1);
-border: 1px solid rgba(255, 255, 255, 0.2);
-border-top: 0;
-}
-.header h1 {
-font-size: 2.5rem;
-margin-bottom: 0.5rem;
-background: linear-gradient(45deg, var(--accent-1), var(--accent-2));
--webkit-background-clip: text;
--webkit-text-fill-color: transparent;
-background-clip: text;
-text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-filter: drop-shadow(0 0 15px rgba(var(--accent-1-rgb), 0.3));
-}
-.header p {
-font-size: 1.2rem;
-color: var(--text-secondary);
-font-style: italic;
-}
-.nav-tabs {
-display: flex;
-justify-content: center;
-align-items: center;
-background: rgba(0,0,0,0.2);
-padding: 1rem;
-gap: 1rem;
-flex-wrap: wrap;
-}
-code
-Code
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City Evolution Knowledge Base Explorer</title>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg,#2c3e50 0%,#34495e 100%);
+            --accent-1: #e74c3c;
+            --accent-2: #c03b2b;
+            --btn-gradient: linear-gradient(45deg,#e74c3c,#c0392b);
+            --accent-1-rgb: 231, 76, 60;
+            --accent-warning: #ffc107;
+            --accent-warning-rgb: 255, 193, 7;
+            --text-primary: #ecf0f1;
+            --text-secondary: #bdc3c7;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Georgia', serif;
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+        .header {
+            background: rgba(0,0,0,0.3);
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 3px solid var(--accent-1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-top: 0;
+        }
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, var(--accent-1), var(--accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            filter: drop-shadow(0 0 15px rgba(var(--accent-1-rgb), 0.3));
+        }
+        .header p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0,0,0,0.2);
+            padding: 1rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
 
-download
-
-content_copy
-
-expand_less
-/* --- FINAL BUTTON RULES START --- */
+```
+    /* --- FINAL BUTTON RULES START --- */
     /* Base style for ALL buttons */
     .tab-button, #settings-btn, .sector-button {
         padding: 12px 24px;
@@ -461,11 +456,11 @@ expand_less
 
     window.setTheme = function(name) {
         applyTheme(name);
-        localStorage.setItem('waterloo-theme', name);
+        localStorage.setItem('city-evolution-theme', name);
     }
 
     const availableThemeNames = Object.keys(THEMES);
-    const savedTheme = localStorage.getItem('waterloo-theme');
+    const savedTheme = localStorage.getItem('city-evolution-theme');
     let themeToLoad = DEFAULT_THEME_NAME;
     if (savedTheme && availableThemeNames.includes(savedTheme)) {
         themeToLoad = savedTheme;
@@ -488,348 +483,173 @@ expand_less
     });
 })();
 </script>
+```
+
 </head>
 <body>
-<div id="settings-modal" class="modal-overlay">
-<div class="modal-content">
-<button id="close-modal-btn" class="close-btn">&times;</button>
-<h3>Display Settings</h3>
-<label for="theme-select">Theme:</label>
-<select id="theme-select" onchange="setTheme(this.value)"></select>
-</div>
-</div>
-<div class="header">
-<h1>City Evolution Mapper</h1>
-<p>Visualizing Urban Growth from Antiquity to Modernity</p>
-</div>
-<div class="nav-tabs">
-<button class="tab-button active" data-tab="overview">Overview</button>
-<button class="tab-button" data-tab="ancient">Ancient & Classical</button>
-<button class="tab-button" data-tab="medieval">Medieval & Renaissance</button>
-<button class="tab-button" data-tab="modern">Industrial & Modern</button>
-<button class="tab-button" data-tab="forces">Shaping Forces</button>
-<button class="tab-button" data-tab="search">Search Knowledge</button>
-<button id="settings-btn" title="Settings">⚙️</button>
-</div>
-<div class="container">
-<div id="overview" class="tab-content active">
-<div class="section-card">
-<h2 class="section-title">A Journey Through Urban Time</h2>
-<p style="font-size: 1.2rem; line-height: 1.8; margin-bottom: 2rem;">
-From the first settlements in Mesopotamia to the sprawling megacities of the 21st century, urban centers have been the engines of civilization. This explorer visualizes the patterns of urban growth, tracking how geography, trade, technology, and politics have shaped the cities we live in today.
-</p>
-<div class="stats-grid">
-<div class="stat-card">
-<span class="stat-number">~3000 BCE</span>
-<div class="stat-label">First Cities Emerge</div>
-</div>
-<div class="stat-card">
-<span class="stat-number">1+ Million</span>
-<div class="stat-label">Population of Ancient Rome</div>
-</div>
-<div class="stat-card">
-<span class="stat-number">55%</span>
-<div class="stat-label">Current Global Urban Population</div>
-</div>
-<div class="stat-card">
-<span class="stat-number">37 Million</span>
-<div class="stat-label">Largest Megacity (Tokyo)</div>
-</div>
-</div>
-<div class="interactive-map">
-<h3 style="color: var(--accent-1); margin-bottom: 1rem;">Historical City Case Studies</h3>
-<p>Click on each city to explore its unique development history:</p>
-<div class="sector-buttons">
-<button class="sector-button" data-sector="rome">Rome</button>
-<button class="sector-button" data-sector="paris">Paris</button>
-<button class="sector-button" data-sector="london">London</button>
-<button class="sector-button" data-sector="newyork">New York</button>
-</div>
-<div id="rome-detail" class="sector-detail">
-<h4 style="color: var(--accent-1);">Rome: The Eternal City</h4>
-<p><strong>Evolution:</strong> From a small Latin settlement to the heart of a vast empire. Characterized by monumental civic structures, advanced engineering (aqueducts, roads), and a dense, complex urban fabric. Its legacy influenced urban planning for millennia.</p>
-</div>
-<div id="paris-detail" class="sector-detail">
-<h4 style="color: var(--accent-1);">Paris: The Grand Redesign</h4>
-<p><strong>Evolution:</strong> Evolved from a medieval core to a grand European capital. Famously reshaped in the 19th century by Baron Haussmann, who created wide boulevards, public parks, and a unified architectural style, influencing modern urban renewal projects worldwide.</p>
-</div>
-<div id="london-detail" class="sector-detail">
-<h4 style="color: var(--accent-1);">London: The Organic Metropolis</h4>
-<p><strong>Evolution:</strong> A city defined by organic growth rather than a rigid plan. From its Roman origins, it expanded through trade and industry, surviving the Great Fire and the Blitz to become a global financial center with a distinct patchwork of historic and modern districts.</p>
-</div>
-<div id="newyork-detail" class="sector-detail">
-<h4 style="color: var(--accent-1);">New York: The Grid and the Skyscraper</h4>
-<p><strong>Evolution:</strong> Defined by the Commissioners' Plan of 1811, a visionary grid system that structured its growth. The city's evolution is a story of vertical expansion, driven by economic ambition and technological innovation, creating the most iconic skyline in the world.</p>
-</div>
-</div>
-</div>
-</div>
-<div id="ancient" class="tab-content">
-<div class="section-card">
-<h2 class="section-title">The Dawn of Urban Life (3000 BCE – 500 CE)</h2>
-<div class="sector-grid">
-<div class="sector-card">
-<h3 class="sector-name">Mesopotamian Cradles</h3>
-<p>The world's first true cities, like Uruk and Babylon, arose in the fertile crescent. They were characterized by monumental religious structures (ziggurats), city walls for defense, and early forms of social and political organization.</p>
-</div>
-<div class="sector-card">
-<h3 class="sector-name">Indus Valley Grid Plans</h3>
-<p>Cities like Mohenjo-Daro displayed sophisticated early urban planning, with streets laid out in a grid pattern, advanced drainage systems, and a clear division of functional areas, suggesting a highly organized society.</p>
-</div>
-<div class="sector-card">
-<h3 class="sector-name">Greek Civic Space</h3>
-<p>The Greek polis (city-state) prioritized public life. The Agora (marketplace) and Acropolis (citadel) were central to civic and religious activity, establishing the concept of public space as a cornerstone of urban design.</p>
-</div>
-<div class="sector-card">
-<h3 class="sector-name">Roman Engineering</h3>
-<p>The Romans were master builders, and their cities reflected this. A vast network of roads, aqueducts, sewers, and monumental public buildings like the Colosseum and Forum, set a standard for urban infrastructure that would not be matched for centuries.</p>
-</div>
-</div>
-</div>
-</div>
-<div id="medieval" class="tab-content">
-<div class="section-card">
-<h2 class="section-title">Medieval & Renaissance Growth (500 - 1600 CE)</h2>
-<div class="sector-grid">
-<div class="sector-card">
-<div class="sector-name">The Walled City</div>
-<p>In a fragmented and often dangerous Europe, defense was paramount. Medieval cities were characterized by fortifications, narrow winding streets, and a dense organic layout centered on a cathedral and marketplace.</p>
-</div>
-<div class="sector-card">
-<div class="sector-name">The Rise of Commerce</div>
-<p>As trade revived, market towns and the ports of leagues like the Hanseatic League flourished. Guild halls and merchant houses became prominent structures, reflecting the growing power of the merchant class in shaping urban life.</p>
-</div>
-<div class="sector-card">
-<div class="sector-name">Renaissance Idealism</div>
-<p>The Renaissance brought a return to classical ideas of order and symmetry. Planners and architects conceived of the 'Ideal City,' characterized by geometric street plans, grand public squares, and harmonious architecture designed to reflect humanist values.</p>
-</div>
-<div class="sector-card">
-<div class="sector-name">New World Colonization</div>
-<p>European powers exported their urban planning ideas to the Americas. The Spanish "Laws of the Indies" dictated a rigid grid-plan centered on a main plaza, a pattern still visible in hundreds of cities across Latin America.</p>
-</div>
-</div>
-</div>
-</div>
-<div id="modern" class="tab-content">
-<div class="section-card">
-<h2 class="section-title">The Industrial & Modern Eras (1600 CE - Present)</h2>
-<div class="sector-grid">
-<div class="sector-card">
-<h3 class="sector-name">The Industrial Revolution</h3>
-<p>Factories drew millions from the countryside into cities, leading to unprecedented growth and overcrowding. This era was marked by poor sanitation, slum housing, and the emergence of new infrastructure like railways.</p>
-</div>
-<div class="sector-card">
-<h3 class="sector-name">The City Beautiful Movement</h3>
-<p>A reform movement in the late 19th and early 20th centuries that advocated for beautification and monumental grandeur in cities to promote civic virtue and a harmonious social order.</p>
-</div>
-<div class="sector-card">
-<h3 class="sector-name">Rise of the Suburbs</h3>
-<p>The advent of the automobile and mass transit allowed cities to expand outward. This led to the development of low-density, car-dependent suburbs, fundamentally changing the structure of the metropolis.</p>
-</div>
-<div class="sector-card">
-<h3 class="sector-name">The Age of the Megacity</h3>
-<p>The 20th and 21st centuries have seen the rise of megacities with populations exceeding 10 million, particularly in Asia and the developing world. These cities face immense challenges in infrastructure, housing, and sustainability.</p>
-</div>
-</div>
-</div>
-</div>
-<div id="forces" class="tab-content">
-<div class="section-card">
-<h2 class="section-title">Forces That Shape Our Cities</h2>
-<div class="sector-grid">
-<div class="sector-card">
-<h3 class="sector-name">Geography</h3>
-<p>The physical landscape is the foundation of any city. Rivers provide water and transport, harbors encourage trade, and hills offer defense. The natural environment dictates the initial settlement and its potential for growth.</p>
-</div>
-<div class="sector-card">
-<h3 class="sector-name">Economic Activity</h3>
-<p>From ancient markets to modern financial districts, the need for trade and commerce has always been a primary driver of urban form. Economic forces determine where commercial centers rise and industrial zones develop.</p>
-</div>
-<div class="sector-card">
-<h3 class="sector-name">Technology</h3>
-<p>Technological innovations continuously reshape cities. Roman aqueducts, the steel frame that enabled skyscrapers, the automobile, and now the digital infrastructure of 'smart cities' all redefine the limits of urban life.</p>
-</div>
-<div class="sector-card">
-<h3 class="sector-name">Planning & Politics</h3>
-<p>The decisions of rulers, governments, and planners leave a lasting mark. Whether it's a defensive wall, a grand boulevard, a public park, or a zoning law, political power and planning philosophy actively shape the urban environment.</p>
-</div>
-</div>
-</div>
-</div>
-<div id="search" class="tab-content">
-<div class="section-card">
-<h2 class="section-title">Search the Knowledge Base</h2>
-<input type="text" id="searchInput" class="search-box" placeholder="Search for concepts, city types, historical periods...">
-code
-Code
-
-download
-
-content_copy
-
-expand_less
-<div id="searchResults">
-                <p style="text-align: center; color: var(--text-secondary); font-style: italic; margin: 2rem 0;">
-                    Enter a search term above to explore the urban history knowledge base.<br>
-                    Try searching for: "Grid Plan", "Suburb", "Zoning", "Agora", "Megacity", etc.
-                </p>
-            </div>
+    <div id="settings-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button id="close-modal-btn" class="close-btn">&times;</button>
+            <h3>Display Settings</h3>
+            <label for="theme-select">Theme:</label>
+            <select id="theme-select" onchange="setTheme(this.value)"></select>
         </div>
     </div>
-</div>
-<script>
-    // Knowledge base for searching
-    const knowledgeBase = {
-        "Grid Plan": "An urban layout where streets run at right angles to each other, forming a grid. Used since ancient times (e.g., Indus Valley) and famously applied in cities like New York, it facilitates orderly development and navigation.",
-        "Urban Sprawl": "The expansion of low-density, car-dependent development outwards from the city center. Often criticized for its environmental impact and inefficiency.",
-        "Zoning": "A key tool of modern urban planning that divides a municipality into districts (zones) for different uses, such as residential, commercial, or industrial. It controls the density and type of development.",
-        "Gentrification": "The process where a neighborhood's character changes as wealthier people move in, often displacing lower-income residents and businesses. It's a common and controversial aspect of modern urban change.",
-        "Megacity": "An urban area with a total population of more than 10 million people. The number of megacities has grown rapidly in the 21st century, particularly in Asia and Africa.",
-        "Suburb": "A residential district located on the outskirts of a city. Their growth was fueled by the automobile and the desire for more space, defining the landscape of many Western cities in the 20th century.",
-        "Agora": "A public open space used for assemblies and markets in ancient Greek city-states. It was the center of athletic, artistic, spiritual, and political life, representing the heart of the community.",
-        "Forum": "The Roman equivalent of the Greek Agora. It was the main public square in a Roman city, serving as the center for judicial, economic, and religious activities.",
-        "CBD (Central Business District)": "The commercial and business center of a city, often referred to as 'downtown.' It typically has the highest concentration of offices, retail, and financial institutions.",
-        "Greenbelt": "A policy and land-use designation used in land-use planning to retain areas of largely undeveloped, wild, or agricultural land surrounding or neighboring urban areas.",
-        "Industrial Revolution": "A period of major industrialization during the late 18th and early 19th centuries that saw a massive migration of people to cities, leading to rapid, often chaotic, urban growth and significant social challenges.",
-        "Public Realm": "All of the publicly owned streets, sidewalks, rights-of-way, parks, and other publicly accessible open spaces. The quality of the public realm is crucial to a city's livability.",
-        "Smart City": "An urban area that uses different types of electronic methods and sensors to collect data. Insights gained from that data are used to manage assets, resources, and services efficiently.",
-        "New Urbanism": "An urban design movement that promotes environmentally friendly habits by creating walkable neighborhoods containing a wide range of housing and job types. It emerged in the late 20th century as a reaction against urban sprawl.",
-        "Haussmannization": "The extensive public works program commissioned by Emperor Napoléon III and directed by Baron Haussmann in 19th-century Paris. It involved demolishing medieval neighborhoods and building wide avenues, parks, and squares."
-    };
-    // Initialize the application
-    document.addEventListener('DOMContentLoaded', function() {
-        initializeTabs();
-        initializeSectorButtons();
-        initializeSearch();
-        initializeModal();
-    });
-    function initializeModal() {
-        const modal = document.getElementById('settings-modal');
-        const openBtn = document.getElementById('settings-btn');
-        const closeBtn = document.getElementById('close-modal-btn');
-        if (modal && openBtn && closeBtn) {
-            openBtn.addEventListener('click', () => {
-                modal.classList.add('show');
-            });
-            closeBtn.addEventListener('click', () => {
-                modal.classList.remove('show');
-            });
-            modal.addEventListener('click', (event) => {
-                if (event.target === modal) {
-                    modal.classList.remove('show');
-                }
-            });
-        }
-    }
-    function initializeTabs() {
-        const tabButtons = document.querySelectorAll('.tab-button');
-        tabButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const tabName = this.getAttribute('data-tab');
-                showTab(tabName);
-            });
-        });
-    }
-    function showTab(tabName) {
-        try {
-            const tabContents = document.querySelectorAll('.tab-content');
-            tabContents.forEach(content => {
-                if (content && content.classList) {
-                    content.classList.remove('active');
-                }
-            });
-            const tabButtons = document.querySelectorAll('.tab-button');
-            tabButtons.forEach(button => {
-                if (button && button.classList) {
-                    button.classList.remove('active');
-                }
-            });
-            const targetTab = document.getElementById(tabName);
-            if (targetTab && targetTab.classList) {
-                targetTab.classList.add('active');
-            }
-            const activeButton = document.querySelector(`[data-tab="${tabName}"]`);
-            if (activeButton && activeButton.classList) {
-                activeButton.classList.add('active');
-            }
-        } catch (error) {
-            console.error('Error in showTab:', error);
-        }
-    }
-    function initializeSectorButtons() {
-        const sectorButtons = document.querySelectorAll('.sector-button');
-        sectorButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const sectorName = this.getAttribute('data-sector');
-                showSectorDetail(sectorName, this);
-            });
-        });
-    }
-    function showSectorDetail(sector, clickedButton) {
-        try {
-            const details = document.querySelectorAll('.sector-detail');
-            details.forEach(detail => detail.classList.remove('show'));
-            const buttons = document.querySelectorAll('.sector-button');
-            buttons.forEach(button => button.classList.remove('active'));
-            const targetDetail = document.getElementById(sector + '-detail');
-            if (targetDetail) {
-                targetDetail.classList.add('show');
-                clickedButton.classList.add('active');
-            }
-        } catch (error) {
-            console.error('Error in showSectorDetail:', error);
-        }
-    }
-    function initializeSearch() {
-        const searchInput = document.getElementById('searchInput');
-        if (searchInput) {
-            searchInput.addEventListener('keyup', searchContent);
-        }
-    }
-    function searchContent() {
-        try {
-            const searchInput = document.getElementById('searchInput');
-            const resultsDiv = document.getElementById('searchResults');
-            
-            if (!searchInput || !resultsDiv) return;
-            
-            const searchTerm = searchInput.value.toLowerCase();
-            if (searchTerm.length < 2) {
-                resultsDiv.innerHTML = '<p style="text-align: center; color: var(--text-secondary); font-style: italic; margin: 2rem 0;">Enter a search term above to explore the urban history knowledge base.<br>Try searching for: "Grid Plan", "Suburb", "Zoning", "Agora", "Megacity", etc.</p>';
-                return;
-            }
-            let results = [];
-            
-            for (const key in knowledgeBase) {
-                if (knowledgeBase.hasOwnProperty(key)) {
-                    const value = knowledgeBase[key];
-                    if (key.toLowerCase().includes(searchTerm) || value.toLowerCase().includes(searchTerm)) {
-                        results.push({
-                            title: key,
-                            content: value,
-                            relevance: key.toLowerCase().startsWith(searchTerm) ? 2 : 1
-                        });
-                    }
-                }
-            }
-            results.sort((a, b) => b.relevance - a.relevance);
-            if (results.length === 0) {
-                resultsDiv.innerHTML = `<div class="section-card"><h3 style="color: var(--accent-1);">No results found for "${searchInput.value}"</h3><p>Try searching for concepts, city types, historical periods, or urban planning terms.</p></div>`;
-                return;
-            }
-            let resultHTML = `<h3 style="color: var(--accent-1); margin-bottom: 1.5rem;">Search Results for "${searchInput.value}"</h3>`;
-            
-            for (let i = 0; i < results.length; i++) {
-                const result = results[i];
-                const highlightedContent = result.content.replace(new RegExp(searchTerm, 'gi'), '<span class="highlight">$&</span>');
-                
-                resultHTML += `<div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid var(--accent-1);"><h4 style="color: var(--accent-1); margin-bottom: 0.8rem;">${result.title}</h4><p style="line-height: 1.6;">${highlightedContent}</p></div>`;
-            }
-            resultsDiv.innerHTML = resultHTML;
-        } catch (error) {
-            console.error('Error in searchContent:', error);
-        }
-    }
-</script>
-</body>
-</html>
+    <div class="header">
+        <h1>City Evolution Mapper</h1>
+        <p>Urban Development Through Time • From Ancient Settlements to Modern Metropolises</p>
+    </div>
+    <div class="nav-tabs">
+        <button class="tab-button active" data-tab="overview">Overview</button>
+        <button class="tab-button" data-tab="ancient">Ancient Origins</button>
+        <button class="tab-button" data-tab="development">Development Phases</button>
+        <button class="tab-button" data-tab="transportation">Transport Networks</button>
+        <button class="tab-button" data-tab="economic">Economic Centers</button>
+        <button class="tab-button" data-tab="search">Search Database</button>
+        <button id="settings-btn" title="Settings">⚙️</button>
+    </div>
+    <div class="container">
+        <div id="overview" class="tab-content active">
+             <div class="section-card">
+                <h2 class="section-title">The Evolution of Urban Civilization</h2>
+                <p style="font-size: 1.2rem; line-height: 1.8; margin-bottom: 2rem;">
+                    Cities are humanity's greatest collective achievement, representing millennia of social, economic, and technological evolution. From the first permanent settlements along river valleys to today's sprawling megacities, urban centers have shaped the course of human history, driving innovation, culture, and progress.
+                </p>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-number">~10,000 BCE</span>
+                        <div class="stat-label">First Permanent Settlements</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">3500 BCE</span>
+                        <div class="stat-label">Rise of First Cities</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">56%</span>
+                        <div class="stat-label">Global Urban Population (2020)</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">43</span>
+                        <div class="stat-label">Megacities Worldwide (10M+)</div>
+                    </div>
+                </div>
+                <div class="interactive-map">
+                    <h3 style="color: var(--accent-1); margin-bottom: 1rem;">Key Urban Development Patterns</h3>
+                    <p>Click on each pattern to explore how cities evolved through different forces:</p>
+                    <div class="sector-buttons">
+                        <button class="sector-button" data-sector="geographic">Geographic Factors</button>
+                        <button class="sector-button" data-sector="trade">Trade Routes</button>
+                        <button class="sector-button" data-sector="political">Political Forces</button>
+                        <button class="sector-button" data-sector="industrial">Industrial Revolution</button>
+                    </div>
+                    <div id="geographic-detail" class="sector-detail">
+                        <h4 style="color: var(--accent-1);">Geographic Factors</h4>
+                        <p><strong>Key Elements:</strong> Rivers, harbors, crossroads, defensive positions, climate</p>
+                        <p><strong>Examples:</strong> Most ancient cities developed along rivers (Tigris-Euphrates, Nile, Indus) providing water, transport, and fertile soil. Natural harbors created trading hubs like Constantinople and New York.</p>
+                    </div>
+                    <div id="trade-detail" class="sector-detail">
+                        <h4 style="color: var(--accent-1);">Trade Routes</h4>
+                        <p><strong>Key Networks:</strong> Silk Road, Mediterranean trade, Trans-Saharan routes, Maritime spice trade</p>
+                        <p><strong>Impact:</strong> Cities at trade crossroads became wealthy cosmopolitan centers. Venice dominated Mediterranean trade, while Samarkand flourished on the Silk Road.</p>
+                    </div>
+                    <div id="political-detail" class="sector-detail">
+                        <h4 style="color: var(--accent-1);">Political Forces</h4>
+                        <p><strong>Drivers:</strong> Capital cities, military outposts, colonial settlements, planned capitals</p>
+                        <p><strong>Examples:</strong> Rome expanded through military conquest, Washington DC was purpose-built as a capital, Brasília was created to develop Brazil's interior.</p>
+                    </div>
+                    <div id="industrial-detail" class="sector-detail">
+                        <h4 style="color: var(--accent-1);">Industrial Revolution</h4>
+                        <p><strong>Transformation:</strong> Factory systems, railway networks, worker housing, urban sprawl</p>
+                        <p><strong>Impact:</strong> Cities like Manchester and Detroit exploded in size. Industrial zones shaped urban geography, creating distinct working-class and industrial districts.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="ancient" class="tab-content">
+            <div class="section-card">
+                <h2 class="section-title">Ancient Urban Origins</h2>
+                <div class="sector-grid">
+                    <div class="sector-card">
+                        <h3 class="sector-name">Mesopotamian Cities</h3>
+                        <p>The world's first cities emerged in Mesopotamia around 3500 BCE. Uruk, Ur, and Babylon pioneered urban planning with temples, markets, and residential quarters. These cities invented writing, law codes, and complex administration.</p>
+                    </div>
+                    <div class="sector-card">
+                        <h3 class="sector-name">Egyptian Urban Centers</h3>
+                        <p>Memphis and Thebes served as capitals of ancient Egypt. Cities were carefully planned along the Nile, with monumental architecture reflecting divine kingship. Urban design integrated religious, administrative, and residential functions.</p>
+                    </div>
+                    <div class="sector-card">
+                        <h3 class="sector-name">Indus Valley Cities</h3>
+                        <p>Harappa and Mohenjo-daro (2600-1900 BCE) featured sophisticated urban planning with grid patterns, drainage systems, and standardized construction. These cities had public baths, granaries, and advanced water management.</p>
+                    </div>
+                </div>
+                <div class="subsection">
+                    <h3 class="section-title">Timeline of Early Urbanization</h3>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-time">10,000 BCE</div>
+                            <h4>Neolithic Revolution</h4>
+                            <p>Agriculture enables permanent settlements. Jericho and Çatalhöyük emerge as early proto-cities with populations of several thousand.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-time">3500 BCE</div>
+                            <h4>Rise of Sumerian Cities</h4>
+                            <p>Uruk becomes the world's largest city with 50,000+ inhabitants. Cities develop specialized crafts, trade networks, and social hierarchies.</p>
+                        </div>
+                         <div class="timeline-item">
+                            <div class="timeline-time">2500 BCE</div>
+                            <h4>Urban Networks Expand</h4>
+                            <p>Cities spread across Eurasia and North Africa. Trade networks connect urban centers from the Mediterranean to the Indus Valley.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="development" class="tab-content">
+            <div class="section-card">
+                <h2 class="section-title">Major Urban Development Phases</h2>
+                <div class="sector-grid">
+                    <div class="sector-card">
+                        <div class="sector-name">Classical Cities (500 BCE - 500 CE)</div>
+                        <p>Greek poleis and Roman cities established urban models copied for centuries. Forums, amphitheaters, aqueducts, and grid plans became standard. Rome reached 1 million inhabitants at its peak.</p>
+                    </div>
+                    <div class="sector-card">
+                        <div class="sector-name">Medieval Towns (500 - 1500 CE)</div>
+                        <p>Cities contracted but remained vital centers. Walls defined urban boundaries. Markets, guilds, and cathedrals shaped city life. Venice, Paris, and London emerged as major centers.</p>
+                    </div>
+                    <div class="sector-card">
+                        <div class="sector-name">Renaissance Cities (1400 - 1600)</div>
+                        <p>Urban renewal and planned expansions. Florence pioneered Renaissance urbanism. Ideal city concepts influenced design. Public squares and perspective vistas transformed cityscapes.</p>
+                    </div>
+                    <div class="sector-card">
+                        <div class="sector-name">Industrial Cities (1750 - 1900)</div>
+                        <p>Explosive growth driven by factories. Manchester grew from 25,000 to 500,000 people. Railways reshaped urban geography. Worker housing and industrial zones created new urban patterns.</p>
+                    </div>
+                    <div class="sector-card">
+                        <div class="sector-name">Modern Metropolis (1900 - Present)</div>
+                        <p>Skyscrapers, suburbs, and automobiles transformed cities. Urban planning became professional discipline. Megacities emerged in developing world. Digital technology creates smart cities.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="transportation" class="tab-content">
+            <div class="section-card">
+                <h2 class="section-title">Transportation Networks & Urban Form</h2>
+                <div class="sector-grid">
+                    <div class="sector-card">
+                        <h3 class="sector-name">Walking Cities (Pre-1850)</h3>
+                        <p>Compact, dense settlements limited by walking distance. Mixed-use neighborhoods with work and residence close together. City diameter rarely exceeded 3 miles. Streets designed for foot traffic and horses.</p>
+                    </div>
+                    <div class="sector-card">
+                        <h3 class="sector-name">Transit Cities (1850-1940)</h3>
+                        <p>Streetcars and railways enabled expansion along corridors. Star-shaped cities developed along transit lines. Suburbs emerged at station stops. Central business districts intensified as transit hubs.</p>
+                    </div>
+                </div>
+                <div class="subsection">
+                    <h3>Evolution of Urban Transit Systems</h3>
+                    <p style="font-size: 1.1rem; line-height: 1.7;">
+                        Transportation technology has fundamentally shaped urban form. Ancient cities relied on foot traffic and pack animals, limiting their size. Roman roads enabled larger empires but cities remained compact. Canals in the medieval period connected cities but didn't change their internal structure. The railroad age created linear development along tracks and enabled commuter suburbs. Streetcars extended this pattern, creating "streetcar suburbs." The automobile age brought dispersed, low-density sprawl and highway-oriented development. Today, cities are rediscovering mass transit to combat congestion and pollution.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div id="economic" class
