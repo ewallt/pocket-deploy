@@ -1,805 +1,846 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wisdom of Crowds - A History Report</title>
-    <style>
-        :root {
-            --bg-gradient: linear-gradient(135deg,#2c3e50 0%,#34495e 100%);
-            --accent-1: #e74c3c;
-            --accent-2: #c03b2b;
-            --btn-gradient: linear-gradient(45deg,#e74c3c,#c0392b);
-            --accent-1-rgb: 231, 76, 60;
-            --accent-warning: #ffc107;
-            --accent-warning-rgb: 255, 193, 7;
-            --text-primary: #ecf0f1;
-            --text-secondary: #bdc3c7;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>City Evolution Knowledge Base</title>
+<style>
+:root {
+--bg-gradient: linear-gradient(135deg,#2c3e50 0%,#34495e 100%);
+--accent-1: #e74c3c;
+--accent-2: #c03b2b;
+--btn-gradient: linear-gradient(45deg,#e74c3c,#c0392b);
+--accent-1-rgb: 231, 76, 60;
+--accent-warning: #ffc107;
+--accent-warning-rgb: 255, 193, 7;
+--text-primary: #ecf0f1;
+--text-secondary: #bdc3c7;
+--ui-background: #34495e;
+--ui-background-accent: rgba(52, 73, 94, 0.8);
+--container-background-subtle: rgba(0, 0, 0, 0.3);
+--btn-text-active: #ffffff;
+}
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+body {
+font-family: 'Georgia', serif;
+background: var(--bg-gradient);
+color: var(--text-primary);
+min-height: 100vh;
+}
+.header {
+background: rgba(0,0,0,0.3);
+padding: 2rem;
+text-align: center;
+border-bottom: 3px solid var(--accent-1);
+border: 1px solid rgba(255, 255, 255, 0.2);
+border-top: 0;
+}
+.header h1 {
+font-size: 2.5rem;
+margin-bottom: 0.5rem;
+background: linear-gradient(45deg, var(--accent-1), var(--accent-2));
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+filter: drop-shadow(0 0 15px rgba(var(--accent-1-rgb), 0.3));
+}
+.header p {
+font-size: 1.2rem;
+color: var(--text-secondary);
+font-style: italic;
+}
+.nav-tabs {
+display: flex;
+justify-content: center;
+align-items: center;
+background: rgba(0,0,0,0.2);
+padding: 1rem;
+gap: 1rem;
+flex-wrap: wrap;
+}
+code
+Code
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+download
 
-        body {
-            font-family: 'Georgia', serif;
-            background: var(--bg-gradient);
-            color: var(--text-primary);
-            min-height: 100vh;
-        }
+content_copy
 
-        .header {
-            background: rgba(0,0,0,0.3);
-            padding: 2rem;
-            text-align: center;
-            border-bottom: 3px solid var(--accent-1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-top: 0;
-        }
-
-        .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(45deg, var(--accent-1), var(--accent-2));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-            filter: drop-shadow(0 0 15px rgba(var(--accent-1-rgb), 0.3));
-        }
-
-        .header p {
-            font-size: 1.2rem;
-            color: var(--text-secondary);
-            font-style: italic;
-        }
-
-        .nav-tabs {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: rgba(0,0,0,0.2);
-            padding: 1rem;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-        
-        /* --- FINAL BUTTON RULES START --- */
-
-        /* Base style for ALL buttons */
-        .tab-button, #settings-btn, .sector-button {
-            padding: 12px 24px;
-            background: var(--ui-background);
-            border: none;
-            color: var(--text-primary);
-            cursor: pointer;
-            border-radius: 5px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        /* Specific settings for the icon */
-        #settings-btn {
-            font-size: 1.2rem;
-            padding: 10px 15px;
-        }
-
-        /* HOVER state for buttons */
-        .tab-button:hover, .sector-button:hover, #settings-btn:hover {
-            background: var(--btn-gradient);
-            transform: translateY(-2px);
-            color: var(--btn-text-hover);
-        }
-
-        /* ACTIVE state for selected buttons */
-        .tab-button.active, .sector-button.active {
-            background: var(--btn-gradient);
-            border-color: var(--accent-2);
-            transform: translateY(-2px);
-            color: var(--btn-text-active);
-        }
-        
-        /* --- FINAL BUTTON RULES END --- */
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-        
-        /* Modal Styles */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.7);
-            justify-content: center;
-            align-items: center;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .modal-overlay.show {
-            display: flex;
-        }
-
-        .modal-content {
-            background: #2c3e50;
-            padding: 2rem;
-            border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.2);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-            text-align: center;
-            position: relative;
-            width: 90%;
-            max-width: 400px;
-        }
-
-        .modal-content h3 {
-            color: var(--accent-1);
-            margin-bottom: 1.5rem;
-            font-size: 1.5rem;
-        }
-        
-        .modal-content label {
-            font-size: 1.1rem;
-            margin-right: 10px;
-        }
-
-        #theme-select {
-            background-color: var(--ui-background);
-            color: var(--text-primary);
-            border: 1px solid var(--accent-2);
-            border-radius: 5px;
-            padding: 8px;
-            font-size: 1rem;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            color: #aaa;
-            font-size: 28px;
-            font-weight: bold;
-            background: none;
-            border: none;
-            cursor: pointer;
-        }
-
-        .close-btn:hover,
-        .close-btn:focus {
-            color: var(--text-primary);
-            text-decoration: none;
-        }
-
-        .tab-content {
-            display: none;
-            animation: fadeIn 0.5s ease-in;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .section-card {
-            background: rgba(255,255,255,0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 10px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            border: 1px solid rgba(255,255,255,0.2);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-        }
-
-        .section-title {
-            color: var(--accent-1);
-            font-size: 1.8rem;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--accent-1);
-        }
-
-        .subsection {
-            margin: 1.5rem 0;
-        }
-
-        .subsection h3 {
-            color: var(--accent-1);
-            font-size: 1.3rem;
-            margin-bottom: 0.8rem;
-        }
-
-        .subsection h4 {
-            color: var(--accent-2);
-            font-size: 1.1rem;
-            margin: 1rem 0 0.5rem 0;
-        }
-
-        .sector-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .sector-card {
-            background: rgba(255,255,255,0.05);
-            border-radius: 8px;
-            padding: 1.5rem;
-            border-left: 4px solid var(--accent-1);
-            transition: transform 0.3s ease;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .sector-card:hover {
-            transform: translateY(-5px);
-            background: rgba(255,255,255,0.1);
-        }
-
-        .sector-name {
-            color: var(--accent-1);
-            font-size: 1.4rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-        }
-
-        .casualties-highlight {
-            background: rgba(var(--accent-warning-rgb), 0.15);
-            padding: 1rem;
-            border-radius: 5px;
-            border-left: 4px solid var(--accent-warning);
-            margin: 1rem 0;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-            margin: 1.5rem 0;
-        }
-
-           .stat-card {
-            background: var(--ui-background-accent);
-            padding: 1.5rem;
-            border-radius: 8px;
-            text-align: center;
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .stat-number {
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--accent-1);
-            display: block;
-        }
-
-        .stat-label {
-            color: var(--text-secondary);
-            margin-top: 0.5rem;
-        }
-        
-        .timeline {
-            position: relative;
-            padding-left: 2rem;
-            margin-top: 2rem;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: var(--accent-1);
-        }
-
-        .timeline-item {
-            position: relative;
-            margin-bottom: 2rem;
-            padding-left: 2rem;
-        }
-
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -2.05rem;
-            top: 5px;
-            width: 12px;
-            height: 12px;
-            background: var(--accent-1);
-            border-radius: 50%;
-            border: 2px solid var(--ui-background);
-        }
-
-        .timeline-time {
-            color: var(--accent-1);
-            font-weight: bold;
-            font-size: 1.1rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .search-box {
-            width: 100%;
-            padding: 12px;
-            font-size: 1rem;
-            border: none;
-            border-radius: 5px;
-            background: rgba(255,255,255,0.1);
-            color: var(--text-primary);
-            margin-bottom: 2rem;
-        }
-
-        .search-box::placeholder {
-            color: var(--text-secondary);
-        }
-
-        .highlight {
-            background: rgba(var(--accent-1-rgb), 0.3);
-            padding: 2px 4px;
-            border-radius: 3px;
-        }
-
-        .interactive-map {
-            background: var(--container-background-subtle);
-            padding: 2rem;
-            border-radius: 10px;
-            text-align: center;
-            margin-bottom: 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .sector-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            flex-wrap: wrap;
-            margin-top: 1rem;
-        }
-
-        .sector-detail {
-            display: none;
-            margin-top: 2rem;
-            padding: 1.5rem;
-            background: rgba(255,255,255,0.05);
-            border-radius: 8px;
-        }
-
-        .sector-detail.show {
-            display: block;
-        }
-        
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 2rem;
-            }
-            .nav-tabs {
-                flex-direction: column;
-                align-items: center;
-            }
-            .container {
-                padding: 1rem;
-            }
-            .sector-grid {
-                grid-template-columns: 1fr;
-            }
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-    <script>
-    // Self-executing function to manage all theme logic.
-    (function() {
-        const DEFAULT_THEME_NAME = 'cyber-night';
+expand_less
+/* --- FINAL BUTTON RULES START --- */
+    /* Base style for ALL buttons */
+    .tab-button, #settings-btn, .sector-button {
+        padding: 12px 24px;
+        background: var(--ui-background);
+        border: none;
+        color: var(--text-primary);
+        cursor: pointer;
+        border-radius: 5px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    /* Specific settings for the icon */
+    #settings-btn {
+        font-size: 1.2rem;
+        padding: 10px 15px;
+    }
+    /* HOVER state for buttons */
+    .tab-button:hover, .sector-button:hover, #settings-btn:hover {
+        background: var(--btn-gradient);
+        transform: translateY(-2px);
+    }
+    /* ACTIVE state for selected buttons */
+    .tab-button.active, .sector-button.active {
+        background: var(--btn-gradient);
+        border-color: var(--accent-2);
+        transform: translateY(-2px);
+        color: var(--btn-text-active);
+    }
+    /* LOGIC-DRIVEN TEXT COLOR FOR HOVER AND ACTIVE STATES */
+    .btn-light-text:hover, .btn-light-text.active {
+         color: var(--text-primary);
+    }
+    .btn-dark-text:hover, .btn-dark-text.active {
+         color: var(--btn-text-active);
+    }
     
-        let THEMES = {
-            'cyber-night': {
-                '--bg-gradient': 'linear-gradient(135deg,#0a0a23 0%,#1a1a3a 50%,#2e2e5e 100%)',
-                '--accent-1': '#a8b8d0', '--accent-1-rgb': '168, 184, 208',
-                '--accent-2': '#8899b3',
-                '--btn-gradient': 'linear-gradient(45deg,#1a1a3a,#2e2e5e)',
-                '--accent-warning': '#e8b339',
-                '--accent-warning-rgb': '232, 179, 57',
-                '--ui-background': '#34495e',
-                '--ui-background-accent': 'rgba(52, 73, 94, 0.8)',
-                '--container-background-subtle': 'rgba(0, 0, 0, 0.3)',
-                '--btn-text-active': '#ecf0f1'
-            },
-            'scorched-gold': {
-                '--bg-gradient': 'linear-gradient(135deg,#0a231f 0%,#193a33 50%,#2e5e54 100%)',
-                '--ui-background': '#345e56',
-                '--ui-background-accent': 'rgba(52, 94, 86, 0.8)',
-                '--container-background-subtle': 'rgba(0, 0, 0, 0.3)',
-                '--accent-1': '#f0c475',
-                '--accent-2': '#d4a24c',
-                '--btn-gradient': 'linear-gradient(45deg,#f0c475,#d4a24c)',
-                '--accent-1-rgb': '240, 196, 117',
-                '--btn-text-active': '#2a1d15',
-                '--btn-text-hover': '#2a1d15',
-                '--accent-warning': '#e8b339',
-                '--accent-warning-rgb': '232, 179, 57'
-            },
-            'red-alert': {
-                '--bg-gradient': 'linear-gradient(135deg,#0a0a23 0%,#1a1a3a 50%,#2e2e5e 100%)',
-                '--ui-background': '#34495e',
-                '--ui-background-accent': 'rgba(52, 73, 94, 0.8)',
-                '--container-background-subtle': 'rgba(0, 0, 0, 0.3)',
-                '--accent-1': '#e74c3c',
-                '--accent-2': '#c03b2b',
-                '--btn-gradient': 'linear-gradient(45deg,#e74c3c,#c0392b)',
-                '--accent-1-rgb': '231, 76, 60',
-                '--accent-warning': '#e8b339',
-                '--accent-warning-rgb': '232, 179, 57',
-                '--btn-text-active': '#ffffff'
-            },
-            'teal-matrix': {
-                '--bg-gradient': 'linear-gradient(135deg,#0a231c 0%,#1a3a31 50%,#2e5e50 100%)',
-                '--accent-1': '#ace0d5', '--accent-1-rgb': '172, 224, 213',
-                '--accent-2': '#92b3a9',
-                '--btn-gradient': 'linear-gradient(45deg,#1a3a31,#2e5e50)',
-                '--accent-warning': '#e8b339',
-                '--accent-warning-rgb': '232, 179, 57',
-                '--ui-background': '#345e55',
-                '--ui-background-accent': 'rgba(52, 94, 85, 0.8)',
-                '--container-background-subtle': 'rgba(0, 0, 0, 0.3)',
-                '--btn-text-active': '#ecf0f1'
-            }
-        };
+    /* --- FINAL BUTTON RULES END --- */
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+    
+    /* Modal Styles */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.7);
+        justify-content: center;
+        align-items: center;
+        animation: fadeIn 0.3s ease;
+    }
+    .modal-overlay.show {
+        display: flex;
+    }
+    .modal-content {
+        background: #2c3e50;
+        padding: 2rem;
+        border-radius: 10px;
+        border: 1px solid rgba(255,255,255,0.2);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        text-align: center;
+        position: relative;
+        width: 90%;
+        max-width: 400px;
+    }
+    .modal-content h3 {
+        color: var(--accent-1);
+        margin-bottom: 1.5rem;
+        font-size: 1.5rem;
+    }
+    
+    .modal-content label {
+        font-size: 1.1rem;
+        margin-right: 10px;
+    }
+    #theme-select {
+        background-color: var(--ui-background);
+        color: var(--text-primary);
+        border: 1px solid var(--accent-2);
+        border-radius: 5px;
+        padding: 8px;
+        font-size: 1rem;
+    }
+    .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        color: #aaa;
+        font-size: 28px;
+        font-weight: bold;
+        background: none;
+        border: none;
+        cursor: pointer;
+    }
+    .close-btn:hover,
+    .close-btn:focus {
+        color: var(--text-primary);
+        text-decoration: none;
+    }
+    .tab-content {
+        display: none;
+        animation: fadeIn 0.5s ease-in;
+    }
+    .tab-content.active {
+        display: block;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .section-card {
+        background: rgba(255,255,255,0.05);
+        backdrop-filter: blur(10px);
+        border-radius: 10px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        border: 1px solid rgba(255,255,255,0.2);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+    .section-title {
+        color: var(--accent-1);
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--accent-1);
+    }
+    .subsection {
+        margin: 1.5rem 0;
+    }
+    .subsection h3 {
+        color: var(--accent-1);
+        font-size: 1.3rem;
+        margin-bottom: 0.8rem;
+    }
+    .subsection h4 {
+        color: var(--accent-2);
+        font-size: 1.1rem;
+        margin: 1rem 0 0.5rem 0;
+    }
+    .sector-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+    .sector-card {
+        background: rgba(255,255,255,0.05);
+        border-radius: 8px;
+        padding: 1.5rem;
+        border-left: 4px solid var(--accent-1);
+        transition: transform 0.3s ease;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+    .sector-card:hover {
+        transform: translateY(-5px);
+        background: rgba(255,255,255,0.1);
+    }
+    .sector-name {
+        color: var(--accent-1);
+        font-size: 1.4rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+    .casualties-highlight {
+        background: rgba(var(--accent-warning-rgb), 0.15);
+        padding: 1rem;
+        border-radius: 5px;
+        border-left: 4px solid var(--accent-warning);
+        margin: 1rem 0;
+    }
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+        margin: 1.5rem 0;
+    }
+       .stat-card {
+        background: var(--ui-background-accent);
+        padding: 1.5rem;
+        border-radius: 8px;
+        text-align: center;
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+    .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: var(--accent-1);
+        display: block;
+    }
+    .stat-label {
+        color: var(--text-secondary);
+        margin-top: 0.5rem;
+    }
+    /* --- TIMELINE STYLES START --- */
+    .timeline {
+        position: relative;
+        padding-left: 2rem;
+        margin-top: 2rem;
+    }
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: var(--accent-1);
+    }
+    .timeline-item {
+        position: relative;
+        margin-bottom: 2rem;
+        padding-left: 2rem;
+    }
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -2.05rem;
+        top: 5px;
+        width: 12px;
+        height: 12px;
+        background: var(--accent-1);
+        border-radius: 50%;
+        border: 2px solid var(--ui-background);
+    }
+    .timeline-time {
+        color: var(--accent-1);
+        font-weight: bold;
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+    }
+    /* --- TIMELINE STYLES END --- */
+    .search-box {
+        width: 100%;
+        padding: 12px;
+        font-size: 1rem;
+        border: none;
+        border-radius: 5px;
+        background: rgba(255,255,255,0.1);
+        color: var(--text-primary);
+        margin-bottom: 2rem;
+    }
+    .search-box::placeholder {
+        color: var(--text-secondary);
+    }
+    .highlight {
+        background: rgba(var(--accent-1-rgb), 0.3);
+        padding: 2px 4px;
+        border-radius: 3px;
+    }
+    .interactive-map {
+        background: var(--container-background-subtle);
+        padding: 2rem;
+        border-radius: 10px;
+        text-align: center;
+        margin-bottom: 2rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .sector-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+    }
+    .sector-detail {
+        display: none;
+        margin-top: 2rem;
+        padding: 1.5rem;
+        background: rgba(255,255,255,0.05);
+        border-radius: 8px;
+    }
+    .sector-detail.show {
+        display: block;
+    }
+    
+    @media (max-width: 768px) {
+        .header h1 {
+            font-size: 2rem;
+        }
+        .nav-tabs {
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            padding: 1rem;
+        }
+        .sector-grid {
+            grid-template-columns: 1fr;
+        }
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+<script>
+// Self-executing function to manage all theme logic.
+(function() {
+    const DEFAULT_THEME_NAME = 'red-alert';
 
-        function applyTheme(name) {
-            const theme = THEMES[name];
-            if (theme) {
-                const root = document.documentElement;
-                for (const [key, value] of Object.entries(theme)) {
+    let THEMES = {
+        'cyber-blue': {
+            '--bg-gradient': 'linear-gradient(135deg,#0a0a23 0%,#1a1a3a 50%,#2e2e5e 100%)',
+            '--accent-1': '#a8b8d0', '--accent-1-rgb': '168, 184, 208',
+            '--accent-2': '#8899b3',
+            '--btn-gradient': 'linear-gradient(45deg,#1a1a3a,#2e2e5e)',
+            '--accent-warning': '#e8b339',
+            '--accent-warning-rgb': '232, 179, 57',
+            '--ui-background': '#34495e',
+            '--ui-background-accent': 'rgba(52, 73, 94, 0.8)',
+            '--container-background-subtle': 'rgba(0, 0, 0, 0.3)',
+            '--btn-text-active': '#ecf0f1'
+        },
+        'teal-matrix': {
+            '--bg-gradient': 'linear-gradient(135deg,#0a231c 0%,#1a3a31 50%,#2e5e50 100%)',
+            '--accent-1': '#ace0d5', '--accent-1-rgb': '172, 224, 213',
+            '--accent-2': '#92b3a9',
+            '--btn-gradient': 'linear-gradient(45deg,#1a3a31,#2e5e50)',
+            '--accent-warning': '#e8b339',
+            '--accent-warning-rgb': '232, 179, 57',
+            '--ui-background': '#345e55',
+            '--ui-background-accent': 'rgba(52, 94, 85, 0.8)',
+            '--container-background-subtle': 'rgba(0, 0, 0, 0.3)',
+            '--btn-text-active': '#ecf0f1'
+        },
+        'red-alert': {
+            '--bg-gradient': 'linear-gradient(135deg,#2c3e50 0%,#34495e 100%)',
+            '--ui-background': '#34495e',
+            '--ui-background-accent': 'rgba(52, 73, 94, 0.8)',
+            '--container-background-subtle': 'rgba(0, 0, 0, 0.3)',
+            '--accent-1': '#e74c3c',
+            '--accent-2': '#c03b2b',
+            '--btn-gradient': 'linear-gradient(45deg,#e74c3c,#c0392b)',
+            '--accent-1-rgb': '231, 76, 60',
+            '--accent-warning': '#e8b339',
+            '--accent-warning-rgb': '232, 179, 57',
+            '--btn-text-active': '#ffffff'
+        },
+        'scorched-gold': {
+            '--bg-gradient': 'linear-gradient(135deg,#0a231f 0%,#193a33 50%,#2e5e54 100%)',
+            '--ui-background': '#345e56',
+            '--ui-background-accent': 'rgba(52, 94, 86, 0.8)',
+            '--container-background-subtle': 'rgba(0, 0, 0, 0.3)',
+            '--accent-1': '#f0c475',
+            '--accent-2': '#d4a24c',
+            '--btn-gradient': 'linear-gradient(45deg,#f0c475,#d4a24c)',
+            '--accent-1-rgb': '240, 196, 117',
+            '--btn-text-active': '#2a1d15',
+            '--accent-warning': '#e8b339',
+            '--accent-warning-rgb': '232, 179, 57'
+        }
+    };
+    function finalizeThemes(themes) {
+        for (const themeName in themes) {
+            const theme = themes[themeName];
+            const gradient = theme['--btn-gradient'];
+            if (gradient.includes('#d') || gradient.includes('#e') || gradient.includes('#f')) {
+                theme.hover_style = 'btn-dark-text'; 
+            } else {
+                theme.hover_style = 'btn-light-text';
+            }
+        }
+        return themes;
+    }
+    THEMES = finalizeThemes(THEMES);
+
+    function applyTheme(name) {
+        const theme = THEMES[name];
+        if (theme) {
+            const root = document.documentElement;
+            for (const [key, value] of Object.entries(theme)) {
+                if(key !== 'hover_style') {
                     root.style.setProperty(key, value);
                 }
             }
+            const buttons = document.querySelectorAll('.tab-button, .sector-button, #settings-btn');
+            buttons.forEach(button => {
+                button.classList.remove('btn-light-text', 'btn-dark-text');
+                if (theme.hover_style) {
+                    button.classList.add(theme.hover_style);
+                }
+            });
         }
-    
-        window.setTheme = function(name) {
-            applyTheme(name);
-            localStorage.setItem('woc-history-theme', name);
-        }
-    
-        const availableThemeNames = Object.keys(THEMES);
-        const savedTheme = localStorage.getItem('woc-history-theme');
-        let themeToLoad = DEFAULT_THEME_NAME;
+    }
 
-        if (savedTheme && availableThemeNames.includes(savedTheme)) {
-            themeToLoad = savedTheme;
-        }
-        
-        applyTheme(themeToLoad);
+    window.setTheme = function(name) {
+        applyTheme(name);
+        localStorage.setItem('city-theme', name);
+    }
+
+    const availableThemeNames = Object.keys(THEMES);
+    const savedTheme = localStorage.getItem('city-theme');
+    let themeToLoad = DEFAULT_THEME_NAME;
+    if (savedTheme && availableThemeNames.includes(savedTheme)) {
+        themeToLoad = savedTheme;
+    }
     
-        document.addEventListener('DOMContentLoaded', () => {
-            const themeSelect = document.getElementById('theme-select');
-            if (themeSelect) {
-                availableThemeNames.forEach(name => {
-                    const option = document.createElement('option');
-                    option.value = name;
-                    option.textContent = name.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                    themeSelect.appendChild(option);
-                });
-                themeSelect.value = themeToLoad;
-            }
-        });
-    })();
-    </script>
+    applyTheme(themeToLoad);
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const themeSelect = document.getElementById('theme-select');
+        if (themeSelect) {
+            themeSelect.innerHTML = '';
+            availableThemeNames.forEach(name => {
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = name.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                themeSelect.appendChild(option);
+            });
+            themeSelect.value = themeToLoad;
+        }
+    });
+})();
+</script>
 </head>
 <body>
-    <div id="settings-modal" class="modal-overlay">
-        <div class="modal-content">
-            <button id="close-modal-btn" class="close-btn">&times;</button>
-            <h3>Display Settings</h3>
-            <label for="theme-select">Theme:</label>
-            <select id="theme-select" onchange="setTheme(this.value)"></select>
-        </div>
-    </div>
+<div id="settings-modal" class="modal-overlay">
+<div class="modal-content">
+<button id="close-modal-btn" class="close-btn">&times;</button>
+<h3>Display Settings</h3>
+<label for="theme-select">Theme:</label>
+<select id="theme-select" onchange="setTheme(this.value)"></select>
+</div>
+</div>
+<div class="header">
+<h1>City Evolution Mapper</h1>
+<p>Visualizing Urban Development Through Time • Knowledge Base Explorer</p>
+</div>
+<div class="nav-tabs">
+<button class="tab-button active" data-tab="overview">Overview</button>
+<button class="tab-button" data-tab="eras">Historical Eras</button>
+<button class="tab-button" data-tab="factors">Growth Factors</button>
+<button class="tab-button" data-tab="data">Urban Data</button>
+<button class="tab-button" data-tab="search">Search Knowledge</button>
+<button id="settings-btn" title="Settings">⚙️</button>
+</div>
+<div class="container">
+<div id="overview" class="tab-content active">
+<div class="section-card">
+<h2 class="section-title">The City: A Living Organism</h2>
+<p style="font-size: 1.2rem; line-height: 1.8; margin-bottom: 2rem;">
+Cities are the epicenters of human civilization, constantly evolving tapestries woven from threads of geography, commerce, technology, and culture. From ancient riverside settlements to sprawling modern metropolises, their growth patterns tell the story of humanity itself. This explorer provides insight into the core principles that shape urban development across history.
+</p>
+<div class="stats-grid">
+<div class="stat-card">
+<span class="stat-number">&lt;1 km²</span>
+<div class="stat-label">Ancient Settlement Area</div>
+</div>
+<div class="stat-card">
+<span class="stat-number">~10,000</span>
+<div class="stat-label">Early Population</div>
+</div>
+<div class="stat-card">
+<span class="stat-number">&gt;1,000 km²</span>
+<div class="stat-label">Modern Metropolis Area</div>
+</div>
+<div class="stat-card">
+<span class="stat-number">&gt;10,000,000</span>
+<div class="stat-label">Megacity Population</div>
+</div>
+</div>
+<div class="interactive-map">
+<h3 style="color: var(--accent-1); margin-bottom: 1rem;">Phases of Urban Evolution</h3>
+<p>Click on each era to learn more about its defining characteristics:</p>
+<div class="sector-buttons">
+<button class="sector-button" data-sector="ancient">Ancient Origins</button>
+<button class="sector-button" data-sector="medieval">Medieval Hub</button>
+<button class="sector-button" data-sector="industrial">Industrial Age</button>
+<button class="sector-button" data-sector="modern">Modern Metropolis</button>
+</div>
+<div id="ancient-detail" class="sector-detail">
+<h4 style="color: var(--accent-1);">Ancient Origins (c. 3000 BC - 500 AD)</h4>
+<p><strong>Key Drivers:</strong> Access to water, defensible locations, fertile land for agriculture.</p>
+<p><strong>Characteristics:</strong> Often walled for defense, with a central temple or palace. Organic, unplanned street layouts are common. Examples include early settlements in Mesopotamia, Rome, and Athens.</p>
+</div>
+<div id="medieval-detail" class="sector-detail">
+<h4 style="color: var(--accent-1);">The Medieval Hub (c. 500 - 1500 AD)</h4>
+<p><strong>Key Drivers:</strong> Trade routes, feudal power centers, religious significance (cathedrals, monasteries).</p>
+<p><strong>Characteristics:</strong> Dominated by a castle or cathedral. Compact, high-density living within fortified walls. Emergence of guild halls and market squares as central economic points.</p>
+</div>
+<div id="industrial-detail" class="sector-detail">
+<h4 style="color: var(--accent-1);">The Industrial Age (c. 1760 - 1900 AD)</h4>
+<p><strong>Key Drivers:</strong> Factories, railways, canals, mass migration from rural areas.</p>
+<p><strong>Significance:</strong> Explosive, often chaotic growth. Development of specialized industrial zones, tenements for workers, and the first suburbs for the wealthy. Infrastructure like sewers and public transit becomes critical.</p>
+</div>
+<div id="modern-detail" class="sector-detail">
+<h4 style="color: var(--accent-1);">The Modern Metropolis (c. 1900 - Present)</h4>
+<p><strong>Key Drivers:</strong> The automobile, electricity, global finance, information technology.</p>
+<p><strong>Significance:</strong> Rise of the skyscraper and Central Business District (CBD). Widespread suburbanization creating vast, low-density urban regions. Focus on urban planning, zoning laws, and massive infrastructure projects.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="eras" class="tab-content">
+<div class="section-card">
+<h2 class="section-title">Timeline of Urban Evolution</h2>
+<div class="subsection">
+<div class="timeline">
+<div class="timeline-item">
+<div class="timeline-time">~3000 BC</div>
+<h4>The First Cities</h4>
+<p>Settlements in Mesopotamia and the Indus Valley grow into the world's first true cities, characterized by social stratification, monumental architecture, and early forms of governance.</p>
+</div>
+<div class="timeline-item">
+<div class="timeline-time">~500 BC - 400 AD</div>
+<h4>The Classical City</h4>
+<p>Greek and Roman cities like Athens and Rome introduce concepts like the grid plan (Hippodamian plan), public forums, aqueducts, and large-scale public buildings (theaters, baths).</p>
+</div>
+<div class="timeline-item">
+<div class="timeline-time">~1100 - 1400 AD</div>
+<h4>The Mercantile City</h4>
+<p>As feudalism wanes, cities like Venice and Bruges thrive on trade. Market squares and guild halls become the heart of the city, reflecting the rising power of the merchant class.</p>
+</div>
+<div class="timeline-item">
+<div class="timeline-time">~1850 AD</div>
+<h4>The Age of Infrastructure</h4>
+<p>In response to the squalor of early industrial cities, major infrastructure projects are undertaken. Haussmann's renovation of Paris and the construction of London's sewer system set new precedents for urban planning.</p>
+</div>
+<div class="timeline-item">
+<div class="timeline-time">~1950 AD</div>
+<h4>The Suburban Explosion</h4>
+<p>Post-WWII economic prosperity and the rise of the automobile lead to massive suburban expansion, particularly in the United States, fundamentally changing the structure and scale of the modern city.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="factors" class="tab-content">
+<div class="section-card">
+<h2 class="section-title">Key Factors in Urban Growth</h2>
+<div class="sector-grid">
+<div class="sector-card">
+<div class="sector-name">Geography & Site</div>
+<p>The initial location of a city is paramount. Factors include access to fresh water, defensible terrain (hills, islands), proximity to resources, and access to transportation routes like rivers or coastlines.</p>
+</div>
+<div class="sector-card">
+<div class="sector-name">Economic Forces</div>
+<p>Trade, industry, and commerce are the engines of urban growth. The presence of markets, ports, factories, or financial institutions attracts population and investment, shaping the city's form and function.</p>
+</div>
+<div class="sector-card">
+<div class="sector-name">Technology</div>
+<p>Technological innovations repeatedly redefine urban possibilities. The aqueduct enabled large classical cities, the elevator enabled the skyscraper, and the automobile enabled the sprawling suburb.</p>
+</div>
+<div class="sector-card">
+<div class="sector-name">Transportation</div>
+<p>The movement of people and goods is the lifeblood of a city. The evolution from walkable cities to those shaped by railways, streetcars, and highways dictates the scale, density, and spatial layout of urban areas.</p>
+</div>
+<div class="sector-card">
+<div class="sector-name">Policy & Planning</div>
+<p>Conscious decisions, from defensive walls and grid layouts to modern zoning laws and public housing projects, deliberately shape urban development. Urban planning can guide growth, correct problems, or create new ones.</p>
+</div>
+<div class="sector-card">
+<div class="sector-name">Social & Cultural Factors</div>
+<p>Cities are magnets for people seeking opportunity, community, or freedom. Migration, cultural institutions (universities, museums), and social dynamics all play a role in how neighborhoods develop and change over time.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="data" class="tab-content">
+<div class="section-card">
+<h2 class="section-title">Urban Data & Consequences</h2>
+<div class="stats-grid">
+<div class="stat-card">
+<span class="stat-number">56%</span>
+<div class="stat-label">World Population in Cities (2021)</div>
+</div>
+<div class="stat-card">
+<span class="stat-number">68%</span>
+<div class="stat-label">Projected Urban Population (2050)</div>
+</div>
+<div class="stat-card">
+<span class="stat-number">&gt;80%</span>
+<div class="stat-label">Global GDP Generated in Cities</div>
+</div>
+</div>
+<div class="sector-grid">
+<div class="sector-card">
+<h3 class="sector-name">Economic Engines</h3>
+<p>By concentrating labor, capital, and innovation, cities act as powerful engines of economic growth, driving progress in technology, finance, and culture for entire nations.</p>
+</div>
+<div class="sector-card">
+<h3 class="sector-name">Social Transformation</h3>
+<p>Urbanization leads to profound social changes, including shifts in family structure, increased diversity, and the rise of new social networks and cultural forms. It also presents challenges of inequality and social cohesion.</p>
+</div>
+<div class="sector-card">
+<h3 class="sector-name">Environmental Challenges</h3>
+<p>The high concentration of people and activity in cities leads to significant environmental challenges, such as pollution, waste management, the urban heat island effect, and high resource consumption.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="search" class="tab-content">
+<div class="section-card">
+<h2 class="section-title">Search the Knowledge Base</h2>
+<input type="text" id="searchInput" class="search-box" placeholder="Search for concepts, city types, planners, or any topic...">
+code
+Code
 
-    <div class="header">
-        <h1>A Brief History of Collective Intelligence</h1>
-        <p>From Ancient Juries to Modern Markets • Knowledge Base</p>
-    </div>
+download
 
-    <div class="nav-tabs">
-        <button class="tab-button active" data-tab="overview">Overview</button>
-        <button class="tab-button" data-tab="early-roots">Early Roots</button>
-        <button class="tab-button" data-tab="modern-era">Modern Era</button>
-        <button class="tab-button" data-tab="key-thinkers">Key Thinkers</button>
-        <button class="tab-button" data-tab="core-concepts">Core Concepts</button>
-        <button class="tab-button" data-tab="search">Search</button>
-        <button id="settings-btn" title="Settings">⚙️</button>
-    </div>
+content_copy
 
-    <div class="container">
-        <div id="overview" class="tab-content active">
-             <div class="section-card">
-                <h2 class="section-title">The Power of the Many</h2>
-                <p style="font-size: 1.2rem; line-height: 1.8; margin-bottom: 2rem;">
-                    The idea that groups of individuals can exhibit a collective intelligence greater than any single member is as old as democracy itself. From the surprising accuracy of a crowd guessing an ox's weight to the complex problem-solving of the internet, this principle has been observed for centuries. This report provides a high-level overview of the key milestones, figures, and concepts that define our understanding of the Wisdom of Crowds.
+expand_less
+<div id="searchResults">
+                <p style="text-align: center; color: var(--text-secondary); font-style: italic; margin: 2rem 0;">
+                    Enter a search term above to explore the urban development knowledge base.<br>
+                    Try searching for: "Zoning", "Jane Jacobs", "Grid Plan", "Suburb", "Infrastructure", etc.
                 </p>
-                
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <span class="stat-number">1906</span>
-                        <div class="stat-label">Galton's Ox Experiment</div>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-number">99.9%</span>
-                        <div class="stat-label">Accuracy of the Crowd's Guess</div>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-number">4</span>
-                        <div class="stat-label">Conditions for a Wise Crowd</div>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-number">$1M</span>
-                        <div class="stat-label">The Netflix Prize (2006)</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="early-roots" class="tab-content">
-            <div class="section-card">
-                <h2 class="section-title">Early Roots (500 BC – 1960s)</h2>
-                <div class="timeline">
-                    <div class="timeline-item">
-                        <div class="timeline-time">c. 508 BC</div>
-                        <h4>Athenian Democracy</h4>
-                        <p>The Athenian practice of using large, randomly selected juries (Dikasteria) and citizen assemblies was an early, large-scale experiment in collective decision-making and justice.</p>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-time">1785</div>
-                        <h4>Condorcet's Jury Theorem</h4>
-                        <p>The Marquis de Condorcet provides the first mathematical proof that if individuals are more than 50% likely to be right, a larger group is almost certain to make the correct decision.</p>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-time">1906</div>
-                        <h4>Galton's Ox Experiment</h4>
-                        <p>Francis Galton, a skeptic of democracy, is shocked to discover that the average guess of a crowd at a country fair is nearly perfect at predicting an ox's weight, providing the foundational anecdote for the field.</p>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-time">1945</div>
-                        <h4>Hayek's "Use of Knowledge in Society"</h4>
-                        <p>Economist Friedrich Hayek argues that a market's price system is a mechanism for aggregating the dispersed, local knowledge of millions of individuals, a task no central planner could ever accomplish.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="modern-era" class="tab-content">
-            <div class="section-card">
-                <h2 class="section-title">The Modern Era (1980s – Present)</h2>
-                <div class="sector-grid">
-                    <div class="sector-card">
-                        <div class="sector-name">Prediction Markets</div>
-                        <p>Beginning with the Iowa Electronic Markets in 1988, these platforms harness the crowd to create uncannily accurate forecasts on everything from elections to corporate sales by allowing people to bet on outcomes.</p>
-                    </div>
-                    <div class="sector-card">
-                        <div class="sector-name">Open Source Software</div>
-                        <p>The rise of projects like Linux (1991) demonstrates that a globally distributed, volunteer crowd can build and maintain incredibly complex systems more effectively than traditional corporate hierarchies.</p>
-                    </div>
-                    <div class="sector-card">
-                        <div class="sector-name">Crowdsourcing & The Web</div>
-                        <p>The launch of Wikipedia (2001) becomes the quintessential example of large-scale content creation. Platforms like Kaggle (2010) and Mechanical Turk further formalize crowdsourcing as a problem-solving tool.</p>
-                        <div class="casualties-highlight">
-                            <strong>Challenge:</strong> The same platforms can also create echo chambers and groupthink, demonstrating the dark side of collective behavior online.
-                        </div>
-                    </div>
-                    <div class="sector-card">
-                        <div class="sector-name">AI & Collective Intelligence</div>
-                        <p>Modern AI systems, especially large language models, can be seen as a form of collective intelligence, as they are trained on the aggregated knowledge of a vast portion of the public internet created by millions of humans.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="key-thinkers" class="tab-content">
-            <div class="section-card">
-                <h2 class="section-title">Key Thinkers</h2>
-                <div class="sector-grid">
-                    <div class="sector-card">
-                        <h3 class="sector-name">Francis Galton</h3>
-                        <p>A statistician and eugenicist who, in studying the average guess of a crowd in 1906, inadvertently provided the first powerful empirical evidence for the wisdom of crowds.</p>
-                    </div>
-                    <div class="sector-card">
-                        <h3 class="sector-name">Friedrich Hayek</h3>
-                        <p>An Austrian economist who argued in the 1940s that market prices were a form of collective computation, solving a problem of knowledge distribution that no central authority could match.</p>
-                    </div>
-                    <div class="sector-card">
-                        <h3 class="sector-name">James Surowiecki</h3>
-                        <p>A journalist whose 2004 book, "The Wisdom of Crowds," synthesized decades of research and popularized the idea for a mass audience, defining the four key conditions for a wise crowd.</p>
-                    </div>
-                     <div class="sector-card">
-                        <h3 class="sector-name">Scott Page</h3>
-                        <p>A contemporary researcher on complex systems whose "Diversity Trumps Ability" theorem provides mathematical proof for why cognitive diversity is often more important than individual expertise for group problem-solving.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="core-concepts" class="tab-content">
-            <div class="section-card">
-                <h2 class="section-title">The Four Conditions for a Wise Crowd</h2>
-                <div class="sector-grid">
-                     <div class="sector-card">
-                        <h3 class="sector-name">Diversity of Opinion</h3>
-                        <p>The group must possess a wide range of perspectives, backgrounds, and private information. Homogenous groups are prone to correlated errors and collective blind spots.</p>
-                     </div>
-                     <div class="sector-card">
-                        <h3 class="sector-name">Independence</h3>
-                        <p>Individuals in the group must form their own judgments without being influenced by the choices of those around them. This prevents cascades and herding behavior.</p>
-                     </div>
-                     <div class="sector-card">
-                        <h3 class="sector-name">Decentralization</h3>
-                        <p>Individuals should be able to draw on their own local, specialized knowledge. Power and information should not be overly centralized in a single authority.</p>
-                     </div>
-                     <div class="sector-card">
-                        <h3 class="sector-name">Aggregation</h3>
-                        <p>There must be a mechanism, like a voting system, a market price, or a simple average, to turn the private judgments of individuals into a single, collective decision.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="search" class="tab-content">
-            <div class="section-card">
-                <h2 class="section-title">Search the Knowledge Base</h2>
-                <input type="text" id="searchInput" class="search-box" placeholder="Search for thinkers, concepts, events...">
-                
-                <div id="searchResults">
-                    <p style="text-align: center; color: var(--text-secondary); font-style: italic; margin: 2rem 0;">
-                        Enter a search term above to explore the history of collective intelligence.<br>
-                        Try searching for: "Galton", "Surowiecki", "Prediction Market", "Diversity", etc.
-                    </p>
-                </div>
             </div>
         </div>
     </div>
-
-    <script>
-        // Knowledge base for searching
-        const knowledgeBase = {
-            "Galton": "Sir Francis Galton's 1906 experiment with an ox at a country fair is the foundational anecdote for the wisdom of crowds. The crowd's average guess of the ox's weight was nearly perfect.",
-            "Surowiecki": "James Surowiecki is the author of the 2004 book 'The Wisdom of Crowds,' which popularized the concept and defined the four key conditions: Diversity, Independence, Decentralization, and Aggregation.",
-            "Prediction Market": "A speculative market created to forecast future events. The market price of a contract on an event is considered to be the crowd's collective probability estimate. The Iowa Electronic Markets (1988) was a pioneering example.",
-            "Diversity": "Cognitive diversity is a key condition for a wise crowd. A group with a wide range of perspectives and problem-solving approaches can often outperform a group of like-minded experts.",
-            "Independence": "For a crowd's errors to cancel out, their judgments must be independent. If people are just copying each other, the crowd becomes a herd and its collective intelligence collapses.",
-            "Aggregation": "A mechanism for turning private judgments into a collective decision. Examples include voting systems, market prices, or simply averaging individual estimates.",
-            "Decentralization": "The principle that individuals should be able to draw on their own local, specialized knowledge. It ensures that information is not concentrated in one place and that a wider range of data is included.",
-            "Open Source": "Projects like Linux demonstrate how a decentralized, independent crowd of volunteers can collaboratively build and maintain highly complex and reliable systems.",
-            "Wikipedia": "The online encyclopedia is a prime example of crowdsourcing, where millions of individuals contribute and edit content to create a vast repository of collective knowledge.",
-            "Condorcet": "The Marquis de Condorcet's Jury Theorem (1785) was an early mathematical proof showing that if individuals are more likely to be right than wrong, a larger group will be more accurate than any single member."
-        };
-
-        // Initialize the application
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeTabs();
-            initializeSectorButtons();
-            initializeSearch();
-            initializeModal();
-        });
-
-        function initializeModal() {
-            const modal = document.getElementById('settings-modal');
-            const openBtn = document.getElementById('settings-btn');
-            const closeBtn = document.getElementById('close-modal-btn');
-
-            if (modal && openBtn && closeBtn) {
-                openBtn.addEventListener('click', () => modal.classList.add('show'));
-                closeBtn.addEventListener('click', () => modal.classList.remove('show'));
-                modal.addEventListener('click', (event) => {
-                    if (event.target === modal) modal.classList.remove('show');
-                });
-            }
+</div>
+<script>
+    // Knowledge base for searching
+    const knowledgeBase = {
+        "Urbanization": "The process of a country's population shifting from rural to urban areas. It is a primary driver of modern social and economic change.",
+        "Zoning": "A method of urban planning in which a municipality divides land into areas or 'zones,' each of which has a set of regulations for new development that differs from other zones. Zones can be for residential, commercial, or industrial use.",
+        "Grid Plan": "A type of city plan in which streets run at right angles to each other, forming a grid. It is one of the oldest and most common forms of city layout, favored for its simplicity and efficiency in parcelling land.",
+        "Suburb": "A residential area or a mixed-use area, either existing as part of a city or as a separate residential community within commuting distance of a city. Suburbs grew exponentially with the advent of the automobile.",
+        "Infrastructure": "The basic physical and organizational structures and facilities (e.g., buildings, roads, power supplies) needed for the operation of a society or enterprise. For cities, this includes water, sewage, electrical grids, and transportation networks.",
+        "Gentrification": "The process of changing the character of a neighborhood through the influx of more affluent residents and businesses. It often increases the economic value of a neighborhood, but can lead to the displacement of long-term, lower-income residents.",
+        "Jane Jacobs": "An influential writer and activist on urbanism. Her 1961 book, 'The Death and Life of Great American Cities,' critiqued 1950s urban renewal policies and championed vibrant, diverse, mixed-use neighborhoods.",
+        "Central Business District (CBD)": "The commercial and business center of a city. In larger cities, it is often synonymous with the 'financial district' and characterized by a high concentration of office buildings and retail establishments.",
+        "Megalopolis": "A very large, heavily populated city or urban complex, typically formed by the merging of several cities and their suburbs. The area from Boston to Washington, D.C. is a classic example.",
+        "Urban Sprawl": "The expansion of low-density development outward from city centers. It is characterized by single-family homes, car-dependent lifestyles, and the separation of residential and commercial uses.",
+        "Mixed-Use Development": "Urban development that blends residential, commercial, cultural, institutional, or industrial uses, where those functions are physically and functionally integrated. It is a key component of New Urbanism.",
+        "Public Transit": "Shared passenger-transport services which are available for use by the general public, such as buses, trains, and subways. Efficient public transit is crucial for the functioning of dense urban areas.",
+        "Urban Heat Island": "An urban area or metropolitan area that is significantly warmer than its surrounding rural areas due to human activities. The main cause is the modification of land surfaces, where structures absorb and re-emit the sun's heat more than natural landscapes."
+    };
+    // Initialize the application
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeTabs();
+        initializeSectorButtons();
+        initializeSearch();
+        initializeModal();
+    });
+    function initializeModal() {
+        const modal = document.getElementById('settings-modal');
+        const openBtn = document.getElementById('settings-btn');
+        const closeBtn = document.getElementById('close-modal-btn');
+        if (modal && openBtn && closeBtn) {
+            openBtn.addEventListener('click', () => {
+                modal.classList.add('show');
+            });
+            closeBtn.addEventListener('click', () => {
+                modal.classList.remove('show');
+            });
+            modal.addEventListener('click', (event) => {
+                if (event.target === modal) {
+                    modal.classList.remove('show');
+                }
+            });
         }
-
-        function initializeTabs() {
+    }
+    function initializeTabs() {
+        const tabButtons = document.querySelectorAll('.tab-button');
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const tabName = this.getAttribute('data-tab');
+                showTab(tabName);
+            });
+        });
+    }
+    function showTab(tabName) {
+        try {
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => {
+                if (content && content.classList) {
+                    content.classList.remove('active');
+                }
+            });
             const tabButtons = document.querySelectorAll('.tab-button');
             tabButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const tabName = this.getAttribute('data-tab');
-                    showTab(tabName);
-                });
-            });
-        }
-
-        function showTab(tabName) {
-            try {
-                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-                document.querySelectorAll('.tab-button').forEach(button => button.classList.remove('active'));
-                document.getElementById(tabName).classList.add('active');
-                document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
-            } catch (error) { console.error('Error in showTab:', error); }
-        }
-
-        function initializeSectorButtons() {
-            const sectorButtons = document.querySelectorAll('.sector-button');
-            sectorButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const sectorName = this.getAttribute('data-sector');
-                    showSectorDetail(sectorName, this);
-                });
-            });
-        }
-
-        function showSectorDetail(sector, clickedButton) {
-            try {
-                document.querySelectorAll('.sector-detail').forEach(detail => detail.classList.remove('show'));
-                document.querySelectorAll('.sector-button').forEach(button => button.classList.remove('active'));
-                const targetDetail = document.getElementById(sector + '-detail');
-                if (targetDetail) {
-                    targetDetail.classList.add('show');
-                    clickedButton.classList.add('active');
+                if (button && button.classList) {
+                    button.classList.remove('active');
                 }
-            } catch (error) { console.error('Error in showSectorDetail:', error); }
-        }
-
-        function initializeSearch() {
-            const searchInput = document.getElementById('searchInput');
-            if (searchInput) {
-                searchInput.addEventListener('keyup', searchContent);
+            });
+            const targetTab = document.getElementById(tabName);
+            if (targetTab && targetTab.classList) {
+                targetTab.classList.add('active');
             }
+            const activeButton = document.querySelector(`[data-tab="${tabName}"]`);
+            if (activeButton && activeButton.classList) {
+                activeButton.classList.add('active');
+            }
+        } catch (error) {
+            console.error('Error in showTab:', error);
         }
-
-        function searchContent() {
-            try {
-                const searchInput = document.getElementById('searchInput');
-                const resultsDiv = document.getElementById('searchResults');
-                if (!searchInput || !resultsDiv) return;
-                
-                const searchTerm = searchInput.value.toLowerCase();
-
-                if (searchTerm.length < 2) {
-                    resultsDiv.innerHTML = `<p style="text-align: center; color: var(--text-secondary); font-style: italic; margin: 2rem 0;">Enter a search term above to explore the history of collective intelligence.<br>Try searching for: "Galton", "Surowiecki", "Prediction Market", "Diversity", etc.</p>`;
-                    return;
-                }
-
-                let results = [];
-                for (const key in knowledgeBase) {
-                    if (knowledgeBase.hasOwnProperty(key)) {
-                        const value = knowledgeBase[key];
-                        if (key.toLowerCase().includes(searchTerm) || value.toLowerCase().includes(searchTerm)) {
-                            results.push({
-                                title: key,
-                                content: value,
-                                relevance: key.toLowerCase().startsWith(searchTerm) ? 2 : 1
-                            });
-                        }
+    }
+    function initializeSectorButtons() {
+        const sectorButtons = document.querySelectorAll('.sector-button');
+        sectorButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const sectorName = this.getAttribute('data-sector');
+                showSectorDetail(sectorName, this);
+            });
+        });
+    }
+    function showSectorDetail(sector, clickedButton) {
+        try {
+            const details = document.querySelectorAll('.sector-detail');
+            details.forEach(detail => detail.classList.remove('show'));
+            const buttons = document.querySelectorAll('.sector-button');
+            buttons.forEach(button => button.classList.remove('active'));
+            const targetDetail = document.getElementById(sector + '-detail');
+            if (targetDetail) {
+                targetDetail.classList.add('show');
+                clickedButton.classList.add('active');
+            }
+        } catch (error) {
+            console.error('Error in showSectorDetail:', error);
+        }
+    }
+    function initializeSearch() {
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.addEventListener('keyup', searchContent);
+        }
+    }
+    function searchContent() {
+        try {
+            const searchInput = document.getElementById('searchInput');
+            const resultsDiv = document.getElementById('searchResults');
+            
+            if (!searchInput || !resultsDiv) return;
+            
+            const searchTerm = searchInput.value.toLowerCase();
+            if (searchTerm.length < 2) {
+                resultsDiv.innerHTML = '<p style="text-align: center; color: var(--text-secondary); font-style: italic; margin: 2rem 0;">Enter a search term above to explore the urban development knowledge base.<br>Try searching for: "Zoning", "Jane Jacobs", "Grid Plan", "Suburb", "Infrastructure", etc.</p>';
+                return;
+            }
+            let results = [];
+            
+            for (const key in knowledgeBase) {
+                if (knowledgeBase.hasOwnProperty(key)) {
+                    const value = knowledgeBase[key];
+                    if (key.toLowerCase().includes(searchTerm) || value.toLowerCase().includes(searchTerm)) {
+                        results.push({
+                            title: key,
+                            content: value,
+                            relevance: key.toLowerCase().startsWith(searchTerm) ? 2 : 1
+                        });
                     }
                 }
-
-                results.sort((a, b) => b.relevance - a.relevance);
-
-                if (results.length === 0) {
-                    resultsDiv.innerHTML = `<div class="section-card"><h3 style="color: var(--accent-1);">No results found for "${searchInput.value}"</h3><p>Try searching for thinkers, concepts, or events.</p></div>`;
-                    return;
-                }
-
-                let resultHTML = `<h3 style="color: var(--accent-1); margin-bottom: 1.5rem;">Search Results for "${searchInput.value}"</h3>`;
-                for (let i = 0; i < results.length; i++) {
-                    const result = results[i];
-                    const highlightedContent = result.content.replace(new RegExp(searchTerm, 'gi'), `<span class="highlight">$&</span>`);
-                    resultHTML += `<div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid var(--accent-1);"><h4 style="color: var(--accent-1); margin-bottom: 0.8rem;">${result.title}</h4><p style="line-height: 1.6;">${highlightedContent}</p></div>`;
-                }
-
-                resultsDiv.innerHTML = resultHTML;
-            } catch (error) { console.error('Error in searchContent:', error); }
+            }
+            results.sort((a, b) => b.relevance - a.relevance);
+            if (results.length === 0) {
+                resultsDiv.innerHTML = `<div class="section-card"><h3 style="color: var(--accent-1);">No results found for "${searchInput.value}"</h3><p>Try searching for concepts, city types, planners, or any topic.</p></div>`;
+                return;
+            }
+            let resultHTML = `<h3 style="color: var(--accent-1); margin-bottom: 1.5rem;">Search Results for "${searchInput.value}"</h3>`;
+            
+            for (let i = 0; i < results.length; i++) {
+                const result = results[i];
+                const highlightedContent = result.content.replace(new RegExp(searchTerm, 'gi'), '<span class="highlight">$&</span>');
+                
+                resultHTML += `<div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid var(--accent-1);"><h4 style="color: var(--accent-1); margin-bottom: 0.8rem;">${result.title}</h4><p style="line-height: 1.6;">${highlightedContent}</p></div>`;
+            }
+            resultsDiv.innerHTML = resultHTML;
+        } catch (error) {
+            console.error('Error in searchContent:', error);
         }
-    </script>
+    }
+</script>
 </body>
 </html>
