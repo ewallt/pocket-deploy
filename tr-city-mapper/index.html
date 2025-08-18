@@ -1,9 +1,3 @@
-You've spotted two excellent points, and you are correct on both counts. My apologies for those errors.
-
-Gold Headings: You are right. Only the main title (<h1>) should be gold in that theme, not all the other section headings. I have corrected the CSS rule to target only the main document title.
-Stray Text: That "code Code download..." text is indeed an error. It appears to be a rendering artifact from the template's script. I've adjusted the script that builds that timeline to ensure it's clean and doesn't produce that extra text.
-Here is the corrected version of the HTML file with those two fixes implemented.
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -151,7 +145,8 @@ background-color: var(--input-bg);
 }
 
 /* CORRECTED STYLE FOR EMERALD HEADING */
-.theme-emerald #docTitle {
+.dark.theme-emerald #docTitle,
+.dark.theme-emerald .active-link {
 color: #f0c475;
 }
 
@@ -442,27 +437,32 @@ sections.forEach(sec => sec && obs.observe(sec));
 (function buildTimeline(){
 const wrap = document.getElementById('timelineWrap');
 const list = document.getElementById('timeline');
-const coda = document.getElementById('timelineCoda');
 
 if (!timelineStepsData || !wrap || !list) { if(wrap) wrap.hidden = true; return; }
 const steps = timelineStepsData.split(',').map(s => s.trim());
 const labels = timelineLabelsData ? timelineLabelsData.split(',').map(s => s.trim()) : [];
 if (!steps.length) { wrap.hidden = true; return; }
-wrap.hidden = false;
 
-// FIX: Clear list content before building to prevent artifacts
-list.innerHTML = '';
+wrap.hidden = false;
+list.innerHTML = ''; // Clear any potential placeholder content
 
 const mkStep = (id, label) => (
 `<li class="flex items-center gap-2"><span class="inline-block w-[14px] h-[14px] rounded-full border-2 border-current bg-current"></span><a href="#${id}" class="hover:underline">${label}</a></li>`
 );
+
 const segments = [];
-steps.forEach((id, idx) => {
-const el = $$('#content h2').find(h => slug(h.textContent) === id);
-if (el && !el.id) el.id = id;
-const label = labels[idx] || (el?.textContent || id.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()));
-segments.push(mkStep(id, label));
-if (idx !== steps.length - 1) segments.push('<li class="h-[2px] bg-current opacity-35"></li>');
+const headings = $$('#content h2');
+
+steps.forEach((stepId, idx) => {
+const headingEl = headings.find(h => slug(h.textContent) === stepId);
+if (headingEl) {
+if (!headingEl.id) headingEl.id = stepId;
+const label = labels[idx] || headingEl.textContent;
+segments.push(mkStep(stepId, label));
+if (idx !== steps.length - 1) {
+segments.push('<li class="h-[2px] bg-current opacity-35"></li>');
+}
+}
 });
 list.innerHTML = segments.join('');
 })();
@@ -501,8 +501,12 @@ restore();
 
 buildTOC();
 try {
-const saved = localStorage.getItem('colorScheme');
-applyTheme(saved && THEME_PACKS[saved] ? saved : 'slate');
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+document.documentElement.classList.add('dark');
+}
+const savedColor = localStorage.getItem('colorScheme');
+applyTheme(savedColor || 'slate');
 } catch(_){
 applyTheme('slate');
 }
