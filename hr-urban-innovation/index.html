@@ -540,5 +540,18 @@ expand_less
       }
     });
   </script>
+  <script>
+(function(){
+  if (document.getElementById('first-paragraph-fix')) return;
+  var css = `
+    .prose :where(h2,h3) + p { padding-left: 1rem; border-left: 2px solid var(--border); }
+    .prose p.lead { font-size: inherit; line-height: inherit; font-weight: inherit; }
+  `;
+  var s = document.createElement('style');
+  s.id = 'first-paragraph-fix';
+  s.textContent = css;
+  document.head.appendChild(s);
+})();
+</script>
 </body>
 </html>
