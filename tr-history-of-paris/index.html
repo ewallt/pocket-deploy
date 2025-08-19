@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+<style>
+.material-symbols-outlined {
+font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+</style>
+<title>The Evolution of the City</title>
+<!-- Prepaint bootstrap: set dark + theme class before paint to avoid flicker -->
+<script>
+(function () {
+const root = document.documentElement;
+try {
+const savedTheme = localStorage.getItem('theme'); // 'light' | 'dark' | null
+const savedColor = localStorage.getItem('colorScheme'); // 'slate' | 'emerald' | future
+const isDark = savedTheme !== 'light'; // default to dark if unset
+root.classList.toggle('dark', isDark);
+// Apply colored theme classes ONLY in dark mode; light is always neutral slate
+root.classList.toggle('theme-emerald', isDark && savedColor === 'emerald');
+} catch (_) {}
+})();
+</script>
+<!-- Tailwind (with Typography) -->
+<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+<script>
+tailwind.config = { darkMode: 'class' };
+</script>
+<!-- Google Font (optional) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+<style>
+:root { color-scheme: light dark; }
+html { scroll-behavior: smooth; }
+.font-newspaper { font-family: 'Lora', serif; }
+:where(h2,h3,h4){ scroll-margin-top: 84px; }
+mark { background: #fde68a; padding: .1em .2em; border-radius: .2rem; }
+@media (max-width: 380px){ .prose { font-size: .96rem; } }
+
+/* ---------- Semantic surfaces (read from CSS variables) ---------- */
+.hero {
+/* give the header an explicit base fill so gradient blends to the right hue */
+background-color: var(--hero-base);
+background:
+radial-gradient(50% 120% at 10% 10%, var(--hero-r1), transparent 60%),
+radial-gradient(80% 140% at 90% 10%, var(--hero-r2), transparent 70%),
+linear-gradient(180deg, var(--hero-wash), transparent 35%);
+}
+.border-var { border-color: var(--border) !important; }
+.surface { border-width: 1px; border-style: solid; border-color: var(--border); }
+.hr-var { border-color: var(--border); }
+.subtitle { color: var(--subtitle-fg); }
+.timeline-fg { color: var(--timeline-fg); }
+.footer-note { color: var(--footer-fg); }
+.active-link { color: var(--active); font-weight: 700; }
+
+.input-surface {
+border: 1px solid var(--input-border);
+background-color: var(--input-bg);
+}
+.btn-surface { border: 1px solid var(--btn-border); }
+.btn-surface:hover { background: var(--btn-hover-bg); }
+.toc-link:hover { background: var(--hover-bg); }
+
+/* ---------- Slate (default) variables ---------- */
+:root{
+/* accents / inks */
+--active: rgb(59,130,246); /* sky-500 */
+--subtitle-fg: rgb(71,85,105); /* slate-600 */
+--timeline-fg: rgb(100,116,139); /* slate-500 */
+--footer-fg: rgb(100,116,139); /* slate-500 */
+
+/* surfaces */
+--border: rgb(226,232,240); /* slate-200 */
+--hover-bg: rgb(248,250,252); /* slate-50 */
+--btn-border: rgb(203,213,225); /* slate-300 */
+--btn-hover-bg: rgb(248,250,252); /* slate-50 */
+--input-border: rgba(203,213,225,0.7); /* slate-300/70 */
+--input-bg: rgba(255,255,255,0.7); /* white/70 */
+
+/* hero base & gradient (light) */
+--hero-base: transparent; /* keep light header airy */
+--hero-r1: rgba(49,46,129,.12); /* indigo-700 */
+--hero-r2: rgba(234,88,12,.12); /* orange-600 hint */
+--hero-wash: rgba(14,165,233,.08); /* sky-500 wash */
+}
+.dark{
+--subtitle-fg: rgb(203,213,225); /* slate-300 */
+--timeline-fg: rgb(148,163,184); /* slate-400 */
+--footer-fg: rgb(148,163,184); /* slate-400 */
+
+--border: rgb(30,41,59); /* slate-800 */
+--hover-bg: rgb(15,23,42); /* slate-900 */
+--btn-border: rgb(51,65,85); /* slate-700 */
+--btn-hover-bg: rgb(15,23,42); /* slate-900 */
+--input-border: rgba(51,65,85,0.7); /* slate-700/70 */
+--input-bg: rgba(2,6,23,0.6); /* slate-950/60 */
+
+/* hero base & gradient (dark) */
+--hero-base: rgb(2,6,23); /* slate-950 */
+--hero-r1: rgba(49,46,129,.12);
+--hero-r2: rgba(234,88,12,.12);
+--hero-wash: rgba(14,165,233,.08);
+}
+
+/* ---------- Emerald theme overrides (light & dark) ---------- */
+.theme-emerald{
+--active: #10b981; /* emerald-500 */
+
+--border: rgb(187,247,208); /* emerald-200 */
+--hover-bg: rgb(240,253,244); /* emerald-50 */
+--btn-border: rgb(187,247,208); /* emerald-200 */
+--btn-hover-bg: rgb(240,253,244); /* emerald-50 */
+--input-border: rgba(110,231,183,0.7); /* emerald-300/70 */
+--input-bg: rgba(255,255,255,0.7); /* white/70 */
+
+/* keep subtitles/timeline neutral for readability over hero */
+--subtitle-fg: rgb(71,85,105); /* slate-600 */
+--timeline-fg: rgb(71,85,105); /* slate-600 */
+--footer-fg: rgb(16,185,129); /* emerald-500 */
+
+/* hero base & gradient (emerald light) */
+--hero-base: transparent;
+--hero-r1: rgba(16,185,129,.14); /* emerald-500 */
+--hero-r2: rgba(163,230,53,.12); /* lime-400 */
+--hero-wash: rgba(5,150,105,.10); /* emerald-600 wash */
+}
+.dark.theme-emerald{
+/* ↑ Give borders enough contrast on dark emerald surfaces */
+--border: rgba(110,231,183,0.55); /* emerald-300 @ 55% */
+--hover-bg: rgb(6,78,59); /* emerald-900 */
+--btn-border: rgba(110,231,183,0.45); /* slightly softer than borders */
+--btn-hover-bg: rgb(6,78,59); /* emerald-900 */
+--input-border: rgba(110,231,183,0.55); /* match border contrast */
+--input-bg: rgba(6,95,70,0.60); /* emerald-900/60 */
+
+/* text accents for readability */
+--footer-fg: rgb(110,231,183); /* emerald-300/400 */
+--subtitle-fg: rgb(226,252,236); /* emerald-100 */
+--timeline-fg: rgb(187,247,208); /* emerald-200 */
+
+/* hero base & gradient (unchanged, stays emerald) */
+--hero-base: rgb(2,44,34); /* emerald-950 (#022c22) */
+--hero-r1: rgba(16,185,129,.14);
+--hero-r2: rgba(163,230,53,.12);
+--hero-wash: rgba(5,150,105,.10);
+}
+
+/* NEW STYLE FOR EMERALD HEADINGS */
+.theme-emerald .prose h2,
+.theme-emerald .prose h3,
+.theme-emerald #docTitle,
+.theme-emerald .subtitle,
+.theme-emerald aside h2,
+.theme-emerald .active-link {
+color: #f0c475;
+}
+
+/* ===== Modal Styles ===== */
+.modal-overlay {
+display: none; position: fixed; z-index: 1000; left: 0; top: 0;
+width: 100%; height: 100%;
+background-color: rgba(0,0,0,0.6);
+justify-content: center; align-items: center;
+}
+.modal-overlay.show { display: flex; }
+.modal-content {
+background: #fff; color: #1e293b; /* slate-800 */
+padding: 2rem; border-radius: 8px;
+text-align: center; position: relative; width: 90%; max-width: 400px;
+}
+.dark .modal-content { background: #1e293b; color: #f8fafc; } /* slate-800, slate-50 */
+.modal-content h3 { font-size: 1.5rem; margin-bottom: 1.5rem; }
+.close-btn {
+position: absolute; top: 10px; right: 15px; color: #94a3b8; /* slate-400 */
+font-size: 28px; font-weight: bold; background: none;
+border: none; cursor: pointer;
+}
+.dark .close-btn { color: #64748b; } /* slate-500 */
+</style>
+</head>
+<body class="bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 pb-[env(safe-area-inset-bottom)]">
+<!-- Modal Theme Switcher HTML -->
+<div class="fixed top-4 right-4 z-50">
+<button id="settings-btn" class="p-2 rounded-full shadow-lg bg-white/70 dark:bg-slate-800/70 backdrop-blur" aria-label="toggle settings">
+<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0 3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.096 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+</button>
+</div>
+<div id="settings-modal" class="modal-overlay">
+<div class="modal-content surface">
+<button id="close-modal-btn" class="close-btn">×</button>
+<h3>Display Settings</h3>
+<button id="modalThemeBtn" class="w-full text-sm px-3 py-2 rounded-lg btn-surface mb-2">Toggle Light/Dark</button>
+<button id="modalColorBtn" class="w-full text-sm px-3 py-2 rounded-lg btn-surface">Change Color Scheme</button>
+</div>
+</div>
+<!-- Header -->
+<header id="top" class="hero border-b border-var">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-between gap-4">
+<div>
+<h1 id="docTitle" class="text-2xl sm:text-3xl font-bold font-newspaper tracking-tight">Loading...</h1>
+<p id="docSubtitle" class="subtitle text-sm sm:text-base"></p>
+</div>
+<div class="flex items-center gap-2">
+<label for="search" class="sr-only">Search</label>
+<input id="search" type="search" placeholder="Search…" class="hidden md:block w-56 rounded-xl input-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400" />
+<button id="clearSearch" type="button" class="hidden md:inline-flex text-xs px-2 py-2 rounded-lg btn-surface">Clear</button>
+</div>
+</div>
+code
+Code
+
+download
+
+content_copy
+
+expand_less
+<!-- Timeline / Sections Nav -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6" id="timelineWrap" hidden>
+  <nav aria-label="Journey timeline" id="timelineNav" class="timeline-fg">
+    <ol id="timeline" class="grid grid-cols-2 sm:grid-cols-4 items-center gap-x-2 gap-y-1 text-[11px] sm:text-sm"></ol>
+    <div id="timelineCoda" class="mt-2 text-[11px] sm:text-xs"></div>
+  </nav>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)] gap-8">
+<!-- Sidebar -->
+<aside class="lg:sticky lg:top-4 h-max">
+<nav aria-label="On this page" class="rounded-2xl surface p-4">
+<h2 class="text-sm font-semibold mb-2">Sections</h2>
+<ol id="toc" class="space-y-1 text-sm"></ol>
+<hr class="my-4 hr-var" />
+<button id="expandAll" type="button" class="w-full text-xs px-3 py-2 rounded-lg btn-surface">Expand All</button>
+<button id="collapseAll" type="button" class="mt-2 w-full text-xs px-3 py-2 rounded-lg btn-surface">Collapse All</button>
+</nav>
+</aside>
+code
+Code
+
+download
+
+content_copy
+
+expand_less
+<section id="content" class="prose prose-slate dark:prose-invert max-w-none">
+  <!-- Article Content Starts Here -->
+  
+  <article class="rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+<meta name="doc-title" content="History of Paris">
+<meta name="doc-subtitle" content="From Roman Lutetia to a 21st-century global capital.">
+<meta name="timeline-steps" content="prehistory-and-lutetia,medieval-paris,renaissance-and-enlightenment,revolution-and-haussmann,belle-epoque-to-wwii,postwar-to-present">
+<meta name="timeline-labels" content="Prehistory,Medieval,Renaissance,Revolution & Haussmann,Belle Époque–WWII,Postwar–Today">
+<h2 id="prehistory-and-lutetia">Prehistory and Lutetia</h2>
+<p class="lead">Long before monuments and boulevards, the Paris Basin’s rivers supported small settlements that traded along the Seine. When the Romans conquered Gaul, they founded Lutetia on the Île de la Cité and the Left Bank, laying streets, baths, and an amphitheater that anchored a regional hub.</p>
+<details open>
+<summary><h3>From Fishermen to Romans</h3></summary>
+<div class="pl-4 border-l-2 border-var"><p>The Parisii tribe controlled river traffic until Roman engineers imposed a grid, bridges, and civic buildings; fragments like the Arènes de Lutèce and Cluny baths still hint at that first urban plan.</p></div>
+</details>
+<h2 id="medieval-paris">Medieval Paris</h2>
+<p class="lead">After Rome’s decline, Paris reemerged as a royal and religious center, clustering around the cathedral and palace on the island and spilling to the banks. Guilds, markets, and the University of Paris turned it into a magnet for learning and trade.</p>
+<details open>
+<summary><h3>The Island City</h3></summary>
+<div class="pl-4 border-l-2 border-var"><p>Notre-Dame’s Gothic rise symbolized both piety and power, while walled precincts protected a dense maze of streets, convents, and workshops.</p></div>
+</details>
+<h3>Schools and Scriptoria</h3>
+<p>Scholastics on the Left Bank shaped Europe’s intellectual life, and bookmaking flourished around the Latin Quarter’s colleges and cloisters.</p>
+<h2 id="renaissance-and-enlightenment">Renaissance and Enlightenment</h2>
+<p class="lead">Kings invited Italian artists, rebuilt palaces, and opened grand squares, while printers and salons spread humanist and later Enlightenment ideas. Paris became both a stage for courtly spectacle and an engine of critique.</p>
+<details open>
+<summary><h3>Streets, Squares, and Print</h3></summary>
+<div class="pl-4 border-l-2 border-var"><p>New bridges knit Right and Left Banks; the Place des Vosges set a model for planned urban space; presses multiplied pamphlets that traveled faster than royal censors.</p></div>
+</details>
+<h2 id="revolution-and-haussmann">Revolution and Haussmann</h2>
+<p class="lead">Revolutionary crowds made the city a theater of politics, toppling symbols and redrawing institutions; decades later, Baron Haussmann’s works remade the fabric with boulevards, parks, and modern sewers.</p>
+<details open>
+<summary><h3>Urban Upheaval</h3></summary>
+<div class="pl-4 border-l-2 border-var"><p>From 1789 through the 19th century, barricades, regimes, and reforms recurred; wide avenues, uniform façades, and rail hubs then oriented Paris to industry and spectacle.</p></div>
+</details>
+<h2 id="belle-epoque-to-wwii">Belle Époque to WWII</h2>
+<p class="lead">World’s fairs, the Métro, electricity, and avant-garde art defined a glittering Belle Époque even as social tensions simmered; war, occupation, and liberation brought rupture and resilience.</p>
+<h3>Modernity and Crisis</h3>
+<p>Cafés and studios incubated movements from Impressionism to Surrealism; 20th-century conflicts scarred the city yet also accelerated infrastructure and planning.</p>
+<h2 id="postwar-to-present">Postwar to Present</h2>
+<p class="lead">Reconstruction, immigration, and suburban growth produced a polycentric metropolis, while preservation laws defended historic cores. Today Paris balances global tourism and culture with climate goals, mobility shifts, and social equity.</p>
+<details open>
+<summary><h3>Global City</h3></summary>
+<div class="pl-4 border-l-2 border-var"><p>Projects from the périphérique to Grand Paris Express, pedestrian riverbanks, and bike networks reflect a long arc: a river town turned world city still reorganizing itself around people, public space, and transit.</p></div>
+</details>
+</article>
+code
+Code
+
+download
+
+content_copy
+
+expand_less
+<!-- DO NOT PASTE ANYTHING AFTER THIS POINT -->
+</section>
+</main>
+<footer class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 text-xs footer-note">
+Threaded Reader — a single-file template
+</footer>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+// ===== Utilities =====
+const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+const slug = s => s.toLowerCase().replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-');
+
+// ===== Read Metadata from Content =====
+const firstArticle = document.querySelector('#content article');
+const docTitle = firstArticle?.querySelector('meta[name="doc-title"]')?.content || 'Untitled Document';
+const docSubtitle = firstArticle?.querySelector('meta[name="doc-subtitle"]')?.content || '';
+const timelineStepsData = firstArticle?.querySelector('meta[name="timeline-steps"]')?.content;
+const timelineLabelsData = firstArticle?.querySelector('meta[name="timeline-labels"]')?.content;
+
+// ===== Populate Header from Metadata =====
+document.getElementById('docTitle').textContent = docTitle;
+document.getElementById('docSubtitle').textContent = docSubtitle;
+document.title = docTitle;
+
+// ===== THEME ENGINE =====
+const THEME_PACKS = {
+slate: {
+proseClass: 'prose-slate',
+bodyClass: 'bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 pb-[env(safe-area-inset-bottom)]'
+},
+emerald: {
+proseClass: 'prose-emerald',
+bodyClass: 'bg-white text-emerald-900 dark:bg-emerald-950 dark:text-emerald-100 pb-[env(safe-area-inset-bottom)]'
+}
+};
+const availableThemes = Object.keys(THEME_PACKS);
+let currentThemeIndex = 0;
+try {
+const saved = localStorage.getItem('colorScheme');
+if (saved && THEME_PACKS[saved]) currentThemeIndex = availableThemes.indexOf(saved);
+} catch(_) {}
+
+function applyTheme(themeKey){
+const root = document.documentElement;
+const isDark = root.classList.contains('dark');
+const pack = THEME_PACKS[themeKey] || THEME_PACKS.slate;
+root.classList.toggle('theme-emerald', isDark && themeKey === 'emerald');
+document.body.className = isDark ? pack.bodyClass : THEME_PACKS.slate.bodyClass;
+document.getElementById('content').className = `prose ${pack.proseClass} dark:prose-invert max-w-none`;
+try { localStorage.setItem('colorScheme', themeKey); } catch(_){}
+}
+
+function toggleLightDark() {
+const root = document.documentElement;
+const isDark = root.classList.toggle('dark');
+try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch(_){}
+
+if (!isDark) {
+root.classList.remove('theme-emerald');
+applyTheme('slate');
+} else {
+let saved = 'slate';
+try { const s = localStorage.getItem('colorScheme'); if (s) saved = s; } catch(_){}
+applyTheme(saved);
+}
+buildTOC();
+}
+
+function cycleColorScheme() {
+const root = document.documentElement;
+if (!root.classList.contains('dark')) {
+toggleLightDark();
+return;
+}
+currentThemeIndex = (currentThemeIndex + 1) % availableThemes.length;
+const newTheme = availableThemes[currentThemeIndex];
+applyTheme(newTheme);
+buildTOC();
+}
+
+// ===== MODAL WIRING =====
+function initializeModal() {
+const modal = document.getElementById('settings-modal');
+const openBtn = document.getElementById('settings-btn');
+const closeBtn = document.getElementById('close-modal-btn');
+const modalThemeBtn = document.getElementById('modalThemeBtn');
+const modalColorBtn = document.getElementById('modalColorBtn');
+
+openBtn.onclick = () => modal.classList.add('show');
+closeBtn.onclick = () => modal.classList.remove('show');
+modal.onclick = (event) => { if (event.target === modal) modal.classList.remove('show'); };
+modalThemeBtn.onclick = () => toggleLightDark();
+modalColorBtn.onclick = () => cycleColorScheme();
+}
+initializeModal();
+
+// ===== Expand/Collapse, TOC, Timeline, Search =====
+const getDetails = () => document.querySelectorAll('#content details');
+const expandBtn = document.getElementById('expandAll');
+const collapseBtn = document.getElementById('collapseAll');
+
+if (getDetails().length === 0) {
+if(expandBtn) expandBtn.hidden = true;
+if(collapseBtn) collapseBtn.hidden = true;
+} else {
+expandBtn?.addEventListener('click', () => { getDetails().forEach(d => d.open = true); });
+collapseBtn?.addEventListener('click', () => { getDetails().forEach(d => d.open = false); });
+}
+
+(function addBackToTopLinks(){
+$$('#content > article').forEach((article, index, arr) => {
+if (index === arr.length - 1) return;
+const wrapper = document.createElement('div');
+wrapper.className = 'mt-6 flex justify-end';
+wrapper.innerHTML = `<a href="#top" class="text-sm underline decoration-dotted">Back to top</a>`;
+article.appendChild(wrapper);
+});
+})();
+
+function buildTOC(){
+const toc = document.getElementById('toc');
+if (!toc) return;
+const headings = $$('#content h2, #content h3');
+const items = headings.map(h => {
+if (!h.id) h.id = slug(h.textContent);
+return { id: h.id, text: h.textContent.trim(), level: h.tagName.toLowerCase() };
+});
+
+toc.innerHTML = items.map(({id, text, level}) => {
+const pad = level === 'h3' ? ' pl-4' : '';
+return `<li><a href="#${id}" class="toc-link block px-2 py-1.5 rounded${pad}">${text}</a></li>`;
+}).join('');
+
+const links = $$('#toc a');
+const sections = items.map(i => document.getElementById(i.id));
+const obs = new IntersectionObserver(entries => {
+entries.forEach(e => {
+if (e.isIntersecting) {
+links.forEach(a => a.classList.remove('active-link'));
+const id = '#' + e.target.id;
+const active = links.find(a => a.getAttribute('href') === id);
+active?.classList.add('active-link');
+}
+});
+}, { rootMargin: '-40% 0px -55% 0px', threshold: 0.01 });
+sections.forEach(sec => sec && obs.observe(sec));
+}
+
+(function buildTimeline(){
+const wrap = document.getElementById('timelineWrap');
+const list = document.getElementById('timeline');
+const coda = document.getElementById('timelineCoda');
+
+if (!timelineStepsData || !wrap || !list) { if(wrap) wrap.hidden = true; return; }
+const steps = timelineStepsData.split(',').map(s => s.trim());
+const labels = timelineLabelsData ? timelineLabelsData.split(',').map(s => s.trim()) : [];
+if (!steps.length) { wrap.hidden = true; return; }
+wrap.hidden = false;
+
+const mkStep = (id, label) => (
+`<li class="flex items-center gap-2"><span class="inline-block w-[14px] h-[14px] rounded-full border-2 border-current bg-current"></span><a href="#${id}" class="hover:underline">${label}</a></li>`
+);
+const segments = [];
+steps.forEach((id, idx) => {
+const el = $$('#content h2, #content h3').find(h => slug(h.textContent) === id);
+if (el && !el.id) el.id = id;
+const label = labels[idx] || (el?.textContent || id.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()));
+segments.push(mkStep(id, label));
+if (idx !== steps.length - 1) segments.push('<li class="h-[2px] bg-current opacity-35"></li>');
+});
+list.innerHTML = segments.join('');
+})();
+
+(function searchHL(){
+const input = document.getElementById('search');
+const clearBtn = document.getElementById('clearSearch');
+const content = document.getElementById('content');
+if (!input || !content) return;
+let originalHTML = '';
+function restore(){
+if (originalHTML) {
+content.innerHTML = originalHTML;
+buildTOC();
+}
+}
+function highlight(term){
+if (!originalHTML) originalHTML = content.innerHTML;
+restore();
+if (!term) return;
+const esc = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const re = new RegExp(`(${esc})(?![^<]*>)`, 'gi');
+content.innerHTML = content.innerHTML.replace(re, '<mark>$1</mark>');
+buildTOC();
+}
+let t;
+input.addEventListener('input', (e) => {
+clearTimeout(t);
+t = setTimeout(() => highlight(e.target.value.trim()), 120);
+});
+clearBtn?.addEventListener('click', () => {
+if (input) input.value='';
+restore();
+});
+})();
+
+buildTOC();
+try {
+const saved = localStorage.getItem('colorScheme');
+applyTheme(saved && THEME_PACKS[saved] ? saved : 'slate');
+} catch(_){
+applyTheme('slate');
+}
+});
+</script>
+<script>
+(function(){
+if (document.getElementById('first-paragraph-fix')) return;
+var css = `
+.prose :where(h2,h3) + p { padding-left: 1rem; border-left: 2px solid var(--border); }
+.prose p.lead { font-size: inherit; line-height: inherit; font-weight: inherit; }
+`;
+var s = document.createElement('style');
+s.id = 'first-paragraph-fix';
+s.textContent = css;
+document.head.appendChild(s);
+})();
+</script>
+</body>
+</html>
+Google Search Suggestions
+Display of Search Suggestions is required when using Grounding with Google Search. Learn more
+
+History of Paris threaded reader web app
+Paris from Roman Lutetia to 21st-century global capital
+Timeline of Paris history
+Key periods in the history of Paris
