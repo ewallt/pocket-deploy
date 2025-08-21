@@ -563,6 +563,17 @@ applyTheme('slate');
 });
 </script>
 <script>
+(function () {
+  // Strip accidental text nodes in <head> (e.g., "Code", comments, etc.)
+  Array.from(document.head.childNodes).forEach(n => {
+    if (n.nodeType === 3 && n.textContent.trim()) n.remove();
+  });
+  // If the mobile UI pasted a lone "Code/Copy code" at top of body, remove it
+  const f = document.body && document.body.firstChild;
+  if (f && f.nodeType === 3 && /^(Code|Copy code)$/i.test(f.textContent.trim())) f.remove();
+})();
+</script>
+<script>
 (function(){
 if (document.getElementById('first-paragraph-fix')) return;
 var css = `
