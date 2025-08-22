@@ -591,5 +591,59 @@ s.textContent = css;
 document.head.appendChild(s);
 })();
 </script>
+<script>
+(function () {
+  // 1) Ensure the first-paragraph ribbon + lead-size fix exists (harmless if already present)
+  if (!document.getElementById('first-paragraph-fix')) {
+    var s = document.createElement('style');
+    s.id = 'first-paragraph-fix';
+    s.textContent =
+      '.prose :where(h2,h3)+p{padding-left:1rem;border-left:2px solid var(--border);}'+
+      '.prose p.lead{font-size:inherit;line-height:inherit;font-weight:inherit;}';
+    document.head.appendChild(s);
+  }
+
+  // 2) Remove stray toolbar words the UI sometimes injects
+  var BAD = new Set(['code','Code','download','content_copy','expand_less','expand_more']);
+  (function cleanToolbarWords(root){
+    var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+    var toRemove = [];
+    while (walker.nextNode()) {
+      var n = walker.currentNode;
+      var t = n.textContent.trim();
+      if (!t) continue;
+      if (BAD.has(t)) {
+        var p = n.parentNode;
+        var lonely = Array.from(p.childNodes).every(function(ch){
+          return ch===n || (ch.nodeType===3 && !ch.textContent.trim());
+        });
+        toRemove.push(lonely ? p : n);
+      }
+    }
+    toRemove.forEach(function(node){ if (node && node.remove) node.remove(); });
+  })(document.body);
+
+  // 3) Unwrap code-fenced HTML fragments into real nodes inside #content
+  function unwrap(pre) {
+    var raw = pre.textContent.trim();
+    raw = raw.replace(/^```[a-z]*\n?/i,'').replace(/\n?```$/,'').trim();
+    if (raw.includes('&lt;') || raw.includes('&gt;') || raw.includes('&amp;')) {
+      var ta = document.createElement('textarea'); ta.innerHTML = raw; raw = ta.value;
+    }
+    if (/<article|<h2|<meta\s+name="doc-title"/i.test(raw)) {
+      var range = document.createRange();
+      range.selectNode(pre);
+      var frag = range.createContextualFragment(raw);
+      pre.replaceWith(frag);
+    }
+  }
+
+  document.querySelectorAll('#content pre > code').forEach(function(codeEl){
+    unwrap(codeEl.closest('pre'));
+  });
+  document.querySelectorAll('#content pre:not(:has(code))').forEach(unwrap);
+})();
+</script>
+  
 </body>
 </html>
