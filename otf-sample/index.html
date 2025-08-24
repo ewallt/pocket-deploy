@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sample SPA with Theme Switcher</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' };
+  </script>
+  <style>
+    /* Default (Light Neutral) */
+    :root {
+      --bg-gradient: linear-gradient(135deg,#f8fafc 0%,#e2e8f0 100%);
+      --accent-1: #2563eb;
+      --accent-2: #1d4ed8;
+      --text-primary: #1e293b;
+      --text-secondary: #475569;
+      --ui-background: #ffffff;
+      --ui-background-accent: #f1f5f9;
+      --btn-gradient: linear-gradient(45deg,#2563eb,#1d4ed8);
+    }
+    /* Navy Blue */
+    .theme-navy {
+      --bg-gradient: linear-gradient(135deg,#0a0a23 0%,#1a1a3a 50%,#2e2e5e 100%);
+      --accent-1: #60a5fa;
+      --accent-2: #3b82f6;
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --ui-background: #1e293b;
+      --ui-background-accent: #334155;
+      --btn-gradient: linear-gradient(45deg,#3b82f6,#1e40af);
+    }
+    /* Green + Gold */
+    .theme-emerald {
+      --bg-gradient: linear-gradient(135deg,#022c22 0%,#064e3b 60%,#065f46 100%);
+      --accent-1: #f0c475;
+      --accent-2: #d4a24c;
+      --text-primary: #ecfdf5;
+      --text-secondary: #a7f3d0;
+      --ui-background: #064e3b;
+      --ui-background-accent: #065f46;
+      --btn-gradient: linear-gradient(45deg,#10b981,#065f46);
+    }
+    body {
+      background: var(--bg-gradient);
+      color: var(--text-primary);
+      font-family: system-ui, sans-serif;
+    }
+    .tab-button {
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      cursor: pointer;
+      background: var(--ui-background);
+      border: 1px solid var(--accent-2);
+      transition: all 0.2s;
+      color: var(--text-primary);
+    }
+    .tab-button:hover {
+      background: var(--btn-gradient);
+      color: white;
+    }
+    .tab-button.active {
+      background: var(--btn-gradient);
+      color: white;
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 50;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal-content {
+      background: var(--ui-background);
+      color: var(--text-primary);
+      padding: 1.5rem;
+      border-radius: 0.5rem;
+      min-width: 300px;
+    }
+    .modal-content h3 { margin-bottom: 1rem; font-weight: 600; }
+    .close-btn { position: absolute; top: 0.5rem; right: 1rem; cursor: pointer; }
+  </style>
+</head>
+<body class="min-h-screen">
+  <!-- Header -->
+  <header class="p-6 border-b" style="background: var(--ui-background); color: var(--text-primary);">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold">Sample Report</h1>
+        <p class="text-sm" style="color: var(--text-secondary);">An interactive single-page app scaffold</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <input id="search" type="text" placeholder="Search…" class="px-2 py-1 rounded border text-sm" />
+        <button id="settings-btn" class="p-2 border rounded" title="Settings">⚙️</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Tabs -->
+  <nav class="flex gap-2 p-4 flex-wrap" style="background: var(--ui-background-accent);">
+    <button class="tab-button active" data-tab="overview">Overview</button>
+    <button class="tab-button" data-tab="concepts">Concepts</button>
+    <button class="tab-button" data-tab="data">Data</button>
+    <button class="tab-button" data-tab="timeline">Timeline</button>
+    <button class="tab-button" data-tab="critiques">Critiques</button>
+    <button class="tab-button" data-tab="glossary">Glossary</button>
+    <button class="tab-button" data-tab="source">Source</button>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="p-6">
+    <div id="overview" class="tab-content active">
+      <h2 class="text-xl font-semibold mb-2" style="color: var(--accent-1);">Overview</h2>
+      <p>This is a placeholder overview section. Replace with report introduction and highlights.</p>
+    </div>
+    <div id="concepts" class="tab-content">
+      <h2 class="text-xl font-semibold mb-2" style="color: var(--accent-1);">Core Concepts</h2>
+      <p>Here you would explain the main concepts from the report.</p>
+    </div>
+    <div id="data" class="tab-content">
+      <h2 class="text-xl font-semibold mb-2" style="color: var(--accent-1);">Evidence / Data</h2>
+      <p>Include charts and tables here. If using Chart.js, wrap each canvas in a responsive container.</p>
+    </div>
+    <div id="timeline" class="tab-content">
+      <h2 class="text-xl font-semibold mb-2" style="color: var(--accent-1);">Timeline</h2>
+      <p>Chronological scenarios, milestones, or phases can be listed here.</p>
+    </div>
+    <div id="critiques" class="tab-content">
+      <h2 class="text-xl font-semibold mb-2" style="color: var(--accent-1);">Critiques</h2>
+      <p>Provide analyses, critiques, or counterpoints here.</p>
+    </div>
+    <div id="glossary" class="tab-content">
+      <h2 class="text-xl font-semibold mb-2" style="color: var(--accent-1);">Glossary</h2>
+      <p>Key terms and definitions go here.</p>
+    </div>
+    <div id="source" class="tab-content">
+      <h2 class="text-xl font-semibold mb-2" style="color: var(--accent-1);">Source & Provenance</h2>
+      <p>Provide citation information, provenance, and references here.</p>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="p-4 text-center text-sm" style="color: var(--text-secondary);">
+    © 2025 Example SPA — Built with Tailwind & Vanilla JS
+  </footer>
+
+  <!-- Modal -->
+  <div id="settings-modal" class="modal-overlay">
+    <div class="modal-content relative">
+      <button id="close-modal-btn" class="close-btn">✕</button>
+      <h3>Display Settings</h3>
+      <label for="theme-select" class="block mb-2">Theme:</label>
+      <select id="theme-select" class="border p-1 rounded w-full">
+        <option value="light">Light</option>
+        <option value="navy">Navy</option>
+        <option value="emerald">Emerald-Gold</option>
+      </select>
+    </div>
+  </div>
+
+  <script>
+    // Tabs
+    document.querySelectorAll('.tab-button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab).classList.add('active');
+        localStorage.setItem('activeTab', btn.dataset.tab);
+      });
+    });
+    // Restore tab
+    const savedTab = localStorage.getItem('activeTab');
+    if (savedTab && document.getElementById(savedTab)) {
+      document.querySelector(`[data-tab="${savedTab}"]`).click();
+    }
+
+    // Modal
+    const modal = document.getElementById('settings-modal');
+    document.getElementById('settings-btn').onclick = () => modal.classList.add('show');
+    document.getElementById('close-modal-btn').onclick = () => modal.classList.remove('show');
+    modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('show'); });
+
+    // Theme Switcher
+    function applyTheme(name) {
+      document.body.classList.remove('theme-navy','theme-emerald');
+      if (name === 'navy') document.body.classList.add('theme-navy');
+      if (name === 'emerald') document.body.classList.add('theme-emerald');
+      localStorage.setItem('themeChoice', name);
+    }
+    const themeSelect = document.getElementById('theme-select');
+    themeSelect.addEventListener('change', () => applyTheme(themeSelect.value));
+    const savedTheme = localStorage.getItem('themeChoice') || 'light';
+    themeSelect.value = savedTheme;
+    applyTheme(savedTheme);
+  </script>
+</body>
+</html>
