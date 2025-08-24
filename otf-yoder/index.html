@@ -1,554 +1,426 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The Politics of the Lamb — Interactive Reader</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-tailwind.config = {
-  theme: {
-    extend: {
-      colors: {
-        stonebg: { DEFAULT: '#f5f5f4' }
-      }
-    }
-  }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+<style>
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
+</style>
+<title>The Evolution of the City</title>
+
+<!-- Prepaint bootstrap: set theme from localStorage or system preference -->
+<script>
+(function () {
+  const root = document.documentElement;
+  const saved = JSON.parse(localStorage.getItem('ui_theme')||'{}');
+  const prefersDark = matchMedia('(prefers-color-scheme: dark)').matches;
+  const mode = saved.mode || (prefersDark ? 'dark' : 'light');
+  const theme = saved.theme || 'slate';
+  root.classList.toggle('dark', mode==='dark');
+  root.classList.toggle('theme-emerald', mode==='dark' && theme==='emerald');
+})();
 </script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body class="min-h-screen bg-stone-100 text-stone-800 antialiased overflow-x-hidden">
-<div id="app" class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-6">
-<header class="mb-6">
-  <div class="flex items-start justify-between gap-4">
-    <div>
-      <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight">The Politics of the Lamb — Interactive Reader</h1>
-      <p class="mt-1 text-sm sm:text-base text-stone-700">An interactive exploration of John Howard Yoder’s vision of divine non-coercion, the Anabaptist memory, and the church as an alternative society.</p>
-    </div>
-    <div class="flex items-center gap-2">
-      <label for="globalSearch" class="sr-only">Search</label>
-      <input id="globalSearch" type="search" placeholder="Search concepts…" class="w-44 sm:w-56 rounded-md border border-stone-300 bg-white px-3 py-2 text-sm placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-sky-500" aria-label="Search content">
-      <button id="toggleSourcePane" class="rounded-md border border-sky-500 px-3 py-2 text-sm font-medium text-sky-700 bg-white hover:bg-stone-50 focus:outline-none focus:ring-2 focus:ring-sky-500" aria-haspopup="true" aria-expanded="false">Source</button>
-    </div>
-  </div>
-  <nav id="tabs" role="tablist" aria-label="Primary sections" class="mt-4 flex flex-wrap gap-2">
-    <button role="tab" id="tabbtn-overview" aria-selected="true" aria-controls="tab-overview" class="px-3 py-2 rounded-md text-sm font-medium border border-stone-300 bg-white focus:outline-none focus:ring-2 focus:ring-sky-500">Overview</button>
-    <button role="tab" id="tabbtn-concepts" aria-selected="false" aria-controls="tab-concepts" class="px-3 py-2 rounded-md text-sm font-medium border border-stone-300 bg-white focus:outline-none focus:ring-2 focus:ring-sky-500">Core Concepts</button>
-    <button role="tab" id="tabbtn-history" aria-selected="false" aria-controls="tab-history" class="px-3 py-2 rounded-md text-sm font-medium border border-stone-300 bg-white focus:outline-none focus:ring-2 focus:ring-sky-500">Tradition &amp; History</button>
-    <button role="tab" id="tabbtn-practices" aria-selected="false" aria-controls="tab-practices" class="px-3 py-2 rounded-md text-sm font-medium border border-stone-300 bg-white focus:outline-none focus:ring-2 focus:ring-sky-500">Practices</button>
-    <button role="tab" id="tabbtn-timeline" aria-selected="false" aria-controls="tab-timeline" class="px-3 py-2 rounded-md text-sm font-medium border border-stone-300 bg-white focus:outline-none focus:ring-2 focus:ring-sky-500">Timeline</button>
-    <button role="tab" id="tabbtn-critiques" aria-selected="false" aria-controls="tab-critiques" class="px-3 py-2 rounded-md text-sm font-medium border border-stone-300 bg-white focus:outline-none focus:ring-2 focus:ring-sky-500">Critiques &amp; Implications</button>
-    <button role="tab" id="tabbtn-witness" aria-selected="false" aria-controls="tab-witness" class="px-3 py-2 rounded-md text-sm font-medium border border-stone-300 bg-white focus:outline-none focus:ring-2 focus:ring-sky-500">Witness Today</button>
-    <button role="tab" id="tabbtn-glossary" aria-selected="false" aria-controls="tab-glossary" class="px-3 py-2 rounded-md text-sm font-medium border border-stone-300 bg-white focus:outline-none focus:ring-2 focus:ring-sky-500">Glossary</button>
-    <button role="tab" id="tabbtn-source" aria-selected="false" aria-controls="tab-source" class="px-3 py-2 rounded-md text-sm font-medium border border-stone-300 bg-white focus:outline-none focus:ring-2 focus:ring-sky-500">Source Pane</button>
-  </nav>
-</header>
 
-<main class="space-y-10">
-  <section id="tab-overview" role="tabpanel" aria-labelledby="tabbtn-overview" tabindex="0" class="block">
-    <div class="rounded-lg bg-white border border-stone-200 p-4">
-      <h2 class="text-xl font-semibold mb-2">Context &amp; Takeaways</h2>
-      <p class="mb-3 text-stone-700">This section orients you to the article’s thesis: Jesus’s non-violence is not a temporary ideal but the revelation of how God governs, contrasted with the “Constantinian shift,” and embodied in an alternative church polity.</p>
-      <ul class="list-disc pl-5 space-y-1">
-        <li>Thesis: divine sovereignty is non-coercive; the cross reveals true power.</li>
-        <li>Problem: the church’s alliance with coercion obscures Jesus’s politics.</li>
-        <li>Practice: communities witness by embodying non-coercive life together.</li>
-      </ul>
-    </div>
-    <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4" id="overviewCards"></div>
-    <div id="overviewDetail" class="mt-4 rounded-lg bg-white border border-stone-200 p-4"></div>
-  </section>
+<!-- Theme Variables -->
+<style>
+:root{
+  --active: rgb(59,130,246);
+  --subtitle-fg: rgb(71,85,105);
+  --timeline-fg: rgb(100,116,139);
+  --footer-fg: rgb(100,116,139);
+  --border: rgb(226,232,240);
+  --hover-bg: rgb(248,250,252);
+  --btn-border: rgb(203,213,225);
+  --btn-hover-bg: rgb(248,250,252);
+  --input-border: rgba(203,213,225,0.7);
+  --input-bg: rgba(255,255,255,0.7);
+  --hero-base: transparent;
+  --hero-r1: rgba(49,46,129,0.12);
+  --hero-r2: rgba(234,88,12,0.12);
+  --hero-wash: rgba(14,165,233,0.08);
+}
+html.dark{
+  --subtitle-fg: rgb(203,213,225);
+  --timeline-fg: rgb(148,163,184);
+  --footer-fg: rgb(148,163,184);
+  --border: rgb(30,41,59);
+  --hover-bg: rgb(15,23,42);
+  --btn-border: rgb(51,65,85);
+  --btn-hover-bg: rgb(15,23,42);
+  --input-border: rgba(51,65,85,0.7);
+  --input-bg: rgba(2,6,23,0.6);
+  --hero-base: rgb(2,6,23);
+}
+html.dark.theme-emerald{
+  --active: #10b981;
+  --border: rgba(110,231,183,0.55);
+  --hover-bg: rgb(6,78,59);
+  --btn-border: rgba(110,231,183,0.45);
+  --btn-hover-bg: rgb(6,78,59);
+  --input-border: rgba(110,231,183,0.55);
+  --input-bg: rgba(6,95,70,0.60);
+  --footer-fg: rgb(110,231,183);
+  --subtitle-fg: rgb(226,252,236);
+  --timeline-fg: rgb(187,247,208);
+  --hero-base: rgb(2,44,34);
+  --hero-r1: rgba(16,185,129,0.14);
+  --hero-r2: rgba(163,230,53,0.12);
+  --hero-wash: rgba(5,150,105,0.10);
+}
+.theme-emerald .prose h2,
+.theme-emerald .prose h3,
+.theme-emerald #docTitle,
+.theme-emerald .subtitle,
+.theme-emerald aside h2,
+.theme-emerald .active-link{ color:#f0c475; }
+</style>
 
- <section id="tab-concepts" role="tabpanel" aria-labelledby="tabbtn-concepts" tabindex="0" class="hidden">
-    <div class="rounded-lg bg-white border border-stone-200 p-4">
-      <h2 class="text-xl font-semibold mb-2">Context &amp; Takeaways</h2>
-      <p class="mb-3 text-stone-700">Explore Yoder’s core ideas: non-violence as revelation, the critique of Constantinianism, “revolutionary subordination,” the church as an alternative society, and the theological/ hermeneutical grounds that make these claims coherent.</p>
-      <ul class="list-disc pl-5 space-y-1">
-        <li>Jesus’s commands apply to public life now, not as later ideals.</li>
-        <li>Power is redefined as suffering love rather than domination.</li>
-        <li>The church’s polity is itself political witness.</li>
-      </ul>
-    </div>
-    <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4" id="conceptCards"></div>
-    <div id="conceptDetail" class="mt-4 rounded-lg bg-white border border-stone-200 p-4"></div>
-  </section>
-
- <section id="tab-history" role="tabpanel" aria-labelledby="tabbtn-history" tabindex="0" class="hidden">
-    <div class="rounded-lg bg-white border border-stone-200 p-4">
-      <h2 class="text-xl font-semibold mb-2">Context &amp; Takeaways</h2>
-      <p class="mb-3 text-stone-700">Trace the Anabaptist memory, martyr witness, and Yoder’s diagnosis of the Constantinian shift. See how the narrative frames non-coercion as faithful continuity with early discipleship.</p>
-      <ul class="list-disc pl-5 space-y-1">
-        <li>The 1520s Anabaptists refused the sword and suffered for it.</li>
-        <li>“Constantinian shift” names the church’s turn to coercion.</li>
-        <li>Yoder recovers cruciform politics in a modern idiom.</li>
-      </ul>
-    </div>
-    <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4" id="historyCards"></div>
-    <div id="historyDetail" class="mt-4 rounded-lg bg-white border border-stone-200 p-4"></div>
-  </section>
-
- <section id="tab-practices" role="tabpanel" aria-labelledby="tabbtn-practices" tabindex="0" class="hidden">
-    <div class="rounded-lg bg-white border border-stone-200 p-4">
-      <h2 class="text-xl font-semibold mb-2">Context &amp; Takeaways</h2>
-      <p class="mb-3 text-stone-700">Yoder’s “Body Politics” outlines practices that form a non-coercive community. Engage each practice and see how it re-patterns authority, economics, and voice.</p>
-      <ul class="list-disc pl-5 space-y-1">
-        <li>Authority emerges from communal discernment.</li>
-        <li>Economics become relational rather than coercive.</li>
-        <li>Gifts and voices are shared across the community.</li>
-      </ul>
-    </div>
-    <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4" id="practiceCards"></div>
-    <div id="practiceDetail" class="mt-4 rounded-lg bg-white border border-stone-200 p-4"></div>
-  </section>
-
- <section id="tab-timeline" role="tabpanel" aria-labelledby="tabbtn-timeline" tabindex="0" class="hidden">
-    <div class="rounded-lg bg-white border border-stone-200 p-4">
-      <h2 class="text-xl font-semibold mb-2">Context &amp; Takeaways</h2>
-      <p class="mb-3 text-stone-700">A minimal timeline highlights key moments explicitly mentioned in the article to situate the argument historically.</p>
-      <ul class="list-disc pl-5 space-y-1">
-        <li>Radical Reformation martyr witness anchors the memory.</li>
-        <li>1969 marks Yoder’s circulated manuscript.</li>
-        <li>1992 surfaces allegations that complicate reception.</li>
-      </ul>
-    </div>
-    <div class="chart-container w-full max-w-2xl mx-auto h-80 max-h-[450px] rounded-lg bg-white border border-stone-200 p-3">
-      <canvas id="timelineChart" aria-label="Timeline of key events" role="img"></canvas>
-    </div>
-    <div class="mt-4 overflow-x-auto">
-      <table class="w-full text-sm bg-white border border-stone-200 rounded-lg">
-        <thead class="bg-stone-50">
-          <tr class="text-left">
-            <th class="px-3 py-2 border-b border-stone-200">Year</th>
-            <th class="px-3 py-2 border-b border-stone-200">Event</th>
-            <th class="px-3 py-2 border-b border-stone-200">Detail</th>
-          </tr>
-        </thead>
-        <tbody id="timelineTableBody"></tbody>
-      </table>
-    </div>
-    <p class="mt-3 text-stone-700 text-sm px-1" id="timelineTakeaway"></p>
-  </section>
-
- <section id="tab-critiques" role="tabpanel" aria-labelledby="tabbtn-critiques" tabindex="0" class="hidden">
-    <div class="rounded-lg bg-white border border-stone-200 p-4">
-      <h2 class="text-xl font-semibold mb-2">Context &amp; Takeaways</h2>
-      <p class="mb-3 text-stone-700">Assess challenges: applicability to public roles, charges of sectarianism, and the moral/theological shock of Yoder’s abuses.</p>
-      <ul class="list-disc pl-5 space-y-1">
-        <li>Faithfulness, not conventional effectiveness, governs the ethic.</li>
-        <li>Non-violence can be pragmatically potent yet remains cruciform.</li>
-        <li>Abuse exposes how coercion corrupts—even in peace traditions.</li>
-      </ul>
-    </div>
-    <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4" id="critiqueCards"></div>
-    <div id="critiqueDetail" class="mt-4 rounded-lg bg-white border border-stone-200 p-4"></div>
-  </section>
-
- <section id="tab-witness" role="tabpanel" aria-labelledby="tabbtn-witness" tabindex="0" class="hidden">
-    <div class="rounded-lg bg-white border border-stone-200 p-4">
-      <h2 class="text-xl font-semibold mb-2">Context &amp; Takeaways</h2>
-      <p class="mb-3 text-stone-700">Contemporary witnesses illustrate non-coercive power: accompaniment in conflict zones, reconciliation after atrocity, and restorative practices in cities.</p>
-      <ul class="list-disc pl-5 space-y-1">
-        <li>Absorbing harm can protect communities without retaliation.</li>
-        <li>Reconciliation emerges from long, communal processes.</li>
-        <li>Relational authority interrupts cycles of vengeance.</li>
-      </ul>
-    </div>
-    <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4" id="witnessCards"></div>
-    <div id="witnessDetail" class="mt-4 rounded-lg bg-white border border-stone-200 p-4"></div>
-  </section>
-
- <section id="tab-glossary" role="tabpanel" aria-labelledby="tabbtn-glossary" tabindex="0" class="hidden">
-    <div class="rounded-lg bg-white border border-stone-200 p-4">
-      <h2 class="text-xl font-semibold mb-2">Context &amp; Takeaways</h2>
-      <p class="mb-3 text-stone-700">Key terms clarify how the article uses words like “non-coercion,” “Constantinian shift,” and “politics of the Lamb.”</p>
-      <ul class="list-disc pl-5 space-y-1">
-        <li>Shared vocabulary reduces misreadings.</li>
-        <li>Short, precise definitions aid navigation.</li>
-        <li>Aliases help search and filtering.</li>
-      </ul>
-    </div>
-    <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4" id="glossaryGrid"></div>
-  </section>
-
- <section id="tab-source" role="tabpanel" aria-labelledby="tabbtn-source" tabindex="0" class="hidden">
-    <div class="rounded-lg bg-white border border-stone-200 p-4">
-      <h2 class="text-xl font-semibold mb-2">Context &amp; Takeaways</h2>
-      <p class="mb-3 text-stone-700">Review provenance and quotations drawn from the Source Report. Use this pane to audit how statements are grounded.</p>
-      <ul class="list-disc pl-5 space-y-1">
-        <li>Provenance lists the source and context.</li>
-        <li>Quotes are short anchors back to content.</li>
-        <li>Use this pane to cross-check assertions.</li>
-      </ul>
-    </div>
-    <div id="sourcePaneInternal" class="mt-4 rounded-lg bg-white border border-stone-200 p-4"></div>
-  </section>
-</main>
-
-<footer class="mt-12 border-t border-stone-300 pt-6">
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <div>
-      <h3 class="font-semibold mb-2">Provenance</h3>
-      <ul id="provenanceList" class="text-sm space-y-1"></ul>
-    </div>
-    <div>
-      <h3 class="font-semibold mb-2">Extracted Quotes</h3>
-      <ul id="quoteList" class="text-sm space-y-2"></ul>
-    </div>
-  </div>
-  <details class="hidden mt-6">
-    <summary class="cursor-pointer">Validation Checklist</summary>
-    <ul class="list-disc pl-5 text-sm space-y-1">
-      <li>Language matches Source Report (English).</li>
-      <li>Single <code>h1</code> present; semantic headings used.</li>
-      <li>Tabs support keyboard nav (Arrow/Home/End); ARIA wired.</li>
-      <li>URL hash deep links and localStorage persistence for active tab.</li>
-      <li>No SVG/Mermaid; charts use Canvas with text fallback.</li>
-      <li>WCAG AA contrast; visible focus ring; logical DOM order.</li>
-      <li>No horizontal scrolling on common viewports.</li>
-      <li>Footer provenance and Source Pane present.</li>
-    </ul>
-  </details>
-</footer>
-</div>
-
-<div id="sourceDrawer" class="fixed inset-y-0 right-0 w-80 max-w-[90vw] translate-x-full bg-white border-l border-stone-300 shadow-xl transition-transform duration-300 ease-in-out z-40 overflow-y-auto">
-  <div class="p-4">
-    <div class="flex items-center justify-between mb-2">
-      <h2 class="text-lg font-semibold">Source Pane</h2>
-      <button id="closeSourcePane" class="rounded-md border border-stone-300 px-2 py-1 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-sky-500" aria-label="Close">⎋</button>
-    </div>
-    <div id="sourcePaneDrawer" class="text-sm space-y-3"></div>
-  </div>
-</div>
-
-<!-- RATIONALE: This IA elevates user tasks surfaced by the article: (1) grasp the thesis (Overview), (2) study the core claims (Core Concepts), (3) situate historically (Tradition & History + Timeline), (4) practice communally (Practices), (5) weigh tensions (Critiques & Implications), (6) see living examples (Witness Today), (7) anchor vocabulary (Glossary), and (8) audit claims (Source Pane/Provenance). Tabs with deep links support shareable entry points; cards + detail panels lower cognitive load by chunking dense prose into selectable units; a minimal, article-faithful timeline just visualizes explicitly dated events. -->
-
-<!-- IA_DECISIONS: Grouping follows conceptual function rather than article order. Alternatives considered: a chapter-mirroring layout (rejected: less usable), a single long scroll with sticky TOC (rejected: harder to compare), or splitting into multiple pages (rejected: breaks SPA constraint). Timeline is minimal because the source provides few explicit dates. Practices are isolated to highlight Yoder’s Body Politics as actionable polity. -->
-
-<!-- INTERACTION_CHOICES: Inform—cards reveal summaries/details; Compare—users scan grids within sections and use search/filter; Show Change—timeline via Chart.js with text fallback. Tabs are keyboardable with ARIA roles; URL hash enables deep links; localStorage persists last tab. Accordions gate dense notes where needed in detail panes. -->
-
-<!-- DATA_MAPPING: AppData.meta -> header/provenance; AppData.sections[*].items -> cards and detail content per section; AppData.timeline -> Chart.js dataset + fallback table; AppData.quotes -> Source panes; AppData.glossary -> glossary grid. Each card’s id maps to detail text; search filters by label, summary, tags across current section. -->
-
+<!-- Tailwind (with Typography) -->
+<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
 <script>
-const appData = {
-  meta: {
-    title: "The Politics of the Lamb: John Howard Yoder on Why God’s Kingdom Rejects the Sword",
-    subtitle: "How a Mennonite theologian showed that Jesus’s non-violence wasn’t practical compromise but the revelation of how God governs",
-    report_provenance: [
-      { label: "Source", detail: "User-provided article: “The Politics of the Lamb: John Howard Yoder on Why God’s Kingdom Rejects the Sword”" },
-      { label: "Key Claim", detail: "Jesus’s non-violence reveals divine sovereignty; coercion misrepresents God’s rule." }
-    ]
-  },
-  quotes: [
-    { text: "Jesus’s non-violence is how God runs the real world.", ref: "Thesis" },
-    { text: "When the church accepted Constantine’s sword, it lost Jesus’s cross.", ref: "Constantinian shift" },
-    { text: "Effectiveness is God’s business; faithfulness is ours.", ref: "Faithfulness over effectiveness" },
-    { text: "The Lamb conquers as a Lamb—through suffering love, not coercive power.", ref: "Politics of the Lamb" }
-  ],
-  sections: [
-    {
-      id: "overview",
-      title: "Overview",
-      kind: "overview",
-      intro: "Orient to the article’s thesis and main movements.",
-      items: [
-        { id: "thesis", label: "Thesis", summary: "Non-violence as revelation of divine sovereignty.", detail: "The article argues that Jesus’s refusal of the sword and embrace of the cross reveal how God actually governs. This is not interim idealism but the enduring shape of divine power." , tags: ["thesis","non-violence"]},
-        { id: "problem", label: "The Constantine Problem", summary: "The church’s alliance with coercion.", detail: "The “Constantinian shift” names the move from cruciform witness to coercive power, recoding Jesus’s commands as private ideals or future counsels instead of public ethics for today.", tags: ["constantinian"]},
-        { id: "practice", label: "Alternative Polity", summary: "Church as non-coercive community.", detail: "The church witnesses by embodying non-coercive practices—discipline as discernment, shared economy, plural gifts, and open speech—that display a different politics.", tags: ["church","polity"]},
-        { id: "challenge", label: "Complicated Legacy", summary: "Abuse and accountability.", detail: "Yoder’s abuses expose how coercion can lurk inside peace talk. The article faces this tension and lets his own theology judge such misuse of power.", tags: ["legacy","abuse"]}
-      ]
-    },
-    {
-      id: "concepts",
-      title: "Core Concepts",
-      kind: "concepts",
-      intro: "Core claims and theological/ethical frames.",
-      items: [
-        { id: "revelation", label: "Non-violence as Revelation", summary: "Jesus’s politics shows God’s rule.", detail: "Jesus’s enemy-love and cross are not detours but the revelation of sovereignty. He refuses Satan’s political shortcuts and redefines kingship through service and self-giving.", tags: ["revelation","ethics"]},
-        { id: "constantinian", label: "Constantinian Shift", summary: "From cross to sword.", detail: "After Constantine, Christians recoded commands as private or future. Yoder calls this a theological revolution that imagines God ruling like Caesar.", tags: ["history","power"]},
-        { id: "revsub", label: "Revolutionary Subordination", summary: "Subverting domination from within.", detail: "Voluntary, Christ-shaped submission robs hierarchy of ultimate power. Choosing what others would force exposes coercion’s emptiness without endorsing injustice.", tags: ["household codes","subversion"]},
-        { id: "altsoc", label: "Church as Alternative Society", summary: "Polity as witness.", detail: "The church is not refuge or state tool but a counter-society practicing non-coercive authority, shared resources, plural gifts, and open discernment.", tags: ["church","community"]},
-        { id: "hermeneutic", label: "Hermeneutical Revolution", summary: "Jesus meant what he said, now.", detail: "Yoder collapses tiers of ethic. Love of enemies applies to all disciples in public life today, not merely to private persons or future saints.", tags: ["scripture","reading"]},
-        { id: "foundation", label: "Theological Foundation", summary: "Sovereignty as suffering love.", detail: "Creation’s grain is shalom; evil is parasitic. The resurrection vindicates non-coercion as the stronger power.", tags: ["theology","shalom"]},
-        { id: "lamb", label: "Politics of the Lamb", summary: "Conquering as a Lamb.", detail: "In Revelation, the Lamb does not become a Lion of coercion. The Lamb’s way—suffering love—reveals enduring rule.", tags: ["revelation","symbol"]},
-        { id: "challenge2", label: "Continuing Challenge", summary: "Impossible and necessary.", detail: "Non-coercion confronts violent systems. Faithfulness may entail suffering; yet it unveils new standards and possibilities.", tags: ["discipleship","cost"]}
-      ]
-    },
-    {
-      id: "history",
-      title: "Tradition & History",
-      kind: "history",
-      intro: "Memory, martyrs, and diagnoses.",
-      items: [
-        { id: "anabaptist", label: "Anabaptist Memory", summary: "Refusing the sword in the 1520s.", detail: "The Radical Reformation birthed communities that would not kill or wield the sword for Christ’s kingdom, enduring persecution from Catholics and Protestants alike.", tags: ["anabaptist","memory"]},
-        { id: "manz", label: "Felix Manz (1527)", summary: "First Anabaptist martyr.", detail: "Drowned in Zurich for rejecting infant baptism and the sword, Manz’s last words were, “Into thy hands, Lord, I commend my spirit.”", tags: ["martyr","1527"]},
-        { id: "mirror", label: "Martyrs’ Mirror", summary: "A book of witness.", detail: "Over 1,100 pages documenting thousands who chose death rather than take up weapons, embodying a concrete conviction about Christ’s lordship.", tags: ["witness"]},
-        { id: "diagnosis", label: "Diagnosing Constantine", summary: "Losing the cross for the sword.", detail: "Yoder names the church’s political-theological turn after Constantine as a catastrophe for discipleship and doctrine.", tags: ["diagnosis"]},
-        { id: "yoder1969", label: "1969 Manuscript", summary: "The Politics of Jesus circulates.", detail: "A Mennonite theologian teaching in Indiana drafts a work arguing that Jesus’s non-violence is the lasting form of divine governance.", tags: ["1969","book"]},
-        { id: "allegations1992", label: "1992 Allegations", summary: "Abuse revelations surface.", detail: "Reports of sexual harassment and assault deeply complicate reception and force theological and communal reckoning.", tags: ["1992","abuse"]}
-      ]
-    },
-    {
-      id: "practices",
-      title: "Practices",
-      kind: "practices",
-      intro: "Body Politics practices as public witness.",
-      items: [
-        { id: "binding", label: "Binding & Loosing", summary: "Communal moral discernment.", detail: "Authority flows through dialogue and community wisdom, not decree or status.", tags: ["authority","discernment"]},
-        { id: "bread", label: "Breaking Bread", summary: "Shared economy beyond market logic.", detail: "Resources flow according to need rather than purchase power, forming economic peace.", tags: ["economy","sharing"]},
-        { id: "baptism", label: "Baptism", summary: "New humanity in Christ.", detail: "Identity transcends racial, class, and gender divisions; belonging re-orders power.", tags: ["identity","unity"]},
-        { id: "fullness", label: "Fullness of Christ", summary: "Plural gifts, dispersed power.", detail: "Leadership is functional and plural; every member participates.", tags: ["gifts","leadership"]},
-        { id: "ruleofpaul", label: "Rule of Paul", summary: "Open speech and discernment.", detail: "The community hears all voices; truth emerges through conversation, not imposition.", tags: ["speech","dialogue"]}
-      ]
-    },
-    {
-      id: "critiques",
-      title: "Critiques & Implications",
-      kind: "critiques",
-      intro: "Tensions and responses.",
-      items: [
-        { id: "sectarian", label: "Sectarian Charge", summary: "Is this only for small churches?", detail: "Yoder answers by reframing vocation: Christians may refuse roles requiring violence, witnessing to alternatives rather than managing the sword.", tags: ["critique","public"]},
-        { id: "pragmatic", label: "Does It Work?", summary: "Effectiveness vs faithfulness.", detail: "Non-violence can be pragmatically potent, yet the criterion remains obedience to Jesus rather than conventional success.", tags: ["effectiveness","faithfulness"]},
-        { id: "abuse", label: "Moral Shock", summary: "The theologian’s coercion.", detail: "The abuses force communities to confront how non-coercive language can mask domination and how accountability must itself avoid coercion.", tags: ["coercion","accountability"]}
-      ]
-    },
-    {
-      id: "witness",
-      title: "Witness Today",
-      kind: "witness",
-      intro: "Contemporary embodiments.",
-      items: [
-        { id: "colombia", label: "Accompaniment under Threat", summary: "Christian Peacemaker Teams in Colombia.", detail: "Accompaniment protected communities; some workers died, revealing protective power without retaliation.", tags: ["colombia","accompaniment"]},
-        { id: "rwanda", label: "Reconciliation Villages", summary: "After genocide, slow healing.", detail: "Mennonite peace workers helped foster communities where survivors and perpetrators’ families live together, choosing healing over vengeance.", tags: ["rwanda","reconciliation"]},
-        { id: "cities", label: "Restorative Interventions", summary: "Interrupting retaliation in cities.", detail: "Former gang members trained in restorative justice model authority through relationship rather than force.", tags: ["restorative","cities"]}
-      ]
-    }
-  ],
-  timeline: [
-    { year: 1527, label: "Felix Manz", detail: "First Anabaptist martyr drowned in Zurich." },
-    { year: 1969, label: "Yoder Manuscript", detail: "The Politics of Jesus circulates in Indiana." },
-    { year: 1992, label: "Allegations Surface", detail: "Abuse reports complicate Yoder’s legacy." }
-  ],
-  glossary: [
-    { term: "Non-coercion", definition: "God’s sovereignty operating through patient, suffering love rather than force.", aliases: ["Nonviolence","Suffering love"] },
-    { term: "Constantinian shift", definition: "The church’s turn from cruciform witness to alignment with imperial coercion.", aliases: ["Constantinianism"] },
-    { term: "Revolutionary subordination", definition: "Voluntary, Christ-shaped submission that subverts domination from within.", aliases: ["Subversive submission"] },
-    { term: "Alternative society", definition: "The church as a community that practices non-coercive polity and economics.", aliases: ["Counter-society"] },
-    { term: "Politics of the Lamb", definition: "The Lamb conquers by suffering love; divine rule is cruciform.", aliases: ["Lamb’s politics"] },
-    { term: "Shalom", definition: "Holistic peace and flourishing aligned with creation’s grain.", aliases: ["Peace"] }
-  ]
-};
+  tailwind.config = { darkMode: 'class' };
+</script>
 
-const qs = (s,el=document)=>el.querySelector(s);
-const qsa = (s,el=document)=>Array.from(el.querySelectorAll(s));
+<!-- Google Font (optional) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
 
-function renderProvenance(){
-  const list = qs('#provenanceList');
-  list.innerHTML = appData.meta.report_provenance.map(p=>`<li><span class="font-medium">${p.label}:</span> ${p.detail}</li>`).join('');
-  const quotes = qs('#quoteList');
-  quotes.innerHTML = appData.quotes.map(q=>`<li>“${q.text}” <span class="text-stone-500">(${q.ref})</span></li>`).join('');
-  const drawer = qs('#sourcePaneDrawer');
-  drawer.innerHTML = `
-    <div><h3 class="font-semibold mb-1">Provenance</h3><ul class="list-disc pl-5">${appData.meta.report_provenance.map(p=>`<li><span class="font-medium">${p.label}:</span> ${p.detail}</li>`).join('')}</ul></div>
-    <div class="mt-3"><h3 class="font-semibold mb-1">Quotes</h3><ul class="list-disc pl-5 space-y-1">${appData.quotes.map(q=>`<li>“${q.text}” <span class="text-stone-500">(${q.ref})</span></li>`).join('')}</ul></div>
-  `;
-  const internal = qs('#sourcePaneInternal');
-  internal.innerHTML = drawer.innerHTML;
+<style>
+:root { color-scheme: light dark; }
+html { scroll-behavior: smooth; }
+.font-newspaper { font-family: 'Lora', serif; }
+:where(h2,h3,h4){ scroll-margin-top: 84px; }
+mark { background: #fde68a; padding: .1em .2em; border-radius: .2rem; }
+@media (max-width: 380px){ .prose { font-size: .96rem; } }
+
+/* ---------- Semantic surfaces (read from CSS variables) ---------- */
+.hero {
+  background-color: var(--hero-base);
+  background:
+    radial-gradient(50% 120% at 10% 10%, var(--hero-r1), transparent 60%),
+    radial-gradient(80% 140% at 90% 10%, var(--hero-r2), transparent 70%),
+    linear-gradient(180deg, var(--hero-wash), transparent 35%);
 }
+.active-link { color: var(--active); font-weight: 700; }
+.toc-link:hover { background: var(--hover-bg); }
 
-function cardTemplate(item){
-  return `
-    <button data-id="${item.id}" class="cardBtn w-full text-left rounded-lg border border-stone-300 bg-white p-4 hover:bg-stone-50 focus:outline-none focus:ring-2 focus:ring-sky-500" aria-describedby="${item.id}-summary">
-      <div class="text-base font-semibold">${item.label}</div>
-      <div id="${item.id}-summary" class="mt-1 text-sm text-stone-700">${item.summary}</div>
-      <div class="mt-2 text-xs text-sky-700">${(item.tags||[]).map(t=>`#${t}`).join(' ')}</div>
+/* Give the first paragraph after each H2/H3 the ribbon */
+.prose :where(h2,h3) + p { padding-left: 1rem; border-left: 2px solid var(--border); }
+
+/* Stop Tailwind Typography from enlarging `.lead` */
+.prose p.lead { font-size: inherit !important; line-height: inherit !important; font-weight: inherit !important; }
+
+/* ===== Modal Styles ===== */
+.modal-overlay {
+  display: none; position: fixed; z-index: 1000; left: 0; top: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.6);
+  justify-content: center; align-items: center;
+}
+.modal-overlay.show { display: flex; }
+.modal-content {
+  background: var(--input-bg);
+  color: var(--subtitle-fg);
+  border: 1px solid var(--border);
+  padding: 2rem; border-radius: 8px;
+  text-align: center; position: relative; width: 90%; max-width: 400px;
+}
+.modal-content h3 { font-size: 1.5rem; margin-bottom: 1.5rem; }
+.close-btn {
+  position: absolute; top: 10px; right: 15px;
+  color: var(--timeline-fg);
+  font-size: 28px; font-weight: bold; background: none;
+  border: none; cursor: pointer;
+}
+</style>
+</head>
+
+<body class="bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 pb-[env(safe-area-inset-bottom)]">
+
+  <!-- Modal Theme Switcher HTML -->
+  <div class="fixed top-4 right-4 z-50">
+    <button id="settings-btn" class="p-2 rounded-full shadow-lg bg-white/70 dark:bg-slate-800/70 backdrop-blur" aria-label="toggle settings">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0 3.35a1.724 1.724 0 001.066 2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.096 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
     </button>
-  `;
-}
+  </div>
+  <div id="settings-modal" class="modal-overlay">
+    <div class="modal-content">
+        <button id="close-modal-btn" class="close-btn">×</button>
+        <h3>Display Settings</h3>
+        <button id="modalThemeBtn" class="w-full text-sm px-3 py-2 rounded-lg border border-[var(--btn-border)] hover:bg-[var(--btn-hover-bg)] mb-2">Toggle Light/Dark</button>
+        <button id="modalColorBtn" class="w-full text-sm px-3 py-2 rounded-lg border border-[var(--btn-border)] hover:bg-[var(--btn-hover-bg)]">Change Color Scheme</button>
+    </div>
+  </div>
 
-function detailTemplate(item){
-  return `
-    <h3 class="text-lg font-semibold mb-1">${item.label}</h3>
-    <p class="text-stone-700">${item.detail}</p>
-    <div class="mt-3">
-      <button class="accBtn rounded-md border border-stone-300 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-sky-500" aria-expanded="false" aria-controls="${item.id}-more">More notes</button>
-      <div id="${item.id}-more" class="mt-2 hidden">
-        <p class="text-sm text-stone-700">Related tags: ${(item.tags||[]).map(t=>`#${t}`).join(' ') || "—"}</p>
+  <!-- Header -->
+  <header id="top" class="hero border-b border-[var(--border)]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-between gap-4">
+      <div>
+        <h1 id="docTitle" class="text-2xl sm:text-3xl font-bold font-newspaper tracking-tight">Loading...</h1>
+        <p id="docSubtitle" class="text-[var(--subtitle-fg)] text-sm sm:text-base"></p>
+      </div>
+      <div class="flex items-center gap-2">
+        <label for="search" class="sr-only">Search</label>
+        <input id="search" type="search" placeholder="Search…" class="hidden md:block w-56 rounded-xl bg-[var(--input-bg)] border-[var(--input-border)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--active)]" />
+        <button id="clearSearch" type="button" class="hidden md:inline-flex text-xs px-2 py-2 rounded-lg border border-[var(--btn-border)] hover:bg-[var(--btn-hover-bg)]">Clear</button>
       </div>
     </div>
-  `;
-}
 
-function populateSection(sectionId, gridSel, detailSel){
-  const section = appData.sections.find(s=>s.id===sectionId);
-  const grid = qs(gridSel);
-  const detail = qs(detailSel);
-  grid.innerHTML = section.items.map(cardTemplate).join('');
-  grid.addEventListener('click', e=>{
-    const btn = e.target.closest('.cardBtn');
-    if(!btn) return;
-    const item = section.items.find(i=>i.id===btn.dataset.id);
-    detail.innerHTML = detailTemplate(item);
-    const accBtn = qs('.accBtn', detail);
-    const accPanel = qs(`#${item.id}-more`, detail);
-    accBtn.addEventListener('click', ()=>{
-      const expanded = accBtn.getAttribute('aria-expanded') === 'true';
-      accBtn.setAttribute('aria-expanded', String(!expanded));
-      accPanel.classList.toggle('hidden', expanded);
-    });
-  });
-}
+    <!-- Timeline / Sections Nav -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6" id="timelineWrap" hidden>
+      <nav aria-label="Journey timeline" id="timelineNav" class="text-[var(--timeline-fg)]">
+        <ol id="timeline" class="grid grid-cols-2 sm:grid-cols-4 items-center gap-x-2 gap-y-1 text-[11px] sm:text-sm"></ol>
+        <div id="timelineCoda" class="mt-2 text-[11px] sm:text-xs"></div>
+      </nav>
+    </div>
+  </header>
 
-function populateGlossary(){
-  const grid = qs('#glossaryGrid');
-  grid.innerHTML = appData.glossary.map(g=>`
-    <article class="rounded-lg border border-stone-300 bg-white p-4">
-      <h4 class="font-semibold">${g.term}</h4>
-      <p class="mt-1 text-sm text-stone-700">${g.definition}</p>
-      <p class="mt-1 text-xs text-stone-600">${g.aliases.length?`Also: ${g.aliases.join(', ')}`:''}</p>
-    </article>
-  `).join('');
-}
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)] gap-8">
+    <!-- Sidebar -->
+    <aside class="lg:sticky lg:top-4 h-max">
+      <nav aria-label="On this page" class="rounded-2xl border border-[var(--border)] p-4">
+        <h2 class="text-sm font-semibold mb-2">Sections</h2>
+        <ol id="toc" class="space-y-1 text-sm"></ol>
+        <hr class="my-4 border-t border-[var(--border)]" />
+        <button id="expandAll" type="button" class="w-full text-xs px-3 py-2 rounded-lg border border-[var(--btn-border)] hover:bg-[var(--btn-hover-bg)]">Expand All</button>
+        <button id="collapseAll" type="button" class="mt-2 w-full text-xs px-3 py-2 rounded-lg border border-[var(--btn-border)] hover:bg-[var(--btn-hover-bg)]">Collapse All</button>
+      </nav>
+    </aside>
 
-function buildTimeline(){
-  const ctx = qs('#timelineChart').getContext('2d');
-  const data = appData.timeline.map(d=>({x:d.year, y:1, label:d.label, detail:d.detail}));
-  const chart = new Chart(ctx, {
-    type: 'scatter',
-    data: {
-      datasets: [{
-        label: 'Key events',
-        data,
-        pointRadius: 5
-      }]
-    },
-    options: {
-      maintainAspectRatio: false,
-      plugins: {
-        tooltip: {
-          callbacks: {
-            label: (ctx)=> `${ctx.raw.x}: ${ctx.raw.label} — ${ctx.raw.detail}`
+    <section id="content" class="prose prose-slate dark:prose-invert max-w-none">
+      <!-- START PASTING HERE -->
+
+      <!-- DO NOT PASTE ANYTHING AFTER THIS POINT -->
+    </section>
+  </main>
+
+  <footer class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 text-xs text-[var(--footer-fg)]">
+    Threaded Reader — a single-file template
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // ===== Utilities =====
+      const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+      const slug = s => s.toLowerCase().replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-');
+
+      // ===== Read Metadata from Content =====
+      const firstArticle = document.querySelector('#content article');
+      const docTitle = firstArticle?.querySelector('meta[name="doc-title"]')?.content || 'Untitled Document';
+      const docSubtitle = firstArticle?.querySelector('meta[name="doc-subtitle"]')?.content || '';
+      const timelineStepsData = firstArticle?.querySelector('meta[name="timeline-steps"]')?.content;
+      const timelineLabelsData = firstArticle?.querySelector('meta[name="timeline-labels"]')?.content;
+
+      // ===== Populate Header from Metadata =====
+      document.getElementById('docTitle').textContent = docTitle;
+      document.getElementById('docSubtitle').textContent = docSubtitle;
+      document.title = docTitle;
+
+      // ===== MODAL WIRING =====
+      function initializeModal() {
+        const modal = document.getElementById('settings-modal');
+        const openBtn = document.getElementById('settings-btn');
+        const closeBtn = document.getElementById('close-modal-btn');
+        const modalThemeBtn = document.getElementById('modalThemeBtn');
+        const modalColorBtn = document.getElementById('modalColorBtn');
+
+        openBtn.onclick = () => modal.classList.add('show');
+        closeBtn.onclick = () => modal.classList.remove('show');
+        modal.onclick = (event) => { if (event.target === modal) modal.classList.remove('show'); };
+        
+        // Wire buttons to the global ThemeManager
+        modalThemeBtn.onclick = () => ThemeManager.setMode(ThemeManager.get().mode==='dark'?'light':'dark');
+        modalColorBtn.onclick = () => ThemeManager.setTheme(ThemeManager.get().theme==='emerald'?'slate':'emerald');
+      }
+      initializeModal();
+
+      // ===== Expand/Collapse, TOC, Timeline, Search =====
+      const getDetails = () => document.querySelectorAll('#content details');
+      const expandBtn = document.getElementById('expandAll');
+      const collapseBtn = document.getElementById('collapseAll');
+
+      if (getDetails().length === 0) {
+        if(expandBtn) expandBtn.hidden = true;
+        if(collapseBtn) collapseBtn.hidden = true;
+      } else {
+        expandBtn?.addEventListener('click', () => { getDetails().forEach(d => d.open = true); });
+        collapseBtn?.addEventListener('click', () => { getDetails().forEach(d => d.open = false); });
+      }
+
+      (function addBackToTopLinks(){
+        $$('#content > article').forEach((article, index, arr) => {
+          if (index === arr.length - 1) return;
+          const wrapper = document.createElement('div');
+          wrapper.className = 'mt-6 flex justify-end';
+          wrapper.innerHTML = `<a href="#top" class="text-sm underline decoration-dotted">Back to top</a>`;
+          article.appendChild(wrapper);
+        });
+      })();
+
+      function buildTOC(){
+        const toc = document.getElementById('toc');
+        if (!toc) return;
+        const headings = $$('#content h2, #content h3');
+        const items = headings.map(h => {
+          if (!h.id) h.id = slug(h.textContent);
+          return { id: h.id, text: h.textContent.trim(), level: h.tagName.toLowerCase() };
+        });
+
+        toc.innerHTML = items.map(({id, text, level}) => {
+          const pad = level === 'h3' ? ' pl-4' : '';
+          return `<li><a href="#${id}" class="toc-link block px-2 py-1.5 rounded${pad}">${text}</a></li>`;
+        }).join('');
+
+        const links = $$('#toc a');
+        const sections = items.map(i => document.getElementById(i.id));
+        const obs = new IntersectionObserver(entries => {
+          entries.forEach(e => {
+            if (e.isIntersecting) {
+              links.forEach(a => a.classList.remove('active-link'));
+              const id = '#' + e.target.id;
+              const active = links.find(a => a.getAttribute('href') === id);
+              active?.classList.add('active-link');
+            }
+          });
+        }, { rootMargin: '-40% 0px -55% 0px', threshold: 0.01 });
+        sections.forEach(sec => sec && obs.observe(sec));
+      }
+
+      (function buildTimeline(){
+        const wrap = document.getElementById('timelineWrap');
+        const list = document.getElementById('timeline');
+        const coda = document.getElementById('timelineCoda');
+
+        if (!timelineStepsData || !wrap || !list) { if(wrap) wrap.hidden = true; return; }
+        const steps = timelineStepsData.split(',').map(s => s.trim());
+        const labels = timelineLabelsData ? timelineLabelsData.split(',').map(s => s.trim()) : [];
+        if (!steps.length) { wrap.hidden = true; return; }
+        wrap.hidden = false;
+
+        const mkStep = (id, label) => (
+          `<li class="flex items-center gap-2"><span class="inline-block w-[14px] h-[14px] rounded-full border-2 border-current bg-current"></span><a href="#${id}" class="hover:underline">${label}</a></li>`
+        );
+        const segments = [];
+        steps.forEach((id, idx) => {
+          const el = $$('#content h2, #content h3').find(h => slug(h.textContent) === id);
+          if (el && !el.id) el.id = id;
+          const label = labels[idx] || (el?.textContent || id.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()));
+          segments.push(mkStep(id, label));
+          if (idx !== steps.length - 1) segments.push('<li class="h-[2px] bg-current opacity-35"></li>');
+        });
+        list.innerHTML = segments.join('');
+      })();
+
+      (function searchHL(){
+        const input = document.getElementById('search');
+        const clearBtn = document.getElementById('clearSearch');
+        const content = document.getElementById('content');
+        if (!input || !content) return;
+        let originalHTML = '';
+        function restore(){
+          if (originalHTML) {
+            content.innerHTML = originalHTML;
+            buildTOC();
           }
-        },
-        legend: { display: false },
-        title: { display: true, text: 'Timeline (explicit dates from the article)' }
-      },
-      scales: {
-        x: { type: 'linear', ticks: { stepSize: 50 } },
-        y: { display: false, min: 0, max: 2 }
+        }
+        function highlight(term){
+          if (!originalHTML) originalHTML = content.innerHTML;
+          restore();
+          if (!term) return;
+          const esc = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+          const re = new RegExp(`(${esc})(?![^<]*>)`, 'gi');
+          content.innerHTML = content.innerHTML.replace(re, '<mark>$1</mark>');
+          buildTOC();
+        }
+        let t;
+        input.addEventListener('input', (e) => {
+          clearTimeout(t);
+          t = setTimeout(() => highlight(e.target.value.trim()), 120);
+        });
+        clearBtn?.addEventListener('click', () => {
+          if (input) input.value='';
+          restore();
+        });
+      })();
+
+      buildTOC();
+    });
+  </script>
+
+  <!-- Sanitizer: remove stray toolbar words; unwrap code-fenced HTML -->
+  <script>
+  (function () {
+    // 1) Remove stray toolbar words the UI sometimes injects
+    var BAD = new Set(['code','Code','download','content_copy','expand_less','expand_more']);
+    (function cleanToolbarWords(root){
+      var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+      var toRemove = [];
+      while (walker.nextNode()) {
+        var n = walker.currentNode;
+        var t = n.textContent.trim();
+        if (!t) continue;
+        if (BAD.has(t)) {
+          var p = n.parentNode;
+          var lonely = Array.from(p.childNodes).every(function(ch){
+            return ch===n || (ch.nodeType===3 && !ch.textContent.trim());
+          });
+          toRemove.push(lonely ? p : n);
+        }
+      }
+      toRemove.forEach(function(node){ if (node && node.remove) node.remove(); });
+    })(document.body);
+
+    // 2) Unwrap code-fenced HTML fragments into real nodes inside #content
+    function unwrap(pre) {
+      if (!pre) return;
+      var raw = pre.textContent.trim();
+      raw = raw.replace(/^```[a-z]*\n?/i,'').replace(/\n?```$/,'').trim();
+      // decode HTML entities if needed
+      if (raw.includes('&lt;') || raw.includes('&gt;') || raw.includes('&amp;')) {
+        var ta = document.createElement('textarea'); ta.innerHTML = raw; raw = ta.value;
+      }
+      if (/<article|<h2|<meta\s+name="doc-title"/i.test(raw)) {
+        var range = document.createRange();
+        range.selectNode(pre);
+        var frag = range.createContextualFragment(raw);
+        pre.replaceWith(frag);
       }
     }
-  });
-  const container = qs('.chart-container');
-  const ro = new ResizeObserver(()=>{ chart.resize(); });
-  ro.observe(container);
-  const tbody = qs('#timelineTableBody');
-  tbody.innerHTML = appData.timeline.map(row=>`
-    <tr>
-      <td class="px-3 py-2 border-b border-stone-200">${row.year}</td>
-      <td class="px-3 py-2 border-b border-stone-200">${row.label}</td>
-      <td class="px-3 py-2 border-b border-stone-200">${row.detail}</td>
-    </tr>
-  `).join('');
-  qs('#timelineTakeaway').textContent = "Across centuries, explicit moments anchor the case: martyr witness (1527), theological articulation (1969), and a moral reckoning (1992).";
-  return chart;
-}
 
-function setupTabs(){
-  const tabButtons = qsa('#tabs [role="tab"]');
-  const panels = qsa('[role="tabpanel"]');
-  function activate(id, pushHash=true){
-    tabButtons.forEach(b=>{
-      const sel = b.id === `tabbtn-${id}`;
-      b.setAttribute('aria-selected', String(sel));
+    // unwrap <pre><code>…</code></pre>
+    document.querySelectorAll('#content pre > code').forEach(function(codeEl){
+      unwrap(codeEl.closest('pre'));
     });
-    panels.forEach(p=>{
-      p.classList.toggle('hidden', p.id !== `tab-${id}`);
-      p.classList.toggle('block', p.id === `tab-${id}`);
+    // unwrap bare <pre> blocks (no :has() for iOS compatibility)
+    document.querySelectorAll('#content pre').forEach(function(pre){
+      if (!pre.querySelector('code')) unwrap(pre);
     });
-    if(pushHash){
-      const newHash = `#tab=${id}`;
-      if(location.hash !== newHash) history.replaceState(null, '', newHash);
+  })();
+  </script>
+  
+  <!-- Global Theme Manager -->
+  <script>
+  (function(){
+    const root=document.documentElement;
+    const saved=JSON.parse(localStorage.getItem('ui_theme')||'{}');
+    const prefersDark=matchMedia('(prefers-color-scheme: dark)').matches;
+    const state={ mode: saved.mode|| (prefersDark?'dark':'light'), theme: saved.theme||'slate' };
+    function apply(){
+      root.classList.toggle('dark', state.mode==='dark');
+      root.classList.toggle('theme-emerald', state.mode==='dark' && state.theme==='emerald');
     }
-    localStorage.setItem('activeTab', id);
-    if(id==='timeline' && !window.__timelineInit){
-      window.__timelineChart = buildTimeline();
-      window.__timelineInit = true;
-    }
-  }
-  tabButtons.forEach((btn, idx)=>{
-    btn.addEventListener('click', ()=>activate(btn.id.replace('tabbtn-','')));
-    btn.addEventListener('keydown', (e)=>{
-      const current = tabButtons.indexOf ? tabButtons.indexOf(btn) : tabButtons.findIndex(x=>x===btn);
-      if(e.key==='ArrowRight'){ e.preventDefault(); (tabButtons[current+1]||tabButtons[0]).focus(); }
-      if(e.key==='ArrowLeft'){ e.preventDefault(); (tabButtons[current-1]||tabButtons[tabButtons.length-1]).focus(); }
-      if(e.key==='Home'){ e.preventDefault(); tabButtons[0].focus(); }
-      if(e.key==='End'){ e.preventDefault(); tabButtons[tabButtons.length-1].focus(); }
-    });
-  });
-  const hash = new URLSearchParams((location.hash||'').replace('#','')).get('tab');
-  const saved = localStorage.getItem('activeTab');
-  activate(hash || saved || 'overview', false);
-}
-
-function setupSearch(){
-  const input = qs('#globalSearch');
-  function apply(){
-    const q = input.value.trim().toLowerCase();
-    const activePanel = qsa('[role="tabpanel"]').find(p=>!p.classList.contains('hidden'));
-    if(!activePanel) return;
-    const cards = qsa('.cardBtn', activePanel);
-    cards.forEach(btn=>{
-      const text = btn.textContent.toLowerCase();
-      btn.classList.toggle('hidden', q && !text.includes(q));
-    });
-  }
-  input.addEventListener('input', apply);
-}
-
-function setupSourcePane(){
-  const drawer = qs('#sourceDrawer');
-  const toggle = qs('#toggleSourcePane');
-  const close = qs('#closeSourcePane');
-  function open(){
-    drawer.classList.remove('translate-x-full');
-    toggle.setAttribute('aria-expanded','true');
-  }
-  function shut(){
-    drawer.classList.add('translate-x-full');
-    toggle.setAttribute('aria-expanded','false');
-  }
-  toggle.addEventListener('click', ()=> {
-    const openState = toggle.getAttribute('aria-expanded')==='true';
-    if(openState) shut(); else open();
-  });
-  close.addEventListener('click', shut);
-  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') shut(); });
-}
-
-function renderSections(){
-  populateSection('overview', '#overviewCards', '#overviewDetail');
-  populateSection('concepts', '#conceptCards', '#conceptDetail');
-  populateSection('history', '#historyCards', '#historyDetail');
-  populateSection('practices', '#practiceCards', '#practiceDetail');
-  populateSection('critiques', '#critiqueCards', '#critiqueDetail');
-  populateSection('witness', '#witnessCards', '#witnessDetail');
-  populateGlossary();
-}
-
-function init(){
-  renderProvenance();
-  renderSections();
-  setupTabs();
-  setupSearch();
-  setupSourcePane();
-}
-document.addEventListener('DOMContentLoaded', init);
-</script>
+    window.ThemeManager={
+      setMode(m){ state.mode=m; localStorage.setItem('ui_theme',JSON.stringify(state)); apply(); },
+      setTheme(t){ state.theme=t; localStorage.setItem('ui_theme',JSON.stringify(state)); apply(); },
+      get(){ return {...state}; }
+    };
+    apply();
+  })();
+  </script>
 
 </body>
 </html>
-
-
