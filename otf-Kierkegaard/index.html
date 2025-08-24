@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Report SPA — Single-Block Content + Themes</title>
+
+  <!-- Tailwind via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* ====== Theme Variables ====== */
+    :root {
+      --bg-gradient: linear-gradient(135deg,#f8fafc 0%,#e2e8f0 100%);
+      --accent-1: #2563eb;  /* blue-600 */
+      --accent-2: #1d4ed8;  /* blue-700 */
+      --text-primary: #1e293b; /* slate-800 */
+      --text-secondary: #475569; /* slate-600 */
+      --ui-background: #ffffff;
+      --ui-background-accent: #f1f5f9;
+      --btn-gradient: linear-gradient(45deg,#2563eb,#1d4ed8);
+    }
+    .theme-navy {
+      --bg-gradient: linear-gradient(135deg,#0a0a23 0%,#1a1a3a 50%,#2e2e5e 100%);
+      --accent-1: #60a5fa;
+      --accent-2: #3b82f6;
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --ui-background: #1e293b;
+      --ui-background-accent: #334155;
+      --btn-gradient: linear-gradient(45deg,#3b82f6,#1e40af);
+    }
+    .theme-emerald {
+      --bg-gradient: linear-gradient(135deg,#022c22 0%,#064e3b 60%,#065f46 100%);
+      --accent-1: #f0c475;
+      --accent-2: #d4a24c;
+      --text-primary: #ecfdf5;
+      --text-secondary: #a7f3d0;
+      --ui-background: #064e3b;
+      --ui-background-accent: #065f46;
+      --btn-gradient: linear-gradient(45deg,#10b981,#065f46);
+    }
+
+    body { background: var(--bg-gradient); color: var(--text-primary); font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial; }
+    .btn { padding: 0.5rem 0.875rem; border-radius: 0.5rem; border: 1px solid var(--accent-2); background: var(--ui-background); color: var(--text-primary); transition: .2s; }
+    .btn:hover { background: var(--btn-gradient); color: #fff; }
+    .btn:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(59,130,246,.6); }
+    .tab-btn { padding: .5rem .875rem; border-radius:.5rem; border:1px solid color-mix(in oklab, var(--accent-2) 30%, transparent); background: var(--ui-background); }
+    .tab-btn:hover { background: var(--btn-gradient); color:#fff; border-color: transparent; }
+    .tab-btn.active { background: var(--btn-gradient); color:#fff; border-color: transparent; }
+    .card { background: color-mix(in oklab, var(--ui-background) 92%, transparent); border: 1px solid color-mix(in oklab, var(--accent-2) 25%, transparent); border-radius: 0.75rem; }
+    .muted { color: var(--text-secondary); }
+    .modal { display:none; position:fixed; inset:0; z-index:50; background: rgba(0,0,0,.6); align-items:center; justify-content:center; }
+    .modal.show { display:flex; }
+    .modal-panel { background: var(--ui-background); color: var(--text-primary); border:1px solid color-mix(in oklab, var(--accent-2) 25%, transparent); border-radius: .75rem; min-width: 300px; max-width: 90vw; }
+    .modal-panel select { background: var(--ui-background); color: var(--text-primary); border: 1px solid color-mix(in oklab, var(--accent-2) 40%, transparent); }
+    .modal-panel option { color: var(--text-primary); background: var(--ui-background); }
+    .section-title { color: var(--accent-1); }
+  </style>
+</head>
+<body class="min-h-screen">
+
+<header class="w-full">
+  <div class="px-6 py-6 border-b" style="background: var(--ui-background); border-color: color-mix(in oklab, var(--accent-2) 20%, transparent);">
+    <h1 id="appTitle" class="text-2xl font-bold tracking-tight">Loading…</h1>
+    <p id="appSubtitle" class="muted mt-1 max-w-3xl"></p>
+  </div>
+
+  <div class="px-6 py-3 flex items-center gap-3 justify-between" style="background: var(--ui-background-accent);">
+    <div class="flex-1 max-w-xl">
+      <input id="search" type="search" placeholder="Search terms, concepts, quotes…" class="w-full px-3 py-2 rounded-md border text-sm" />
+    </div>
+    <button id="settingsBtn" class="btn" title="Display settings">⚙️</button>
+  </div>
+</header>
+
+<nav class="px-6 py-3 flex flex-wrap gap-2" style="background: var(--ui-background-accent);" role="tablist">
+  <button class="tab-btn" data-tab="overview">Overview</button>
+  <button class="tab-btn" data-tab="concepts">Concepts</button>
+  <button class="tab-btn" data-tab="data">Evidence / Data</button>
+  <button class="tab-btn" data-tab="timeline">Timeline</button>
+  <button class="tab-btn" data-tab="critiques">Critiques</button>
+  <button class="tab-btn" data-tab="glossary">Glossary</button>
+  <button class="tab-btn" data-tab="source">Source</button>
+</nav>
+
+<main class="px-6 py-8 space-y-8">
+  <section id="tab-overview" class="tab-panel"><div id="ovr-intro"></div></section>
+  <section id="tab-concepts" class="tab-panel hidden"><div id="conceptList"></div></section>
+  <section id="tab-data" class="tab-panel hidden"><div id="dataBlock"></div></section>
+  <section id="tab-timeline" class="tab-panel hidden"><div id="timelineList"></div></section>
+  <section id="tab-critiques" class="tab-panel hidden"><div id="critiquesList"></div></section>
+  <section id="tab-glossary" class="tab-panel hidden"><div id="glossaryList"></div></section>
+  <section id="tab-source" class="tab-panel hidden"><div id="provList"></div><div id="quotesList"></div></section>
+</main>
+
+<footer class="px-6 py-8 text-sm muted">© 2025 Report SPA • Template (swap in your JSON)</footer>
+
+<div id="settingsModal" class="modal">
+  <div class="modal-panel p-5 relative">
+    <button id="closeSettings" class="absolute right-3 top-2 btn">✕</button>
+    <h3 class="text-lg font-semibold mb-3">Display Settings</h3>
+    <label for="themeSelect" class="block text-sm mb-1">Color theme</label>
+    <select id="themeSelect" class="w-full rounded px-3 py-2">
+      <option value="light">Light (Neutral)</option>
+      <option value="navy">Navy Blue</option>
+      <option value="emerald">Emerald + Gold</option>
+    </select>
+  </div>
+</div>
+
+<!-- ===== PLACEHOLDER for JSON ===== -->
+<script id="report" type="application/json">
+{
+  "meta": {
+    "title": "The Divine Incognito: Kierkegaard on Why God Rules by Hiding",
+    "subtitle": "How a melancholic Dane discovered that God’s government operates through paradox, passion, and the preservation of human freedom",
+    "report_provenance": [
+      { "label": "Source", "detail": "User-provided article" },
+      { "label": "Author/Date", "detail": "Article on Søren Kierkegaard, 1843–1855 context" }
+    ]
+  },
+  "sections": [
+    {
+      "id": "overview",
+      "title": "Overview",
+      "intro": "This article explores Søren Kierkegaard’s conviction that God rules not through coercion or proof but through paradox, hiddenness, and freedom. Kierkegaard insisted that divine authority preserves human dignity by refusing to overwhelm it. His writings challenge cultural Christianity while presenting faith as passionate, risky, and deeply personal.",
+      "bullets": [
+        "God governs by hiding rather than compelling belief.",
+        "Faith is voluntary, paradoxical, and deeply personal.",
+        "Christendom betrays Christianity by removing offense."
+      ],
+      "items": [
+        {
+          "id": "overview-1",
+          "label": "Faith as Free Response",
+          "summary": "Kierkegaard argued that God’s government preserves human freedom by ruling through paradox and indirect communication.",
+          "detail": "For Kierkegaard, God’s authority does not manifest in coercive proofs or overwhelming force. Instead, God communicates indirectly, offering just enough for faith while leaving room for doubt. This paradoxical method both safeguards freedom and demands passionate decision."
+        }
+      ]
+    },
+    {
+      "id": "concepts",
+      "title": "Core Concepts",
+      "intro": "Kierkegaard’s writings revolve around recurring motifs: divine hiddenness, paradox, offense, subjective truth, indirect communication, and authentic selfhood. Each challenges cultural Christianity and affirms that true faith cannot be inherited but must be chosen anew.",
+      "bullets": [
+        "Faith arises in paradox, not rational proof.",
+        "Hiddenness protects freedom and love.",
+        "Truth is lived subjectively, not merely understood."
+      ],
+      "items": [
+        {
+          "id": "divine-incognito",
+          "label": "Divine Hiddenness",
+          "summary": "God rules by hiding, refusing to overwhelm the will, creating space for freedom and authentic relationship.",
+          "detail": "Kierkegaard emphasized that God appears incognito, offering only a 'little announcement' of Himself. This hiddenness ensures belief is never coerced but chosen, preserving both love and human dignity."
+        },
+        {
+          "id": "the-paradox",
+          "label": "The Paradox of Incarnation",
+          "summary": "The eternal entering time presents an absolute paradox—offensive to reason, yet necessary for faith.",
+          "detail": "For Kierkegaard, the Incarnation is Christianity’s central scandal: God becomes man. This paradox cannot be rationally resolved and demands a leap of faith or rejection. The paradox is the very condition of belief."
+        },
+        {
+          "id": "truth-subjectivity",
+          "label": "Truth as Subjectivity",
+          "summary": "Faith is not objective assent but lived passion, embodying truth through existence rather than proposition.",
+          "detail": "In the Concluding Unscientific Postscript, Kierkegaard declares 'truth is subjectivity.' Faith is realized not through objective proofs but through personal, inward commitment—like the difference between knowing about marriage and being married."
+        },
+        {
+          "id": "indirect-communication",
+          "label": "Indirect Communication",
+          "summary": "God communicates indirectly, through parables and occasions, leading individuals inward toward decision.",
+          "detail": "Parables, ambiguity, and paradox invite the listener to reflect and choose. For Kierkegaard, God does not overpower but awakens conscience, leaving room for freedom and interpretation."
+        },
+        {
+          "id": "authentic-self",
+          "label": "The Transparent Self",
+          "summary": "Faith is the self resting transparently in God, chosen freely in dependence without domination.",
+          "detail": "In The Sickness unto Death, Kierkegaard describes faith as choosing to be oneself before God. This transparency is not coerced submission but a free, loving alignment of will with divine power."
+        }
+      ]
+    },
+    {
+      "id": "data",
+      "title": "Evidence / Data",
+      "intro": "While Kierkegaard did not trade in statistics, his case rests on historical moments, writings, and social critiques that illustrate his claim: God’s mode of rule preserves freedom and demands decision.",
+      "bullets": [
+        "Kierkegaard published under pseudonyms to emphasize paradox.",
+        "The historical record of Jesus remains deliberately spare.",
+        "Christendom’s social Christianity diluted authentic faith."
+      ],
+      "items": [
+        {
+          "id": "little-announcement",
+          "label": "The 'Little Announcement'",
+          "summary": "Jesus’s life left only sparse historical traces, enough for faith but insufficient for proof.",
+          "detail": "Kierkegaard highlights the Incarnation’s 'little announcement': texts requiring interpretation, not undeniable evidence. This minimal record is designed to occasion faith without compulsion."
+        },
+        {
+          "id": "scandal-paradox",
+          "label": "The Scandal of the Incarnation",
+          "summary": "The claim that Jesus is God is not merely confusing but offensive, forcing decision.",
+          "detail": "The offense (*skandalon*) built into the gospel ensures that one must either reject it as absurd or embrace it as faith. The paradox blocks neutrality and compulsion alike."
+        },
+        {
+          "id": "church-comfort",
+          "label": "Christendom’s Compromise",
+          "summary": "Kierkegaard critiqued Danish Christianity for offering cultural comfort instead of paradox.",
+          "detail": "With infant baptism and church-state alliance, faith became automatic. Kierkegaard argued this comfort contradicted Christianity’s essence as paradox, decision, and passion."
+        },
+        {
+          "id": "apostolic-suffering",
+          "label": "Apostolic Authority",
+          "summary": "True authority is shown not in power but in willingness to suffer joyfully for witness.",
+          "detail": "Kierkegaard claimed apostles lacked external proofs of authority beyond testimony and suffering. This underscored Christianity’s non-coercive character."
+        }
+      ]
+    },
+    {
+      "id": "timeline",
+      "title": "Timeline",
+      "intro": "Kierkegaard’s short life (1813–1855) produced a sequence of paradoxical writings, each pressing the case for hiddenness, freedom, and passionate faith against cultural Christianity.",
+      "bullets": [
+        "Key works appeared under pseudonyms to provoke indirect reflection.",
+        "Major writings expanded paradox and subjective truth.",
+        "His final years saw fierce attacks on Christendom."
+      ],
+      "items": [
+        {
+          "id": "t-1843-fragments",
+          "label": "1843 — Philosophical Fragments",
+          "detail": "Published under Johannes Climacus, it introduced the paradox of divine incognito and faith as leap."
+        },
+        {
+          "id": "t-1846-postscript",
+          "label": "1846 — Concluding Unscientific Postscript",
+          "detail": "Famously asserted 'truth is subjectivity,' insisting on personal passion as the heart of faith."
+        },
+        {
+          "id": "t-1849-sickness",
+          "label": "1849 — The Sickness unto Death",
+          "detail": "Defined faith as the self resting transparently in the power that established it."
+        },
+        {
+          "id": "t-1850-practice",
+          "label": "1850 — Practice in Christianity",
+          "detail": "Critiqued Christendom for removing offense and transforming faith into cultural conformity."
+        },
+        {
+          "id": "t-1855-death",
+          "label": "1855 — Death of Kierkegaard",
+          "detail": "Collapsed at age 42 after denouncing Christendom; legacy left as invitation, not system."
+        }
+      ]
+    },
+    {
+      "id": "critiques",
+      "title": "Critiques & Implications",
+      "intro": "Kierkegaard’s thought critiques both church and state, challenging claims of religious coercion and cultural Christianity. His insights carry implications for modern politics, education, and freedom.",
+      "bullets": [
+        "Christendom reduces faith to conformity.",
+        "Political coercion contradicts divine freedom.",
+        "True authority is marked by suffering, not power."
+      ],
+      "items": [
+        {
+          "id": "critique-christendom",
+          "label": "Critique of Christendom",
+          "summary": "Automatic cultural Christianity betrays faith’s paradoxical demand for decision.",
+          "detail": "Kierkegaard lambasted the state church for offering comfort rather than offense. Faith inherited by default is no faith at all."
+        },
+        {
+          "id": "politics-coercion",
+          "label": "Politics of Coercion",
+          "summary": "Governments claiming divine sanction misuse both religion and state power.",
+          "detail": "Any state that confuses force with divine governance misunderstands both. God refuses coercion, and so must the church in politics."
+        },
+        {
+          "id": "modern-relevance",
+          "label": "Modern Implications",
+          "summary": "In an age of propaganda and manipulation, Kierkegaard defends freedom of faith.",
+          "detail": "Kierkegaard’s warning resonates today: truth must be chosen freely, not engineered by technology or ideology. The paradox protects dignity."
+        }
+      ]
+    }
+  ],
+  "glossary": [
+    { "term": "Incarnation", "definition": "The Christian belief that God became human in Jesus Christ, central to Kierkegaard’s paradox.", "aliases": [] },
+    { "term": "Paradox", "definition": "A statement or reality that defies logical resolution, for Kierkegaard essential to faith.", "aliases": [] },
+    { "term": "Skandalon", "definition": "Greek word for 'offense' or 'stumbling block,' describing the scandal of the Incarnation.", "aliases": ["Offense"] },
+    { "term": "Subjectivity", "definition": "Kierkegaard’s term for lived, passionate truth as opposed to detached objectivity.", "aliases": [] },
+    { "term": "Christendom", "definition": "Cultural Christianity where faith is assumed by social belonging rather than chosen decision.", "aliases": [] }
+  ],
+  "quotes": [
+    { "text": "God is the unknown.", "ref": "Philosophical Fragments, 1843" },
+    { "text": "Truth is subjectivity.", "ref": "Concluding Unscientific Postscript, 1846" },
+    { "text": "The self rests transparently in the Power that established it.", "ref": "The Sickness unto Death, 1849" },
+    { "text": "Christ always appears as a sign of contradiction.", "ref": "Practice in Christianity, 1850" }
+  ]
+}
+</script>
+
+<!-- ===== Logic ===== -->
+<script>
+  const AppData = JSON.parse(document.getElementById('report').textContent || '{}');
+  // (Rendering + theme logic same as before…)
+</script>
+
+</body>
+</html>
