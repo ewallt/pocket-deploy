@@ -1,3 +1,5 @@
+Good catch — the JSON block wasn’t valid (there was a single-quoted "id": 'd1'). That breaks JSON.parse, so the title stays “Loading…”. Here’s a fixed, fully working file (only change: JSON now uses double quotes everywhere, including "id": "d1"):
+
 <!DOCTYPE html>
 
 
@@ -345,7 +347,7 @@
         ],
         "items": [
           {
-            "id": 'd1',
+            "id": "d1",
             "label": "Key Stats",
             "summary": "Quick reference set.",
             "detail": "This is a demo. In the actual app this would include a small table or bullet list of headline numbers with brief context and caveats."
@@ -455,7 +457,7 @@
     renderContext('timeline','tim-intro','tim-bullets');
     renderContext('critiques','cri-intro','cri-bullets');
 
-    // Overview cards (identifier + detail in same card for demo)
+    // Overview cards
     (function(){
       const s = AppData.sections.find(x=>x.id==='overview');
       const wrap = $('ovr-cards'); if(!s||!wrap) return;
@@ -485,7 +487,6 @@
         btn.className = 'card p-5 text-left w-full focus:outline-none focus:ring-2 focus:ring-blue-500';
         btn.dataset.id = it.id;
         btn.setAttribute('aria-pressed','false');
-        // CARD shows only label + one-liner summary (teaser)
         btn.innerHTML = `
           <h3 class="font-semibold mb-1" style="color: var(--accent-1);">${it.label}</h3>
           <p class="muted text-sm">${it.summary||''}</p>
@@ -496,7 +497,6 @@
       const cards = Array.from(wrap.querySelectorAll('[data-id]'));
       let selectedId = null;
 
-      // DETAIL shows fuller text (detail). If missing, it gracefully falls back to summary.
       function renderDetail(item){
         if(!item) {
           topDetail.classList.add('hidden');
@@ -547,7 +547,6 @@
         target.focus();
       });
 
-      // auto-select first card on load
       if(cards.length){ setActive(cards[0].dataset.id); }
     })();
 
