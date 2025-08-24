@@ -5,7 +5,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Report SPA — Themes + Detail Panels</title>
+  <title>Report SPA — Single-Block Content + Themes</title>
 
 
   <!-- Tailwind via CDN -->
@@ -54,7 +54,7 @@
       background: var(--ui-background); color: var(--text-primary); transition: .2s;
     }
     .btn:hover { background: var(--btn-gradient); color: #fff; }
-    .btn:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(59,130,246,.6); } /* visible focus */
+    .btn:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(59,130,246,.6); }
 
     .tab-btn { padding: .5rem .875rem; border-radius:.5rem; border:1px solid color-mix(in oklab, var(--accent-2) 30%, transparent); background: var(--ui-background); }
     .tab-btn:hover { background: var(--btn-gradient); color:#fff; border-color: transparent; }
@@ -76,7 +76,7 @@
       border-radius: .75rem; min-width: 300px; max-width: 90vw;
     }
 
-    /* High-contrast select in modal (fix for navy/emerald) */
+    /* High-contrast select in modal (for navy/emerald) */
     .modal-panel select {
       background: var(--ui-background);
       color: var(--text-primary);
@@ -222,7 +222,7 @@
 
 
   <footer class="px-6 py-8 text-sm muted">
-    © 2025 Report SPA • Theme switcher + AppData loader demo
+    © 2025 Report SPA • Single-block content demo (swap the JSON below to update everything)
   </footer>
 
 
@@ -247,108 +247,153 @@
   </div>
 
 
-  <!-- ===== AppData: sample report (replace this JSON for new content) ===== -->
+  <!-- ===== SINGLE-BLOCK CONTENT (replace this JSON, nothing else) ===== -->
 
 
-  <script>
-    const AppData = {
-      meta: {
-        title: "A Brief History of Cognitive Biases",
-        subtitle: "From Early Psychology to the Behavioral Revolution • Knowledge Base",
-        report_provenance: [
-          { label: "Compiled by", detail: "Example Research Unit" },
-          { label: "Last updated", detail: "2025-08-24" },
-          { label: "Primary sources", detail: "Thorndike (1920), Bartlett (1932), Asch (1951), Wason (1960), Kahneman & Tversky (1979), Thaler & Sunstein (2008)" }
+  <script id="report" type="application/json">
+  {
+    "meta": {
+      "title": "A Brief History of Cognitive Biases",
+      "subtitle": "From Early Psychology to the Behavioral Revolution • Knowledge Base",
+      "report_provenance": [
+        { "label": "Compiled by", "detail": "Example Research Unit" },
+        { "label": "Last updated", "detail": "2025-08-24" },
+        { "label": "Primary sources", "detail": "Thorndike (1920), Bartlett (1932), Asch (1951), Wason (1960), Kahneman & Tversky (1979), Thaler & Sunstein (2008)" }
+      ]
+    },
+    "sections": [
+      {
+        "id": "overview",
+        "title": "Overview",
+        "intro": "Cognitive biases are predictable patterns of deviation from rational judgment caused by mental shortcuts. This overview highlights their historical development and enduring impact.",
+        "bullets": [
+          "Biases arise from efficient heuristics that can misfire.",
+          "Milestones span early lab psychology to modern behavioral economics.",
+          "Bias literacy improves personal, market, and policy decisions."
+        ],
+        "items": [
+          {
+            "id": "m1",
+            "label": "Prospect Theory (1979)",
+            "summary": "Losses loom larger than gains.",
+            "detail": "This is a demo. In the actual app this panel would explain Prospect Theory: reference dependence, diminishing sensitivity, and loss aversion, with a succinct example of choices under risk."
+          },
+          {
+            "id": "m2",
+            "label": "Nobel Recognition",
+            "summary": "2002 (Kahneman), 2017 (Thaler).",
+            "detail": "This is a demo. In the actual app this panel would describe how these awards validated importing psychology into economics and spurred policy applications."
+          },
+          {
+            "id": "m3",
+            "label": "Bias Catalogue",
+            "summary": "Over 180 named biases.",
+            "detail": "This is a demo. In the actual app this panel would note families of biases, examples across domains, and why taxonomies matter for mitigation."
+          },
+          {
+            "id": "m4",
+            "label": "2:1 Loss Aversion",
+            "summary": "Rule-of-thumb ratio.",
+            "detail": "This is a demo. In the actual app this panel would discuss variability, context effects, and field vs. lab findings."
+          }
         ]
       },
-      sections: [
-        {
-          id: "overview",
-          title: "Overview",
-          intro: "Cognitive biases are predictable patterns of deviation from rational judgment caused by mental shortcuts. This overview highlights their historical development and enduring impact.",
-          bullets: [
-            "Biases arise from efficient heuristics that can misfire.",
-            "Key milestones span 1920s psychology to modern behavioral economics.",
-            "Understanding biases improves decisions in policy, markets, and daily life."
-          ],
-          items: [
-            { id:"m1", label:"Prospect Theory (1979)", summary:"Descriptive model of risk with loss aversion.", detail:"Kahneman & Tversky showed outcomes are evaluated vs. reference points; losses loom larger than gains." },
-            { id:"m2", label:"Nobel Recognition (2002, 2017)", summary:"Validation of behavioral approach.", detail:"Kahneman (2002) and Thaler (2017) recognized for integrating psychology with economics." },
-            { id:"m3", label:"Bias Catalogue", summary:"Over 180 documented biases.", detail:"From anchoring to survivorship, a growing taxonomy maps where heuristics mislead." },
-            { id:"m4", label:"Loss Aversion Ratio", summary:"Losses ≈ 2x gains.", detail:"Typical estimates suggest the disutility of losses is about twice the utility of equivalent gains." }
-          ]
-        },
-        {
-          id: "concepts",
-          title: "Core Concepts",
-          intro: "Foundational biases explain many observed judgment errors. These cards summarize four pillars.",
-          bullets: [
-            "Confirmation bias: we seek supportive evidence.",
-            "Anchoring: initial numbers pull estimates.",
-            "Loss aversion: losses weigh heavier than gains."
-          ],
-          items: [
-            { id:"c1", label:"Confirmation Bias", summary:"Seeking confirming evidence.", detail:"People preferentially notice, recall, and test data that confirms prior beliefs." },
-            { id:"c2", label:"Anchoring", summary:"Overweighting first info.", detail:"Initial values serve as anchors; adjustments are insufficient even when anchors are arbitrary." },
-            { id:"c3", label:"Loss Aversion", summary:"Losses > gains.", detail:"Pain of losing ~2x pleasure of winning; drives reference-dependent choices." },
-            { id:"c4", label:"Survivorship Bias", summary:"Ignoring the unseen failures.", detail:"We focus on successes that remain visible; missing data skews inference." }
-          ]
-        },
-        {
-          id: "data",
-          title: "Evidence / Data",
-          intro: "Representative stats and facts that frequently appear in the literature.",
-          bullets: [
-            "Loss aversion often approximates a ~2:1 ratio.",
-            "Bias catalogue exceeds 180 entries across domains.",
-            "Behavioral findings replicated in lab and field."
-          ],
-          items: [
-            { id:"d1", label:"Key Stats", summary:"Quick pulse.", detail:"Loss aversion ratio ≈ 2:1; >180 biases; widespread replication across contexts." }
-          ]
-        },
-        {
-          id: "timeline",
-          title: "Timeline",
-          intro: "Selected milestones from early experiments to applied behavioral policy.",
-          bullets: [
-            "1920: Halo Effect named (Thorndike).",
-            "1951: Asch conformity experiments.",
-            "1979: Prospect Theory published."
-          ],
-          items: [
-            { id:"t1", label:"1920 — Halo Effect", detail:"Trait spillover distorts judgment." },
-            { id:"t2", label:"1932 — Reconstructive Memory", detail:"Bartlett shows memory reshaping." },
-            { id:"t3", label:"1951 — Conformity", detail:"Asch demonstrates social pressure." },
-            { id:"t4", label:"1960 — Confirmation Bias", detail:"Wason 2-4-6 task evidence." },
-            { id:"t5", label:"1979 — Prospect Theory", detail:"Reference dependence and loss aversion." }
-          ]
-        },
-        {
-          id: "critiques",
-          title: "Critiques & Implications",
-          intro: "Debates center on external validity, boundaries of effects, and ethical nudging.",
-          bullets: [
-            "Replicability varies by effect and context.",
-            "Nudging raises autonomy and consent questions.",
-            "Bias literacy can mitigate, not eliminate, errors."
-          ],
-          items: [
-            { id:"k1", label:"Replicability", summary:"Mixed replication record.", detail:"Large-sample preregistrations clarify effect sizes and boundary conditions." },
-            { id:"k2", label:"Ethics of Nudging", summary:"Autonomy vs. welfare.", detail:"Transparent, accountable choice architecture can respect agency while improving outcomes." }
-          ]
-        }
-      ],
-      glossary: [
-        { term:"Heuristic", definition:"A mental shortcut for quick decisions; efficient but fallible." },
-        { term:"Reference Point", definition:"A baseline from which gains/losses are evaluated." },
-        { term:"Choice Architecture", definition:"Design of environments that structure decisions." }
-      ],
-      quotes: [
-        { text:"Losses loom larger than gains.", ref:"Kahneman & Tversky (1979)" },
-        { text:"We see what we expect to see.", ref:"Bartlett (1932)" }
-      ]
-    };
+      {
+        "id": "concepts",
+        "title": "Core Concepts",
+        "intro": "Tap any card to see a fuller explanation in the detail panels above and below the grid.",
+        "bullets": [
+          "Cards: quick identifiers only.",
+          "Detail panels: the real explanations.",
+          "Swap this JSON to update content."
+        ],
+        "items": [
+          {
+            "id": "c1",
+            "label": "Confirmation Bias",
+            "summary": "We seek supportive evidence.",
+            "detail": "This is a demo. In the actual app this would define confirmation bias, give a minimal historical note (e.g., Wason, 1960), and add a short example showing selective search, interpretation, and memory. You could also add a 'mitigation' mini-list here."
+          },
+          {
+            "id": "c2",
+            "label": "Anchoring",
+            "summary": "First numbers pull estimates.",
+            "detail": "This is a demo. In the actual app this would explain how arbitrary anchors influence judgments (e.g., wheel-of-fortune experiments), why adjustments are insufficient, and where anchoring shows up in pricing and negotiations."
+          },
+          {
+            "id": "c3",
+            "label": "Loss Aversion",
+            "summary": "Losses weigh heavier than gains.",
+            "detail": "This is a demo. In the actual app this would explain reference points, asymmetric value function, typical magnitudes, and implications for selling vs. buying, insurance, and endowment effect."
+          },
+          {
+            "id": "c4",
+            "label": "Survivorship Bias",
+            "summary": "We ignore unseen failures.",
+            "detail": "This is a demo. In the actual app this would show the WWII bomber example, emphasize missing data problems, and suggest checklists for ensuring absent cases are considered."
+          }
+        ]
+      },
+      {
+        "id": "data",
+        "title": "Evidence / Data",
+        "intro": "Representative facts often cited across the literature.",
+        "bullets": [
+          "Loss aversion ~2:1 (varies).",
+          "Catalog >180 biases and growing.",
+          "Lab and field replications exist."
+        ],
+        "items": [
+          {
+            "id": 'd1',
+            "label": "Key Stats",
+            "summary": "Quick reference set.",
+            "detail": "This is a demo. In the actual app this would include a small table or bullet list of headline numbers with brief context and caveats."
+          }
+        ]
+      },
+      {
+        "id": "timeline",
+        "title": "Timeline",
+        "intro": "Selected milestones from early experiments to applied policy.",
+        "bullets": [
+          "1920: Halo Effect (Thorndike).",
+          "1951: Asch conformity.",
+          "1979: Prospect Theory."
+        ],
+        "items": [
+          { "id":"t1","label":"1920 — Halo Effect","detail":"This is a demo. In the actual app this would describe Thorndike's rating spillover and implications for performance evaluation." },
+          { "id":"t2","label":"1932 — Reconstructive Memory","detail":"This is a demo. In the actual app this would summarize Bartlett’s story recall findings and schema theory." },
+          { "id":"t3","label":"1951 — Conformity","detail":"This is a demo. In the actual app this would outline Asch’s line experiments and social pressure." },
+          { "id":"t4","label":"1960 — Confirmation Bias","detail":"This is a demo. In the actual app this would explain Wason’s 2-4-6 task and falsification failure." },
+          { "id":"t5","label":"1979 — Prospect Theory","detail":"This is a demo. In the actual app this would list the theory’s key components and influence." }
+        ]
+      },
+      {
+        "id": "critiques",
+        "title": "Critiques & Implications",
+        "intro": "Debates revolve around effect sizes, boundary conditions, and ethics of nudging.",
+        "bullets": [
+          "Replication depends on context.",
+          "Autonomy vs. welfare trade-offs.",
+          "Bias literacy mitigates, not cures."
+        ],
+        "items": [
+          { "id":"k1","label":"Replicability","summary":"Mixed replication record.","detail":"This is a demo. In the actual app this would point to large-sample, preregistered studies and nuance around effect heterogeneity." },
+          { "id":"k2","label":"Ethics of Nudging","summary":"Autonomy & consent.","detail":"This is a demo. In the actual app this would discuss transparent defaults, accountability, and designing for agency." }
+        ]
+      }
+    ],
+    "glossary": [
+      { "term":"Heuristic", "definition":"A mental shortcut for quick decisions; efficient but fallible." },
+      { "term":"Reference Point", "definition":"Baseline from which gains and losses are judged." },
+      { "term":"Choice Architecture", "definition":"Environmental design that shapes decisions." }
+    ],
+    "quotes": [
+      { "text":"Losses loom larger than gains.", "ref":"Kahneman & Tversky (1979)" },
+      { "text":"We see what we expect to see.", "ref":"Bartlett (1932)" }
+    ]
+  }
   </script>
 
 
@@ -356,6 +401,9 @@
 
 
   <script>
+    // ---------- Parse single-block content ----------
+    const AppData = JSON.parse(document.getElementById('report').textContent);
+
     // ---------- Theme ----------
     const bodyEl = document.body;
     const themeSelect = document.getElementById('themeSelect');
@@ -384,7 +432,7 @@
     modal.addEventListener('click', (e)=>{ if(e.target===modal){ modal.classList.remove('show'); modal.setAttribute('aria-hidden','true'); }});
     if (themeSelect) themeSelect.addEventListener('change', e => applyTheme(e.target.value));
 
-    // ---------- Render from AppData ----------
+    // ---------- Helpers ----------
     const $ = (id)=>document.getElementById(id);
 
     // Header
@@ -407,7 +455,7 @@
     renderContext('timeline','tim-intro','tim-bullets');
     renderContext('critiques','cri-intro','cri-bullets');
 
-    // Overview cards
+    // Overview cards (identifier + detail in same card for demo)
     (function(){
       const s = AppData.sections.find(x=>x.id==='overview');
       const wrap = $('ovr-cards'); if(!s||!wrap) return;
@@ -422,7 +470,7 @@
       });
     })();
 
-    // Concepts: cards + dual detail panels
+    // Concepts: cards = short; detail panels = longer (distinct)
     (function(){
       const s = AppData.sections.find(x=>x.id==='concepts');
       const wrap = $('conceptList');
@@ -430,25 +478,25 @@
       const bottomDetail = $('conceptDetailBottom');
       if(!s || !wrap) return;
 
-      // render cards as buttons for accessibility
       wrap.innerHTML = '';
       (s.items||[]).forEach(it=>{
-        const card = document.createElement('button');
-        card.type = 'button';
-        card.className = 'card p-5 text-left w-full focus:outline-none focus:ring-2 focus:ring-blue-500';
-        card.dataset.id = it.id;
-        card.setAttribute('aria-pressed','false');
-        card.innerHTML = `
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'card p-5 text-left w-full focus:outline-none focus:ring-2 focus:ring-blue-500';
+        btn.dataset.id = it.id;
+        btn.setAttribute('aria-pressed','false');
+        // CARD shows only label + one-liner summary (teaser)
+        btn.innerHTML = `
           <h3 class="font-semibold mb-1" style="color: var(--accent-1);">${it.label}</h3>
-          <p class="muted text-sm mb-2">${it.summary||''}</p>
-          <p>${it.detail||''}</p>
+          <p class="muted text-sm">${it.summary||''}</p>
         `;
-        wrap.appendChild(card);
+        wrap.appendChild(btn);
       });
 
       const cards = Array.from(wrap.querySelectorAll('[data-id]'));
       let selectedId = null;
 
+      // DETAIL shows fuller text (detail). If missing, it gracefully falls back to summary.
       function renderDetail(item){
         if(!item) {
           topDetail.classList.add('hidden');
@@ -458,9 +506,7 @@
         const html = `
           <div class="text-sm uppercase tracking-wide muted mb-1">Selected concept</div>
           <h3 class="text-lg font-semibold mb-2" style="color: var(--accent-1);">${item.label}</h3>
-          <p class="mb-2">${item.detail||item.summary||''}</p>
-          ${item.examples?.length ? `<div class="mt-3"><div class="font-semibold mb-1">Examples</div><ul class="list-disc pl-5 space-y-1">${item.examples.map(e=>`<li>${e}</li>`).join('')}</ul></div>` : ''}
-          ${item.quotes?.length ? `<div class="mt-3"><div class="font-semibold mb-1">Quotes</div><ul class="list-disc pl-5 space-y-1">${item.quotes.map(q=>`<li>“${q.text}” — ${q.ref||''}</li>`).join('')}</ul></div>` : ''}
+          <p class="mb-2">${item.detail || item.summary || ''}</p>
         `;
         topDetail.innerHTML = html;
         bottomDetail.innerHTML = html;
@@ -481,14 +527,12 @@
         renderDetail(item);
       }
 
-      // click
       wrap.addEventListener('click', (e)=>{
         const btn = e.target.closest('[data-id]');
         if(!btn) return;
         setActive(btn.dataset.id);
       });
 
-      // keyboard
       wrap.addEventListener('keydown', (e)=>{
         if(!['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Home','End'].includes(e.key)) return;
         e.preventDefault();
