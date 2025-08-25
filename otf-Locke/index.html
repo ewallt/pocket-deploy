@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Reasonable Revolutionary - Interactive Report</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg,#f8fafc 0%,#e2e8f0 100%);
+            --accent-1: #2563eb;
+            --accent-2: #1d4ed8;
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --ui-background: #ffffff;
+            --ui-background-accent: #f1f5f9;
+            --btn-gradient: linear-gradient(45deg,#2563eb,#1d4ed8);
+        }
+        .theme-navy {
+            --bg-gradient: linear-gradient(135deg,#0a0a23 0%,#1a1a3a 50%,#2e2e5e 100%);
+            --accent-1: #60a5fa;
+            --accent-2: #3b82f6;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --ui-background: #1e293b;
+            --ui-background-accent: #334155;
+            --btn-gradient: linear-gradient(45deg,#3b82f6,#1e40af);
+        }
+        .theme-emerald {
+            --bg-gradient: linear-gradient(135deg,#022c22 0%,#064e3b 60%,#065f46 100%);
+            --accent-1: #f0c475;
+            --accent-2: #d4a24c;
+            --text-primary: #ecfdf5;
+            --text-secondary: #a7f3d0;
+            --ui-background: #064e3b;
+            --ui-background-accent: #065f46;
+            --btn-gradient: linear-gradient(45deg,#10b981,#065f46);
+        }
+        body { background: var(--bg-gradient); color: var(--text-primary); min-height: 100vh; }
+        .ui-bg { background-color: var(--ui-background); }
+        .ui-bg-accent { background-color: var(--ui-background-accent); }
+        .text-primary { color: var(--text-primary); }
+        .text-secondary { color: var(--text-secondary); }
+        .accent-1 { color: var(--accent-1); }
+        .accent-2 { color: var(--accent-2); }
+        .btn-gradient { background: var(--btn-gradient); }
+        .border-accent { border-color: var(--accent-1); }
+        *:focus-visible { outline: 3px solid var(--accent-1); outline-offset: 2px; }
+        .tab-active { border-bottom: 3px solid var(--accent-1); color: var(--accent-1); }
+        .accordion-content {
+            display: grid;
+            grid-template-rows: 0fr;
+            opacity: 0.5;
+            transition: grid-template-rows 0.4s ease-out, opacity 0.3s ease-out;
+        }
+        .accordion-content > div { overflow: hidden; }
+        .accordion-content.active {
+            grid-template-rows: 1fr;
+            opacity: 1;
+            transition: grid-template-rows 0.5s ease-in, opacity 0.5s ease-in;
+        }
+        .search-highlight { background-color: #fef08a; color: #713f12; }
+        .theme-navy .search-highlight { background-color: #fde047; color: #1e293b; }
+        .theme-emerald .search-highlight { background-color: #a7f3d0; color: #064e3b; }
+        .chart-container { position: relative; width: 100%; max-width: 48rem; margin: 0 auto; height: 20rem; max-height: 450px; }
+    </style>
+</head>
+<body class="font-sans">
+    <div class="container mx-auto px-4 py-6 max-w-7xl">
+        <!-- Header: Dynamically rendered -->
+        <header id="app-header" class="ui-bg rounded-lg shadow-lg p-6 mb-6"></header>
+        
+        <!-- Search Bar -->
+        <div class="ui-bg rounded-lg shadow-lg p-4 mb-6">
+            <input type="search" id="searchInput" placeholder="Search concepts, people, or events..." 
+                   class="w-full px-4 py-2 rounded-lg ui-bg-accent text-primary placeholder-gray-500 focus:ring-2">
+        </div>
+        
+        <!-- Tab Navigation: Dynamically rendered -->
+        <nav id="app-tabs" class="ui-bg rounded-lg shadow-lg mb-6" role="tablist" aria-label="Main navigation"></nav>
+        
+        <!-- Tab Panels: Dynamically rendered -->
+        <main id="app-panels" class="ui-bg rounded-lg shadow-lg p-6"></main>
+        
+        <!-- Settings Modal -->
+        <div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+            <div class="ui-bg rounded-lg p-6 max-w-md w-full">
+                <h2 id="settings-title" class="text-xl font-bold accent-1 mb-4">Display Settings</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label for="themeSelect" class="block text-primary font-semibold mb-2">Theme</label>
+                        <select id="themeSelect" class="w-full px-3 py-2 rounded ui-bg-accent text-primary">
+                            <option value="default">Light (Default)</option>
+                            <option value="theme-navy">Navy Blue</option>
+                            <option value="theme-emerald">Green + Gold</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button id="cancelSettings" class="px-4 py-2 rounded ui-bg-accent text-primary hover:opacity-80">Cancel</button>
+                    <button id="saveSettings" class="px-4 py-2 rounded btn-gradient text-white hover:opacity-80">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Island -->
+    <script type="application/json" id="report-data">
+    {
+      "meta": {
+        "title": "The Reasonable Revolutionary",
+        "subtitle": "John Locke on Why God Never Forces Faith",
+        "provenance": [
+          { "label": "Title", "detail": "The Reasonable Revolutionary: John Locke on Why God Never Forces Faith" },
+          { "label": "Subtitle", "detail": "How an Oxford scholar's defense of religious toleration revealed the divine logic of freedom" },
+          { "label": "Type", "detail": "Historical and theological analysis" },
+          { "label": "Focus", "detail": "Locke's Letter Concerning Toleration and theology of non-coercion" }
+        ]
+      },
+      "sections": [
+        {
+          "id": "overview", "title": "Overview",
+          "intro": "In 1689, John Locke published 'A Letter Concerning Toleration,' arguing that religious coercion violates not just human dignity but divine design. The God who created human minds to know truth through reason would never authorize force to compel faith.",
+          "bullets": [
+            "Written during the persecution of French Huguenots after Louis XIV revoked the Edict of Nantes in 1685",
+            "Locke argued that civil government and spiritual authority operate in fundamentally different realms",
+            "His theology of non-coercion was grounded in the nature of faith, how God governs, and why forced religion corrupts both church and state"
+          ],
+          "items": [
+            { "id": "overview-1", "label": "The Historical Context", "summary": "1685: Louis XIV's revocation of the Edict of Nantes unleashed persecution against French Protestants. Hundreds of thousands of Huguenots fled to England with tales of forced conversions and family separations.", "detail": "Meanwhile, John Locke in Dutch exile was completing his revolutionary letter that would transform Western thinking about religious freedom, published anonymously in 1689." },
+            { "id": "overview-2", "label": "The Core Argument", "summary": "Locke claimed that coercion in religion violates divine design itself. The God who created minds to know truth through reason couldn't authorize force without contradicting His own nature.", "detail": "This wasn't tolerance from exhaustion after religious wars, but principled theology based on what faith is, how God governs, and why earthly rulers who try to rule souls inevitably corrupt both church and state." },
+            { "id": "overview-3", "label": "Revolutionary Impact", "summary": "Locke's vision separated civil and spiritual power completely: the state secures life, liberty, and property through law; religion aims at salvation of souls through persuasion.", "detail": "This created the 'Lockean settlement': God rules souls through truth that persuades and love that wins; the state rules bodies through laws that protect and punish. When each power remains in its proper sphere, both human dignity and civil peace are preserved." }
+          ]
+        },
+        {
+          "id": "concepts", "title": "Concepts",
+          "intro": "Locke developed a sophisticated framework distinguishing civil from spiritual authority, analyzing the mechanics of belief, and defining the church as a voluntary society fundamentally different from political institutions.",
+          "bullets": [
+            "Civil government operates on bodies and estates; spiritual authority operates on souls through persuasion",
+            "True religion consists in 'inward and full persuasion of the mind'—something force cannot produce",
+            "Churches are voluntary societies that can only use spiritual discipline, never civil coercion"
+          ],
+          "items": [
+            { "id": "concepts-1", "label": "Drawing the Line", "summary": "Fundamental distinction between realms", "detail": "Civil government secures 'civil interests'—life, liberty, health, property—through law. Religion aims at salvation of souls. Mix these powers and you corrupt both: the state becomes an inquisitor, the church becomes a political faction." },
+            { "id": "concepts-2", "label": "Mechanics of Belief", "summary": "The impossibility of forced faith", "detail": "Belief is a judgment formed when the mind encounters convincing evidence. You cannot will yourself to believe 2+2=5 any more than threats can make it true. Force can make hypocrites; only reasons can make believers." },
+            { "id": "concepts-3", "label": "Voluntary Society", "summary": "The nature of true church membership", "detail": "A church is 'a voluntary society of men, joining themselves together of their own accord.' No one is born into faith like they're born into a nation. The worst punishment a church can inflict is exclusion from fellowship." },
+            { "id": "concepts-4", "label": "Empire of Conscience", "summary": "God's exclusive jurisdiction", "detail": "Conscience is the interior forum where the soul stands before God. Because only God can judge hearts—knowing intentions and sincerity—He reserves this forum to Himself. Civil rulers lack both competence and authority here." },
+            { "id": "concepts-5", "label": "Divine Pedagogy", "summary": "How God chooses to govern", "detail": "God's government operates by teaching and drawing, not coercion. He illuminates minds without overriding them; wins hearts without conscripting them. Non-coercion isn't divine weakness but the fitting expression of how a God of truth and love rules." },
+            { "id": "concepts-6", "label": "Moderate Penalties Fallacy", "summary": "Why 'gentle pressure' still fails", "detail": "Even moderate fines or disabilities remain force, categorically unfit to produce belief. They corrupt the motive that gives religious acts their worth. Prayer offered to avoid punishment isn't prayer—it's a transaction." }
+          ]
+        },
+        {
+          "id": "evidence", "title": "Evidence",
+          "intro": "Locke systematically diagnosed the multiple failures that religious coercion produces, from epistemic confusion to moral corruption to jurisdictional overreach.",
+          "bullets": [
+            "Pain and penalties aren't arguments—they can't correct error, only suppress its expression",
+            "Coercion rewards hypocrisy, the very vice religion condemns, by making false profession rational",
+            "Once rulers claim authority over belief, every sect dreams of seizing that power for itself"
+          ],
+          "items": [
+            { "id": "evidence-1", "label": "The Cascade of Failures", "summary": "Locke identified four types of failure in religious coercion: epistemic (force can't correct error), moral (rewards hypocrisy), jurisdictional (usurps divine authority), and prudential (creates cycles of persecution).", "detail": "Each failure compounds the others. A mind 'persuaded' by fear hasn't been persuaded at all. When advancement attaches to an established creed, false profession becomes rational. Today's persecuted become tomorrow's persecutors." },
+            { "id": "evidence-2", "label": "Biblical Resonance", "summary": "Christ's kingdom is 'not of this world' and cannot be advanced by worldly instruments. The wheat and tares must grow together until harvest.", "detail": "The worship God seeks is 'in spirit and truth,' not external conformity without sincerity. God sends rain on just and unjust alike, seeks prodigals rather than slaves, knocks at the door rather than breaking it down." },
+            { "id": "evidence-3", "label": "Practical Test", "summary": "Locke offers a simple experiment: Can you, by act of will, believe that 2+2=5? Can threat make the sun orbit the earth true for you?", "detail": "The answer exposes coercion's futility. You can't be 'slightly pregnant' and you can't 'slightly coerce' conscience. Where the Gospel persuades, the magistrate need not punish; where only punishment can move, there is no Gospel." }
+          ]
+        },
+        {
+          "id": "boundaries", "title": "Boundaries",
+          "intro": "Locke's toleration, though broad for the 17th century, had controversial limits based on perceived threats to civil society rather than doctrinal disagreements.",
+          "bullets": [
+            "Excluded atheists who he believed couldn't be trusted to keep oaths essential to civil contracts",
+            "Excluded Catholics whose allegiance to a foreign prince created divided political loyalty",
+            "These exclusions followed from practical concerns about maintaining civil peace, not doctrinal tests"
+          ],
+          "items": [
+            { "id": "boundaries-1", "label": "Atheist Exclusion", "summary": "Locke withheld toleration from atheists, arguing they couldn't be trusted to keep oaths.", "detail": "If oaths have no binding force (as he believed atheists must hold), then contracts, testimony, and promises—the ligaments of civil society—dissolve. This wasn't a doctrinal test but (in his view) a threat to minimal consensus needed for common life." },
+            { "id": "boundaries-2", "label": "Catholic Question", "summary": "Roman Catholics were excluded due to allegiance to a foreign prince with temporal claims.", "detail": "If religious commitment entails political allegiance to foreign temporal power, civic loyalty fractures. Locke saw this not as theological disagreement but as incompatible political loyalty." },
+            { "id": "boundaries-3", "label": "Practical Limits", "summary": "Toleration extends as far as civil peace permits.", "detail": "When doctrines actively undermine peace—not by being false but by attacking foundations of civil society—Locke draws a line. The same architecture that shields faith from force keeps the public square from becoming a confessional battlefield." }
+          ]
+        },
+        {
+          "id": "implications", "title": "Implications",
+          "intro": "Locke's argument produced revolutionary yet practical guidelines for rulers, churches, and citizens that transformed Western political thought.",
+          "bullets": [
+            "Rulers must secure equal civil rights and leave matters of God to conscience",
+            "Churches must refuse the sword and rely only on truth, love, and spiritual discipline",
+            "Citizens must seek truth under evidence, not threat, and never violate conscience for favor"
+          ],
+          "items": [
+            { "id": "implications-1", "label": "For Rulers", "summary": "Secure equal civil rights in worldly things. Punish crimes, not creeds. Protect bodies and property, not orthodoxy.", "detail": "The magistrate's sword can restrain actual injuries—violence, fraud, theft—but cannot command assent or punish unbelief as such. Civil rulers lack both competence and authority over conscience." },
+            { "id": "implications-2", "label": "For Churches", "summary": "Refuse the temptation of coercive power. Teach, persuade, pray, and if necessary, exercise spiritual discipline—excommunication, not execution.", "detail": "Let your only weapons be truth and love. A church that persecutes reveals it doesn't understand the Gospel it claims to proclaim. Charity, meekness, and goodwill aren't additions to correct doctrine but necessary fruits of God's kingdom." },
+            { "id": "implications-3", "label": "For Citizens", "summary": "Seek truth under evidence, not under threat. Never violate conscience to curry favor or escape pain.", "detail": "Hypocrisy wounds both church and state. This isn't religious indifference but energetic engagement under conditions of civic peace: a free field where truth can commend itself to minds and grace can win hearts." }
+          ]
+        },
+        {
+          "id": "legacy", "title": "Legacy",
+          "intro": "Three centuries later, Locke's vision remains urgently relevant as both religious extremism and secular totalitarianism threaten freedom of conscience.",
+          "bullets": [
+            "The temptation to coerce belief—religious, ideological, or cultural—remains powerful",
+            "Modern actors have changed but the basic challenge persists: living together despite ultimate disagreements",
+            "Locke's answer isn't relativism but principled commitment to methods proper to truth-seeking"
+          ],
+          "items": [
+            { "id": "legacy-1", "label": "The Lockean Settlement", "summary": "Not the absence of religious authority but its proper location.", "detail": "God rules souls through truth that persuades and love that wins. The state rules bodies through laws that protect and punish. When each power remains in its proper sphere, both human dignity and civil peace are preserved." },
+            { "id": "legacy-2", "label": "Contemporary Relevance", "summary": "Secular ideologies compete with religious fundamentalisms; social media shapes belief; 'cancel culture' wields social death rather than physical execution.", "detail": "The actors have changed but the challenge remains: how to live together when we disagree about ultimate things. Locke's answer: minds are changed by reasons, not racks; hearts are won by love, not law." },
+            { "id": "legacy-3", "label": "Continuing Challenge", "summary": "In an age rushing toward various forms of coercion, Locke calls us back to basics.", "detail": "What sort of thing is belief? What kind of creatures are we? How does God choose to govern? Answer these clearly, and the path forward becomes clear, even if not easy. The God who refuses to coerce continues to persuade." }
+          ]
+        }
+      ],
+      "glossary": [
+        { "term": "Letter Concerning Toleration", "definition": "Locke's 1689 work arguing that religious coercion violates both human nature and divine design, published anonymously while in Dutch exile." },
+        { "term": "Civil Interests", "definition": "Life, liberty, health, and property—the proper sphere of government authority according to Locke, distinct from spiritual concerns." },
+        { "term": "Voluntary Society", "definition": "Locke's definition of a church: people joining of their own accord for worship, not through birth, territory, or coercion." },
+        { "term": "Edict of Nantes", "definition": "1598 decree granting religious tolerance to French Protestants (Huguenots), revoked by Louis XIV in 1685, triggering mass persecution." },
+        { "term": "Dragonnades", "definition": "French military units quartered in Protestant homes to force conversions through intimidation and violence." },
+        { "term": "Interior Forum", "definition": "The conscience as the sacred space where the soul stands before God, reserved to divine authority alone." },
+        { "term": "Moderate Penalties", "definition": "Jonas Proast's compromise proposal of using gentle pressure (fines, disabilities) to encourage religious consideration, which Locke rejected." },
+        { "term": "Divine Pedagogy", "definition": "God's method of governing souls through illumination and attraction rather than coercion, respecting the nature of rational creatures." }
+      ],
+      "quotes": [
+        { "text": "True religion consists in the inward and full persuasion of the mind.", "ref": "On the nature of genuine faith" },
+        { "text": "A voluntary society of men, joining themselves together of their own accord.", "ref": "Locke's definition of a church" },
+        { "text": "Where the Gospel persuades, the magistrate need not punish; where only punishment can move, there is no Gospel.", "ref": "On the futility of religious coercion" },
+        { "text": "You can chain a body; you cannot chain a belief.", "ref": "On the different spheres of civil and spiritual authority" },
+        { "text": "The God who refuses to coerce continues to persuade.", "ref": "On divine governance" }
+      ],
+      "timelineChart": {
+        "title": "Development of Religious Toleration",
+        "labels": ["1598", "1685", "1689", "1690s", "1700s", "Present"],
+        "values": [3, 1, 4, 3.5, 4.5, 3]
+      }
+    }
+    </script>
+
+    <script defer>
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        // ------------------
+        // DOM Element Refs
+        // ------------------
+        const app = {
+            header: document.getElementById('app-header'),
+            tabs: document.getElementById('app-tabs'),
+            panels: document.getElementById('app-panels'),
+            searchInput: document.getElementById('searchInput'),
+            settings: {
+                modal: document.getElementById('settingsModal'),
+                btn: document.getElementById('settingsBtn'), // Will be rendered into header
+                saveBtn: document.getElementById('saveSettings'),
+                cancelBtn: document.getElementById('cancelSettings'),
+                themeSelect: document.getElementById('themeSelect')
+            }
+        };
+
+        // ------------------
+        // State Management
+        // ------------------
+        const state = {
+            activeTab: 'overview',
+            theme: 'default',
+            chartInstance: null
+        };
+
+        const loadState = () => {
+            const storedTab = localStorage.getItem('activeTab');
+            const storedTheme = localStorage.getItem('theme');
+            const hashTab = location.hash.substring(1);
+
+            state.theme = storedTheme || 'default';
+            state.activeTab = hashTab || storedTab || 'overview';
+            
+            applyTheme(state.theme);
+        };
+
+        const saveState = () => {
+            localStorage.setItem('activeTab', state.activeTab);
+            localStorage.setItem('theme', state.theme);
+        };
+
+        const applyTheme = (theme) => {
+            document.documentElement.className = theme === 'default' ? '' : theme;
+            if (app.settings.themeSelect) app.settings.themeSelect.value = theme;
+            state.theme = theme;
+            // If chart exists, update its colors
+            if (state.chartInstance) {
+                updateChartColors();
+            }
+        };
+
+        // ------------------
+        // Data Loading
+        // ------------------
+        const loadData = () => {
+            try {
+                const dataNode = document.getElementById('report-data');
+                if (!dataNode) throw new Error('Data script tag not found');
+                return JSON.parse(dataNode.textContent);
+            } catch (e) {
+                console.error("Failed to load or parse report data:", e);
+                app.panels.innerHTML = `<p class="text-red-500">Error: Could not load report data.</p>`;
+                return null;
+            }
+        };
+        
+        const data = loadData();
+        if (!data) return; // Stop execution if data fails to load
+
+        // ------------------
+        // Render Functions
+        // ------------------
+        const renderHeader = () => {
+            const { meta } = data;
+            app.header.innerHTML = `
+                <div class="flex justify-between items-start">
+                    <div class="flex-1">
+                        <h1 class="text-3xl font-bold accent-1 mb-2">${meta.title || 'Report'}</h1>
+                        <p class="text-secondary text-lg">${meta.subtitle || ''}</p>
+                    </div>
+                    <button id="settingsBtn" class="p-3 rounded-lg ui-bg-accent hover:opacity-80 transition-opacity" aria-label="Display Settings">
+                        <span class="text-2xl">⚙️</span>
+                    </button>
+                </div>`;
+        };
+        
+        const renderTabs = () => {
+            const { sections } = data;
+            // Ensure sections exists and is an array before mapping
+            const tabsHTML = (sections || []).map(section => `
+                <button role="tab" aria-selected="false" aria-controls="${section.id}-panel" id="${section.id}-tab"
+                        class="px-6 py-3 font-semibold text-secondary hover:accent-1 transition-colors">
+                    ${section.title}
+                </button>
+            `).join('');
+            app.tabs.innerHTML = `<div class="flex flex-wrap">${tabsHTML}</div>`;
+        };
+
+        const renderPanels = () => {
+            const { sections, glossary, quotes, timelineChart, meta } = data;
+            const panelsHTML = (sections || []).map(section => {
+                const contextBlock = `
+                    <div class="ui-bg-accent rounded-lg p-6 mb-6">
+                        <h2 class="text-xl font-bold accent-1 mb-3">Context & Takeaways</h2>
+                        <p class="text-primary mb-4">${section.intro || ''}</p>
+                        ${section.bullets && section.bullets.length > 0 ? `
+                        <ul class="list-disc list-inside space-y-2 text-secondary">
+                            ${section.bullets.map(bullet => `<li>${bullet}</li>`).join('')}
+                        </ul>` : ''}
+                    </div>`;
+
+                let content = '';
+                // Generic accordion panel renderer for sections with items
+                if (['overview', 'evidence', 'boundaries', 'implications', 'legacy'].includes(section.id)) {
+                    content = `<div class="space-y-4">
+                        ${(section.items || []).map(item => `
+                        <div class="accordion" data-searchable="${item.label} ${item.summary} ${item.detail}">
+                            <button class="accordion-trigger w-full text-left px-4 py-3 ui-bg-accent rounded-lg font-semibold text-primary hover:opacity-90 transition-opacity" aria-expanded="false">
+                                ${item.label}
+                            </button>
+                            <div class="accordion-content">
+                              <div>
+                                <div class="mt-2 p-4 ui-bg-accent rounded-lg">
+                                    <p class="text-primary mb-3">${item.summary}</p>
+                                    <p class="text-secondary">${item.detail || ''}</p>
+                                </div>
+                              </div>
+                            </div>
+                        </div>`).join('')}
+                    </div>`;
+                } else {
+                    switch(section.id) {
+                        case 'concepts':
+                             content = `<div class="grid md:grid-cols-2 gap-4">
+                                ${(section.items || []).map(item => `
+                                <div class="ui-bg-accent rounded-lg p-4" data-searchable="${item.label} ${item.summary} ${item.detail}">
+                                    <h3 class="font-bold accent-1 mb-2">${item.label}</h3>
+                                    <p class="text-secondary text-sm mb-3">${item.summary}</p>
+                                    <p class="text-primary">${item.detail}</p>
+                                </div>`).join('')}
+                            </div>`;
+                            break;
+                        case 'glossary':
+                            content = `<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                ${(glossary || []).map(item => `
+                                <div class="ui-bg-accent rounded-lg p-4 hover:shadow-lg transition-shadow cursor-pointer glossary-card" data-searchable="${item.term} ${item.definition}">
+                                    <h3 class="font-bold accent-1 mb-2">${item.term}</h3>
+                                    <p class="text-primary text-sm">${item.definition}</p>
+                                </div>`).join('')}
+                            </div>`;
+                            break;
+                        case 'source':
+                             content = `<div class="space-y-6">
+                                <div class="ui-bg-accent rounded-lg p-4">
+                                    <h3 class="font-bold accent-1 mb-3">Source Information</h3>
+                                    <div class="space-y-2">${(meta.provenance || []).map(p => `<p class="text-primary"><strong>${p.label}:</strong> ${p.detail}</p>`).join('')}</div>
+                                </div>
+                                <div class="ui-bg-accent rounded-lg p-4">
+                                    <h3 class="font-bold accent-1 mb-3">Key Quotes</h3>
+                                    <div class="space-y-4">${(quotes || []).map(q => `<div class="pl-4 border-l-4 border-accent"><p class="text-primary italic mb-2">"${q.text}"</p><p class="text-secondary text-sm">${q.ref}</p></div>`).join('')}</div>
+                                </div>
+                            </div>`;
+                            break;
+                    }
+                }
+                
+                // Special handling for timeline to add chart
+                if (section.id === 'timeline' || timelineChart) {
+                     content = `
+                        <div class="mb-6 chart-container">
+                            <canvas id="timelineChart"></canvas>
+                        </div>
+                        <p class="text-center text-secondary text-sm mb-6">A chart representing key moments in the history of religious toleration, including the Edict of Nantes (1598), its revocation (1685), and the publication of Locke's Letter (1689).</p>
+                        `;
+                }
+                
+                return `<div role="tabpanel" id="${section.id}-panel" aria-labelledby="${section.id}-tab" hidden>
+                    ${contextBlock}
+                    ${content || '<p class="text-secondary">No items yet.</p>'}
+                </div>`;
+            }).join('');
+            app.panels.innerHTML = panelsHTML;
+        };
+
+        // ------------------
+        // Interactivity
+        // ------------------
+        const switchTab = (tabId) => {
+            const allTabs = app.tabs.querySelectorAll('[role="tab"]');
+            const allPanels = app.panels.querySelectorAll('[role="tabpanel"]');
+            
+            // Fallback if tabId is invalid
+            const targetTab = document.getElementById(`${tabId}-tab`);
+            if (!targetTab) {
+                tabId = data.sections[0].id;
+            }
+            
+            allTabs.forEach((tab, index) => {
+                const isActive = tab.id === `${tabId}-tab`;
+                tab.setAttribute('aria-selected', isActive);
+                tab.setAttribute('tabindex', isActive ? '0' : '-1');
+                tab.classList.toggle('tab-active', isActive);
+                tab.classList.toggle('text-secondary', !isActive);
+            });
+
+            allPanels.forEach(panel => {
+                panel.hidden = panel.id !== `${tabId}-panel`;
+            });
+            
+            // Check if timelineChart data exists and tab is active
+            if (data.timelineChart && !state.chartInstance && document.getElementById(`${data.sections.find(s=>s.title==="Timeline")?.id || 'timeline'}-panel`)?.getAttribute('aria-labelledby') === `${tabId}-tab`) {
+                 setupChart();
+            } else if (data.timelineChart && !state.chartInstance && tabId === 'overview') { // A special check to see if timeline section exists
+                const timelineSection = data.sections.find(s => s.title === 'Timeline' || s.id === 'timeline');
+                if (timelineSection && tabId === timelineSection.id) setupChart();
+            }
+
+            state.activeTab = tabId;
+            location.hash = tabId;
+            saveState();
+        };
+
+        const setupEventListeners = () => {
+            // Tabs
+            app.tabs.addEventListener('click', e => {
+                const tab = e.target.closest('[role="tab"]');
+                if (tab) switchTab(tab.id.replace('-tab', ''));
+            });
+            app.tabs.addEventListener('keydown', e => {
+                const tabs = Array.from(app.tabs.querySelectorAll('[role="tab"]'));
+                const currentIndex = tabs.findIndex(t => t.id === `${state.activeTab}-tab`);
+                let newIndex = currentIndex;
+
+                if (e.key === 'ArrowRight') newIndex = (currentIndex + 1) % tabs.length;
+                else if (e.key === 'ArrowLeft') newIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+                else if (e.key === 'Home') newIndex = 0;
+                else if (e.key === 'End') newIndex = tabs.length - 1;
+                else return;
+
+                e.preventDefault();
+                tabs[newIndex].focus();
+                switchTab(tabs[newIndex].id.replace('-tab', ''));
+            });
+
+            // Accordions
+            app.panels.addEventListener('click', e => {
+                const trigger = e.target.closest('.accordion-trigger');
+                if (trigger) {
+                    const content = trigger.nextElementSibling;
+                    const isExpanded = trigger.getAttribute('aria-expanded') === 'true';
+                    trigger.setAttribute('aria-expanded', !isExpanded);
+                    content.classList.toggle('active');
+                }
+            });
+
+            // Modal
+            const settingsBtn = document.getElementById('settingsBtn'); // Re-query after render
+            if (settingsBtn) {
+                settingsBtn.addEventListener('click', () => {
+                    app.settings.modal.classList.remove('hidden');
+                    app.settings.themeSelect.focus();
+                });
+            }
+
+            const closeModal = () => {
+                app.settings.modal.classList.add('hidden');
+                document.getElementById('settingsBtn')?.focus();
+            };
+            app.settings.saveBtn.addEventListener('click', () => {
+                applyTheme(app.settings.themeSelect.value);
+                saveState();
+                closeModal();
+            });
+            app.settings.cancelBtn.addEventListener('click', closeModal);
+            app.settings.modal.addEventListener('keydown', e => {
+                if (e.key === 'Escape') closeModal();
+            });
+
+            // Search
+            app.searchInput.addEventListener('input', handleSearch);
+        };
+        
+        const handleSearch = (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            const searchables = document.querySelectorAll('[data-searchable]');
+            
+            // Clear previous highlights
+            searchables.forEach(el => {
+                 if(el.hasAttribute('data-searchable-original')) {
+                    el.innerHTML = el.getAttribute('data-searchable-original');
+                 }
+                 el.style.display = '';
+            });
+            
+            if (query.length < 3) return;
+
+            let firstHit = null;
+
+            searchables.forEach(el => {
+                if (!el.hasAttribute('data-searchable-original')) {
+                    el.setAttribute('data-searchable-original', el.innerHTML);
+                }
+                const text = el.dataset.searchable.toLowerCase();
+                if (text.includes(query)) {
+                    if (!firstHit) firstHit = el;
+                    el.style.display = '';
+                    const regex = new RegExp(`(${query})`, 'gi');
+                    el.innerHTML = el.getAttribute('data-searchable-original').replace(regex, `<mark class="search-highlight">$1</mark>`);
+                } else {
+                    el.style.display = 'none';
+                }
+            });
+
+            if (firstHit) {
+                const panel = firstHit.closest('[role="tabpanel"]');
+                if (panel && panel.hidden) {
+                    switchTab(panel.id.replace('-panel', ''));
+                }
+                setTimeout(() => {
+                    firstHit.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstHit.focus({ preventScroll: true });
+                }, 200);
+            }
+        };
+
+        // ------------------
+        // Chart.js Setup
+        // ------------------
+        const setupChart = () => {
+            const { timelineChart } = data;
+            if (!timelineChart) return;
+            const ctx = document.getElementById('timelineChart')?.getContext('2d');
+            if (!ctx) return;
+
+            const chartData = {
+                type: 'line',
+                data: {
+                    labels: timelineChart.labels,
+                    datasets: [{
+                        label: timelineChart.title,
+                        data: timelineChart.values,
+                        tension: 0.3,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true, ticks: { display: false } } }
+                }
+            };
+
+            state.chartInstance = new Chart(ctx, chartData);
+            updateChartColors();
+
+            const container = document.querySelector('.chart-container');
+            if (container && !container.hasAttribute('data-resize-observer-attached')) {
+                container.setAttribute('data-resize-observer-attached', 'true');
+                new ResizeObserver(() => {
+                    if(state.chartInstance) state.chartInstance.resize();
+                }).observe(container);
+            }
+        };
+
+        const updateChartColors = () => {
+            if (!state.chartInstance) return;
+            const style = getComputedStyle(document.documentElement);
+            state.chartInstance.data.datasets[0].borderColor = style.getPropertyValue('--accent-1');
+            state.chartInstance.data.datasets[0].backgroundColor = style.getPropertyValue('--accent-2');
+            state.chartInstance.options.plugins.legend.labels.color = style.getPropertyValue('--text-primary');
+            state.chartInstance.options.scales.x.ticks.color = style.getPropertyValue('--text-secondary');
+            state.chartInstance.update();
+        };
+
+        // ------------------
+        // Initialization
+        // ------------------
+        const init = () => {
+            loadState();
+            renderHeader();
+            renderTabs();
+            renderPanels();
+            setupEventListeners();
+            switchTab(state.activeTab);
+
+            window.addEventListener('hashchange', () => {
+                const hashTab = location.hash.substring(1);
+                if (hashTab && hashTab !== state.activeTab) {
+                    switchTab(hashTab);
+                }
+            });
+        };
+
+        init();
+    });
+    </script>
+</body>
+</html>
