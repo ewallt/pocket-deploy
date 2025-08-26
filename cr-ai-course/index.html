@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web App Demo</title>
+    <title>AI Foundations: Skills & Tools Pathway</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Added Tailwind Typography plugin for rich text styling -->
+    <script src="https://cdn.tailwindcss.com/3.4.1?plugins=typography"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
@@ -20,6 +22,10 @@
             --nav-hover-bg: #e5e5dd;
             --nav-active-bg: #dcdcd3;
             --nav-active-text: #1c1c1c;
+            --prose-text: var(--text);
+            --prose-headings: var(--accent-text);
+            --prose-links: var(--accent-text);
+            --prose-bold: var(--text);
             font-family: 'Merriweather', serif;
         }
 
@@ -27,7 +33,7 @@
         .theme-emerald-paper, .theme-cyber-blue, .theme-emerald-gold {
             font-family: 'Lato', sans-serif;
         }
-
+        
         body {
             background: var(--bg-gradient);
             color: var(--text);
@@ -54,16 +60,16 @@
             border-bottom-color: var(--accent-text);
         }
 
-        .settings-button {
-            background-color: var(--nav-hover-bg);
+        .settings-button { background-color: var(--nav-hover-bg); }
+        .settings-button:hover { opacity: 0.8; }
+        *:focus-visible { outline: 3px solid var(--accent-text); outline-offset: 2px; }
+
+        /* Tailwind Prose Theming */
+        .prose {
+            color: var(--prose-text);
         }
-        .settings-button:hover {
-            opacity: 0.8;
-        }
-        
-        *:focus-visible { 
-            outline: 3px solid var(--accent-text);
-            outline-offset: 2px; 
+        .prose h2, .prose h3, .prose a, .prose strong {
+            color: var(--prose-headings);
         }
     </style>
 </head>
@@ -76,7 +82,7 @@
         <nav id="app-tabs" class="ui-bg border ui-border rounded-lg shadow-lg mb-6" role="tablist" aria-label="Main navigation"></nav>
         
         <!-- Tab Panels: Dynamically rendered -->
-        <main id="app-panels" class="ui-bg border ui-border rounded-lg shadow-lg p-6 min-h-[200px]"></main>
+        <main id="app-panels" class="ui-bg border ui-border rounded-lg shadow-lg p-6 md:p-8"></main>
         
         <!-- Settings Modal -->
         <div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="settings-title">
@@ -100,19 +106,21 @@
     <!-- Data Island -->
     <script type="application/json" id="app-data">
     {
-      "meta": {
-        "title": "Interactive Learning Demo"
-      },
-      "lessons": [
-        { "id": "lesson-1", "title": "Lesson 1" },
-        { "id": "lesson-2", "title": "Lesson 2" },
-        { "id": "lesson-3", "title": "Lesson 3" },
-        { "id": "lesson-4", "title": "Lesson 4" },
-        { "id": "lesson-5", "title": "Lesson 5" },
-        { "id": "lesson-6", "title": "Lesson 6" },
-        { "id": "lesson-7", "title": "Lesson 7" },
-        { "id": "lesson-8", "title": "Lesson 8" }
-      ]
+      "ai-course": {
+        "display_order": 10,
+        "title": "AI Foundations: Skills & Tools Pathway",
+        "description": "An 8-unit course that builds practical AI literacy from core concepts and data, through models and neural networks, to NLP, vision, tooling, and deployment.",
+        "categories": {
+          "unit-1-key-concepts": { "display_order": 10, "name": "Unit 1: What Is AI? Key Concepts and Terminology", "display_name": "Unit 1", "introduction": "Orient to the landscape of AI: how systems perceive, reason, and act; the role of data and learning; and the vocabulary you’ll use throughout the course.", "paragraphs": [ { "heading": "Defining AI", "content": "Artificial Intelligence refers to systems that perform tasks requiring human-like intelligence—perception, pattern recognition, prediction, planning, and language. In practice today, most AI is statistical learning that maps inputs to outputs using data rather than hand-crafted rules." }, { "heading": "Narrow vs. General Intelligence", "content": "Narrow (or weak) AI excels at specific tasks like translation or image tagging; General AI would transfer learning across tasks and adapt broadly. This course focuses on narrow AI methods that deliver value in real products." }, { "heading": "Rules, Machine Learning, and Heuristics", "content": "Rule-based systems encode explicit logic; machine learning discovers patterns from data. Heuristics are practical shortcuts. Modern AI often blends learned models with lightweight rules for control and guardrails." }, { "heading": "Data, Features, and Labels", "content": "Data are raw observations; features are representations extracted for modeling; labels are target outputs in supervised learning. Clarity about what each datum means—and how it was collected—is essential to trustworthy models." }, { "heading": "Training vs. Inference", "content": "Training fits model parameters on historical data to minimize loss; inference applies the trained model to new inputs. Training is compute-intensive and episodic; inference must be fast, reliable, and cost-efficient." }, { "heading": "Symbolic vs. Statistical Approaches", "content": "Symbolic AI manipulates explicit knowledge structures; statistical AI reasons from data distributions. Hybrid systems can use symbols for structure and learned components for perception or ranking." }, { "heading": "Supervised, Unsupervised, and Reinforcement Learning", "content": "Supervised learning uses labeled pairs; unsupervised discovers structure like clusters; reinforcement learning optimizes actions through reward signals. Many real systems are supervised or self-supervised with feedback loops." }, { "heading": "Generative vs. Discriminative Models", "content": "Generative models produce data (e.g., text, images) or model joint distributions; discriminative models directly map inputs to labels. Use generative models for creation and reasoning, discriminative for classification and scoring." }, { "heading": "Bias, Fairness, and Accountability", "content": "Models inherit bias from data and design choices. Fairness requires measurement, mitigation, and governance, including documentation of intended use and limitations." }, { "heading": "AI System Boundaries", "content": "An AI solution includes inputs, model, post-processing, evaluation, deployment, monitoring, and human oversight. Thinking in systems helps you design safe, maintainable products." } ] },
+          "unit-2-data": { "display_order": 20, "name": "Unit 2: Data — The Fuel of AI", "display_name": "Unit 2", "introduction": "Master the data lifecycle—collection, labeling, quality control, governance—so your models learn from accurate, representative examples.", "paragraphs": [ { "heading": "Data Types and Modalities", "content": "Structured tables, text, images, audio, video, logs, and graphs each demand different preprocessing and storage. Know the modality to choose the right pipeline and model class." }, { "heading": "The Data Lifecycle", "content": "Plan how data is sourced, versioned, labeled, validated, and archived. Treat datasets like code: reproducible, reviewed, and tracked with clear provenance." }, { "heading": "Labeling and Annotation", "content": "High-quality labels drive supervised learning. Use clear guidelines, consensus checks, spot audits, and tools that surface ambiguous cases to annotators." }, { "heading": "Splits: Train, Validation, Test", "content": "Create non-overlapping splits that mirror production. Use validation for model selection and hyperparameters; reserve test for unbiased final estimates." }, { "heading": "Feature Engineering and Representations", "content": "From normalization and embeddings to learned tokenization, representations shape model performance. Document transformations to keep training and inference consistent." }, { "heading": "Augmentation and Balancing", "content": "Use augmentation to increase diversity and reduce overfitting—random crops, noise, paraphrases—while keeping labels valid. Address class imbalance via reweighting or resampling." }, { "heading": "Quality, Drift, and Data Debt", "content": "Detect outliers, leakage, and stale samples. Monitor input and label drift over time to avoid silent degradation. Pay down data debt with regular cleanup and rebaselining." }, { "heading": "Bias and Representativeness", "content": "Audit demographic coverage, long-tail cases, and spiky distributions. Collect counterfactual or hard-negative examples to reduce systematic errors." }, { "heading": "Privacy and Compliance", "content": "Minimize personal data, apply de-identification, and honor consent and retention policies. Prefer differential access and strong logging to support audits." }, { "heading": "Datasheets and Documentation", "content": "Publish a dataset card describing purpose, composition, collection, labeling, splits, known issues, and intended use. Good documentation accelerates safe reuse." } ] },
+          "unit-3-algorithms-models": { "display_order": 30, "name": "Unit 3: Algorithms and Models", "display_name": "Unit 3", "introduction": "Survey the modeling toolbox and the ideas behind it—learning paradigms, objective functions, generalization, and evaluation.", "paragraphs": [ { "heading": "Learning Paradigms", "content": "Supervised, unsupervised, self-supervised, semi-supervised, and reinforcement learning provide different supervision signals. Choose based on data availability and task constraints." }, { "heading": "Linear Models and Beyond", "content": "Linear/logistic regression offer interpretability and strong baselines. Kernel methods, trees, and ensembles capture non-linearities without deep nets." }, { "heading": "Decision Trees and Ensembles", "content": "Random forests and gradient boosting (e.g., XGBoost) are tabular workhorses. They handle mixed features, require modest tuning, and are competitive on many business datasets." }, { "heading": "Probabilistic Modeling", "content": "Model uncertainty with probabilistic outputs, calibration, and Bayesian methods. Uncertainty estimates support safer decision-making and triage." }, { "heading": "Loss Functions and Objectives", "content": "Cross-entropy, mean squared error, ranking losses, and custom business proxies define what the model optimizes. Select losses aligned with downstream metrics." }, { "heading": "Optimization Basics", "content": "Stochastic gradient descent and variants (Adam, RMSProp) balance speed and stability. Learning rate schedules and warm-ups often matter more than exotic architectures." }, { "heading": "Regularization and Generalization", "content": "Weight decay, dropout, early stopping, and data augmentation reduce overfitting. Validate assumptions with learning curves and ablations." }, { "heading": "Evaluation Metrics", "content": "Classification uses accuracy, precision-recall, ROC-AUC; regression uses MAE/RMSE; ranking uses NDCG/MAP. Pick metrics that reflect real costs and benefits." }, { "heading": "Overfitting, Underfitting, and Leakage", "content": "Underfitting means high bias; overfitting means high variance. Prevent leakage by ensuring no future or duplicate information enters training." }, { "heading": "Model Selection", "content": "Start simple, establish baselines, and only increase complexity with evidence. Prefer models that are accurate, robust, and operable." } ] },
+          "unit-4-neural-networks": { "display_order": 40, "name": "Unit 4: Building and Training Neural Networks", "display_name": "Unit 4", "introduction": "Understand neural architectures, training mechanics, and practical tricks for stable, efficient learning.", "paragraphs": [ { "heading": "Neurons, Layers, and Computation Graphs", "content": "Neural nets compose linear transforms with non-linear activations. Computation graphs track operations so gradients can be computed automatically." }, { "heading": "Architectural Families", "content": "MLPs handle tabular features; CNNs excel at spatial data; RNNs and temporal CNNs process sequences; Transformers use attention and scale across modalities." }, { "heading": "Forward and Backpropagation", "content": "Forward pass produces outputs and loss; backpropagation distributes gradients to update parameters. Numerical stability and correct shapes are frequent debugging points." }, { "heading": "Activations, Initialization, and Normalization", "content": "ReLU/GELU activations, He/Xavier initialization, and Batch/Layer Norm help gradients flow and speed convergence. Mismatches here often cause training collapse." }, { "heading": "Optimizers and Schedules", "content": "AdamW with cosine decay or step schedules is a strong default. Tune learning rate first; consider warm-up for transformer-like models." }, { "heading": "Regularization for NNs", "content": "Dropout, stochastic depth, label smoothing, and mixup/cutmix improve generalization. Balance with data size and task complexity." }, { "heading": "Training Workflow and Debugging", "content": "Start with tiny batches and overfit a small subset to verify signals. Add checksums, gradient norms, and loss curves to catch silent bugs early." }, { "heading": "Hardware and Parallelism", "content": "GPUs and TPUs accelerate tensor ops; use mixed precision for speed and memory. Data, tensor, and pipeline parallelism enable large-scale training." }, { "heading": "Checkpoints and Reproducibility", "content": "Save model and optimizer states, random seeds, and environment details. Version training code and data to make results reproducible." }, { "heading": "Export and Serving Considerations", "content": "Plan for inference: quantization, pruning, batching, and model formats (ONNX, TorchScript). Validate numerics match training before rollout." } ] },
+          "unit-5-nlp-essentials": { "display_order": 50, "name": "Unit 5: Working with Text — NLP Essentials", "display_name": "Unit 5", "introduction": "Build language systems from tokenization to transformers, with attention to evaluation, safety, and production reliability.", "paragraphs": [ { "heading": "Text Preprocessing and Tokenization", "content": "Normalize, clean, and segment text into tokens. Subword tokenizers (BPE/WordPiece) balance vocabulary size with coverage for rare words." }, { "heading": "Representations and Embeddings", "content": "Move from sparse one-hot vectors to dense embeddings that capture semantics. Contextual embeddings from transformers adapt meaning to surrounding text." }, { "heading": "Core Tasks and Patterns", "content": "Classification, sentiment, NER, QA, summarization, translation, and retrieval share similar pipelines: tokenize → encode → predict → decode." }, { "heading": "Language Modeling", "content": "Autoregressive and masked LMs learn next-token or fill-in-the-blank objectives that transfer to many tasks. Scale tends to improve fluency and coverage." }, { "heading": "Transformers for NLP", "content": "Self-attention models parallelize sequence processing and model long-range dependencies. Pretrained encoders/decoders can be fine-tuned or adapted with parameter-efficient methods." }, { "heading": "Prompting, Fine-Tuning, and RAG", "content": "Prompt engineering steers pretrained models; fine-tuning specializes them; retrieval-augmented generation grounds responses in external sources for freshness and accuracy." }, { "heading": "Evaluation and Quality", "content": "Use task metrics (e.g., F1, BLEU/ROUGE, exact match) plus human review. Test for robustness to paraphrase, typos, and domain shift." }, { "heading": "Safety, Bias, and Content Controls", "content": "Mitigate harmful or sensitive outputs with policies, classifiers, and filtering. Monitor for jailbreaks, leakage, and prompt injection in interactive systems." }, { "heading": "Latency and Cost", "content": "Sequence length dominates compute. Use caching, smaller distilled models, or hybrid retrieval to reduce latency and spend." }, { "heading": "Production Patterns", "content": "Log prompts/responses with privacy in mind, maintain blocklists/allowlists, and implement rollback plans. Track drift in content distributions over time." } ] },
+          "unit-6-vision-systems": { "display_order": 60, "name": "Unit 6: Working with Images and Video — Vision Systems", "display_name": "Unit 6", "introduction": "From pixels to perception: build classifiers, detectors, and segmenters, and ship them to real devices and services.", "paragraphs": [ { "heading": "Pixels, Channels, and Datasets", "content": "Images are tensors with spatial and channel dimensions; videos add time. Curate datasets with varied lighting, viewpoints, and backgrounds to avoid brittle models." }, { "heading": "Convolutional Neural Networks", "content": "Convolutions capture local patterns with shared weights. Architectures like ResNet and EfficientNet provide strong baselines for classification." }, { "heading": "Modern Vision Backbones", "content": "Vision Transformers and hybrid ConvNets leverage attention to model global context. Pretrained backbones fine-tune efficiently on custom tasks." }, { "heading": "Detection and Segmentation", "content": "Object detection (e.g., RetinaNet, YOLO) localizes instances; semantic and instance segmentation assign pixel-level labels. Metrics include IoU and mAP." }, { "heading": "Augmentation for Vision", "content": "Geometric transforms, color jitter, cutout, and mixup improve robustness. Ensure augmentations reflect plausible real-world variation." }, { "heading": "Robustness and Adversarial Concerns", "content": "Small perturbations can fool models. Defense-in-depth includes input checks, smoothing, ensembles, and human review for high-stakes tasks." }, { "heading": "Edge vs. Cloud Deployment", "content": "Edge offers low latency and privacy; cloud offers scale and flexibility. Use quantization and pruning to fit models on constrained devices." }, { "heading": "Video Understanding", "content": "Temporal models reason over frames for action recognition and tracking. Sampling strategies trade accuracy for speed." }, { "heading": "Evaluation in the Wild", "content": "Test across devices, cameras, and environments. Create challenge sets with glare, motion blur, and occlusions to expose weaknesses." }, { "heading": "Applications and Safety", "content": "Use cases include quality inspection, OCR, medical imaging, and autonomous assistance. Address privacy and consent when images include people." } ] },
+          "unit-7-tools-frameworks": { "display_order": 70, "name": "Unit 7: Tools, Frameworks, and Platforms", "display_name": "Unit 7", "introduction": "Get productive with the modern AI toolchain—from tensors and autograd to experiment tracking, packaging, and serving.", "paragraphs": [ { "heading": "Framework Landscape", "content": "PyTorch and TensorFlow dominate deep learning; JAX is rising for research. Scikit-learn remains a staple for classical ML, especially on tabular data." }, { "heading": "Tensors, Autograd, and Modules", "content": "Tensors are multi-dimensional arrays with efficient kernels. Autograd records operations to compute gradients; modules compose layers into reusable blocks." }, { "heading": "Training Loops and High-Level APIs", "content": "Write explicit loops for control or use helpers like Keras, PyTorch Lightning, and Accelerate to standardize boilerplate and multi-GPU setup." }, { "heading": "Data Utilities", "content": "Use NumPy/Pandas for preprocessing; dataset and dataloader abstractions stream batches with transforms and caching. Profile I/O to avoid GPU starvation." }, { "heading": "Experiment Tracking", "content": "Track configs, metrics, artifacts, and snapshots with tools like MLflow or Weights & Biases. Reproducibility depends on disciplined tracking." }, { "heading": "Model Hubs and Checkpoints", "content": "Pretrained weights from model hubs accelerate development. Manage licenses, attribution, and security scanning when importing third-party models." }, { "heading": "Packaging and Interchange", "content": "Export to ONNX or TorchScript for portability. Containerize runtime dependencies and pin versions to prevent environment drift." }, { "heading": "Serving and Inference", "content": "Use TF Serving, TorchServe, or custom microservices. Consider batch vs. real-time endpoints, autoscaling, and request-level caching." }, { "heading": "Hardware Acceleration", "content": "GPUs/TPUs provide massive parallelism; CPUs with vector extensions still matter for light workloads. Monitor utilization to balance cost and speed." }, { "heading": "Collaboration and Notebooks", "content": "Adopt code reviews, notebooks for exploration, and scripts for production. Enforce style, tests, and pre-commit hooks for quality." } ] },
+          "unit-8-deployment": { "display_order": 80, "name": "Unit 8: Deploying AI — From Research to Real-World Systems", "display_name": "Unit 8", "introduction": "Translate models into reliable products: evaluate offline and online, monitor in production, and manage risk, cost, and governance.", "paragraphs": [ { "heading": "Product Framing and KPIs", "content": "Define user outcomes and business KPIs before modeling. Align metrics with real costs (false positives/negatives) and acceptable risk." }, { "heading": "Offline vs. Online Evaluation", "content": "Offline metrics are necessary but not sufficient. Use shadow traffic, canary releases, and A/B tests to measure causal impact in production." }, { "heading": "Latency, Throughput, and SLOs", "content": "Budget compute for the 95th/99th percentile latency, not just averages. Right-size instance types, batching, and caching to meet SLOs." }, { "heading": "Monitoring and Drift Detection", "content": "Track input distributions, confidence, and outcome feedback. Detect data and concept drift; retrain or recalibrate before quality erodes." }, { "heading": "Human-in-the-Loop", "content": "Route uncertain or high-risk cases to human review. Use feedback to improve datasets, labels, and decision thresholds." }, { "heading": "Safety, Security, and Abuse Resistance", "content": "Harden endpoints against prompt injection, model theft, and adversarial inputs. Rate-limit, authenticate, and log with privacy by design." }, { "heading": "Privacy and Compliance", "content": "Minimize personal data, honor regional requirements, and document processing. Provide user controls for access, correction, and deletion." }, { "heading": "Cost and Efficiency", "content": "Measure cost per request and per successful outcome. Use distillation, quantization, and caching to reduce spend without losing quality." }, { "heading": "Governance and Documentation", "content": "Maintain model cards and decision logs describing purpose, data, metrics, safety tests, and known limits. Review changes through an AI risk process." }, { "heading": "Lifecycle and Iteration", "content": "Plan for continuous improvement: data refresh, retraining cadence, regression tests, and rollback plans. Treat AI like a living system, not a one-off launch." } ] }
+        }
+      }
     }
     </script>
 
@@ -129,15 +137,16 @@
             vars: {
               '--bg-gradient': '#f7fbf9', '--text': '#1e2b28', '--accent-text': '#0f7f6d', '--nav-bg': '#e7f3ef',
               '--nav-border': '#86c8ba', '--nav-text': '#1e2b28', '--nav-hover-bg': '#d7ece6', '--nav-active-bg': '#bfe3d9',
-              '--nav-active-text': '#1e2b28'
+              '--nav-active-text': '#1e2b28', '--prose-text': '#1e2b28', '--prose-headings': '#0f7f6d'
             }
           },
           'cyber-blue': {
             name: 'Cyber Blue', type: 'variable', isDark: true,
             vars: {
               '--bg-gradient': 'linear-gradient(135deg,#0a0a23 0%,#1a1a3a 50%,#2e2e5e 100%)', '--text': '#f1f5f9',
-              '--accent-text': '#a8b8d0', '--nav-bg': '#1e293b', '--nav-border': '#334155', '--nav-text': '#f1f5f9',
-              '--nav-hover-bg': '#334155', '--nav-active-bg': '#2e2e5e', '--nav-active-text': '#f1f5f9'
+              '--accent-text': '#60a5fa', '--nav-bg': '#1e293b', '--nav-border': '#334155', '--nav-text': '#f1f5f9',
+              '--nav-hover-bg': '#334155', '--nav-active-bg': '#2e2e5e', '--nav-active-text': '#f1f5f9',
+              '--prose-text': '#94a3b8', '--prose-headings': '#f1f5f9', '--prose-invert': 'invert(1)'
             }
           },
           'emerald-gold': {
@@ -145,7 +154,8 @@
             vars: {
               '--bg-gradient': 'linear-gradient(135deg,#022c22 0%,#064e3b 60%,#065f46 100%)', '--text': '#ecfdf5',
               '--accent-text': '#f0c475', '--nav-bg': '#064e3b', '--nav-border': '#d4a24c', '--nav-text': '#ecfdf5',
-              '--nav-hover-bg': '#065f46', '--nav-active-bg': '#0b3d31', '--nav-active-text': '#f0c475'
+              '--nav-hover-bg': '#065f46', '--nav-active-bg': '#0b3d31', '--nav-active-text': '#f0c475',
+              '--prose-text': '#a7f3d0', '--prose-headings': '#ecfdf5', '--prose-invert': 'invert(1)'
             }
           }
         };
@@ -168,14 +178,11 @@
         // ------------------
         // State Management
         // ------------------
-        const state = {
-            activeTab: 'lesson-1',
-            theme: 'newspaper',
-        };
+        const state = { activeTab: null, theme: 'newspaper' };
 
         const loadState = () => {
             state.theme = localStorage.getItem('appTheme') || 'newspaper';
-            state.activeTab = localStorage.getItem('activeTab') || 'lesson-1';
+            state.activeTab = localStorage.getItem('activeTab');
         };
 
         const saveState = () => {
@@ -190,18 +197,13 @@
             const theme = THEMES[themeKey];
             if (!theme) return;
 
-            // Remove all other theme classes
             app.root.className = '';
-            
-            // Clear inline styles from previous variable themes
             app.root.style.cssText = '';
 
             if (theme.type === 'variable' && theme.vars) {
-                // Apply variables for 'variable' themes
                 for (const [key, value] of Object.entries(theme.vars)) {
                     app.root.style.setProperty(key, value);
                 }
-                // Add a class for potential font-family overrides etc.
                 app.root.classList.add(`theme-${themeKey}`);
             }
 
@@ -219,19 +221,31 @@
         };
 
         // ------------------
-        // Data Loading
+        // Data Loading & Transformation
         // ------------------
-        const loadData = () => {
+        const loadAndTransformData = () => {
             try {
-                const dataNode = document.getElementById('app-data');
-                return JSON.parse(dataNode.textContent);
+                const rawData = JSON.parse(document.getElementById('app-data').textContent);
+                const course = rawData['ai-course'];
+                
+                const units = Object.entries(course.categories).map(([id, unitData]) => ({
+                    id, ...unitData
+                })).sort((a, b) => a.display_order - b.display_order);
+
+                return {
+                    meta: {
+                        title: course.title,
+                        description: course.description
+                    },
+                    units: units
+                };
             } catch (e) {
-                console.error("Failed to load app data:", e);
+                console.error("Failed to load or transform app data:", e);
                 return null;
             }
         };
         
-        const data = loadData();
+        const data = loadAndTransformData();
         if (!data) return;
 
         // ------------------
@@ -239,39 +253,58 @@
         // ------------------
         const renderHeader = () => {
             app.header.innerHTML = `
-                <div class="flex justify-between items-center">
-                    <h1 class="text-3xl font-bold text-accent">${data.meta.title}</h1>
-                    <button id="settingsBtn" class="p-3 rounded-lg settings-button transition-opacity" aria-label="Display Settings">
+                <div class="flex justify-between items-start gap-4">
+                    <div>
+                        <h1 class="text-3xl font-bold text-accent">${data.meta.title}</h1>
+                        <p class="mt-2 text-primary/80">${data.meta.description}</p>
+                    </div>
+                    <button id="settingsBtn" class="flex-shrink-0 p-3 rounded-lg settings-button transition-opacity" aria-label="Display Settings">
                         <span class="text-2xl text-accent">⚙️</span>
                     </button>
                 </div>`;
         };
         
         const renderTabs = () => {
-            const tabsHTML = (data.lessons || []).map(lesson => `
-                <button role="tab" aria-selected="false" aria-controls="${lesson.id}-panel" id="${lesson.id}-tab"
-                        class="px-6 py-3 font-semibold transition-colors tab-button">
-                    ${lesson.title}
-                </button>
-            `).join('');
-            app.tabs.innerHTML = `<div class="flex flex-wrap">${tabsHTML}</div>`;
+            app.tabs.innerHTML = `<div class="flex flex-wrap">${
+                data.units.map(unit => `
+                    <button role="tab" aria-selected="false" aria-controls="${unit.id}-panel" id="${unit.id}-tab"
+                            class="px-5 py-3 font-semibold transition-colors tab-button">
+                        ${unit.display_name}
+                    </button>`
+                ).join('')
+            }</div>`;
         };
 
         const renderPanels = () => {
-            app.panels.innerHTML = (data.lessons || []).map(lesson => `
-                <div role="tabpanel" id="${lesson.id}-panel" aria-labelledby="${lesson.id}-tab" class="p-4" hidden>
-                    <h2 class="text-2xl font-bold text-accent">${lesson.title}</h2>
-                    <p class="mt-4 text-primary">Content to be developed.</p>
-                </div>`
-            ).join('');
+            app.panels.innerHTML = data.units.map(unit => {
+                const paragraphsHTML = unit.paragraphs.map(p => `
+                    <h3>${p.heading}</h3>
+                    <p>${p.content}</p>
+                `).join('');
+
+                const proseClasses = THEMES[state.theme].isDark ? 'prose prose-lg max-w-none prose-invert' : 'prose prose-lg max-w-none';
+
+                return `
+                    <div role="tabpanel" id="${unit.id}-panel" aria-labelledby="${unit.id}-tab" hidden>
+                        <div class="${proseClasses}">
+                            <h2>${unit.name}</h2>
+                            <p class="lead">${unit.introduction}</p>
+                            ${paragraphsHTML}
+                        </div>
+                    </div>`;
+            }).join('');
         };
 
         // ------------------
         // Interactivity
         // ------------------
         const switchTab = (tabId) => {
-            const allTabs = app.tabs.querySelectorAll('[role="tab"]');
-            allTabs.forEach(tab => {
+            // Validate tabId, fallback to first unit if invalid
+            if (!data.units.some(u => u.id === tabId)) {
+                tabId = data.units[0].id;
+            }
+
+            app.tabs.querySelectorAll('[role="tab"]').forEach(tab => {
                 const isActive = tab.id === `${tabId}-tab`;
                 tab.setAttribute('aria-selected', isActive);
                 tab.classList.toggle('tab-active', isActive);
@@ -286,14 +319,11 @@
         };
 
         const setupEventListeners = () => {
-            // Tabs
             app.tabs.addEventListener('click', e => {
                 const tab = e.target.closest('[role="tab"]');
                 if (tab) switchTab(tab.id.replace('-tab', ''));
             });
 
-            // Settings Modal
-            // We use event delegation on the header since the button is rendered dynamically
             app.header.addEventListener('click', e => {
                 if (e.target.closest('#settingsBtn')) {
                     app.settings.modal.classList.remove('hidden');
@@ -310,9 +340,13 @@
                 if (e.key === 'Escape') closeModal();
             });
 
-            // Theme Selector Change
             app.settings.themeSelect.addEventListener('change', (e) => {
                 applyTheme(e.target.value);
+                // Re-render panels to apply correct prose class for dark/light themes
+                renderPanels();
+                // Ensure the active tab remains visible
+                const activePanel = document.getElementById(`${state.activeTab}-panel`);
+                if(activePanel) activePanel.hidden = false;
             });
         };
 
@@ -329,7 +363,7 @@
             renderPanels();
             
             setupEventListeners();
-            switchTab(state.activeTab);
+            switchTab(state.activeTab || data.units[0].id);
         };
 
         init();
