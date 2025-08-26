@@ -1,639 +1,336 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The Politics of the Lamb — Interactive Reader</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Foundations: Skills & Tools Pathway</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com/3.4.1?plugins=typography"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Default Theme: Newspaper */
+        :root {
+            --bg-gradient: #fdfdf8;
+            --text: #1c1c1c;
+            --accent-text: #8c1c13;
+            --nav-bg: #f1f1eb;
+            --nav-border: #dcdcd3;
+            --nav-text: #1c1c1c;
+            --nav-hover-bg: #e5e5dd;
+            --nav-active-bg: #dcdcd3;
+            --nav-active-text: #1c1c1c;
+            --prose-text: var(--text);
+            --prose-headings: var(--accent-text);
+            --prose-links: var(--accent-text);
+            --prose-bold: var(--text);
+            font-family: 'Merriweather', serif;
+        }
 
-<!-- Prepaint: read theme before first paint to avoid flash -->
-<script>
-(function () {
-  const root = document.documentElement;
-  const saved = JSON.parse(localStorage.getItem('ui_theme')||'{}');
-  const prefersDark = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches;
-  const mode = saved.mode || (prefersDark ? 'dark' : 'light');
-  const theme = saved.theme || 'slate';
-  root.classList.toggle('dark', mode==='dark');
-  root.classList.toggle('theme-emerald', mode==='dark' && theme==='emerald');
-})();
-</script>
+        .theme-emerald-paper, .theme-cyber-blue, .theme-emerald-gold {
+            font-family: 'Lato', sans-serif;
+        }
+        
+        body {
+            background: var(--bg-gradient);
+            color: var(--text);
+            min-height: 100vh;
+        }
 
-<!-- Theme variables -->
-<style>
-:root{
-  --active: rgb(59,130,246);
-  --subtitle-fg: rgb(71,85,105);
-  --timeline-fg: rgb(100,116,139);
-  --footer-fg: rgb(100,116,139);
-  --border: rgb(226,232,240);
-  --hover-bg: rgb(248,250,252);
-  --btn-border: rgb(203,213,225);
-  --btn-hover-bg: rgb(248,250,252);
-  --input-border: rgba(203,213,225,0.7);
-  --input-bg: rgba(255,255,255,0.7);
-  --hero-base: transparent;
-  --hero-r1: rgba(49,46,129,0.12);
-  --hero-r2: rgba(234,88,12,0.12);
-  --hero-wash: rgba(14,165,233,0.08);
-}
-html.dark{
-  --subtitle-fg: rgb(203,213,225);
-  --timeline-fg: rgb(148,163,184);
-  --footer-fg: rgb(148,163,184);
-  --border: rgb(30,41,59);
-  --hover-bg: rgb(15,23,42);
-  --btn-border: rgb(51,65,85);
-  --btn-hover-bg: rgb(15,23,42);
-  --input-border: rgba(51,65,85,0.7);
-  --input-bg: rgba(2,6,23,0.6);
-  --hero-base: rgb(2,6,23);
-}
-html.dark.theme-emerald{
-  --active: #10b981;
-  --border: rgba(110,231,183,0.55);
-  --hover-bg: rgb(6,78,59);
-  --btn-border: rgba(110,231,183,0.45);
-  --btn-hover-bg: rgb(6,78,59);
-  --input-border: rgba(110,231,183,0.55);
-  --input-bg: rgba(6,95,70,0.60);
-  --footer-fg: rgb(110,231,183);
-  --subtitle-fg: rgb(226,252,236);
-  --timeline-fg: rgb(187,247,208);
-  --hero-base: rgb(2,44,34);
-  --hero-r1: rgba(16,185,129,0.14);
-  --hero-r2: rgba(163,230,53,0.12);
-  --hero-wash: rgba(5,150,105,0.10);
-}
-.theme-emerald .prose h2,
-.theme-emerald .prose h3,
-.theme-emerald #docTitle,
-.theme-emerald .subtitle,
-.theme-emerald aside h2,
-.theme-emerald .active-link{
-  color: #f0c475;
-}
-</style>
+        .ui-bg { background-color: var(--nav-bg); }
+        .ui-border { border-color: var(--nav-border); }
+        .text-primary { color: var(--text); }
+        .text-accent { color: var(--accent-text); }
 
-<!-- Tailwind (with Typography) -->
-<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
-<script>
-  tailwind.config = { darkMode: 'class' };
-</script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<style>
-:root { color-scheme: light dark; }
-html { scroll-behavior: smooth; }
-.hero {
-  background-color: var(--hero-base);
-  background:
-    radial-gradient(50% 120% at 10% 10%, var(--hero-r1), transparent 60%),
-    radial-gradient(80% 140% at 90% 10%, var(--hero-r2), transparent 70%),
-    linear-gradient(180deg, var(--hero-wash), transparent 35%);
-}
-.active-link { color: var(--active); font-weight: 700; }
-.toc-link:hover { background: var(--hover-bg); }
-.prose :where(h2,h3) + p { padding-left: 1rem; border-left: 2px solid var(--border); }
-.chart-container { position: relative; }
-</style>
+        .tab-button {
+            background-color: var(--nav-bg);
+            color: var(--nav-text);
+            border-bottom: 3px solid transparent;
+        }
+        .tab-button:hover, .tab-button:focus-visible {
+            background-color: var(--nav-hover-bg);
+        }
+        .tab-button.tab-active {
+            background-color: var(--nav-active-bg);
+            color: var(--nav-active-text);
+            border-bottom-color: var(--accent-text);
+        }
 
+        .settings-button { background-color: var(--nav-hover-bg); }
+        .settings-button:hover { opacity: 0.8; }
+        *:focus-visible { outline: 3px solid var(--accent-text); outline-offset: 2px; }
+
+        .prose { color: var(--prose-text); }
+        .prose h2, .prose h3, .prose a, .prose strong { color: var(--prose-headings); }
+        .prose p.lead { color: var(--prose-text); }
+    </style>
 </head>
+<body class="transition-colors duration-300">
+    <div class="container mx-auto px-4 py-6 max-w-7xl">
+        <header id="app-header" class="ui-bg border ui-border rounded-lg shadow-lg p-6 mb-6"></header>
+        <nav id="app-tabs" class="ui-bg border ui-border rounded-lg shadow-lg mb-6" role="tablist" aria-label="Main navigation"></nav>
+        <main id="app-panels" class="ui-bg border ui-border rounded-lg shadow-lg p-6 md:p-8"></main>
+        
+        <div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+            <div class="ui-bg border ui-border rounded-lg p-6 max-w-md w-full shadow-2xl">
+                <h2 id="settings-title" class="text-xl font-bold text-accent mb-4">Display Settings</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label for="themeSelect" class="block text-primary font-semibold mb-2">Theme</label>
+                        <select id="themeSelect" class="w-full px-3 py-2 rounded ui-bg border ui-border text-primary">
+                        </select>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button id="closeSettings" class="px-4 py-2 rounded text-primary hover:opacity-80">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<body class="bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 antialiased overflow-x-hidden">
-<div id="app" class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-6">
-<header class="mb-6 hero border-b border-[var(--border)]">
-  <div class="flex items-start justify-between gap-4">
-    <div>
-      <h1 id="docTitle" class="text-2xl sm:text-3xl font-semibold tracking-tight">The Politics of the Lamb — Interactive Reader</h1>
-      <p class="mt-1 text-sm sm:text-base subtitle text-[var(--subtitle-fg)]">An interactive exploration of John Howard Yoder’s vision of divine non-coercion, the Anabaptist memory, and the church as an alternative society.</p>
-    </div>
-    <div class="flex items-center gap-2">
-      <label for="globalSearch" class="sr-only">Search</label>
-      <input id="globalSearch" type="search" placeholder="Search concepts…" class="w-44 sm:w-56 rounded-md border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-[var(--active)]" aria-label="Search content">
-      <button id="toggleSourcePane" class="rounded-md border border-[var(--btn-border)] px-3 py-2 text-sm font-medium bg-[var(--input-bg)] hover:bg-[var(--btn-hover-bg)] focus:outline-none focus:ring-2 focus:ring-[var(--active)]" aria-haspopup="true" aria-expanded="false">Source</button>
-      <button id="toggleMode" class="rounded-md border border-[var(--btn-border)] px-3 py-2 text-sm bg-[var(--input-bg)] hover:bg-[var(--btn-hover-bg)] focus:outline-none focus:ring-2 focus:ring-[var(--active)]" title="Light/Dark">Mode</button>
-      <button id="toggleTheme" class="rounded-md border border-[var(--btn-border)] px-3 py-2 text-sm bg-[var(--input-bg)] hover:bg-[var(--btn-hover-bg)] focus:outline-none focus:ring-2 focus:ring-[var(--active)]" title="Slate/Emerald (dark)">Color</button>
-    </div>
-  </div>
-  <nav id="tabs" role="tablist" aria-label="Primary sections" class="mt-4 flex flex-wrap gap-2">
-    <button role="tab" id="tabbtn-overview" aria-selected="true" aria-controls="tab-overview" class="px-3 py-2 rounded-md text-sm font-medium border border-[var(--border)] bg-[var(--input-bg)] focus:outline-none focus:ring-2 focus:ring-[var(--active)]">Overview</button>
-    <button role="tab" id="tabbtn-concepts" aria-selected="false" aria-controls="tab-concepts" class="px-3 py-2 rounded-md text-sm font-medium border border-[var(--border)] bg-[var(--input-bg)] focus:outline-none focus:ring-2 focus:ring-[var(--active)]">Core Concepts</button>
-    <button role="tab" id="tabbtn-history" aria-selected="false" aria-controls="tab-history" class="px-3 py-2 rounded-md text-sm font-medium border border-[var(--border)] bg-[var(--input-bg)] focus:outline-none focus:ring-2 focus:ring-[var(--active)]">Tradition &amp; History</button>
-    <button role="tab" id="tabbtn-practices" aria-selected="false" aria-controls="tab-practices" class="px-3 py-2 rounded-md text-sm font-medium border border-[var(--border)] bg-[var(--input-bg)] focus:outline-none focus:ring-2 focus:ring-[var(--active)]">Practices</button>
-    <button role="tab" id="tabbtn-timeline" aria-selected="false" aria-controls="tab-timeline" class="px-3 py-2 rounded-md text-sm font-medium border border-[var(--border)] bg-[var(--input-bg)] focus:outline-none focus:ring-2 focus:ring-[var(--active)]">Timeline</button>
-    <button role="tab" id="tabbtn-critiques" aria-selected="false" aria-controls="tab-critiques" class="px-3 py-2 rounded-md text-sm font-medium border border-[var(--border)] bg-[var(--input-bg)] focus:outline-none focus:ring-2 focus:ring-[var(--active)]">Critiques &amp; Implications</button>
-    <button role="tab" id="tabbtn-witness" aria-selected="false" aria-controls="tab-witness" class="px-3 py-2 rounded-md text-sm font-medium border border-[var(--border)] bg-[var(--input-bg)] focus:outline-none focus:ring-2 focus:ring-[var(--active)]">Witness Today</button>
-    <button role="tab" id="tabbtn-glossary" aria-selected="false" aria-controls="tab-glossary" class="px-3 py-2 rounded-md text-sm font-medium border border-[var(--border)] bg-[var(--input-bg)] focus:outline-none focus:ring-2 focus:ring-[var(--active)]">Glossary</button>
-    <button role="tab" id="tabbtn-source" aria-selected="false" aria-controls="tab-source" class="px-3 py-2 rounded-md text-sm font-medium border border-[var(--border)] bg-[var(--input-bg)] focus:outline-none focus:ring-2 focus:ring-[var(--active)]">Source Pane</button>
-  </nav>
-</header>
-
-<main class="space-y-10 prose prose-slate dark:prose-invert max-w-none">
-  <section id="tab-overview" role="tabpanel" aria-labelledby="tabbtn-overview" tabindex="0" class="block">
-    <div class="rounded-lg bg-[var(--input-bg)] border border-[var(--border)] p-4">
-      <h2 class="text-xl font-semibold mb-2">Context &amp; Takeaways</h2>
-      <p class="mb-3 text-[var(--subtitle-fg)]">This section orients you to the article’s thesis: Jesus’s non-violence is not a temporary ideal but the revelation of how God governs, contrasted with the “Constantinian shift,” and embodied in an alternative church polity.</p>
-      <ul class="list-disc pl-5 space-y-1">
-        <li>Thesis: divine sovereignty is non-coercive; the cross reveals true power.</li>
-        <li>Problem: the church’s alliance with coercion obscures Jesus’s politics.</li>
-        <li>Practice: communities witness by embodying non-coercive life together.</li>
-      </ul>
-    </div>
-    <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4" id="overviewCards"></div>
-    <div id="overviewDetail" class="mt-4 rounded-lg bg-[var(--input-bg)] border border-[var(--border)] p-4"></div>
-  </section>
-
-  <section id="tab-concepts" role="tabpanel" aria-labelledby="tabbtn-concepts" tabindex="0" class="hidden">
-    <div class="rounded-lg bg-[var(--input-bg)] border border-[var(--border)] p-4">
-      <h2 class="text-xl font-semibold mb-2">Context &amp; Takeaways</h2>
-      <p class="mb-3 text-[var(--subtitle-fg)]">Explore Yoder’s core ideas: non-violence as revelation, the critique of Constantinianism, “revolutionary subordination,” the church as an alternative society, and the theological/hermeneutical grounds that make these claims coherent.</p>
-      <ul class="list-disc pl-5 space-y-1">
-        <li>Jesus’s commands apply to public life now, not as later ideals.</li>
-        <li>Power is redefined as suffering love rather than domination.</li>
-        <li>The church’s polity is itself political witness.</li>
-      </ul>
-    </div>
-    <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4" id="conceptCards"></div>
-    <div id="conceptDetail" class="mt-4 rounded-lg bg-[var(--input-bg)] border border-[var(--border)] p-4"></div>
-  </section>
-
-  <section id="tab-history" role="tabpanel" aria-labelledby="tabbtn-history" tabindex="0" class="hidden">
-    <div class="rounded-lg bg-[var(--input-bg)] border border-[var(--border)] p-4">
-      <h2 class="text-xl font-semibold mb-2">Context &amp; Takeaways</h2>
-      <p class="mb-3 text-[var(--subtitle-fg)]">Trace the Anabaptist memory, martyr witness, and Yoder’s diagnosis of the Constantinian shift. See how the narrative frames non-coercion as faithful continuity with early discipleship.</p>
-      <ul class="list-disc pl-5 space-y-1">
-        <li>The 1520s Anabaptists refused the sword and suffered for it.</li>
-        <li>“Constantinian shift” names the church’s turn to coercion.</li>
-        <li>Yoder recovers cruciform politics in a modern idiom.</li>
-      </ul>
-    </div>
-    <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4" id="historyCards"></div>
-    <div id="historyDetail" class="mt-4 rounded-lg bg-[var(--input-bg)] border border-[var(--border)] p-4"></div>
-  </section>
-
-  <section id="tab-practices" role="tabpanel" aria-labelledby="tabbtn-practices" tabindex="0" class="hidden">
-    <div class="rounded-lg bg-[var(--input-bg)] border border-[var(--border)] p-4">
-      <h2 class="text-xl font-semibold mb-2">Context &amp; Takeaways</h2>
-      <p class="mb-3 text-[var(--subtitle-fg)]">Yoder’s “Body Politics” outlines practices that form a non-coercive community. Engage each practice and see how it re-patterns authority, economics, and voice.</p>
-      <ul class="list-disc pl-5 space-y-1">
-        <li>Authority emerges from communal discernment.</li>
-        <li>Economics become relational rather than coercive.</li>
-        <li>Gifts and voices are shared across the community.</li>
-      </ul>
-    </div>
-    <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4" id="practiceCards"></div>
-    <div id="practiceDetail" class="mt-4 rounded-lg bg-[var(--input-bg)] border border-[var(--border)] p-4"></div>
-  </section>
-
-  <section id="tab-timeline" role="tabpanel" aria-labelledby="tabbtn-timeline" tabindex="0" class="hidden">
-    <div class="rounded-lg bg-[var(--input-bg)] border border-[var(--border)] p-4">
-      <h2 class="text-xl font-semibold mb-2">Context &amp; Takeaways</h2>
-      <p class="mb-3 text-[var(--subtitle-fg)]">A minimal timeline highlights key moments explicitly mentioned in the article to situate the argument historically.</p>
-      <ul class="list-disc pl-5 space-y-1">
-        <li>Radical Reformation martyr witness anchors the memory.</li>
-        <li>1969 marks Yoder’s circulated manuscript.</li>
-        <li>1992 surfaces allegations that complicate reception.</li>
-      </ul>
-    </div>
-    <div class="chart-container w-full max-w-2xl mx-auto h-80 max-h-[450px] rounded-lg bg-[var(--input-bg)] border border-[var(--border)] p-3">
-      <canvas id="timelineChart" aria-label="Timeline of key events" role="img"></canvas>
-    </div>
-    <div class="mt-4 overflow-x-auto">
-      <table class="w-full text-sm bg-[var(--input-bg)] border border-[var(--border)] rounded-lg">
-        <thead>
-          <tr class="text-left">
-            <th class="px-3 py-2 border-b border-[var(--border)]">Year</th>
-            <th class="px-3 py-2 border-b border-[var(--border)]">Event</th>
-            <th class="px-3 py-2 border-b border-[var(--border)]">Detail</th>
-          </tr>
-        </thead>
-        <tbody id="timelineTableBody"></tbody>
-      </table>
-    </div>
-    <p class="mt-3 text-[var(--subtitle-fg)] text-sm px-1" id="timelineTakeaway"></p>
-  </section>
-
-  <section id="tab-critiques" role="tabpanel" aria-labelledby="tabbtn-critiques" tabindex="0" class="hidden">
-    <div class="rounded-lg bg-[var(--input-bg)] border border-[var(--border)] p-4">
-      <h2 class="text-xl font-semibold mb-2">Context &amp; Takeaways</h2>
-      <p class="mb-3 text-[var(--subtitle-fg)]">Assess challenges: applicability to public roles, charges of sectarianism, and the moral/theological shock of Yoder’s abuses.</p>
-      <ul class="list-disc pl-5 space-y-1">
-        <li>Faithfulness, not conventional effectiveness, governs the ethic.</li>
-        <li>Non-violence can be pragmatically potent yet remains cruciform.</li>
-        <li>Abuse exposes how coercion corrupts—even in peace traditions.</li>
-      </ul>
-    </div>
-    <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4" id="critiqueCards"></div>
-    <div id="critiqueDetail" class="mt-4 rounded-lg bg-[var(--input-bg)] border border-[var(--border)] p-4"></div>
-  </section>
-
-  <section id="tab-witness" role="tabpanel" aria-labelledby="tabbtn-witness" tabindex="0" class="hidden">
-    <div class="rounded-lg bg-[var(--input-bg)] border border-[var(--border)] p-4">
-      <h2 class="text-xl font-semibold mb-2">Context &amp; Takeaways</h2>
-      <p class="mb-3 text-[var(--subtitle-fg)]">Contemporary witnesses illustrate non-coercive power: accompaniment in conflict zones, reconciliation after atrocity, and restorative practices in cities.</p>
-      <ul class="list-disc pl-5 space-y-1">
-        <li>Absorbing harm can protect communities without retaliation.</li>
-        <li>Reconciliation emerges from long, communal processes.</li>
-        <li>Relational authority interrupts cycles of vengeance.</li>
-      </ul>
-    </div>
-    <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4" id="witnessCards"></div>
-    <div id="witnessDetail" class="mt-4 rounded-lg bg-[var(--input-bg)] border border-[var(--border)] p-4"></div>
-  </section>
-
-  <section id="tab-glossary" role="tabpanel" aria-labelledby="tabbtn-glossary" tabindex="0" class="hidden">
-    <div class="rounded-lg bg-[var(--input-bg)] border border-[var(--border)] p-4">
-      <h2 class="text-xl font-semibold mb-2">Context &amp; Takeaways</h2>
-      <p class="mb-3 text-[var(--subtitle-fg)]">Key terms clarify how the article uses words like “non-coercion,” “Constantinian shift,” and “politics of the Lamb.”</p>
-      <ul class="list-disc pl-5 space-y-1">
-        <li>Shared vocabulary reduces misreadings.</li>
-        <li>Short, precise definitions aid navigation.</li>
-        <li>Aliases help search and filtering.</li>
-      </ul>
-    </div>
-    <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4" id="glossaryGrid"></div>
-  </section>
-
-  <section id="tab-source" role="tabpanel" aria-labelledby="tabbtn-source" tabindex="0" class="hidden">
-    <div class="rounded-lg bg-[var(--input-bg)] border border-[var(--border)] p-4">
-      <h2 class="text-xl font-semibold mb-2">Context &amp; Takeaways</h2>
-      <p class="mb-3 text-[var(--subtitle-fg)]">Review provenance and quotations drawn from the Source Report. Use this pane to audit how statements are grounded.</p>
-      <ul class="list-disc pl-5 space-y-1">
-        <li>Provenance lists the source and context.</li>
-        <li>Quotes are short anchors back to content.</li>
-        <li>Use this pane to cross-check assertions.</li>
-      </ul>
-    </div>
-    <div id="sourcePaneInternal" class="mt-4 rounded-lg bg-[var(--input-bg)] border border-[var(--border)] p-4"></div>
-  </section>
-</main>
-
-<footer class="mt-12 border-t border-[var(--border)] pt-6">
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <div>
-      <h3 class="font-semibold mb-2">Provenance</h3>
-      <ul id="provenanceList" class="text-sm space-y-1 text-[var(--footer-fg)]"></ul>
-    </div>
-    <div>
-      <h3 class="font-semibold mb-2">Extracted Quotes</h3>
-      <ul id="quoteList" class="text-sm space-y-2 text-[var(--footer-fg)]"></ul>
-    </div>
-  </div>
-  <details class="hidden mt-6">
-    <summary class="cursor-pointer">Validation Checklist</summary>
-    <ul class="list-disc pl-5 text-sm space-y-1">
-      <li>ARIA tabs with hash + persistence</li>
-      <li>No SVG/Mermaid; charts use Canvas</li>
-      <li>WCAG AA focus ring via <code>--active</code></li>
-    </ul>
-  </details>
-</footer>
-</div>
-
-<div id="sourceDrawer" class="fixed inset-y-0 right-0 w-80 max-w-[90vw] translate-x-full bg-[var(--input-bg)] border-l border-[var(--border)] shadow-xl transition-transform duration-300 ease-in-out z-40 overflow-y-auto">
-  <div class="p-4">
-    <div class="flex items-center justify-between mb-2">
-      <h2 class="text-lg font-semibold">Source Pane</h2>
-      <button id="closeSourcePane" class="rounded-md border border-[var(--btn-border)] px-2 py-1 text-sm bg-[var(--input-bg)] hover:bg-[var(--btn-hover-bg)] focus:outline-none focus:ring-2 focus:ring-[var(--active)]" aria-label="Close">⎋</button>
-    </div>
-    <div id="sourcePaneDrawer" class="text-sm space-y-3"></div>
-  </div>
-</div>
-
-<script>
-const appData = {
-  meta: {
-    title: "The Politics of the Lamb: John Howard Yoder on Why God’s Kingdom Rejects the Sword",
-    subtitle: "How a Mennonite theologian showed that Jesus’s non-violence wasn’t practical compromise but the revelation of how God governs",
-    report_provenance: [
-      { label: "Source", detail: "User-provided article: “The Politics of the Lamb: John Howard Yoder on Why God’s Kingdom Rejects the Sword”" },
-      { label: "Key Claim", detail: "Jesus’s non-violence reveals divine sovereignty; coercion misrepresents God’s rule." }
-    ]
-  },
-  quotes: [
-    { text: "Jesus’s non-violence is how God runs the real world.", ref: "Thesis" },
-    { text: "When the church accepted Constantine’s sword, it lost Jesus’s cross.", ref: "Constantinian shift" },
-    { text: "Effectiveness is God’s business; faithfulness is ours.", ref: "Faithfulness over effectiveness" },
-    { text: "The Lamb conquers as a Lamb—through suffering love, not coercive power.", ref: "Politics of the Lamb" }
-  ],
-  sections: [
+    <!-- Data Island (Content remains the same) -->
+    <script type="application/json" id="app-data">
     {
-      id: "overview",
-      title: "Overview",
-      kind: "overview",
-      intro: "Orient to the article’s thesis and main movements.",
-      items: [
-        { id: "thesis", label: "Thesis", summary: "Non-violence as revelation of divine sovereignty.", detail: "The article argues that Jesus’s refusal of the sword and embrace of the cross reveal how God actually governs. This is not interim idealism but the enduring shape of divine power." , tags: ["thesis","non-violence"]},
-        { id: "problem", label: "The Constantine Problem", summary: "The church’s alliance with coercion.", detail: "The “Constantinian shift” names the move from cruciform witness to coercive power, recoding Jesus’s commands as private ideals or future counsels instead of public ethics for today.", tags: ["constantinian"]},
-        { id: "practice", label: "Alternative Polity", summary: "Church as non-coercive community.", detail: "The church witnesses by embodying non-coercive practices—discipline as discernment, shared economy, plural gifts, and open speech—that display a different politics.", tags: ["church","polity"]},
-        { id: "challenge", label: "Complicated Legacy", summary: "Abuse and accountability.", detail: "Yoder’s abuses expose how coercion can lurk inside peace talk. The article faces this tension and lets his own theology judge such misuse of power.", tags: ["legacy","abuse"]}
-      ]
-    },
-    {
-      id: "concepts",
-      title: "Core Concepts",
-      kind: "concepts",
-      intro: "Core claims and theological/ethical frames.",
-      items: [
-        { id: "revelation", label: "Non-violence as Revelation", summary: "Jesus’s politics shows God’s rule.", detail: "Jesus’s enemy-love and cross are not detours but the revelation of sovereignty. He refuses Satan’s political shortcuts and redefines kingship through service and self-giving.", tags: ["revelation","ethics"]},
-        { id: "constantinian", label: "Constantinian Shift", summary: "From cross to sword.", detail: "After Constantine, Christians recoded commands as private or future. Yoder calls this a theological revolution that imagines God ruling like Caesar.", tags: ["history","power"]},
-        { id: "revsub", label: "Revolutionary Subordination", summary: "Subverting domination from within.", detail: "Voluntary, Christ-shaped submission robs hierarchy of ultimate power. Choosing what others would force exposes coercion’s emptiness without endorsing injustice.", tags: ["household codes","subversion"]},
-        { id: "altsoc", label: "Church as Alternative Society", summary: "Polity as witness.", detail: "The church is not refuge or state tool but a counter-society practicing non-coercive authority, shared resources, plural gifts, and open discernment.", tags: ["church","community"]},
-        { id: "hermeneutic", label: "Hermeneutical Revolution", summary: "Jesus meant what he said, now.", detail: "Yoder collapses tiers of ethic. Love of enemies applies to all disciples in public life today, not merely to private persons or future saints.", tags: ["scripture","reading"]},
-        { id: "foundation", label: "Theological Foundation", summary: "Sovereignty as suffering love.", detail: "Creation’s grain is shalom; evil is parasitic. The resurrection vindicates non-coercion as the stronger power.", tags: ["theology","shalom"]},
-        { id: "lamb", label: "Politics of the Lamb", summary: "Conquering as a Lamb.", detail: "In Revelation, the Lamb does not become a Lion of coercion. The Lamb’s way—suffering love—reveals enduring rule.", tags: ["revelation","symbol"]},
-        { id: "challenge2", label: "Continuing Challenge", summary: "Impossible and necessary.", detail: "Non-coercion confronts violent systems. Faithfulness may entail suffering; yet it unveils new standards and possibilities.", tags: ["discipleship","cost"]}
-      ]
-    },
-    {
-      id: "history",
-      title: "Tradition & History",
-      kind: "history",
-      intro: "Memory, martyrs, and diagnoses.",
-      items: [
-        { id: "anabaptist", label: "Anabaptist Memory", summary: "Refusing the sword in the 1520s.", detail: "The Radical Reformation birthed communities that would not kill or wield the sword for Christ’s kingdom, enduring persecution from Catholics and Protestants alike.", tags: ["anabaptist","memory"]},
-        { id: "manz", label: "Felix Manz (1527)", summary: "First Anabaptist martyr.", detail: "Drowned in Zurich for rejecting infant baptism and the sword, Manz’s last words were, “Into thy hands, Lord, I commend my spirit.”", tags: ["martyr","1527"]},
-        { id: "mirror", label: "Martyrs’ Mirror", summary: "A book of witness.", detail: "Over 1,100 pages documenting thousands who chose death rather than take up weapons, embodying a concrete conviction about Christ’s lordship.", tags: ["witness"]},
-        { id: "diagnosis", label: "Diagnosing Constantine", summary: "Losing the cross for the sword.", detail: "Yoder names the church’s political-theological turn after Constantine as a catastrophe for discipleship and doctrine.", tags: ["diagnosis"]},
-        { id: "yoder1969", label: "1969 Manuscript", summary: "The Politics of Jesus circulates.", detail: "A Mennonite theologian teaching in Indiana drafts a work arguing that Jesus’s non-violence is the lasting form of divine governance.", tags: ["1969","book"]},
-        { id: "allegations1992", label: "1992 Allegations", summary: "Abuse revelations surface.", detail: "Reports of sexual harassment and assault deeply complicate reception and force theological and communal reckoning.", tags: ["1992","abuse"]}
-      ]
-    },
-    {
-      id: "practices",
-      title: "Practices",
-      kind: "practices",
-      intro: "Body Politics practices as public witness.",
-      items: [
-        { id: "binding", label: "Binding & Loosing", summary: "Communal moral discernment.", detail: "Authority flows through dialogue and community wisdom, not decree or status.", tags: ["authority","discernment"]},
-        { id: "bread", label: "Breaking Bread", summary: "Shared economy beyond market logic.", detail: "Resources flow according to need rather than purchase power, forming economic peace.", tags: ["economy","sharing"]},
-        { id: "baptism", label: "Baptism", summary: "New humanity in Christ.", detail: "Identity transcends racial, class, and gender divisions; belonging re-orders power.", tags: ["identity","unity"]},
-        { id: "fullness", label: "Fullness of Christ", summary: "Plural gifts, dispersed power.", detail: "Leadership is functional and plural; every member participates.", tags: ["gifts","leadership"]},
-        { id: "ruleofpaul", label: "Rule of Paul", summary: "Open speech and discernment.", detail: "The community hears all voices; truth emerges through conversation, not imposition.", tags: ["speech","dialogue"]}
-      ]
-    },
-    {
-      id: "critiques",
-      title: "Critiques & Implications",
-      kind: "critiques",
-      intro: "Tensions and responses.",
-      items: [
-        { id: "sectarian", label: "Sectarian Charge", summary: "Is this only for small churches?", detail: "Yoder answers by reframing vocation: Christians may refuse roles requiring violence, witnessing to alternatives rather than managing the sword.", tags: ["critique","public"]},
-        { id: "pragmatic", label: "Does It Work?", summary: "Effectiveness vs faithfulness.", detail: "Non-violence can be pragmatically potent, yet the criterion remains obedience to Jesus rather than conventional success.", tags: ["effectiveness","faithfulness"]},
-        { id: "abuse", label: "Moral Shock", summary: "The theologian’s coercion.", detail: "The abuses force communities to confront how non-coercive language can mask domination and how accountability must itself avoid coercion.", tags: ["coercion","accountability"]}
-      ]
-    },
-    {
-      id: "witness",
-      title: "Witness Today",
-      kind: "witness",
-      intro: "Contemporary embodiments.",
-      items: [
-        { id: "colombia", label: "Accompaniment under Threat", summary: "Christian Peacemaker Teams in Colombia.", detail: "Accompaniment protected communities; some workers died, revealing protective power without retaliation.", tags: ["colombia","accompaniment"]},
-        { id: "rwanda", label: "Reconciliation Villages", summary: "After genocide, slow healing.", detail: "Mennonite peace workers helped foster communities where survivors and perpetrators’ families live together, choosing healing over vengeance.", tags: ["rwanda","reconciliation"]},
-        { id: "cities", label: "Restorative Interventions", summary: "Interrupting retaliation in cities.", detail: "Former gang members trained in restorative justice model authority through relationship rather than force.", tags: ["restorative","cities"]}
-      ]
-    }
-  ],
-  timeline: [
-    { year: 1527, label: "Felix Manz", detail: "First Anabaptist martyr drowned in Zurich." },
-    { year: 1969, label: "Yoder Manuscript", detail: "The Politics of Jesus circulates in Indiana." },
-    { year: 1992, label: "Allegations Surface", detail: "Abuse reports complicate Yoder’s legacy." }
-  ],
-  glossary: [
-    { term: "Non-coercion", definition: "God’s sovereignty operating through patient, suffering love rather than force.", aliases: ["Nonviolence","Suffering love"] },
-    { term: "Constantinian shift", definition: "The church’s turn from cruciform witness to alignment with imperial coercion.", aliases: ["Constantinianism"] },
-    { term: "Revolutionary subordination", definition: "Voluntary, Christ-shaped submission that subverts domination from within.", aliases: ["Subversive submission"] },
-    { term: "Alternative society", definition: "The church as a community that practices non-coercive polity and economics.", aliases: ["Counter-society"] },
-    { term: "Politics of the Lamb", definition: "The Lamb conquers by suffering love; divine rule is cruciform.", aliases: ["Lamb’s politics"] },
-    { term: "Shalom", definition: "Holistic peace and flourishing aligned with creation’s grain.", aliases: ["Peace"] }
-  ]
-};
-
-const qs = (s,el=document)=>el.querySelector(s);
-const qsa = (s,el=document)=>Array.from(el.querySelectorAll(s));
-
-function renderProvenance(){
-  const list = qs('#provenanceList');
-  list.innerHTML = appData.meta.report_provenance.map(p=>`<li><span class="font-medium">${p.label}:</span> ${p.detail}</li>`).join('');
-  const quotes = qs('#quoteList');
-  quotes.innerHTML = appData.quotes.map(q=>`<li>“${q.text}” <span class="text-[var(--footer-fg)]">(${q.ref})</span></li>`).join('');
-  const drawer = qs('#sourcePaneDrawer');
-  drawer.innerHTML = `
-    <div><h3 class="font-semibold mb-1">Provenance</h3><ul class="list-disc pl-5">${appData.meta.report_provenance.map(p=>`<li><span class="font-medium">${p.label}:</span> ${p.detail}</li>`).join('')}</ul></div>
-    <div class="mt-3"><h3 class="font-semibold mb-1">Quotes</h3><ul class="list-disc pl-5 space-y-1">${appData.quotes.map(q=>`<li>“${q.text}” <span class="text-[var(--footer-fg)]">(${q.ref})</span></li>`).join('')}</ul></div>
-  `;
-  const internal = qs('#sourcePaneInternal');
-  internal.innerHTML = drawer.innerHTML;
-}
-
-function cardTemplate(item){
-  return `
-    <button data-id="${item.id}" class="cardBtn w-full text-left rounded-lg border border-[var(--border)] bg-[var(--input-bg)] p-4 hover:bg-[var(--btn-hover-bg)] focus:outline-none focus:ring-2 focus:ring-[var(--active)]" aria-describedby="${item.id}-summary">
-      <div class="text-base font-semibold">${item.label}</div>
-      <div id="${item.id}-summary" class="mt-1 text-sm text-[var(--subtitle-fg)]">${item.summary}</div>
-      <div class="mt-2 text-xs" style="color: var(--active)">${(item.tags||[]).map(t=>`#${t}`).join(' ')}</div>
-    </button>
-  `;
-}
-
-function detailTemplate(item){
-  return `
-    <h3 class="text-lg font-semibold mb-1">${item.label}</h3>
-    <p class="text-[var(--subtitle-fg)]">${item.detail}</p>
-    <div class="mt-3">
-      <button class="accBtn rounded-md border border-[var(--btn-border)] px-3 py-2 text-sm bg-[var(--input-bg)] hover:bg-[var(--btn-hover-bg)] focus:outline-none focus:ring-2 focus:ring-[var(--active)]" aria-expanded="false" aria-controls="${item.id}-more">More notes</button>
-      <div id="${item.id}-more" class="mt-2 hidden">
-        <p class="text-sm text-[var(--subtitle-fg)]">Related tags: ${(item.tags||[]).map(t=>`#${t}`).join(' ') || "—"}</p>
-      </div>
-    </div>
-  `;
-}
-
-function populateSection(sectionId, gridSel, detailSel){
-  const section = appData.sections.find(s=>s.id===sectionId);
-  const grid = qs(gridSel);
-  const detail = qs(detailSel);
-  grid.innerHTML = section.items.map(cardTemplate).join('');
-  grid.addEventListener('click', e=>{
-    const btn = e.target.closest('.cardBtn');
-    if(!btn) return;
-    const item = section.items.find(i=>i.id===btn.dataset.id);
-    detail.innerHTML = detailTemplate(item);
-    const accBtn = qs('.accBtn', detail);
-    const accPanel = qs(`#${item.id}-more`, detail);
-    accBtn.addEventListener('click', ()=>{
-      const expanded = accBtn.getAttribute('aria-expanded') === 'true';
-      accBtn.setAttribute('aria-expanded', String(!expanded));
-      accPanel.classList.toggle('hidden', expanded);
-    });
-  });
-}
-
-function populateGlossary(){
-  const grid = qs('#glossaryGrid');
-  grid.innerHTML = appData.glossary.map(g=>`
-    <article class="rounded-lg border border-[var(--border)] bg-[var(--input-bg)] p-4">
-      <h4 class="font-semibold">${g.term}</h4>
-      <p class="mt-1 text-sm text-[var(--subtitle-fg)]">${g.definition}</p>
-      <p class="mt-1 text-xs text-[var(--timeline-fg)]">${g.aliases.length?`Also: ${g.aliases.join(', ')}`:''}</p>
-    </article>
-  `).join('');
-}
-
-function buildTimeline(){
-  const ctx = qs('#timelineChart').getContext('2d');
-  const data = appData.timeline.map(d=>({x:d.year, y:1, label:d.label, detail:d.detail}));
-  const chart = new Chart(ctx, {
-    type: 'scatter',
-    data: { datasets: [{ label: 'Key events', data, pointRadius: 5 }]},
-    options: {
-      maintainAspectRatio: false,
-      plugins: {
-        tooltip: {
-          callbacks: { label: (c)=> `${c.raw.x}: ${c.raw.label} — ${c.raw.detail}` }
-        },
-        legend: { display: false },
-        title: { display: true, text: 'Timeline (explicit dates from the article)' }
-      },
-      scales: {
-        x: { type: 'linear', ticks: { stepSize: 50 }, grid: { color: getComputedStyle(document.documentElement).getPropertyValue('--border') } },
-        y: { display: false, min: 0, max: 2 }
+      "ai-course": {
+        "title": "AI Foundations: Skills & Tools Pathway",
+        "description": "An 8-unit course that builds practical AI literacy from core concepts and data, through models and neural networks, to NLP, vision, tooling, and deployment.",
+        "categories": {
+          "unit-1-key-concepts": { "display_order": 10, "name": "Unit 1: What Is AI? Key Concepts and Terminology", "display_name": "Unit 1", "introduction": "This unit provides a comprehensive foundation in Artificial Intelligence. It defines what AI is, distinguishes between its major forms, and introduces the key concepts and terminology that will be used throughout the course. Each section is written as a full mini-lesson, giving you the context and clarity needed before diving into more advanced modules.", "paragraphs": [ { "heading": "Defining Artificial Intelligence", "content": "Artificial Intelligence (AI) refers to the design of computer systems that can perform tasks which, if a human carried them out, would be considered intelligent. These tasks include recognizing patterns in data, making predictions, solving problems, and understanding natural language. Unlike traditional software that relies on explicit programming rules, AI systems often learn from examples and improve over time as they are exposed to more data. This distinction between static rules and adaptive systems is at the heart of AI’s transformative power. When we talk about AI today, we are usually referring to machine learning systems—algorithms that adjust their internal parameters to better map inputs to outputs. For example, rather than programming every detail of how to recognize a cat in an image, engineers provide thousands of labeled cat photos, and the system learns the common features on its own. This approach has led to breakthroughs in language translation, medical diagnostics, and recommendation systems, reshaping entire industries. Understanding this definition provides a grounding for everything that follows in this course." }, { "heading": "Narrow vs. General Intelligence", "content": "One of the most important distinctions in AI is between narrow intelligence and general intelligence. Narrow AI, sometimes called weak AI, is designed to perform a specific task or a small range of tasks. Examples include voice assistants like Siri or Alexa, spam filters for email, and facial recognition in photo libraries. These systems can perform their narrow tasks extremely well but lack flexibility—your spam filter cannot drive a car, and your voice assistant cannot diagnose diseases. General AI, on the other hand, would have the ability to learn and adapt across many domains, much like a human being can. It would reason, plan, and transfer knowledge from one area to another. Despite its portrayal in movies and speculative fiction, general AI does not yet exist and remains a long-term research goal. Most of the progress and applications we see today belong firmly to the realm of narrow AI. Recognizing this difference is crucial: narrow AI has already changed the world, while general AI is still hypothetical." }, { "heading": "Rules, Machine Learning, and Heuristics", "content": "Before the dominance of machine learning, early AI research focused on rule-based systems. In such systems, experts hand-crafted rules that computers would follow. For example, a medical diagnostic system might ask a series of yes/no questions and then apply rules to suggest possible illnesses. These systems worked well in highly structured domains but often failed in messy, real-world scenarios because it was impossible to encode every exception. Machine learning took a different approach, allowing the system to discover patterns in data rather than relying entirely on pre-written rules. Heuristics, or practical shortcuts, still play a role in AI—sometimes a well-chosen heuristic can reduce computation time or guide a model’s search for solutions. In practice, many modern AI systems combine all three approaches: they use machine learning to recognize patterns, heuristics to make quick decisions, and rules to enforce boundaries or comply with regulations. This hybrid design makes them both flexible and controllable." }, { "heading": "Data, Features, and Labels", "content": "At the heart of every AI system is data. Data can take many forms: numbers in a spreadsheet, images, video, or snippets of text. Features are the aspects of that data that are used by the model to make predictions. In image recognition, features might be edges, textures, or color distributions; in natural language processing, they might be word tokens or embeddings. Labels are the ground truth values used in supervised learning—what the system is supposed to predict. For instance, in an email spam filter, the features are derived from the text of the email, and the labels are 'spam' or 'not spam.' The quality of the features and labels directly influences model performance. Poorly labeled data leads to confusion and inaccurate predictions, while well-structured data allows the system to generalize effectively. Understanding how data, features, and labels interact is essential because these choices determine whether an AI project succeeds or fails." }, { "heading": "Training vs. Inference", "content": "The life cycle of an AI model can be divided into two phases: training and inference. Training is the process by which the model learns from data. During training, algorithms adjust millions or even billions of parameters to minimize errors on the provided examples. This process is computationally intensive, often requiring specialized hardware like GPUs. Once training is complete, the model moves to inference: applying what it has learned to new, unseen data. For example, a trained image classifier may have been taught with millions of photos, but inference is when it correctly identifies a new photo uploaded by a user. Training may occur only occasionally, but inference must happen quickly and efficiently whenever the system is used. Understanding this distinction helps you grasp why companies often centralize training in data centers but deploy inference models on edge devices, phones, or browsers where speed and responsiveness matter most." }, { "heading": "Symbolic vs. Statistical Approaches", "content": "AI can be broadly divided into symbolic and statistical approaches. Symbolic AI, also called 'good old-fashioned AI,' relies on explicit representations of knowledge. It uses symbols, rules, and logic to reason about problems. Chess programs from the 1980s, for example, relied heavily on symbolic reasoning, encoding expert knowledge and searching through possibilities. Statistical AI, by contrast, focuses on learning patterns from large datasets. Machine learning and neural networks are examples of statistical approaches, relying less on explicit rules and more on probabilities. Today’s breakthroughs, from large language models to image recognition systems, come primarily from statistical AI. However, symbolic methods are still relevant. Some researchers believe hybrid systems—combining the structure of symbolic reasoning with the adaptability of statistical learning—will be necessary for building more trustworthy and interpretable AI. Knowing both traditions helps clarify the strengths and weaknesses of different approaches." }, { "heading": "Supervised, Unsupervised, and Reinforcement Learning", "content": "Machine learning is not a single technique but a family of approaches. In supervised learning, models learn from labeled examples. Given thousands of emails marked 'spam' or 'not spam,' the system learns to classify new ones. In unsupervised learning, there are no labels—models look for structure in the data, such as grouping customers into segments based on purchasing habits. Reinforcement learning is different: the system learns by interacting with an environment, receiving rewards or penalties for its actions. A reinforcement learner might play a video game, improving its strategy by maximizing its score. Each approach has strengths and limitations. Supervised learning requires costly labeled data but delivers accurate results. Unsupervised learning reveals hidden patterns but may lack clear validation. Reinforcement learning can achieve human-level or even superhuman performance in specific domains, but it is computationally expensive and data-hungry. These three paradigms form the core of most modern AI applications." }, { "heading": "Generative vs. Discriminative Models", "content": "Models can also be classified as generative or discriminative. Discriminative models focus on distinguishing between categories—they learn decision boundaries between classes. Logistic regression and support vector machines are classic discriminative models. Generative models, on the other hand, attempt to model the underlying distribution of the data itself. They can create new examples that resemble the training data. Language models that generate fluent text, or image generators like diffusion models, are generative. Both types of models have practical uses: discriminative models are often simpler and more efficient for classification tasks, while generative models power applications in creativity, simulation, and unsupervised learning. Importantly, generative and discriminative methods are not mutually exclusive. In some cases, combining them produces more robust systems, such as semi-supervised learning where generative models help compensate for limited labeled data." }, { "heading": "Bias, Fairness, and Accountability", "content": "AI systems reflect the data they are trained on and the decisions made by their designers. This can lead to bias—systematic errors that disadvantage particular groups. For instance, a facial recognition system trained mostly on lighter-skinned individuals may perform poorly on darker-skinned individuals. Fairness in AI is not just a technical challenge but a social one, requiring careful dataset design, algorithmic audits, and diverse perspectives in development. Accountability means ensuring that when systems fail or cause harm, there are mechanisms to trace why decisions were made and to assign responsibility. This might include maintaining model documentation, audit trails, or even regulatory oversight. Addressing bias, fairness, and accountability from the outset prevents real-world harm and builds trust in AI deployments. Ignoring these issues, on the other hand, risks amplifying social inequalities and undermining confidence in the technology." }, { "heading": "AI System Boundaries", "content": "It is easy to think of AI as just the model itself, but in practice an AI system encompasses much more. Inputs must be collected, cleaned, and validated. Models must be trained, evaluated, and deployed into environments with specific constraints. Post-processing often shapes model outputs to meet business or ethical goals, while monitoring systems track performance over time to detect drift or anomalies. Human oversight, too, is an essential component, ensuring that AI complements rather than replaces critical decision-making. For example, in a medical AI system, predictions must be checked by trained professionals, with clear channels for escalation if errors occur. Thinking of AI in terms of complete systems, rather than isolated algorithms, helps practitioners anticipate challenges and design more reliable solutions. This system-level perspective concludes our foundational overview and prepares you for deeper dives in the modules to come." } ] },
+          "unit-2-data": { "display_order": 20, "name": "Unit 2: Data — The Fuel of AI", "display_name": "Unit 2", "introduction": "Master the data lifecycle—collection, labeling, quality control, governance—so your models learn from accurate, representative examples.", "paragraphs": [{"heading":"Placeholder", "content":"Content for Unit 2 to be developed."}] },
+          "unit-3-algorithms-models": { "display_order": 30, "name": "Unit 3: Algorithms and Models", "display_name": "Unit 3", "introduction": "Survey the modeling toolbox and the ideas behind it—learning paradigms, objective functions, generalization, and evaluation.", "paragraphs": [{"heading":"Placeholder", "content":"Content for Unit 3 to be developed."}] },
+          "unit-4-neural-networks": { "display_order": 40, "name": "Unit 4: Building and Training Neural Networks", "display_name": "Unit 4", "introduction": "Understand neural architectures, training mechanics, and practical tricks for stable, efficient learning.", "paragraphs": [{"heading":"Placeholder", "content":"Content for Unit 4 to be developed."}] },
+          "unit-5-nlp-essentials": { "display_order": 50, "name": "Unit 5: Working with Text — NLP Essentials", "display_name": "Unit 5", "introduction": "Build language systems from tokenization to transformers, with attention to evaluation, safety, and production reliability.", "paragraphs": [{"heading":"Placeholder", "content":"Content for Unit 5 to be developed."}] },
+          "unit-6-vision-systems": { "display_order": 60, "name": "Unit 6: Working with Images and Video — Vision Systems", "display_name": "Unit 6", "introduction": "From pixels to perception: build classifiers, detectors, and segmenters, and ship them to real devices and services.", "paragraphs": [{"heading":"Placeholder", "content":"Content for Unit 6 to be developed."}] },
+          "unit-7-tools-frameworks": { "display_order": 70, "name": "Unit 7: Tools, Frameworks, and Platforms", "display_name": "Unit 7", "introduction": "Get productive with the modern AI toolchain—from tensors and autograd to experiment tracking, packaging, and serving.", "paragraphs": [{"heading":"Placeholder", "content":"Content for Unit 7 to be developed."}] },
+          "unit-8-deployment": { "display_order": 80, "name": "Unit 8: Deploying AI — From Research to Real-World Systems", "display_name": "Unit 8", "introduction": "Translate models into reliable products: evaluate offline and online, monitor in production, and manage risk, cost, and governance.", "paragraphs": [{"heading":"Placeholder", "content":"Content for Unit 8 to be developed."}] }
+        }
       }
     }
-  });
-  const container = qs('.chart-container');
-  const ro = new ResizeObserver(()=>{ chart.resize(); });
-  ro.observe(container);
-  const tbody = qs('#timelineTableBody');
-  tbody.innerHTML = appData.timeline.map(row=>`
-    <tr>
-      <td class="px-3 py-2 border-b border-[var(--border)]">${row.year}</td>
-      <td class="px-3 py-2 border-b border-[var(--border)]">${row.label}</td>
-      <td class="px-3 py-2 border-b border-[var(--border)]">${row.detail}</td>
-    </tr>
-  `).join('');
-  qs('#timelineTakeaway').textContent = "Across centuries, explicit moments anchor the case: martyr witness (1527), theological articulation (1969), and a moral reckoning (1992).";
-  return chart;
-}
+    </script>
 
-function setupTabs(){
-  const tabButtons = qsa('#tabs [role="tab"]');
-  const panels = qsa('[role="tabpanel"]');
-  function activate(id, pushHash=true){
-    tabButtons.forEach(b=>{
-      const sel = b.id === `tabbtn-${id}`;
-      b.setAttribute('aria-selected', String(sel));
+    <script defer>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // ------------------
+        // THEME DATA - The only significant change is in 'cyber-blue'
+        // ------------------
+        const THEMES = {
+          'newspaper': { name: 'Newspaper', type: 'classic', isDark: false },
+          'emerald-paper': {
+            name: 'Emerald Paper', type: 'variable', isDark: false,
+            vars: {
+              '--bg-gradient': '#f7fbf9', '--text': '#1e2b28', '--accent-text': '#0f7f6d', '--nav-bg': '#e7f3ef',
+              '--nav-border': '#86c8ba', '--nav-text': '#1e2b28', '--nav-hover-bg': '#d7ece6', '--nav-active-bg': '#bfe3d9',
+              '--nav-active-text': '#1e2b28', '--prose-text': '#1e2b28', '--prose-headings': '#0f7f6d'
+            }
+          },
+          'cyber-blue': {
+            name: 'Cyber Night', type: 'variable', isDark: true,
+            vars: {
+              // UPDATED: Now a solid, near-black color like Tailwind's slate-950
+              '--bg-gradient': '#020617', 
+              '--text': '#f1f5f9', 
+              // UPDATED: Now a stronger blue like Tailwind's blue-500
+              '--accent-text': 'rgb(59,130,246)', 
+              // These slate colors are consistent with the new style
+              '--nav-bg': '#1e293b', 
+              '--nav-border': '#334155', 
+              '--nav-text': '#f1f5f9',
+              '--nav-hover-bg': '#334155', 
+              '--nav-active-bg': '#0f172a',
+              '--nav-active-text': '#f1f5f9',
+              '--prose-text': '#94a3b8', 
+              '--prose-headings': 'rgb(59,130,246)'
+            }
+          },
+          'emerald-gold': {
+            name: 'Emerald/Gold', type: 'variable', isDark: true,
+            vars: {
+              '--bg-gradient': 'linear-gradient(135deg,#022c22 0%,#064e3b 60%,#065f46 100%)', '--text': '#ecfdf5',
+              '--accent-text': '#f0c475', '--nav-bg': '#064e3b', '--nav-border': '#d4a24c', '--nav-text': '#ecfdf5',
+              '--nav-hover-bg': '#065f46', '--nav-active-bg': '#0b3d31', '--nav-active-text': '#f0c475',
+              '--prose-text': '#a7f3d0', '--prose-headings': '#ecfdf5'
+            }
+          }
+        };
+
+        // All subsequent JS is identical to the original AI course app
+        const app = {
+            root: document.documentElement,
+            header: document.getElementById('app-header'),
+            tabs: document.getElementById('app-tabs'),
+            panels: document.getElementById('app-panels'),
+            settings: {
+                modal: document.getElementById('settingsModal'),
+                closeBtn: document.getElementById('closeSettings'),
+                themeSelect: document.getElementById('themeSelect')
+            }
+        };
+
+        const state = { activeTab: null, theme: 'newspaper' };
+
+        const loadState = () => {
+            state.theme = localStorage.getItem('appTheme') || 'newspaper';
+            state.activeTab = localStorage.getItem('activeTab');
+        };
+
+        const saveState = () => {
+            localStorage.setItem('appTheme', state.theme);
+            localStorage.setItem('activeTab', state.activeTab);
+        };
+
+        const applyTheme = (themeKey) => {
+            const theme = THEMES[themeKey];
+            if (!theme) return;
+
+            app.root.className = '';
+            app.root.style.cssText = '';
+
+            if (theme.type === 'variable' && theme.vars) {
+                for (const [key, value] of Object.entries(theme.vars)) {
+                    app.root.style.setProperty(key, value);
+                }
+                app.root.classList.add(`theme-${themeKey}`);
+            }
+
+            state.theme = themeKey;
+            if (app.settings.themeSelect.value !== themeKey) {
+                app.settings.themeSelect.value = themeKey;
+            }
+            saveState();
+        };
+
+        const populateThemeSelector = () => {
+            app.settings.themeSelect.innerHTML = Object.entries(THEMES).map(([key, theme]) => 
+                `<option value="${key}">${theme.name}</option>`
+            ).join('');
+        };
+
+        const loadAndTransformData = () => {
+            try {
+                const rawData = JSON.parse(document.getElementById('app-data').textContent);
+                const course = rawData['ai-course'];
+                const units = Object.entries(course.categories).map(([id, unitData]) => ({ id, ...unitData }))
+                    .sort((a, b) => a.display_order - b.display_order);
+                return { meta: { title: course.title, description: course.description }, units };
+            } catch (e) {
+                console.error("Failed to load or transform app data:", e);
+                return null;
+            }
+        };
+        
+        const data = loadAndTransformData();
+        if (!data) return;
+
+        const renderHeader = () => {
+            app.header.innerHTML = `
+                <div class="flex justify-between items-start gap-4">
+                    <div>
+                        <h1 class="text-3xl font-bold text-accent">${data.meta.title}</h1>
+                        <p class="mt-2 text-primary/80">${data.meta.description}</p>
+                    </div>
+                    <button id="settingsBtn" class="flex-shrink-0 p-3 rounded-lg settings-button transition-opacity" aria-label="Display Settings">
+                        <span class="text-2xl text-accent">⚙️</span>
+                    </button>
+                </div>`;
+        };
+        
+        const renderTabs = () => {
+            app.tabs.innerHTML = `<div class="flex flex-wrap">${
+                data.units.map(unit => `
+                    <button role="tab" aria-selected="false" aria-controls="${unit.id}-panel" id="${unit.id}-tab"
+                            class="px-5 py-3 font-semibold transition-colors tab-button">
+                        ${unit.display_name}
+                    </button>`
+                ).join('')
+            }</div>`;
+        };
+
+        const renderPanels = () => {
+            app.panels.innerHTML = data.units.map(unit => {
+                const introHTML = unit.introduction ? `<p class="lead">${unit.introduction}</p>` : '';
+                const paragraphsHTML = (unit.paragraphs || []).map(p => `
+                    <h3>${p.heading}</h3>
+                    <p>${p.content}</p>
+                `).join('');
+
+                const proseClasses = THEMES[state.theme].isDark ? 'prose prose-lg max-w-none prose-invert' : 'prose prose-lg max-w-none';
+
+                return `
+                    <div role="tabpanel" id="${unit.id}-panel" aria-labelledby="${unit.id}-tab" hidden>
+                        <div class="${proseClasses}">
+                            <h2>${unit.name}</h2>
+                            ${introHTML}
+                            ${paragraphsHTML}
+                        </div>
+                    </div>`;
+            }).join('');
+        };
+
+        const switchTab = (tabId) => {
+            if (!data.units.some(u => u.id === tabId)) {
+                tabId = data.units[0]?.id;
+            }
+            if (!tabId) return;
+
+            app.tabs.querySelectorAll('[role="tab"]').forEach(tab => {
+                const isActive = tab.id === `${tabId}-tab`;
+                tab.setAttribute('aria-selected', isActive);
+                tab.classList.toggle('tab-active', isActive);
+            });
+
+            app.panels.querySelectorAll('[role="tabpanel"]').forEach(panel => {
+                panel.hidden = panel.id !== `${tabId}-panel`;
+            });
+            
+            state.activeTab = tabId;
+            saveState();
+        };
+
+        const setupEventListeners = () => {
+            app.tabs.addEventListener('click', e => {
+                const tab = e.target.closest('[role="tab"]');
+                if (tab) switchTab(tab.id.replace('-tab', ''));
+            });
+
+            app.header.addEventListener('click', e => {
+                if (e.target.closest('#settingsBtn')) {
+                    app.settings.modal.classList.remove('hidden');
+                    app.settings.themeSelect.focus();
+                }
+            });
+            
+            const closeModal = () => {
+                app.settings.modal.classList.add('hidden');
+                document.getElementById('settingsBtn')?.focus();
+            };
+            app.settings.closeBtn.addEventListener('click', closeModal);
+            app.settings.modal.addEventListener('keydown', e => {
+                if (e.key === 'Escape') closeModal();
+            });
+
+            app.settings.themeSelect.addEventListener('change', (e) => {
+                applyTheme(e.target.value);
+                renderPanels();
+                const activePanel = document.getElementById(`${state.activeTab}-panel`);
+                if(activePanel) activePanel.hidden = false;
+            });
+        };
+
+        const init = () => {
+            loadState();
+            populateThemeSelector();
+            applyTheme(state.theme);
+            renderHeader();
+            renderTabs();
+            renderPanels();
+            setupEventListeners();
+            switchTab(state.activeTab || data.units[0]?.id);
+        };
+
+        init();
     });
-    panels.forEach(p=>{
-      p.classList.toggle('hidden', p.id !== `tab-${id}`);
-      p.classList.toggle('block', p.id === `tab-${id}`);
-    });
-    if(pushHash){
-      const newHash = `#tab=${id}`;
-      if(location.hash !== newHash) history.replaceState(null, '', newHash);
-    }
-    localStorage.setItem('activeTab', id);
-    if(id==='timeline' && !window.__timelineInit){
-      window.__timelineChart = buildTimeline();
-      window.__timelineInit = true;
-    }
-  }
-  tabButtons.forEach((btn)=>{
-    btn.addEventListener('click', ()=>activate(btn.id.replace('tabbtn-','')));
-    btn.addEventListener('keydown', (e)=>{
-      const idx = tabButtons.findIndex(x=>x===btn);
-      if(e.key==='ArrowRight'){ e.preventDefault(); (tabButtons[idx+1]||tabButtons[0]).focus(); }
-      if(e.key==='ArrowLeft'){ e.preventDefault(); (tabButtons[idx-1]||tabButtons[tabButtons.length-1]).focus(); }
-      if(e.key==='Home'){ e.preventDefault(); tabButtons[0].focus(); }
-      if(e.key==='End'){ e.preventDefault(); tabButtons[tabButtons.length-1]).focus(); }
-    });
-  });
-  const hash = new URLSearchParams((location.hash||'').replace('#','')).get('tab');
-  const saved = localStorage.getItem('activeTab');
-  activate(hash || saved || 'overview', false);
-}
-
-function setupSearch(){
-  const input = qs('#globalSearch');
-  function apply(){
-    const q = input.value.trim().toLowerCase();
-    const activePanel = qsa('[role="tabpanel"]').find(p=>!p.classList.contains('hidden'));
-    if(!activePanel) return;
-    const cards = qsa('.cardBtn', activePanel);
-    cards.forEach(btn=>{
-      const text = btn.textContent.toLowerCase();
-      btn.classList.toggle('hidden', q && !text.includes(q));
-    });
-  }
-  input.addEventListener('input', apply);
-}
-
-function setupSourcePane(){
-  const drawer = qs('#sourceDrawer');
-  const toggle = qs('#toggleSourcePane');
-  const close = qs('#closeSourcePane');
-  function open(){ drawer.classList.remove('translate-x-full'); toggle.setAttribute('aria-expanded','true'); }
-  function shut(){ drawer.classList.add('translate-x-full'); toggle.setAttribute('aria-expanded','false'); }
-  toggle.addEventListener('click', ()=> toggle.getAttribute('aria-expanded')==='true' ? shut() : open());
-  close.addEventListener('click', shut);
-  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') shut(); });
-}
-
-function renderSections(){
-  populateSection('overview', '#overviewCards', '#overviewDetail');
-  populateSection('concepts', '#conceptCards', '#conceptDetail');
-  populateSection('history', '#historyCards', '#historyDetail');
-  populateSection('practices', '#practiceCards', '#practiceDetail');
-  populateSection('critiques', '#critiqueCards', '#critiqueDetail');
-  populateSection('witness', '#witnessCards', '#witnessDetail');
-  populateGlossary();
-}
-
-function init(){
-  // Theme toggles
-  const modeBtn = qs('#toggleMode');
-  const themeBtn = qs('#toggleTheme');
-  modeBtn.addEventListener('click', ()=> ThemeManager.setMode(ThemeManager.get().mode==='dark'?'light':'dark'));
-  themeBtn.addEventListener('click', ()=> ThemeManager.setTheme(ThemeManager.get().theme==='emerald'?'slate':'emerald'));
-
-  // Meta/header + content
-  qs('#docTitle').textContent = appData.meta.title;
-  document.title = appData.meta.title;
-  renderProvenance();
-  renderSections();
-  setupTabs();
-  setupSearch();
-  setupSourcePane();
-}
-document.addEventListener('DOMContentLoaded', init);
-</script>
-
-<!-- Global Theme Manager -->
-<script>
-(function(){
-  const root=document.documentElement;
-  const saved=JSON.parse(localStorage.getItem('ui_theme')||'{}');
-  const prefersDark=matchMedia('(prefers-color-scheme: dark)').matches;
-  const state={ mode: saved.mode|| (prefersDark?'dark':'light'), theme: saved.theme||'slate' };
-  function apply(){
-    root.classList.toggle('dark', state.mode==='dark');
-    root.classList.toggle('theme-emerald', state.mode==='dark' && state.theme==='emerald');
-  }
-  window.ThemeManager={
-    setMode(m){ state.mode=m; localStorage.setItem('ui_theme',JSON.stringify(state)); apply(); },
-    setTheme(t){ state.theme=t; localStorage.setItem('ui_theme',JSON.stringify(state)); apply(); },
-    get(){ return {...state}; }
-  };
-  // Respond to OS changes (optional but nice)
-  try{
-    matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e=>{
-      const saved = JSON.parse(localStorage.getItem('ui_theme')||'{}');
-      if(!saved.mode){ state.mode = e.matches?'dark':'light'; apply(); }
-    });
-  }catch(_){}
-  apply();
-})();
-</script>
-
+    </script>
 </body>
 </html>
