@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web App Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Default Theme: Newspaper */
+        :root {
+            --bg-gradient: #fdfdf8;
+            --text: #1c1c1c;
+            --accent-text: #8c1c13;
+            --nav-bg: #f1f1eb;
+            --nav-border: #dcdcd3;
+            --nav-text: #1c1c1c;
+            --nav-hover-bg: #e5e5dd;
+            --nav-active-bg: #dcdcd3;
+            --nav-active-text: #1c1c1c;
+            font-family: 'Merriweather', serif;
+        }
+
+        /* All other themes are applied via class */
+        .theme-emerald-paper, .theme-cyber-blue, .theme-emerald-gold {
+            font-family: 'Lato', sans-serif;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* Component Styles using CSS Variables */
+        .ui-bg { background-color: var(--nav-bg); }
+        .ui-border { border-color: var(--nav-border); }
+        .text-primary { color: var(--text); }
+        .text-accent { color: var(--accent-text); }
+
+        .tab-button {
+            background-color: var(--nav-bg);
+            color: var(--nav-text);
+            border-bottom: 3px solid transparent;
+        }
+        .tab-button:hover, .tab-button:focus-visible {
+            background-color: var(--nav-hover-bg);
+        }
+        .tab-button.tab-active {
+            background-color: var(--nav-active-bg);
+            color: var(--nav-active-text);
+            border-bottom-color: var(--accent-text);
+        }
+
+        .settings-button {
+            background-color: var(--nav-hover-bg);
+        }
+        .settings-button:hover {
+            opacity: 0.8;
+        }
+        
+        *:focus-visible { 
+            outline: 3px solid var(--accent-text);
+            outline-offset: 2px; 
+        }
+    </style>
+</head>
+<body class="transition-colors duration-300">
+    <div class="container mx-auto px-4 py-6 max-w-7xl">
+        <!-- Header: Dynamically rendered -->
+        <header id="app-header" class="ui-bg border ui-border rounded-lg shadow-lg p-6 mb-6"></header>
+        
+        <!-- Tab Navigation: Dynamically rendered -->
+        <nav id="app-tabs" class="ui-bg border ui-border rounded-lg shadow-lg mb-6" role="tablist" aria-label="Main navigation"></nav>
+        
+        <!-- Tab Panels: Dynamically rendered -->
+        <main id="app-panels" class="ui-bg border ui-border rounded-lg shadow-lg p-6 min-h-[200px]"></main>
+        
+        <!-- Settings Modal -->
+        <div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+            <div class="ui-bg border ui-border rounded-lg p-6 max-w-md w-full shadow-2xl">
+                <h2 id="settings-title" class="text-xl font-bold text-accent mb-4">Display Settings</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label for="themeSelect" class="block text-primary font-semibold mb-2">Theme</label>
+                        <select id="themeSelect" class="w-full px-3 py-2 rounded ui-bg border ui-border text-primary">
+                            <!-- Options dynamically populated by JS -->
+                        </select>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button id="closeSettings" class="px-4 py-2 rounded text-primary hover:opacity-80">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Island -->
+    <script type="application/json" id="app-data">
+    {
+      "meta": {
+        "title": "Interactive Learning Demo"
+      },
+      "lessons": [
+        { "id": "lesson-1", "title": "Lesson 1" },
+        { "id": "lesson-2", "title": "Lesson 2" },
+        { "id": "lesson-3", "title": "Lesson 3" },
+        { "id": "lesson-4", "title": "Lesson 4" },
+        { "id": "lesson-5", "title": "Lesson 5" },
+        { "id": "lesson-6", "title": "Lesson 6" },
+        { "id": "lesson-7", "title": "Lesson 7" },
+        { "id": "lesson-8", "title": "Lesson 8" }
+      ]
+    }
+    </script>
+
+    <script defer>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // ------------------
+        // THEME DATA
+        // ------------------
+        const THEMES = {
+          'newspaper': { name: 'Newspaper', type: 'classic', isDark: false },
+          'emerald-paper': {
+            name: 'Emerald Paper', type: 'variable', isDark: false,
+            vars: {
+              '--bg-gradient': '#f7fbf9', '--text': '#1e2b28', '--accent-text': '#0f7f6d', '--nav-bg': '#e7f3ef',
+              '--nav-border': '#86c8ba', '--nav-text': '#1e2b28', '--nav-hover-bg': '#d7ece6', '--nav-active-bg': '#bfe3d9',
+              '--nav-active-text': '#1e2b28'
+            }
+          },
+          'cyber-blue': {
+            name: 'Cyber Blue', type: 'variable', isDark: true,
+            vars: {
+              '--bg-gradient': 'linear-gradient(135deg,#0a0a23 0%,#1a1a3a 50%,#2e2e5e 100%)', '--text': '#f1f5f9',
+              '--accent-text': '#a8b8d0', '--nav-bg': '#1e293b', '--nav-border': '#334155', '--nav-text': '#f1f5f9',
+              '--nav-hover-bg': '#334155', '--nav-active-bg': '#2e2e5e', '--nav-active-text': '#f1f5f9'
+            }
+          },
+          'emerald-gold': {
+            name: 'Emerald/Gold', type: 'variable', isDark: true,
+            vars: {
+              '--bg-gradient': 'linear-gradient(135deg,#022c22 0%,#064e3b 60%,#065f46 100%)', '--text': '#ecfdf5',
+              '--accent-text': '#f0c475', '--nav-bg': '#064e3b', '--nav-border': '#d4a24c', '--nav-text': '#ecfdf5',
+              '--nav-hover-bg': '#065f46', '--nav-active-bg': '#0b3d31', '--nav-active-text': '#f0c475'
+            }
+          }
+        };
+
+        // ------------------
+        // DOM Element Refs
+        // ------------------
+        const app = {
+            root: document.documentElement,
+            header: document.getElementById('app-header'),
+            tabs: document.getElementById('app-tabs'),
+            panels: document.getElementById('app-panels'),
+            settings: {
+                modal: document.getElementById('settingsModal'),
+                closeBtn: document.getElementById('closeSettings'),
+                themeSelect: document.getElementById('themeSelect')
+            }
+        };
+
+        // ------------------
+        // State Management
+        // ------------------
+        const state = {
+            activeTab: 'lesson-1',
+            theme: 'newspaper',
+        };
+
+        const loadState = () => {
+            state.theme = localStorage.getItem('appTheme') || 'newspaper';
+            state.activeTab = localStorage.getItem('activeTab') || 'lesson-1';
+        };
+
+        const saveState = () => {
+            localStorage.setItem('appTheme', state.theme);
+            localStorage.setItem('activeTab', state.activeTab);
+        };
+
+        // ------------------
+        // Theme Management
+        // ------------------
+        const applyTheme = (themeKey) => {
+            const theme = THEMES[themeKey];
+            if (!theme) return;
+
+            // Remove all other theme classes
+            app.root.className = '';
+            
+            // Clear inline styles from previous variable themes
+            app.root.style.cssText = '';
+
+            if (theme.type === 'variable' && theme.vars) {
+                // Apply variables for 'variable' themes
+                for (const [key, value] of Object.entries(theme.vars)) {
+                    app.root.style.setProperty(key, value);
+                }
+                // Add a class for potential font-family overrides etc.
+                app.root.classList.add(`theme-${themeKey}`);
+            }
+
+            state.theme = themeKey;
+            if (app.settings.themeSelect.value !== themeKey) {
+                app.settings.themeSelect.value = themeKey;
+            }
+            saveState();
+        };
+
+        const populateThemeSelector = () => {
+            app.settings.themeSelect.innerHTML = Object.entries(THEMES).map(([key, theme]) => 
+                `<option value="${key}">${theme.name}</option>`
+            ).join('');
+        };
+
+        // ------------------
+        // Data Loading
+        // ------------------
+        const loadData = () => {
+            try {
+                const dataNode = document.getElementById('app-data');
+                return JSON.parse(dataNode.textContent);
+            } catch (e) {
+                console.error("Failed to load app data:", e);
+                return null;
+            }
+        };
+        
+        const data = loadData();
+        if (!data) return;
+
+        // ------------------
+        // Render Functions
+        // ------------------
+        const renderHeader = () => {
+            app.header.innerHTML = `
+                <div class="flex justify-between items-center">
+                    <h1 class="text-3xl font-bold text-accent">${data.meta.title}</h1>
+                    <button id="settingsBtn" class="p-3 rounded-lg settings-button transition-opacity" aria-label="Display Settings">
+                        <span class="text-2xl text-accent">⚙️</span>
+                    </button>
+                </div>`;
+        };
+        
+        const renderTabs = () => {
+            const tabsHTML = (data.lessons || []).map(lesson => `
+                <button role="tab" aria-selected="false" aria-controls="${lesson.id}-panel" id="${lesson.id}-tab"
+                        class="px-6 py-3 font-semibold transition-colors tab-button">
+                    ${lesson.title}
+                </button>
+            `).join('');
+            app.tabs.innerHTML = `<div class="flex flex-wrap">${tabsHTML}</div>`;
+        };
+
+        const renderPanels = () => {
+            app.panels.innerHTML = (data.lessons || []).map(lesson => `
+                <div role="tabpanel" id="${lesson.id}-panel" aria-labelledby="${lesson.id}-tab" class="p-4" hidden>
+                    <h2 class="text-2xl font-bold text-accent">${lesson.title}</h2>
+                    <p class="mt-4 text-primary">Content to be developed.</p>
+                </div>`
+            ).join('');
+        };
+
+        // ------------------
+        // Interactivity
+        // ------------------
+        const switchTab = (tabId) => {
+            const allTabs = app.tabs.querySelectorAll('[role="tab"]');
+            allTabs.forEach(tab => {
+                const isActive = tab.id === `${tabId}-tab`;
+                tab.setAttribute('aria-selected', isActive);
+                tab.classList.toggle('tab-active', isActive);
+            });
+
+            app.panels.querySelectorAll('[role="tabpanel"]').forEach(panel => {
+                panel.hidden = panel.id !== `${tabId}-panel`;
+            });
+            
+            state.activeTab = tabId;
+            saveState();
+        };
+
+        const setupEventListeners = () => {
+            // Tabs
+            app.tabs.addEventListener('click', e => {
+                const tab = e.target.closest('[role="tab"]');
+                if (tab) switchTab(tab.id.replace('-tab', ''));
+            });
+
+            // Settings Modal
+            // We use event delegation on the header since the button is rendered dynamically
+            app.header.addEventListener('click', e => {
+                if (e.target.closest('#settingsBtn')) {
+                    app.settings.modal.classList.remove('hidden');
+                    app.settings.themeSelect.focus();
+                }
+            });
+            
+            const closeModal = () => {
+                app.settings.modal.classList.add('hidden');
+                document.getElementById('settingsBtn')?.focus();
+            };
+            app.settings.closeBtn.addEventListener('click', closeModal);
+            app.settings.modal.addEventListener('keydown', e => {
+                if (e.key === 'Escape') closeModal();
+            });
+
+            // Theme Selector Change
+            app.settings.themeSelect.addEventListener('change', (e) => {
+                applyTheme(e.target.value);
+            });
+        };
+
+        // ------------------
+        // Initialization
+        // ------------------
+        const init = () => {
+            loadState();
+            populateThemeSelector();
+            applyTheme(state.theme);
+
+            renderHeader();
+            renderTabs();
+            renderPanels();
+            
+            setupEventListeners();
+            switchTab(state.activeTab);
+        };
+
+        init();
+    });
+    </script>
+</body>
+</html>
