@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Why the Allies Won: An Interactive Analysis</title>
+    <title>Interactive Course Template</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.tailwindcss.com/3.4.1?plugins=typography"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -89,7 +89,11 @@
         </div>
     </div>
 
-    <!-- Data Island -->
+    <!-- 
+    ============================================================
+    vvvvvvvvvvvvvv PASTE YOUR JSON CONTENT BELOW vvvvvvvvvvvvvv
+    ============================================================
+    -->
     <script type="application/json" id="app-data">
 {
   "ww2-analysis": {
@@ -411,7 +415,13 @@
     }
   }
 }
-</script>
+
+    </script>
+    <!-- 
+    ============================================================
+    ^^^^^^^^^^^^^^ PASTE YOUR JSON CONTENT ABOVE ^^^^^^^^^^^^^^
+    ============================================================
+    -->
 
     <script defer>
     document.addEventListener('DOMContentLoaded', () => {
@@ -458,7 +468,7 @@
               '--bg-gradient': 'linear-gradient(135deg,#022c22 0%,#064e3b 60%,#065f46 100%)', '--text': '#ecfdf5',
               '--accent-text': '#f0c475', '--nav-bg': '#064e3b', '--nav-border': '#d4a24c', '--nav-text': '#ecfdf5',
               '--nav-hover-bg': '#065f46', '--nav-active-bg': '#0b3d31', '--nav-active-text': '#f0c475',
-              '--prose-text': '#a7f3d0', '--prose-headings': '#f0c475’
+              '--prose-text': '#a7f3d0', '--prose-headings': '#f0c475'
             }
           }
         };
@@ -516,21 +526,40 @@
 
         const loadAndTransformData = () => {
             try {
-                const rawData = JSON.parse(document.getElementById('app-data').textContent);
-                const course = rawData['ww2-analysis'];
+                const dataNode = document.getElementById('app-data');
+                if (!dataNode.textContent.trim()) {
+                    console.error("JSON data is empty.");
+                    return null;
+                }
+                const rawData = JSON.parse(dataNode.textContent);
+                
+                // *** IMPROVEMENT: Automatically find the top-level key ***
+                const topLevelKey = Object.keys(rawData)[0];
+                if (!topLevelKey) {
+                    console.error("JSON data is missing a top-level key.");
+                    return null;
+                }
+                const course = rawData[topLevelKey];
+                
                 const units = Object.entries(course.categories).map(([id, unitData]) => ({ id, ...unitData }))
                     .sort((a, b) => a.display_order - b.display_order);
                 return { meta: { title: course.title, description: course.description }, units };
             } catch (e) {
                 console.error("Failed to load or transform app data:", e);
+                app.panels.innerHTML = `<div class="p-4 text-red-500 bg-red-100 rounded"><strong>Error:</strong> Could not load content. Please ensure the JSON is correctly formatted and pasted into the data island.</div>`;
                 return null;
             }
         };
         
         const data = loadAndTransformData();
+        
+        // Stop execution if data failed to load
         if (!data) return;
 
         const renderHeader = () => {
+            // Update document title dynamically
+            document.title = data.meta.title || "Interactive Course";
+            
             app.header.innerHTML = `
                 <div class="flex justify-between items-start gap-4">
                     <div>
@@ -639,3 +668,4 @@
     </script>
 </body>
 </html>
+
