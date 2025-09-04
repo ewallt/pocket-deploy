@@ -3,31 +3,84 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Mark 1:1–3 — Hays on Figural Christology</title>
+<title>Report SPA — Template (Course-Theme Palette + Navy)</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
+/* ========= Base tokens (default = "Newspaper") ========= */
 :root{
-  --bg: linear-gradient(135deg,#f8fafc 0%,#e2e8f0 100%);
-  --ink:#0f172a; --muted:#475569; --card:#ffffff; --line:#e2e8f0;
-  --acc1:#2563eb; --acc2:#1d4ed8;
+  /* Newspaper (light, neutral) */
+  --bg: #fdfdf8;                   /* from --bg-gradient */
+  --ink: #1c1c1c;                  /* --text */
+  --muted: #3f3f3f;                /* derived */
+  --card: #f1f1eb;                 /* --nav-bg */
+  --line: #dcdcd3;                 /* --nav-border */
+  --acc1: #8c1c13;                 /* --accent-text (headings) */
+  --acc2: #8c1c13;                 /* keep cohesive */
 }
-.theme-navy{
-  --bg: linear-gradient(135deg,#0a0a23 0%,#1a1a3a 50%,#2e2e5e 100%);
-  --ink:#e2e8f0; --muted:#94a3b8; --card:#1f2937; --line:#334155;
-  --acc1:#60a5fa; --acc2:#3b82f6;
+
+/* ========= Emerald Paper (light) ========= */
+.theme-emerald-paper{
+  --bg: #f7fbf9;
+  --ink: #1e2b28;
+  --muted: #2b423d;
+  --card: #e7f3ef;
+  --line: #86c8ba;
+  --acc1: #0f7f6d;  /* headings / accents */
+  --acc2: #0f7f6d;
 }
-.theme-emerald{
+
+/* ========= Cyber Night (dark) ========= */
+.theme-cyber-blue{
+  --bg: rgb(2, 6, 23);          /* slate-950 */
+  --ink: rgb(203, 213, 225);    /* slate-300 */
+  --muted: rgb(148,163,184);    /* slate-400 */
+  --card: rgb(30, 41, 59);      /* slate-800 */
+  --line: rgb(51, 65, 85);      /* slate-700 */
+  --acc1: rgb(203, 213, 225);   /* subtle neutral headings */
+  --acc2: rgb(203, 213, 225);
+}
+
+/* ========= Emerald/Gold (dark) ========= */
+.theme-emerald-gold{
   --bg: linear-gradient(135deg,#022c22 0%,#064e3b 60%,#065f46 100%);
-  --ink:#ecfdf5; --muted:#a7f3d0; --card:#064e3b; --line:#065f46;
-  --acc1:#f0c475; --acc2:#d4a24c;
+  --ink: #ecfdf5;               /* emerald-50 */
+  --muted: #a7f3d0;             /* emerald-200 */
+  --card: #064e3b;
+  --line: #d4a24c;              /* gold edge */
+  --acc1: #f0c475;              /* gold heading */
+  --acc2: #d4a24c;
 }
+
+/* ========= Navy (dark, Threaded-Reader style) — keep as-is ========= */
+.theme-navy{
+  --bg:  linear-gradient(135deg,#0a0a23 0%, #141433 50%, #0f172a 100%);
+  --ink:   #e5e7eb;   /* slate-200 */
+  --muted: #94a3b8;   /* slate-400 */
+  --card:  #0f172a;   /* slate-900-ish */
+  --line:  #1f2937;   /* slate-800 */
+  --acc1:  #cbd5e1;   /* neutral */
+  --acc2:  #94a3b8;
+}
+/* Navy: keep blue very sparse */
+.theme-navy .section-title{ color: var(--ink); }
+.theme-navy a{ color:#60a5fa; }                 /* sky-400 */
+.theme-navy a:hover{ color:#93c5fd; }           /* sky-300 */
+.theme-navy .tab-btn[aria-selected="true"]{
+  background:#1f2937; color:#e5e7eb; border-color:#334155;
+  box-shadow: inset 0 0 0 1px #3b82f6;
+}
+.theme-navy .tab-btn:focus-visible{ outline:2px solid #60a5fa; outline-offset:2px; }
+
+/* ========= Shell styling (unchanged) ========= */
 html,body{height:100%}
 body{background:var(--bg);color:var(--ink);font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Inter,Arial}
 .card{background:var(--card);border:1px solid var(--line);border-radius:.75rem}
 .tab-btn{border:1px solid var(--line);background:var(--card);border-radius:.5rem}
-.tab-btn[aria-selected="true"]{background:linear-gradient(45deg,var(--acc1),var(--acc2));color:white;border-color:transparent}
-a{color:var(--acc2)}
-.section-title{color:var(--acc1)}
+.tab-btn[aria-selected="true"]{
+  background:linear-gradient(45deg,var(--acc1),var(--acc2));color:white;border-color:transparent
+}
+a{color: var(--acc2)}
+.section-title{color: var(--acc1)}
 </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -42,9 +95,11 @@ a{color:var(--acc2)}
     <div class="flex items-center gap-2">
       <label for="theme" class="text-sm" style="color:var(--muted)">Theme</label>
       <select id="theme" class="text-sm px-2 py-1 rounded border" style="background:var(--card);color:var(--ink);border-color:var(--line)">
-        <option value="light">Light</option>
-        <option value="navy">Navy</option>
-        <option value="emerald">Emerald</option>
+        <option value="newspaper">Newspaper (Light)</option>
+        <option value="navy">Navy (Dark)</option>
+        <option value="emerald-paper">Emerald Paper (Light)</option>
+        <option value="cyber-blue">Cyber Night (Dark)</option>
+        <option value="emerald-gold">Emerald/Gold (Dark)</option>
       </select>
     </div>
   </div>
@@ -130,9 +185,9 @@ a{color:var(--acc2)}
   </section>
 </main>
 
-<footer class="px-6 py-8 text-sm" style="color:var(--muted)">© 2025 Hays SPA • Single-file demo</footer>
+<footer class="px-6 py-8 text-sm" style="color:var(--muted)">© 2025 Report SPA • Single-file template</footer>
 
-<!-- ===== Embedded Content JSON ===== -->
+<!-- ========= CONTENT JSON DATA ISLAND ========= -->
 <script id="report" type="application/json">
 {
   "meta": {
@@ -141,7 +196,7 @@ a{color:var(--acc2)}
     "report_provenance": [
       { "label": "Compiled by", "detail": "Instructor v6.1 — Hays Session" },
       { "label": "Last updated", "detail": "2025-09-03" },
-      { "label": "Primary sources", "detail": "Mark 1:1–3; Exod 23:20; Mal 3:1; Isa 40:3 (cf. Isa 40–55, Ps 2; Isa 42; Mark 1:10–11; 15:38)" },
+      { "label": "Primary sources", "detail": "Mark 1:1–3; Exod 23:20; Mal 3:1; Isa 40:3 (cf. Isa 40–55; Ps 2; Isa 42; Mark 1:10–11; 15:38)" },
       { "label": "Secondary sources", "detail": "Richard B. Hays, Reading Backwards (2014); Echoes of Scripture in the Gospels (2016)" }
     ]
   },
@@ -156,10 +211,30 @@ a{color:var(--acc2)}
         "Early motifs (wilderness, Jordan, torn heavens) deepen the new-exodus/theophany frame."
       ],
       "items": [
-        { "id":"o1","label":"Composite as Overture","summary":"Exod 23:20/Mal 3:1 + Isa 40:3 function as Mark’s theological prelude.","detail":"By heading a composite as “in Isaiah,” Mark centers Isaiah’s promise of divine return while weaving in messenger language from Exodus/Malachi." },
-        { "id":"o2","label":"Figural Identification","summary":"Jesus as the LORD’s arrival.","detail":"If John prepares YHWH’s way (Isa 40), yet Jesus arrives after John, the narrative identifies Jesus with Israel’s God—without erasing the texts’ original sense." },
-        { "id":"o3","label":"New-Exodus Horizon","summary":"Wilderness, water, and return from exile.","detail":"Mark’s wilderness/Jordan setting and the “torn heavens” evoke Isaiah 40–55: God breaks in to restore His people." },
-        { "id":"o4","label":"Narrated Christology","summary":"Story + Scripture disclose identity.","detail":"Mark shows who Jesus is by scripting Him into Israel’s Scriptures rather than by abstract titles alone." }
+        {
+          "id": "o1",
+          "label": "Composite as Overture",
+          "summary": "Exod 23:20/Mal 3:1 + Isa 40:3 function as Mark’s theological prelude.",
+          "detail": "By heading a composite as “in Isaiah,” Mark centers Isaiah’s promise of divine return while weaving in messenger language from Exodus/Malachi."
+        },
+        {
+          "id": "o2",
+          "label": "Figural Identification",
+          "summary": "Jesus as the LORD’s arrival.",
+          "detail": "If John prepares YHWH’s way (Isa 40), yet Jesus arrives after John, the narrative identifies Jesus with Israel’s God—without erasing the texts’ original sense."
+        },
+        {
+          "id": "o3",
+          "label": "New-Exodus Horizon",
+          "summary": "Wilderness, water, and return from exile.",
+          "detail": "Mark’s wilderness/Jordan setting and the “torn heavens” evoke Isaiah 40–55: God breaks in to restore His people."
+        },
+        {
+          "id": "o4",
+          "label": "Narrated Christology",
+          "summary": "Story + Scripture disclose identity.",
+          "detail": "Mark shows who Jesus is by scripting Him into Israel’s Scriptures rather than by abstract titles alone."
+        }
       ]
     },
     {
@@ -172,30 +247,90 @@ a{color:var(--acc2)}
         "Narrative Christology: identity is shown by the story’s scriptural patterning."
       ],
       "items": [
-        { "id":"c1","label":"Figural Reading","summary":"Later events disclose prefiguring patterns.","detail":"Not free allegory; the OT sense stands, yet is seen anew in light of Christ’s paschal event." },
-        { "id":"c2","label":"Metalepsis","summary":"Echo that pulls in its broader context.","detail":"Quoting Isa 40:3 invokes the new-exodus chapters (Isa 40–55), shaping how we read Mark’s opening scenes." },
-        { "id":"c3","label":"Composite Citation","summary":"Multiple texts as one witness.","detail":"Mark conflates Exod 23:20/Mal 3:1 with Isa 40:3 to craft a single overture about God’s coming." },
-        { "id":"c4","label":"New Exodus","summary":"Promise of divine return and renewal.","detail":"Isaiah anticipates God Himself leading His people from exile; Mark frames Jesus within this hope." },
-        { "id":"c5","label":"Kyrios (Lord)","summary":"LXX rendering of the divine name.","detail":"The Greek kyrios often translates YHWH, easing the Markan identification effect when applied to Jesus." },
-        { "id":"c6","label":"Narrative Christology","summary":"Identity shown in plot and pattern.","detail":"Mark’s Christology emerges from narrative/scriptural choreography more than from formal creedal ascriptions." },
-        { "id":"c7","label":"Schizō — “Torn”","summary":"Heavens/veil rent open.","detail":"Mark 1:10 and 15:38 bookend access to God’s presence, echoing Isa 64:1." }
+        {
+          "id": "c1",
+          "label": "Figural Reading",
+          "summary": "Later events disclose prefiguring patterns.",
+          "detail": "Not free allegory; the OT sense stands, yet is seen anew in light of Christ’s paschal event."
+        },
+        {
+          "id": "c2",
+          "label": "Metalepsis",
+          "summary": "Echo that pulls in its broader context.",
+          "detail": "Quoting Isa 40:3 invokes the new-exodus chapters (Isa 40–55), shaping how we read Mark’s opening scenes."
+        },
+        {
+          "id": "c3",
+          "label": "Composite Citation",
+          "summary": "Multiple texts as one witness.",
+          "detail": "Mark conflates Exod 23:20/Mal 3:1 with Isa 40:3 to craft a single overture about God’s coming."
+        },
+        {
+          "id": "c4",
+          "label": "New Exodus",
+          "summary": "Promise of divine return and renewal.",
+          "detail": "Isaiah anticipates God Himself leading His people from exile; Mark frames Jesus within this hope."
+        },
+        {
+          "id": "c5",
+          "label": "Kyrios (Lord)",
+          "summary": "LXX rendering of the divine name.",
+          "detail": "The Greek kyrios often translates YHWH, easing the Markan identification effect when applied to Jesus."
+        },
+        {
+          "id": "c6",
+          "label": "Narrative Christology",
+          "summary": "Identity shown in plot and pattern.",
+          "detail": "Mark’s Christology emerges from narrative/scriptural choreography more than from formal creedal ascriptions."
+        },
+        {
+          "id": "c7",
+          "label": "Schizō — “Torn”",
+          "summary": "Heavens/veil rent open.",
+          "detail": "Mark 1:10 and 15:38 bookend access to God’s presence, echoing Isa 64:1."
+        }
       ]
     },
     {
       "id": "data",
       "title": "Evidence / Data",
-      "intro": "Textual signals that support a figural, high Christology reading in Mark’s prologue.",
+      "intro": "Textual signals that support a figural, high-Christology reading in Mark’s prologue.",
       "bullets": [
         "Identity transfer: YHWH’s “way” → Jesus’ way.",
         "LXX semantics: kyrios as YHWH’s title in Greek.",
         "Motif recurrence: wilderness, Jordan, torn heavens, divine voice."
       ],
       "items": [
-        { "id":"d1","label":"Identity Transfer","summary":"From YHWH’s path to Jesus’ arrival.","detail":"Mark 1:2–3 assigns Isaiah’s highway for the LORD to the one who comes after John—Jesus." },
-        { "id":"d2","label":"LXX Kyrios","summary":"Title that bridges OT to NT usage.","detail":"Kyrios commonly renders the Tetragrammaton; Mark’s “Lord” language can carry divine connotations when applied to Jesus." },
-        { "id":"d3","label":"Motif Recurrence","summary":"Wilderness/Jordan + torn heavens.","detail":"The setting and theophany (1:10–11) align with Isaianic hopes of God’s return and Spirit-anointed Servant." },
-        { "id":"d4","label":"Bookend Tearing","summary":"Heavens (1:10) ↔ veil (15:38).","detail":"Schizō links opening and climax, suggesting renewed access/presence consistent with divine advent." },
-        { "id":"d5","label":"Servant-King Convergence","summary":"Ps 2 + Isa 42 at baptism.","detail":"The heavenly voice blends royal sonship and servant vocation, reinforcing the Isaianic frame." }
+        {
+          "id": "d1",
+          "label": "Identity Transfer",
+          "summary": "From YHWH’s path to Jesus’ arrival.",
+          "detail": "Mark 1:2–3 assigns Isaiah’s highway for the LORD to the one who comes after John—Jesus."
+        },
+        {
+          "id": "d2",
+          "label": "LXX Kyrios",
+          "summary": "Title that bridges OT to NT usage.",
+          "detail": "Kyrios commonly renders the Tetragrammaton; Mark’s “Lord” language can carry divine connotations when applied to Jesus."
+        },
+        {
+          "id": "d3",
+          "label": "Motif Recurrence",
+          "summary": "Wilderness/Jordan + torn heavens.",
+          "detail": "The setting and theophany (1:10–11) align with Isaianic hopes of God’s return and Spirit-anointed Servant."
+        },
+        {
+          "id": "d4",
+          "label": "Bookend Tearing",
+          "summary": "Heavens (1:10) ↔ veil (15:38).",
+          "detail": "Schizō links opening and climax, suggesting renewed access/presence consistent with divine advent."
+        },
+        {
+          "id": "d5",
+          "label": "Servant-King Convergence",
+          "summary": "Ps 2 + Isa 42 at baptism.",
+          "detail": "The heavenly voice blends royal sonship and servant vocation, reinforcing the Isaianic frame."
+        }
       ]
     },
     {
@@ -208,12 +343,12 @@ a{color:var(--acc2)}
         "Modern scholarship articulates figural logic."
       ],
       "items": [
-        { "id":"t1","label":"3rd–1st c. BCE — Septuagint","detail":"Greek OT normalizes kyrios for the divine name, shaping NT diction." },
-        { "id":"t2","label":"c. 60–70 CE — Mark Composed","detail":"Gospel begins with Exod/Mal + Isa composite (1:2–3) as theological overture." },
-        { "id":"t3","label":"Mark 1:10–11 — Baptism Theophany","detail":"Heavens torn; voice identifies the Son; Spirit descends—new-exodus tones." },
-        { "id":"t4","label":"Mark 15:38 — Veil Torn","detail":"Temple curtain rips, echoing 1:10 and Isa 64:1; access theme climaxes." },
-        { "id":"t5","label":"2014 — Reading Backwards","detail":"Hays articulates figural Christology across the Gospels." },
-        { "id":"t6","label":"2016 — Echoes of Scripture in the Gospels","detail":"Expanded case studies of OT resonances shaping Gospel portraits." }
+        { "id": "t1", "label": "3rd–1st c. BCE — Septuagint", "detail": "Greek OT normalizes kyrios for the divine name, shaping NT diction." },
+        { "id": "t2", "label": "c. 60–70 CE — Mark Composed", "detail": "Gospel begins with Exod/Mal + Isa composite (1:2–3) as theological overture." },
+        { "id": "t3", "label": "Mark 1:10–11 — Baptism Theophany", "detail": "Heavens torn; voice identifies the Son; Spirit descends—new-exodus tones." },
+        { "id": "t4", "label": "Mark 15:38 — Veil Torn", "detail": "Temple curtain rips, echoing 1:10 and Isa 64:1; access theme climaxes." },
+        { "id": "t5", "label": "2014 — Reading Backwards", "detail": "Hays articulates figural Christology across the Gospels." },
+        { "id": "t6", "label": "2016 — Echoes of Scripture in the Gospels", "detail": "Expanded case studies of OT resonances shaping Gospel portraits." }
       ]
     },
     {
@@ -226,110 +361,130 @@ a{color:var(--acc2)}
         "Source-critical questions about the composite heading."
       ],
       "items": [
-        { "id":"k1","label":"Over-Reading?","summary":"Echo vs. eisegesis.","detail":"Subtle allusions can be subjective; Hays answers with criteria (availability, volume, recurrence, thematic coherence, satisfaction)." },
-        { "id":"k2","label":"Christology Controls","summary":"Agent vs. identity.","detail":"Some read the “way” as for God’s agent; Hays argues the Isaianic frame and Mark’s motifs press toward divine identity." },
-        { "id":"k3","label":"“In Isaiah” Problem","summary":"Composite under one prophet.","detail":"Mark’s ascription raises source questions; literarily it spotlights Isaiah’s horizon as the governing lens." }
+        {
+          "id": "k1",
+          "label": "Over-Reading?",
+          "summary": "Echo vs. eisegesis.",
+          "detail": "Subtle allusions can be subjective; Hays answers with criteria (availability, volume, recurrence, thematic coherence, satisfaction)."
+        },
+        {
+          "id": "k2",
+          "label": "Christology Controls",
+          "summary": "Agent vs. identity.",
+          "detail": "Some read the “way” as for God’s agent; Hays argues the Isaianic frame and Mark’s motifs press toward divine identity."
+        },
+        {
+          "id": "k3",
+          "label": "“In Isaiah” Problem",
+          "summary": "Composite under one prophet.",
+          "detail": "Mark’s ascription raises source questions; literarily it spotlights Isaiah’s horizon as the governing lens."
+        }
       ]
     }
   ],
   "glossary": [
-    { "term":"Figural Reading", "definition":"A retrospective, canonical way of seeing earlier texts prefigure later events in Christ without canceling their original sense." },
-    { "term":"Metalepsis", "definition":"An echo that invokes the broader context of its source text, shaping interpretation beyond the quoted line." },
-    { "term":"Composite Citation", "definition":"A merged quotation of multiple OT passages treated as a single scriptural witness." },
-    { "term":"New Exodus", "definition":"Isaiah’s promise that God Himself would return to restore His people, guiding a second, greater deliverance." },
-    { "term":"Kyrios", "definition":"Greek ‘Lord’; the Septuagint’s common rendering of YHWH, often bearing divine connotations in the NT." },
-    { "term":"Narrative Christology", "definition":"Understanding who Jesus is through the Gospel’s plot, symbols, and scriptural patterning." },
-    { "term":"Schizō", "definition":"Greek for “to tear”; used in Mark 1:10 and 15:38 to frame divine access." },
-    { "term":"Theophany", "definition":"A manifestation of God’s presence, often marked by voice, Spirit, or cosmic signs." }
+    { "term": "Figural Reading", "definition": "A retrospective, canonical way of seeing earlier texts prefigure later events in Christ without canceling their original sense." },
+    { "term": "Metalepsis", "definition": "An echo that invokes the broader context of its source text, shaping interpretation beyond the quoted line." },
+    { "term": "Composite Citation", "definition": "A merged quotation of multiple OT passages treated as a single scriptural witness." },
+    { "term": "New Exodus", "definition": "Isaiah’s promise that God Himself would return to restore His people, guiding a second, greater deliverance." },
+    { "term": "Kyrios", "definition": "Greek ‘Lord’; the Septuagint’s common rendering of YHWH, often bearing divine connotations in the NT." },
+    { "term": "Narrative Christology", "definition": "Understanding who Jesus is through the Gospel’s plot, symbols, and scriptural patterning." },
+    { "term": "Schizō", "definition": "Greek for “to tear”; used in Mark 1:10 and 15:38 to frame divine access." },
+    { "term": "Theophany", "definition": "A manifestation of God’s presence, often marked by voice, Spirit, or cosmic signs." }
   ],
   "quotes": [
-    { "text":"Prepare the way of the LORD; make straight in the desert a highway for our God.", "ref":"Isaiah 40:3" },
-    { "text":"Behold, I send my messenger before your face, who will prepare your way.", "ref":"Exodus 23:20; Malachi 3:1 (as used in Mark 1:2)" },
-    { "text":"He saw the heavens being torn open and the Spirit descending on him like a dove.", "ref":"Mark 1:10" },
-    { "text":"And the curtain of the temple was torn in two, from top to bottom.", "ref":"Mark 15:38" }
+    { "text": "Prepare the way of the LORD; make straight in the desert a highway for our God.", "ref": "Isaiah 40:3" },
+    { "text": "Behold, I send my messenger before your face, who will prepare your way.", "ref": "Exodus 23:20; Malachi 3:1 (as used in Mark 1:2)" },
+    { "text": "He saw the heavens being torn open and the Spirit descending on him like a dove.", "ref": "Mark 1:10" },
+    { "text": "And the curtain of the temple was torn in two, from top to bottom.", "ref": "Mark 15:38" }
   ]
 }
 </script>
+<!-- =========================================== -->
 
-<!-- ===== App Logic ===== -->
+<!-- ===== App Logic (unchanged except theme wiring) ===== -->
 <script>
 const $ = (id)=>document.getElementById(id);
 let DATA={};
-try{ DATA = JSON.parse(document.getElementById('report').textContent); }catch(e){ DATA={meta:{title:'Untitled',subtitle:''},sections:[],glossary:[],quotes:[]}; }
+try{
+  DATA = JSON.parse(document.getElementById('report').textContent);
+}catch(e){
+  DATA = { meta:{title:'Report SPA — Template',subtitle:'Paste content JSON into the <script id="report"> block.'}, sections:[], glossary:[], quotes:[] };
+}
 
 // Header
-$('appTitle').textContent = DATA.meta.title || 'Untitled';
-$('appSubtitle').textContent = DATA.meta.subtitle || '';
+$('appTitle').textContent = DATA.meta?.title || 'Untitled';
+$('appSubtitle').textContent = DATA.meta?.subtitle || '';
 
-// Theme
+// Theme selector
 const themeSel = document.getElementById('theme');
-function applyTheme(v){ document.body.classList.remove('theme-navy','theme-emerald'); if(v==='navy')document.body.classList.add('theme-navy'); if(v==='emerald')document.body.classList.add('theme-emerald'); localStorage.setItem('hays-theme',v); }
-applyTheme(localStorage.getItem('hays-theme')||'light');
-themeSel.value = localStorage.getItem('hays-theme')||'light';
+function applyTheme(v){
+  document.body.classList.remove('theme-navy','theme-emerald-paper','theme-cyber-blue','theme-emerald-gold');
+  // default = Newspaper (root tokens), so no class
+  if(v==='navy')           document.body.classList.add('theme-navy');
+  if(v==='emerald-paper')  document.body.classList.add('theme-emerald-paper');
+  if(v==='cyber-blue')     document.body.classList.add('theme-cyber-blue');
+  if(v==='emerald-gold')   document.body.classList.add('theme-emerald-gold');
+  localStorage.setItem('hays-theme', v);
+}
+applyTheme(localStorage.getItem('hays-theme')||'newspaper');
+themeSel.value = localStorage.getItem('hays-theme')||'newspaper';
 themeSel.addEventListener('change', e=>applyTheme(e.target.value));
 
 // Helpers
 const sec = (id)=> (DATA.sections||[]).find(s=>s.id===id);
 function fillContext(sectionId, introId, bulletsId){
   const s = sec(sectionId); if(!s) return;
-  $(introId).textContent = s.intro || '';
-  const ul = $(bulletsId); ul.innerHTML=''; (s.bullets||[]).forEach(b=>{ const li=document.createElement('li'); li.textContent=b; ul.appendChild(li); });
+  const introEl = $(introId), ul = $(bulletsId);
+  if (introEl) introEl.textContent = s.intro || '';
+  if (ul) { ul.innerHTML=''; (s.bullets||[]).forEach(b=>{ const li=document.createElement('li'); li.textContent=b; ul.appendChild(li); }); }
+}
+function renderItems(wrapId, items){
+  const wrap = $(wrapId); if(!wrap) return;
+  wrap.innerHTML='';
+  (items||[]).forEach(it=>{
+    const el=document.createElement('article');
+    el.className='card p-5';
+    el.innerHTML = `<h3 class="font-semibold mb-1 section-title">${it.label||''}</h3>
+                    <p class="text-sm" style="color:var(--muted)">${it.summary||''}</p>
+                    <p class="mt-1">${it.detail||''}</p>`;
+    wrap.appendChild(el);
+  });
 }
 
 // Overview
 (function(){
   const s = sec('overview'); if(!s) return;
   fillContext('overview','ovr-intro','ovr-bullets');
-  const wrap = $('ovr-cards'); wrap.innerHTML='';
-  (s.items||[]).forEach(it=>{
-    const el = document.createElement('article');
-    el.className='card p-5';
-    el.innerHTML = `<h3 class="font-semibold mb-1 section-title">${it.label}</h3>
-                    <p class="text-sm" style="color:var(--muted)">${it.summary||''}</p>
-                    <p class="mt-1">${it.detail||''}</p>`;
-    wrap.appendChild(el);
-  });
+  renderItems('ovr-cards', s.items);
 })();
 
 // Concepts
 (function(){
   const s = sec('concepts'); if(!s) return;
+  document.getElementById('tab-concepts').classList.remove('hidden');
   fillContext('concepts','con-intro','con-bullets');
-  const wrap = $('concepts-grid'); wrap.innerHTML='';
-  (s.items||[]).forEach(it=>{
-    const el=document.createElement('article');
-    el.className='card p-5';
-    el.innerHTML=`<h3 class="font-semibold mb-1 section-title">${it.label}</h3>
-                  <p class="text-sm" style="color:var(--muted)">${it.summary||''}</p>
-                  <p class="mt-1">${it.detail||''}</p>`;
-    wrap.appendChild(el);
-  });
+  renderItems('concepts-grid', s.items);
 })();
 
 // Data
 (function(){
   const s = sec('data'); if(!s) return;
+  document.getElementById('tab-data').classList.remove('hidden');
   fillContext('data','dat-intro','dat-bullets');
-  const wrap = $('data-grid'); wrap.innerHTML='';
-  (s.items||[]).forEach(it=>{
-    const el=document.createElement('article');
-    el.className='card p-5';
-    el.innerHTML=`<h3 class="font-semibold mb-1 section-title">${it.label}</h3>
-                  <p class="text-sm" style="color:var(--muted)">${it.summary||''}</p>
-                  <p class="mt-1">${it.detail||''}</p>`;
-    wrap.appendChild(el);
-  });
+  renderItems('data-grid', s.items);
 })();
 
 // Timeline
 (function(){
   const s = sec('timeline'); if(!s) return;
+  document.getElementById('tab-timeline').classList.remove('hidden');
   fillContext('timeline','tim-intro','tim-bullets');
   const list = $('timeline-list'); list.innerHTML='';
   (s.items||[]).forEach(it=>{
     const li=document.createElement('li');
     li.className='card p-4';
-    li.innerHTML = `<div class="font-semibold section-title">${it.label}</div><div>${it.detail||''}</div>`;
+    li.innerHTML = `<div class="font-semibold section-title">${it.label||''}</div><div>${it.detail||''}</div>`;
     list.appendChild(li);
   });
 })();
@@ -337,38 +492,37 @@ function fillContext(sectionId, introId, bulletsId){
 // Critiques
 (function(){
   const s = sec('critiques'); if(!s) return;
+  document.getElementById('tab-critiques').classList.remove('hidden');
   fillContext('critiques','cri-intro','cri-bullets');
-  const wrap = $('critiques-grid'); wrap.innerHTML='';
-  (s.items||[]).forEach(it=>{
-    const el=document.createElement('article');
-    el.className='card p-5';
-    el.innerHTML=`<h3 class="font-semibold mb-1 section-title">${it.label}</h3>
-                  <p class="text-sm" style="color:var(--muted)">${it.summary||''}</p>
-                  <p class="mt-1">${it.detail||''}</p>`;
-    wrap.appendChild(el);
-  });
+  renderItems('critiques-grid', s.items);
 })();
 
 // Glossary
 (function(){
+  if(!(DATA.glossary||[]).length) return;
+  document.getElementById('tab-glossary').classList.remove('hidden');
   const wrap=$('glossary-grid'); wrap.innerHTML='';
   (DATA.glossary||[]).forEach(g=>{
     const d=document.createElement('div');
     d.className='card p-5';
-    d.innerHTML=`<dt class="font-semibold mb-1 section-title">${g.term}</dt><dd>${g.definition||''}</dd>`;
+    d.innerHTML=`<dt class="font-semibold mb-1 section-title">${g.term||''}</dt><dd>${g.definition||''}</dd>`;
     wrap.appendChild(d);
   });
 })();
 
 // Source
 (function(){
+  const hasProv = (DATA.meta?.report_provenance||[]).length;
+  const hasQuotes = (DATA.quotes||[]).length;
+  if(!hasProv && !hasQuotes) return;
+  document.getElementById('tab-source').classList.remove('hidden');
   const pl=$('prov-list'); pl.innerHTML='';
   (DATA.meta?.report_provenance||[]).forEach(p=>{
-    const li=document.createElement('li'); li.textContent = `${p.label}: ${p.detail}`; pl.appendChild(li);
+    const li=document.createElement('li'); li.textContent = `${p.label||''}: ${p.detail||''}`; pl.appendChild(li);
   });
   const ql=$('quotes-list'); ql.innerHTML='';
   (DATA.quotes||[]).forEach(q=>{
-    const li=document.createElement('li'); li.textContent = `"${q.text}" — ${q.ref}`; ql.appendChild(li);
+    const li=document.createElement('li'); li.textContent = `"${q.text||''}" — ${q.ref||''}`; ql.appendChild(li);
   });
 })();
 
