@@ -9,13 +9,13 @@
 /* ========= Base tokens (default = "Newspaper") ========= */
 :root{
   /* Newspaper (light, neutral) */
-  --bg: #fdfdf8;                   /* from --bg-gradient */
-  --ink: #1c1c1c;                  /* --text */
-  --muted: #3f3f3f;                /* derived */
-  --card: #f1f1eb;                 /* --nav-bg */
-  --line: #dcdcd3;                 /* --nav-border */
-  --acc1: #8c1c13;                 /* --accent-text (headings) */
-  --acc2: #8c1c13;                 /* keep cohesive */
+  --bg: #fdfdf8;                 /* from --bg-gradient */
+  --ink: #1c1c1c;                /* --text */
+  --muted: #3f3f3f;              /* derived */
+  --card: #f1f1eb;               /* --nav-bg */
+  --line: #dcdcd3;               /* --nav-border */
+  --acc1: #8c1c13;               /* --accent-text (headings) */
+  --acc2: #8c1c13;               /* keep cohesive */
 }
 /* ========= Emerald Paper (light) ========= */
 .theme-emerald-paper{
@@ -30,11 +30,11 @@
 /* ========= Emerald/Gold (dark, adjusted for tabs) ========= */
 .theme-emerald-gold{
   --bg: linear-gradient(135deg,#022c22 0%,#064e3b 60%,#065f46 100%);
-  --ink: #ecfdf5;             /* emerald-50 */
-  --muted: #a7f3d0;           /* emerald-200 */
+  --ink: #ecfdf5;               /* emerald-50 */
+  --muted: #a7f3d0;             /* emerald-200 */
   --card: #064e3b;
-  --line: #0d9488;            /* emerald-600 edge */
-  --acc1: #f0c475;            /* gold heading */
+  --line: #0d9488;              /* emerald-600 edge */
+  --acc1: #f0c475;              /* gold heading */
   --acc2: #d4a24c;
 }
 .theme-emerald-gold .tab-btn[aria-selected="true"]{
@@ -47,7 +47,7 @@
   outline:2px solid #f0c475;
   outline-offset:2px;
 }
-/* ========= Navy (dark, Threaded-Reader style) — keep as-is ========= */
+/* ========= Navy (dark, Threaded-Reader style) ========= */
 .theme-navy{
   --bg:  linear-gradient(135deg,#0a0a23 0%, #141433 50%, #0f172a 100%);
   --ink:   #e5e7eb;   /* slate-200 */
@@ -57,7 +57,6 @@
   --acc1:  #cbd5e1;   /* neutral */
   --acc2:  #94a3b8;
 }
-/* Navy: keep blue very sparse */
 .theme-navy .section-title{ color: var(--ink); }
 .theme-navy a{ color:#60a5fa; }                 /* sky-400 */
 .theme-navy a:hover{ color:#93c5fd; }           /* sky-300 */
@@ -66,7 +65,7 @@
   box-shadow: inset 0 0 0 1px #3b82f6;
 }
 .theme-navy .tab-btn:focus-visible{ outline:2px solid #60a5fa; outline-offset:2px; }
-/* ========= Shell styling (unchanged) ========= */
+/* ========= Shell styling ========= */
 html,body{height:100%}
 body{background:var(--bg);color:var(--ink);font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Inter,Arial}
 .card{background:var(--card);border:1px solid var(--line);border-radius:.75rem}
@@ -84,10 +83,8 @@ a{color: var(--acc2)}
 }
 .theme-cyber-blue a { color: #60a5fa; }
 .theme-cyber-blue a:hover { color: #93c5fd; }
-/* Navy (Dark) prose link treatment, headings stay neutral */
 .theme-cyber-blue .prose a { color:#60a5fa; text-decoration-color:#60a5fa; }
 .theme-cyber-blue .prose a:hover { color:#93c5fd; text-decoration-color:#93c5fd; }
-
 </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -117,17 +114,25 @@ a{color: var(--acc2)}
     <button class="tab-btn px-3 py-2 text-sm" data-tab="source"    aria-selected="false">Source</button>
   </nav>
 </header>
-<main class="px-6 py-8 space-y-8 grow">
-<!-- Overview -->
-<section id="tab-overview" class="space-y-4">
-  <!-- NEW: Main Statement card -->
-  <article id="main-statement-wrap" class="card p-6 hidden">
-    <h2 class="text-xl font-semibold section-title mb-2">Main Statement</h2>
-    <p id="main-statement-text" class="text-lg leading-relaxed"></p>
-  </article>
 
-  <article class="card p-6">
-    <h2 class="text-xl font-semibold section-title mb-2">Context & Takeaways</h2>
+<main class="px-6 py-8 space-y-8 grow">
+  <!-- Overview -->
+  <section id="tab-overview" class="space-y-4">
+    <!-- Main Statement card (hidden by default) -->
+    <article id="main-statement-wrap" class="card p-6 hidden">
+      <h2 class="text-xl font-semibold section-title mb-2">Main Statement</h2>
+      <p id="main-statement-text" class="text-lg leading-relaxed"></p>
+    </article>
+
+    <article class="card p-6">
+      <h2 class="text-xl font-semibold section-title mb-2">Context & Takeaways</h2>
+      <p id="ovr-intro" class="mb-3"></p>
+      <ul id="ovr-bullets" class="list-disc pl-5 space-y-1"></ul>
+    </article>
+
+    <div id="ovr-cards" class="grid md:grid-cols-2 gap-4"></div>
+  </section>
+
   <!-- Concepts -->
   <section id="tab-concepts" class="hidden space-y-4">
     <article class="card p-6">
@@ -137,6 +142,7 @@ a{color: var(--acc2)}
     </article>
     <div id="concepts-grid" class="grid md:grid-cols-2 gap-4"></div>
   </section>
+
   <!-- Evidence / Data -->
   <section id="tab-data" class="hidden space-y-4">
     <article class="card p-6">
@@ -146,6 +152,7 @@ a{color: var(--acc2)}
     </article>
     <div id="data-grid" class="grid md:grid-cols-2 gap-4"></div>
   </section>
+
   <!-- Timeline -->
   <section id="tab-timeline" class="hidden space-y-4">
     <article class="card p-6">
@@ -155,6 +162,7 @@ a{color: var(--acc2)}
     </article>
     <ol id="timeline-list" class="space-y-3"></ol>
   </section>
+
   <!-- Critiques -->
   <section id="tab-critiques" class="hidden space-y-4">
     <article class="card p-6">
@@ -164,6 +172,7 @@ a{color: var(--acc2)}
     </article>
     <div id="critiques-grid" class="grid md:grid-cols-2 gap-4"></div>
   </section>
+
   <!-- Glossary -->
   <section id="tab-glossary" class="hidden space-y-4">
     <article class="card p-6">
@@ -171,6 +180,7 @@ a{color: var(--acc2)}
       <dl id="glossary-grid" class="grid md:grid-cols-2 gap-4"></dl>
     </article>
   </section>
+
   <!-- Source -->
   <section id="tab-source" class="hidden space-y-4">
     <article class="card p-6">
@@ -181,7 +191,9 @@ a{color: var(--acc2)}
     </article>
   </section>
 </main>
+
 <footer class="px-6 py-8 text-sm" style="color:var(--muted)">© 2025 Report SPA • Single-file template</footer>
+
 <!-- ========= CONTENT JSON DATA ISLAND ========= -->
 <script id="report" type="application/json">
 {
@@ -213,30 +225,10 @@ a{color: var(--acc2)}
       "title": "Core Concepts",
       "intro": "Key motifs in Hays’s articulation of the Gospel.",
       "items": [
-        {
-          "id": "c1",
-          "label": "Pistis Christou",
-          "summary": "Faithfulness of Christ",
-          "detail": "Paul’s phrase points to Jesus’ obedience unto death, not merely human belief."
-        },
-        {
-          "id": "c2",
-          "label": "Narrative Identity",
-          "summary": "Life re-narrated",
-          "detail": "Conversion is entrance into God’s story disclosed in Christ."
-        },
-        {
-          "id": "c3",
-          "label": "New Creation",
-          "summary": "Cosmic renewal",
-          "detail": "The resurrection begins the eschatological transformation."
-        },
-        {
-          "id": "c4",
-          "label": "Community",
-          "summary": "Embodied Gospel",
-          "detail": "Faith is lived within the people shaped by Scripture and Spirit."
-        }
+        { "id": "c1", "label": "Pistis Christou", "summary": "Faithfulness of Christ", "detail": "Paul’s phrase points to Jesus’ obedience unto death, not merely human belief." },
+        { "id": "c2", "label": "Narrative Identity", "summary": "Life re-narrated", "detail": "Conversion is entrance into God’s story disclosed in Christ." },
+        { "id": "c3", "label": "New Creation", "summary": "Cosmic renewal", "detail": "The resurrection begins the eschatological transformation." },
+        { "id": "c4", "label": "Community", "summary": "Embodied Gospel", "detail": "Faith is lived within the people shaped by Scripture and Spirit." }
       ]
     },
     {
@@ -244,30 +236,10 @@ a{color: var(--acc2)}
       "title": "Evidence / Data",
       "intro": "Pauline texts that anchor Hays’s reading.",
       "items": [
-        {
-          "id": "d1",
-          "label": "Romans 3:22",
-          "summary": "Righteousness through faithfulness of Jesus",
-          "detail": "Christ’s fidelity reveals God’s justice."
-        },
-        {
-          "id": "d2",
-          "label": "Galatians 2:16",
-          "summary": "Not by works but through Christ’s faithfulness",
-          "detail": "Justification grounded in Christ’s obedience."
-        },
-        {
-          "id": "d3",
-          "label": "1 Corinthians 15",
-          "summary": "Resurrection as turning point",
-          "detail": "God’s vindication of Jesus and hope for new creation."
-        },
-        {
-          "id": "d4",
-          "label": "2 Corinthians 5",
-          "summary": "Reconciliation of the world",
-          "detail": "God was in Christ reconciling the world to Himself."
-        }
+        { "id": "d1", "label": "Romans 3:22", "summary": "Righteousness through faithfulness of Jesus", "detail": "Christ’s fidelity reveals God’s justice." },
+        { "id": "d2", "label": "Galatians 2:16", "summary": "Not by works but through Christ’s faithfulness", "detail": "Justification grounded in Christ’s obedience." },
+        { "id": "d3", "label": "1 Corinthians 15", "summary": "Resurrection as turning point", "detail": "God’s vindication of Jesus and hope for new creation." },
+        { "id": "d4", "label": "2 Corinthians 5", "summary": "Reconciliation of the world", "detail": "God was in Christ reconciling the world to Himself." }
       ]
     },
     {
@@ -275,26 +247,10 @@ a{color: var(--acc2)}
       "title": "Timeline",
       "intro": "Historical and theological trajectory.",
       "items": [
-        {
-          "id": "t1",
-          "label": "30 CE — Cross and Resurrection",
-          "detail": "Historical events as narrative climax."
-        },
-        {
-          "id": "t2",
-          "label": "50s CE — Pauline Letters",
-          "detail": "First articulation of Christ’s faithfulness as salvation."
-        },
-        {
-          "id": "t3",
-          "label": "1983 — The Faith of Jesus Christ",
-          "detail": "Hays’s scholarly defense of *pistis Christou* as subjective genitive."
-        },
-        {
-          "id": "t4",
-          "label": "1996 — The Moral Vision of the NT",
-          "detail": "Hays develops a narrative-theological account of the Gospel’s ethics."
-        }
+        { "id": "t1", "label": "30 CE — Cross and Resurrection", "detail": "Historical events as narrative climax." },
+        { "id": "t2", "label": "50s CE — Pauline Letters", "detail": "First articulation of Christ’s faithfulness as salvation." },
+        { "id": "t3", "label": "1983 — The Faith of Jesus Christ", "detail": "Hays’s scholarly defense of *pistis Christou* as subjective genitive." },
+        { "id": "t4", "label": "1996 — The Moral Vision of the NT", "detail": "Hays develops a narrative-theological account of the Gospel’s ethics." }
       ]
     },
     {
@@ -302,24 +258,9 @@ a{color: var(--acc2)}
       "title": "Critiques & Debates",
       "intro": "Points of contention in Hays’s reading.",
       "items": [
-        {
-          "id": "k1",
-          "label": "Translation Dispute",
-          "summary": "Faith in vs. faith of Christ",
-          "detail": "Many translations still opt for objective genitive, downplaying Christ’s fidelity."
-        },
-        {
-          "id": "k2",
-          "label": "Individual Decision",
-          "summary": "Less emphasis",
-          "detail": "Critics argue Hays underplays personal decision and assurance language."
-        },
-        {
-          "id": "k3",
-          "label": "Ethical Priority",
-          "summary": "Community focus",
-          "detail": "Some say his emphasis on communal ethics overshadows personal conversion."
-        }
+        { "id": "k1", "label": "Translation Dispute", "summary": "Faith in vs. faith of Christ", "detail": "Many translations still opt for objective genitive, downplaying Christ’s fidelity." },
+        { "id": "k2", "label": "Individual Decision", "summary": "Less emphasis", "detail": "Critics argue Hays underplays personal decision and assurance language." },
+        { "id": "k3", "label": "Ethical Priority", "summary": "Community focus", "detail": "Some say his emphasis on communal ethics overshadows personal conversion." }
       ]
     }
   ],
@@ -330,27 +271,15 @@ a{color: var(--acc2)}
     { "term": "Narrative Identity", "definition": "The shaping of one’s life story by the story of Christ." }
   ],
   "quotes": [
-    {
-      "text": "The righteousness of God through the faithfulness of Jesus Christ for all who believe.",
-      "ref": "Romans 3:22"
-    },
-    {
-      "text": "I have been crucified with Christ… the life I now live in the flesh I live by the faithfulness of the Son of God.",
-      "ref": "Galatians 2:20"
-    },
-    {
-      "text": "If Christ has not been raised, your faith is futile; you are still in your sins.",
-      "ref": "1 Corinthians 15:17"
-    },
-    {
-      "text": "God was in Christ reconciling the world to Himself.",
-      "ref": "2 Corinthians 5:19"
-    }
+    { "text": "The righteousness of God through the faithfulness of Jesus Christ for all who believe.", "ref": "Romans 3:22" },
+    { "text": "I have been crucified with Christ… the life I now live in the flesh I live by the faithfulness of the Son of God.", "ref": "Galatians 2:20" },
+    { "text": "If Christ has not been raised, your faith is futile; you are still in your sins.", "ref": "1 Corinthians 15:17" },
+    { "text": "God was in Christ reconciling the world to Himself.", "ref": "2 Corinthians 5:19" }
   ]
 }
 </script>
-<!-- =========================================== -->
-<!-- ===== App Logic (unchanged except theme wiring) ===== -->
+
+<!-- ===== App Logic ===== -->
 <script>
 const $ = (id)=>document.getElementById(id);
 let DATA={};
@@ -359,9 +288,11 @@ try{
 }catch(e){
   DATA = { meta:{title:'Report SPA — Template',subtitle:'Paste content JSON into the <script id="report"> block.'}, sections:[], glossary:[], quotes:[] };
 }
+
 // Header
 $('appTitle').textContent = DATA.meta?.title || 'Untitled';
 $('appSubtitle').textContent = DATA.meta?.subtitle || '';
+
 // Main Statement (optional)
 (function(){
   const ms = DATA.main_statement || DATA.main_answer || DATA.main || '';
@@ -378,7 +309,6 @@ $('appSubtitle').textContent = DATA.meta?.subtitle || '';
 const themeSel = document.getElementById('theme');
 function applyTheme(v){
   document.body.classList.remove('theme-navy','theme-emerald-paper','theme-cyber-blue','theme-emerald-gold');
-  // default = Newspaper (root tokens), so no class
   if(v==='navy')           document.body.classList.add('theme-navy');
   if(v==='emerald-paper')  document.body.classList.add('theme-emerald-paper');
   if(v==='cyber-blue')     document.body.classList.add('theme-cyber-blue');
@@ -388,6 +318,7 @@ function applyTheme(v){
 applyTheme(localStorage.getItem('hays-theme')||'newspaper');
 themeSel.value = localStorage.getItem('hays-theme')||'newspaper';
 themeSel.addEventListener('change', e=>applyTheme(e.target.value));
+
 // Helpers
 const sec = (id)=> (DATA.sections||[]).find(s=>s.id===id);
 function fillContext(sectionId, introId, bulletsId){
@@ -408,12 +339,14 @@ function renderItems(wrapId, items){
     wrap.appendChild(el);
   });
 }
+
 // Overview
 (function(){
   const s = sec('overview'); if(!s) return;
   fillContext('overview','ovr-intro','ovr-bullets');
   renderItems('ovr-cards', s.items);
 })();
+
 // Concepts
 (function(){
   const s = sec('concepts'); if(!s) return;
@@ -421,6 +354,7 @@ function renderItems(wrapId, items){
   fillContext('concepts','con-intro','con-bullets');
   renderItems('concepts-grid', s.items);
 })();
+
 // Data
 (function(){
   const s = sec('data'); if(!s) return;
@@ -428,6 +362,7 @@ function renderItems(wrapId, items){
   fillContext('data','dat-intro','dat-bullets');
   renderItems('data-grid', s.items);
 })();
+
 // Timeline
 (function(){
   const s = sec('timeline'); if(!s) return;
@@ -441,6 +376,7 @@ function renderItems(wrapId, items){
     list.appendChild(li);
   });
 })();
+
 // Critiques
 (function(){
   const s = sec('critiques'); if(!s) return;
@@ -448,6 +384,7 @@ function renderItems(wrapId, items){
   fillContext('critiques','cri-intro','cri-bullets');
   renderItems('critiques-grid', s.items);
 })();
+
 // Glossary
 (function(){
   if(!(DATA.glossary||[]).length) return;
@@ -460,6 +397,7 @@ function renderItems(wrapId, items){
     wrap.appendChild(d);
   });
 })();
+
 // Source
 (function(){
   const hasProv = (DATA.meta?.report_provenance||[]).length;
@@ -475,6 +413,7 @@ function renderItems(wrapId, items){
     const li=document.createElement('li'); li.textContent = `"${q.text||''}" — ${q.ref||''}`; ql.appendChild(li);
   });
 })();
+
 // Tabs
 const tabs = Array.from(document.querySelectorAll('[data-tab]'));
 const panels = {
@@ -498,6 +437,3 @@ activate(panels[location.hash.replace('#','')] ? location.hash.replace('#','') :
 </script>
 </body>
 </html>
-
-
-
