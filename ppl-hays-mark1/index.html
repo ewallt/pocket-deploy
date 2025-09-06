@@ -1,205 +1,194 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hays SPA Template — 4 Themes</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Report SPA — Template (Course-Theme Palette + Navy)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+/* ========= Base tokens (default = "Newspaper") ========= */
+:root{
+  /* Newspaper (light, neutral) */
+  --bg: #fdfdf8;                   /* from --bg-gradient */
+  --ink: #1c1c1c;                  /* --text */
+  --muted: #3f3f3f;                /* derived */
+  --card: #f1f1eb;                 /* --nav-bg */
+  --line: #dcdcd3;                 /* --nav-border */
+  --acc1: #8c1c13;                 /* --accent-text (headings) */
+  --acc2: #8c1c13;                 /* keep cohesive */
+}
 
-  <style>
-    /* =========================================================
-       THEME TOKENS (4 schemes): Newspaper, Emerald Paper, Cyber Night, Emerald/Gold
-       ========================================================= */
-    :root{
-      /* Newspaper (light) */
-      --bg:#f8fafc; --ink:#0f172a; --muted:#475569; --card:#ffffff; --line:#e2e8f0;
-      --acc1:#8c1c13; /* headings/accent */
-      --nav-bg:#f1f1eb; --nav-border:#dcdcd3; --nav-text:#1c1c1c;
-      --nav-hover-bg:#e5e5dd; --nav-active-bg:#e8e8e0; --nav-active-text:#1c1c1c;
-    }
-    .theme-emerald-paper{
-      /* Emerald Paper (light) */
-      --bg:#f7fbf9; --ink:#1e2b28; --muted:#2c3b37; --card:#ffffff; --line:#86c8ba;
-      --acc1:#0f7f6d;
-      --nav-bg:#e7f3ef; --nav-border:#86c8ba; --nav-text:#1e2b28;
-      --nav-hover-bg:#d7ece6; --nav-active-bg:#dfeee9; --nav-active-text:#1e2b28;
-    }
-    .theme-cyber-blue{
-      /* Cyber Night (dark blue) — Threaded Reader vibe */
-      --bg:rgb(2,6,23); --ink:rgb(203,213,225); --muted:rgb(148,163,184);
-      --card:rgb(30,41,59); --line:rgb(51,65,85);
-      --acc1:#ffffff;
-      --nav-bg:rgb(30,41,59); --nav-border:rgb(51,65,85); --nav-text:rgb(203,213,225);
-      --nav-hover-bg:rgb(15,23,42); --nav-active-bg:rgb(39,51,74); --nav-active-text:rgb(203,213,225);
-    }
-    .theme-emerald-gold{
-      /* Emerald / Gold (dark) — neutral selected tabs */
-      --bg:linear-gradient(135deg,#022c22 0%,#064e3b 60%,#065f46 100%);
-      --ink:#ecfdf5; --muted:#a7f3d0; --card:#064e3b; --line:#0a6a56;
-      --acc1:#f0c475;
-      --nav-bg:#064e3b; --nav-border:#0a6a56; --nav-text:#ecfdf5;
-      --nav-hover-bg:#065f46; --nav-active-bg:#075245; --nav-active-text:#ecfdf5;
-    }
+/* ========= Emerald Paper (light) ========= */
+.theme-emerald-paper{
+  --bg: #f7fbf9;
+  --ink: #1e2b28;
+  --muted: #2b423d;
+  --card: #e7f3ef;
+  --line: #86c8ba;
+  --acc1: #0f7f6d;  /* headings / accents */
+  --acc2: #0f7f6d;
+}
 
-    /* =========================================================
-       Base UI
-       ========================================================= */
-    html,body{height:100%}
-    body{
-      background:var(--bg); color:var(--ink);
-      font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Inter,Arial,"Apple Color Emoji","Segoe UI Emoji";
-      margin:0;
-    }
-    a{ color:inherit }
-    .muted{ color:var(--muted) }
-    .card{ background:var(--card); border:1px solid var(--line); border-radius:.75rem }
-    .btn{ padding:.5rem .875rem; border-radius:.5rem; border:1px solid var(--nav-border); background:var(--card); color:var(--ink); transition:.15s }
-    .btn:hover{ background:var(--nav-hover-bg) }
-    .btn:focus-visible{ outline:3px solid color-mix(in oklab, var(--acc1) 45%, transparent); outline-offset:2px }
+/* ========= Cyber Night (dark) ========= */
+.theme-cyber-blue{
+  --bg: rgb(2, 6, 23);          /* slate-950 */
+  --ink: rgb(203, 213, 225);    /* slate-300 */
+  --muted: rgb(148,163,184);    /* slate-400 */
+  --card: rgb(30, 41, 59);      /* slate-800 */
+  --line: rgb(51, 65, 85);      /* slate-700 */
+  --acc1: rgb(203, 213, 225);   /* subtle neutral headings */
+  --acc2: rgb(203, 213, 225);
+}
 
-    /* Tabs — neutral, theme-safe */
-    .tab-btn{
-      background:var(--nav-bg); color:var(--nav-text);
-      border:1px solid var(--nav-border); border-radius:.5rem; padding:.5rem .75rem;
-      transition:.15s;
-    }
-    .tab-btn:hover, .tab-btn:focus-visible{ background:var(--nav-hover-bg) }
-    .tab-btn[aria-selected="true"]{
-      background:var(--nav-active-bg); color:var(--nav-active-text); border-color:var(--nav-border); font-weight:600;
-    }
+/* ========= Emerald/Gold (dark) ========= */
+.theme-emerald-gold{
+  --bg: linear-gradient(135deg,#022c22 0%,#064e3b 60%,#065f46 100%);
+  --ink: #ecfdf5;               /* emerald-50 */
+  --muted: #a7f3d0;             /* emerald-200 */
+  --card: #064e3b;
+  --line: #d4a24c;              /* gold edge */
+  --acc1: #f0c475;              /* gold heading */
+  --acc2: #d4a24c;
+}
 
-    .section-title{ color:var(--acc1) }
+/* ========= Navy (dark, Threaded-Reader style) — keep as-is ========= */
+.theme-navy{
+  --bg:  linear-gradient(135deg,#0a0a23 0%, #141433 50%, #0f172a 100%);
+  --ink:   #e5e7eb;   /* slate-200 */
+  --muted: #94a3b8;   /* slate-400 */
+  --card:  #0f172a;   /* slate-900-ish */
+  --line:  #1f2937;   /* slate-800 */
+  --acc1:  #cbd5e1;   /* neutral */
+  --acc2:  #94a3b8;
+}
+/* Navy: keep blue very sparse */
+.theme-navy .section-title{ color: var(--ink); }
+.theme-navy a{ color:#60a5fa; }                 /* sky-400 */
+.theme-navy a:hover{ color:#93c5fd; }           /* sky-300 */
+.theme-navy .tab-btn[aria-selected="true"]{
+  background:#1f2937; color:#e5e7eb; border-color:#334155;
+  box-shadow: inset 0 0 0 1px #3b82f6;
+}
+.theme-navy .tab-btn:focus-visible{ outline:2px solid #60a5fa; outline-offset:2px; }
 
-    /* Modal */
-    .modal{ display:none; position:fixed; inset:0; z-index:50; background:rgba(0,0,0,.6); align-items:center; justify-content:center }
-    .modal.show{ display:flex }
-    .modal-panel{ background:var(--card); color:var(--ink); border:1px solid var(--nav-border); border-radius:.75rem; min-width:280px; max-width:90vw }
-  </style>
+/* ========= Shell styling (unchanged) ========= */
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Inter,Arial}
+.card{background:var(--card);border:1px solid var(--line);border-radius:.75rem}
+.tab-btn{border:1px solid var(--line);background:var(--card);border-radius:.5rem}
+.tab-btn[aria-selected="true"]{
+  background:linear-gradient(45deg,var(--acc1),var(--acc2));color:white;border-color:transparent
+}
+a{color: var(--acc2)}
+.section-title{color: var(--acc1)}
+</style>
 </head>
-<body class="min-h-screen">
+<body class="min-h-screen flex flex-col">
 
-  <!-- Header -->
-  <header class="w-full">
-    <div class="px-6 py-6" style="background:var(--card); border-bottom:1px solid var(--line)">
-      <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
-        <div>
-          <h1 id="appTitle" class="text-2xl" style="font-weight:700; letter-spacing:-.01em">Loading…</h1>
-          <p id="appSubtitle" class="muted mt-1" style="max-width:60ch"></p>
-        </div>
-        <button id="settingsBtn" class="btn" title="Theme settings" aria-haspopup="dialog" aria-controls="settingsModal">⚙️</button>
-      </div>
-    </div>
+<header>
+  <div class="px-6 py-6 border-b" style="border-color:var(--line);background:var(--card)">
+    <h1 id="appTitle" class="text-2xl font-bold tracking-tight">Loading…</h1>
+    <p id="appSubtitle" class="mt-1 text-sm" style="color:var(--muted)"></p>
+  </div>
 
-    <!-- Tabs -->
-    <nav class="px-6 py-3" role="tablist" aria-label="Primary" style="background:color-mix(in oklab, var(--card) 80%, transparent); border-bottom:1px solid var(--line); display:flex; flex-wrap:wrap; gap:.5rem">
-      <button class="tab-btn" data-tab="overview"  aria-selected="true">Overview</button>
-      <button class="tab-btn" data-tab="concepts"  aria-selected="false">Concepts</button>
-      <button class="tab-btn" data-tab="data"      aria-selected="false">Evidence / Data</button>
-      <button class="tab-btn" data-tab="timeline"  aria-selected="false">Timeline</button>
-      <button class="tab-btn" data-tab="critiques" aria-selected="false">Critiques</button>
-      <button class="tab-btn" data-tab="glossary"  aria-selected="false">Glossary</button>
-      <button class="tab-btn" data-tab="source"    aria-selected="false">Source</button>
-    </nav>
-  </header>
-
-  <!-- Main -->
-  <main class="px-6 py-8" style="display:grid; gap:1.25rem">
-    <!-- Overview -->
-    <section id="tab-overview" role="tabpanel" aria-labelledby="Overview" class="tab-panel">
-      <article class="card p-6">
-        <h2 class="text-xl section-title" style="font-weight:600; margin:0 0 .5rem">Context & Takeaways</h2>
-        <p id="ovr-intro" class="mb-3" style="margin:.25rem 0 1rem"></p>
-        <ul id="ovr-bullets" class="list-disc" style="padding-left:1.25rem; display:grid; gap:.25rem"></ul>
-      </article>
-      <div id="ovr-cards" class="grid" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1rem; margin-top:1rem"></div>
-    </section>
-
-    <!-- Concepts -->
-    <section id="tab-concepts" class="tab-panel hidden" role="tabpanel" aria-labelledby="Concepts">
-      <article class="card p-6">
-        <h2 class="text-xl section-title" style="font-weight:600; margin:0 0 .5rem">Core Concepts</h2>
-        <p id="con-intro" class="mb-3" style="margin:.25rem 0 1rem"></p>
-        <ul id="con-bullets" class="list-disc" style="padding-left:1.25rem; display:grid; gap:.25rem"></ul>
-      </article>
-      <div id="concepts-grid" class="grid" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1rem; margin-top:1rem"></div>
-    </section>
-
-    <!-- Evidence / Data -->
-    <section id="tab-data" class="tab-panel hidden" role="tabpanel" aria-labelledby="Evidence / Data">
-      <article class="card p-6">
-        <h2 class="text-xl section-title" style="font-weight:600; margin:0 0 .5rem">Evidence / Data</h2>
-        <p id="dat-intro" class="mb-3" style="margin:.25rem 0 1rem"></p>
-        <ul id="dat-bullets" class="list-disc" style="padding-left:1.25rem; display:grid; gap:.25rem"></ul>
-      </article>
-      <div id="data-grid" class="grid" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1rem; margin-top:1rem"></div>
-    </section>
-
-    <!-- Timeline -->
-    <section id="tab-timeline" class="tab-panel hidden" role="tabpanel" aria-labelledby="Timeline">
-      <article class="card p-6">
-        <h2 class="text-xl section-title" style="font-weight:600; margin:0 0 .5rem">Timeline</h2>
-        <p id="tim-intro" class="mb-3" style="margin:.25rem 0 1rem"></p>
-        <ul id="tim-bullets" class="list-disc" style="padding-left:1.25rem; display:grid; gap:.25rem"></ul>
-      </article>
-      <ol id="timeline-list" style="display:grid; gap:.75rem; margin-top:1rem; padding-left:0"></ol>
-    </section>
-
-    <!-- Critiques -->
-    <section id="tab-critiques" class="tab-panel hidden" role="tabpanel" aria-labelledby="Critiques">
-      <article class="card p-6">
-        <h2 class="text-xl section-title" style="font-weight:600; margin:0 0 .5rem">Critiques & Debates</h2>
-        <p id="cri-intro" class="mb-3" style="margin:.25rem 0 1rem"></p>
-        <ul id="cri-bullets" class="list-disc" style="padding-left:1.25rem; display:grid; gap:.25rem"></ul>
-      </article>
-      <div id="critiques-grid" class="grid" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1rem; margin-top:1rem"></div>
-    </section>
-
-    <!-- Glossary -->
-    <section id="tab-glossary" class="tab-panel hidden" role="tabpanel" aria-labelledby="Glossary">
-      <article class="card p-6">
-        <h2 class="text-xl section-title" style="font-weight:600; margin:0 0 .5rem">Glossary</h2>
-        <dl id="glossary-grid" class="grid" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1rem; margin-top:1rem"></dl>
-      </article>
-    </section>
-
-    <!-- Source -->
-    <section id="tab-source" class="tab-panel hidden" role="tabpanel" aria-labelledby="Source">
-      <article class="card p-6">
-        <h2 class="text-xl section-title" style="font-weight:600; margin:0 0 .5rem">Source & Provenance</h2>
-        <ul id="prov-list" class="list-disc" style="padding-left:1.25rem; display:grid; gap:.25rem; margin:0 0 1rem"></ul>
-        <h3 class="text-lg" style="font-weight:600; margin:.25rem 0 .5rem">Quotes</h3>
-        <ul id="quotes-list" class="list-disc" style="padding-left:1.25rem; display:grid; gap:.25rem"></ul>
-      </article>
-    </section>
-  </main>
-
-  <footer class="px-6 py-8 muted" style="font-size:.9rem">
-    Hays SPA Template • Single-file — paste content JSON below
-  </footer>
-
-  <!-- Settings Modal -->
-  <div id="settingsModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
-    <div class="modal-panel p-5 relative">
-      <button id="closeSettings" class="btn" style="position:absolute; right:.75rem; top:.5rem" aria-label="Close settings">✕</button>
-      <h3 id="settingsTitle" class="text-lg" style="font-weight:600; margin-bottom:.75rem">Display Settings</h3>
-      <div class="space-y-3">
-        <div>
-          <label for="themeSelect" class="block" style="font-weight:600; margin-bottom:.25rem">Color theme</label>
-          <select id="themeSelect" class="btn" style="width:100%">
-            <option value="newspaper">Newspaper (Light)</option>
-            <option value="emerald-paper">Emerald Paper (Light)</option>
-            <option value="cyber-blue">Cyber Night (Dark)</option>
-            <option value="emerald-gold">Emerald/Gold (Dark)</option>
-          </select>
-        </div>
-      </div>
+  <div class="px-6 py-3 flex items-center gap-3" style="background:color-mix(in oklab, var(--card) 75%, transparent);border-bottom:1px solid var(--line)">
+    <div class="flex items-center gap-2">
+      <label for="theme" class="text-sm" style="color:var(--muted)">Theme</label>
+      <select id="theme" class="text-sm px-2 py-1 rounded border" style="background:var(--card);color:var(--ink);border-color:var(--line)">
+        <option value="newspaper">Newspaper (Light)</option>
+        <option value="navy">Navy (Dark)</option>
+        <option value="emerald-paper">Emerald Paper (Light)</option>
+        <option value="cyber-blue">Cyber Night (Dark)</option>
+        <option value="emerald-gold">Emerald/Gold (Dark)</option>
+      </select>
     </div>
   </div>
 
-  <!-- =========================================================
-       vvvvvvvvvvvvvv  INSERT YOUR CONTENT JSON BELOW  vvvvvvvvv
-       ========================================================= -->
-  <script id="report" type="application/json">
-  {
+  <nav class="px-6 py-3 flex flex-wrap gap-2" role="tablist" aria-label="Primary">
+    <button class="tab-btn px-3 py-2 text-sm" data-tab="overview"  aria-selected="true">Overview</button>
+    <button class="tab-btn px-3 py-2 text-sm" data-tab="concepts"  aria-selected="false">Concepts</button>
+    <button class="tab-btn px-3 py-2 text-sm" data-tab="data"      aria-selected="false">Evidence / Data</button>
+    <button class="tab-btn px-3 py-2 text-sm" data-tab="timeline"  aria-selected="false">Timeline</button>
+    <button class="tab-btn px-3 py-2 text-sm" data-tab="critiques" aria-selected="false">Critiques</button>
+    <button class="tab-btn px-3 py-2 text-sm" data-tab="glossary"  aria-selected="false">Glossary</button>
+    <button class="tab-btn px-3 py-2 text-sm" data-tab="source"    aria-selected="false">Source</button>
+  </nav>
+</header>
+
+<main class="px-6 py-8 space-y-8 grow">
+  <!-- Overview -->
+  <section id="tab-overview" class="space-y-4">
+    <article class="card p-6">
+      <h2 class="text-xl font-semibold section-title mb-2">Context & Takeaways</h2>
+      <p id="ovr-intro" class="mb-3"></p>
+      <ul id="ovr-bullets" class="list-disc pl-5 space-y-1"></ul>
+    </article>
+    <div id="ovr-cards" class="grid md:grid-cols-2 gap-4"></div>
+  </section>
+
+  <!-- Concepts -->
+  <section id="tab-concepts" class="hidden space-y-4">
+    <article class="card p-6">
+      <h2 class="text-xl font-semibold section-title mb-2">Core Concepts</h2>
+      <p id="con-intro" class="mb-3"></p>
+      <ul id="con-bullets" class="list-disc pl-5 space-y-1"></ul>
+    </article>
+    <div id="concepts-grid" class="grid md:grid-cols-2 gap-4"></div>
+  </section>
+
+  <!-- Evidence / Data -->
+  <section id="tab-data" class="hidden space-y-4">
+    <article class="card p-6">
+      <h2 class="text-xl font-semibold section-title mb-2">Evidence / Data</h2>
+      <p id="dat-intro" class="mb-3"></p>
+      <ul id="dat-bullets" class="list-disc pl-5 space-y-1"></ul>
+    </article>
+    <div id="data-grid" class="grid md:grid-cols-2 gap-4"></div>
+  </section>
+
+  <!-- Timeline -->
+  <section id="tab-timeline" class="hidden space-y-4">
+    <article class="card p-6">
+      <h2 class="text-xl font-semibold section-title mb-2">Timeline</h2>
+      <p id="tim-intro" class="mb-3"></p>
+      <ul id="tim-bullets" class="list-disc pl-5 space-y-1"></ul>
+    </article>
+    <ol id="timeline-list" class="space-y-3"></ol>
+  </section>
+
+  <!-- Critiques -->
+  <section id="tab-critiques" class="hidden space-y-4">
+    <article class="card p-6">
+      <h2 class="text-xl font-semibold section-title mb-2">Critiques & Debates</h2>
+      <p id="cri-intro" class="mb-3"></p>
+      <ul id="cri-bullets" class="list-disc pl-5 space-y-1"></ul>
+    </article>
+    <div id="critiques-grid" class="grid md:grid-cols-2 gap-4"></div>
+  </section>
+
+  <!-- Glossary -->
+  <section id="tab-glossary" class="hidden space-y-4">
+    <article class="card p-6">
+      <h2 class="text-xl font-semibold section-title mb-2">Glossary</h2>
+      <dl id="glossary-grid" class="grid md:grid-cols-2 gap-4"></dl>
+    </article>
+  </section>
+
+  <!-- Source -->
+  <section id="tab-source" class="hidden space-y-4">
+    <article class="card p-6">
+      <h2 class="text-xl font-semibold section-title mb-2">Source & Provenance</h2>
+      <ul id="prov-list" class="list-disc pl-5 space-y-1 mb-4"></ul>
+      <h3 class="font-semibold mb-2">Quotes</h3>
+      <ul id="quotes-list" class="list-disc pl-5 space-y-1"></ul>
+    </article>
+  </section>
+</main>
+
+<footer class="px-6 py-8 text-sm" style="color:var(--muted)">© 2025 Report SPA • Single-file template</footer>
+
+<!-- ========= CONTENT JSON DATA ISLAND ========= -->
+<script id="report" type="application/json">
 {
   "meta": {
     "title": "Mark 1:1–3 — “Prepare the Way”: Hays on Figural Christology",
@@ -411,222 +400,154 @@
   ]
 }
 
-    /* INSERT YOUR CONTENT JSON HERE.
-       Example shape:
+</script>
+<!-- =========================================== -->
 
-       "meta": {
-         "title": "Your Title",
-         "subtitle": "Short subtitle",
-         "report_provenance": [
-           { "label": "Compiled by", "detail": "You" },
-           { "label": "Last updated", "detail": "2025-09-04" }
-         ]
-       },
-       "sections": [
-         { "id":"overview","title":"Overview","intro":"...","bullets":["..."],"items":[{"id":"o1","label":"...","summary":"...","detail":"..."}] },
-         { "id":"concepts","title":"Core Concepts","intro":"...","bullets":["..."],"items":[...] },
-         { "id":"data","title":"Evidence / Data","intro":"...","bullets":["..."],"items":[...] },
-         { "id":"timeline","title":"Timeline","intro":"...","bullets":["..."],"items":[...] },
-         { "id":"critiques","title":"Critiques","intro":"...","bullets":["..."],"items":[...] }
-       ],
-       "glossary":[ { "term":"...", "definition":"..." } ],
-       "quotes":[ { "text":"...", "ref":"..." } ]
-    */
-  }
-  </script>
-  <!-- =========================================================
-       ^^^^^^^^^^^^^^^^  INSERT JSON ABOVE  ^^^^^^^^^^^^^^^^^^^^
-       ========================================================= -->
+<!-- ===== App Logic (unchanged except theme wiring) ===== -->
+<script>
+const $ = (id)=>document.getElementById(id);
+let DATA={};
+try{
+  DATA = JSON.parse(document.getElementById('report').textContent);
+}catch(e){
+  DATA = { meta:{title:'Report SPA — Template',subtitle:'Paste content JSON into the <script id="report"> block.'}, sections:[], glossary:[], quotes:[] };
+}
 
-  <script>
-    // ---------- Parse single-block content ----------
-    let AppData = {};
-    try {
-      const raw = document.getElementById('report').textContent.trim();
-      AppData = raw ? JSON.parse(raw) : { meta:{title:'Untitled',subtitle:''}, sections:[], glossary:[], quotes:[] };
-    } catch (e) {
-      console.error('JSON parse error:', e);
-      AppData = { meta:{title:'Untitled',subtitle:''}, sections:[], glossary:[], quotes:[] };
-    }
+// Header
+$('appTitle').textContent = DATA.meta?.title || 'Untitled';
+$('appSubtitle').textContent = DATA.meta?.subtitle || '';
 
-    // ---------- Theme ----------
-    const root = document.documentElement;
-    const themeSelect = document.getElementById('themeSelect');
-    function applyTheme(key){
-      root.classList.remove('theme-emerald-paper','theme-cyber-blue','theme-emerald-gold');
-      if(key==='emerald-paper') root.classList.add('theme-emerald-paper');
-      if(key==='cyber-blue')    root.classList.add('theme-cyber-blue');
-      if(key==='emerald-gold')  root.classList.add('theme-emerald-gold');
-      localStorage.setItem('hays-theme', key);
-    }
-    (function initTheme(){
-      const saved = localStorage.getItem('hays-theme') || 'newspaper';
-      if (themeSelect) themeSelect.value = saved;
-      applyTheme(saved);
-    })();
+// Theme selector
+const themeSel = document.getElementById('theme');
+function applyTheme(v){
+  document.body.classList.remove('theme-navy','theme-emerald-paper','theme-cyber-blue','theme-emerald-gold');
+  // default = Newspaper (root tokens), so no class
+  if(v==='navy')           document.body.classList.add('theme-navy');
+  if(v==='emerald-paper')  document.body.classList.add('theme-emerald-paper');
+  if(v==='cyber-blue')     document.body.classList.add('theme-cyber-blue');
+  if(v==='emerald-gold')   document.body.classList.add('theme-emerald-gold');
+  localStorage.setItem('hays-theme', v);
+}
+applyTheme(localStorage.getItem('hays-theme')||'newspaper');
+themeSel.value = localStorage.getItem('hays-theme')||'newspaper';
+themeSel.addEventListener('change', e=>applyTheme(e.target.value));
 
-    // Settings modal
-    const modal = document.getElementById('settingsModal');
-    document.getElementById('settingsBtn').addEventListener('click', () => {
-      modal.classList.add('show'); modal.setAttribute('aria-hidden','false');
-    });
-    document.getElementById('closeSettings').addEventListener('click', () => {
-      modal.classList.remove('show'); modal.setAttribute('aria-hidden','true');
-    });
-    modal.addEventListener('click', (e)=>{ if(e.target===modal){ modal.classList.remove('show'); modal.setAttribute('aria-hidden','true'); }});
-    if (themeSelect) themeSelect.addEventListener('change', e => applyTheme(e.target.value));
+// Helpers
+const sec = (id)=> (DATA.sections||[]).find(s=>s.id===id);
+function fillContext(sectionId, introId, bulletsId){
+  const s = sec(sectionId); if(!s) return;
+  const introEl = $(introId), ul = $(bulletsId);
+  if (introEl) introEl.textContent = s.intro || '';
+  if (ul) { ul.innerHTML=''; (s.bullets||[]).forEach(b=>{ const li=document.createElement('li'); li.textContent=b; ul.appendChild(li); }); }
+}
+function renderItems(wrapId, items){
+  const wrap = $(wrapId); if(!wrap) return;
+  wrap.innerHTML='';
+  (items||[]).forEach(it=>{
+    const el=document.createElement('article');
+    el.className='card p-5';
+    el.innerHTML = `<h3 class="font-semibold mb-1 section-title">${it.label||''}</h3>
+                    <p class="text-sm" style="color:var(--muted)">${it.summary||''}</p>
+                    <p class="mt-1">${it.detail||''}</p>`;
+    wrap.appendChild(el);
+  });
+}
 
-    // ---------- Helpers ----------
-    const $ = (id)=>document.getElementById(id);
-    const getSection = (sid)=> (AppData.sections||[]).find(s=>s.id===sid);
+// Overview
+(function(){
+  const s = sec('overview'); if(!s) return;
+  fillContext('overview','ovr-intro','ovr-bullets');
+  renderItems('ovr-cards', s.items);
+})();
 
-    // Header
-    $('appTitle').textContent = AppData.meta?.title || 'Untitled';
-    $('appSubtitle').textContent = AppData.meta?.subtitle || '';
+// Concepts
+(function(){
+  const s = sec('concepts'); if(!s) return;
+  document.getElementById('tab-concepts').classList.remove('hidden');
+  fillContext('concepts','con-intro','con-bullets');
+  renderItems('concepts-grid', s.items);
+})();
 
-    // Context helpers
-    function fillContext(sectionId, introId, bulletsId){
-      const s = getSection(sectionId); if(!s) return;
-      $(introId).textContent = s.intro || '';
-      const ul = $(bulletsId); ul.innerHTML='';
-      (s.bullets||[]).forEach(b=>{
-        const li=document.createElement('li'); li.textContent=b; ul.appendChild(li);
-      });
-    }
+// Data
+(function(){
+  const s = sec('data'); if(!s) return;
+  document.getElementById('tab-data').classList.remove('hidden');
+  fillContext('data','dat-intro','dat-bullets');
+  renderItems('data-grid', s.items);
+})();
 
-    // Overview cards
-    (function(){
-      const s = getSection('overview');
-      if(!s) return;
-      fillContext('overview','ovr-intro','ovr-bullets');
-      const wrap = $('ovr-cards'); if(!wrap) return; wrap.innerHTML='';
-      (s.items||[]).forEach(it=>{
-        const card = document.createElement('article');
-        card.className = 'card p-5';
-        card.style.padding = '1.25rem';
-        card.innerHTML = `<h3 class="section-title" style="font-weight:600; margin:0 0 .25rem">${it.label||''}</h3>
-                          <p class="muted" style="font-size:.9rem; margin:.15rem 0 .4rem">${it.summary||''}</p>
-                          <p style="margin:.25rem 0 0">${it.detail||''}</p>`;
-        wrap.appendChild(card);
-      });
-    })();
+// Timeline
+(function(){
+  const s = sec('timeline'); if(!s) return;
+  document.getElementById('tab-timeline').classList.remove('hidden');
+  fillContext('timeline','tim-intro','tim-bullets');
+  const list = $('timeline-list'); list.innerHTML='';
+  (s.items||[]).forEach(it=>{
+    const li=document.createElement('li');
+    li.className='card p-4';
+    li.innerHTML = `<div class="font-semibold section-title">${it.label||''}</div><div>${it.detail||''}</div>`;
+    list.appendChild(li);
+  });
+})();
 
-    // Concepts
-    (function(){
-      const s = getSection('concepts'); if(!s) return;
-      fillContext('concepts','con-intro','con-bullets');
-      const wrap = $('concepts-grid'); if(!wrap) return; wrap.innerHTML='';
-      (s.items||[]).forEach(it=>{
-        const el=document.createElement('article');
-        el.className='card p-5'; el.style.padding='1.25rem';
-        el.innerHTML=`<h3 class="section-title" style="font-weight:600; margin:0 0 .25rem">${it.label||''}</h3>
-                      <p class="muted" style="font-size:.9rem; margin:.15rem 0 .4rem">${it.summary||''}</p>
-                      <p style="margin:.25rem 0 0">${it.detail||''}</p>`;
-        wrap.appendChild(el);
-      });
-    })();
+// Critiques
+(function(){
+  const s = sec('critiques'); if(!s) return;
+  document.getElementById('tab-critiques').classList.remove('hidden');
+  fillContext('critiques','cri-intro','cri-bullets');
+  renderItems('critiques-grid', s.items);
+})();
 
-    // Data
-    (function(){
-      const s = getSection('data'); if(!s) return;
-      fillContext('data','dat-intro','dat-bullets');
-      const wrap = $('data-grid'); if(!wrap) return; wrap.innerHTML='';
-      (s.items||[]).forEach(it=>{
-        const el=document.createElement('article');
-        el.className='card p-5'; el.style.padding='1.25rem';
-        el.innerHTML=`<h3 class="section-title" style="font-weight:600; margin:0 0 .25rem">${it.label||''}</h3>
-                      <p class="muted" style="font-size:.9rem; margin:.15rem 0 .4rem">${it.summary||''}</p>
-                      <p style="margin:.25rem 0 0">${it.detail||''}</p>`;
-        wrap.appendChild(el);
-      });
-    })();
+// Glossary
+(function(){
+  if(!(DATA.glossary||[]).length) return;
+  document.getElementById('tab-glossary').classList.remove('hidden');
+  const wrap=$('glossary-grid'); wrap.innerHTML='';
+  (DATA.glossary||[]).forEach(g=>{
+    const d=document.createElement('div');
+    d.className='card p-5';
+    d.innerHTML=`<dt class="font-semibold mb-1 section-title">${g.term||''}</dt><dd>${g.definition||''}</dd>`;
+    wrap.appendChild(d);
+  });
+})();
 
-    // Timeline
-    (function(){
-      const s = getSection('timeline'); if(!s) return;
-      fillContext('timeline','tim-intro','tim-bullets');
-      const list = $('timeline-list'); if(!list) return; list.innerHTML='';
-      (s.items||[]).forEach(it=>{
-        const li=document.createElement('li');
-        li.className='card p-4'; li.style.padding='1rem';
-        li.innerHTML = `<div class="section-title" style="font-weight:600; margin:0 0 .25rem">${it.label||''}</div>
-                        <div>${it.detail||''}</div>`;
-        list.appendChild(li);
-      });
-    })();
+// Source
+(function(){
+  const hasProv = (DATA.meta?.report_provenance||[]).length;
+  const hasQuotes = (DATA.quotes||[]).length;
+  if(!hasProv && !hasQuotes) return;
+  document.getElementById('tab-source').classList.remove('hidden');
+  const pl=$('prov-list'); pl.innerHTML='';
+  (DATA.meta?.report_provenance||[]).forEach(p=>{
+    const li=document.createElement('li'); li.textContent = `${p.label||''}: ${p.detail||''}`; pl.appendChild(li);
+  });
+  const ql=$('quotes-list'); ql.innerHTML='';
+  (DATA.quotes||[]).forEach(q=>{
+    const li=document.createElement('li'); li.textContent = `"${q.text||''}" — ${q.ref||''}`; ql.appendChild(li);
+  });
+})();
 
-    // Critiques
-    (function(){
-      const s = getSection('critiques'); if(!s) return;
-      fillContext('critiques','cri-intro','cri-bullets');
-      const wrap = $('critiques-grid'); if(!wrap) return; wrap.innerHTML='';
-      (s.items||[]).forEach(it=>{
-        const el=document.createElement('article');
-        el.className='card p-5'; el.style.padding='1.25rem';
-        el.innerHTML=`<h3 class="section-title" style="font-weight:600; margin:0 0 .25rem">${it.label||''}</h3>
-                      <p class="muted" style="font-size:.9rem; margin:.15rem 0 .4rem">${it.summary||''}</p>
-                      <p style="margin:.25rem 0 0">${it.detail||''}</p>`;
-        wrap.appendChild(el);
-      });
-    })();
-
-    // Glossary
-    (function(){
-      const wrap = $('glossary-grid'); if(!wrap) return; wrap.innerHTML='';
-      (AppData.glossary||[]).forEach(g=>{
-        const d=document.createElement('div');
-        d.className='card p-5'; d.style.padding='1.25rem';
-        d.innerHTML=`<dt class="section-title" style="font-weight:600; margin:0 0 .25rem">${g.term||''}</dt>
-                     <dd>${g.definition||''}</dd>`;
-        wrap.appendChild(d);
-      });
-    })();
-
-    // Source
-    (function(){
-      const pl = $('prov-list'); if(pl){ pl.innerHTML='';
-        (AppData.meta?.report_provenance||[]).forEach(p=>{
-          const li=document.createElement('li'); li.textContent = `${p.label}: ${p.detail}`; pl.appendChild(li);
-        });
-      }
-      const ql = $('quotes-list'); if(ql){ ql.innerHTML='';
-        (AppData.quotes||[]).forEach(q=>{
-          const li=document.createElement('li'); li.textContent = `"${q.text}" — ${q.ref}`; ql.appendChild(li);
-        });
-      }
-    })();
-
-    // ---------- Tabs ----------
-    const tabs = Array.from(document.querySelectorAll('[data-tab]'));
-    const panels = {
-      overview: document.getElementById('tab-overview'),
-      concepts: document.getElementById('tab-concepts'),
-      data: document.getElementById('tab-data'),
-      timeline: document.getElementById('tab-timeline'),
-      critiques: document.getElementById('tab-critiques'),
-      glossary: document.getElementById('tab-glossary'),
-      source: document.getElementById('tab-source')
-    };
-    function activate(key){
-      Object.entries(panels).forEach(([k,el])=>{
-        el.classList.toggle('hidden', k!==key);
-      });
-      tabs.forEach(b=> b.setAttribute('aria-selected', b.dataset.tab===key ? 'true':'false'));
-      localStorage.setItem('hays-tab', key);
-      location.hash = key;
-    }
-    tabs.forEach(btn=> btn.addEventListener('click', ()=>activate(btn.dataset.tab)));
-    window.addEventListener('hashchange', ()=>{
-      const k = location.hash.replace('#','');
-      if (panels[k]) activate(k);
-    });
-    // Init tab
-    (function(){
-      const fromHash = location.hash.replace('#','');
-      const saved = localStorage.getItem('hays-tab') || 'overview';
-      activate(panels[fromHash] ? fromHash : (panels[saved] ? saved : 'overview'));
-    })();
-  </script>
+// Tabs
+const tabs = Array.from(document.querySelectorAll('[data-tab]'));
+const panels = {
+  overview: document.getElementById('tab-overview'),
+  concepts: document.getElementById('tab-concepts'),
+  data: document.getElementById('tab-data'),
+  timeline: document.getElementById('tab-timeline'),
+  critiques: document.getElementById('tab-critiques'),
+  glossary: document.getElementById('tab-glossary'),
+  source: document.getElementById('tab-source')
+};
+function activate(key){
+  for(const [k,el] of Object.entries(panels)){ el.classList.toggle('hidden', k!==key); }
+  tabs.forEach(b=> b.setAttribute('aria-selected', b.dataset.tab===key ? 'true':'false'));
+  localStorage.setItem('hays-tab', key);
+  location.hash = key;
+}
+tabs.forEach(btn=> btn.addEventListener('click', ()=>activate(btn.dataset.tab)));
+window.addEventListener('hashchange', ()=>{ const k=location.hash.replace('#',''); if(panels[k]) activate(k); });
+activate(panels[location.hash.replace('#','')] ? location.hash.replace('#','') : (localStorage.getItem('hays-tab')||'overview'));
+</script>
 </body>
 </html>
 
