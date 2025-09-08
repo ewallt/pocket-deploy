@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Course Template</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com/3.4.1?plugins=typography"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+  /* Default Theme: Newspaper */
+  :root {
+    --bg-gradient: #fdfdf8;
+    --text: #1c1c1c;
+    --accent-text: #8c1c13;
+    --nav-bg: #f1f1eb;
+    --nav-border: #dcdcd3;
+    --nav-text: #1c1c1c;
+    --nav-hover-bg: #e5e5dd;
+    --nav-active-bg: #dcdcd3;
+    --nav-active-text: #1c1c1c;
+    --prose-text: var(--text);
+    --prose-headings: var(--accent-text);
+    --prose-links: var(--accent-text);
+    --prose-bold: var(--text);
+    font-family: 'Merriweather', serif;
+  }
+
+  .theme-emerald-paper,
+  .theme-cyber-blue,
+  .theme-emerald-gold {
+    font-family: 'Lato', sans-serif;
+  }
+
+  body {
+    background: var(--bg-gradient);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  .ui-bg { background-color: var(--nav-bg); }
+  .ui-border { border-color: var(--nav-border); }
+  .text-primary { color: var(--text); }
+  .text-accent { color: var(--accent-text); }
+
+  .tab-button {
+    background-color: var(--nav-bg);
+    color: var(--nav-text);
+    border-bottom: 3px solid transparent;
+  }
+  .tab-button:hover,
+  .tab-button:focus-visible {
+    background-color: var(--nav-hover-bg);
+  }
+  .tab-button.tab-active {
+    background-color: var(--nav-active-bg);
+    color: var(--nav-active-text);
+    border-bottom-color: var(--accent-text);
+  }
+
+  .settings-button { background-color: var(--nav-hover-bg); }
+  .settings-button:hover { opacity: 0.8; }
+  *:focus-visible { outline: 3px solid var(--accent-text); outline-offset: 2px; }
+
+  .prose { color: var(--prose-text); }
+  .prose h2,
+  .prose h3,
+  .prose a,
+  .prose strong { color: var(--prose-headings); }
+  .prose p.lead { color: var(--prose-text); }
+
+  /* Navy (Dark) overrides */
+  .theme-cyber-blue .tab-button.tab-active {
+    background-color: #1f2937; /* slate-800 */
+    color: #e5e7eb;           /* slate-200 */
+    border-bottom-color: #3b82f6; /* blue-500 */
+    box-shadow: inset 0 -2px 0 0 #3b82f6;
+  }
+  .theme-cyber-blue .prose a {
+    color: #60a5fa;              /* blue-400 */
+    text-decoration-color: #60a5fa;
+  }
+  .theme-cyber-blue .prose a:hover {
+    color: #93c5fd;              /* blue-300 */
+    text-decoration-color: #93c5fd;
+  }
+</style>
+
+</head>
+<body class="transition-colors duration-300">
+    <div class="container mx-auto px-4 py-6 max-w-7xl">
+        <header id="app-header" class="ui-bg border ui-border rounded-lg shadow-lg p-6 mb-6"></header>
+        <nav id="app-tabs" class="ui-bg border ui-border rounded-lg shadow-lg mb-6" role="tablist" aria-label="Main navigation"></nav>
+        <main id="app-panels" class="ui-bg border ui-border rounded-lg shadow-lg p-6 md:p-8"></main>
+        
+        <div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+            <div class="ui-bg border ui-border rounded-lg p-6 max-w-md w-full shadow-2xl">
+                <h2 id="settings-title" class="text-xl font-bold text-accent mb-4">Display Settings</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label for="themeSelect" class="block text-primary font-semibold mb-2">Theme</label>
+                        <select id="themeSelect" class="w-full px-3 py-2 rounded ui-bg border ui-border text-primary">
+                        </select>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button id="closeSettings" class="px-4 py-2 rounded text-primary hover:opacity-80">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 
+    ============================================================
+    vvvvvvvvvvvvvv PASTE YOUR JSON CONTENT BELOW vvvvvvvvvvvvvv
+    ============================================================
+    -->
+    <script type="application/json" id="app-data">
+{
+  "ntw-foundations-jesus": {
+    "title": "NT Wright — Foundations & Jesus",
+    "description": "A 6-unit overview of Wright’s method, Israel’s story, and Jesus’s kingdom mission.",
+    "categories": {
+      "unit-1-method-history-scripture": {
+        "display_order": 10,
+        "name": "Unit 1: Method — History, Story, Scripture",
+        "display_name": "Unit 1",
+        "paragraphs": [
+          {
+            "heading": "Critical realism",
+            "content": "Wright’s epistemology holds together the reality of the world God made and the perspectival nature of human knowing. We can know truly even if we do not know exhaustively."
+          },
+          {
+            "heading": "History and theology belong together",
+            "content": "Christian claims are embedded in first-century events and meaning. To do theology responsibly, we must take history seriously rather than retreating into timeless abstractions."
+          },
+          {
+            "heading": "Story as worldview",
+            "content": "Scripture communicates through a grand narrative: creation, covenant, Christ, Spirit, new creation. Doctrines live inside this story as signposts and summaries, not as free-floating ideas."
+          },
+          {
+            "heading": "The authority of Scripture",
+            "content": "Biblical authority is God’s authority exercised through Scripture. Its task is to shape the church’s life and mission as the people who indwell and improvise the story."
+          },
+          {
+            "heading": "Exegesis first, then theology",
+            "content": "We begin with close reading in the text’s historical context; only then do we move to systematic conclusions. Exegesis and theology are partners, but exegesis leads."
+          },
+          {
+            "heading": "Jesus within Judaism",
+            "content": "The Gospels must be read with Second-Temple Judaism in view. Jesus makes sense as the climax of Israel’s story, not as a teacher of generic religion."
+          },
+          {
+            "heading": "Public truth of the gospel",
+            "content": "If Jesus is Lord, the claim is public, not merely private. The gospel confronts idolatry in culture and invites allegiance to the true king."
+          },
+          {
+            "heading": "Aim: wisdom for the church",
+            "content": "Good method serves ecclesial discernment. The goal is a people formed to embody God’s purposes in and for the world."
+          }
+        ]
+      },
+      "unit-2-israel-second-temple": {
+        "display_order": 20,
+        "name": "Unit 2: Israel’s Story & Second-Temple Context",
+        "display_name": "Unit 2",
+        "paragraphs": [
+          {
+            "heading": "Still-exile motif",
+            "content": "Many Jews saw themselves as still in exile under pagan rule. They longed for God to return to Zion and restore the kingdom."
+          },
+          {
+            "heading": "Return of YHWH to the temple",
+            "content": "Prophets promised forgiveness of sins and God’s own return. Temple hopes shape the backdrop for Jesus’s mission and claims."
+          },
+          {
+            "heading": "Messiah expectations",
+            "content": "Hopes ranged from royal to priestly to prophetic. All centered on Israel’s God becoming king through his anointed representative."
+          },
+          {
+            "heading": "Apocalyptic imagination",
+            "content": "Vivid imagery named earth-shaking events in history, not mere end-of-world escape. It announced God’s decisive action within time."
+          },
+          {
+            "heading": "Identity markers",
+            "content": "Torah, Temple, land, and monotheism guided Jewish life. These markers framed debates about belonging and holiness."
+          },
+          {
+            "heading": "Rome and the options",
+            "content": "Responses to empire ranged from collaboration to zealot revolution to desert withdrawal. Jesus offered a different path."
+          },
+          {
+            "heading": "Prophetic vocation of Israel",
+            "content": "Israel’s calling was to be a light to the nations. The question was how God would bring this vocation to its goal."
+          },
+          {
+            "heading": "Covenantal monotheism",
+            "content": "The one God would act to renew the covenant and set the world right. This is the theological air of the New Testament."
+          }
+        ]
+      },
+      "unit-3-kingdom-mission-jesus": {
+        "display_order": 30,
+        "name": "Unit 3: Kingdom and Mission of Jesus",
+        "display_name": "Unit 3",
+        "paragraphs": [
+          {
+            "heading": "Announcement of God’s reign",
+            "content": "Jesus proclaims that Israel’s God is becoming king. The announcement confronts rival powers and summons real allegiance."
+          },
+          {
+            "heading": "Parables as reframing",
+            "content": "Parables reshape expectations about how the kingdom comes. They invite listeners into a surprising and costly story."
+          },
+          {
+            "heading": "Healings and exorcisms",
+            "content": "Deeds enact the message. Healings and exorcisms signal the arrival of God’s liberating rule over sin, sickness, and demons."
+          },
+          {
+            "heading": "Table fellowship and forgiveness",
+            "content": "Meals with sinners enact covenant mercy. Jesus offers the reality to which Temple pointed: forgiveness and restored communion."
+          },
+          {
+            "heading": "Choosing the Twelve",
+            "content": "Twelve signifies renewed Israel. Jesus gathers a people around himself as the locus of God’s action."
+          },
+          {
+            "heading": "Temple action and sign",
+            "content": "Jesus critiques a corrupt system and hints at a new center. Judgment and renewal meet in his own person."
+          },
+          {
+            "heading": "Vocation through suffering",
+            "content": "Jesus rejects violent revolt and passive retreat. He embodies Israel’s calling through self-giving love."
+          },
+          {
+            "heading": "Call to discipleship",
+            "content": "To follow is to take up the cross. Allegiance to Jesus reorients identity, ethics, and mission."
+          }
+        ]
+      },
+      "unit-4-cross-victory-vocation": {
+        "display_order": 40,
+        "name": "Unit 4: The Cross — Victory & Vocation",
+        "display_name": "Unit 4",
+        "paragraphs": [
+          {
+            "heading": "The problem the cross addresses",
+            "content": "Sin enslaves humanity and defaces creation. God deals with both guilt and power in the Messiah’s death."
+          },
+          {
+            "heading": "Representative Israel",
+            "content": "Jesus bears Israel’s vocation in himself for the world. He is faithful Israel, fulfilling the covenant."
+          },
+          {
+            "heading": "Passover and new exodus",
+            "content": "The cross is the decisive liberation. Through it God rescues a people and launches them on mission."
+          },
+          {
+            "heading": "Victory over the powers",
+            "content": "The powers of sin, death, and idolatry are exposed and defeated. The true king reigns from the tree."
+          },
+          {
+            "heading": "Substitution inside the story",
+            "content": "Wright affirms substitution as part of the larger narrative. The goal is a transformed, vocation-bearing people."
+          },
+          {
+            "heading": "Covenant justice revealed",
+            "content": "At the cross God’s righteousness is unveiled as faithful love. Judgment and mercy meet in the Messiah."
+          },
+          {
+            "heading": "New forgiven family",
+            "content": "Forgiveness creates a people beyond old boundary markers. The church is the sign that the powers have lost their grip."
+          },
+          {
+            "heading": "Cross-shaped discipleship",
+            "content": "The pattern of the king becomes the path of his people. Enemy-love and forgiveness are the marks of victory."
+          }
+        ]
+      },
+      "unit-5-resurrection-new-creation": {
+        "display_order": 50,
+        "name": "Unit 5: Resurrection & New Creation",
+        "display_name": "Unit 5",
+        "paragraphs": [
+          {
+            "heading": "Bodily, historical resurrection",
+            "content": "Easter is not a metaphor. God raised Jesus bodily, launching new creation within the old."
+          },
+          {
+            "heading": "Vindication and enthronement",
+            "content": "Resurrection vindicates Jesus and enthrones him as Messiah. Ascension expresses his present world-ruling kingship."
+          },
+          {
+            "heading": "Firstfruits of what is coming",
+            "content": "Jesus’s resurrection is the beginning of the general resurrection. The future has started early in him."
+          },
+          {
+            "heading": "Hope reimagined",
+            "content": "Christian hope is renewed creation, not escape to heaven. God will set the world right at last."
+          },
+          {
+            "heading": "Ethics of resurrection",
+            "content": "Work in the Lord is not in vain. Communities practice forgiveness, justice, and beauty as previews of the future."
+          },
+          {
+            "heading": "Creation affirmed",
+            "content": "Resurrection dignifies bodies, land, and culture. Salvation is material and communal, not disembodied."
+          },
+          {
+            "heading": "Worship and witness",
+            "content": "The risen Lord is confessed and celebrated. Worship fuels public, hope-filled mission."
+          },
+          {
+            "heading": "Suffering in hope",
+            "content": "Present suffering is not the last word. The Spirit sustains perseverance toward glory."
+          }
+          ]
+      },
+      "unit-6-spirit-people-god": {
+        "display_order": 60,
+        "name": "Unit 6: Spirit & the People of God (Acts)",
+        "display_name": "Unit 6",
+        "paragraphs": [
+          {
+            "heading": "Pentecost as covenant gift",
+            "content": "The Spirit is the promised presence of God with his people. He marks the arrival of the new age."
+          },
+          {
+            "heading": "One multiethnic family",
+            "content": "Jews and Gentiles belong together without the latter becoming Jews. The badge is the Spirit, expressed in faith and love."
+          },
+          {
+            "heading": "Apostolic proclamation",
+            "content": "Preaching announces Jesus’s death and resurrection as the fulfillment of Scripture. Hearers are summoned to repent and believe."
+          },
+          {
+            "heading": "Persecution and growth",
+            "content": "Witness often provokes opposition. Paradoxically, suffering authenticates the message and spreads the kingdom."
+          },
+          {
+            "heading": "Holiness and generosity",
+            "content": "Spirit-formed communities share possessions, practice sexual integrity, and embody reconciled relationships."
+          },
+          {
+            "heading": "Guided by the risen Lord",
+            "content": "The Spirit directs mission through prayerful discernment. The church follows the king’s lead into new territory."
+          },
+          {
+            "heading": "Public confrontation with idols",
+            "content": "The gospel challenges false worship and unjust powers. Conversion has economic and social consequences."
+          },
+          {
+            "heading": "Church as signpost",
+            "content": "Local congregations preview new creation. Their life together points to the world God is making."
+          }
+        ]
+      }
+    }
+  }
+}
+
+    </script>
+    <!-- 
+    ============================================================
+    ^^^^^^^^^^^^^^ PASTE YOUR JSON CONTENT ABOVE ^^^^^^^^^^^^^^
+    ============================================================
+-->
+
+<script defer>
+document.addEventListener('DOMContentLoaded', () => {
+
+  const THEMES = {
+    'newspaper': {
+      name: 'Newspaper',
+      type: 'classic',
+      isDark: false
+    },
+    'emerald-paper': {
+      name: 'Emerald Paper',
+      type: 'variable',
+      isDark: false,
+      vars: {
+        '--bg-gradient': '#f7fbf9',
+        '--text': '#1e2b28',
+        '--accent-text': '#0f7f6d',
+        '--nav-bg': '#e7f3ef',
+        '--nav-border': '#86c8ba',
+        '--nav-text': '#1e2b28',
+        '--nav-hover-bg': '#d7ece6',
+        '--nav-active-bg': '#bfe3d9',
+        '--nav-active-text': '#1e2b28',
+        '--prose-text': '#1e2b28',
+        '--prose-headings': '#0f7f6d'
+      }
+    },
+    'cyber-blue': {
+      name: 'Navy (Dark)',
+      type: 'variable',
+      isDark: true,
+      vars: {
+        '--bg-gradient': 'linear-gradient(135deg,#0a0a23 0%, #141433 50%, #0f172a 100%)',
+        '--text': '#e5e7eb',
+        '--accent-text': '#cbd5e1',
+        '--nav-bg': '#0f172a',
+        '--nav-border': '#1f2937',
+        '--nav-text': '#e5e7eb',
+        '--nav-hover-bg': '#111827',
+        '--nav-active-bg': '#1f2937',
+        '--nav-active-text': '#e5e7eb',
+        '--prose-text': '#e5e7eb',
+        '--prose-headings': '#cbd5e1'
+      }
+    },
+    'emerald-gold': {
+      name: 'Emerald/Gold',
+      type: 'variable',
+      isDark: true,
+      vars: {
+        '--bg-gradient': 'linear-gradient(135deg,#022c22 0%,#064e3b 60%,#065f46 100%)',
+        '--text': '#ecfdf5',
+        '--accent-text': '#f0c475',
+        '--nav-bg': '#064e3b',
+        '--nav-border': '#d4a24c',
+        '--nav-text': '#ecfdf5',
+        '--nav-hover-bg': '#065f46',
+        '--nav-active-bg': '#0b3d31',
+        '--nav-active-text': '#f0c475',
+        '--prose-text': '#a7f3d0',
+        '--prose-headings': '#f0c475'
+      }
+    }
+  };
+
+  const app = {
+    root: document.documentElement,
+    header: document.getElementById('app-header'),
+    tabs: document.getElementById('app-tabs'),
+    panels: document.getElementById('app-panels'),
+    settings: {
+      modal: document.getElementById('settingsModal'),
+      closeBtn: document.getElementById('closeSettings'),
+      themeSelect: document.getElementById('themeSelect')
+    }
+  };
+
+  const state = { activeTab: null, theme: 'newspaper' };
+
+  const loadState = () => {
+    state.theme = localStorage.getItem('appTheme') || 'newspaper';
+    state.activeTab = localStorage.getItem('activeTab');
+  };
+
+  const saveState = () => {
+    localStorage.setItem('appTheme', state.theme);
+    localStorage.setItem('activeTab', state.activeTab);
+  };
+
+  const applyTheme = (themeKey) => {
+    const theme = THEMES[themeKey];
+    if (!theme) return;
+
+    app.root.className = '';
+    app.root.style.cssText = '';
+
+    if (theme.type === 'variable' && theme.vars) {
+      for (const [key, value] of Object.entries(theme.vars)) {
+        app.root.style.setProperty(key, value);
+      }
+      app.root.classList.add(`theme-${themeKey}`);
+    }
+
+    state.theme = themeKey;
+    if (app.settings.themeSelect.value !== themeKey) {
+      app.settings.themeSelect.value = themeKey;
+    }
+    saveState();
+  };
+
+  const populateThemeSelector = () => {
+    app.settings.themeSelect.innerHTML = Object.entries(THEMES)
+      .map(([key, theme]) => `<option value="${key}">${theme.name}</option>`)
+      .join('');
+  };
+
+  const loadAndTransformData = () => {
+    try {
+      const dataNode = document.getElementById('app-data');
+      if (!dataNode.textContent.trim()) {
+        console.error('JSON data is empty.');
+        return null;
+      }
+      const rawData = JSON.parse(dataNode.textContent);
+
+      const topLevelKey = Object.keys(rawData)[0];
+      if (!topLevelKey) {
+        console.error('JSON data is missing a top-level key.');
+        return null;
+      }
+      const course = rawData[topLevelKey];
+
+      const units = Object.entries(course.categories)
+        .map(([id, unitData]) => ({ id, ...unitData }))
+        .sort((a, b) => a.display_order - b.display_order);
+
+      return { meta: { title: course.title, description: course.description }, units };
+    } catch (e) {
+      console.error('Failed to load or transform app data:', e);
+      app.panels.innerHTML =
+        `<div class="p-4 text-red-500 bg-red-100 rounded"><strong>Error:</strong> Could not load content. Please ensure the JSON is correctly formatted and pasted into the data island.</div>`;
+      return null;
+    }
+  };
+
+  const data = loadAndTransformData();
+  if (!data) return;
+
+  const renderHeader = () => {
+    document.title = data.meta.title || 'Interactive Course';
+    app.header.innerHTML = `
+      <div class="flex justify-between items-start gap-4">
+        <div>
+          <h1 class="text-3xl font-bold text-accent">${data.meta.title}</h1>
+          <p class="mt-2 text-primary/80">${data.meta.description}</p>
+        </div>
+        <button id="settingsBtn" class="flex-shrink-0 p-3 rounded-lg settings-button transition-opacity" aria-label="Display Settings">
+          <span class="text-2xl text-accent">⚙️</span>
+        </button>
+      </div>`;
+  };
+
+  const renderTabs = () => {
+    app.tabs.innerHTML = `<div class="flex flex-wrap">${
+      data.units.map(unit => `
+        <button role="tab" aria-selected="false" aria-controls="${unit.id}-panel" id="${unit.id}-tab"
+                class="px-5 py-3 font-semibold transition-colors tab-button">
+          ${unit.display_name}
+        </button>`
+      ).join('')
+    }</div>`;
+  };
+
+  const renderPanels = () => {
+    app.panels.innerHTML = data.units.map(unit => {
+      const introHTML = unit.introduction ? `<p class="lead">${unit.introduction}</p>` : '';
+      const paragraphsHTML = (unit.paragraphs || []).map(p => `
+        <h3>${p.heading}</h3>
+        <p>${p.content}</p>
+      `).join('');
+      const proseClasses = THEMES[state.theme].isDark ? 'prose prose-lg max-w-none prose-invert' : 'prose prose-lg max-w-none';
+      return `
+        <div role="tabpanel" id="${unit.id}-panel" aria-labelledby="${unit.id}-tab" hidden>
+          <div class="${proseClasses}">
+            <h2>${unit.name}</h2>
+            ${introHTML}
+            ${paragraphsHTML}
+          </div>
+        </div>`;
+    }).join('');
+  };
+
+  const switchTab = (tabId) => {
+    if (!data.units.some(u => u.id === tabId)) {
+      tabId = data.units[0]?.id;
+    }
+    if (!tabId) return;
+
+    app.tabs.querySelectorAll('[role="tab"]').forEach(tab => {
+      const isActive = tab.id === `${tabId}-tab`;
+      tab.setAttribute('aria-selected', isActive);
+      tab.classList.toggle('tab-active', isActive);
+    });
+
+    app.panels.querySelectorAll('[role="tabpanel"]').forEach(panel => {
+      panel.hidden = panel.id !== `${tabId}-panel`;
+    });
+
+    state.activeTab = tabId;
+    saveState();
+  };
+
+  const setupEventListeners = () => {
+    app.tabs.addEventListener('click', e => {
+      const tab = e.target.closest('[role="tab"]');
+      if (tab) switchTab(tab.id.replace('-tab', ''));
+    });
+
+    app.header.addEventListener('click', e => {
+      if (e.target.closest('#settingsBtn')) {
+        app.settings.modal.classList.remove('hidden');
+        app.settings.themeSelect.focus();
+      }
+    });
+
+    const closeModal = () => {
+      app.settings.modal.classList.add('hidden');
+      document.getElementById('settingsBtn')?.focus();
+    };
+    app.settings.closeBtn.addEventListener('click', closeModal);
+    app.settings.modal.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    app.settings.themeSelect.addEventListener('change', (e) => {
+      applyTheme(e.target.value);
+      renderPanels();
+      const activePanel = document.getElementById(`${state.activeTab}-panel`);
+      if (activePanel) activePanel.hidden = false;
+    });
+  };
+
+  const init = () => {
+    loadState();
+    populateThemeSelector();
+    applyTheme(state.theme);
+    renderHeader();
+    renderTabs();
+    renderPanels();
+    setupEventListeners();
+    switchTab(state.activeTab || data.units[0]?.id);
+  };
+
+  init();
+});
+</script>
+</body>
+</html>
+
+
+
