@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Interactive Course Template</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.tailwindcss.com/3.4.1?plugins=typography"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet"/>
+
+  <style>
+    /* Default Theme: Newspaper */
+    :root {
+      --bg-gradient: #fdfdf8;
+      --text: #1c1c1c;
+      --accent-text: #8c1c13;
+      --nav-bg: #f1f1eb;
+      --nav-border: #dcdcd3;
+      --nav-text: #1c1c1c;
+      --nav-hover-bg: #e5e5dd;
+      --nav-active-bg: #dcdcd3;
+      --nav-active-text: #1c1c1c;
+      --prose-text: var(--text);
+      --prose-headings: var(--accent-text);
+      --prose-links: var(--accent-text);
+      --prose-bold: var(--text);
+      font-family: 'Merriweather', serif;
+      line-height: 1.6;
+    }
+
+    /* Alt themes use Lato */
+    .theme-emerald-paper,
+    .theme-cyber-blue,
+    .theme-emerald-gold {
+      font-family: 'Lato', sans-serif;
+      line-height: 1.6;
+    }
+
+    body {
+      background: var(--bg-gradient);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .ui-bg { background-color: var(--nav-bg); }
+    .ui-border { border-color: var(--nav-border); }
+    .text-primary { color: var(--text); }
+    .text-accent { color: var(--accent-text); }
+    *:focus-visible { outline: 3px solid var(--accent-text); outline-offset: 2px; border-radius: 2px; }
+
+    .tab-button {
+      background-color: var(--nav-bg);
+      color: var(--nav-text);
+      border-bottom: 3px solid transparent;
+      transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+    }
+    .tab-button:hover,
+    .tab-button:focus-visible {
+      background-color: var(--nav-hover-bg);
+    }
+    .tab-button.tab-active {
+      background-color: var(--nav-active-bg);
+      color: var(--nav-active-text);
+      border-bottom-color: var(--accent-text);
+      box-shadow: inset 0 -2px 0 0 var(--accent-text);
+    }
+
+    .settings-button { background-color: var(--nav-hover-bg); }
+    .settings-button:hover { opacity: 0.9; }
+
+    .prose { color: var(--prose-text); }
+    .prose h2, .prose h3, .prose a, .prose strong { color: var(--prose-headings); }
+    .prose a { text-decoration: underline; text-decoration-color: var(--prose-links); }
+    .prose p.lead { color: var(--prose-text); }
+
+    /* Show citations only when not empty */
+    .prose .cite { display: none; }
+    .prose .cite:not(:empty) {
+      display: inline;
+      font-size: .75rem;
+      color: var(--accent-text);
+      vertical-align: super;
+      line-height: 0;
+    }
+
+    /* Theme variable packs */
+    /* Emerald Paper (light) */
+    .theme-emerald-paper {
+      --bg-gradient: #f7fbf9;
+      --text: #1e2b28;
+      --accent-text: #0f7f6d;
+      --nav-bg: #e7f3ef;
+      --nav-border: #86c8ba;
+      --nav-text: #1e2b28;
+      --nav-hover-bg: #d7ece6;
+      --nav-active-bg: #bfe3d9;
+      --nav-active-text: #1e2b28;
+      --prose-text: #1e2b28;
+      --prose-headings: #0f7f6d;
+      --prose-links: #0f7f6d;
+      --prose-bold: #1e2b28;
+    }
+
+    /* Navy (Dark) */
+    .theme-cyber-blue {
+      --bg-gradient: linear-gradient(135deg,#0a0a23 0%, #141433 50%, #0f172a 100%);
+      --text: #e5e7eb;
+      --accent-text: #cbd5e1;
+      --nav-bg: #0f172a;
+      --nav-border: #1f2937;
+      --nav-text: #e5e7eb;
+      --nav-hover-bg: #111827;
+      --nav-active-bg: #1f2937;
+      --nav-active-text: #e5e7eb;
+      --prose-text: #e5e7eb;
+      --prose-headings: #cbd5e1;
+      --prose-links: #93c5fd;
+      --prose-bold: #e5e7eb;
+    }
+    .theme-cyber-blue .tab-button.tab-active {
+      background-color: #1f2937; /* slate-800 */
+      color: #e5e7eb;            /* slate-200 */
+      border-bottom-color: #3b82f6; /* blue-500 */
+      box-shadow: inset 0 -2px 0 0 #3b82f6;
+    }
+    .theme-cyber-blue .prose a {
+      color: #60a5fa;            /* blue-400 */
+      text-decoration-color: #60a5fa;
+    }
+    .theme-cyber-blue .prose a:hover {
+      color: #93c5fd;            /* blue-300 */
+      text-decoration-color: #93c5fd;
+    }
+
+    /* Emerald/Gold (Dark) */
+    .theme-emerald-gold {
+      --bg-gradient: linear-gradient(135deg,#022c22 0%,#064e3b 60%,#065f46 100%);
+      --text: #ecfdf5;
+      --accent-text: #f0c475;
+      --nav-bg: #064e3b;
+      --nav-border: #d4a24c;
+      --nav-text: #ecfdf5;
+      --nav-hover-bg: #065f46;
+      --nav-active-bg: #0b3d31;
+      --nav-active-text: #f0c475;
+      --prose-text: #a7f3d0;
+      --prose-headings: #f0c475;
+      --prose-links: #f0c475;
+      --prose-bold: #ecfdf5;
+    }
+
+    /* Smooth transitions on theme swap */
+    body, .ui-bg, .ui-border, .prose, .prose h2, .prose h3, .prose a, .prose strong, .tab-button {
+      transition: color .25s ease, background-color .25s ease, border-color .25s ease;
+    }
+  </style>
+</head>
+
+<body class="transition-colors duration-300 antialiased">
+  <div class="container mx-auto px-4 py-6 max-w-7xl">
+    <header id="app-header" class="ui-bg border ui-border rounded-lg shadow-lg p-6 mb-6">
+      <!-- Injected by JS -->
+    </header>
+
+    <nav id="app-tabs" class="ui-bg border ui-border rounded-lg shadow-lg mb-6" role="tablist" aria-label="Main navigation">
+      <!-- Injected by JS -->
+    </nav>
+
+    <main id="app-panels" class="ui-bg border ui-border rounded-lg shadow-lg p-6 md:p-8">
+      <!-- Injected by JS -->
+    </main>
+
+    <!-- Theme modal -->
+    <div id="settingsModal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+      <div class="ui-bg border ui-border rounded-lg p-6 max-w-md w-full shadow-2xl">
+        <h2 id="settings-title" class="text-xl font-bold text-accent mb-4">Display Settings</h2>
+        <div class="space-y-4">
+          <div>
+            <label for="themeSelect" class="block text-primary font-semibold mb-2">Theme</label>
+            <select id="themeSelect" class="w-full px-3 py-2 rounded ui-bg border ui-border text-primary"></select>
+          </div>
+        </div>
+        <div class="flex justify-end space-x-3 mt-6">
+          <button id="closeSettings" class="px-4 py-2 rounded text-primary hover:opacity-80">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       vvvvvvvvvvvvvv PASTE YOUR JSON CONTENT BELOW vvvvvvvvvvvvvv
+       ============================================================ -->
+  <script type="application/json" id="app-data">
+{
+  "title": "Paul’s Use of Lament Psalms in Romans",
+  "subtitle": "How Paul reframes Israel’s laments around Christ, hope, and communal practice",
+  "author": "Mark Reasoner (summary)",
+  "source_url": "https://wordandworld.luthersem.edu/wp-content/uploads/pdfs/39-3_Romans/Paul's%20Use%20of%20Lament%20Psalms%20in%20Romans.pdf",
+  "updated": "2025-09-09",
+  "sections": [
+    {
+      "id": "overview",
+      "title": "Overview",
+      "content": [
+        {
+          "type": "p",
+          "text": "Reasoner argues that when Paul quotes lament psalms in Romans, he offers a christologically focused way to understand (and pray) them. Across the letter, laments become a pathway from shame to hope, centered in Christ, and the imprecatory (cursing) parts are redirected away from the community’s present practice."
+        },
+        {
+          "type": "ul",
+          "items": [
+            "Focus: Christ-centered theodicy in suffering (Rom 8:36; Ps 44).",
+            "Theme: Not being put to shame ↔ hope, made explicit and linked to faith (Rom 1:16; 5:5; 9:33; 10:11).",
+            "Climax: Hope placed in the Davidic Messiah, Jesus (Rom 15:12).",
+            "Imprecations: Historicized/relativized and countered by blessing enemies (Rom 11:9–10; 12:14; 15:3)."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "psalm-quotations",
+      "title": "Psalms Quotations in Romans (Reasoner’s Chart)",
+      "note": "Genre marks shown in Reasoner’s chart only. IL = Individual Lament; CL = Communal Lament.",
+      "table": {
+        "columns": ["Romans", "Psalm (NRSV)", "Psalm (MT)", "Psalm (LXX)", "Genre"],
+        "rows": [
+          ["1:23", "106:20", "106:20", "105:20", "—"],
+          ["2:6", "62:12", "62:13", "61:13", "—"],
+          ["3:4", "51:4", "51:6", "50:6", "IL"],
+          ["3:10–12", "14:1–3 = 53:1–3", "14:1–3 = 53:1–3", "52:2–4", "—"],
+          ["3:13a–b", "5:10", "5:10", "5:10", "—"],
+          ["3:13c", "140:3", "140:4", "139:4", "IL"],
+          ["3:14", "10:7", "10:7", "9:28", "—"],
+          ["3:18", "36:1", "36:2", "35:2", "—"],
+          ["4:7–8", "32:1–2", "32:1–2", "31:1–2", "—"],
+          ["8:36", "44:22", "44:23", "43:23", "CL"],
+          ["10:18", "19:4", "19:5", "18:5", "—"],
+          ["11:9–10", "69:22–23", "69:23–24", "68:23–24", "IL"],
+          ["15:3", "69:9", "69:10", "68:10", "IL"],
+          ["15:9", "18:49", "18:50", "17:50", "—"],
+          ["15:11", "117:1", "117:1", "116:1", "—"]
+        ]
+      }
+    },
+    {
+      "id": "development-1",
+      "title": "Development 1 — Christological Theodicy (Ps 44 in Rom 8:36)",
+      "content": [
+        {
+          "type": "p",
+          "text": "Paul cites Ps 44:22 in Rom 8:36 to voice innocent suffering. Rather than a full explanation for evil, his answer is relational: nothing can separate the faithful from God’s love in Christ (8:39). This frames lament as faithful protest sustained by Christ’s love."
+        },
+        {
+          "type": "refs",
+          "items": ["Romans 8:35–39", "Psalm 44 (esp. v.22)"]
+        }
+      ]
+    },
+    {
+      "id": "development-2",
+      "title": "Development 2 — From Shame to Hope",
+      "content": [
+        {
+          "type": "p",
+          "text": "Paul makes explicit a pattern already latent in the LXX and some laments: the plea not to be shamed is resolved by hope. He weaves this into Romans—“not ashamed” and “hope does not disappoint”—and ties it to faith in the promised foundation (Isa 28:16)."
+        },
+        {
+          "type": "refs",
+          "items": ["Romans 1:16; 5:5; 9:33; 10:11", "Isaiah 28:16 (LXX)", "Psalm 69 (LXX 68)"]
+        }
+      ]
+    },
+    {
+      "id": "development-3",
+      "title": "Development 3 — Hope Focused on Christ",
+      "content": [
+        {
+          "type": "p",
+          "text": "The shame↔hope resolution is focused on the Messiah. Believers are conformed to the Son through suffering and glory (8:17, 29–30). Paul ends his Scripture catena with hope in the root of Jesse—understood as Jesus (1:3)—placing hope squarely in Christ (15:12)."
+        },
+        {
+          "type": "refs",
+          "items": ["Romans 8:17, 29–30; 15:12; 1:3"]
+        }
+      ]
+    },
+    {
+      "id": "development-4",
+      "title": "Development 4 — What About the Curses?",
+      "content": [
+        {
+          "type": "p",
+          "text": "Paul redirects imprecations. He cites Ps 69’s curse as “David says” (11:9–10), pushing the detonation back into Israel’s story, while instructing believers to bless and not curse (12:14). When he puts Ps 69 on Christ’s lips (15:3), it is the reproach-bearing, not the cursing."
+        },
+        {
+          "type": "refs",
+          "items": ["Romans 11:9–10; 12:14; 15:3", "Psalm 69"]
+        }
+      ]
+    },
+    {
+      "id": "practice",
+      "title": "Praying Laments Christianly (Romans-Shaped)",
+      "content": [
+        {
+          "type": "ul",
+          "items": [
+            "Name the pain before God (space for protest), but remain inside the relationship sustained by Christ’s love.",
+            "Refuse shame by leaning into hope; let faith fix hope on Christ, not on false securities.",
+            "Let Christ’s pattern govern our use of laments: bear reproach; bless persecutors; leave judgment to God; historicize the curses."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "key-passages",
+      "title": "Key Passage Map",
+      "content": [
+        {
+          "type": "kv",
+          "items": [
+            ["Rom 8:36 ↔ Ps 44:22", "Innocent suffering within God’s faithfulness"],
+            ["Rom 11:9–10 ↔ Ps 69:22–23", "Imprecations historicized (David says)"],
+            ["Rom 15:3 ↔ Ps 69:9", "Christ as speaker, bearing reproach (not cursing)"],
+            ["Rom 1:16; 9:33; 10:11 ↔ Isa 28:16; Ps 69", "Not ashamed ↔ hope, grounded in Christ"],
+            ["Rom 15:12 ↔ Isa 11:10", "Hope in the Davidic Messiah (Jesus)"]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bibliography",
+      "title": "Source",
+      "content": [
+        {
+          "type": "p",
+          "text": "Mark Reasoner, “Paul’s Use of Lament Psalms in Romans,” Word & World 39:3 (2019)."
+        }
+      ]
+    }
+  ]
+}
+  
+  </script>
+  <!-- ============================================================
+       ^^^^^^^^^^^^^^ PASTE YOUR JSON CONTENT ABOVE ^^^^^^^^^^^^^^
+       ============================================================ -->
+
+  <script defer>
+  document.addEventListener('DOMContentLoaded', () => {
+    const THEMES = {
+      'newspaper':   { name: 'Newspaper',     type: 'variable', isDark: false, class: '' },
+      'emerald-paper': { name: 'Emerald Paper', type: 'variable', isDark: false, class: 'theme-emerald-paper' },
+      'cyber-blue':    { name: 'Navy (Dark)',   type: 'variable', isDark: true,  class: 'theme-cyber-blue' },
+      'emerald-gold':  { name: 'Emerald/Gold',  type: 'variable', isDark: true,  class: 'theme-emerald-gold' }
+    };
+
+    const app = {
+      root: document.documentElement,
+      header: document.getElementById('app-header'),
+      tabs: document.getElementById('app-tabs'),
+      panels: document.getElementById('app-panels'),
+      settings: {
+        modal: document.getElementById('settingsModal'),
+        closeBtn: document.getElementById('closeSettings'),
+        themeSelect: document.getElementById('themeSelect')
+      }
+    };
+
+    const state = { activeTab: null, theme: 'newspaper' };
+
+    const loadState = () => {
+      state.theme = localStorage.getItem('appTheme') || 'newspaper';
+      state.activeTab = localStorage.getItem('activeTab');
+    };
+
+    const saveState = () => {
+      localStorage.setItem('appTheme', state.theme);
+      localStorage.setItem('activeTab', state.activeTab);
+    };
+
+    const applyTheme = (themeKey) => {
+      const theme = THEMES[themeKey];
+      if (!theme) return;
+
+      // Reset classes applied to <html> for theme scopes
+      app.root.classList.remove('theme-emerald-paper','theme-cyber-blue','theme-emerald-gold');
+      if (theme.class) app.root.classList.add(theme.class);
+
+      state.theme = themeKey;
+      if (app.settings.themeSelect.value !== themeKey) {
+        app.settings.themeSelect.value = themeKey;
+      }
+      saveState();
+    };
+
+    const populateThemeSelector = () => {
+      app.settings.themeSelect.innerHTML = Object.entries(THEMES)
+        .map(([key, t]) => `<option value="${key}">${t.name}</option>`)
+        .join('');
+    };
+
+    const loadAndTransformData = () => {
+      try {
+        const dataNode = document.getElementById('app-data');
+        if (!dataNode.textContent.trim()) {
+          console.error('JSON data is empty.');
+          return null;
+        }
+        const rawData = JSON.parse(dataNode.textContent);
+
+        const topLevelKey = Object.keys(rawData)[0];
+        if (!topLevelKey) {
+          console.error('JSON data is missing a top-level key.');
+          return null;
+        }
+        const course = rawData[topLevelKey];
+
+        const units = Object.entries(course.categories || {})
+          .map(([id, unitData]) => ({ id, ...unitData }))
+          .sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0));
+
+        return { meta: { title: course.title, description: course.description }, units };
+      } catch (e) {
+        console.error('Failed to load or transform app data:', e);
+        app.panels.innerHTML =
+          `<div class="p-4 text-red-600 bg-red-50 rounded"><strong>Error:</strong> Could not load content. Ensure valid JSON in the data island.</div>`;
+        return null;
+      }
+    };
+
+    const data = loadAndTransformData();
+    if (!data) return;
+
+    const isDark = () => THEMES[state.theme]?.isDark;
+
+    const proseClass = () => isDark()
+      ? 'prose prose-lg max-w-none prose-invert'
+      : 'prose prose-lg max-w-none';
+
+    const renderHeader = () => {
+      document.title = data.meta.title || 'Interactive Course';
+      app.header.innerHTML = `
+        <div class="flex justify-between items-start gap-4">
+          <div>
+            <h1 class="text-3xl font-bold text-accent">${data.meta.title ?? ''}</h1>
+            <p class="mt-2 text-primary/80">${data.meta.description ?? ''}</p>
+          </div>
+          <button id="settingsBtn" class="flex-shrink-0 p-3 rounded-lg settings-button transition-opacity" aria-label="Display Settings">
+            <span class="text-2xl text-accent">⚙️</span>
+          </button>
+        </div>`;
+    };
+
+    const renderTabs = () => {
+      const buttons = data.units.map(u => `
+        <button role="tab" aria-selected="false" aria-controls="${u.id}-panel" id="${u.id}-tab"
+                class="px-5 py-3 font-semibold tab-button">
+          ${u.display_name ?? u.name ?? u.id}
+        </button>
+      `).join('');
+      app.tabs.innerHTML = `<div class="flex flex-wrap">${buttons}</div>`;
+    };
+
+    const renderPanels = () => {
+      app.panels.innerHTML = data.units.map(u => {
+        const intro = u.introduction ? `<p class="lead">${u.introduction}</p>` : '';
+        const paras = (u.paragraphs || []).map(p => `
+          <h3>${p.heading ?? ''}</h3>
+          <p>${p.content ?? ''}</p>
+        `).join('');
+
+        return `
+          <div role="tabpanel" id="${u.id}-panel" aria-labelledby="${u.id}-tab" hidden>
+            <div class="${proseClass()}">
+              <h2>${u.name ?? u.display_name ?? u.id}</h2>
+              ${intro}
+              ${paras}
+            </div>
+          </div>`;
+      }).join('');
+    };
+
+    const switchTab = (tabId) => {
+      if (!data.units.some(u => u.id === tabId)) tabId = data.units[0]?.id;
+      if (!tabId) return;
+
+      app.tabs.querySelectorAll('[role="tab"]').forEach(tab => {
+        const isActive = tab.id === `${tabId}-tab`;
+        tab.setAttribute('aria-selected', isActive);
+        tab.classList.toggle('tab-active', isActive);
+      });
+
+      app.panels.querySelectorAll('[role="tabpanel"]').forEach(panel => {
+        panel.hidden = panel.id !== `${tabId}-panel`;
+      });
+
+      state.activeTab = tabId;
+      saveState();
+    };
+
+    const setupEventListeners = () => {
+      app.tabs.addEventListener('click', (e) => {
+        const tab = e.target.closest('[role="tab"]');
+        if (tab) switchTab(tab.id.replace('-tab', ''));
+      });
+
+      app.header.addEventListener('click', (e) => {
+        if (e.target.closest('#settingsBtn')) {
+          app.settings.modal.classList.remove('hidden');
+          app.settings.themeSelect.focus();
+        }
+      });
+
+      const closeModal = () => {
+        app.settings.modal.classList.add('hidden');
+        document.getElementById('settingsBtn')?.focus();
+      };
+      app.settings.closeBtn.addEventListener('click', closeModal);
+      app.settings.modal.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeModal();
+      });
+
+      app.settings.themeSelect.addEventListener('change', (e) => {
+        applyTheme(e.target.value);
+        renderPanels();                 // refresh dark/light prose mode
+        const activePanel = document.getElementById(`${state.activeTab}-panel`);
+        if (activePanel) activePanel.hidden = false;
+      });
+    };
+
+    const init = () => {
+      loadState();
+      populateThemeSelector();
+      applyTheme(state.theme);
+      renderHeader();
+      renderTabs();
+      renderPanels();
+      setupEventListeners();
+      switchTab(state.activeTab || data.units[0]?.id);
+    };
+
+    init();
+  });
+  </script>
+</body>
+</html>
+
+
