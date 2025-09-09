@@ -67,11 +67,8 @@
       transform: translateX(-100%);
       transition: transform .25s ease;
     }
-    .drawer.open {
-      transform: translateX(0);
-    }
+    .drawer.open { transform: translateX(0); }
 
-    /* Theme variable packs */
     /* Navy (Dark) */
     .theme-cyber-blue {
       --bg-gradient: linear-gradient(135deg,#0a0a23 0%, #141433 50%, #0f172a 100%);
@@ -88,14 +85,8 @@
       --prose-links: #93c5fd;
       --prose-bold: #e5e7eb;
     }
-    .theme-cyber-blue .prose a {
-      color: #60a5fa;
-      text-decoration-color: #60a5fa;
-    }
-    .theme-cyber-blue .prose a:hover {
-      color: #93c5fd;
-      text-decoration-color: #93c5fd;
-    }
+    .theme-cyber-blue .prose a { color: #60a5fa; text-decoration-color: #60a5fa; }
+    .theme-cyber-blue .prose a:hover { color: #93c5fd; text-decoration-color: #93c5fd; }
 
     /* Emerald Paper (light) */
     .theme-emerald-paper {
@@ -131,18 +122,12 @@
       --prose-bold: #ecfdf5;
     }
 
-    /* Smooth transitions on theme swap */
-    body, .ui-bg, .ui-border, .prose, .prose h2, .prose h3, .prose a, .prose strong {
-      transition: color .25s ease, background-color .25s ease, border-color .25s ease;
-    }
-
     /* Active item in drawer */
     .nav-item-active {
       background-color: var(--nav-active-bg);
       color: var(--nav-active-text);
     }
 
-    /* Theme popover list */
     .theme-option[aria-checked="true"]::after {
       content: " ✓";
       font-weight: 700;
@@ -151,7 +136,7 @@
 </head>
 
 <body class="transition-colors duration-300 antialiased">
-  <!-- Top Bar -->
+  <!-- Top Bar (unchanged) -->
   <header class="topbar sticky top-0 z-40 ui-bg border-b ui-border">
     <div class="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between">
       <button id="menuBtn" class="px-3 py-2 rounded hover:opacity-80" aria-label="Open menu">☰</button>
@@ -160,7 +145,7 @@
     </div>
   </header>
 
-  <!-- Drawer + Backdrop -->
+  <!-- Drawer + Backdrop (unchanged) -->
   <div id="backdrop" class="fixed inset-0 bg-black/50 hidden z-40"></div>
   <aside id="drawer" class="drawer fixed inset-y-0 left-0 w-80 ui-bg ui-border border-r z-50 flex flex-col">
     <div class="px-4 py-3 border-b ui-border flex items-center justify-between">
@@ -170,13 +155,13 @@
     <nav id="navList" class="overflow-y-auto p-2"></nav>
   </aside>
 
-  <!-- Theme popover -->
+  <!-- Theme popover (unchanged) -->
   <div id="themePopover" class="hidden absolute right-3 top-14 z-50 ui-bg border ui-border rounded-lg shadow-lg p-2 w-56">
     <div class="px-2 pb-2 text-sm font-semibold text-accent">Theme</div>
     <ul id="themeList" class="divide-y ui-border"></ul>
   </div>
 
-  <!-- Main Content -->
+  <!-- Main Content (unchanged) -->
   <main class="mx-auto max-w-4xl px-4 py-6">
     <article id="reader" class="ui-bg border ui-border rounded-lg shadow-lg p-6">
       <div class="prose prose-lg max-w-none" id="content"></div>
@@ -187,29 +172,30 @@
        vvvvvvvvvvvvv PASTE YOUR JSON CONTENT BELOW vvvvvvvvvvvvvvvv
        Accepts:
        A) { "title","description","categories": { "<id>": { "display_order"?, "name"?, "display_name"?, "introduction"?, "paragraphs":[{"heading"?, "content"}] } } }
-       B) { "<wrapper>": { ...same as A... } }
+       B) { "<wrapper>": { ...same as A... } }   (e.g., {"hays-hermeneutic-essay":{...}})
        C) { "course": { "title","description","categories":{...} } }
        D) { "title","subtitle","sections":[ { "id","title","note"?, "content":[{type:'p'|'ul'|'kv'|'refs'|'table'|'html',...}] } ] }
        E) { "article": { "title","description","blocks":[{type:'p'|...}] } }
-       If this block is empty, the app will try to fetch "./content.json".
+
+       Delete the sample below to keep the slot, then paste your JSON.
        ============================================================ -->
   <script type="application/json" id="app-data">
   {
     "title": "Sample Document",
-    "description": "Replace with your JSON or provide content.json next to this file.",
+    "description": "Delete this sample and paste your JSON.",
     "categories": {
       "unit-1": {
         "display_order": 10,
         "display_name": "Introduction",
         "paragraphs": [
-          { "heading": "Welcome", "content": "This Folio menu reader uses a left drawer for navigation and a half-moon theme switcher." }
+          { "heading": "Welcome", "content": "This keeps the same menu + half-moon UI. Only the loader is more flexible." }
         ]
       },
       "unit-2": {
         "display_order": 20,
         "display_name": "Details",
         "paragraphs": [
-          { "heading": "Compatibility", "content": "It accepts Colorful Reader JSON (with or without a wrapper) and other plain article/sections shapes." }
+          { "heading": "Compatibility", "content": "Use your existing Colorful Reader JSON (wrapper or not), course/categories, or article/sections." }
         ]
       }
     }
@@ -221,15 +207,15 @@
 
   <script defer>
   document.addEventListener('DOMContentLoaded', () => {
-    // ---------- Theme config ----------
+    // ---------- Theme config (unchanged) ----------
     const THEMES = {
-      newspaper:     { label: 'Newspaper',     isDark: false, class: '' },
+      newspaper:       { label: 'Newspaper',     isDark: false, class: '' },
       'emerald-paper': { label: 'Emerald Paper', isDark: false, class: 'theme-emerald-paper' },
       'cyber-blue':    { label: 'Navy (Dark)',   isDark: true,  class: 'theme-cyber-blue' },
       'emerald-gold':  { label: 'Emerald/Gold',  isDark: true,  class: 'theme-emerald-gold' }
     };
 
-    // ---------- Elements ----------
+    // ---------- Elements (unchanged) ----------
     const $ = (id) => document.getElementById(id);
     const app = {
       root: document.documentElement,
@@ -245,15 +231,14 @@
       themeList: $('themeList')
     };
 
-    // ---------- State ----------
+    // ---------- State (unchanged keys for compatibility) ----------
     const state = { activeId: null, theme: 'newspaper', data: null };
-
     const loadState = () => {
-      state.theme = localStorage.getItem('folioMenuThemeV1') || 'newspaper';
-      state.activeId = localStorage.getItem('folioMenuActiveV1');
+      state.theme   = localStorage.getItem('folioMenuThemeV1')  || 'newspaper';
+      state.activeId = localStorage.getItem('folioMenuActiveV1') || '';
     };
     const saveState = () => {
-      localStorage.setItem('folioMenuThemeV1', state.theme);
+      localStorage.setItem('folioMenuThemeV1',  state.theme);
       localStorage.setItem('folioMenuActiveV1', state.activeId || '');
     };
 
@@ -263,13 +248,13 @@
       if (t.class) app.root.classList.add(t.class);
       state.theme = key;
       saveState();
-      // Update popover ARIA checks
+      // Update checks
       Array.from(app.themeList.querySelectorAll('.theme-option')).forEach(li => {
         li.setAttribute('aria-checked', li.dataset.key === key ? 'true' : 'false');
       });
     };
 
-    // ---------- Safe HTML helpers ----------
+    // ---------- Helpers (NEW: loader only) ----------
     const escapeHtml = (s='') => s.replace(/[&<>"']/g, c =>
       ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     const normalizeId = (s, i=0) =>
@@ -305,7 +290,7 @@
       }
     };
 
-    // ---------- Normalizers (accept multiple input schemas) ----------
+    // Normalizers (support Colorful Reader + variants)
     const fromCourseCategories = (raw) => {
       const course = raw.course || raw;
       const cats = course.categories || {};
@@ -376,9 +361,7 @@
       const keys = Object.keys(raw);
       if (!raw.categories && keys.length === 1 && raw[keys[0]] && typeof raw[keys[0]] === 'object') {
         const inner = raw[keys[0]];
-        if (inner.categories || inner.course?.categories) {
-          return detectAndNormalize(inner);
-        }
+        if (inner.categories || inner.course?.categories) return detectAndNormalize(inner);
       }
 
       if (raw.course?.categories || raw.categories) return fromCourseCategories(raw);
@@ -386,7 +369,7 @@
       if (Array.isArray(raw.sections)) return fromSectionsTyped(raw);
       if (raw.article?.blocks) return fromArticleBlocks(raw);
 
-      // Minimal fallback
+      // Minimal fallback: title + content
       const html = raw.html ? String(raw.html) :
                    raw.content ? `<p>${escapeHtml(String(raw.content))}</p>` : '';
       return {
@@ -395,25 +378,16 @@
       };
     };
 
-    // ---------- Load JSON (inline or ./content.json) ----------
-    const loadData = async () => {
+    // ---------- Load inline JSON only (no fetch; same flow) ----------
+    const loadInlineData = () => {
       const node = document.getElementById('app-data');
       const txt = node?.textContent?.trim() || '';
-      if (txt) {
-        try { return detectAndNormalize(JSON.parse(txt)); }
-        catch { /* fall through to fetch */ }
-      }
-      try {
-        const res = await fetch('./content.json', { cache: 'no-store' });
-        if (res.ok) {
-          const j = await res.json();
-          return detectAndNormalize(j);
-        }
-      } catch {}
-      return null;
+      if (!txt) return null;
+      try { return detectAndNormalize(JSON.parse(txt)); }
+      catch (e) { return null; }
     };
 
-    // ---------- Render ----------
+    // ---------- Render (unchanged) ----------
     const proseClass = () => (THEMES[state.theme]?.isDark ? 'prose prose-lg max-w-none prose-invert' : 'prose prose-lg max-w-none');
 
     const renderThemePopover = () => {
@@ -443,18 +417,17 @@
       state.activeId = u.id;
       saveState();
 
-      // Update top title and drawer active highlight
       app.topTitle.textContent = state.data.meta.title || 'Folio';
       Array.from(app.navList.children).forEach(btn => {
         btn.classList.toggle('nav-item-active', btn.getAttribute('data-id') === u.id);
       });
 
-      // Build HTML
       const intro = u.introduction ? `<p class="lead">${u.introduction}</p>` : '';
       const paras = (u.paragraphs || []).map(p => `
         ${p.heading ? `<h3>${escapeHtml(p.heading)}</h3>` : ''}
         ${p.content || ''}
       `).join('');
+
       app.content.className = proseClass();
       app.content.innerHTML = `
         <h2>${escapeHtml(u.name ?? u.display_name ?? u.id)}</h2>
@@ -462,30 +435,20 @@
         ${paras}
       `;
 
-      // Update hash for deep-linking
       history.replaceState(null, '', `#${encodeURIComponent(u.id)}`);
     };
 
-    // ---------- Drawer / Popover controls ----------
-    const openDrawer = () => {
-      app.drawer.classList.add('open');
-      app.backdrop.classList.remove('hidden');
-    };
-    const closeDrawer = () => {
-      app.drawer.classList.remove('open');
-      app.backdrop.classList.add('hidden');
-    };
+    // ---------- Drawer / Popover controls (unchanged) ----------
+    const openDrawer = () => { $('drawer').classList.add('open'); $('backdrop').classList.remove('hidden'); };
+    const closeDrawer = () => { $('drawer').classList.remove('open'); $('backdrop').classList.add('hidden'); };
     const toggleThemePopover = () => {
       const open = app.themePopover.classList.contains('hidden');
       app.themePopover.classList.toggle('hidden', !open);
       app.themeBtn.setAttribute('aria-expanded', String(open));
     };
-    const closeThemePopover = () => {
-      app.themePopover.classList.add('hidden');
-      app.themeBtn.setAttribute('aria-expanded', 'false');
-    };
+    const closeThemePopover = () => { app.themePopover.classList.add('hidden'); app.themeBtn.setAttribute('aria-expanded', 'false'); };
 
-    // ---------- Events ----------
+    // ---------- Events (unchanged) ----------
     const bindEvents = () => {
       app.menuBtn.addEventListener('click', openDrawer);
       app.closeDrawer.addEventListener('click', closeDrawer);
@@ -506,38 +469,34 @@
       app.themeList.addEventListener('click', (e) => {
         const b = e.target.closest('.theme-option');
         if (!b) return;
-        applyTheme(b.dataset.key);          // immediate apply
-        renderContent(state.activeId);      // refresh prose invert if needed
-        // keep popover open or close—choose close for faster UX
+        applyTheme(b.dataset.key);      // immediate apply
+        renderContent(state.activeId);  // update prose invert if needed
         closeThemePopover();
       });
 
-      // Close popover on Escape
       document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-          closeDrawer();
-          closeThemePopover();
-        }
+        if (e.key === 'Escape') { closeDrawer(); closeThemePopover(); }
       });
 
-      // Support deep link on hash change
       window.addEventListener('hashchange', () => {
         const id = decodeURIComponent(location.hash.replace(/^#/, ''));
         if (id && state.data.units.some(u=>u.id===id)) renderContent(id);
       });
     };
 
-    // ---------- Init ----------
-    (async () => {
+    // ---------- Init (unchanged) ----------
+    (() => {
       loadState();
       applyTheme(state.theme);
 
-      const normalized = await loadData();
+      const normalized = loadInlineData();
       if (!normalized || !Array.isArray(normalized.units) || normalized.units.length === 0) {
-        document.title = 'Folio — Error';
-        app.content.innerHTML = `<div class="p-4 text-red-600 bg-red-50 rounded">
-          <strong>Error:</strong> Could not load content. Ensure valid JSON in the data island or provide <code>content.json</code>.
+        document.title = 'Folio — Paste JSON';
+        app.content.innerHTML = `<div class="p-4 bg-yellow-50 text-yellow-900 rounded">
+          <strong>Paste your JSON</strong> into the <code>#app-data</code> block and reload.
         </div>`;
+        bindEvents();
+        renderThemePopover();
         return;
       }
       state.data = normalized;
@@ -549,7 +508,6 @@
       renderThemePopover();
       renderMenu();
 
-      // Start on hash, saved tab, or first
       const startId = decodeURIComponent(location.hash.replace(/^#/, '')) || state.activeId || state.data.units[0].id;
       renderContent(startId);
     })();
