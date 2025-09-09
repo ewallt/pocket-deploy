@@ -168,43 +168,7 @@
     </article>
   </main>
 
-  <!-- ============================================================
-       vvvvvvvvvvvvv PASTE YOUR JSON CONTENT BELOW vvvvvvvvvvvvvvvv
-       Accepts:
-       A) { "title","description","categories": { "<id>": { "display_order"?, "name"?, "display_name"?, "introduction"?, "paragraphs":[{"heading"?, "content"}] } } }
-       B) { "<wrapper>": { ...same as A... } }   (e.g., {"hays-hermeneutic-essay":{...}})
-       C) { "course": { "title","description","categories":{...} } }
-       D) { "title","subtitle","sections":[ { "id","title","note"?, "content":[{type:'p'|'ul'|'kv'|'refs'|'table'|'html',...}] } ] }
-       E) { "article": { "title","description","blocks":[{type:'p'|...}] } }
-
-       Delete the sample below to keep the slot, then paste your JSON.
-       ============================================================ -->
-  <script type="application/json" id="app-data">
-  {
-    "title": "Sample Document",
-    "description": "Delete this sample and paste your JSON.",
-    "categories": {
-      "unit-1": {
-        "display_order": 10,
-        "display_name": "Introduction",
-        "paragraphs": [
-          { "heading": "Welcome", "content": "This keeps the same menu + half-moon UI. Only the loader is more flexible." }
-        ]
-      },
-      "unit-2": {
-        "display_order": 20,
-        "display_name": "Details",
-        "paragraphs": [
-          { "heading": "Compatibility", "content": "Use your existing Colorful Reader JSON (wrapper or not), course/categories, or article/sections." }
-        ]
-      }
-    }
-  }
-  </script>
-  <!-- ============================================================
-       ^^^^^^^^^^^^^^ PASTE YOUR JSON CONTENT ABOVE ^^^^^^^^^^^^^^^
-       ============================================================ -->
-
+  <!-- No inline JSON; reads ./content.json -->
   <script defer>
   document.addEventListener('DOMContentLoaded', () => {
     // ---------- Theme config (unchanged) ----------
@@ -231,10 +195,10 @@
       themeList: $('themeList')
     };
 
-    // ---------- State (unchanged keys for compatibility) ----------
+    // ---------- State (unchanged keys) ----------
     const state = { activeId: null, theme: 'newspaper', data: null };
     const loadState = () => {
-      state.theme   = localStorage.getItem('folioMenuThemeV1')  || 'newspaper';
+      state.theme    = localStorage.getItem('folioMenuThemeV1')  || 'newspaper';
       state.activeId = localStorage.getItem('folioMenuActiveV1') || '';
     };
     const saveState = () => {
@@ -254,47 +218,28 @@
       });
     };
 
-    // ---------- Helpers (NEW: loader only) ----------
+    // ---------- Minimal helpers (for this single schema) ----------
     const escapeHtml = (s='') => s.replace(/[&<>"']/g, c =>
       ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     const normalizeId = (s, i=0) =>
       (s || `section-${i+1}`).toString().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
 
-    const nodeToHtml = (n) => {
-      if (!n) return '';
-      const has = (k) => Object.prototype.hasOwnProperty.call(n, k);
-      const text = n.text ?? n.content ?? '';
-      switch (n.type) {
-        case 'p': return `<p>${escapeHtml(text)}</p>`;
-        case 'ul': return `<ul>${(n.items||[]).map(li=>`<li>${escapeHtml(li)}</li>`).join('')}</ul>`;
-        case 'refs': return `<p><em>${(n.items||[]).map(escapeHtml).join('; ')}</em></p>`;
-        case 'kv': {
-          const items = Array.isArray(n.items) ? n.items : [];
-          return `<ul>${items.map(([k,v]=[])=>`<li><strong>${escapeHtml(k||'')}</strong>: ${escapeHtml(v||'')}</li>`).join('')}</ul>`;
-        }
-        case 'table': {
-          const cols = n.table?.columns || [];
-          const rows = n.table?.rows || [];
-          return `
-            <div class="overflow-x-auto">
-              <table>
-                <thead><tr>${cols.map(c=>`<th>${escapeHtml(c)}</th>`).join('')}</tr></thead>
-                <tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${escapeHtml(String(c))}</td>`).join('')}</tr>`).join('')}</tbody>
-              </table>
-            </div>`;
-        }
-        case 'html': return String(n.html || '');
-        default:
-          if (has('text') || has('content')) return `<p>${escapeHtml(text)}</p>`;
-          return '';
-      }
-    };
+    // ---------- Load JSON from ./content.json (accept optional wrapper) ----------
+    const loadData = async () => {
+      const res = await fetch('./content.json', { cache: 'no-store' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const raw = await res.json();
 
-    // Normalizers (support Colorful Reader + variants)
-    const fromCourseCategories = (raw) => {
-      const course = raw.course || raw;
-      const cats = course.categories || {};
-      const units = Object.entries(cats).map(([id, u], idx) => ({
+      // If wrapped like { "nt-wright-hermeneutic": { ... } }, unwrap it
+      let data = raw;
+      const keys = Object.keys(raw || {});
+      if (!raw.categories && keys.length === 1 && raw[keys[0]] && raw[keys[0]].categories) {
+        data = raw[keys[0]];
+      }
+      if (!data || !data.categories) throw new Error('Missing categories in content.json');
+
+      // Build units
+      const entries = Object.entries(data.categories).map(([id, u], idx) => ({
         id: id || normalizeId(u?.display_name || u?.name, idx),
         name: u?.name || u?.display_name || id || `Section ${idx+1}`,
         display_name: u?.display_name || u?.name || id || `Section ${idx+1}`,
@@ -305,86 +250,18 @@
           content: `<p>${escapeHtml(String(p?.content ?? ''))}</p>`
         }))
       }));
-      units.sort((a,b)=>{
+
+      // Sort: display_order then alpha
+      entries.sort((a,b)=>{
         if (a.order!==null || b.order!==null) return (a.order ?? Infinity) - (b.order ?? Infinity);
         const A=(a.display_name||a.name||'').toLowerCase(), B=(b.display_name||b.name||'').toLowerCase();
         return A.localeCompare(B);
       });
-      return { meta:{ title: course.title||'Untitled', description: course.description||'' }, units };
-    };
 
-    const fromUnitsParagraphs = (raw) => {
-      const units = (raw.units || []).map((u, idx) => ({
-        id: u.id || normalizeId(u?.name, idx),
-        name: u.name || u.display_name || `Section ${idx+1}`,
-        display_name: u.display_name || u.name || `Section ${idx+1}`,
-        introduction: u.introduction ? escapeHtml(u.introduction) : null,
-        paragraphs: (u.paragraphs || []).map(p => ({
-          heading: p?.heading || null,
-          content: `<p>${escapeHtml(String(p?.content ?? ''))}</p>`
-        }))
-      }));
-      return { meta:{ title: raw.title||'Untitled', description: raw.description||raw.subtitle||'' }, units };
-    };
-
-    const fromSectionsTyped = (raw) => {
-      const secs = Array.isArray(raw.sections) ? raw.sections : [];
-      const units = secs.map((s, i) => ({
-        id: s.id || normalizeId(s?.title, i),
-        name: s.title || `Section ${i+1}`,
-        display_name: s.title || `Section ${i+1}`,
-        introduction: s.note ? escapeHtml(s.note) : null,
-        paragraphs: (s.content || []).map(node => ({
-          heading: node?.heading || null,
-          content: nodeToHtml(node)
-        }))
-      }));
-      return { meta:{ title: raw.title||'Untitled', description: raw.subtitle||raw.description||'' }, units };
-    };
-
-    const fromArticleBlocks = (raw) => {
-      const art = raw.article || {};
-      const unit = {
-        id: 'article',
-        name: art.title || 'Article',
-        display_name: art.title || 'Article',
-        introduction: art.description ? escapeHtml(art.description) : null,
-        paragraphs: (art.blocks || []).map(b => ({ heading: b.heading || null, content: nodeToHtml(b) }))
-      };
-      return { meta:{ title: art.title || raw.title || 'Untitled', description: art.description || raw.description || '' }, units:[unit] };
-    };
-
-    const detectAndNormalize = (raw) => {
-      if (!raw || typeof raw !== 'object') return null;
-
-      // Allow a single wrapper key: { "<wrapper>": { categories: {...} } }
-      const keys = Object.keys(raw);
-      if (!raw.categories && keys.length === 1 && raw[keys[0]] && typeof raw[keys[0]] === 'object') {
-        const inner = raw[keys[0]];
-        if (inner.categories || inner.course?.categories) return detectAndNormalize(inner);
-      }
-
-      if (raw.course?.categories || raw.categories) return fromCourseCategories(raw);
-      if (Array.isArray(raw.units)) return fromUnitsParagraphs(raw);
-      if (Array.isArray(raw.sections)) return fromSectionsTyped(raw);
-      if (raw.article?.blocks) return fromArticleBlocks(raw);
-
-      // Minimal fallback: title + content
-      const html = raw.html ? String(raw.html) :
-                   raw.content ? `<p>${escapeHtml(String(raw.content))}</p>` : '';
       return {
-        meta: { title: raw.title || 'Untitled', description: raw.subtitle || raw.description || '' },
-        units: [{ id: 'content', name: raw.title || 'Content', display_name: raw.title || 'Content', introduction: null, paragraphs: html ? [{ heading:null, content: html }] : [] }]
+        meta: { title: data.title || 'Untitled', description: data.description || '' },
+        units: entries
       };
-    };
-
-    // ---------- Load inline JSON only (no fetch; same flow) ----------
-    const loadInlineData = () => {
-      const node = document.getElementById('app-data');
-      const txt = node?.textContent?.trim() || '';
-      if (!txt) return null;
-      try { return detectAndNormalize(JSON.parse(txt)); }
-      catch (e) { return null; }
     };
 
     // ---------- Render (unchanged) ----------
@@ -485,31 +362,32 @@
     };
 
     // ---------- Init (unchanged) ----------
-    (() => {
+    (async () => {
       loadState();
       applyTheme(state.theme);
 
-      const normalized = loadInlineData();
-      if (!normalized || !Array.isArray(normalized.units) || normalized.units.length === 0) {
-        document.title = 'Folio — Paste JSON';
-        app.content.innerHTML = `<div class="p-4 bg-yellow-50 text-yellow-900 rounded">
-          <strong>Paste your JSON</strong> into the <code>#app-data</code> block and reload.
+      try {
+        const normalized = await loadData();
+        state.data = normalized;
+
+        document.title = state.data.meta.title || 'Folio';
+        app.topTitle.textContent = state.data.meta.title || 'Folio';
+
+        bindEvents();
+        renderThemePopover();
+        renderMenu();
+
+        const startId = decodeURIComponent(location.hash.replace(/^#/, '')) || state.activeId || state.data.units[0].id;
+        renderContent(startId);
+      } catch (err) {
+        document.title = 'Folio — Error';
+        app.content.innerHTML = `<div class="p-4 bg-red-50 text-red-700 rounded">
+          <strong>Could not load</strong> <code>content.json</code>.<br/>
+          ${escapeHtml(String(err.message || err))}
         </div>`;
         bindEvents();
         renderThemePopover();
-        return;
       }
-      state.data = normalized;
-
-      document.title = state.data.meta.title || 'Folio';
-      app.topTitle.textContent = state.data.meta.title || 'Folio';
-
-      bindEvents();
-      renderThemePopover();
-      renderMenu();
-
-      const startId = decodeURIComponent(location.hash.replace(/^#/, '')) || state.activeId || state.data.units[0].id;
-      renderContent(startId);
     })();
   });
   </script>
