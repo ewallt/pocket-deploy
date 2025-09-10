@@ -375,7 +375,7 @@ document.addEventListener('DOMContentLoaded', () => {
     throw new Error('No content JSON found. Provide it via the #app-data script tag, a content.json file, or window.__CONTENT__.');
   }
 
-  /* === NEW: allow {meta, sections,...} by converting to CR {categories} === */
+  /* === allow {meta, sections,...} by converting to CR {categories} === */
   function sectionAppToCR(root) {
     const title = root.meta?.title || 'Untitled';
     const description = root.meta?.subtitle || '';
@@ -384,13 +384,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const slug = s.id || ('section-' + (idx + 1));
       const paragraphs = [];
 
-      // bullets -> one list paragraph
       if (Array.isArray(s.bullets) && s.bullets.length) {
         const lis = s.bullets.map(b => `<li>${b}</li>`).join('');
         paragraphs.push({ heading: 'Key points', content: `<ul>${lis}</ul>` });
       }
 
-      // items -> one paragraph per item (label -> heading; summary/detail -> content)
       (s.items || []).forEach(it => {
         const heading = it.label || it.summary || '';
         const detail = (it.summary ? `<em>${it.summary}</em> ` : '') + (it.detail || '');
@@ -409,24 +407,18 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function normalizeFlexible(data) {
-    // Single-app CR shape
     if (data && typeof data === 'object' && data.categories) return data;
-
-    // Single-app "sections" shape
     if (data && typeof data === 'object' && (Array.isArray(data.sections) || data.meta)) {
       return sectionAppToCR(data);
     }
-
-    // Multi-app map (take the first app)
     const keys = data ? Object.keys(data) : [];
     if (!keys.length) throw new Error('Empty content.');
     const first = data[keys[0]];
     if (first?.categories) return first;
     if (first && (Array.isArray(first.sections) || first.meta)) return sectionAppToCR(first);
-
     throw new Error('Unsupported content shape. Expected {categories} or {sections}.');
   }
-  /* === /NEW === */
+  /* === /transform === */
 
   function catArray(app) {
     return Object.entries(app.categories || {}).map(([slug, c]) => ({
@@ -443,6 +435,12 @@ document.addEventListener('DOMContentLoaded', () => {
     appSubtitleEl.textContent = app.description || '';
 
     const cats = catArray(app);
+    if (!cats.length) {
+      contentRoot.innerHTML = '<div class="p-4 rounded border border-yellow-300 bg-yellow-50 text-yellow-800">No sections available.</div>';
+      return;
+    }
+
+    const slugSet = new Set(cats.map(c => c.slug));
 
     navLinks.innerHTML = '';
     for (const c of cats) {
@@ -487,9 +485,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const savedView = localStorage.getItem(state.storagePrefix + 'view');
-    const firstSlug = cats[0]?.slug || 'introduction';
-    const initial = (location.hash || '').replace(/^#/, '') || savedView || firstSlug;
+    const firstSlug = cats[0].slug;
+    const requested = (location.hash || '').replace(/^#/, '') || savedView || firstSlug;
+    const initial = slugSet.has(requested) ? requested : firstSlug;
+
     updateView(initial, false);
+
+    // keep URL + back/forward in sync
+    window.addEventListener('hashchange', () => {
+      const h = (location.hash || '').replace(/^#/, '');
+      updateView(slugSet.has(h) ? h : firstSlug);
+    });
   }
 
   function updateView(viewId, save = true) {
@@ -595,7 +601,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const raw = await loadContent();
       const app = normalizeFlexible(raw);
 
-      /* safer per-project storage key (uses app.title when available) */
+      // safer per-project storage key (uses app.title when available)
       state.storagePrefix = 'folio_' + ((app.title || Object.keys(raw||{})[0] || 'app')
         .toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'')) + '_';
 
