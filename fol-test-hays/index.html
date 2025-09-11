@@ -1,3 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Adaptive Reader (CR/Folio Themes)</title>
+
+  <!-- Tailwind + typography -->
+  <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class'
+    }
+  </script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ---------- THEME VARIABLES (as provided) ---------- */
+
+    /* Default: Newspaper (light, serif) */
+    :root {
+      --bg-gradient: #fdfdf8;
+      --text: #1c1c1c;
+      --accent-text: #8c1c13;
+      --nav-bg: #f1f1eb;
+      --nav-border: #dcdcd3;
+      --nav-text: #1c1c1c;
+      --nav-hover-bg: #e5e5dd;
+      --nav-active-bg: #dcdcd3;
+      --nav-active-text: #1c1c1c;
+      --prose-text: var(--text);
+      --prose-headings: var(--accent-text);
+      --prose-links: var(--accent-text);
+      --prose-bold: var(--text);
+      font-family: 'Merriweather', serif;
+    }
+
+    /* The three alternates use Lato */
+    .theme-emerald-paper,
+    .theme-cyber-blue,
+    .theme-emerald-gold {
+      font-family: 'Lato', sans-serif;
+    }
+
+    body {
+      background: var(--bg-gradient);
+      color: var(--text);
+      transition: background-color .25s, color .25s, background .25s;
+    }
+
+    /* UI tokens */
+    .ui-bg { background-color: var(--nav-bg); }
+    .ui-border { border-color: var(--nav-border); }
+    .text-primary { color: var(--text); }
+    .text-accent { color: var(--accent-text); }
+
+    /* Buttons / tabs */
+    .nav-button, .selectlike {
+      padding:.5rem 1rem; border-radius:.375rem; border:1px solid var(--nav-border);
+      background: var(--nav-bg); color: var(--nav-text);
+      transition: background-color .2s, color .2s, border-color .2s;
+    }
+    .nav-button:hover { background: var(--nav-hover-bg); }
+    .nav-button.active {
+      background: var(--nav-active-bg); color: var(--nav-active-text);
+      border-color: var(--nav-border);
+      border-bottom: 3px solid var(--accent-text);
+    }
+
+    /* Prose coloring */
+    .prose { color: var(--prose-text); }
+    .prose h1, .prose h2, .prose h3,
+    .prose a, .prose strong { color: var(--prose-headings); }
+    .prose a { text-decoration-color: var(--prose-headings); }
+    .prose p.lead { color: var(--prose-text); }
+
+    /* Navy (Dark) extras (you provided) */
+    .theme-cyber-blue .nav-button.active {
+      background-color:#1f2937; color:#e5e7eb; border-bottom-color:#3b82f6; box-shadow: inset 0 -2px 0 0 #3b82f6;
+    }
+    .theme-cyber-blue .prose a {
+      color:#60a5fa; text-decoration-color:#60a5fa;
+    }
+    .theme-cyber-blue .prose a:hover {
+      color:#93c5fd; text-decoration-color:#93c5fd;
+    }
+
+    /* Containers */
+    .nav-container{margin-bottom:1.5rem}
+    .nav-buttons-wrapper{display:flex;flex-wrap:wrap;align-items:center;width:100%}
+    .flex-break{flex-basis:100%;height:0}
+
+    /* Theme toggle */
+    .theme-btn{ padding:.4rem .6rem; border:1px solid var(--nav-border); background:var(--nav-hover-bg); color:var(--nav-text); border-radius:.375rem }
+  </style>
+</head>
+
+<body class="transition-colors duration-300">
+  <!-- Theme toggle (cycles four presets) -->
+  <div class="fixed top-4 right-4 z-50 flex gap-2">
+    <button id="theme-switcher-btn" class="theme-btn" aria-label="toggle theme">Theme</button>
+  </div>
+
+  <main id="app-container" class="container mx-auto px-4 py-6 max-w-3xl">
+    <header id="hdr" class="ui-bg border ui-border rounded-lg shadow-md p-6 mb-6"></header>
+    <div id="switchers" class="mb-6"></div>
+    <nav id="article-nav" class="ui-bg border ui-border rounded-lg shadow-md p-4 mb-6"></nav>
+    <section id="content" class="ui-bg border ui-border rounded-lg shadow-md p-6 md:p-8"></section>
+  </main>
+
+  <!--
+    ============================================================
+    vvvvvvvvvvvvvv PASTE YOUR JSON CONTENT BELOW vvvvvvvvvvvvvv
+    ============================================================
+  -->
+  <script type="application/json" id="app-data">
 
 {
   "hays": {
@@ -820,3 +940,257 @@
 }
 }
   
+
+</script>
+  <!--
+    ============================================================
+    ^^^^^^^^^^^^^^ PASTE YOUR JSON CONTENT ABOVE ^^^^^^^^^^^^^^
+    ============================================================
+  -->
+
+  <script>
+    /* -------------------- THEME SETUP -------------------- */
+    const THEMES = {
+      'newspaper': {
+        name: 'Newspaper',
+        isDark: false,
+        vars: {
+          '--bg-gradient': '#fdfdf8',
+          '--text': '#1c1c1c',
+          '--accent-text': '#8c1c13',
+          '--nav-bg': '#f1f1eb',
+          '--nav-border': '#dcdcd3',
+          '--nav-text': '#1c1c1c',
+          '--nav-hover-bg': '#e5e5dd',
+          '--nav-active-bg': '#dcdcd3',
+          '--nav-active-text': '#1c1c1c',
+          '--prose-text': '#1c1c1c',
+          '--prose-headings': '#8c1c13'
+        },
+        rootClass: '' // serif via :root default
+      },
+      'emerald-paper': {
+        name: 'Emerald Paper',
+        isDark: false,
+        vars: {
+          '--bg-gradient': '#f7fbf9',
+          '--text': '#1e2b28',
+          '--accent-text': '#0f7f6d',
+          '--nav-bg': '#e7f3ef',
+          '--nav-border': '#86c8ba',
+          '--nav-text': '#1e2b28',
+          '--nav-hover-bg': '#d7ece6',
+          '--nav-active-bg': '#bfe3d9',
+          '--nav-active-text': '#1e2b28',
+          '--prose-text': '#1e2b28',
+          '--prose-headings': '#0f7f6d'
+        },
+        rootClass: 'theme-emerald-paper'
+      },
+      'cyber-blue': {
+        name: 'Navy (Dark)',
+        isDark: true,
+        vars: {
+          '--bg-gradient': 'linear-gradient(135deg,#0a0a23 0%, #141433 50%, #0f172a 100%)',
+          '--text': '#e5e7eb',
+          '--accent-text': '#cbd5e1',
+          '--nav-bg': '#0f172a',
+          '--nav-border': '#1f2937',
+          '--nav-text': '#e5e7eb',
+          '--nav-hover-bg': '#111827',
+          '--nav-active-bg': '#1f2937',
+          '--nav-active-text': '#e5e7eb',
+          '--prose-text': '#e5e7eb',
+          '--prose-headings': '#cbd5e1'
+        },
+        rootClass: 'theme-cyber-blue'
+      },
+      'emerald-gold': {
+        name: 'Emerald/Gold',
+        isDark: true,
+        vars: {
+          '--bg-gradient': 'linear-gradient(135deg,#022c22 0%,#064e3b 60%,#065f46 100%)',
+          '--text': '#ecfdf5',
+          '--accent-text': '#f0c475',
+          '--nav-bg': '#064e3b',
+          '--nav-border': '#d4a24c',
+          '--nav-text': '#ecfdf5',
+          '--nav-hover-bg': '#065f46',
+          '--nav-active-bg': '#0b3d31',
+          '--nav-active-text': '#f0c475',
+          '--prose-text': '#a7f3d0',
+          '--prose-headings': '#f0c475'
+        },
+        rootClass: 'theme-emerald-gold'
+      }
+    };
+
+    const THEME_KEYS = ['newspaper','emerald-paper','cyber-blue','emerald-gold'];
+    const root = document.documentElement;
+    const storageKey = 'cr_theme_v2';
+
+    function applyTheme(key){
+      const def = THEMES[key] || THEMES['newspaper'];
+      // reset classes + inline styles
+      root.className = '';
+      root.style.cssText = '';
+      // apply CSS vars
+      for(const [k,v] of Object.entries(def.vars)){ root.style.setProperty(k,v); }
+      // class for font + any theme-specific tweaks
+      if(def.rootClass) root.classList.add(def.rootClass);
+      // dark mode class for Tailwind typography invert
+      if(def.isDark) root.classList.add('dark');
+      localStorage.setItem(storageKey, key);
+      // Re-paint prose invert based on dark
+      paintContent();
+    }
+
+    function nextTheme(){
+      const cur = localStorage.getItem(storageKey) || THEME_KEYS[0];
+      const idx = (THEME_KEYS.indexOf(cur)+1) % THEME_KEYS.length;
+      applyTheme(THEME_KEYS[idx]);
+    }
+
+    document.getElementById('theme-switcher-btn').onclick = nextTheme;
+
+    /* -------------------- APP (unchanged contract) -------------------- */
+    let masterLibrary=null,sortedLibraryIds=null,currentLibraryId=null;
+    let libraryData=null,sortedTopicIds=null,currentTopicId=null,currentArticleId=null;
+
+    const hdr = document.getElementById('hdr');
+    const switchers = document.getElementById('switchers');
+    const nav = document.getElementById('article-nav');
+    const content = document.getElementById('content');
+
+    const looksLikeTopic = o => o && typeof o === 'object' && ('categories' in o || 'title' in o);
+
+    const buildLibrarySwitch = () => !sortedLibraryIds || sortedLibraryIds.length < 2 ? '' : `
+      <div class="nav-container">
+        <select id="library-switcher" class="selectlike w-full">
+          ${sortedLibraryIds.map(id=>{
+            const label=id.replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+            return `<option value="${id}" ${id===currentLibraryId?'selected':''}>${label}</option>`;
+          }).join('')}
+        </select>
+      </div>`;
+
+    const buildTopicSwitch = () => `
+      <div class="nav-container">
+        <select id="topic-switcher" class="selectlike w-full">
+          ${sortedTopicIds.map(tid=>{
+            const t=libraryData[tid];
+            return `<option value="${tid}" ${tid===currentTopicId?'selected':''}>${t.title}</option>`;
+          }).join('')}
+        </select>
+      </div>`;
+
+    const buildNav = (cats,keys) => {
+      let html = '<div class="nav-container"><h3 class="text-accent font-bold mb-2">Select Article:</h3><div class="nav-buttons-wrapper">';
+      keys.forEach(k=>{
+        const a=cats[k];
+        html += `<button class="nav-button mr-2 mb-2 ${k===currentArticleId?'active':''}" data-article-id="${k}">${a.display_name||a.name||k}</button>`;
+        if(a.breakAfter) html+='<div class="flex-break"></div>';
+      });
+      return html + '</div></div>';
+    };
+
+    function paintContent(){
+      // Toggle prose invert class based on theme darkness
+      const isDark = root.classList.contains('dark');
+      content.querySelectorAll('.prose').forEach(el=>{
+        el.classList.remove('prose-invert');
+        if(isDark) el.classList.add('prose-invert');
+      });
+    }
+
+    function render(){
+      if(!libraryData) return;
+
+      sortedTopicIds = Object.keys(libraryData).sort((a,b)=>(libraryData[a].display_order||0)-(libraryData[b].display_order||0));
+      if(!currentTopicId || !libraryData[currentTopicId]) currentTopicId = sortedTopicIds[0];
+      const topic = libraryData[currentTopicId];
+
+      const artKeys = Object.keys(topic.categories||{}).sort((a,b)=>(topic.categories[a].display_order||0)-(topic.categories[b].display_order||0));
+      if(!currentArticleId || !topic.categories[currentArticleId]) currentArticleId = artKeys[0];
+      const art = topic.categories[currentArticleId];
+
+      // Header
+      hdr.innerHTML = `
+        <div class="flex justify-between items-start gap-4">
+          <div>
+            <h1 class="text-3xl font-bold text-accent">${topic.title||''}</h1>
+            ${topic.description?`<p class="mt-2 text-primary/80">${topic.description}</p>`:''}
+          </div>
+        </div>`;
+      document.title = topic.title || 'Adaptive Reader';
+
+      // Switchers
+      switchers.innerHTML = buildLibrarySwitch() + buildTopicSwitch();
+
+      // Article nav
+      nav.innerHTML = buildNav(topic.categories, artKeys);
+
+      // Content
+      const proseCls = 'prose prose-lg max-w-none';
+      content.innerHTML =
+        `<div class="${proseCls}">
+          <h2>${art.name||art.display_name||''}</h2>
+          ${art.introduction?`<p class="lead">${art.introduction}</p>`:''}
+          ${(art.paragraphs||[]).map(p=>`
+            ${p.heading?`<h3>${p.heading}</h3>`:''}
+            ${p.content?`<p>${p.content}</p>`:''}
+          `).join('')}
+        </div>`;
+
+      // Wire events
+      nav.querySelectorAll('.nav-button').forEach(btn => btn.onclick = e => { currentArticleId = e.currentTarget.dataset.articleId; render(); });
+      const ts = document.getElementById('topic-switcher');
+      if(ts) ts.onchange = e => { currentTopicId = e.target.value; currentArticleId = null; render(); };
+      const ls = document.getElementById('library-switcher');
+      if(ls) ls.onchange = e => {
+        currentLibraryId = e.target.value;
+        localStorage.setItem('readerLibraryId', currentLibraryId);
+        libraryData = masterLibrary[currentLibraryId]; currentTopicId = currentArticleId = null; render();
+      };
+
+      // Apply prose invert based on theme
+      paintContent();
+    }
+
+    function init(){
+      // Apply stored/initial theme first to avoid flash
+      applyTheme(localStorage.getItem(storageKey) || 'newspaper');
+
+      let raw=null;
+      const embedded = document.getElementById('app-data').textContent.trim();
+      if(embedded){ raw = JSON.parse(embedded); } else { throw new Error('No JSON in #app-data'); }
+
+      const keys = Object.keys(raw);
+      if(!keys.length) throw new Error('empty data');
+
+      if(looksLikeTopic(raw[keys[0]])){
+        masterLibrary=null; sortedLibraryIds=null; currentLibraryId=null;
+        libraryData = raw;
+      }else{
+        masterLibrary = raw;
+        sortedLibraryIds = keys.sort();
+        currentLibraryId = localStorage.getItem('readerLibraryId');
+        if(!currentLibraryId || !masterLibrary[currentLibraryId]) currentLibraryId = sortedLibraryIds[0];
+        libraryData = masterLibrary[currentLibraryId];
+      }
+      currentTopicId = currentArticleId = null;
+      render();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      try { init(); }
+      catch(err){
+        console.error(err);
+        document.getElementById('content').innerHTML =
+          '<div class="p-4 text-red-500 bg-red-100 rounded"><strong>Error:</strong> Could not load content.</div>';
+      }
+    });
+  </script>
+</body>
+</html>
+
