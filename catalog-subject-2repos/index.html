@@ -18,9 +18,7 @@
       font-size:.85rem; line-height:1; cursor:pointer; user-select:none;
     }
     .chip[aria-pressed="true"]{ background:var(--chip-on-bg); color:#0b1f4f; border-color:var(--chip-on);}
-    .badge{
-      display:inline-block; font-size:.72rem; padding:.15rem .45rem; border-radius:999px; border:1px solid var(--border); color:var(--muted);
-    }
+    .badge{ display:inline-block; font-size:.72rem; padding:.15rem .45rem; border-radius:999px; border:1px solid var(--border); color:var(--muted); }
     .link{color:var(--accent); text-decoration:underline;}
     .grid{display:grid; grid-template-columns:repeat(1,minmax(0,1fr)); gap:1rem;}
     @media(min-width:640px){ .grid{grid-template-columns:repeat(2,minmax(0,1fr));} }
@@ -52,7 +50,7 @@
 
     <section id="results" class="grid"></section>
 
-    <!-- Optional inline fallback: if fetching /apps.json fails, paste your JSON below and keep the tag -->
+    <!-- Inline fallback: paste your JSON here if /apps.json is unavailable -->
     <script id="apps-data" type="application/json">
 [
   { "id": "folio-ntw-hermeneutic", "title": "Folio — Template (CR JSON compatible)", "type": "folio", "subject": "Theology", "url": "https://ewallt.github.io/pocket-deploy/folio-ntw-hermeneutic/" },
@@ -162,19 +160,30 @@
 
   { "id": "city-neighborhoods", "title": "City Neighborhoods", "type": "geography", "subject": "Geography", "url": "https://city-neighborhoods.onrender.com" }
 ]
-
     </script>
   </main>
 
   <script>
   (function(){
-    const state = { data: [], search: "", activeSubjects: new Set() }; // empty set = All
+    const state = { data: [], search: "", activeSubjects: new Set() };
 
-    // ----- Subject mapping & heuristics -----
+    // Subject normalization map
+    const SUBJECT_LABEL = {
+      theology:"Theology", rationality:"Rationality", history:"History",
+      warfare:"Warfare", misc:"Misc", "math/physics":"Math/Physics",
+      interactive:"Interactive", geography:"Geography"
+    };
+
+    // Type -> readable
+    function typeLabel(t){
+      const m={cr:"Colorful Reader", ccr:"Composite CR", ppl:"Perplexity View", chr:"Chronicle", ar:"Adaptive Reader", hr:"History Report", br:"Battle Report", ic:"Idea Comparator", tr:"Toolkit/Playbook", dashboard:"Dashboard", misc:"Misc", otf:"One-off/Essay", folio:"Template", theology:"Theology", essay:"Essay", mathphysics:"Math/Physics", history:"History", geography:"Geography", interactive:"Interactive"};
+      return m[t] || (t ? (t[0].toUpperCase()+t.slice(1)) : "");
+    }
+
+    // Explicit overrides (IDs) when JSON lacks a subject
     const OVERRIDE = new Map(Object.entries({
-      // Theology dashboards & items
-      "dashboard-ppl-gospel":"theology",
-      "otf-ntw-hermeneutic":"theology",
+      // Theology
+      "dashboard-ppl-gospel":"theology", "otf-ntw-hermeneutic":"theology",
       "ar-theology":"theology","ar-boyd":"theology","ar-cslewis":"theology",
       "ar-sda-gospel":"theology","ar-cruciform-academic":"theology","ar-cruciform-pastoral":"theology",
       "ppl-hays-gospel":"theology","ppl-moltmann-gospel":"theology","ppl-ntwright-gospel":"theology",
@@ -183,9 +192,8 @@
       "cr-maxwell-p":"theology","cr-boyd-p":"theology","cr-wieland-p":"theology","cr-song-of-Moses":"theology",
       "abrahamic-covenant":"theology","otf-typology":"theology","db-red-sea":"theology",
 
-      // Rationality / cognitive toolkit
-      "dashboard-cognitive-toolkit":"rationality","dashboard-wisdom-of-crowds":"rationality",
-      "dashboard-parasitic-mind":"rationality",
+      // Rationality
+      "dashboard-cognitive-toolkit":"rationality","dashboard-wisdom-of-crowds":"rationality","dashboard-parasitic-mind":"rationality",
       "hr-cognitive-bias-history":"rationality","chr-cognitive-bias-codex":"rationality","cr-architects-of-mind":"rationality",
       "tr-rationality-playbook":"rationality","tr-team-decision-playbook":"rationality","tr-critical-thinker-playbook":"rationality",
       "hr-wisdom-of-crowds-history":"rationality","chr-wisdom-of-crowds":"rationality","cr-wisdom-of-crowds":"rationality",
@@ -194,26 +202,47 @@
       "ic-currents":"rationality","ic-urbanism":"rationality",
 
       // History
-      "dashboard-ww2-why":"history",
-      "hr-roman-emperor":"history","hr-apollo":"history","hr-ai":"history","hr-ai-papers":"history",
+      "dashboard-ww2-why":"history","hr-roman-emperor":"history","hr-apollo":"history","hr-ai":"history","hr-ai-papers":"history",
       "ar-piracy":"history","ar-atomic-age":"history","ar-boyhood":"history",
 
       // Warfare
       "br-bulge":"warfare","br-d-day":"warfare","br-midway":"warfare","br-waterloo":"warfare","br-gettysburg":"warfare",
 
-      // Misc (composite/main dashboards, tools, template, baking)
-      "dashboard":"misc","dashboard-composite":"misc",
-      "tr-traffic-dashboard":"misc","tr-aging-dashboard":"misc",
-      "ar-baking":"misc","quiz-app":"misc","folio-ntw-hermeneutic":"misc"
+      // Math/Physics
+      "tr-traffic-dashboard":"math/physics","math-logic":"math/physics","physics-revolution":"math/physics","math-physics":"math/physics",
+
+      // Interactive
+      "hero-journey":"interactive","seventies-trivia":"interactive","sixties-trivia":"interactive",
+
+      // Geography
+      "city-neighborhoods":"geography",
+
+      // Misc
+      "dashboard":"misc","dashboard-composite":"misc","tr-aging-dashboard":"misc","ar-baking":"misc","quiz-app":"misc","folio-ntw-hermeneutic":"misc","dashboard-spas":"misc","plugins-api":"misc","non-violent":"theology"
     }));
 
-    function subjectOf(app){
-      if(OVERRIDE.has(app.id)) return OVERRIDE.get(app.id);
+    function esc(s){return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
 
+    function normalizeSubject(raw){
+      if(!raw) return "";
+      const s = String(raw).trim().toLowerCase();
+      // map common variants to our keys
+      if(s==="math/physics"||s==="mathphysics"||s==="math-physics") return "math/physics";
+      return s;
+    }
+
+    function subjectOf(app){
+      // Prefer explicit JSON subject if present
+      if(app.subject){
+        const ns = normalizeSubject(app.subject);
+        if(SUBJECT_LABEL[ns]) return ns;
+      }
+      // Then ID overrides
+      if(OVERRIDE.has(app.id)) return OVERRIDE.get(app.id);
+      // Heuristics (last resort)
       const id=(app.id||"").toLowerCase();
       const title=(app.title||"").toLowerCase();
       const has=(s)=>id.includes(s)||title.includes(s);
-
       if(id.startsWith("ppl-")||id.startsWith("chr-")) return "theology";
       if(id.startsWith("tr-")||has("bias")||has("wisdom of crowds")) return "rationality";
       if(id.startsWith("hr-")||has("wwii")||has("roman")||has("apollo")) return "history";
@@ -221,21 +250,13 @@
       if(id.startsWith("dashboard-")){
         if(has("gospel")) return "theology";
         if(has("cognitive")||has("wisdom")) return "rationality";
-        if(has("ww2")) return "history";
+        if(has("ww2")||has("wwii")) return "history";
         return "misc";
       }
       return "misc";
     }
 
-    // ----- Labels -----
-    const SUBJECT_LABEL = {theology:"Theology", rationality:"Rationality", history:"History", warfare:"Warfare", misc:"Misc"};
-    function typeLabel(t){
-      const m={cr:"Colorful Reader",ccr:"Composite CR",ppl:"Perplexity View",chr:"Chronicle",ar:"Adaptive Reader",hr:"History Report",br:"Battle Report",ic:"Idea Comparator",tr:"Toolkit/Playbook",dashboard:"Dashboard",misc:"Misc",otf:"One-off/Essay",folio:"Template"};
-      return m[t]||t?.toUpperCase()||"";
-    }
-    function esc(s){return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
-
-    // ----- Persistence -----
+    // Persistence
     const LS_KEY = "apps_catalog_subject_state_v1";
     function loadPersist(){
       try{
@@ -249,7 +270,7 @@
       localStorage.setItem(LS_KEY, JSON.stringify({activeSubjects:[...state.activeSubjects], search:state.search}));
     }
 
-    // ----- Data loading -----
+    // Data loading
     async function loadData(){
       const candidates=["./apps.json","../apps.json","../../apps.json","/apps.json"];
       for(const url of candidates){
@@ -258,7 +279,6 @@
           if(res.ok){ const j=await res.json(); if(Array.isArray(j)) return j; }
         }catch(_){}
       }
-      // inline fallback
       const island=document.getElementById("apps-data");
       if(island && island.textContent.trim()){
         try{ const j=JSON.parse(island.textContent); if(Array.isArray(j)) return j; }catch(_){}
@@ -266,13 +286,13 @@
       throw new Error("Unable to load apps.json");
     }
 
-    // ----- DOM refs -----
+    // DOM refs
     const chipsEl=document.getElementById("chips");
     const resultsEl=document.getElementById("results");
     const countsEl=document.getElementById("counts");
     const qEl=document.getElementById("q");
 
-    // ----- UI builders -----
+    // Build subject chips
     function buildSubjectChips(data){
       chipsEl.innerHTML="";
       const allBtn=document.createElement("button");
@@ -282,11 +302,10 @@
       allBtn.innerHTML=`<span>All</span><span class="badge">${data.length}</span>`;
       chipsEl.appendChild(allBtn);
 
-      // counts
       const counts={};
       for(const item of data){ const s=subjectOf(item); counts[s]=(counts[s]||0)+1; }
 
-      const order=["theology","rationality","history","warfare","misc"];
+      const order=["theology","rationality","history","warfare","math/physics","interactive","geography","misc"];
       for(const s of order){
         if(!counts[s]) continue;
         const btn=document.createElement("button");
@@ -308,7 +327,7 @@
         return (item.title||"").toLowerCase().includes(q) || (item.id||"").toLowerCase().includes(q);
       });
 
-      // sort by subject, then title
+      // sort by subject label, then title
       filtered.sort((a,b)=>{
         const sa=SUBJECT_LABEL[subjectOf(a)]||"Misc";
         const sb=SUBJECT_LABEL[subjectOf(b)]||"Misc";
@@ -318,7 +337,8 @@
 
       resultsEl.innerHTML="";
       for(const app of filtered){
-        const subj = SUBJECT_LABEL[subjectOf(app)] || "Misc";
+        const subjKey = subjectOf(app);
+        const subj = SUBJECT_LABEL[subjKey] || "Misc";
         const card=document.createElement("a");
         card.href=app.url; card.target="_blank"; card.rel="noopener"; card.className="card block";
         card.innerHTML=`
@@ -336,7 +356,6 @@
       }
       countsEl.textContent=`${filtered.length} shown`;
 
-      // refresh chip states
       chipsEl.querySelectorAll(".chip").forEach(ch=>{
         const s=ch.dataset.subject;
         const on = s ? state.activeSubjects.has(s) : (state.activeSubjects.size===0);
@@ -344,7 +363,7 @@
       });
     }
 
-    // ----- Events -----
+    // Events
     chipsEl.addEventListener("click",(e)=>{
       const btn=e.target.closest(".chip"); if(!btn) return;
       const s=btn.dataset.subject;
@@ -358,7 +377,7 @@
       savePersist(); apply();
     });
 
-    // ----- Init -----
+    // Init
     (async function init(){
       try{
         loadPersist();
@@ -378,4 +397,3 @@
   </script>
 </body>
 </html>
-
