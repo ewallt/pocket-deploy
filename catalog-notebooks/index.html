@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="theme-newspaper">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -12,28 +12,25 @@
     }
     body{background:var(--bg); color:var(--text);}
     .panel{background:var(--panel); border:1px solid var(--border); border-radius:12px;}
-    .chip{
-      display:inline-flex; align-items:center; gap:.5rem; padding:.35rem .7rem; border-radius:999px;
+    .chip{display:inline-flex; align-items:center; gap:.5rem; padding:.35rem .7rem; border-radius:999px;
       border:1px solid var(--chip-border); background:var(--chip-bg); color:var(--chip-text);
-      font-size:.85rem; line-height:1; cursor:pointer; user-select:none;
-    }
+      font-size:.85rem; line-height:1; cursor:pointer; user-select:none;}
     .chip[aria-pressed="true"]{ background:var(--chip-on-bg); color:#0b1f4f; border-color:var(--chip-on);}
     .badge{display:inline-block; font-size:.72rem; padding:.15rem .45rem; border-radius:999px; border:1px solid var(--border); color:var(--muted);}
-    .link{color:var(--accent); text-decoration:underline;}
     .grid{display:grid; grid-template-columns:repeat(1,minmax(0,1fr)); gap:1rem;}
     @media(min-width:640px){ .grid{grid-template-columns:repeat(2,minmax(0,1fr));} }
     @media(min-width:1024px){ .grid{grid-template-columns:repeat(3,minmax(0,1fr));} }
     .card{padding:1rem; border:1px solid var(--border); border-radius:10px; background:#fff; transition:box-shadow .15s, transform .15s;}
     .card:hover{ box-shadow:0 8px 22px rgba(2,6,23,.06); transform:translateY(-1px); }
     .muted{color:var(--muted);}
-    .sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;}
     .need-link{background-image:linear-gradient(90deg,#fff 0 60%, #fef3c7 60%); border-color:#fde68a;}
+    .sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;}
   </style>
 </head>
 <body class="antialiased">
   <header class="max-w-6xl mx-auto px-4 pt-6 pb-2">
     <h1 class="text-2xl font-bold">Notebooks Catalog</h1>
-    <p class="muted mt-1 text-sm">Filter by <strong>subject</strong> or search by title/id. Tap a card to open the notebook.</p>
+    <p class="muted mt-1 text-sm">Filter by subject or search by title/id. Tap a card to open the notebook.</p>
   </header>
 
   <main class="max-w-6xl mx-auto px-4 pb-24">
@@ -51,7 +48,7 @@
 
     <section id="results" class="grid"></section>
 
-    <!-- Inline fallback data island. You can also load /notebooks.json at the repo root. -->
+    <!-- INLINE DATA ONLY (no external fetch) -->
     <script id="notebooks-data" type="application/json">
     [
       {"title":"Jungian Archetypes: Exploring the Collective Unconscious","subject":"Psychology"},
@@ -86,8 +83,7 @@
       {"title":"Great Thinkers and Ideas","subject":"Philosophy"},
       {"title":"Scientific Revolution","subject":"History"},
       {"title":"A Nobel Prize for Climate","subject":"Science"},
-      {"title":"Moral Vision and Faith in the New Testament","subject":"Theology",
-       "id":"64b953b5-5e31-4da4-badb-950084223ed0"},  <!-- prefilled from your message -->
+      {"title":"Moral Vision and Faith in the New Testament","subject":"Theology","id":"64b953b5-5e31-4da4-badb-950084223ed0"},
       {"title":"Idea Pathogens: Cultural Epidemiology and Epistemic Health","subject":"Rationality"},
       {"title":"Conversations About God: Atonement, Sin, and Grace","subject":"Theology"},
       {"title":"Ellen G. White’s Writings and Seventh-day Adventist Beliefs","subject":"Theology"},
@@ -104,224 +100,168 @@
 
   <script>
   (function(){
-    const state = { data: [], search: "", activeSubjects: new Set() }; // empty = All
     const SUBJECT_LABEL = {
-      Theology:"Theology", History:"History", Psychology:"Psychology", Philosophy:"Philosophy",
-      Science:"Science", Art:"Art", Rationality:"Rationality", Misc:"Misc"
+      Theology:"Theology", History:"History", Psychology:"Psychology",
+      Philosophy:"Philosophy", Science:"Science", Art:"Art",
+      Rationality:"Rationality", Misc:"Misc"
     };
-
-    // ---- small utils ----
     const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-    function esc(s){return String(s||"").replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
-    function slugify(s){
-      return (s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")
-        .replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"");
-    }
-    function withDerivedId(item){
-      if(item.id && item.id.trim()) return item;
-      return {...item, id: slugify(item.title||"notebook")};
-    }
-    function normalizeSubject(s){ return SUBJECT_LABEL[s] ? s : "Misc"; }
 
-    // ---- persistence (state + user-supplied links) ----
-    const LS_KEY = "notebooks_catalog_subject_state_v1";
-    const LS_LINKS = "notebooks_catalog_links_v1"; // map of itemKey -> {url|id}
-    function loadPersist(){
-      try{
-        const raw=localStorage.getItem(LS_KEY); if(raw){
-          const obj=JSON.parse(raw);
-          if(Array.isArray(obj.activeSubjects)) state.activeSubjects=new Set(obj.activeSubjects);
-          if(typeof obj.search==="string") state.search=obj.search;
-        }
-      }catch(_){}
+    const LS_STATE = "notebooks_catalog_subject_state_v1";
+    const LS_LINKS = "notebooks_catalog_links_v1"; // key -> urlOrId
+
+    function esc(s){return String(s||"").replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+    function slugify(s){return (s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"");}
+
+    function withDerivedId(item){return (item.id && item.id.trim()) ? item : {...item, id: slugify(item.title||"notebook")};}
+    function normalizeSubject(s){return SUBJECT_LABEL[s] ? s : "Misc";}
+
+    function loadDataInline(){
+      const el=document.getElementById("notebooks-data");
+      const txt=(el && el.textContent)||"[]";
+      let j=[]; try{ j=JSON.parse(txt);}catch(_){}
+      return j.map(r=>({ ...withDerivedId(r), subject: normalizeSubject(r.subject) }));
     }
-    function savePersist(){
-      localStorage.setItem(LS_KEY, JSON.stringify({activeSubjects:[...state.activeSubjects], search:state.search}));
+
+    function loadState(){
+      let st={search:"", activeSubjects:[]};
+      try{ st = JSON.parse(localStorage.getItem(LS_STATE)||"{}") || st; }catch(_){}
+      return {search: st.search||"", active: new Set(st.activeSubjects||[])};
     }
-    function loadUserLinks(){
-      try{ return JSON.parse(localStorage.getItem(LS_LINKS)||"{}"); }catch(_){ return {}; }
+    function saveState(search, activeSet){
+      localStorage.setItem(LS_STATE, JSON.stringify({search, activeSubjects:[...activeSet]}));
     }
-    function saveUserLink(key, linkOrId){
-      const m = loadUserLinks();
-      // Accept full URL or bare UUID
-      if(!linkOrId) return;
-      linkOrId = String(linkOrId).trim();
-      if(!/^https?:\/\//i.test(linkOrId) && !uuidRe.test(linkOrId)) return;
-      m[key] = linkOrId;
+    function loadLinks(){ try{ return JSON.parse(localStorage.getItem(LS_LINKS)||"{}"); }catch(_){ return {}; } }
+    function saveLink(key, urlOrId){
+      if(!urlOrId) return;
+      urlOrId=String(urlOrId).trim();
+      if(!/^https?:\/\//i.test(urlOrId) && !uuidRe.test(urlOrId)) return;
+      const m=loadLinks(); m[key]=urlOrId;
       localStorage.setItem(LS_LINKS, JSON.stringify(m));
     }
 
-    // ---- data loading ----
-    async function loadData(){
-      const candidates=["./notebooks.json","../notebooks.json","../../notebooks.json","/notebooks.json"];
-      for(const url of candidates){
-        try{
-          const res=await fetch(url,{cache:"no-store"});
-          if(res.ok){
-            const j=await res.json();
-            if(Array.isArray(j)) return j;
-          }
-        }catch(_){}
+    function computeHref(nb, savedMap){
+      if(nb.url && /^https?:\/\//i.test(nb.url)) return nb.url;
+      const key=(nb.title||"")+"||"+(nb.id||"");
+      const saved=savedMap[key];
+      if(saved){
+        if(/^https?:\/\//i.test(saved)) return saved;
+        if(uuidRe.test(saved)) return "https://notebooklm.google.com/notebook/"+saved;
       }
-      const island=document.getElementById("notebooks-data");
-      if(island && island.textContent.trim()){
-        try{
-          const j=JSON.parse(island.textContent);
-          if(Array.isArray(j)) return j;
-        }catch(_){}
-      }
-      throw new Error("Unable to load notebooks.json");
+      if(nb.id && uuidRe.test(nb.id)) return "https://notebooklm.google.com/notebook/"+nb.id;
+      return "";
     }
 
-    // ---- DOM refs ----
+    // DOM refs
     const chipsEl=document.getElementById("chips");
     const resultsEl=document.getElementById("results");
     const countsEl=document.getElementById("counts");
     const qEl=document.getElementById("q");
 
-    // ---- UI builders ----
-    function buildSubjectChips(data){
+    // build chips
+    function buildSubjectChips(data, active){
       chipsEl.innerHTML="";
-      const allBtn=document.createElement("button");
-      allBtn.className="chip";
-      allBtn.dataset.subject="";
-      allBtn.setAttribute("aria-pressed", state.activeSubjects.size===0 ? "true":"false");
-      allBtn.innerHTML=`<span>All</span><span class="badge">${data.length}</span>`;
-      chipsEl.appendChild(allBtn);
-
       const counts={};
-      for(const item of data){
-        const s=item.subject||"Misc";
-        counts[s]=(counts[s]||0)+1;
-      }
-      const order=["Theology","History","Psychology","Rationality","Science","Art","Philosophy","Misc"];
-      for(const s of order){
-        if(!counts[s]) continue;
+      data.forEach(d=>{counts[d.subject]=(counts[d.subject]||0)+1;});
+      const total=data.length;
+
+      const all=document.createElement("button");
+      all.className="chip"; all.dataset.subject="";
+      all.setAttribute("aria-pressed", active.size===0?"true":"false");
+      all.innerHTML=`<span>All</span><span class="badge">${total}</span>`;
+      chipsEl.appendChild(all);
+
+      ["Theology","History","Psychology","Rationality","Science","Art","Philosophy","Misc"].forEach(s=>{
+        if(!counts[s]) return;
         const btn=document.createElement("button");
-        btn.className="chip";
-        btn.dataset.subject=s;
-        btn.setAttribute("aria-pressed", state.activeSubjects.has(s)? "true":"false");
-        btn.innerHTML=`<span>${SUBJECT_LABEL[s]}</span><span class="badge">${counts[s]}</span>`;
+        btn.className="chip"; btn.dataset.subject=s;
+        btn.setAttribute("aria-pressed", active.has(s)?"true":"false");
+        btn.innerHTML=`<span>${s}</span><span class="badge">${counts[s]}</span>`;
         chipsEl.appendChild(btn);
-      }
+      });
     }
 
-    function computeHref(nb, userLinks){
-      // priority: explicit url -> user-saved -> uuid id -> none
-      if(nb.url && /^https?:\/\//i.test(nb.url)) return nb.url;
-      const key = (nb.title||"") + "||" + (nb.id||"");
-      const saved = userLinks[key];
-      if(saved){
-        if(/^https?:\/\//i.test(saved)) return saved;
-        if(uuidRe.test(saved)) return "https://notebooklm.google.com/notebook/" + saved;
-      }
-      if(nb.id && uuidRe.test(nb.id)) return "https://notebooklm.google.com/notebook/" + nb.id;
-      return ""; // missing
+    function openSafe(url){
+      // fallback for iOS
+      const w=window.open(url,"_blank","noopener,noreferrer");
+      if(!w) location.href=url;
     }
+
+    // render
+    const data = loadDataInline();
+    const st = loadState();
+    qEl.value = st.search;
+    buildSubjectChips(data, st.active);
 
     function apply(){
-      const userLinks = loadUserLinks();
-      const q=(state.search||"").toLowerCase().trim();
-      const filtered = state.data.filter(item=>{
-        const subj=item.subject||"Misc";
-        const ok = state.activeSubjects.size===0 || state.activeSubjects.has(subj);
-        if(!ok) return false;
+      const savedMap=loadLinks();
+      const q=(qEl.value||"").toLowerCase().trim();
+      const filtered = data.filter(d=>{
+        if(st.active.size && !st.active.has(d.subject)) return false;
         if(!q) return true;
-        return (item.title||"").toLowerCase().includes(q) || (item.id||"").toLowerCase().includes(q);
-      });
-
-      filtered.sort((a,b)=>{
-        const sa=SUBJECT_LABEL[a.subject]||"Misc";
-        const sb=SUBJECT_LABEL[b.subject]||"Misc";
-        if(sa!==sb) return sa.localeCompare(sb);
-        return (a.title||"").localeCompare(b.title||"");
-      });
+        return (d.title||"").toLowerCase().includes(q) || (d.id||"").toLowerCase().includes(q);
+      }).sort((a,b)=> (a.subject.localeCompare(b.subject)) || (a.title||"").localeCompare(b.title||""));
 
       resultsEl.innerHTML="";
-      for(const nb of filtered){
-        const subj = SUBJECT_LABEL[nb.subject] || "Misc";
-        const key = (nb.title||"") + "||" + (nb.id||"");
-        const href = computeHref(nb, userLinks);
-        const missing = !href;
-        const a = document.createElement("a");
-        a.className = "card block" + (missing ? " need-link":"");
-        a.href = href || "#";
-        a.target = href ? "_blank" : "_self";
-        a.rel = href ? "noopener" : "";
-        a.dataset.key = key;
+      filtered.forEach(nb=>{
+        const key=(nb.title||"")+"||"+(nb.id||"");
+        const href=computeHref(nb, savedMap);
+        const missing=!href;
+        const card=document.createElement("div");
+        card.className="card"+(missing?" need-link":"");
 
-        a.innerHTML = `
+        card.innerHTML=`
           <div class="flex items-start justify-between gap-3">
             <h3 class="text-base font-semibold leading-tight">${esc(nb.title||nb.id)}</h3>
-            <div class="flex gap-2 items-center">
-              <span class="badge">${esc(subj)}</span>
-            </div>
+            <span class="badge">${nb.subject}</span>
           </div>
           <p class="muted mt-1 text-sm">${esc(nb.id||"")}</p>
-          <p class="mt-2 text-sm">
-            ${missing ? '<span class="link">Add link</span> →' : '<span class="link">Open</span> →'}
-          </p>
+          <button class="mt-2 text-sm underline text-blue-600">${missing?"Add link":"Open"} →</button>
         `;
 
-        // If missing, intercept click to prompt for URL/ID and save
-        if(missing){
-          a.addEventListener("click", (e)=>{
-            e.preventDefault();
-            const input = prompt("Paste the NotebookLM URL or the notebook ID (UUID).");
-            if(input && input.trim()){
-              saveUserLink(key, input.trim());
+        const btn=card.querySelector("button");
+        btn.addEventListener("click",(e)=>{
+          e.stopPropagation();
+          if(missing){
+            const val=prompt("Paste the NotebookLM URL or the notebook ID (UUID):");
+            if(val && val.trim()){
+              saveLink(key, val.trim());
               apply();
             }
-          });
-        }
-        resultsEl.appendChild(a);
-      }
-      countsEl.textContent=`${filtered.length} shown`;
+          }else{
+            openSafe(href);
+          }
+        });
+        card.addEventListener("click",()=>{ btn.click(); });
+
+        resultsEl.appendChild(card);
+      });
+
+      countsEl.textContent = `${filtered.length} shown`;
 
       // refresh chip states
       chipsEl.querySelectorAll(".chip").forEach(ch=>{
         const s=ch.dataset.subject;
-        const on = s ? state.activeSubjects.has(s) : (state.activeSubjects.size===0);
-        ch.setAttribute("aria-pressed", on ? "true":"false");
+        ch.setAttribute("aria-pressed", s ? (st.active.has(s)?"true":"false") : (st.active.size===0?"true":"false"));
       });
     }
 
-    // ---- events ----
+    // events
     chipsEl.addEventListener("click",(e)=>{
-      const btn=e.target.closest(".chip"); if(!btn) return;
-      const s=btn.dataset.subject;
-      if(!s){ state.activeSubjects.clear(); }
-      else{
-        state.activeSubjects.has(s) ? state.activeSubjects.delete(s) : state.activeSubjects.add(s);
-      }
-      savePersist(); apply();
+      const b=e.target.closest(".chip"); if(!b) return;
+      const s=b.dataset.subject;
+      if(!s) st.active.clear();
+      else st.active.has(s) ? st.active.delete(s) : st.active.add(s);
+      saveState(qEl.value, st.active);
+      apply();
     });
-
     qEl.addEventListener("input", ()=>{
-      state.search = qEl.value || "";
-      savePersist(); apply();
+      saveState(qEl.value, st.active);
+      apply();
     });
 
-    // ---- init ----
-    (async function init(){
-      try{
-        loadPersist();
-        const raw = await loadData();
-        state.data = raw.map(r=>{
-          const withId = withDerivedId(r);
-          return { ...withId, subject: normalizeSubject(withId.subject) };
-        });
-        qEl.value = state.search;
-        buildSubjectChips(state.data);
-        apply();
-      }catch(err){
-        resultsEl.innerHTML = `
-          <div class="panel p-6">
-            <h3 class="text-lg font-semibold">Couldn’t load <code>notebooks.json</code></h3>
-            <p class="muted mt-1">Place this file at the repo root and refresh, or paste it in the inline data-island above.</p>
-          </div>`;
-      }
-    })();
+    // initial paint
+    apply();
   })();
   </script>
 </body>
