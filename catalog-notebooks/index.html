@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en" class="theme-newspaper">
 <head>
   <meta charset="utf-8" />
@@ -28,6 +27,7 @@
     .card:hover{ box-shadow:0 8px 22px rgba(2,6,23,.06); transform:translateY(-1px); }
     .muted{color:var(--muted);}
     .sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;}
+    .need-link{background-image:linear-gradient(90deg,#fff 0 60%, #fef3c7 60%); border-color:#fde68a;}
   </style>
 </head>
 <body class="antialiased">
@@ -36,7 +36,7 @@
     <p class="muted mt-1 text-sm">Filter by <strong>subject</strong> or search by title/id. Tap a card to open the notebook.</p>
   </header>
 
- <main class="max-w-6xl mx-auto px-4 pb-24">
+  <main class="max-w-6xl mx-auto px-4 pb-24">
     <section class="panel p-4 sm:p-5 mb-4">
       <div class="flex flex-col sm:flex-row sm:items-center gap-3">
         <div class="flex-1">
@@ -49,101 +49,109 @@
       <div id="chips" class="mt-3 flex flex-wrap gap-2"></div>
     </section>
 
-<section id="results" class="grid"></section>
+    <section id="results" class="grid"></section>
 
-<!-- Optional inline fallback: if fetching /notebooks.json fails, this data-island is used -->
-<script id="notebooks-data" type="application/json">
-[
-  {"title":"Jungian Archetypes: Exploring the Collective Unconscious","subject":"Psychology"},
-  {"title":"Christian Approaches to God, Christ, and Salvation","subject":"Theology"},
-  {"title":"Girard’s Scapegoat Theory and Mimetic Desire","subject":"Theology"},
-  {"title":"The Power of the Cross and Christian Freedom","subject":"Theology"},
-  {"title":"Common Sense: Thomas Paine’s Argument for American Independence","subject":"History"},
-  {"title":"The Fight for the Income Tax","subject":"History"},
-  {"title":"Origins of the Cold War","subject":"History"},
-  {"title":"The Joy of the Spirit: Promise, Redemption, and Victory","subject":"Theology"},
-  {"title":"Understanding Autism Spectrum Disorder","subject":"Psychology"},
-  {"title":"Industrial Progress and Development: A Global Perspective","subject":"History"},
-  {"title":"Roman Innovations: From Cityscapes to Frontier Defenses","subject":"History"},
-  {"title":"Nineteenth-Century Britain: Society, Economy, and Empire","subject":"History"},
-  {"title":"Moltmann’s Theology of the Crucified God","subject":"Theology"},
-  {"title":"Relational Dynamics in Personality Disorders and Abuse","subject":"Psychology"},
-  {"title":"Personality Disorders and Intimate Partner Violence","subject":"Psychology"},
-  {"title":"Moltmann’s Theology: Hope, Suffering, and Liberation","subject":"Theology"},
-  {"title":"The Euphrates, Babylon, and the End Times","subject":"Theology"},
-  {"title":"Behold Your God: Understanding His Character and Actions","subject":"Theology"},
-  {"title":"Studies in the Sanctuary and Temple","subject":"Theology"},
-  {"title":"Airpower Doctrine and Strategic Bombing Debates","subject":"History"},
-  {"title":"Sudden Traffic Jams: Emergence to Impact","subject":"Science"},
-  {"title":"The Everlasting Covenant and Justification by Faith","subject":"Theology"},
-  {"title":"The Nonviolent Atonement: A Theological Odyssey","subject":"Theology"},
-  {"title":"Challenging Violent Conceptions of God and Atonement","subject":"Theology"},
-  {"title":"Movements in Modern Art","subject":"Art"},
-  {"title":"Theology of Peace, Justice, and Reconciliation","subject":"Theology"},
-  {"title":"N.T. Wright’s Theology: A Critical Overview","subject":"Theology"},
-  {"title":"The Renaissance Chronicles","subject":"History"},
-  {"title":"The Global Rivalry: Cold War Conflicts and Ideologies","subject":"History"},
-  {"title":"Great Thinkers and Ideas","subject":"Philosophy"},
-  {"title":"Scientific Revolution","subject":"History"},
-  {"title":"A Nobel Prize for Climate","subject":"Science"},
-  {"title":"Moral Vision and Faith in the New Testament","subject":"Theology"},
-  {"title":"Idea Pathogens: Cultural Epidemiology and Epistemic Health","subject":"Rationality"},
-  {"title":"Conversations About God: Atonement, Sin, and Grace","subject":"Theology"},
-  {"title":"Ellen G. White’s Writings and Seventh-day Adventist Beliefs","subject":"Theology"},
-  {"title":"Sin, not God, destroys","subject":"Theology"},
-  {"title":"Decision Hygiene: Reducing Noise in Judgments","subject":"Rationality"},
-  {"title":"Why the Allies Won World War II","subject":"History"},
-  {"title":"The Divine Democracy: God’s Rule by Love","subject":"Theology"},
-  {"title":"Chrysostom on God’s Patient Cultivation and the Unmasking Cross","subject":"Theology"},
-  {"title":"The Golden Mouth’s Clock: God’s Patient Judgment","subject":"Theology"},
-  {"title":"Divine Governance: Love, Truth, and Free Will","subject":"Theology"}
-]
-</script>
- </main>
+    <!-- Inline fallback data island. You can also load /notebooks.json at the repo root. -->
+    <script id="notebooks-data" type="application/json">
+    [
+      {"title":"Jungian Archetypes: Exploring the Collective Unconscious","subject":"Psychology"},
+      {"title":"Christian Approaches to God, Christ, and Salvation","subject":"Theology"},
+      {"title":"Girard’s Scapegoat Theory and Mimetic Desire","subject":"Theology"},
+      {"title":"The Power of the Cross and Christian Freedom","subject":"Theology"},
+      {"title":"Common Sense: Thomas Paine’s Argument for American Independence","subject":"History"},
+      {"title":"The Fight for the Income Tax","subject":"History"},
+      {"title":"Origins of the Cold War","subject":"History"},
+      {"title":"The Joy of the Spirit: Promise, Redemption, and Victory","subject":"Theology"},
+      {"title":"Understanding Autism Spectrum Disorder","subject":"Psychology"},
+      {"title":"Industrial Progress and Development: A Global Perspective","subject":"History"},
+      {"title":"Roman Innovations: From Cityscapes to Frontier Defenses","subject":"History"},
+      {"title":"Nineteenth-Century Britain: Society, Economy, and Empire","subject":"History"},
+      {"title":"Moltmann’s Theology of the Crucified God","subject":"Theology"},
+      {"title":"Relational Dynamics in Personality Disorders and Abuse","subject":"Psychology"},
+      {"title":"Personality Disorders and Intimate Partner Violence","subject":"Psychology"},
+      {"title":"Moltmann’s Theology: Hope, Suffering, and Liberation","subject":"Theology"},
+      {"title":"The Euphrates, Babylon, and the End Times","subject":"Theology"},
+      {"title":"Behold Your God: Understanding His Character and Actions","subject":"Theology"},
+      {"title":"Studies in the Sanctuary and Temple","subject":"Theology"},
+      {"title":"Airpower Doctrine and Strategic Bombing Debates","subject":"History"},
+      {"title":"Sudden Traffic Jams: Emergence to Impact","subject":"Science"},
+      {"title":"The Everlasting Covenant and Justification by Faith","subject":"Theology"},
+      {"title":"The Nonviolent Atonement: A Theological Odyssey","subject":"Theology"},
+      {"title":"Challenging Violent Conceptions of God and Atonement","subject":"Theology"},
+      {"title":"Movements in Modern Art","subject":"Art"},
+      {"title":"Theology of Peace, Justice, and Reconciliation","subject":"Theology"},
+      {"title":"N.T. Wright’s Theology: A Critical Overview","subject":"Theology"},
+      {"title":"The Renaissance Chronicles","subject":"History"},
+      {"title":"The Global Rivalry: Cold War Conflicts and Ideologies","subject":"History"},
+      {"title":"Great Thinkers and Ideas","subject":"Philosophy"},
+      {"title":"Scientific Revolution","subject":"History"},
+      {"title":"A Nobel Prize for Climate","subject":"Science"},
+      {"title":"Moral Vision and Faith in the New Testament","subject":"Theology",
+       "id":"64b953b5-5e31-4da4-badb-950084223ed0"},  <!-- prefilled from your message -->
+      {"title":"Idea Pathogens: Cultural Epidemiology and Epistemic Health","subject":"Rationality"},
+      {"title":"Conversations About God: Atonement, Sin, and Grace","subject":"Theology"},
+      {"title":"Ellen G. White’s Writings and Seventh-day Adventist Beliefs","subject":"Theology"},
+      {"title":"Sin, not God, destroys","subject":"Theology"},
+      {"title":"Decision Hygiene: Reducing Noise in Judgments","subject":"Rationality"},
+      {"title":"Why the Allies Won World War II","subject":"History"},
+      {"title":"The Divine Democracy: God’s Rule by Love","subject":"Theology"},
+      {"title":"Chrysostom on God’s Patient Cultivation and the Unmasking Cross","subject":"Theology"},
+      {"title":"The Golden Mouth’s Clock: God’s Patient Judgment","subject":"Theology"},
+      {"title":"Divine Governance: Love, Truth, and Free Will","subject":"Theology"}
+    ]
+    </script>
+  </main>
 
- <script>
+  <script>
   (function(){
-    const state = { data: [], search: "", activeSubjects: new Set() }; // empty set = All
-
-    // ---- Helpers ----
+    const state = { data: [], search: "", activeSubjects: new Set() }; // empty = All
     const SUBJECT_LABEL = {
       Theology:"Theology", History:"History", Psychology:"Psychology", Philosophy:"Philosophy",
       Science:"Science", Art:"Art", Rationality:"Rationality", Misc:"Misc"
     };
 
+    // ---- small utils ----
+    const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     function esc(s){return String(s||"").replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
     function slugify(s){
       return (s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")
         .replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"");
     }
-
-    // If id missing, derive from title
     function withDerivedId(item){
       if(item.id && item.id.trim()) return item;
       return {...item, id: slugify(item.title||"notebook")};
     }
+    function normalizeSubject(s){ return SUBJECT_LABEL[s] ? s : "Misc"; }
 
-    // Subject fallback if missing/invalid
-    function normalizeSubject(s){
-      if(SUBJECT_LABEL[s]) return s;
-      return "Misc";
-    }
-
-    // ---- Persistence ----
+    // ---- persistence (state + user-supplied links) ----
     const LS_KEY = "notebooks_catalog_subject_state_v1";
+    const LS_LINKS = "notebooks_catalog_links_v1"; // map of itemKey -> {url|id}
     function loadPersist(){
       try{
-        const raw=localStorage.getItem(LS_KEY); if(!raw) return;
-        const obj=JSON.parse(raw);
-        if(Array.isArray(obj.activeSubjects)) state.activeSubjects=new Set(obj.activeSubjects);
-        if(typeof obj.search==="string") state.search=obj.search;
+        const raw=localStorage.getItem(LS_KEY); if(raw){
+          const obj=JSON.parse(raw);
+          if(Array.isArray(obj.activeSubjects)) state.activeSubjects=new Set(obj.activeSubjects);
+          if(typeof obj.search==="string") state.search=obj.search;
+        }
       }catch(_){}
     }
     function savePersist(){
       localStorage.setItem(LS_KEY, JSON.stringify({activeSubjects:[...state.activeSubjects], search:state.search}));
     }
+    function loadUserLinks(){
+      try{ return JSON.parse(localStorage.getItem(LS_LINKS)||"{}"); }catch(_){ return {}; }
+    }
+    function saveUserLink(key, linkOrId){
+      const m = loadUserLinks();
+      // Accept full URL or bare UUID
+      if(!linkOrId) return;
+      linkOrId = String(linkOrId).trim();
+      if(!/^https?:\/\//i.test(linkOrId) && !uuidRe.test(linkOrId)) return;
+      m[key] = linkOrId;
+      localStorage.setItem(LS_LINKS, JSON.stringify(m));
+    }
 
-    // ---- Data loading ----
+    // ---- data loading ----
     async function loadData(){
       const candidates=["./notebooks.json","../notebooks.json","../../notebooks.json","/notebooks.json"];
       for(const url of candidates){
@@ -186,7 +194,6 @@
         const s=item.subject||"Misc";
         counts[s]=(counts[s]||0)+1;
       }
-
       const order=["Theology","History","Psychology","Rationality","Science","Art","Philosophy","Misc"];
       for(const s of order){
         if(!counts[s]) continue;
@@ -199,7 +206,21 @@
       }
     }
 
+    function computeHref(nb, userLinks){
+      // priority: explicit url -> user-saved -> uuid id -> none
+      if(nb.url && /^https?:\/\//i.test(nb.url)) return nb.url;
+      const key = (nb.title||"") + "||" + (nb.id||"");
+      const saved = userLinks[key];
+      if(saved){
+        if(/^https?:\/\//i.test(saved)) return saved;
+        if(uuidRe.test(saved)) return "https://notebooklm.google.com/notebook/" + saved;
+      }
+      if(nb.id && uuidRe.test(nb.id)) return "https://notebooklm.google.com/notebook/" + nb.id;
+      return ""; // missing
+    }
+
     function apply(){
+      const userLinks = loadUserLinks();
       const q=(state.search||"").toLowerCase().trim();
       const filtered = state.data.filter(item=>{
         const subj=item.subject||"Misc";
@@ -209,7 +230,6 @@
         return (item.title||"").toLowerCase().includes(q) || (item.id||"").toLowerCase().includes(q);
       });
 
-      // sort by subject, then title
       filtered.sort((a,b)=>{
         const sa=SUBJECT_LABEL[a.subject]||"Misc";
         const sb=SUBJECT_LABEL[b.subject]||"Misc";
@@ -220,10 +240,17 @@
       resultsEl.innerHTML="";
       for(const nb of filtered){
         const subj = SUBJECT_LABEL[nb.subject] || "Misc";
-        const card=document.createElement("a");
-        const href = nb.url || "#";
-        card.href=href; card.target=href.startsWith("#")?"_self":"_blank"; card.rel="noopener"; card.className="card block";
-        card.innerHTML=`
+        const key = (nb.title||"") + "||" + (nb.id||"");
+        const href = computeHref(nb, userLinks);
+        const missing = !href;
+        const a = document.createElement("a");
+        a.className = "card block" + (missing ? " need-link":"");
+        a.href = href || "#";
+        a.target = href ? "_blank" : "_self";
+        a.rel = href ? "noopener" : "";
+        a.dataset.key = key;
+
+        a.innerHTML = `
           <div class="flex items-start justify-between gap-3">
             <h3 class="text-base font-semibold leading-tight">${esc(nb.title||nb.id)}</h3>
             <div class="flex gap-2 items-center">
@@ -231,9 +258,23 @@
             </div>
           </div>
           <p class="muted mt-1 text-sm">${esc(nb.id||"")}</p>
-          <p class="mt-2 text-sm"><span class="link">Open</span> →</p>
+          <p class="mt-2 text-sm">
+            ${missing ? '<span class="link">Add link</span> →' : '<span class="link">Open</span> →'}
+          </p>
         `;
-        resultsEl.appendChild(card);
+
+        // If missing, intercept click to prompt for URL/ID and save
+        if(missing){
+          a.addEventListener("click", (e)=>{
+            e.preventDefault();
+            const input = prompt("Paste the NotebookLM URL or the notebook ID (UUID).");
+            if(input && input.trim()){
+              saveUserLink(key, input.trim());
+              apply();
+            }
+          });
+        }
+        resultsEl.appendChild(a);
       }
       countsEl.textContent=`${filtered.length} shown`;
 
@@ -245,7 +286,7 @@
       });
     }
 
-    // ---- Events ----
+    // ---- events ----
     chipsEl.addEventListener("click",(e)=>{
       const btn=e.target.closest(".chip"); if(!btn) return;
       const s=btn.dataset.subject;
@@ -261,12 +302,11 @@
       savePersist(); apply();
     });
 
-    // ---- Init ----
+    // ---- init ----
     (async function init(){
       try{
         loadPersist();
         const raw = await loadData();
-        // normalize: ensure id + subject
         state.data = raw.map(r=>{
           const withId = withDerivedId(r);
           return { ...withId, subject: normalizeSubject(withId.subject) };
@@ -284,8 +324,5 @@
     })();
   })();
   </script>
-
 </body>
 </html>
-
-
