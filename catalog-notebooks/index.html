@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Notebook Catalog</title>
+  <title>NotebookLM — Notebooks Catalog</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     :root{
@@ -18,7 +18,7 @@
       font-size:.85rem; line-height:1; cursor:pointer; user-select:none;
     }
     .chip[aria-pressed="true"]{ background:var(--chip-on-bg); color:#0b1f4f; border-color:var(--chip-on);}
-    .badge{display:inline-block; font-size:.72rem; padding:.15rem .45rem; border-radius:999px; border:1px solid var(--border); color:var(--muted);}
+    .badge{ display:inline-block; font-size:.72rem; padding:.15rem .45rem; border-radius:999px; border:1px solid var(--border); color:var(--muted);}
     .link{color:var(--accent); text-decoration:underline;}
     .grid{display:grid; grid-template-columns:repeat(1,minmax(0,1fr)); gap:1rem;}
     @media(min-width:640px){ .grid{grid-template-columns:repeat(2,minmax(0,1fr));} }
@@ -26,18 +26,13 @@
     .card{padding:1rem; border:1px solid var(--border); border-radius:10px; background:#fff; transition:box-shadow .15s, transform .15s;}
     .card:hover{ box-shadow:0 8px 22px rgba(2,6,23,.06); transform:translateY(-1px); }
     .muted{color:var(--muted);}
-    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
-    .pill{display:inline-block;border:1px solid var(--border);border-radius:999px;padding:.15rem .5rem;font-size:.72rem;color:var(--muted);}
-    details.sources summary{cursor:pointer}
-    code.inline{background:#f1f5f9;border:1px solid #e2e8f0;border-radius:6px;padding:.05rem .35rem}
+    .sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;}
   </style>
 </head>
 <body class="antialiased">
   <header class="max-w-6xl mx-auto px-4 pt-6 pb-2">
-    <h1 class="text-2xl font-bold">Notebook Catalog</h1>
-    <p class="muted mt-1 text-sm">
-      Filter by <strong>subject</strong> or search by title/tags. Tap a card to open the notebook or linked app.
-    </p>
+    <h1 class="text-2xl font-bold">NotebookLM — Notebooks Catalog</h1>
+    <p class="muted mt-1 text-sm">Filter by <strong>subject</strong> or search by title/id. Tap a card to open the notebook or linked app.</p>
   </header>
 
   <main class="max-w-6xl mx-auto px-4 pb-24">
@@ -45,7 +40,7 @@
       <div class="flex flex-col sm:flex-row sm:items-center gap-3">
         <div class="flex-1">
           <label for="q" class="sr-only">Search</label>
-          <input id="q" type="search" inputmode="search" placeholder="Search notebooks… (title, tags, id)"
+          <input id="q" type="search" inputmode="search" placeholder="Search notebooks… (title or id)"
                  class="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
         </div>
         <div class="text-sm muted shrink-0" id="counts">0 shown</div>
@@ -55,105 +50,106 @@
 
     <section id="results" class="grid"></section>
 
-    <!-- Inline data-island: edit this JSON in-place. No network fetch is required. -->
-    <script id="notebooks-data" type="application/json">
-{
-  "meta": {
-    "schema_version": "1.0",
-    "description": "Catalog of NotebookLM notebooks (and related web apps)."
-  },
-  "notebooks": [
-    {
-      "id": "nb-theology-centrality-cross",
-      "title": "Centrality of the Cross",
-      "platform": "notebooklm",
-      "subject": "Theology",
-      "tags": ["gospel", "atonement", "discipleship"],
-      "viewer_url": "https://centrality-of-the-cross.onrender.com",
-      "app_url": "https://centrality-of-the-cross.onrender.com",
-      "notes": "Used as source basis for web app. Strong primary sources.",
-      "notable_sources": [
-        {"title": "Gospel Primers", "url": "https://example.com/gospel-primers", "note": "Overview framing"},
-        {"title": "Pauline Epistles Survey", "url": "https://example.com/pauline", "note": "Textual anchors"}
-      ]
-    },
-    {
-      "id": "nb-theology-sermon-mount",
-      "title": "Sermon on the Mount",
-      "platform": "notebooklm",
-      "subject": "Theology",
-      "tags": ["ethics", "kingdom", "beatitudes"],
-      "viewer_url": "https://sermon-on-the-mount.onrender.com",
-      "app_url": "https://sermon-on-the-mount.onrender.com",
-      "notes": "",
-      "notable_sources": []
-    },
-    {
-      "id": "nb-mathphysics-logic",
-      "title": "Math Logic",
-      "platform": "notebooklm",
-      "subject": "Math/Physics",
-      "tags": ["logic", "proof", "foundations"],
-      "viewer_url": "https://math-logic.onrender.com",
-      "app_url": "https://math-logic.onrender.com",
-      "notes": "Basis for logic section in web app.",
-      "notable_sources": [
-        {"title": "Gentzen Natural Deduction", "url": "https://example.com/gentzen", "note": "Reference"}
-      ]
-    },
-    {
-      "id": "nb-mathphysics-physics-revolution",
-      "title": "Physics Revolution",
-      "platform": "notebooklm",
-      "subject": "Math/Physics",
-      "tags": ["relativity", "quantum", "history-of-science"],
-      "viewer_url": "https://physics-revolution.onrender.com",
-      "app_url": "https://physics-revolution.onrender.com",
-      "notes": "",
-      "notable_sources": []
-    },
-    {
-      "id": "nb-history-ww2",
-      "title": "World War II — Overview",
-      "platform": "notebooklm",
-      "subject": "History",
-      "tags": ["ww2", "grand-strategy"],
-      "viewer_url": "https://ww2-ae29.onrender.com",
-      "app_url": "https://ww2-ae29.onrender.com",
-      "notes": "Feeds WW2 dashboard content.",
-      "notable_sources": [
-        {"title": "Overy, Why the Allies Won", "url": "https://example.com/overy", "note": "Core argument"},
-        {"title": "Tooze, Wages of Destruction", "url": "https://example.com/tooze", "note": "Axis constraints"}
-      ]
-    },
+    <!-- Strict JSON data-island (keep plain quotes, no comments, no trailing commas) -->
+    <script id="notebooks-data" type="application/json">[
+      {
+        "id": "nb-conan-obrien",
+        "title": "Conan O'Brien: Interviews & Commentary",
+        "subject": "Media & Culture",
+        "platform": "NotebookLM",
+        "notebook_id": "placeholder-001",
+        "share_url": "#",
+        "app_url": null,
+        "app_ids": [],
+        "sources": [
+          {"title": "Conan podcast transcripts", "url": "#", "note": "Primary quotes", "quality": "high"}
+        ],
+        "notes": "Add share link later."
+      },
+      {
+        "id": "nb-pale-blue-eye",
+        "title": "The Pale Blue Eye — Research Notes",
+        "subject": "Literature",
+        "platform": "NotebookLM",
+        "notebook_id": "placeholder-002",
+        "share_url": "#",
+        "app_url": null,
+        "app_ids": [],
+        "sources": [
+          {"title": "Novel excerpts", "url": "#", "note": "Marked passages", "quality": "medium"}
+        ],
+        "notes": "Tie to future reading app."
+      },
+      {
+        "id": "nb-rbf",
+        "title": "Righteousness by Faith — Sourcebook",
+        "subject": "Theology",
+        "platform": "NotebookLM",
+        "notebook_id": "placeholder-003",
+        "share_url": "#",
+        "app_url": "https://centrality-of-the-cross.onrender.com",
+        "app_ids": ["centrality-cross"],
+        "sources": [
+          {"title": "Waggoner/Wieland essays", "url": "#", "note": "Core materials", "quality": "high"}
+        ],
+        "notes": "Used by several theology apps."
+      },
+      {
+        "id": "nb-hinge-factors",
+        "title": "Hinge Factors of History",
+        "subject": "History",
+        "platform": "NotebookLM",
+        "notebook_id": "placeholder-004",
+        "share_url": "#",
+        "app_url": "https://ww2-ae29.onrender.com",
+        "app_ids": ["ww2-ae29"],
+        "sources": [
+          {"title": "WWII turning points", "url": "#", "note": "Battle summaries", "quality": "high"}
+        ],
+        "notes": "Feeds WW2 apps."
+      },
+      {
+        "id": "nb-math-physics",
+        "title": "Math & Physics — Concept Map",
+        "subject": "Math/Physics",
+        "platform": "NotebookLM",
+        "notebook_id": "placeholder-005",
+        "share_url": "#",
+        "app_url": "https://math-physics.onrender.com",
+        "app_ids": ["math-physics", "physics-revolution"],
+        "sources": [
+          {"title": "Field notes", "url": "#", "note": "Key derivations", "quality": "medium"}
+        ],
+        "notes": "Supports multiple web apps."
+      },
+      {
+        "id": "nb-city-neighborhoods",
+        "title": "City Neighborhoods — Comparative Notes",
+        "subject": "Geography",
+        "platform": "NotebookLM",
+        "notebook_id": "placeholder-006",
+        "share_url": "#",
+        "app_url": "https://city-neighborhoods.onrender.com",
+        "app_ids": ["city-neighborhoods"],
+        "sources": [],
+        "notes": "Add maps & datasets later."
+      }
+    ]</script>
 
-    /* === Add more notebooks below by copying this template ===
-    {
-      "id": "nb-your-id",
-      "title": "Your Notebook Title",
-      "platform": "notebooklm",
-      "subject": "Theology | Rationality | History | Warfare | Math/Physics | Interactive | Geography | Misc",
-      "tags": ["comma","separated","tags"],
-      "viewer_url": "https://example.com/view",
-      "app_url": "https://example.com/app-or-same-as-viewer",
-      "notes": "Freeform notes about status, usage, etc.",
-      "notable_sources": [
-        {"title": "Great Source A", "url": "https://example.com/a", "note": "Why it's great"},
-        {"title": "Great Source B", "url": "https://example.com/b", "note": "Optional second"}
-      ]
-    }
-    === End template === */
-    {}
-  ]
-}
+    <!-- Ultra-safe JS fallback (if JSON.parse fails for any reason) -->
+    <script>
+      // eslint-disable-next-line no-var
+      var NOTEBOOKS_FALLBACK = [
+        {"id":"nb-fallback-1","title":"Fallback Example","subject":"Misc","platform":"NotebookLM","notebook_id":"fallback","share_url":"#","app_url":null,"app_ids":[],"sources":[],"notes":"Only shown if JSON parse fails."}
+      ];
     </script>
   </main>
 
   <script>
   (function(){
-    const state = { data: [], search: "", activeSubjects: new Set() }; // empty = All
-
-    const SUBJECT_ORDER = ["Theology","Rationality","History","Warfare","Math/Physics","Interactive","Geography","Misc"];
+    const state = { data: [], search: "", activeSubjects: new Set() }; // empty set = All
+    const SUBJECT_ORDER = ["Theology","History","Math/Physics","Media & Culture","Literature","Geography","Misc"];
+    const SUBJECT_LABELS = new Set(SUBJECT_ORDER);
 
     // DOM refs
     const chipsEl = document.getElementById("chips");
@@ -161,19 +157,8 @@
     const countsEl = document.getElementById("counts");
     const qEl = document.getElementById("q");
 
-    function esc(s){return String(s||"").replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
-
-    function loadInline(){
-      const island = document.getElementById("notebooks-data");
-      if(!island) throw new Error("Missing data island");
-      const txt = island.textContent.trim();
-      if(!txt) throw new Error("Empty data island");
-      const json = JSON.parse(txt);
-      if(!json || !Array.isArray(json.notebooks)) throw new Error("Invalid JSON structure");
-      // strip any trailing empty {} items (from the template)
-      json.notebooks = json.notebooks.filter(x => x && Object.keys(x).length);
-      return json.notebooks;
-    }
+    // Helpers
+    function esc(s){return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
 
     function buildChips(data){
       chipsEl.innerHTML = "";
@@ -185,48 +170,44 @@
       chipsEl.appendChild(allBtn);
 
       const counts = {};
-      for(const n of data){
-        const s = n.subject || "Misc";
+      for(const nb of data){
+        const s = nb.subject && SUBJECT_LABELS.has(nb.subject) ? nb.subject : "Misc";
         counts[s] = (counts[s]||0)+1;
       }
-      const order = SUBJECT_ORDER.slice().filter(s => counts[s]).concat(
-        Object.keys(counts).filter(s => !SUBJECT_ORDER.includes(s)).sort()
-      );
+      const order = SUBJECT_ORDER.filter(s => counts[s]);
       for(const s of order){
         const btn = document.createElement("button");
         btn.className = "chip";
         btn.dataset.subject = s;
         btn.setAttribute("aria-pressed", state.activeSubjects.has(s)? "true":"false");
-        btn.innerHTML = `<span>${esc(s)}</span><span class="badge">${counts[s]||0}</span>`;
+        btn.innerHTML = `<span>${s}</span><span class="badge">${counts[s]||0}</span>`;
         chipsEl.appendChild(btn);
       }
     }
 
-    function render(){
-      const q=(state.search||"").toLowerCase().trim();
-      const filtered = state.data.filter(n=>{
-        const subj = n.subject || "Misc";
+    function apply(){
+      const q = (state.search||"").toLowerCase().trim();
+      const filtered = state.data.filter(nb=>{
+        const subj = nb.subject && SUBJECT_LABELS.has(nb.subject) ? nb.subject : "Misc";
         const ok = state.activeSubjects.size===0 || state.activeSubjects.has(subj);
         if(!ok) return false;
         if(!q) return true;
-        const hay = [n.title,n.id,(n.tags||[]).join(" "),n.subject].join(" ").toLowerCase();
-        return hay.includes(q);
+        return (nb.title||"").toLowerCase().includes(q) || (nb.id||"").toLowerCase().includes(q);
       });
 
-      // sort by subject order, then title
+      // sort by subject order then title
       filtered.sort((a,b)=>{
-        const sa = (a.subject||"Misc"), sb = (b.subject||"Misc");
-        const ia = SUBJECT_ORDER.indexOf(sa), ib = SUBJECT_ORDER.indexOf(sb);
-        if(ia!==ib) return (ia<0?999:ia) - (ib<0?999:ib);
+        const sa = SUBJECT_ORDER.indexOf(a.subject||"Misc");
+        const sb = SUBJECT_ORDER.indexOf(b.subject||"Misc");
+        if(sa!==sb) return sa - sb;
         return (a.title||"").localeCompare(b.title||"");
       });
 
       resultsEl.innerHTML = "";
       for(const nb of filtered){
-        const tags = (nb.tags||[]).slice(0,6);
-        const srcCount = (nb.notable_sources||[]).length;
-        const viewer = nb.viewer_url || nb.app_url || "#";
-        const app    = nb.app_url;
+        const subj = nb.subject || "Misc";
+        const appHref = nb.app_url || nb.share_url || "#";
+        const hasApp = !!nb.app_url;
 
         const card = document.createElement("article");
         card.className = "card";
@@ -234,77 +215,68 @@
           <div class="flex items-start justify-between gap-3">
             <h3 class="text-base font-semibold leading-tight">${esc(nb.title||nb.id)}</h3>
             <div class="flex gap-2 items-center">
-              <span class="badge">${esc(nb.subject||"Misc")}</span>
-              <span class="badge">${esc((nb.platform||"").toUpperCase())}</span>
+              <span class="badge">${esc(subj)}</span>
+              <span class="badge">NotebookLM</span>
             </div>
           </div>
           <p class="muted mt-1 text-sm">${esc(nb.id||"")}</p>
-
-          <div class="mt-2 flex flex-wrap gap-2">
-            ${tags.map(t=>`<span class="pill">${esc(t)}</span>`).join("")}
+          <div class="mt-2 text-sm">
+            <a href="${esc(nb.share_url||'#')}" target="_blank" rel="noopener" class="link">Open Notebook</a>
+            ${hasApp ? ` &middot; <a href="${esc(nb.app_url)}" target="_blank" rel="noopener" class="link">Open App</a>` : ``}
           </div>
-
-          <div class="mt-3 flex flex-wrap gap-3">
-            <a href="${esc(viewer)}" target="_blank" rel="noopener" class="link text-sm">Open viewer →</a>
-            ${app && app!==viewer ? `<a href="${esc(app)}" target="_blank" rel="noopener" class="link text-sm">Open app →</a>` : ""}
-          </div>
-
-          ${srcCount ? `
-            <details class="sources mt-3">
-              <summary class="text-sm link">Notable sources (${srcCount})</summary>
-              <ul class="mt-2 space-y-1 text-sm">
-                ${(nb.notable_sources||[]).map(s=>`
-                  <li>
-                    <a href="${esc(s.url||"#")}" target="_blank" rel="noopener" class="link">${esc(s.title||s.url||"Source")}</a>
-                    ${s.note ? `<span class="muted">— ${esc(s.note)}</span>` : ""}
-                  </li>`).join("")}
-              </ul>
-            </details>` : ``}
-
-          ${nb.notes ? `<p class="mt-3 text-sm">${esc(nb.notes)}</p>` : ``}
+          ${Array.isArray(nb.sources)&&nb.sources.length
+            ? `<details class="mt-2">
+                 <summary class="text-sm cursor-pointer">Sources (${nb.sources.length})</summary>
+                 <ul class="mt-2 list-disc pl-5 text-sm">
+                   ${nb.sources.map(s=>`<li><a class="link" target="_blank" rel="noopener" href="${esc(s.url||'#')}">${esc(s.title||'Source')}</a>${s.note?` — ${esc(s.note)}`:''}${s.quality?` <span class="badge">${esc(s.quality)}</span>`:''}</li>`).join("")}
+                 </ul>
+               </details>` : ``}
         `;
         resultsEl.appendChild(card);
       }
       countsEl.textContent = `${filtered.length} shown`;
 
-      // refresh chip states
       chipsEl.querySelectorAll(".chip").forEach(ch=>{
-        const s=ch.dataset.subject;
+        const s = ch.dataset.subject;
         const on = s ? state.activeSubjects.has(s) : (state.activeSubjects.size===0);
         ch.setAttribute("aria-pressed", on ? "true":"false");
       });
     }
 
-    // events
-    document.getElementById("chips").addEventListener("click",(e)=>{
-      const btn=e.target.closest(".chip"); if(!btn) return;
-      const s=btn.dataset.subject;
+    // Events
+    chipsEl.addEventListener("click",(e)=>{
+      const btn = e.target.closest(".chip"); if(!btn) return;
+      const s = btn.dataset.subject;
       if(!s){ state.activeSubjects.clear(); }
       else{
         state.activeSubjects.has(s) ? state.activeSubjects.delete(s) : state.activeSubjects.add(s);
       }
-      render();
+      apply();
+    });
+    qEl.addEventListener("input", ()=>{
+      state.search = qEl.value || "";
+      apply();
     });
 
-    document.getElementById("q").addEventListener("input", (e)=>{
-      state.search = e.target.value || "";
-      render();
-    });
-
-    // init
-    try{
-      state.data = loadInline();
-      // prebuild chips and render
+    // Init: parse JSON safely; if it fails, use NOTEBOOKS_FALLBACK
+    (function init(){
+      const island = document.getElementById("notebooks-data");
+      let parsed = [];
+      if(island){
+        const raw = island.textContent; // textContent avoids HTML entity noise
+        try{
+          // Trim to avoid stray whitespace/BOM
+          parsed = JSON.parse(raw.trim());
+        }catch(err){
+          console.warn("JSON parse failed; using fallback:", err);
+          // eslint-disable-next-line no-undef
+          parsed = Array.isArray(NOTEBOOKS_FALLBACK) ? NOTEBOOKS_FALLBACK : [];
+        }
+      }
+      state.data = Array.isArray(parsed) ? parsed : [];
       buildChips(state.data);
-      render();
-    }catch(err){
-      resultsEl.innerHTML = `
-        <div class="panel p-6">
-          <h3 class="text-lg font-semibold">Couldn’t read embedded JSON</h3>
-          <p class="muted mt-1">Check the <code class="inline">#notebooks-data</code> script tag and ensure it contains valid JSON.</p>
-          <pre class="mt-3 text-xs bg-slate-100 p-3 rounded border border-slate-200 overflow-auto">${esc(String(err))}</pre>
-        </div>`;
-    }
+      apply();
+    })();
   })();
   </script>
 </body>
