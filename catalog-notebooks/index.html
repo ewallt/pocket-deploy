@@ -1,9 +1,10 @@
 <!DOCTYPE html>
+
 <html lang="en" class="theme-newspaper">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>NotebookLM — Notebooks Catalog</title>
+  <title>Notebooks Catalog — By Subject</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     :root{
@@ -18,7 +19,7 @@
       font-size:.85rem; line-height:1; cursor:pointer; user-select:none;
     }
     .chip[aria-pressed="true"]{ background:var(--chip-on-bg); color:#0b1f4f; border-color:var(--chip-on);}
-    .badge{ display:inline-block; font-size:.72rem; padding:.15rem .45rem; border-radius:999px; border:1px solid var(--border); color:var(--muted);}
+    .badge{display:inline-block; font-size:.72rem; padding:.15rem .45rem; border-radius:999px; border:1px solid var(--border); color:var(--muted);}
     .link{color:var(--accent); text-decoration:underline;}
     .grid{display:grid; grid-template-columns:repeat(1,minmax(0,1fr)); gap:1rem;}
     @media(min-width:640px){ .grid{grid-template-columns:repeat(2,minmax(0,1fr));} }
@@ -31,11 +32,11 @@
 </head>
 <body class="antialiased">
   <header class="max-w-6xl mx-auto px-4 pt-6 pb-2">
-    <h1 class="text-2xl font-bold">NotebookLM — Notebooks Catalog</h1>
-    <p class="muted mt-1 text-sm">Filter by <strong>subject</strong> or search by title/id. Tap a card to open the notebook or linked app.</p>
+    <h1 class="text-2xl font-bold">Notebooks Catalog</h1>
+    <p class="muted mt-1 text-sm">Filter by <strong>subject</strong> or search by title/id. Tap a card to open the notebook.</p>
   </header>
 
-  <main class="max-w-6xl mx-auto px-4 pb-24">
+ <main class="max-w-6xl mx-auto px-4 pb-24">
     <section class="panel p-4 sm:p-5 mb-4">
       <div class="flex flex-col sm:flex-row sm:items-center gap-3">
         <div class="flex-1">
@@ -48,236 +49,243 @@
       <div id="chips" class="mt-3 flex flex-wrap gap-2"></div>
     </section>
 
-    <section id="results" class="grid"></section>
+<section id="results" class="grid"></section>
 
-    <!-- Strict JSON data-island (keep plain quotes, no comments, no trailing commas) -->
-    <script id="notebooks-data" type="application/json">[
-      {
-        "id": "nb-conan-obrien",
-        "title": "Conan O'Brien: Interviews & Commentary",
-        "subject": "Media & Culture",
-        "platform": "NotebookLM",
-        "notebook_id": "placeholder-001",
-        "share_url": "#",
-        "app_url": null,
-        "app_ids": [],
-        "sources": [
-          {"title": "Conan podcast transcripts", "url": "#", "note": "Primary quotes", "quality": "high"}
-        ],
-        "notes": "Add share link later."
-      },
-      {
-        "id": "nb-pale-blue-eye",
-        "title": "The Pale Blue Eye — Research Notes",
-        "subject": "Literature",
-        "platform": "NotebookLM",
-        "notebook_id": "placeholder-002",
-        "share_url": "#",
-        "app_url": null,
-        "app_ids": [],
-        "sources": [
-          {"title": "Novel excerpts", "url": "#", "note": "Marked passages", "quality": "medium"}
-        ],
-        "notes": "Tie to future reading app."
-      },
-      {
-        "id": "nb-rbf",
-        "title": "Righteousness by Faith — Sourcebook",
-        "subject": "Theology",
-        "platform": "NotebookLM",
-        "notebook_id": "placeholder-003",
-        "share_url": "#",
-        "app_url": "https://centrality-of-the-cross.onrender.com",
-        "app_ids": ["centrality-cross"],
-        "sources": [
-          {"title": "Waggoner/Wieland essays", "url": "#", "note": "Core materials", "quality": "high"}
-        ],
-        "notes": "Used by several theology apps."
-      },
-      {
-        "id": "nb-hinge-factors",
-        "title": "Hinge Factors of History",
-        "subject": "History",
-        "platform": "NotebookLM",
-        "notebook_id": "placeholder-004",
-        "share_url": "#",
-        "app_url": "https://ww2-ae29.onrender.com",
-        "app_ids": ["ww2-ae29"],
-        "sources": [
-          {"title": "WWII turning points", "url": "#", "note": "Battle summaries", "quality": "high"}
-        ],
-        "notes": "Feeds WW2 apps."
-      },
-      {
-        "id": "nb-math-physics",
-        "title": "Math & Physics — Concept Map",
-        "subject": "Math/Physics",
-        "platform": "NotebookLM",
-        "notebook_id": "placeholder-005",
-        "share_url": "#",
-        "app_url": "https://math-physics.onrender.com",
-        "app_ids": ["math-physics", "physics-revolution"],
-        "sources": [
-          {"title": "Field notes", "url": "#", "note": "Key derivations", "quality": "medium"}
-        ],
-        "notes": "Supports multiple web apps."
-      },
-      {
-        "id": "nb-city-neighborhoods",
-        "title": "City Neighborhoods — Comparative Notes",
-        "subject": "Geography",
-        "platform": "NotebookLM",
-        "notebook_id": "placeholder-006",
-        "share_url": "#",
-        "app_url": "https://city-neighborhoods.onrender.com",
-        "app_ids": ["city-neighborhoods"],
-        "sources": [],
-        "notes": "Add maps & datasets later."
-      }
-    ]</script>
+<!-- Optional inline fallback: if fetching /notebooks.json fails, this data-island is used -->
+<script id="notebooks-data" type="application/json">
+[
+  {"title":"Jungian Archetypes: Exploring the Collective Unconscious","subject":"Psychology"},
+  {"title":"Christian Approaches to God, Christ, and Salvation","subject":"Theology"},
+  {"title":"Girard’s Scapegoat Theory and Mimetic Desire","subject":"Theology"},
+  {"title":"The Power of the Cross and Christian Freedom","subject":"Theology"},
+  {"title":"Common Sense: Thomas Paine’s Argument for American Independence","subject":"History"},
+  {"title":"The Fight for the Income Tax","subject":"History"},
+  {"title":"Origins of the Cold War","subject":"History"},
+  {"title":"The Joy of the Spirit: Promise, Redemption, and Victory","subject":"Theology"},
+  {"title":"Understanding Autism Spectrum Disorder","subject":"Psychology"},
+  {"title":"Industrial Progress and Development: A Global Perspective","subject":"History"},
+  {"title":"Roman Innovations: From Cityscapes to Frontier Defenses","subject":"History"},
+  {"title":"Nineteenth-Century Britain: Society, Economy, and Empire","subject":"History"},
+  {"title":"Moltmann’s Theology of the Crucified God","subject":"Theology"},
+  {"title":"Relational Dynamics in Personality Disorders and Abuse","subject":"Psychology"},
+  {"title":"Personality Disorders and Intimate Partner Violence","subject":"Psychology"},
+  {"title":"Moltmann’s Theology: Hope, Suffering, and Liberation","subject":"Theology"},
+  {"title":"The Euphrates, Babylon, and the End Times","subject":"Theology"},
+  {"title":"Behold Your God: Understanding His Character and Actions","subject":"Theology"},
+  {"title":"Studies in the Sanctuary and Temple","subject":"Theology"},
+  {"title":"Airpower Doctrine and Strategic Bombing Debates","subject":"History"},
+  {"title":"Sudden Traffic Jams: Emergence to Impact","subject":"Science"},
+  {"title":"The Everlasting Covenant and Justification by Faith","subject":"Theology"},
+  {"title":"The Nonviolent Atonement: A Theological Odyssey","subject":"Theology"},
+  {"title":"Challenging Violent Conceptions of God and Atonement","subject":"Theology"},
+  {"title":"Movements in Modern Art","subject":"Art"},
+  {"title":"Theology of Peace, Justice, and Reconciliation","subject":"Theology"},
+  {"title":"N.T. Wright’s Theology: A Critical Overview","subject":"Theology"},
+  {"title":"The Renaissance Chronicles","subject":"History"},
+  {"title":"The Global Rivalry: Cold War Conflicts and Ideologies","subject":"History"},
+  {"title":"Great Thinkers and Ideas","subject":"Philosophy"},
+  {"title":"Scientific Revolution","subject":"History"},
+  {"title":"A Nobel Prize for Climate","subject":"Science"},
+  {"title":"Moral Vision and Faith in the New Testament","subject":"Theology"},
+  {"title":"Idea Pathogens: Cultural Epidemiology and Epistemic Health","subject":"Rationality"},
+  {"title":"Conversations About God: Atonement, Sin, and Grace","subject":"Theology"},
+  {"title":"Ellen G. White’s Writings and Seventh-day Adventist Beliefs","subject":"Theology"},
+  {"title":"Sin, not God, destroys","subject":"Theology"},
+  {"title":"Decision Hygiene: Reducing Noise in Judgments","subject":"Rationality"},
+  {"title":"Why the Allies Won World War II","subject":"History"},
+  {"title":"The Divine Democracy: God’s Rule by Love","subject":"Theology"},
+  {"title":"Chrysostom on God’s Patient Cultivation and the Unmasking Cross","subject":"Theology"},
+  {"title":"The Golden Mouth’s Clock: God’s Patient Judgment","subject":"Theology"},
+  {"title":"Divine Governance: Love, Truth, and Free Will","subject":"Theology"}
+]
+</script>
+ </main>
 
-    <!-- Ultra-safe JS fallback (if JSON.parse fails for any reason) -->
-    <script>
-      // eslint-disable-next-line no-var
-      var NOTEBOOKS_FALLBACK = [
-        {"id":"nb-fallback-1","title":"Fallback Example","subject":"Misc","platform":"NotebookLM","notebook_id":"fallback","share_url":"#","app_url":null,"app_ids":[],"sources":[],"notes":"Only shown if JSON parse fails."}
-      ];
-    </script>
-  </main>
-
-  <script>
+ <script>
   (function(){
     const state = { data: [], search: "", activeSubjects: new Set() }; // empty set = All
-    const SUBJECT_ORDER = ["Theology","History","Math/Physics","Media & Culture","Literature","Geography","Misc"];
-    const SUBJECT_LABELS = new Set(SUBJECT_ORDER);
 
-    // DOM refs
-    const chipsEl = document.getElementById("chips");
-    const resultsEl = document.getElementById("results");
-    const countsEl = document.getElementById("counts");
-    const qEl = document.getElementById("q");
+    // ---- Helpers ----
+    const SUBJECT_LABEL = {
+      Theology:"Theology", History:"History", Psychology:"Psychology", Philosophy:"Philosophy",
+      Science:"Science", Art:"Art", Rationality:"Rationality", Misc:"Misc"
+    };
 
-    // Helpers
-    function esc(s){return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+    function esc(s){return String(s||"").replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+    function slugify(s){
+      return (s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+        .replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"");
+    }
 
-    function buildChips(data){
-      chipsEl.innerHTML = "";
-      const allBtn = document.createElement("button");
-      allBtn.className = "chip";
-      allBtn.dataset.subject = "";
+    // If id missing, derive from title
+    function withDerivedId(item){
+      if(item.id && item.id.trim()) return item;
+      return {...item, id: slugify(item.title||"notebook")};
+    }
+
+    // Subject fallback if missing/invalid
+    function normalizeSubject(s){
+      if(SUBJECT_LABEL[s]) return s;
+      return "Misc";
+    }
+
+    // ---- Persistence ----
+    const LS_KEY = "notebooks_catalog_subject_state_v1";
+    function loadPersist(){
+      try{
+        const raw=localStorage.getItem(LS_KEY); if(!raw) return;
+        const obj=JSON.parse(raw);
+        if(Array.isArray(obj.activeSubjects)) state.activeSubjects=new Set(obj.activeSubjects);
+        if(typeof obj.search==="string") state.search=obj.search;
+      }catch(_){}
+    }
+    function savePersist(){
+      localStorage.setItem(LS_KEY, JSON.stringify({activeSubjects:[...state.activeSubjects], search:state.search}));
+    }
+
+    // ---- Data loading ----
+    async function loadData(){
+      const candidates=["./notebooks.json","../notebooks.json","../../notebooks.json","/notebooks.json"];
+      for(const url of candidates){
+        try{
+          const res=await fetch(url,{cache:"no-store"});
+          if(res.ok){
+            const j=await res.json();
+            if(Array.isArray(j)) return j;
+          }
+        }catch(_){}
+      }
+      const island=document.getElementById("notebooks-data");
+      if(island && island.textContent.trim()){
+        try{
+          const j=JSON.parse(island.textContent);
+          if(Array.isArray(j)) return j;
+        }catch(_){}
+      }
+      throw new Error("Unable to load notebooks.json");
+    }
+
+    // ---- DOM refs ----
+    const chipsEl=document.getElementById("chips");
+    const resultsEl=document.getElementById("results");
+    const countsEl=document.getElementById("counts");
+    const qEl=document.getElementById("q");
+
+    // ---- UI builders ----
+    function buildSubjectChips(data){
+      chipsEl.innerHTML="";
+      const allBtn=document.createElement("button");
+      allBtn.className="chip";
+      allBtn.dataset.subject="";
       allBtn.setAttribute("aria-pressed", state.activeSubjects.size===0 ? "true":"false");
-      allBtn.innerHTML = `<span>All</span><span class="badge">${data.length}</span>`;
+      allBtn.innerHTML=`<span>All</span><span class="badge">${data.length}</span>`;
       chipsEl.appendChild(allBtn);
 
-      const counts = {};
-      for(const nb of data){
-        const s = nb.subject && SUBJECT_LABELS.has(nb.subject) ? nb.subject : "Misc";
-        counts[s] = (counts[s]||0)+1;
+      const counts={};
+      for(const item of data){
+        const s=item.subject||"Misc";
+        counts[s]=(counts[s]||0)+1;
       }
-      const order = SUBJECT_ORDER.filter(s => counts[s]);
+
+      const order=["Theology","History","Psychology","Rationality","Science","Art","Philosophy","Misc"];
       for(const s of order){
-        const btn = document.createElement("button");
-        btn.className = "chip";
-        btn.dataset.subject = s;
+        if(!counts[s]) continue;
+        const btn=document.createElement("button");
+        btn.className="chip";
+        btn.dataset.subject=s;
         btn.setAttribute("aria-pressed", state.activeSubjects.has(s)? "true":"false");
-        btn.innerHTML = `<span>${s}</span><span class="badge">${counts[s]||0}</span>`;
+        btn.innerHTML=`<span>${SUBJECT_LABEL[s]}</span><span class="badge">${counts[s]}</span>`;
         chipsEl.appendChild(btn);
       }
     }
 
     function apply(){
-      const q = (state.search||"").toLowerCase().trim();
-      const filtered = state.data.filter(nb=>{
-        const subj = nb.subject && SUBJECT_LABELS.has(nb.subject) ? nb.subject : "Misc";
+      const q=(state.search||"").toLowerCase().trim();
+      const filtered = state.data.filter(item=>{
+        const subj=item.subject||"Misc";
         const ok = state.activeSubjects.size===0 || state.activeSubjects.has(subj);
         if(!ok) return false;
         if(!q) return true;
-        return (nb.title||"").toLowerCase().includes(q) || (nb.id||"").toLowerCase().includes(q);
+        return (item.title||"").toLowerCase().includes(q) || (item.id||"").toLowerCase().includes(q);
       });
 
-      // sort by subject order then title
+      // sort by subject, then title
       filtered.sort((a,b)=>{
-        const sa = SUBJECT_ORDER.indexOf(a.subject||"Misc");
-        const sb = SUBJECT_ORDER.indexOf(b.subject||"Misc");
-        if(sa!==sb) return sa - sb;
+        const sa=SUBJECT_LABEL[a.subject]||"Misc";
+        const sb=SUBJECT_LABEL[b.subject]||"Misc";
+        if(sa!==sb) return sa.localeCompare(sb);
         return (a.title||"").localeCompare(b.title||"");
       });
 
-      resultsEl.innerHTML = "";
+      resultsEl.innerHTML="";
       for(const nb of filtered){
-        const subj = nb.subject || "Misc";
-        const appHref = nb.app_url || nb.share_url || "#";
-        const hasApp = !!nb.app_url;
-
-        const card = document.createElement("article");
-        card.className = "card";
-        card.innerHTML = `
+        const subj = SUBJECT_LABEL[nb.subject] || "Misc";
+        const card=document.createElement("a");
+        const href = nb.url || "#";
+        card.href=href; card.target=href.startsWith("#")?"_self":"_blank"; card.rel="noopener"; card.className="card block";
+        card.innerHTML=`
           <div class="flex items-start justify-between gap-3">
             <h3 class="text-base font-semibold leading-tight">${esc(nb.title||nb.id)}</h3>
             <div class="flex gap-2 items-center">
               <span class="badge">${esc(subj)}</span>
-              <span class="badge">NotebookLM</span>
             </div>
           </div>
           <p class="muted mt-1 text-sm">${esc(nb.id||"")}</p>
-          <div class="mt-2 text-sm">
-            <a href="${esc(nb.share_url||'#')}" target="_blank" rel="noopener" class="link">Open Notebook</a>
-            ${hasApp ? ` &middot; <a href="${esc(nb.app_url)}" target="_blank" rel="noopener" class="link">Open App</a>` : ``}
-          </div>
-          ${Array.isArray(nb.sources)&&nb.sources.length
-            ? `<details class="mt-2">
-                 <summary class="text-sm cursor-pointer">Sources (${nb.sources.length})</summary>
-                 <ul class="mt-2 list-disc pl-5 text-sm">
-                   ${nb.sources.map(s=>`<li><a class="link" target="_blank" rel="noopener" href="${esc(s.url||'#')}">${esc(s.title||'Source')}</a>${s.note?` — ${esc(s.note)}`:''}${s.quality?` <span class="badge">${esc(s.quality)}</span>`:''}</li>`).join("")}
-                 </ul>
-               </details>` : ``}
+          <p class="mt-2 text-sm"><span class="link">Open</span> →</p>
         `;
         resultsEl.appendChild(card);
       }
-      countsEl.textContent = `${filtered.length} shown`;
+      countsEl.textContent=`${filtered.length} shown`;
 
+      // refresh chip states
       chipsEl.querySelectorAll(".chip").forEach(ch=>{
-        const s = ch.dataset.subject;
+        const s=ch.dataset.subject;
         const on = s ? state.activeSubjects.has(s) : (state.activeSubjects.size===0);
         ch.setAttribute("aria-pressed", on ? "true":"false");
       });
     }
 
-    // Events
+    // ---- Events ----
     chipsEl.addEventListener("click",(e)=>{
-      const btn = e.target.closest(".chip"); if(!btn) return;
-      const s = btn.dataset.subject;
+      const btn=e.target.closest(".chip"); if(!btn) return;
+      const s=btn.dataset.subject;
       if(!s){ state.activeSubjects.clear(); }
       else{
         state.activeSubjects.has(s) ? state.activeSubjects.delete(s) : state.activeSubjects.add(s);
       }
-      apply();
-    });
-    qEl.addEventListener("input", ()=>{
-      state.search = qEl.value || "";
-      apply();
+      savePersist(); apply();
     });
 
-    // Init: parse JSON safely; if it fails, use NOTEBOOKS_FALLBACK
-    (function init(){
-      const island = document.getElementById("notebooks-data");
-      let parsed = [];
-      if(island){
-        const raw = island.textContent; // textContent avoids HTML entity noise
-        try{
-          // Trim to avoid stray whitespace/BOM
-          parsed = JSON.parse(raw.trim());
-        }catch(err){
-          console.warn("JSON parse failed; using fallback:", err);
-          // eslint-disable-next-line no-undef
-          parsed = Array.isArray(NOTEBOOKS_FALLBACK) ? NOTEBOOKS_FALLBACK : [];
-        }
+    qEl.addEventListener("input", ()=>{
+      state.search = qEl.value || "";
+      savePersist(); apply();
+    });
+
+    // ---- Init ----
+    (async function init(){
+      try{
+        loadPersist();
+        const raw = await loadData();
+        // normalize: ensure id + subject
+        state.data = raw.map(r=>{
+          const withId = withDerivedId(r);
+          return { ...withId, subject: normalizeSubject(withId.subject) };
+        });
+        qEl.value = state.search;
+        buildSubjectChips(state.data);
+        apply();
+      }catch(err){
+        resultsEl.innerHTML = `
+          <div class="panel p-6">
+            <h3 class="text-lg font-semibold">Couldn’t load <code>notebooks.json</code></h3>
+            <p class="muted mt-1">Place this file at the repo root and refresh, or paste it in the inline data-island above.</p>
+          </div>`;
       }
-      state.data = Array.isArray(parsed) ? parsed : [];
-      buildChips(state.data);
-      apply();
     })();
   })();
   </script>
+
 </body>
 </html>
+
+
