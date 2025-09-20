@@ -9,121 +9,38 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    /* CSS Custom Properties for Theming */
-    /* Default Theme: Newspaper (light, serif) */
-    :root {
-      --bg-gradient: #fdfdf8;
-      --text: #1c1c1c;
-      --accent-text: #8c1c13;
-      --nav-bg: #f1f1eb;
-      --nav-border: #dcdcd3;
-      --nav-text: #1c1c1c;
-      --nav-hover-bg: #e5e5dd;
-      --nav-active-bg: #dcdcd3;
-      --nav-active-text: #1c1c1c;
-      --prose-text: var(--text);
-      --prose-headings: var(--accent-text);
-      --prose-links: var(--accent-text);
-      --prose-bold: var(--text);
-      font-family: 'Merriweather', serif;
-      line-height: 1.6;
-    }
-
-    .theme-emerald-paper,
-    .theme-cyber-blue,
-    .theme-emerald-gold {
-      font-family: 'Lato', sans-serif;
-      line-height: 1.6;
-    }
-
-    .theme-emerald-paper {
-      --bg-gradient: #f7fbf9;
-      --text: #1e2b28;
-      --accent-text: #0f7f6d;
-      --nav-bg: #e7f3ef;
-      --nav-border: #86c8ba;
-      --nav-text: #1e2b28;
-      --nav-hover-bg: #d7ece6;
-      --nav-active-bg: #bfe3d9;
-      --nav-active-text: #1e2b28;
-      --prose-text: #1e2b28;
-      --prose-headings: #0f7f6d;
-    }
-
-    .theme-cyber-blue {
-      --bg-gradient: #0f172a;
-      --text: #e5e7eb;
-      --accent-text: #94a3b8;
-      --nav-bg: #0f172a;
-      --nav-border: #1f2937;
-      --nav-text: #e5e7eb;
-      --nav-hover-bg: #111827;
-      --nav-active-bg: #1f2937;
-      --nav-active-text: #e5e7eb;
-      --prose-text: #d1d5db;
-      --prose-headings: #cbd5e1;
-    }
-
-    .theme-emerald-gold {
-      --bg-gradient: #064e3b;
-      --text: #ecfdf5;
-      --accent-text: #f0c475;
-      --nav-bg: #064e3b;
-      --nav-border: #d4a24c;
-      --nav-text: #ecfdf5;
-      --nav-hover-bg: #065f46;
-      --nav-active-bg: #0b3d31;
-      --nav-active-text: #f0c475;
-      --prose-text: #a7f3d0;
-      --prose-headings: #f0c475;
-    }
-
-    body { background-color: var(--bg-gradient); color: var(--text); min-height: 100vh; }
-    .ui-bg { background-color: var(--nav-bg); }
-    .ui-border { border-color: var(--nav-border); }
-    .text-primary { color: var(--text); }
-    .text-accent { color: var(--accent-text); }
-    *:focus-visible { outline: 3px solid var(--accent-text); outline-offset: 2px; border-radius: 2px; }
-
-    .prose { color: var(--prose-text); }
-    .prose h2, .prose h3 { color: var(--prose-headings); }
-    .prose a { color: var(--prose-links); text-decoration: underline; }
-    .prose strong { color: var(--prose-bold); font-weight: bold; }
-    .prose h2 { font-size: 1.875rem; line-height: 2.25rem; margin-top: 2rem; margin-bottom: 1rem; font-weight: 700; border-bottom: 1px solid var(--nav-border); padding-bottom: 0.5rem; }
-    .prose h3 { font-size: 1.5rem; line-height: 2rem; margin-top: 1.5rem; margin-bottom: 0.75rem; font-weight: 700; }
-    .prose p, .prose ul, .prose ol { margin-bottom: 1rem; }
-    .prose ul { list-style-position: inside; }
-    .prose li { margin-bottom: 0.5rem; }
-    .prose blockquote { border-left: 4px solid var(--nav-border); padding-left: 1rem; margin: 1rem 0; font-style: italic; }
-    .prose .note {
-      font-size: 0.95rem;
-      background-color: var(--nav-bg);
-      border: 1px solid var(--nav-border);
-      padding: 1rem;
-      border-radius: 0.5rem;
-    }
-
-    .prose .cite { display: none; }
-    .prose .cite:not(:empty) { display: inline; font-size: 0.75rem; color: var(--accent-text); vertical-align: super; line-height: 0; }
-
-    body, .ui-bg, .ui-border, .prose, .prose h2, .prose h3, .prose a, .prose strong, .prose .cite {
-      transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
-    }
-
-    .nav-link[aria-current="page"] {
-      background-color: var(--nav-active-bg);
-      color: var(--nav-active-text);
-      font-weight: bold;
-    }
+    :root { --bg-gradient:#fdfdf8; --text:#1c1c1c; --accent-text:#8c1c13; --nav-bg:#f1f1eb; --nav-border:#dcdcd3; --nav-text:#1c1c1c; --nav-hover-bg:#e5e5dd; --nav-active-bg:#dcdcd3; --nav-active-text:#1c1c1c; --prose-text:var(--text); --prose-headings:var(--accent-text); --prose-links:var(--accent-text); --prose-bold:var(--text); font-family:'Merriweather',serif; line-height:1.6; }
+    .theme-emerald-paper,.theme-cyber-blue,.theme-emerald-gold{font-family:'Lato',sans-serif; line-height:1.6;}
+    .theme-emerald-paper{--bg-gradient:#f7fbf9;--text:#1e2b28;--accent-text:#0f7f6d;--nav-bg:#e7f3ef;--nav-border:#86c8ba;--nav-text:#1e2b28;--nav-hover-bg:#d7ece6;--nav-active-bg:#bfe3d9;--nav-active-text:#1e2b28;--prose-text:#1e2b28;--prose-headings:#0f7f6d;}
+    .theme-cyber-blue{--bg-gradient:#0f172a;--text:#e5e7eb;--accent-text:#94a3b8;--nav-bg:#0f172a;--nav-border:#1f2937;--nav-text:#e5e7eb;--nav-hover-bg:#111827;--nav-active-bg:#1f2937;--nav-active-text:#e5e7eb;--prose-text:#d1d5db;--prose-headings:#cbd5e1;}
+    .theme-emerald-gold{--bg-gradient:#064e3b;--text:#ecfdf5;--accent-text:#f0c475;--nav-bg:#064e3b;--nav-border:#d4a24c;--nav-text:#ecfdf5;--nav-hover-bg:#065f46;--nav-active-bg:#0b3d31;--nav-active-text:#f0c475;--prose-text:#a7f3d0;--prose-headings:#f0c475;}
+    body{background-color:var(--bg-gradient); color:var(--text); min-height:100vh;}
+    .ui-bg{background-color:var(--nav-bg);} .ui-border{border-color:var(--nav-border);}
+    .text-primary{color:var(--text);} .text-accent{color:var(--accent-text);}
+    *:focus-visible{outline:3px solid var(--accent-text); outline-offset:2px; border-radius:2px;}
+    .prose{color:var(--prose-text);} .prose h2,.prose h3{color:var(--prose-headings);} .prose a{color:var(--prose-links); text-decoration:underline;} .prose strong{color:var(--prose-bold); font-weight:bold;}
+    .prose h2{font-size:1.875rem; line-height:2.25rem; margin-top:2rem; margin-bottom:1rem; font-weight:700; border-bottom:1px solid var(--nav-border); padding-bottom:.5rem;}
+    .prose h3{font-size:1.5rem; line-height:2rem; margin-top:1.5rem; margin-bottom:.75rem; font-weight:700;}
+    .prose p,.prose ul,.prose ol{margin-bottom:1rem;} .prose ul{list-style-position:inside;} .prose li{margin-bottom:.5rem;}
+    .prose blockquote{border-left:4px solid var(--nav-border); padding-left:1rem; margin:1rem 0; font-style:italic;}
+    .prose .note{font-size:.95rem; background-color:var(--nav-bg); border:1px solid var(--nav-border); padding:1rem; border-radius:.5rem;}
+    .nav-link[aria-current="page"]{background-color:var(--nav-active-bg); color:var(--nav-active-text); font-weight:bold;}
+    /* Scripture preview UI */
+    .ref-pop{position:absolute; z-index:50; max-width:28rem; background:var(--nav-bg); border:1px solid var(--nav-border); padding:.6rem .8rem; border-radius:.5rem; box-shadow:0 6px 20px rgba(0,0,0,.15); font-size:.9rem;}
+    #verse-modal{position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:60; background:rgba(0,0,0,.5); backdrop-filter:blur(2px);}
+    #verse-modal .card{background:var(--nav-bg); color:var(--text); border:1px solid var(--nav-border); border-radius:.6rem; max-width:36rem; width:92%; padding:1rem;}
+    #verse-modal .actions{display:flex; gap:.5rem; justify-content:flex-end; margin-top:.75rem;}
+    #verse-modal button,#verse-modal a{padding:.4rem .7rem; border-radius:.4rem; border:1px solid var(--nav-border);}
   </style>
 </head>
 <body class="antialiased">
 
+<!-- JSON data island -->
 <script id="app-data" type="application/json">
 {
-  "behold-your-god—chapter-1": {
+  "behold-your-god-ch1": {
     "title": "Behold Your God — Chapter 1 Essay",
-    "description": "Chapter 1 (“An All-Important Theme”): a study essay that states the core idea and follows the author’s logic with clear arguments in prose form.",
+    "description": "Chapter 1 (“An All-Important Theme”): core idea with supporting arguments, written as study prose.",
     "categories": {
       "chapter-1-an-all-important-theme": {
         "display_order": 10,
@@ -131,34 +48,13 @@
         "display_name": "Chapter 1 — An All-Important Theme",
         "introduction": "The opening chapter argues that eternal life turns on a true knowledge of God’s character and that a false concept of God corrupts religion at its root.",
         "paragraphs": [
-          {
-            "heading": "Chapter 1.",
-            "content": "This chapter lays the thesis to which the whole book returns: eternal life is bound to the knowledge of God as He truly is (John 17:3). What we believe about God’s character governs how we worship, how we treat others, and whether we receive or resist further light. A mistaken picture of God does not merely weaken devotion; it redirects the entire religious life along a path that ends badly."
-          },
-          {
-            "heading": "The Universal Predicament",
-            "content": "It is safe to say three things: first, everyone holds some working idea of God, whether examined or assumed; second, that idea quietly rules everything in religion; third, humanity is predisposed to a false view that culture and education often deepen. Therefore, deliverance into a true knowledge of God is not optional. Without it, even earnest religion can harden around error and mistake zeal for faithfulness (Rom 1:21–25)."
-          },
-          {
-            "heading": "Relational Knowledge, Not Speculation",
-            "content": "Knowing God is not accumulation of data but entering into a relationship defined by truth and love. Scripture locates life in this knowledge itself, not in speculation about unrevealed things (John 17:3; Deut 29:29). Grace and power flow “through the knowledge of Him,” so the fitting prayer is for emancipation from inherited distortions and for light to walk in what God has actually revealed (2 Pet 1:2–4)."
-          },
-          {
-            "heading": "Historical Proof: Why Israel Missed Christ",
-            "content": "The history of Israel in Jesus’ day illustrates the thesis. Many expected a force-wielding liberator who would enthrone Israel above the nations. When Jesus taught the ways of the kingdom and embodied non-coercive love, the mismatch with their preconceptions produced offense rather than repentance. Even mighty works did not cure a false concept of God; only a new mind could (John 6:14–15)."
-          },
-          {
-            "heading": "From Crown to Cross",
-            "content": "The attempt to crown Jesus after the feeding of the five thousand revealed the reigning ideal: political dominion secured by power. When Christ refused that path and set His face toward the cross, the people’s hopes collapsed. The same revelation that should have saved them became a stumbling stone because it contradicted the picture of God they cherished. The road from imagined crown to actual cross exposes how lethal a misconceived deity can be."
-          },
-          {
-            "heading": "A Present Warning",
-            "content": "This peril persists. We are tempted to reject corrective light when it collides with long-held ideas or personal ambitions. Darkness born of misrepresentation still “covers the earth,” and texts that seem harsh or puzzling often clear when read beneath the steady light of God’s self-revelation in Christ (Isa 42:1–4; Exod 33:18–19; 34:6–7). The practical response is an honest, prayerful openness to be taught anew."
-          },
-          {
-            "heading": "Where the Argument Goes Next",
-            "content": "If God’s character is the decisive issue, then His law—which Scripture portrays as the transcript of that character—must be rightly understood. The next section therefore turns to God’s government and law, not as an external code, but as the pattern of life that protects freedom, truth, and love. Read this way, the law becomes a witness to who God is, preparing us to interpret His actions consistently with the cross."
-          }
+          { "heading": "Chapter 1.", "content": "This chapter lays the thesis to which the whole book returns: eternal life is bound to the knowledge of God as He truly is (John 17:3). What we believe about God’s character governs how we worship, how we treat others, and whether we receive or resist further light. A mistaken picture of God does not merely weaken devotion; it redirects the entire religious life along a path that ends badly." },
+          { "heading": "The Universal Predicament", "content": "It is safe to say three things: first, everyone holds some working idea of God, whether examined or assumed; second, that idea quietly rules everything in religion; third, humanity is predisposed to a false view that culture and education often deepen. Therefore, deliverance into a true knowledge of God is not optional. Without it, even earnest religion can harden around error and mistake zeal for faithfulness (Rom 1:21–25)." },
+          { "heading": "Relational Knowledge, Not Speculation", "content": "Knowing God is not accumulation of data but entering into a relationship defined by truth and love. Scripture locates life in this knowledge itself, not in speculation about unrevealed things (John 17:3; Deut 29:29). Grace and power flow through the knowledge of Him, so the fitting prayer is for emancipation from inherited distortions and for light to walk in what God has actually revealed (2 Pet 1:2–4)." },
+          { "heading": "Historical Proof: Why Israel Missed Christ", "content": "The history of Israel in Jesus’ day illustrates the thesis. Many expected a force-wielding liberator who would enthrone Israel above the nations. When Jesus taught the ways of the kingdom and embodied non-coercive love, the mismatch with their preconceptions produced offense rather than repentance. Even mighty works did not cure a false concept of God; only a new mind could (John 6:14–15)." },
+          { "heading": "From Crown to Cross", "content": "The attempt to crown Jesus after the feeding of the five thousand revealed the reigning ideal: political dominion secured by power. When Christ refused that path and set His face toward the cross, the people’s hopes collapsed. The same revelation that should have saved them became a stumbling stone because it contradicted the picture of God they cherished. The road from imagined crown to actual cross exposes how lethal a misconceived deity can be." },
+          { "heading": "A Present Warning", "content": "This peril persists. We are tempted to reject corrective light when it collides with long-held ideas or personal ambitions. Darkness born of misrepresentation still covers the earth, and texts that seem harsh or puzzling often clear when read beneath the steady light of God’s self-revelation in Christ (Isa 42:1–4; Exod 33:18–19; 34:6–7). The practical response is an honest, prayerful openness to be taught anew." },
+          { "heading": "Where the Argument Goes Next", "content": "If God’s character is the decisive issue, then His law—which Scripture portrays as the transcript of that character—must be rightly understood. The next section therefore turns to God’s government and law, not as an external code, but as the pattern of life that protects freedom, truth, and love. Read this way, the law becomes a witness to who God is, preparing us to interpret His actions consistently with the cross." }
         ]
       }
     }
@@ -167,12 +63,9 @@
 </script>
 
 <div class="relative min-h-screen md:flex">
-  <!-- Mobile Nav Bar -->
   <div class="ui-bg flex justify-between md:hidden sticky top-0 z-20 border-b ui-border">
     <button id="mobile-menu-btn" aria-controls="nav-panel" aria-expanded="false" class="p-4 text-primary hover:bg-[var(--nav-hover-bg)]">
-      <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-      </svg>
+      <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
       <span class="sr-only">Open Menu</span>
     </button>
     <div class="p-2">
@@ -183,7 +76,6 @@
     </div>
   </div>
 
-  <!-- Nav Panel -->
   <nav id="nav-panel" class="ui-bg text-primary w-64 absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition-transform duration-200 ease-in-out z-30 md:flex flex-col border-r ui-border">
     <div class="p-4 border-b ui-border">
       <h1 id="app-title" class="text-xl font-bold text-accent">Folio Title</h1>
@@ -198,25 +90,14 @@
     </div>
   </nav>
 
-  <!-- Overlay for mobile nav -->
   <div id="nav-overlay" class="fixed inset-0 bg-black/50 z-20 hidden md:hidden"></div>
 
-  <!-- Main Content -->
   <main class="flex-1 p-6 sm:p-8 lg:p-12">
     <div class="max-w-4xl mx-auto prose" id="content-root"></div>
   </main>
 </div>
 
-<!-- Verse modal -->
-<style>
-.ref-pop { position:absolute; z-index:50; max-width:28rem; background:var(--nav-bg); border:1px solid var(--nav-border);
-  padding:.6rem .8rem; border-radius:.5rem; box-shadow:0 6px 20px rgba(0,0,0,.15); font-size:.9rem; }
-#verse-modal { position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:60;
-  background:rgba(0,0,0,.5); backdrop-filter: blur(2px); }
-#verse-modal .card { background:var(--nav-bg); color:var(--text); border:1px solid var(--nav-border); border-radius:.6rem; max-width:36rem; width:92%; padding:1rem; }
-#verse-modal .actions { display:flex; gap:.5rem; justify-content:flex-end; margin-top:.75rem; }
-#verse-modal button, #verse-modal a { padding:.4rem .7rem; border-radius:.4rem; border:1px solid var(--nav-border); }
-</style>
+<!-- Scripture preview modal -->
 <div id="verse-modal" role="dialog" aria-modal="true" aria-labelledby="verse-title">
   <div class="card">
     <div id="verse-title" class="text-accent font-bold mb-2"></div>
@@ -229,89 +110,172 @@
 </div>
 
 <script>
-/* === Core App Loader (unchanged, trimmed for space) === */
-/* ... keep your original renderApp/init code here ... */
+/* ---------- Minimal app renderer (reads #app-data and renders UI) ---------- */
+(function(){
+  const htmlEl = document.documentElement;
+  const navPanel = document.getElementById('nav-panel');
+  const navLinks = document.getElementById('nav-links');
+  const navOverlay = document.getElementById('nav-overlay');
+  const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+  const contentRoot = document.getElementById('content-root');
+  const appTitleEl = document.getElementById('app-title');
+  const appSubtitleEl = document.getElementById('app-subtitle');
 
-/* === Auto-link Scripture refs to Bible Gateway (KJV) === */
-const BIBLE_LINK_BASE = 'https://www.biblegateway.com/passage/?search=';
-const BIBLE_VERSION = 'KJV';
-const REF_RE = /\b(?:(?:1|2|3)\s*)?(?:Gen|Ex(?:od)?|Lev|Num|Deut|Josh|Judg|Ruth|1(?:\s)?Sam|2(?:\s)?Sam|1(?:\s)?Kgs|2(?:\s)?Kgs|1(?:\s)?Chr|2(?:\s)?Chr|Ezra|Neh|Esth|Job|Ps(?:alm|alms)?|Prov|Eccl|Song|Isa|Jer|Lam|Ezek|Dan|Hos|Joel|Amos|Obad|Jonah|Mic|Nah|Hab|Zeph|Hag|Zech|Mal|Matt|Mark|Luke|John|Acts|Rom|1(?:\s)?Cor|2(?:\s)?Cor|Gal|Eph|Phil|Col|1(?:\s)?Thess|2(?:\s)?Thess|1(?:\s)?Tim|2(?:\s)?Tim|Titus|Phlm|Heb|Jas|1(?:\s)?Pet|2(?:\s)?Pet|1(?:\s)?John|2(?:\s)?John|3(?:\s)?John|Jude|Rev)\.?\s*\d{1,3}:\d{1,3}(?:[-–]\d{1,3})?(?:,\s*\d{1,3}:\d{1,3})*/g;
-
-function linkifyBibleRefs(rootEl = document) {
-  const nodes = rootEl.querySelectorAll('#content-root p, #content-root li');
-  nodes.forEach(n => {
-    n.innerHTML = n.innerHTML.replace(REF_RE, (m) => {
-      const q = encodeURIComponent(m.replace(/\s+/g, '+'));
-      const href = `${BIBLE_LINK_BASE}${q}&version=${BIBLE_VERSION}`;
-      return `<a class="bible-ref" href="${href}" target="_blank" rel="noopener" data-ref="${m}">${m}</a>`;
-    });
-  });
-}
-
-/* === Verse Preview Logic === */
-async function fetchKJV(ref){
-  const url = 'https://bible-api.com/' + encodeURIComponent(ref.replace(/\s+/g,' '));
-  const res = await fetch(url);
-  if(!res.ok) return null;
-  const j = await res.json();
-  return j.text ? j.text.trim() + ' — KJV' : null;
-}
-function isTouch(){ return matchMedia('(hover: none)').matches; }
-
-function attachRefPreviews(){
-  let pop; let hideT;
-  const modal = document.getElementById('verse-modal');
-  const vTitle = document.getElementById('verse-title');
-  const vBody = document.getElementById('verse-body');
-  const vOpen = document.getElementById('verse-open');
-  const vClose = document.getElementById('verse-close');
-
-  function openModal(ref, href, text){
-    vTitle.textContent = ref;
-    vBody.textContent = text || 'Loading…';
-    vOpen.href = href;
-    modal.style.display = 'flex';
-    vClose.focus();
+  function loadContent(){
+    const n = document.getElementById('app-data');
+    if (!n) throw new Error('No #app-data found');
+    const raw = n.textContent.trim();
+    if (!raw) throw new Error('JSON in #app-data is empty');
+    return JSON.parse(raw);
   }
-  function closeModal(){ modal.style.display = 'none'; }
+  function firstApp(obj){
+    if (obj.categories) return obj;
+    const k = Object.keys(obj);
+    return obj[k[0]];
+  }
+  function catArray(app){
+    return Object.entries(app.categories||{}).map(([slug,c])=>({
+      slug, display_order: c.display_order ?? 999,
+      display_name: c.display_name || c.name || slug,
+      introduction: c.introduction || '',
+      paragraphs: Array.isArray(c.paragraphs)? c.paragraphs: []
+    })).sort((a,b)=>(a.display_order-b.display_order)||a.display_name.localeCompare(b.display_name));
+  }
 
-  vClose.addEventListener('click', closeModal);
-  modal.addEventListener('click', (e)=>{ if(e.target===modal) closeModal(); });
-  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeModal(); });
+  function renderApp(app){
+    appTitleEl.textContent = app.title || 'Folio';
+    appSubtitleEl.textContent = app.description || '';
+    const cats = catArray(app);
 
-  document.querySelectorAll('#content-root a.bible-ref').forEach(a=>{
-    const ref = a.dataset.ref;
-    const href = a.href;
-    if (isTouch()){
-      a.addEventListener('click', async (e)=>{
-        e.preventDefault();
-        openModal(ref, href, 'Loading…');
-        try { vBody.textContent = (await fetchKJV(ref)) || 'Preview unavailable.'; }
-        catch { vBody.textContent = 'Preview unavailable.'; }
-      });
-    } else {
-      a.addEventListener('mouseenter', async ()=>{
-        clearTimeout(hideT);
-        if (!pop){ pop = document.createElement('div'); pop.className='ref-pop'; document.body.appendChild(pop); }
-        pop.textContent = 'Loading…';
-        const rect = a.getBoundingClientRect();
-        pop.style.top = (window.scrollY + rect.bottom + 6) + 'px';
-        pop.style.left = (window.scrollX + rect.left) + 'px';
-        pop.hidden = false;
-        try { pop.textContent = (await fetchKJV(ref)) || 'Preview unavailable'; }
-        catch { pop.textContent = 'Preview unavailable'; }
-      });
-      a.addEventListener('mouseleave', ()=>{ hideT = setTimeout(()=>{ if(pop) pop.hidden=true; }, 150); });
+    // nav
+    navLinks.innerHTML = cats.map(c => `<li><a href="#${c.slug}" class="nav-link block p-2 rounded hover:bg-[var(--nav-hover-bg)]" data-view="${c.slug}">${c.display_name}</a></li>`).join('');
+
+    // content
+    contentRoot.innerHTML = cats.map(c => {
+      const paras = c.paragraphs.map(p => `
+        ${p.heading ? `<h3>${p.heading}</h3>`:''}
+        ${p.content ? `<p>${p.content}</p>`:''}
+      `).join('');
+      return `
+        <article id="${c.slug}" class="content-panel hidden">
+          <h2>${c.display_name}</h2>
+          ${c.introduction ? `<p class="note">${c.introduction}</p>`:''}
+          ${paras}
+        </article>
+      `;
+    }).join('');
+
+    // activate first or hash
+    const slugSet = new Set(cats.map(c=>c.slug));
+    function updateView(viewId){
+      contentRoot.querySelectorAll('.content-panel').forEach(el => el.classList.toggle('hidden', el.id !== viewId));
+      navLinks.querySelectorAll('a.nav-link').forEach(a => a.setAttribute('aria-current', a.dataset.view===viewId?'page':'false'));
+      history.replaceState(null, '', '#'+viewId);
+      document.title = (cats.find(c=>c.slug===viewId)?.display_name || 'Folio') + ' | ' + (app.title||'');
     }
-  });
-}
+    const initial = (location.hash||'').replace(/^#/,'');
+    updateView(slugSet.has(initial) ? initial : cats[0].slug);
 
-/* Wrap renderApp to add ref-linking + previews */
-document.addEventListener('DOMContentLoaded', () => {
-  const origRenderApp = window.renderApp;
-  window.renderApp = function(app){ origRenderApp(app); linkifyBibleRefs(); attachRefPreviews(); };
-});
+    // events
+    navLinks.addEventListener('click',(e)=>{
+      const a = e.target.closest('a.nav-link'); if(!a) return;
+      e.preventDefault(); updateView(a.dataset.view);
+      if (!navPanel.classList.contains('md:translate-x-0')) toggleMobileNav(true);
+      window.scrollTo({top:0,behavior:'smooth'});
+    });
+    window.addEventListener('hashchange',()=>{
+      const h=(location.hash||'').replace(/^#/, '');
+      if(slugSet.has(h)) updateView(h);
+    });
+
+    // After render: linkify + previews
+    linkifyBibleRefs(document);
+    attachRefPreviews();
+  }
+
+  function toggleMobileNav(forceClose=false){
+    const open = !forceClose && navPanel.classList.contains('-translate-x-full');
+    if (open){ navPanel.classList.remove('-translate-x-full'); navOverlay.classList.remove('hidden'); mobileMenuBtn.setAttribute('aria-expanded','true'); }
+    else { navPanel.classList.add('-translate-x-full'); navOverlay.classList.add('hidden'); mobileMenuBtn.setAttribute('aria-expanded','false'); }
+  }
+  mobileMenuBtn.addEventListener('click',()=>toggleMobileNav());
+  navOverlay.addEventListener('click',()=>toggleMobileNav(true));
+
+  // Scripture helpers (KJV)
+  const BIBLE_LINK_BASE = 'https://www.biblegateway.com/passage/?search=';
+  const BIBLE_VERSION = 'KJV';
+  const REF_RE = /\b(?:(?:1|2|3)\s*)?(?:Gen|Ex(?:od)?|Lev|Num|Deut|Josh|Judg|Ruth|1(?:\s)?Sam|2(?:\s)?Sam|1(?:\s)?Kgs|2(?:\s)?Kgs|1(?:\s)?Chr|2(?:\s)?Chr|Ezra|Neh|Esth|Job|Ps(?:alm|alms)?|Prov|Eccl|Song|Isa|Jer|Lam|Ezek|Dan|Hos|Joel|Amos|Obad|Jonah|Mic|Nah|Hab|Zeph|Hag|Zech|Mal|Matt|Mark|Luke|John|Acts|Rom|1(?:\s)?Cor|2(?:\s)?Cor|Gal|Eph|Phil|Col|1(?:\s)?Thess|2(?:\s)?Thess|1(?:\s)?Tim|2(?:\s)?Tim|Titus|Phlm|Heb|Jas|1(?:\s)?Pet|2(?:\s)?Pet|1(?:\s)?John|2(?:\s)?John|3(?:\s)?John|Jude|Rev)\.?\s*\d{1,3}:\d{1,3}(?:[-–]\d{1,3})?(?:,\s*\d{1,3}:\d{1,3})*/g;
+
+  function linkifyBibleRefs(root=document){
+    root.querySelectorAll('#content-root p, #content-root li').forEach(n=>{
+      n.innerHTML = n.innerHTML.replace(REF_RE, m=>{
+        const q = encodeURIComponent(m.replace(/\s+/g,'+'));
+        const href = `${BIBLE_LINK_BASE}${q}&version=${BIBLE_VERSION}`;
+        return `<a class="bible-ref" href="${href}" target="_blank" rel="noopener" data-ref="${m}">${m}</a>`;
+      });
+    });
+  }
+
+  async function fetchKJV(ref){
+    try{
+      const url = 'https://bible-api.com/' + encodeURIComponent(ref.replace(/\s+/g,' '));
+      const res = await fetch(url); if(!res.ok) return null;
+      const j = await res.json();
+      return j.text ? j.text.trim() + ' — KJV' : null;
+    }catch{return null;}
+  }
+  function isTouch(){ return matchMedia('(hover: none)').matches; }
+
+  function attachRefPreviews(){
+    let pop; let hideT;
+    const modal = document.getElementById('verse-modal');
+    const vTitle = document.getElementById('verse-title');
+    const vBody = document.getElementById('verse-body');
+    const vOpen = document.getElementById('verse-open');
+    const vClose = document.getElementById('verse-close');
+
+    function openModal(ref, href, text){
+      vTitle.textContent = ref;
+      vBody.textContent = text || 'Loading…';
+      vOpen.href = href;
+      modal.style.display = 'flex';
+      vClose.focus();
+    }
+    function closeModal(){ modal.style.display = 'none'; }
+    vClose.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e)=>{ if(e.target===modal) closeModal(); });
+    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeModal(); });
+
+    document.querySelectorAll('#content-root a.bible-ref').forEach(a=>{
+      const ref = a.dataset.ref;
+      const href = a.href;
+      if (isTouch()){
+        a.addEventListener('click', async (e)=>{
+          e.preventDefault();
+          openModal(ref, href, 'Loading…');
+          vBody.textContent = (await fetchKJV(ref)) || 'Preview unavailable.';
+        });
+      } else {
+        a.addEventListener('mouseenter', async ()=>{
+          clearTimeout(hideT);
+          if (!pop){ pop = document.createElement('div'); pop.className='ref-pop'; document.body.appendChild(pop); }
+          pop.textContent = 'Loading…';
+          const rect = a.getBoundingClientRect();
+          pop.style.top = (window.scrollY + rect.bottom + 6) + 'px';
+          pop.style.left = (window.scrollX + rect.left) + 'px';
+          pop.hidden = false;
+          pop.textContent = (await fetchKJV(ref)) || 'Preview unavailable';
+        });
+        a.addEventListener('mouseleave', ()=>{ hideT = setTimeout(()=>{ if(pop) pop.hidden=true; }, 150); });
+      }
+    });
+  }
+
+  // Init
+  const appObj = firstApp(loadContent());
+  window.renderApp = renderApp; // expose if you extend later
+  renderApp(appObj);
+})();
 </script>
 </body>
 </html>
-
