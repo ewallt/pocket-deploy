@@ -24,7 +24,6 @@
   }
   a{color:var(--accent); text-decoration:none}
   .wrap{max-width:1000px; margin:0 auto; padding:20px}
-  /* Header */
   .hdr{position:sticky; top:0; z-index:10; backdrop-filter:saturate(160%) blur(12px); background:color-mix(in oklab, var(--panel) 78%, transparent); border-bottom:1px solid var(--border)}
   .hdr-inner{display:flex; gap:16px; align-items:center; justify-content:space-between; padding:14px 20px}
   .title{display:flex; gap:12px; align-items:center; font-weight:700; letter-spacing:.2px}
@@ -35,8 +34,6 @@
   .actions{display:flex; gap:8px; flex-wrap:wrap}
   .btn{appearance:none; border:1px solid var(--border); background:var(--panel); color:var(--ink); padding:10px 14px; border-radius:10px; cursor:pointer; font-weight:600}
   .btn:hover{outline:2px solid color-mix(in oklab, var(--brand) 35%, transparent)}
-  .btn.green{border-color:color-mix(in oklab, var(--ok) 40%, var(--border));}
-  /* Panels */
   .panel{background:linear-gradient(180deg, color-mix(in oklab, var(--panel) 86%, transparent), var(--panel)); border:1px solid var(--border); border-radius:var(--radius); padding:20px; box-shadow:0 10px 30px rgba(0,0,0,.08)}
   .section{margin:18px 0}
   h1{font-size:24px; margin:0}
@@ -47,8 +44,6 @@
   .chips{display:flex; gap:8px; flex-wrap:wrap; margin:8px 0}
   .chip{background:var(--chip); color:var(--chip-ink); border:1px solid var(--border); padding:6px 10px; border-radius:999px; font-size:12px}
   .note{padding:10px 12px; border-left:3px solid var(--brand); background:color-mix(in oklab, var(--brand) 12%, transparent); border-radius:10px}
-  .muted{color:var(--muted)}
-  /* Flashcards */
   .fc-wrap{display:grid; gap:16px}
   .fc-toolbar{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
   .fc{position:relative; border:1px solid var(--border); border-radius:18px; background:var(--card); padding:26px; min-height:220px; perspective:1000px; box-shadow:0 4px 20px rgba(3,7,18,.18)}
@@ -61,7 +56,6 @@
   .fc-foot{position:absolute; bottom:10px; left:16px; right:16px; display:flex; justify-content:space-between; align-items:center; color:var(--muted); font-size:12px}
   .fc-illus{font-size:12px; padding-top:10px; color:var(--muted)}
   .pill{padding:4px 8px; border-radius:999px; border:1px dashed var(--border)}
-  /* Print */
   @media print{
     body{background:#fff; color:#000}
     .hdr, .actions, .tabs, .app-footer, .fc-wrap, .fc, .fc-toolbar{display:none !important}
@@ -90,12 +84,10 @@
   </header>
 
   <main class="wrap" id="app">
-    <!-- Handout -->
     <section id="tab-handout" class="panel tab-panel" role="tabpanel" aria-labelledby="t-handout">
       <div class="handout-root" id="handout"></div>
     </section>
 
-    <!-- Flashcards -->
     <section id="tab-flashcards" class="panel tab-panel" role="tabpanel" aria-labelledby="t-flashcards" hidden>
       <div class="fc-wrap">
         <div class="fc-toolbar">
@@ -145,7 +137,7 @@ const HANDOUT_HTML = `
 
   <div class="section">
     <h2>Thesis</h2>
-    <p class="k">The “hunter father” analogy shows that a loving father may adopt <emprotective</em> measures in a dangerous environment without changing his character or principles. Likewise, God acts to <em>minimize harm and save</em> while remaining perfectly consistent with His law and Christ-revealed character.</p>
+    <p class="k">The “hunter father” analogy shows that a loving father may adopt <em>protective</em> measures in a dangerous environment without changing his character or principles. Likewise, God acts to <em>minimize harm and save</em> while remaining perfectly consistent with His law and Christ-revealed character.</p>
   </div>
 
   <div class="section">
@@ -208,7 +200,7 @@ const CARDS = [
   { q:"Summarize the analogy in one line.", a:"Protective action ≠ character change; it’s love working under constraint to limit harm and save.", page:"", illus:"[Illustration: ❤️‍🩹 love under constraint]" }
 ];
 
-/* ------------------ TAB UI ------------------ */
+/* ------------------ Tabs ------------------ */
 const tabs = {
   handout: { tabBtn: document.getElementById('t-handout'), panel: document.getElementById('tab-handout') },
   flash:   { tabBtn: document.getElementById('t-flashcards'), panel: document.getElementById('tab-flashcards') }
@@ -226,7 +218,7 @@ tabs.flash.tabBtn.addEventListener('click', ()=>showTab('flash'));
 /* Inject handout */
 document.getElementById('handout').innerHTML = HANDOUT_HTML;
 
-/* ------------------ COPY & PRINT ------------------ */
+/* ------------------ Copy & Print ------------------ */
 document.getElementById('copyBtn').addEventListener('click', async () => {
   const handout = document.querySelector('#tab-handout .handout-root');
   const text = handout.innerText.replace(/\n{3,}/g, '\n\n').trim();
@@ -247,11 +239,12 @@ function toast(msg){
   n.textContent = msg;
   n.style.position='fixed'; n.style.bottom='18px'; n.style.left='50%'; n.style.transform='translateX(-50%)';
   n.style.background='var(--panel)'; n.style.color='var(--ink)'; n.style.border='1px solid var(--border)';
-  n.style.padding='10px 14px'; n.style.borderRadius='10px'; n.style.boxShadow:'0 6px 20px rgba(0,0,0,.18)';
+  n.style.padding='10px 14px'; n.style.borderRadius='10px'; 
+  n.style.boxShadow = '0 6px 20px rgba(0,0,0,.18)'; /* ← fixed = sign */
   document.body.appendChild(n); setTimeout(()=>n.remove(), 1800);
 }
 
-/* ------------------ FLASHCARDS ------------------ */
+/* ------------------ Flashcards ------------------ */
 const cardEl = document.getElementById('card');
 const qEl = document.getElementById('qText');
 const aEl = document.getElementById('aText');
@@ -313,7 +306,6 @@ document.getElementById('prevBtn').addEventListener('click', prev);
 document.getElementById('shuffleBtn').addEventListener('click', shuffle);
 remember.addEventListener('change', ()=>{ if(!remember.checked) clearLS(); saveLS(); });
 
-// Keyboard shortcuts (active on Flashcards tab)
 document.addEventListener('keydown', (e)=>{
   const flashActive = document.getElementById('t-flashcards').getAttribute('aria-selected') === 'true';
   if(!flashActive) return;
@@ -322,7 +314,6 @@ document.addEventListener('keydown', (e)=>{
   if(e.key === 'ArrowLeft'){ prev(); }
 });
 
-// Init
 document.getElementById('handout').innerHTML = HANDOUT_HTML;
 loadLS(); renderCard();
 </script>
