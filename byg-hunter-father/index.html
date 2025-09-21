@@ -9,16 +9,15 @@
   :root{
     --bg:#0b1020; --panel:#0f172a; --ink:#e5e7eb; --muted:#94a3b8; --brand:#22d3ee;
     --chip:#1f2937; --chip-ink:#cbd5e1; --accent:#38bdf8; --ok:#10b981; --warn:#f59e0b; --bad:#ef4444;
-    --border:#1e293b; --card:#111827; --hi:#f1f5f9; --radius:14px;
+    --border:#1e293b; --card:#111827; --radius:14px;
   }
   @media (prefers-color-scheme: light){
-    :root{ --bg:#f7fafc; --panel:#ffffff; --ink:#0f172a; --muted:#475569; --brand:#0ea5e9; --chip:#eef2ff; --chip-ink:#3730a3; --accent:#2563eb; --border:#e5e7eb; --card:#ffffff; --hi:#0f172a; }
+    :root{ --bg:#f7fafc; --panel:#ffffff; --ink:#0f172a; --muted:#475569; --brand:#0ea5e9; --chip:#eef2ff; --chip-ink:#3730a3; --accent:#2563eb; --border:#e5e7eb; --card:#ffffff; }
   }
   *{box-sizing:border-box}
   html,body{height:100%}
   body{
-    margin:0; font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-    color:var(--ink);
+    margin:0; font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; color:var(--ink);
     background:radial-gradient(1200px 800px at 70% -20%, rgba(56,189,248,.12), transparent 60%), var(--bg);
     -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
   }
@@ -27,7 +26,7 @@
   .hdr{position:sticky; top:0; z-index:10; backdrop-filter:saturate(160%) blur(12px); background:color-mix(in oklab, var(--panel) 78%, transparent); border-bottom:1px solid var(--border)}
   .hdr-inner{display:flex; gap:16px; align-items:center; justify-content:space-between; padding:14px 20px}
   .title{display:flex; gap:12px; align-items:center; font-weight:700; letter-spacing:.2px}
-  .badge{font-size:12px; padding:2px 8px; border-radius:999px; background:var(--chip); color:var(--chip-ink); border:1px solid var(--border)}
+  .badge{font-size:12px; padding:2px 8px; border-radius:999px; background:var(--chip); color:#cbd5e1; border:1px solid var(--border)}
   .tabs{display:flex; gap:8px; flex-wrap:wrap}
   .tab{appearance:none; border:1px solid var(--border); background:var(--panel); color:var(--ink); padding:10px 14px; border-radius:999px; cursor:pointer; font-weight:600}
   .tab[aria-selected="true"]{background:linear-gradient(180deg, color-mix(in oklab, var(--brand) 55%, var(--panel)), var(--panel)); color:#03121a}
@@ -42,8 +41,9 @@
   ul{margin:8px 0 8px 22px}
   li{margin:6px 0}
   .chips{display:flex; gap:8px; flex-wrap:wrap; margin:8px 0}
-  .chip{background:var(--chip); color:var(--chip-ink); border:1px solid var(--border); padding:6px 10px; border-radius:999px; font-size:12px}
-  .note{padding:10px 12px; border-left:3px solid var(--brand); background:color-mix(in oklab, var(--brand) 12%, transparent); border-radius:10px}
+  .chip{background:var(--chip); color:#cbd5e1; border:1px solid var(--border); padding:6px 10px; border-radius:999px; font-size:12px}
+  .pill{padding:4px 8px; border-radius:999px; border:1px dashed var(--border)}
+  /* Flashcards */
   .fc-wrap{display:grid; gap:16px}
   .fc-toolbar{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
   .fc{position:relative; border:1px solid var(--border); border-radius:18px; background:var(--card); padding:26px; min-height:220px; perspective:1000px; box-shadow:0 4px 20px rgba(3,7,18,.18)}
@@ -55,7 +55,6 @@
   .fc-a{font-size:17px}
   .fc-foot{position:absolute; bottom:10px; left:16px; right:16px; display:flex; justify-content:space-between; align-items:center; color:var(--muted); font-size:12px}
   .fc-illus{font-size:12px; padding-top:10px; color:var(--muted)}
-  .pill{padding:4px 8px; border-radius:999px; border:1px dashed var(--border)}
   @media print{
     body{background:#fff; color:#000}
     .hdr, .actions, .tabs, .app-footer, .fc-wrap, .fc, .fc-toolbar{display:none !important}
@@ -78,16 +77,18 @@
       <div class="actions">
         <button class="btn" id="copyBtn" title="Copy handout to clipboard">Copy Handout</button>
         <button class="btn" id="printBtn" title="Print the handout">Print</button>
-        <a class="btn green" href="https://github.com/ewallt/pocket-deploy/new/gh-pages?filename=byg-hunter-father/index.html" target="_blank" rel="noopener">GitHub Placeholder</a>
+        <a class="btn" href="https://github.com/ewallt/pocket-deploy/new/gh-pages?filename=byg-hunter-father/index.html" target="_blank" rel="noopener">GitHub Placeholder</a>
       </div>
     </div>
   </header>
 
   <main class="wrap" id="app">
+    <!-- Handout -->
     <section id="tab-handout" class="panel tab-panel" role="tabpanel" aria-labelledby="t-handout">
       <div class="handout-root" id="handout"></div>
     </section>
 
+    <!-- Flashcards -->
     <section id="tab-flashcards" class="panel tab-panel" role="tabpanel" aria-labelledby="t-flashcards" hidden>
       <div class="fc-wrap">
         <div class="fc-toolbar">
@@ -126,78 +127,73 @@
   </footer>
 
 <script>
-/* ------------------ DATA ------------------ */
+/* ------------------ DATA (Accommodation front-and-center) ------------------ */
 const HANDOUT_HTML = `
   <h1>“Hunter Father” — Teaching Handout</h1>
   <div class="chips">
     <span class="chip">Ch.31 — The Ever-Loving, Saving Father</span>
-    <span class="chip">Analogy: minimization of harm</span>
-    <span class="chip">Lens: God acts as Saviour without changing principles</span>
+    <span class="chip">Principle: Accommodation (Concession ≠ Endorsement)</span>
+    <span class="chip">Lens: Love under constraint</span>
   </div>
 
   <div class="section">
     <h2>Thesis</h2>
-    <p class="k">The “hunter father” analogy shows that a loving father may adopt <em>protective</em> measures in a dangerous environment without changing his character or principles. Likewise, God acts to <em>minimize harm and save</em> while remaining perfectly consistent with His law and Christ-revealed character.</p>
+    <p class="k">
+      The father’s true will is that his son <em>not</em> become a hunter. When the son insists against the father’s wishes,
+      the father <strong>accommodates</strong>—teaching <em>safe, humane methods</em> to <strong>limit harm</strong>.
+      Outsiders overhearing this training may <em>misread concession as endorsement</em>. Likewise, some biblical
+      commands/counsels that look violent are God’s <strong>damage-limiting guidance within human insistence</strong>,
+      not endorsements of violence or a change of divine character.
+    </p>
   </div>
 
   <div class="section">
     <h2>Story in brief</h2>
     <ul>
-      <li>A family lives near real dangers (predators/hostile conditions). The father trains and equips for safety.</li>
-      <li>From an outside or childish view, the father looks like “a gunman.”</li>
-      <li>But the father hasn’t changed; he’s choosing the <strong>least-harm</strong> path to protect life under constraints.</li>
+      <li>Father’s intent: <strong>No hunting</strong>. Son chooses to hunt anyway.</li>
+      <li>Father concedes to teach <strong>safety and humanity</strong> to prevent greater harm.</li>
+      <li>Observers may conclude, wrongly, that the father <em>supports</em> hunting.</li>
     </ul>
   </div>
 
   <div class="section">
-    <h2>What readers often misread</h2>
+    <h2>Key distinctions</h2>
     <ul>
-      <li><strong>Misread:</strong> “The father became violent.” → <strong>Correction:</strong> He is <em>restraining violence</em> and reducing harm.</li>
-      <li><strong>Misread:</strong> “Principles were suspended.” → <strong>Correction:</strong> Principles are intact; action is shaped by love, law, and reality.</li>
-      <li><strong>Misread:</strong> “Force proves character.” → <strong>Correction:</strong> Motive, method, and goal reveal character (to save, not to coerce).</li>
+      <li><strong>Will vs. Concession:</strong> God’s ideal will ≠ what He permits under human insistence.</li>
+      <li><strong>Concession vs. Endorsement:</strong> Guidance to minimize harm ≠ approval of the chosen path.</li>
+      <li><strong>Character Continuity:</strong> Accommodation never suspends love or righteousness.</li>
     </ul>
   </div>
 
   <div class="section">
-    <h2>How the analogy informs hard texts</h2>
+    <h2>How this reads hard texts</h2>
     <ul>
-      <li><strong>Agency:</strong> Distinguish God’s saving intervention from destructive agencies (human, adversarial, natural).</li>
-      <li><strong>Constraint:</strong> In a fallen world, love may adopt protective measures that look severe but aim to <em>limit</em> harm.</li>
-      <li><strong>Continuity:</strong> God’s actions <em>never</em> violate His law/character; they express them within real-world constraints.</li>
-    </ul>
-  </div>
-
-  <div class="section">
-    <h2>Applications</h2>
-    <ul>
-      <li>Read difficult narratives through the lens of a saving Father, not a capricious ruler.</li>
-      <li>Ask in each scene: Who is harmed? Who is protected? What action <em>minimizes</em> total harm while keeping righteousness intact?</li>
-      <li>Let Christ’s life and teaching be the baseline for interpreting God’s motives and methods.</li>
+      <li><strong>Counsel/commands that seem violent:</strong> read as <em>accommodation</em> (like the father’s training) to minimize harm.</li>
+      <li><strong>Misread risk:</strong> people project endorsement onto God’s concessions—just as neighbors misread the father.</li>
+      <li><strong>Diagnostic question:</strong> What in this counsel clearly aims to <em>limit</em> total harm and protect the vulnerable?</li>
     </ul>
   </div>
 
   <div class="section">
     <h2>Discussion prompts</h2>
     <ul>
-      <li>Where does the analogy help correct popular misreadings of God’s actions?</li>
-      <li>How do motive and method together reveal character in both the father and God?</li>
+      <li>Where does “concession ≠ endorsement” reframe a text you’ve struggled with?</li>
+      <li>How do motive, method, and goal reveal character in both the father and in God’s accommodations?</li>
     </ul>
   </div>
 `;
 
 const CARDS = [
-  { q:"What does the 'hunter father' analogy aim to show?", a:"A loving father can adopt protective measures in danger without changing character; God likewise acts to save and minimize harm.", page:"", illus:"[Illustration: 🛡️ father as protector]" },
-  { q:"From a superficial view, how might the father be misread?", a:"As 'becoming a gunman'—but that misreads his saving intent and context.", page:"", illus:"[Illustration: 👀 misperception]" },
-  { q:"What is the core ethical principle on display?", a:"Minimization of harm within unchanging principles of love and righteousness.", page:"", illus:"[Illustration: ⚖️ least harm]" },
-  { q:"How does this analogy map to God?", a:"God’s interventions aim to save/limit harm while staying consistent with His character revealed in Christ.", page:"", illus:"[Illustration: ✝️ lens]" },
-  { q:"What common misreading does the analogy correct?", a:"That strong protective actions equal a shift in character or a resort to coercion.", page:"", illus:"[Illustration: 🔁 correction]" },
-  { q:"Which question reframes hard texts productively?", a:"Who is being protected, and what action minimizes harm without violating righteousness?", page:"", illus:"[Illustration: ❓ guiding question]" },
-  { q:"How should 'force' be evaluated here?", a:"By motive/method/goal: protective restraint vs. coercive domination.", page:"", illus:"[Illustration: 🧭 moral compass]" },
-  { q:"What stays constant about the father (and about God)?", a:"Character and principles remain constant; actions adapt to the danger, not to a new ethic.", page:"", illus:"[Illustration: 🧱 steady core]" },
-  { q:"What does 'agency mapping' mean in this context?", a:"Tracking actors (God, humans, adversary, nature) to avoid attributing to God what others do.", page:"", illus:"[Illustration: 🗺️ agency map]" },
-  { q:"Why is the analogy pastorally helpful?", a:"It replaces fear-based images of God with a coherent picture of a Saviour-Father.", page:"", illus:"[Illustration: 💛 reassurance]" },
-  { q:"What is a practical reader habit from this chapter?", a:"Read difficult narratives through the 'saving-Father' lens guided by Christ’s life.", page:"", illus:"[Illustration: 📖→✝️]" },
-  { q:"Summarize the analogy in one line.", a:"Protective action ≠ character change; it’s love working under constraint to limit harm and save.", page:"", illus:"[Illustration: ❤️‍🩹 love under constraint]" }
+  { q:"Father’s true will regarding hunting?", a:"That the son not hunt. Accommodation follows only after the son insists.", page:"", illus:"[🧭 true will ≠ chosen path]" },
+  { q:"Define accommodation in this analogy.", a:"Damage-limiting guidance given after refusal of the ideal, to minimize harm while keeping principles intact.", page:"", illus:"[🛡️ limiting harm]" },
+  { q:"Why isn’t accommodation an endorsement?", a:"Because the aim is safety/humanity within a path the father does not approve; motive and goal differ from endorsement.", page:"", illus:"[↔️ concession ≠ approval]" },
+  { q:"How does this map to God’s 'hard' commands?", a:"They function like the father’s lessons—accommodations to human insistence, not approvals of violence.", page:"", illus:"[📖 lens for commands]" },
+  { q:"What common interpretive error does the analogy expose?", a:"Overhearing accommodation and projecting it as endorsement (projection).", page:"", illus:"[👂➡️ ✅ (mistaken)]" },
+  { q:"What stays constant through accommodation?", a:"God’s character and principles of love/righteousness; only the guidance adapts to limit harm.", page:"", illus:"[🧱 steady character]" },
+  { q:"One-line takeaway:", a:"Concession to human choice is love under constraint—aimed at minimizing harm, not endorsing the choice.", page:"", illus:"[❤️‍🩹 love under constraint]" },
+  { q:"Diagnostic question for tough texts:", a:"Where is the harm-minimizing logic that protects life while keeping righteousness intact?", page:"", illus:"[🔎 harm test]" },
+  { q:"Relation to 'projection' theme:", a:"Humans project their values; thus concessions get misread as God’s ideal will.", page:"", illus:"[🪞 projection]" },
+  { q:"Pastoral value of this analogy:", a:"It restores trust in God’s character while making sense of difficult passages.", page:"", illus:"[💛 trust]" }
 ];
 
 /* ------------------ Tabs ------------------ */
@@ -214,9 +210,6 @@ function showTab(which){
 }
 tabs.handout.tabBtn.addEventListener('click', ()=>showTab('handout'));
 tabs.flash.tabBtn.addEventListener('click', ()=>showTab('flash'));
-
-/* Inject handout */
-document.getElementById('handout').innerHTML = HANDOUT_HTML;
 
 /* ------------------ Copy & Print ------------------ */
 document.getElementById('copyBtn').addEventListener('click', async () => {
@@ -239,10 +232,13 @@ function toast(msg){
   n.textContent = msg;
   n.style.position='fixed'; n.style.bottom='18px'; n.style.left='50%'; n.style.transform='translateX(-50%)';
   n.style.background='var(--panel)'; n.style.color='var(--ink)'; n.style.border='1px solid var(--border)';
-  n.style.padding='10px 14px'; n.style.borderRadius='10px'; 
-  n.style.boxShadow = '0 6px 20px rgba(0,0,0,.18)'; /* ← fixed = sign */
+  n.style.padding='10px 14px'; n.style.borderRadius='10px';
+  n.style.boxShadow = '0 6px 20px rgba(0,0,0,.18)';
   document.body.appendChild(n); setTimeout(()=>n.remove(), 1800);
 }
+
+/* ------------------ Handout inject ------------------ */
+document.getElementById('handout').innerHTML = HANDOUT_HTML;
 
 /* ------------------ Flashcards ------------------ */
 const cardEl = document.getElementById('card');
@@ -255,7 +251,7 @@ const illusB = document.getElementById('illusBack');
 const progress = document.getElementById('progress');
 const remember = document.getElementById('remember');
 
-const LS_KEY = 'byg-hunter-father-fc-v1';
+const LS_KEY = 'byg-hunter-father-fc-v2';
 let order = [...CARDS.keys()];
 let idx = 0;
 let flipped = false;
@@ -314,7 +310,7 @@ document.addEventListener('keydown', (e)=>{
   if(e.key === 'ArrowLeft'){ prev(); }
 });
 
-document.getElementById('handout').innerHTML = HANDOUT_HTML;
+/* Init */
 loadLS(); renderCard();
 </script>
 </body>
