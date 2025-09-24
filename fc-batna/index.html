@@ -17,9 +17,7 @@
             --shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -40,15 +38,57 @@
             text-align: center;
         }
 
+        .deck-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
         #app h1 {
             color: var(--primary-color);
             font-size: 1.8rem;
+            margin: 0;
         }
 
-        #app .deck-description {
-            margin-bottom: 2rem;
-            line-height: 1.6;
+        /* --- NEW: Info Icon & Collapsible Description --- */
+        .info-icon {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
         }
+
+        .info-icon:hover {
+            background-color: rgba(0,0,0,0.05);
+        }
+
+        .deck-description {
+            line-height: 1.6;
+            text-align: left;
+            background-color: var(--secondary-color);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin: 1rem 0 2rem 0;
+            overflow: hidden;
+            max-height: 500px; /* Adjust if description is very long */
+            opacity: 1;
+            transition: all 0.4s ease-in-out;
+        }
+        
+        .deck-description.collapsed {
+            max-height: 0;
+            opacity: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+
 
         /* --- Controls (Positioned on Top) --- */
         .controls {
@@ -63,7 +103,7 @@
             background-color: var(--primary-color);
             color: var(--light-text-color);
             border: none;
-            padding: 12px 20px; /* Slightly larger for touch */
+            padding: 12px 20px;
             border-radius: 8px;
             font-size: 1rem;
             font-weight: 500;
@@ -71,29 +111,20 @@
             transition: background-color 0.2s, transform 0.1s;
         }
 
-        .controls button:hover {
-            background-color: #004170;
-        }
-
-        .controls button:active {
-            transform: scale(0.98);
-        }
-        
-        .controls button:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
+        .controls button:hover { background-color: #004170; }
+        .controls button:active { transform: scale(0.98); }
+        .controls button:disabled { background-color: #ccc; cursor: not-allowed; }
         
         .card-progress {
             color: #6c757d;
             font-weight: 500;
-            width: 110px; /* Wider for "16 of 16" */
+            width: 110px;
         }
         
-        /* --- Card Flip Animation --- */
+        /* --- Card --- */
         .card-container {
             max-width: var(--card-max-width);
-            width: 100%; /* Responsive width */
+            width: 100%;
             height: var(--card-height);
             perspective: 1200px;
             margin: 0 auto;
@@ -107,9 +138,7 @@
             transition: transform 0.6s;
         }
 
-        .card.is-flipped {
-            transform: rotateY(180deg);
-        }
+        .card.is-flipped { transform: rotateY(180deg); }
 
         .card-face {
             position: absolute;
@@ -123,7 +152,6 @@
             justify-content: center;
             align-items: center;
             padding: 25px;
-            box-sizing: border-box;
         }
 
         .card-front {
@@ -141,7 +169,7 @@
             transform: rotateY(180deg);
             justify-content: flex-start;
             text-align: left;
-            overflow-y: auto; /* Allows scrolling for long content on mobile */
+            overflow-y: auto;
         }
         
         .card-back p {
@@ -169,19 +197,15 @@
             padding: 10px 15px;
         }
         
-        #copy-prompt-btn:hover {
-            background-color: #218838;
-        }
+        #copy-prompt-btn:hover { background-color: #218838; }
 
     </style>
 </head>
 <body>
-
-    <div id="app">
-        </div>
+    <div id="app"></div>
 
     <script type="text/javascript">
-        // --- DATA SOURCE (The only part to change for a new deck) ---
+        // --- DATA SOURCE ---
         const deckData = {
           "deckId": "batna-v2",
           "deckTitle": "Defining Your BATNA",
@@ -215,60 +239,66 @@
                 app.innerHTML = '';
                 document.title = deckData.deckTitle;
 
-                // --- Create Header ---
+                // --- Create Header with Info Icon ---
                 const header = document.createElement('header');
+                const titleContainer = document.createElement('div');
+                titleContainer.className = 'deck-header';
+                
                 const title = document.createElement('h1');
                 title.textContent = deckData.deckTitle;
+
+                const infoBtn = document.createElement('button');
+                infoBtn.className = 'info-icon';
+                infoBtn.setAttribute('aria-label', 'Show deck description');
+                infoBtn.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" fill="#888"/></svg>`;
+                
+                titleContainer.appendChild(title);
+                titleContainer.appendChild(infoBtn);
+                header.appendChild(titleContainer);
+
                 const description = document.createElement('p');
-                description.className = 'deck-description';
+                description.className = 'deck-description collapsed'; // Start collapsed
                 description.textContent = deckData.deckDescription;
-                header.appendChild(title);
                 header.appendChild(description);
                 
-                // --- Create Controls (now rendered before the card) ---
+                app.appendChild(header);
+
+                // --- Create Controls ---
+                // ... (This section is identical to the previous version, so it's placed after the header)
                 const controls = document.createElement('div');
                 controls.className = 'controls';
-
                 const prevBtn = document.createElement('button');
                 prevBtn.id = 'prev-btn';
                 prevBtn.textContent = 'Previous';
-
                 const flipBtn = document.createElement('button');
                 flipBtn.id = 'flip-btn';
                 flipBtn.textContent = 'Flip';
-
                 const nextBtn = document.createElement('button');
                 nextBtn.id = 'next-btn';
                 nextBtn.textContent = 'Next';
-
                 const progress = document.createElement('p');
                 progress.className = 'card-progress';
                 progress.textContent = `Card ${currentCardIndex + 1} of ${deckData.cards.length}`;
-
                 controls.appendChild(prevBtn);
                 controls.appendChild(flipBtn);
                 controls.appendChild(progress);
                 controls.appendChild(nextBtn);
-                
-                // --- Append elements to app in the new order ---
-                app.appendChild(header);
                 app.appendChild(controls);
 
                 // --- Create Card ---
+                // ... (This section is identical to the previous version)
                 const cardData = deckData.cards[currentCardIndex];
                 const cardContainer = document.createElement('div');
                 cardContainer.className = 'card-container';
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.id = 'card';
-
                 const cardFront = document.createElement('div');
                 cardFront.className = 'card-face card-front';
                 const frontTitle = document.createElement('div');
                 frontTitle.className = 'card-front-title';
                 frontTitle.textContent = cardData.front.title;
                 cardFront.appendChild(frontTitle);
-
                 const cardBack = document.createElement('div');
                 cardBack.className = 'card-face card-back';
                 const backExplanation = document.createElement('p');
@@ -279,44 +309,32 @@
                 const copyBtn = document.createElement('button');
                 copyBtn.id = 'copy-prompt-btn';
                 copyBtn.textContent = 'Copy Prompt';
-                
                 cardBack.appendChild(backExplanation);
                 cardBack.appendChild(backPrompt);
                 cardBack.appendChild(copyBtn);
-
                 card.appendChild(cardFront);
                 card.appendChild(cardBack);
                 cardContainer.appendChild(card);
                 app.appendChild(cardContainer);
 
-                // --- Add Event Listeners & Logic ---
-                flipBtn.addEventListener('click', () => card.classList.toggle('is-flipped'));
+                // --- Add Event Listeners ---
+                infoBtn.addEventListener('click', () => {
+                    description.classList.toggle('collapsed');
+                });
                 
+                // Other event listeners are identical
+                flipBtn.addEventListener('click', () => card.classList.toggle('is-flipped'));
                 copyBtn.addEventListener('click', () => {
                    navigator.clipboard.writeText(cardData.back.actionablePrompt).then(() => {
                        copyBtn.textContent = 'Copied!';
                        setTimeout(() => { copyBtn.textContent = 'Copy Prompt'; }, 2000);
                    });
                 });
-
-                prevBtn.addEventListener('click', () => {
-                    if (currentCardIndex > 0) {
-                        currentCardIndex--;
-                        render();
-                    }
-                });
-
-                nextBtn.addEventListener('click', () => {
-                    if (currentCardIndex < deckData.cards.length - 1) {
-                        currentCardIndex++;
-                        render();
-                    }
-                });
-                
+                prevBtn.addEventListener('click', () => { if (currentCardIndex > 0) { currentCardIndex--; render(); } });
+                nextBtn.addEventListener('click', () => { if (currentCardIndex < deckData.cards.length - 1) { currentCardIndex++; render(); } });
                 prevBtn.disabled = currentCardIndex === 0;
                 nextBtn.disabled = currentCardIndex === deckData.cards.length - 1;
             }
-
             render(); // Initial Render
         });
     </script>
