@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Cozinha por Padrões — Base Pescetariana</title>
+  <title>Design Pattern Cooking — Pescetariana</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,9 +24,11 @@
     .dark .kbd{background:#0b1220;border-color:#334155;}
     ::-webkit-scrollbar{height:10px;width:10px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:8px}::-webkit-scrollbar-thumb:hover{background:#94a3b8}
     .dark ::-webkit-scrollbar-thumb{background:#334155}
+    noscript { display:block; padding:12px; margin:12px auto; max-width:720px; background:#fef3c7; border:1px solid #f59e0b; border-radius:8px; color:#92400e; }
   </style>
 </head>
 <body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 transition-colors">
+  <noscript>Este app precisa de JavaScript habilitado.</noscript>
   <header class="sticky top-0 z-30 glass border-b border-slate-200/60 dark:border-slate-700/60 bg-white/70 dark:bg-slate-900/60">
     <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
       <div class="flex items-center gap-3">
@@ -45,7 +47,7 @@
           <span class="text-slate-400 text-xs hidden lg:inline">Filtrar títulos e parágrafos</span>
         </div>
         <button id="themeToggle" class="rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-800" title="Alternar tema">
-          <span class="inline dark:hidden">🌙</span><span class="hidden dark:inline">☀️</span>
+          <span id="themeIcon">🌙</span>
         </button>
       </div>
     </div>
@@ -68,237 +70,313 @@
   </footer>
 
   <script>
-  const APP_DATA = {
-    "title": "Cozinha por Padrões — Base Pescetariana",
-    "description": "Um guia prático, em português, para facilitar o dia a dia de uma pescetariana: padrões (técnicas), molhos-mãe, templates de refeição, despensa esperta e planejamento semanal.",
-    "categories": {
-      "inicio": {
-        "display_order": 1,
-        "name": "inicio",
-        "display_name": "Como Usar",
-        "introduction": "Pense em blocos: técnica + proteína + base (grão/verdura) + molho-mãe + acidez/crocância. Troque apenas um bloco para variar sem esforço.",
-        "paragraphs": [
-          { "heading": "Fluxo de Noite Útil (20–30 min)", "content": "1) Descongele/prepare a proteína. 2) Escolha a técnica pelo corte/espessura. 3) Reaqueça um grão pronto e escolha um legume. 4) Aplique um molho-mãe. 5) Finalize com limão/ervas e um toque crocante." },
-          { "heading": "Padrões vs. Receitas", "content": "Use os padrões como LEGO: um conjunto pequeno de técnicas e molhos gera dezenas de pratos, sem depender de receitas longas." }
-        ]
-      },
-      "despensa-base": {
-        "display_order": 2,
-        "name": "despensa-base",
-        "display_name": "Despensa Base",
-        "introduction": "Uma despensa curta e versátil reduz decisões e acelera o preparo.",
-        "paragraphs": [
-          { "heading": "Grãos & Massas", "content": "Arroz integral/jasmin, quinoa, cuscuz marroquino, farro (se achar), massa de trigo ou arroz. Cozinhe um lote semanal para bowls e acompanhamentos." },
-          { "heading": "Leguminosas & Conservas", "content": "Grão-de-bico, lentilha, feijão branco; tomate pelado; atum/sardinha (em água/azeite); palmito, milho, ervilha; leite de coco; cogumelos." },
-          { "heading": "Nozes, Sementes & Farinhas", "content": "Amêndoas, castanhas, nozes; chia, gergelim; panko, farinha de rosca/farinha de milho; aveia." },
-          { "heading": "Ácidos, Óleos & Molhos", "content": "Azeite, óleo neutro; limão/lima, vinagre de vinho/maçã; shoyu, miso, tahine, mostarda, gochujang, alcaparras." },
-          { "heading": "Frescos de Rotina", "content": "Alho, cebola, gengibre, coentro/salsinha, cebolinha, pimentões, folhas (rúcula/espinafre), tomates-cereja, pepino, limão." }
-        ]
-      },
-      "proteinas-do-mar": {
-        "display_order": 3,
-        "name": "proteinas-do-mar",
-        "display_name": "Proteínas do Mar",
-        "introduction": "Escolha cortes práticos; porcione e congele em camada fina para descongelar rápido.",
-        "paragraphs": [
-          { "heading": "Peixes Magros", "content": "Tilápia, linguado, pescada: ideais para vapor, papillote e assado rápido (8–12 min)." },
-          { "heading": "Peixes Gordurosos", "content": "Salmão, sardinha, cavalinha: bons para selar + terminar no forno, grelhar, ou assar em alta." },
-          { "heading": "Frutos do Mar", "content": "Camarão limpo (congelado), mexilhão, lula: cocção curtíssima (2–5 min) para não borrachar." },
-          { "heading": "Compra Inteligente", "content": "Cheiro de mar (não de amônia), carne firme, olho brilhante. Prefira peixes do dia ou pacotes congelados confiáveis." }
-        ]
-      },
-      "molhos-mae": {
-        "display_order": 4,
-        "name": "molhos-mae",
-        "display_name": "Molhos-Mãe (Padrões)",
-        "introduction": "Molhos base prontos em 5–10 min que viram dezenas de pratos. Faça 1–2 por semana.",
-        "paragraphs": [
-          { "heading": "Emulsão Cítrica", "content": "Azeite + limão + mostarda + mel/maple + sal/pimenta. Variações: laranja; alcaparras; ervas frescas." },
-          { "heading": "Iogurte Herbáceo", "content": "Iogurte grego + alho ralado + limão + dill/salsinha. Versões: pepino (tzatziki), hortelã." },
-          { "heading": "Tomate Assado Express", "content": "Tomate-cereja + alho + azeite + sal; 15 min a 220 °C; amasse. Base para massas e peixe." },
-          { "heading": "Tahine & Limão", "content": "Tahine + limão + água até ponto + sal; adições: cominho, páprica, alho." },
-          { "heading": "Moqueca-Base Ligeira", "content": "Refogue cebola/alho/pimentão; some tomate + leite de coco + fio de dendê; finalize com coentro." },
-          { "heading": "Pesto de Coentro (Sem Queijo, se quiser)", "content": "Coentro + castanha de caju + alho + azeite + limão + sal; ajuste com água para textura de molho." }
-        ]
-      },
-      "tecnicas": {
-        "display_order": 5,
-        "name": "tecnicas",
-        "display_name": "Técnicas-Padrão",
-        "introduction": "Selecione a técnica pela espessura e tipo de corte. Cronometrar é meio caminho.",
-        "paragraphs": [
-          { "heading": "Papillote (Forno)", "content": "Peixe + sal + fatias de limão + ervas + fio de azeite em papel manteiga; 200–220 °C por 10–14 min." },
-          { "heading": "Vapor Rápido", "content": "Cesto de vapor; 6–8 min para filés finos. Finalize com molho-mãe e ervas." },
-          { "heading": "Selar + Forno", "content": "Para salmão/postas: 2–3 min por lado na frigideira quente + 5–8 min no forno a 200 °C." },
-          { "heading": "Poaching Suave", "content": "Líquido aromatizado (água/caldo/leite de coco) a 80–90 °C por 6–10 min; ponto úmido e delicado." },
-          { "heading": "Escabeche Rápido", "content": "Finalize com vinagre/limão + azeite + aromáticos; ótimo para servir frio no dia seguinte." },
-          { "heading": "Salmoura Relâmpago", "content": "10 g sal/200 ml água, 15–20 min; enxágue e seque. Textura mais suculenta e tempero por dentro." }
-        ]
-      },
-      "templates-de-refeicao": {
-        "display_order": 6,
-        "name": "templates-de-refeicao",
-        "display_name": "Templates de Refeição",
-        "introduction": "Use 'slots': grão + verdura/legume + proteína + molho; adicione acidez e crocância no final.",
-        "paragraphs": [
-          { "heading": "Bowl 4-Slots", "content": "Grão (arroz/quinoa) + folhas/legumes + peixe/camarão + molho-mãe (tahine/iogurte/emulsão)." },
-          { "heading": "Salada Proteica", "content": "Folhas + grão ou leguminosa + peixe em lascas + crocante (panko tostado/nozes) + vinagrete." },
-          { "heading": "Massa do Mar", "content": "Espaguete/penne + tomate assado ou pesto + camarão/atum + raspas e suco de limão." },
-          { "heading": "Moqueca Ligeira", "content": "Template da moqueca-base com postas/camarão; finalize com coentro e limão." },
-          { "heading": "Wrap/Taco", "content": "Tortilha + peixe assado em tiras + repolho + coentro + emulsão cítrica." },
-          { "heading": "Sopa Rápida", "content": "Caldo + legumes + leguminosa + peixe em cubos (poaching no final). Azeite/ervas na tigela." }
-        ]
-      },
-      "perfis-de-sabor": {
-        "display_order": 7,
-        "name": "perfis-de-sabor",
-        "display_name": "Perfis de Sabor",
-        "introduction": "Perfis prontos ajudam a variar sem pensar em receita.",
-        "paragraphs": [
-          { "heading": "Brasileiro", "content": "Alho/cebola, pimentão, coentro/salsinha, limão, leite de coco, dendê (moderado)." },
-          { "heading": "Mediterrâneo", "content": "Azeite, alho, limão, tomate, azeitona, alcaparra, salsa/dill/orégano." },
-          { "heading": "Japonês", "content": "Shoyu, gengibre, cebolinha, gergelim, miso; sirva com arroz e pepino." },
-          { "heading": "Tailandês", "content": "Leite de coco, curry, limão, coentro, pimenta; finalize com amendoim torrado." },
-          { "heading": "Mexicano", "content": "Limão, coentro, pimenta, cominho; milho/feijão; pico de gallo." },
-          { "heading": "Árabe", "content": "Tahine, limão, cominho, páprica, hortelã; pepino e tomate." }
-        ]
-      },
-      "substituicoes-e-restricoes": {
-        "display_order": 8,
-        "name": "substituicoes-e-restricoes",
-        "display_name": "Substituições & Restrições",
-        "introduction": "Trocas simples preservam o padrão mesmo com limitações.",
-        "paragraphs": [
-          { "heading": "Sem Laticínios", "content": "Iogurte → tahine/'leitelho' de castanha; manteiga → azeite; pesto sem queijo (castanha + limão)." },
-          { "heading": "Sem Glúten", "content": "Use arroz/quinoa/massa de arroz; panko → farinha de milho/torrada de arroz triturada." },
-          { "heading": "Alergia a Crustáceos", "content": "Substitua camarão/mexilhão/lula por peixes brancos/gordurosos nos templates." },
-          { "heading": "Baixo FODMAP (geral)", "content": "Reduza alho/cebola; use azeite aromatizado com alho; priorize cebolinha verde (folhas)." }
-        ]
-      },
-      "planejamento-semanal": {
-        "display_order": 9,
-        "name": "planejamento-semanal",
-        "display_name": "Planejamento Semanal",
-        "introduction": "Um pequeno 'ritual' semanal salva a semana inteira.",
-        "paragraphs": [
-          { "heading": "Preparo de 60 min (Domingo)", "content": "Cozinhe 1 grão (arroz/quinoa), 1 leguminosa (grão-de-bico), 2 molhos-mãe; lave/parte legumes; porcione 3 noites de peixe no freezer." },
-          { "heading": "Roteiro 30 min (Dia Útil)", "content": "Descongele porção → escolha técnica (papillote/vapor/selar) → aqueça grão → legume rápido (salteado/forno) → molho-mãe + limão/ervas." },
-          { "heading": "Lista Sempre Comprar", "content": "Limão, folhas, tomates-cereja, ervas frescas, alho/gengibre, 2 peixes da semana, 1 fruto do mar congelado, leite de coco, uma leguminosa." }
-        ]
-      },
-      "exemplos-rapidos": {
-        "display_order": 10,
-        "name": "exemplos-rapidos",
-        "display_name": "Exemplos Rápidos (15–25 min)",
-        "introduction": "Cartas-idéia para usar os padrões hoje.",
-        "paragraphs": [
-          { "heading": "Salmão Selado + Emulsão de Limão", "content": "Selar 2–3 min por lado; forno 5–6 min; servir com quinoa, rúcula e emulsão cítrica." },
-          { "heading": "Tilápia em Papillote Mediterrânea", "content": "Azeitona, alcaparra, tomate, ervas; 12 min a 210 °C; finalize com azeite e limão." },
-          { "heading": "Camarão Alho & Limão + Massa", "content": "Saltear 2 min com alho; juntar tomate assado express; envolver espaguete; salsinha." },
-          { "heading": "Moqueca Ligeira de Peixe", "content": "Base de leite de coco + dendê; postas 8–10 min; pimentões, coentro e limão no final." },
-          { "heading": "Bowl Asiático com Atum", "content": "Arroz, pepino, cebolinha; atum em lata; molho shoyu-gengibre-gergelim; gergelim torrado." },
-          { "heading": "Salada Grega com Sardinha", "content": "Folhas, pepino, tomate, cebola roxa, azeitona; sardinha; iogurte herbáceo (ou tahine)." }
-        ]
-      },
-      "utensilios": {
-        "display_order": 11,
-        "name": "utensilios",
-        "display_name": "Utensílios Essenciais",
-        "introduction": "Poucas peças resolvem 90% das noites.",
-        "paragraphs": [
-          { "heading": "Panelas & Frigideiras", "content": "Antiaderente média, inox pesada, caçarola média, panela para vapor (ou cesto)." },
-          { "heading": "Facas & Tábuas", "content": "Faca do chef + fileteira; tábuas separadas para cru e pronto." },
-          { "heading": "Miscelânea", "content": "Assadeira, papel manteiga, pinça, termômetro (opcional), peneira, potes com tampa." }
-        ]
-      },
-      "congelamento": {
-        "display_order": 12,
-        "name": "congelamento",
-        "display_name": "Congelar & Descongelar",
-        "introduction": "Ganhe tempo porcionando bem.",
-        "paragraphs": [
-          { "heading": "Porções Planas", "content": "Congele em saquinhos, camada fina; descongela mais rápido e por igual." },
-          { "heading": "Descongelamento Seguro", "content": "Geladeira (8–12 h) ou água fria corrente (embalado), trocando a água; cozinhe imediatamente." },
-          { "heading": "Temperos Após Descongelar", "content": "Tempere próximo à cocção para melhor textura." }
-        ]
+  (function(){
+    var APP_DATA = {
+      "title": "Cozinha por Padrões — Base Pescetariana",
+      "description": "Um guia prático, em português, para facilitar o dia a dia de uma pescetariana: padrões (técnicas), molhos-mãe, templates de refeição, despensa esperta e planejamento semanal.",
+      "categories": {
+        "inicio": {
+          "display_order": 1, "name": "inicio", "display_name": "Como Usar",
+          "introduction": "Pense em blocos: técnica + proteína + base (grão/verdura) + molho-mãe + acidez/crocância. Troque apenas um bloco para variar sem esforço.",
+          "paragraphs": [
+            { "heading": "Fluxo de Noite Útil (20–30 min)", "content": "1) Descongele/prepare a proteína. 2) Escolha a técnica pelo corte/espessura. 3) Reaqueça um grão pronto e escolha um legume. 4) Aplique um molho-mãe. 5) Finalize com limão/ervas e um toque crocante." },
+            { "heading": "Padrões vs. Receitas", "content": "Use os padrões como LEGO: um conjunto pequeno de técnicas e molhos gera dezenas de pratos, sem depender de receitas longas." }
+          ]
+        },
+        "despensa-base": {
+          "display_order": 2, "name": "despensa-base", "display_name": "Despensa Base",
+          "introduction": "Uma despensa curta e versátil reduz decisões e acelera o preparo.",
+          "paragraphs": [
+            { "heading": "Grãos & Massas", "content": "Arroz integral/jasmin, quinoa, cuscuz marroquino, farro (se achar), massa de trigo ou arroz. Cozinhe um lote semanal para bowls e acompanhamentos." },
+            { "heading": "Leguminosas & Conservas", "content": "Grão-de-bico, lentilha, feijão branco; tomate pelado; atum/sardinha (em água/azeite); palmito, milho, ervilha; leite de coco; cogumelos." },
+            { "heading": "Nozes, Sementes & Farinhas", "content": "Amêndoas, castanhas, nozes; chia, gergelim; panko, farinha de rosca/farinha de milho; aveia." },
+            { "heading": "Ácidos, Óleos & Molhos", "content": "Azeite, óleo neutro; limão/lima, vinagre de vinho/maçã; shoyu, miso, tahine, mostarda, gochujang, alcaparras." },
+            { "heading": "Frescos de Rotina", "content": "Alho, cebola, gengibre, coentro/salsinha, cebolinha, pimentões, folhas (rúcula/espinafre), tomates-cereja, pepino, limão." }
+          ]
+        },
+        "proteinas-do-mar": {
+          "display_order": 3, "name": "proteinas-do-mar", "display_name": "Proteínas do Mar",
+          "introduction": "Escolha cortes práticos; porcione e congele em camada fina para descongelar rápido.",
+          "paragraphs": [
+            { "heading": "Peixes Magros", "content": "Tilápia, linguado, pescada: ideais para vapor, papillote e assado rápido (8–12 min)." },
+            { "heading": "Peixes Gordurosos", "content": "Salmão, sardinha, cavalinha: bons para selar + terminar no forno, grelhar, ou assar em alta." },
+            { "heading": "Frutos do Mar", "content": "Camarão limpo (congelado), mexilhão, lula: cocção curtíssima (2–5 min) para não borrachar." },
+            { "heading": "Compra Inteligente", "content": "Cheiro de mar (não de amônia), carne firme, olho brilhante. Prefira peixes do dia ou pacotes congelados confiáveis." }
+          ]
+        },
+        "molhos-mae": {
+          "display_order": 4, "name": "molhos-mae", "display_name": "Molhos-Mãe (Padrões)",
+          "introduction": "Molhos base prontos em 5–10 min que viram dezenas de pratos. Faça 1–2 por semana.",
+          "paragraphs": [
+            { "heading": "Emulsão Cítrica", "content": "Azeite + limão + mostarda + mel/maple + sal/pimenta. Variações: laranja; alcaparras; ervas frescas." },
+            { "heading": "Iogurte Herbáceo", "content": "Iogurte grego + alho ralado + limão + dill/salsinha. Versões: pepino (tzatziki), hortelã." },
+            { "heading": "Tomate Assado Express", "content": "Tomate-cereja + alho + azeite + sal; 15 min a 220 °C; amasse. Base para massas e peixe." },
+            { "heading": "Tahine & Limão", "content": "Tahine + limão + água até ponto + sal; adições: cominho, páprica, alho." },
+            { "heading": "Moqueca-Base Ligeira", "content": "Refogue cebola/alho/pimentão; some tomate + leite de coco + fio de dendê; finalize com coentro." },
+            { "heading": "Pesto de Coentro (Sem Queijo, se quiser)", "content": "Coentro + castanha de caju + alho + azeite + limão + sal; ajuste com água para textura de molho." }
+          ]
+        },
+        "tecnicas": {
+          "display_order": 5, "name": "tecnicas", "display_name": "Técnicas-Padrão",
+          "introduction": "Selecione a técnica pela espessura e tipo de corte. Cronometrar é meio caminho.",
+          "paragraphs": [
+            { "heading": "Papillote (Forno)", "content": "Peixe + sal + fatias de limão + ervas + fio de azeite em papel manteiga; 200–220 °C por 10–14 min." },
+            { "heading": "Vapor Rápido", "content": "Cesto de vapor; 6–8 min para filés finos. Finalize com molho-mãe e ervas." },
+            { "heading": "Selar + Forno", "content": "Para salmão/postas: 2–3 min por lado na frigideira quente + 5–8 min no forno a 200 °C." },
+            { "heading": "Poaching Suave", "content": "Líquido aromatizado (água/caldo/leite de coco) a 80–90 °C por 6–10 min; ponto úmido e delicado." },
+            { "heading": "Escabeche Rápido", "content": "Finalize com vinagre/limão + azeite + aromáticos; ótimo para servir frio no dia seguinte." },
+            { "heading": "Salmoura Relâmpago", "content": "10 g sal/200 ml água, 15–20 min; enxágue e seque. Textura mais suculenta e tempero por dentro." }
+          ]
+        },
+        "templates-de-refeicao": {
+          "display_order": 6, "name": "templates-de-refeicao", "display_name": "Templates de Refeição",
+          "introduction": "Use 'slots': grão + verdura/legume + proteína + molho; adicione acidez e crocância no final.",
+          "paragraphs": [
+            { "heading": "Bowl 4-Slots", "content": "Grão (arroz/quinoa) + folhas/legumes + peixe/camarão + molho-mãe (tahine/iogurte/emulsão)." },
+            { "heading": "Salada Proteica", "content": "Folhas + grão ou leguminosa + peixe em lascas + crocante (panko tostado/nozes) + vinagrete." },
+            { "heading": "Massa do Mar", "content": "Espaguete/penne + tomate assado ou pesto + camarão/atum + raspas e suco de limão." },
+            { "heading": "Moqueca Ligeira", "content": "Template da moqueca-base com postas/camarão; finalize com coentro e limão." },
+            { "heading": "Wrap/Taco", "content": "Tortilha + peixe assado em tiras + repolho + coentro + emulsão cítrica." },
+            { "heading": "Sopa Rápida", "content": "Caldo + legumes + leguminosa + peixe em cubos (poaching no final). Azeite/ervas na tigela." }
+          ]
+        },
+        "perfis-de-sabor": {
+          "display_order": 7, "name": "perfis-de-sabor", "display_name": "Perfis de Sabor",
+          "introduction": "Perfis prontos ajudam a variar sem pensar em receita.",
+          "paragraphs": [
+            { "heading": "Brasileiro", "content": "Alho/cebola, pimentão, coentro/salsinha, limão, leite de coco, dendê (moderado)." },
+            { "heading": "Mediterrâneo", "content": "Azeite, alho, limão, tomate, azeitona, alcaparra, salsa/dill/orégano." },
+            { "heading": "Japonês", "content": "Shoyu, gengibre, cebolinha, gergelim, miso; sirva com arroz e pepino." },
+            { "heading": "Tailandês", "content": "Leite de coco, curry, limão, coentro, pimenta; finalize com amendoim torrado." },
+            { "heading": "Mexicano", "content": "Limão, coentro, pimenta, cominho; milho/feijão; pico de gallo." },
+            { "heading": "Árabe", "content": "Tahine, limão, cominho, páprica, hortelã; pepino e tomate." }
+          ]
+        },
+        "substituicoes-e-restricoes": {
+          "display_order": 8, "name": "substituicoes-e-restricoes", "display_name": "Substituições & Restrições",
+          "introduction": "Trocas simples preservam o padrão mesmo com limitações.",
+          "paragraphs": [
+            { "heading": "Sem Laticínios", "content": "Iogurte → tahine/'leitelho' de castanha; manteiga → azeite; pesto sem queijo (castanha + limão)." },
+            { "heading": "Sem Glúten", "content": "Use arroz/quinoa/massa de arroz; panko → farinha de milho/torrada de arroz triturada." },
+            { "heading": "Alergia a Crustáceos", "content": "Substitua camarão/mexilhão/lula por peixes brancos/gordurosos nos templates." },
+            { "heading": "Baixo FODMAP (geral)", "content": "Reduza alho/cebola; use azeite aromatizado com alho; priorize cebolinha verde (folhas)." }
+          ]
+        },
+        "planejamento-semanal": {
+          "display_order": 9, "name": "planejamento-semanal", "display_name": "Planejamento Semanal",
+          "introduction": "Um pequeno 'ritual' semanal salva a semana inteira.",
+          "paragraphs": [
+            { "heading": "Preparo de 60 min (Domingo)", "content": "Cozinhe 1 grão (arroz/quinoa), 1 leguminosa (grão-de-bico), 2 molhos-mãe; lave/parte legumes; porcione 3 noites de peixe no freezer." },
+            { "heading": "Roteiro 30 min (Dia Útil)", "content": "Descongele porção → escolha técnica (papillote/vapor/selar) → aqueça grão → legume rápido (salteado/forno) → molho-mãe + limão/ervas." },
+            { "heading": "Lista Sempre Comprar", "content": "Limão, folhas, tomates-cereja, ervas frescas, alho/gengibre, 2 peixes da semana, 1 fruto do mar congelado, leite de coco, uma leguminosa." }
+          ]
+        },
+        "exemplos-rapidos": {
+          "display_order": 10, "name": "exemplos-rapidos", "display_name": "Exemplos Rápidos (15–25 min)",
+          "introduction": "Cartas-idéia para usar os padrões hoje.",
+          "paragraphs": [
+            { "heading": "Salmão Selado + Emulsão de Limão", "content": "Selar 2–3 min por lado; forno 5–6 min; servir com quinoa, rúcula e emulsão cítrica." },
+            { "heading": "Tilápia em Papillote Mediterrânea", "content": "Azeitona, alcaparra, tomate, ervas; 12 min a 210 °C; finalize com azeite e limão." },
+            { "heading": "Camarão Alho & Limão + Massa", "content": "Saltear 2 min com alho; juntar tomate assado express; envolver espaguete; salsinha." },
+            { "heading": "Moqueca Ligeira de Peixe", "content": "Base de leite de coco + dendê; postas 8–10 min; pimentões, coentro e limão no final." },
+            { "heading": "Bowl Asiático com Atum", "content": "Arroz, pepino, cebolinha; atum em lata; molho shoyu-gengibre-gergelim; gergelim torrado." },
+            { "heading": "Salada Grega com Sardinha", "content": "Folhas, pepino, tomate, cebola roxa, azeitona; sardinha; iogurte herbáceo (ou tahine)." }
+          ]
+        },
+        "utensilios": {
+          "display_order": 11, "name": "utensilios", "display_name": "Utensílios Essenciais",
+          "introduction": "Poucas peças resolvem 90% das noites.",
+          "paragraphs": [
+            { "heading": "Panelas & Frigideiras", "content": "Antiaderente média, inox pesada, caçarola média, panela para vapor (ou cesto)." },
+            { "heading": "Facas & Tábuas", "content": "Faca do chef + fileteira; tábuas separadas para cru e pronto." },
+            { "heading": "Miscelânea", "content": "Assadeira, papel manteiga, pinça, termômetro (opcional), peneira, potes com tampa." }
+          ]
+        },
+        "congelamento": {
+          "display_order": 12, "name": "congelamento", "display_name": "Congelar & Descongelar",
+          "introduction": "Ganhe tempo porcionando bem.",
+          "paragraphs": [
+            { "heading": "Porções Planas", "content": "Congele em saquinhos, camada fina; descongela mais rápido e por igual." },
+            { "heading": "Descongelamento Seguro", "content": "Geladeira (8–12 h) ou água fria corrente (embalado), trocando a água; cozinhe imediatamente." },
+            { "heading": "Temperos Após Descongelar", "content": "Tempere próximo à cocção para melhor textura." }
+          ]
+        }
+      }
+    };
+
+    function $(sel, el){ return (el || document).querySelector(sel); }
+    function $all(sel, el){ return Array.prototype.slice.call((el || document).querySelectorAll(sel)); }
+
+    var KEY = 'dpc_cat';
+    var activeKey = localStorage.getItem(KEY) || 'inicio';
+
+    function sortCategories(cats){
+      var arr = [];
+      for (var id in cats){ if (cats.hasOwnProperty(id)) { var c = cats[id]; c.id = id; arr.push(c); } }
+      arr.sort(function(a,b){ return (a.display_order || 999) - (b.display_order || 999); });
+      return arr;
+    }
+
+    function renderNav(list){
+      var nav = $('#nav');
+      if (!nav) return;
+      nav.innerHTML = '';
+      for (var i=0;i<list.length;i++){
+        (function(cat){
+          var btn = document.createElement('button');
+          btn.className = 'w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 border border-transparent';
+          btn.setAttribute('data-id', cat.id);
+          if (cat.id === activeKey) btn.setAttribute('aria-selected', 'true');
+          btn.innerHTML = '<div class="flex items-center gap-2"><span class="text-xs px-2 py-0.5 rounded chip">'+ String(cat.display_order).replace(/^(\d)$/, '0$1') +'</span><span>'+ (cat.display_name || cat.name) +'</span></div>';
+          btn.addEventListener('click', function(){
+            activeKey = cat.id;
+            try { localStorage.setItem(KEY, activeKey); } catch(e){}
+            updateActive();
+            window.scrollTo(0,0);
+          });
+          nav.appendChild(btn);
+        })(list[i]);
+      }
+      updateActive();
+    }
+
+    function updateActive(){
+      var navBtns = $all('#nav button');
+      for (var i=0;i<navBtns.length;i++){
+        var isActive = navBtns[i].getAttribute('data-id') === activeKey;
+        if (isActive) navBtns[i].setAttribute('aria-selected','true');
+        else navBtns[i].removeAttribute('aria-selected');
+      }
+      var cat = APP_DATA.categories[activeKey] || APP_DATA.categories.inicio;
+      renderCategory(cat);
+    }
+
+    function el(tag, cls, text){
+      var e = document.createElement(tag);
+      if (cls) e.className = cls;
+      if (text != null) e.textContent = text;
+      return e;
+    }
+
+    function renderCategory(cat){
+      var content = $('#content');
+      if (!content) return;
+      content.innerHTML = '';
+
+      var section = document.createElement('article');
+      section.className = 'card hover-card p-5 md:p-6';
+
+      var header = document.createElement('div');
+      header.className = 'flex items-start justify-between gap-4 mb-3';
+      var h2 = el('h2', 'text-2xl md:text-3xl font-bold', cat.display_name || cat.name);
+      var copyBtn = el('button', 'hidden sm:inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-sm');
+      copyBtn.innerHTML = '<span>Copiar seção</span>';
+      copyBtn.addEventListener('click', function(){ copySectionText(cat); });
+      header.appendChild(h2);
+      header.appendChild(copyBtn);
+
+      var intro = el('p', 'text-slate-600 dark:text-slate-300 mb-4');
+      intro.textContent = cat.introduction || '';
+
+      var prose = el('div', 'prose prose-slate max-w-none dark:prose-invert');
+      var arr = cat.paragraphs || [];
+      for (var i=0;i<arr.length;i++){
+        var p = arr[i];
+        if (p.heading) prose.appendChild(el('h3','mt-6', p.heading));
+        if (p.content) prose.appendChild(el('p','', p.content));
+      }
+
+      section.appendChild(header);
+      section.appendChild(intro);
+      section.appendChild(prose);
+      content.appendChild(section);
+    }
+
+    function copySectionText(cat){
+      var lines = [];
+      lines.push(cat.display_name || cat.name);
+      if (cat.introduction) lines.push(cat.introduction);
+      var arr = cat.paragraphs || [];
+      for (var i=0;i<arr.length;i++){
+        var p = arr[i];
+        if (p.heading) lines.push('\n' + p.heading.toUpperCase());
+        if (p.content) lines.push(p.content);
+      }
+      var txt = lines.join('\n');
+      if (navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(txt);
+        toast('Conteúdo copiado!');
+      } else {
+        var ta = document.createElement('textarea');
+        ta.value = txt; document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); toast('Conteúdo copiado!'); } catch(e){}
+        document.body.removeChild(ta);
       }
     }
-  };
 
-  const $ = (sel, el=document) => el.querySelector(sel);
-  const $$ = (sel, el=document) => Array.from(el.querySelectorAll(sel));
+    function toast(msg){
+      var t = $('#toast');
+      if (!t){
+        t = document.createElement('div');
+        t.id = 'toast';
+        t.className = 'fixed bottom-4 left-1/2 -translate-x-1/2 bg-slate-900 text-white dark:bg-white dark:text-slate-900 px-4 py-2 rounded-lg shadow-lg';
+        document.body.appendChild(t);
+      }
+      t.textContent = msg;
+      t.style.opacity = '1';
+      setTimeout(function(){ t.style.opacity = '0'; }, 1400);
+    }
 
-  const KEY = 'dpc_cat';
-  let activeKey = localStorage.getItem(KEY) || Object.keys(APP_DATA.categories).find(k => APP_DATA.categories[k].display_order === 1) || 'inicio';
+    function applyTheme(theme){
+      if (theme === 'dark'){ document.documentElement.classList.add('dark'); $('#themeIcon').textContent = '☀️'; }
+      else { document.documentElement.classList.remove('dark'); $('#themeIcon').textContent = '🌙'; }
+    }
 
-  function sortCategories(cats) {
-    return Object.entries(cats)
-      .map(([id, c]) => ({ id, ...c }))
-      .sort((a, b) => (a.display_order ?? 999) - (b.display_order ?? 999));
-  }
+    document.addEventListener('DOMContentLoaded', function(){
+      var THEME_KEY = 'dpc_theme';
+      var savedTheme = 'light';
+      try {
+        savedTheme = localStorage.getItem(THEME_KEY) || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      } catch(e){}
+      applyTheme(savedTheme);
+      var themeBtn = document.getElementById('themeToggle');
+      if (themeBtn){
+        themeBtn.addEventListener('click', function(){
+          var next = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+          try { localStorage.setItem(THEME_KEY, next); } catch(e){}
+          applyTheme(next);
+        });
+      }
 
-  function renderNav(list) {
-    const nav = $('#nav');
-    nav.innerHTML = '';
-    list.forEach(cat => {
-      const btn = document.createElement('button');
-      btn.className = 'w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 border border-transparent aria-selected:border-cyan-400';
-      btn.setAttribute('data-id', cat.id);
-      btn.setAttribute('aria-selected', cat.id === activeKey ? 'true' : 'false');
-      btn.innerHTML = '<div class="flex items-center gap-2"><span class="text-xs px-2 py-0.5 rounded chip">'+ String(cat.display_order).padStart(2,'0') +'</span><span>'+ (cat.display_name || cat.name) +'</span></div>';
-      btn.addEventListener('click', () => {
-        activeKey = cat.id;
-        localStorage.setItem(KEY, activeKey);
-        updateActive();
-        scrollTo({ top: 0, behavior: 'smooth' });
-      });
-      nav.appendChild(btn);
+      var t = document.getElementById('app-title'); if (t) t.textContent = APP_DATA.title || 'Design Pattern Cooking';
+      var d = document.getElementById('app-desc'); if (d) d.textContent = APP_DATA.description || '';
+
+      var cats = sortCategories(APP_DATA.categories);
+      if (!APP_DATA.categories[activeKey] && cats.length) activeKey = cats[0].id;
+      renderNav(cats);
+
+      var search = document.getElementById('search');
+      if (search){
+        search.addEventListener('input', function(e){
+          var q = (e.target.value || '').toLowerCase();
+          var content = document.getElementById('content');
+          var nodes = content ? content.querySelectorAll('h3, p') : [];
+          for (var i=0;i<nodes.length;i++){
+            var text = (nodes[i].textContent || '').toLowerCase();
+            nodes[i].style.display = (q && text.indexOf(q) === -1) ? 'none' : '';
+          }
+        });
+      }
+
+      var collapseBtn = document.getElementById('collapseAll');
+      if (collapseBtn){
+        collapseBtn.addEventListener('click', function(){
+          if (search){ search.value = ''; var ev = document.createEvent('Event'); ev.initEvent('input', true, true); search.dispatchEvent(ev); }
+          window.scrollTo(0,0);
+        });
+      }
     });
-    updateActive();
-  }
-
-  function updateActive() {
-    $$('#nav button').forEach(b => b.setAttribute('aria-selected', b.getAttribute('data-id') === activeKey ? 'true' : 'false'));
-    const cat = APP_DATA.categories[activeKey];
-    renderCategory(cat);
-  }
-
-  function el(tag, cls, text) {
-    const e = document.createElement(tag);
-    if (cls) e.className = cls;
-    if (text != null) e.textContent = text;
-    return e;
-  }
-
-  function renderCategory(cat) {
-    const content = $('#content');
-    content.innerHTML = '';
-
-    const section = document.createElement('article');
-    section.className = 'card hover-card p-5 md:p-6';
-
-    const header = document.createElement('div');
-    header.className = 'flex items-start justify-between gap-4 mb-3';
-    const h2 = el('h2', 'text-2xl md:text-3xl font-bold', cat.display_name || cat.name);
-    const copyBtn = el('button', 'hidden sm:inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-sm');
-    copyBtn.innerHTML = '<span>Copiar seção</span>';
-    copyBtn.addEventListener('click', () => copySectionText(cat));
-    header.append(h2, copyBtn);
-
-    const intro = el('p', 'text-slate-600 dark:text-slate-300 mb-4');
-    intro.textContent = cat.introduction || '';
-
-    const prose = el('div', 'prose prose-slate max-w-none dark:prose-invert');
-    (cat.paragraphs || []).forEach(p => {
-      if (p.heading) prose.appendChild(el('h3', 'mt-6', p.heading));
-      if (p.content) prose.appendChild(el('p', '', p.content));
-    });
-
-    section.append(header, intro, prose);
-    content.appendChild(section);
-  }
-
-  function copySectionText(cat) {
-    const lines = [];
-    lines.push((cat.display_name || cat.name));
-    if (cat.int
+  })();
+  </script>
+</body>
+</html>
