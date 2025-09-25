@@ -231,6 +231,23 @@
             "title": "Cozinha por Padrões — Base Pescetariana",
             "description": "Base de conhecimento prática, em português, para facilitar o dia a dia de uma pescetariana. Estrutura em ‘padrões’ (técnicas, molhos-base, templates de refeição) + listas de despensa, substituições e planejamento semanal.",
             "categories": {
+                "como-usar": {
+                    "name": "como-usar",
+                    "display_name": "Como Usar o Aplicativo",
+                    "introduction": "Este aplicativo foi desenhado para simplificar sua cozinha, transformando o ato de cozinhar em uma montagem criativa, e não uma busca exaustiva por receitas. Veja como tirar o máximo proveito:",
+                    "paragraphs": [
+                        { "heading": "1. Sistema de Blocos (Abordagem LEGO)", "content": "Pense em blocos intercambiáveis: Técnica + Proteína + Base (grão/vegetal) + Molho + Acidez/Crocância. Troque apenas um bloco por vez para criar variação sem reinventar a refeição inteira." },
+                        { "heading": "2. Fluxo da Noite (20–30 minutos)", "content": "Descongele ou prepare a proteína com antecedência. Escolha a técnica de cozimento com base no corte/tamanho. Reaqueça um grão pré-cozido e combine com um vegetal rápido. Adicione um 'molho-mãe' (um dos básicos preparados). Finalize com ervas, limão ou algo crocante." },
+                        { "heading": "3. Despensa como Atalho", "content": "Mantenha uma lista de despensa inteligente e enxuta. Estocar itens multiuso (como limão, azeite, tomate enlatado, camarão congelado) permite montar uma refeição sem planejamento." },
+                        { "heading": "4. Molhos-Mãe como Multiplicadores", "content": "Prepare 1–2 molhos simples por semana. Eles mudam instantaneamente a personalidade de um prato (ex: tahine-limão = Oriente Médio; tomate-alho = Italiano)." },
+                        { "heading": "5. Templates, Não Receitas", "content": "Pense em termos de templates de refeição (bowl, massa, salada, wrap, sopa). Use a proteína, o grão ou o molho que tiver à mão para preencher os 'slots'." },
+                        { "heading": "6. Perfis de Sabor", "content": "Mantenha alguns 'perfis de sabor' em mente (Mediterrâneo, Japonês, Tailandês, etc.). Cada um é definido por um punhado de itens da despensa, não por uma receita completa." },
+                        { "heading": "7. Substituições & Restrições", "content": "Regras de troca simples (ex: tahine em vez de iogurte para sem laticínios, macarrão de arroz para sem glúten). Assim, restrições alimentares não atrapalham o fluxo." },
+                        { "heading": "8. Ritual Semanal (1 hora)", "content": "Cozinhe em lote um grão e uma leguminosa. Pique ou lave os vegetais. Porcione proteínas no freezer. Faça 2 molhos. Com esta base, cozinhar durante a semana se torna principalmente uma montagem." },
+                        { "heading": "9. Cartas de Inspiração Rápida", "content": "Cada seção inclui 'exemplos de montagem' de 15–25 minutos (ex: salmão + molho de limão + quinoa + verduras). Estes mostram como as peças se encaixam, não são receitas fixas." },
+                        { "heading": "10. Uso Otimizado para Celular", "content": "Abra no seu telefone na cozinha. Toque em uma categoria (Despensa, Molhos, Técnicas, etc.) para obter orientação just-in-time enquanto cozinha. Sem rolar por longas receitas — apenas o essencial no momento da necessidade." }
+                    ]
+                },
                 "despensa-base": {
                     "name": "despensa-base",
                     "display_name": "Despensa Base",
@@ -375,7 +392,15 @@
             document.querySelectorAll('#main-nav a').forEach(link => {
                 link.classList.remove('active');
             });
-            document.querySelector(`#main-nav a[data-category="${categoryKey}"]`).classList.add('active');
+            const activeLink = document.querySelector(`#main-nav a[data-category="${categoryKey}"]`);
+            if (activeLink) {
+                activeLink.classList.add('active');
+                // Scroll navigation to make active item visible if nav is horizontal
+                if (window.innerWidth > 768) {
+                    activeLink.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                }
+            }
+
 
             // Scroll to top of content
             window.scrollTo(0, 0);
@@ -389,9 +414,14 @@
         // Initialize navigation and content
         function initApp() {
             let navHtml = '';
+            // Get category keys and ensure 'como-usar' is first if it exists
             const categoryKeys = Object.keys(knowledgeBase.categories);
+            const orderedCategoryKeys = categoryKeys.includes('como-usar')
+                ? ['como-usar', ...categoryKeys.filter(key => key !== 'como-usar')]
+                : categoryKeys;
 
-            categoryKeys.forEach(key => {
+
+            orderedCategoryKeys.forEach(key => {
                 navHtml += `<a href="#${key}" data-category="${key}">${knowledgeBase.categories[key].display_name}</a>`;
             });
             navElement.innerHTML = navHtml;
@@ -406,7 +436,7 @@
             });
 
             // Handle initial load or URL hash
-            const initialCategory = window.location.hash ? window.location.hash.substring(1) : categoryKeys[0];
+            const initialCategory = window.location.hash ? window.location.hash.substring(1) : orderedCategoryKeys[0];
             renderCategory(initialCategory);
 
             // Menu toggle for mobile
