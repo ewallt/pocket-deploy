@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cozinha por Padrões — Base Pescetariana</title>
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --accent-color: #28a745;
+            --bg-color: #f8f9fa;
+            --text-color: #343a40;
+            --card-bg: #ffffff;
+            --border-color: #dee2e6;
+            --header-height: 60px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding-top: var(--header-height);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            box-sizing: border-box; /* Include padding in width */
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: var(--header-height);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.2em;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            flex-grow: 1;
+            padding-right: 10px; /* Space for menu icon */
+        }
+
+        #menu-toggle {
+            display: none; /* Hidden by default, shown on small screens */
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.8em;
+            cursor: pointer;
+            padding: 0 10px;
+            line-height: 1; /* Aligns hamburger icon vertically */
+        }
+
+        nav {
+            background-color: var(--secondary-color);
+            overflow-x: auto;
+            white-space: nowrap;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            padding: 0 10px;
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            width: 100%;
+            z-index: 900;
+            display: flex;
+            box-sizing: border-box;
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+        }
+
+        nav a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: background-color 0.3s, color 0.3s;
+            flex-shrink: 0; /* Prevent items from shrinking */
+        }
+
+        nav a:hover, nav a.active {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        main {
+            padding: 20px;
+            max-width: 900px;
+            margin: calc(var(--header-height) + 50px) auto 20px auto; /* Adjust for fixed header and nav */
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .category-section {
+            margin-bottom: 40px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 20px;
+        }
+
+        .category-section:last-of-type {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .category-section h2 {
+            color: var(--primary-color);
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 5px;
+            display: inline-block; /* Makes border-bottom only as wide as text */
+        }
+
+        .category-section p.introduction {
+            font-style: italic;
+            margin-bottom: 20px;
+            color: var(--secondary-color);
+        }
+
+        .category-section h3 {
+            color: var(--accent-color);
+            font-size: 1.3em;
+            margin-top: 25px;
+            margin-bottom: 8px;
+        }
+
+        .category-section ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            padding-left: 0;
+        }
+
+        .category-section ul li {
+            margin-bottom: 8px;
+        }
+
+        /* Mobile-specific styles */
+        @media (max-width: 768px) {
+            header {
+                height: var(--header-height);
+                padding: 10px 15px;
+            }
+
+            header h1 {
+                font-size: 1.1em;
+            }
+
+            #menu-toggle {
+                display: block;
+            }
+
+            nav {
+                flex-direction: column;
+                position: fixed;
+                top: var(--header-height);
+                left: -100%; /* Hidden by default */
+                width: 100%;
+                height: calc(100vh - var(--header-height));
+                background-color: var(--secondary-color);
+                transition: left 0.3s ease-in-out;
+                z-index: 990;
+                overflow-y: auto;
+                padding: 0;
+                box-shadow: none;
+            }
+
+            nav.open {
+                left: 0;
+            }
+
+            nav a {
+                padding: 15px 20px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                text-align: left;
+                font-size: 1em;
+            }
+
+            main {
+                margin-top: calc(var(--header-height) + 10px); /* Adjust for fixed header only, nav is now hidden by default */
+                padding: 15px;
+                box-shadow: none;
+                border-radius: 0;
+            }
+
+            .category-section {
+                padding-bottom: 15px;
+                margin-bottom: 25px;
+            }
+
+            .category-section h2 {
+                font-size: 1.5em;
+            }
+
+            .category-section h3 {
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Cozinha por Padrões — Base Pescetariana</h1>
+        <button id="menu-toggle" aria-label="Abrir Menu">&#9776;</button>
+    </header>
+
+    <nav id="main-nav">
+        <!-- Navigation links will be injected here by JavaScript -->
+    </nav>
+
+    <main id="app-content">
+        <!-- Content will be injected here by JavaScript -->
+    </main>
+
+    <script>
+        const knowledgeBase = {
+            "title": "Cozinha por Padrões — Base Pescetariana",
+            "description": "Base de conhecimento prática, em português, para facilitar o dia a dia de uma pescetariana. Estrutura em ‘padrões’ (técnicas, molhos-base, templates de refeição) + listas de despensa, substituições e planejamento semanal.",
+            "categories": {
+                "despensa-base": {
+                    "name": "despensa-base",
+                    "display_name": "Despensa Base",
+                    "introduction": "Manter uma despensa enxuta com itens versáteis reduz decisões e acelera o preparo.",
+                    "paragraphs": [
+                        { "heading": "Grãos & Massas", "content": "Arroz integral, arroz jasmin, quinoa, cuscuz marroquino, macarrão de trigo integral ou de arroz, farro (se achar). Cozinhe um lote por semana para ‘bowls’ e acompanhamentos." },
+                        { "heading": "Leguminosas & Conservas", "content": "Grão-de-bico, lentilha, feijão branco; tomate pelado, atum e sardinha em água/azeite, palmito, milho, ervilha, leite de coco, cogumelos em conserva." },
+                        { "heading": "Nozes, Sementes & Farinhas", "content": "Amêndoas, castanha de caju/para, nozes; chia, gergelim; panko, farinha de rosca, farinha de trigo integral; tapioca (opcional)." },
+                        { "heading": "Azeites, Ácidos & Temperos", "content": "Azeite de oliva, óleo neutro; vinagre de vinho/maçã, limão/lima; sal, pimenta-do-reino, páprica, cominho, cúrcuma, pimenta-calabresa, louro. Molhos: shoyu, miso, gochujang, tahine, mostarda." },
+                        { "heading": "Frescos que Valem Ouro", "content": "Alho, cebola, gengibre, coentro/salsinha, cebolinha, limão, pimentões, folhas (rúcula/espinafre), tomates-cereja. Guarde lavados/prontos." }
+                    ]
+                },
+                "proteinas-do-mar": {
+                    "name": "proteinas-do-mar",
+                    "display_name": "Proteínas do Mar",
+                    "introduction": "Escolha cortes práticos; porcione e congele em saquinhos planos para descongelar rápido.",
+                    "paragraphs": [
+                        { "heading": "Peixes Magros", "content": "Tilápia, linguado, pescada: ideais para vapor, papillote e assado rápido. Cozinham em 8–12 min." },
+                        { "heading": "Peixes Gordurosos", "content": "Salmão, sardinha, cavalinha: ótimos para selar + terminar no forno, grelhar, ou assar alto." },
+                        { "heading": "Frutos do Mar", "content": "Camarão (limpo, congelado), mexilhão, lula: cocção curtíssima (2–5 min) para não borrachar." },
+                        { "heading": "Dicas de Compra", "content": "Cheiro de mar (não ‘amônia’), carne firme, olho brilhante. Prefira peixes inteiros/postas do dia ou pacotes congelados de boa procedência." }
+                    ]
+                },
+                "molhos-mae": {
+                    "name": "molhos-mae",
+                    "display_name": "Molhos-Mãe (Padrões)",
+                    "introduction": "Molhos-base prontos em 5–10 min que viram dezenas de pratos. Faça 1–2 por semana.",
+                    "paragraphs": [
+                        { "heading": "Emulsão Cítrica Rápida", "content": "Azeite + limão + mostarda + mel (ou maple) + sal/pimenta. Variações: laranja; alcaparras; ervas." },
+                        { "heading": "Iogurte Herbáceo", "content": "Iogurte grego + alho ralado + limão + dill/salsinha. Versões: pepino (tzatziki), hortelã (mediterrâneo)." },
+                        { "heading": "Tomate Assado Express", "content": "Tomate-cereja + alho + azeite + sal; 15 min a 220 °C; amasse. Vira base para massa/peixe." },
+                        { "heading": "Tahine & Limão", "content": "Tahine + limão + água até ponto + sal. Adições: cominho, páprica, alho. Vai em bowls, legumes e peixe." },
+                        { "heading": "Moqueca-Base Ligeira", "content": "Refogue cebola/alho/pimentão, junte tomate + leite de coco + um fio de dendê; finalize com coentro." },
+                        { "heading": "Pesto de Coentro (Sem Queijo, se quiser)", "content": "Coentro + castanha de caju + alho + azeite + limão + sal. Ajuste com água para molho." }
+                    ]
+                },
+                "tecnicas": {
+                    "name": "tecnicas",
+                    "display_name": "Técnicas-Padrão",
+                    "introduction": "Escolha a técnica pela espessura do peixe e tempo disponível. Cronometrar é meio caminho.",
+                    "paragraphs": [
+                        { "heading": "Papillote (Pacotinho no Forno)", "content": "Peixe + sal + fatias de limão + ervas + um fio de azeite em papel manteiga; 200–220 °C por 10–14 min." },
+                        { "heading": "Vapor Rápido", "content": "Cesto de vapor; 6–8 min para filés finos. Termine com molho-mãe e ervas." },
+                        { "heading": "Selar + Terminar no Forno", "content": "Salmão/postas: 2–3 min por lado na frigideira quente + 5–8 min no forno a 200 °C." },
+                        { "heading": "Poaching Suave", "content": "Cozimento imerso em líquido aromatizado (água/caldo/leite de coco) a 80–90 °C por 6–10 min." },
+                        { "heading": "Escabeche Rápido", "content": "Marinar e/ou finalizar com vinagre/limão + azeite + aromáticos; ótimo para sobras frias." },
+                        { "heading": "Salmoura Relâmpago", "content": "10 g sal/200 ml água, 15–20 min; enxágue e seque. Textura mais suculenta, tempero por dentro." }
+                    ]
+                },
+                "templates-de-refeicao": {
+                    "name": "templates-de-refeicao",
+                    "display_name": "Templates de Refeição",
+                    "introduction": "Troque só um componente e gere variedade infinita. Pense em ‘slots’: grão + verdura + proteína + molho.",
+                    "paragraphs": [
+                        { "heading": "Bowl 4-Slots", "content": "Grão (arroz/quinoa) + folhas/legumes + peixe ou camarão + molho-mãe (tahine/iógurte/emulsão)." },
+                        { "heading": "Salada Proteica", "content": "Folhas + grão/leguminosa + peixe em lascas + crocante (panko tostado/nozes) + vinagrete." },
+                        { "heading": "Massa do Mar", "content": "Espaguete/penne + tomate assado ou pesto + camarão ou atum + toque de limão." },
+                        { "heading": "Moqueca Ligeira", "content": "Template da moqueca-base com postas ou camarão; finalize com coentro e limão." },
+                        { "heading": "Wrap/Taco", "content": "Tortilha + peixe assado em tiras + repolho, coentro e emulsão cítrica." },
+                        { "heading": "Sopa Rápida", "content": "Caldo + legumes + leguminosa + peixe em cubos (poaching final). Azeite e ervas na tigela." }
+                    ]
+                },
+                "perfis-de-sabor": {
+                    "name": "perfis-de-sabor",
+                    "display_name": "Perfis de Sabor",
+                    "introduction": "Use perfis para variar sem pensar muito em receita.",
+                    "paragraphs": [
+                        { "heading": "Brasileiro", "content": "Alho/cebola, pimentão, coentro/salsinha, limão, leite de coco, dendê (moderado)." },
+                        { "heading": "Mediterrâneo", "content": "Azeite, alho, limão, tomate, azeitona, alcaparra, ervas (salsa, dill, orégano)." },
+                        { "heading": "Japonês", "content": "Shoyu, gengibre, cebolinha, gergelim, miso. Final com arroz e pepino." },
+                        { "heading": "Tailandês", "content": "Leite de coco, curry (amarelo/vermelho), limão, coentro, pimenta." },
+                        { "heading": "Mexicano", "content": "Limão, coentro, pimenta, cominho; milho/feijão; pico de gallo." },
+                        { "heading": "Árabe", "content": "Tahine, limão, cominho, páprica, hortelã; pepino e tomate." }
+                    ]
+                },
+                "substituicoes-e-restricoes": {
+                    "name": "substituicoes-e-restricoes",
+                    "display_name": "Substituições & Restrições",
+                    "introduction": "Trocas simples para manter o padrão mesmo com limitações.",
+                    "paragraphs": [
+                        { "heading": "Sem Laticínios", "content": "Troque iogurte por tahine/‘leitelho’ de castanha; manteiga por azeite; pesto sem queijo com castanha + limão." },
+                        { "heading": "Sem Glúten", "content": "Use arroz/quinoa/massa de arroz; panko → farinha de milho/torrada de arroz triturada." },
+                        { "heading": "Alergia a Crustáceos", "content": "Use peixes brancos/gordurosos nos templates; evite camarão/mexilhão/lula." },
+                        { "heading": "Baixo FODMAP (no geral)", "content": "Reduza alho/cebola; use infusão de alho no azeite; privilegie cebolinha verde (folhas)." }
+                    ]
+                },
+                "planejamento-semanal": {
+                    "name": "planejamento-semanal",
+                    "display_name": "Planejamento Semanal",
+                    "introduction": "Um pequeno ‘ritual’ de domingo salva a semana inteira.",
+                    "paragraphs": [
+                        { "heading": "Prep de 60 Min", "content": "1 grão cozido (arroz/quinoa) + 1 leguminosa (grão-de-bico) + 2 molhos-mãe + legumes lavados/cortados + porcionar 3 noites de peixe no freezer." },
+                        { "heading": "Roteiro 30-Min (Noite Útil)", "content": "Descongele porção → escolha técnica (papillote/vapor/selar) → aqueça grão → legume rápido (salteado/forno) → finalize com molho-mãe e acidez." },
+                        { "heading": "Lista ‘Sempre Comprar’", "content": "Limão, folhas, tomates-cereja, ervas frescas, alho/gengibre, 2 peixes da semana, 1 fruto do mar congelado, leite de coco, uma leguminosa." }
+                    ]
+                },
+                "exemplos-rapidos": {
+                    "name": "exemplos-rapidos",
+                    "display_name": "Exemplos Rápidos (15–25 min)",
+                    "introduction": "Cartas-idéia para usar os padrões hoje mesmo.",
+                    "paragraphs": [
+                        { "heading": "Salmão Selado + Emulsão de Limão", "content": "Selar 2–3 min por lado; terminar 5–6 min no forno; servir com quinoa, rúcula e emulsão cítrica." },
+                        { "heading": "Tilápia em Papillote Mediterrânea", "content": "Azeitona, alcaparra, tomate, ervas; 12 min a 210 °C; finalizar com azeite e limão." },
+                        { "heading": "Camarão Alho & Limão + Massa", "content": "Saltear 2 min com alho; juntar tomate assado express; envolver espaguete; salsinha." },
+                        { "heading": "Moqueca Ligeira de Peixe", "content": "Base de leite de coco + dendê; postas 8–10 min; pimentões, coentro e limão no final." },
+                        { "heading": "Bowl Asiático com Atum", "content": "Arroz, pepino, cebolinha; atum em lata; molho shoyu-gengibre-gergelim; gergelim torrado." },
+                        { "heading": "Salada Grega com Sardinha", "content": "Folhas, pepino, tomate, cebola roxa, azeitona; sardinha; iogurte herbáceo (ou tahine)." }
+                    ]
+                }
+            }
+        };
+
+        const navElement = document.getElementById('main-nav');
+        const appContentElement = document.getElementById('app-content');
+        const menuToggle = document.getElementById('menu-toggle');
+
+        // Function to render content for a given category
+        function renderCategory(categoryKey) {
+            const categoryData = knowledgeBase.categories[categoryKey];
+            if (!categoryData) {
+                appContentElement.innerHTML = `<p>Categoria não encontrada.</p>`;
+                return;
+            }
+
+            let html = `
+                <div class="category-section" id="${categoryKey}">
+                    <h2>${categoryData.display_name}</h2>
+                    <p class="introduction">${categoryData.introduction}</p>
+            `;
+
+            categoryData.paragraphs.forEach(paragraph => {
+                html += `
+                    <h3>${paragraph.heading}</h3>
+                    <p>${paragraph.content}</p>
+                `;
+            });
+
+            html += `</div>`;
+            appContentElement.innerHTML = html;
+
+            // Update active state in nav
+            document.querySelectorAll('#main-nav a').forEach(link => {
+                link.classList.remove('active');
+            });
+            document.querySelector(`#main-nav a[data-category="${categoryKey}"]`).classList.add('active');
+
+            // Scroll to top of content
+            window.scrollTo(0, 0);
+
+            // Close mobile menu after selection
+            if (navElement.classList.contains('open') && window.innerWidth <= 768) {
+                navElement.classList.remove('open');
+            }
+        }
+
+        // Initialize navigation and content
+        function initApp() {
+            let navHtml = '';
+            const categoryKeys = Object.keys(knowledgeBase.categories);
+
+            categoryKeys.forEach(key => {
+                navHtml += `<a href="#${key}" data-category="${key}">${knowledgeBase.categories[key].display_name}</a>`;
+            });
+            navElement.innerHTML = navHtml;
+
+            // Add event listeners for navigation links
+            navElement.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', (event) => {
+                    event.preventDefault(); // Prevent default anchor jump
+                    const categoryKey = event.target.dataset.category;
+                    renderCategory(categoryKey);
+                });
+            });
+
+            // Handle initial load or URL hash
+            const initialCategory = window.location.hash ? window.location.hash.substring(1) : categoryKeys[0];
+            renderCategory(initialCategory);
+
+            // Menu toggle for mobile
+            menuToggle.addEventListener('click', () => {
+                navElement.classList.toggle('open');
+            });
+
+            // Close menu if a category is selected AND it's a mobile view
+            navElement.addEventListener('click', (event) => {
+                if (event.target.tagName === 'A' && window.innerWidth <= 768) {
+                    navElement.classList.remove('open');
+                }
+            });
+
+            // Close mobile menu when resizing to desktop
+            window.addEventListener('resize', () => {
+                if (window.innerWidth > 768) {
+                    navElement.classList.remove('open');
+                }
+            });
+        }
+
+        initApp();
+    </script>
+</body>
+</html>
