@@ -5,66 +5,117 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Behold Your God — Flashcards Dashboard</title>
   <style>
+    /* Color system — default to DARK, override for LIGHT */
+    :root{
+      --bg:#0b1020;
+      --panel:#0f172a;
+      --ink:#e5e7eb;
+      --muted:#94a3b8;
+      --brand:#4f8ef7;
+
+      --card-bg: #111827;
+      --card-grad-top:#111827;
+      --card-grad-bot:#0f1624;
+
+      --border:#1f2940;
+      --border-subtle:#182235;
+
+      --tag-ink:#9ec1ff;
+      --tag-bg:#0f203e;
+      --tag-border:#1b3a73;
+
+      --shadow: 0 6px 30px rgba(0,0,0,0.25);
+      --shadow-hover: 0 8px 26px rgba(0,0,0,.35);
+    }
+    @media (prefers-color-scheme: light){
+      :root{
+        --bg:#f5f7fb;
+        --panel:#ffffff;
+        --ink:#1b2a41;
+        --muted:#34495e;
+        --brand:#4f8ef7;
+
+        --card-bg:#ffffff;
+        --card-grad-top:#ffffff;
+        --card-grad-bot:#fcfdff;
+
+        --border:#e3e9f3;
+        --border-subtle:#e9eef5;
+
+        --tag-ink:#2e6be6;
+        --tag-bg:#eaf2ff;
+        --tag-border:#d6e6ff;
+
+        --shadow: 0 6px 30px rgba(0,0,0,0.06);
+        --shadow-hover: 0 8px 22px rgba(79,142,247,.15);
+      }
+    }
+
+    /* Base */
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Inter, system-ui, Arial, sans-serif;
       line-height: 1.6;
-      color: #2c3e50;
-      background: #f5f7fb;
+      color: var(--ink);
+      background: var(--bg);
       margin: 0;
       padding: 2rem;
     }
     .container {
       max-width: 880px;
       margin: 0 auto;
-      background: #fff;
+      background: var(--panel);
       border-radius: 12px;
       padding: 2rem;
-      box-shadow: 0 6px 30px rgba(0,0,0,0.06);
-      border: 1px solid #e9eef5;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border-subtle);
     }
     h1 {
       margin: 0 0 1.25rem 0;
       font-size: 1.9rem;
-      color: #1b2a41;
+      color: var(--ink);
       letter-spacing: .2px;
     }
     h2 {
-      color: #34495e;
+      color: var(--muted);
       margin: 2rem 0 1rem 0;
       font-size: 1.2rem;
-      border-bottom: 3px solid #4f8ef7;
+      border-bottom: 3px solid var(--brand);
       padding-bottom: .5rem;
     }
+
+    /* Project cards */
     .project {
       display: block;
       text-decoration: none;
       color: inherit;
-      border: 1px solid #e3e9f3;
+      border: 1px solid var(--border);
       border-radius: 10px;
       padding: 1.1rem 1.2rem;
       margin-bottom: .9rem;
       transition: all .18s ease;
-      background: linear-gradient(180deg, #ffffff, #fcfdff);
+      background: linear-gradient(180deg, var(--card-grad-top), var(--card-grad-bot));
     }
     .project:hover {
-      border-color: #4f8ef7;
+      border-color: var(--brand);
       transform: translateY(-1px);
-      box-shadow: 0 8px 22px rgba(79,142,247,.15);
+      box-shadow: var(--shadow-hover);
     }
     .project h3 {
       margin: 0;
-      color: #2e6be6;
+      color: var(--brand);
       font-size: 1.05rem;
       letter-spacing: .2px;
     }
+
+    /* Tag pill */
     .tag {
       display: inline-block;
       margin-left: .4rem;
       padding: .1rem .45rem;
       font-size: .72rem;
-      color: #2e6be6;
-      background: #eaf2ff;
-      border: 1px solid #d6e6ff;
+      color: var(--tag-ink);
+      background: var(--tag-bg);
+      border: 1px solid var(--tag-border);
       border-radius: 999px;
       vertical-align: middle;
     }
