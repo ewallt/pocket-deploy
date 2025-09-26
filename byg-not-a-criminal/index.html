@@ -1,6 +1,4 @@
 <!DOCTYPE html>
-
-
 <html lang="en">
 <head>
 <meta charset="utf-8" />
@@ -22,8 +20,18 @@
   .title{display:flex;gap:12px;align-items:center;font-weight:700}
   .badge{font-size:12px;padding:2px 8px;border-radius:999px;background:var(--chip);color:var(--chip-ink)}
   .tabs{display:flex;gap:8px}
-  .tab{border:1px solid var(--border);background:var(--panel);color:var(--ink);padding:10px 14px;border-radius:999px;cursor:pointer;font-weight:600}
-  .tab[aria-selected="true"]{background:var(--brand);color:#fff}
+  .tab{border:1px solid var(--border);background:transparent;color:var(--ink);padding:10px 14px;border-radius:999px;cursor:pointer;font-weight:600}
+  /* Active tab — clean underline indicator (no bright fill) */
+  .tab[aria-selected="true"]{
+    position:relative;
+    background:transparent;
+    color:var(--ink);
+  }
+  .tab[aria-selected="true"]::after{
+    content:"";
+    position:absolute; left:12px; right:12px; bottom:-6px;
+    height:3px; border-radius:3px; background:var(--brand);
+  }
   .btn{border:1px solid var(--border);background:var(--panel);color:var(--ink);padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:600}
   .panel{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:20px;margin:20px 0}
   .fc{border:1px solid var(--border);border-radius:18px;background:var(--card);padding:26px;min-height:220px}
@@ -55,49 +63,42 @@
     </div>
   </header>
 
-
   <main class="wrap">
     <section id="tab-handout" class="panel" role="tabpanel" aria-labelledby="t-handout">
       <div id="handout" class="empty">Loading…</div>
     </section>
 
-
-<section id="tab-flashcards" class="panel" role="tabpanel" aria-labelledby="t-flashcards" hidden>
-  <div class="fc-toolbar">
-    <button class="btn" id="flipBtn"></button>
-    <button class="btn" id="prevBtn"></button>
-    <button class="btn" id="nextBtn"></button>
-    <button class="btn" id="shuffleBtn"></button>
-    <label><input type="checkbox" id="remember" /> <span id="rememberLabel"></span></label>
-    <span id="progress" aria-live="polite"></span>
-  </div>
-
-  <article class="fc" id="card" aria-live="polite">
-    <div class="fc-inner">
-      <div class="fc-side fc-front">
-        <div id="qText"></div>
-        <div id="illusFront" class="k"></div>
-        <div><span id="pageFront"></span> • <span id="frontHint"></span></div>
+    <section id="tab-flashcards" class="panel" role="tabpanel" aria-labelledby="t-flashcards" hidden>
+      <div class="fc-toolbar">
+        <button class="btn" id="flipBtn"></button>
+        <button class="btn" id="prevBtn"></button>
+        <button class="btn" id="nextBtn"></button>
+        <button class="btn" id="shuffleBtn"></button>
+        <label><input type="checkbox" id="remember" /> <span id="rememberLabel"></span></label>
+        <span id="progress" aria-live="polite"></span>
       </div>
-      <div class="fc-side fc-back" hidden>
-        <div id="aText"></div>
-        <div id="illusBack" class="k"></div>
-        <div><span id="pageBack"></span> • <span id="backHint"></span></div>
-      </div>
-    </div>
-  </article>
-  <span class="sr-only" id="flipState" aria-live="polite"></span>
-</section>
 
+      <article class="fc" id="card" aria-live="polite">
+        <div class="fc-inner">
+          <div class="fc-side fc-front">
+            <div id="qText"></div>
+            <div id="illusFront" class="k"></div>
+            <div><span id="pageFront"></span> • <span id="frontHint"></span></div>
+          </div>
+          <div class="fc-side fc-back" hidden>
+            <div id="aText"></div>
+            <div id="illusBack" class="k"></div>
+            <div><span id="pageBack"></span> • <span id="backHint"></span></div>
+          </div>
+        </div>
+      </article>
+      <span class="sr-only" id="flipState" aria-live="polite"></span>
+    </section>
   </main>
-
 
   <footer class="wrap"><div id="footerLine"></div></footer>
 
-
   <!-- ========= CONTENT (ONLY THIS MIDDLE BLOCK CHANGES PER CHAPTER) ========= -->
-
-
   <script id="app-data" type="application/json">
   {
     "slug": "byg-ch22-not-a-criminal",
@@ -125,10 +126,7 @@
     ]
   }
   </script>
-
-
   <!-- ======================= /CONTENT BLOCK ======================= -->
-
 
 <script>
 /* ================= REUSABLE LOADER (unchanged across chapters) ================= */
@@ -316,7 +314,5 @@
   }
 })();
 </script>
-
-
 </body>
 </html>
