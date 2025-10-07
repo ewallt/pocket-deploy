@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>The Risk God Took at the Cross — Colorful Reader</title>
+<meta name="description" content="A single-file reader presenting a compact knowledge base on the risk God took at the cross within the Great Controversy frame."/>
+<style>
+:root{
+  /* Token-parity defaults (swap to your theme later) */
+  --bg:#0b1020; --panel:#0f172a; --ink:#e5e7eb; --muted:#94a3b8; --brand:#22d3ee;
+  --chip:#1f2937; --chip-ink:#cbd5e1; --accent:#38bdf8; --border:#1e293b; --card:#111827;
+  --radius:14px; --gap:14px; --pad:16px; --maxw:1080px; --shadow:0 10px 30px rgba(0,0,0,.25);
+}
+@media (prefers-color-scheme: light){
+  :root{ --bg:#f7fafc; --panel:#ffffff; --ink:#0f172a; --muted:#475569; --brand:#0ea5e9;
+         --chip:#eef2ff; --chip-ink:#1f2a56; --accent:#2563eb; --border:#e5e7eb; --card:#ffffff; }
+}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:24px}
+.header{background:linear-gradient(180deg,rgba(255,255,255,.04),transparent);border:1px solid var(--border);border-radius:var(--radius);padding:28px;box-shadow:var(--shadow)}
+.h1{margin:0 0 6px;font-size:28px;letter-spacing:.2px}
+.desc{margin:0;color:var(--muted)}
+.tools{display:flex;gap:var(--gap);align-items:center;margin:16px 0 0}
+.search{flex:1;display:flex;gap:10px}
+.search input{flex:1;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--ink)}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+.chip{background:var(--chip);color:var(--chip-ink);padding:6px 10px;border-radius:999px;font-size:12px;border:1px solid var(--border)}
+.grid{display:grid;grid-template-columns:1fr;gap:var(--gap);margin-top:20px}
+.section{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:18px}
+.section h2{margin:0 0 8px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-top:12px}
+.card h3{margin:0 0 6px;font-size:16px}
+.meta{font-size:12px;color:var(--muted)}
+.footer{margin:28px 0 60px;color:var(--muted);font-size:13px}
+.src-list a{color:var(--accent);text-decoration:none}
+.bad{color:#ffb4b4}
+.good{color:#8ef69c}
+.note{display:block;margin-top:8px}
+.kberr{white-space:pre-wrap;background:#361a1a;border:1px solid #5f2b2b;border-radius:10px;padding:12px;color:#ffdede;margin-top:12px}
+.hide{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="header">
+    <h1 class="h1" id="title"></h1>
+    <p class="desc" id="description"></p>
+    <div class="tools">
+      <div class="search">
+        <input id="q" placeholder="Search cards… (titles & content)"/>
+      </div>
+      <span class="chip" id="count">0 cards</span>
+      <span class="chip" id="validChip">validating…</span>
+    </div>
+    <div id="kbErrors" class="kberr hide"></div>
+    <div class="chips" id="chips"></div>
+  </header>
+
+  <main class="grid" id="grid"></main>
+
+  <footer class="footer">
+    <div class="src-list" id="sources"></div>
+    <div class="note">Theme tokens exposed; swap <code>:root</code> to match your Colorful Reader palette.</div>
+  </footer>
+</div>
+
+<!-- Embedded KB JSON -->
+<script id="kb" type="application/json">
+</script>
+
+<script>
+/* ===== Runtime JSON Validator (tiny, friendly) ===== */
+const schema = {
+  schema_version:"string",
+  title:"string",
+  description:"string",
+  sections:[{id:"string",name:"string",cards:[{type:"string",title:"string",content:"string"}]}],
+  sources:[{id:"string",title:"string",url:"string",note:"string"}]
+};
+function validateKB(kb){
+  const errs=[];
+  function req(obj,key,type){ if(!(key in obj)) errs.push(`Missing key: ${key}`); else if(typeof obj[key]!==type) errs.push(`Type mismatch: ${key} should be ${type}`); }
+  req(kb,"schema_version","string"); req(kb,"title","string"); req(kb,"description","string");
+  if(!Array.isArray(kb.sections)) errs.push("sections must be an array");
+  else kb.sections.forEach((s,i)=>{
+    ["id","name"].forEach(k=>{ if(!(k in s)||typeof s[k]!=="string") errs.push(`sections[${i}].${k} missing/string`); });
+    if(!Array.isArray(s.cards)) errs.push(`sections[${i}].cards must be array`);
+    else s.cards.forEach((c,j)=>{
+      ["type","title","content"].forEach(k=>{ if(!(k in c)||typeof c[k]!=="string") errs.push(`sections[${i}].cards[${j}].${k} missing/string`); });
+    });
+  });
+  if(!Array.isArray(kb.sources)) errs.push("sources must be an array");
+  else kb.sources.forEach((s,i)=>{
+    ["id","title","url","note"].forEach(k=>{ if(!(k in s)||typeof s[k]!=="string") errs.push(`sources[${i}].${k} missing/string`); });
+  });
+  return errs;
+}
+
+/* ===== Render ===== */
+function el(tag,cls,txt){ const e=document.createElement(tag); if(cls) e.className=cls; if(txt!=null) e.textContent=txt; return e; }
+function render(kb){
+  document.getElementById("title").textContent=kb.title;
+  document.getElementById("description").textContent=kb.description;
+  const grid=document.getElementById("grid"); grid.innerHTML="";
+  let total=0;
+  kb.sections.forEach(sec=>{
+    const s=el("section","section");
+    s.appendChild(el("h2",null,sec.name));
+    sec.cards.forEach(card=>{
+      total++;
+      const c=el("article","card");
+      c.dataset.title=card.title.toLowerCase(); c.dataset.content=card.content.toLowerCase();
+      c.appendChild(el("h3",null,card.title));
+      c.appendChild(el("p","meta",card.type));
+      c.appendChild(el("p",null,card.content));
+      s.appendChild(c);
+    });
+    grid.appendChild(s);
+  });
+  document.getElementById("count").textContent = total + " cards";
+  const srcDiv=document.getElementById("sources");
+  srcDiv.innerHTML="<strong>Sources:</strong> " + kb.sources.map(s=>`<a href="${s.url}" target="_blank" rel="noopener">${s.title}</a>`).join(" · ");
+  // chips
+  const chips=document.getElementById("chips");
+  chips.innerHTML="";
+  kb.sections.forEach(sec=>chips.appendChild(el("span","chip",sec.name)));
+}
+
+/* ===== Search ===== */
+function wireSearch(){
+  const q=document.getElementById("q");
+  const grid=document.getElementById("grid");
+  q.addEventListener("input",()=>{
+    const t=q.value.trim().toLowerCase();
+    let shown=0;
+    [...grid.querySelectorAll(".section")].forEach(sec=>{
+      let secShown=0;
+      [...sec.querySelectorAll(".card")].forEach(card=>{
+        const hit = !t || card.dataset.title.includes(t) || card.dataset.content.includes(t);
+        card.style.display = hit ? "" : "none";
+        if(hit) secShown++;
+      });
+      sec.style.display = secShown? "":"none";
+      shown+=secShown;
+    });
+    document.getElementById("count").textContent = shown + " cards";
+  });
+}
+
+/* ===== Boot ===== */
+(function(){
+  // Inject the KB from the block below (the assistant will paste JSON there)
+  const kbEl=document.getElementById("kb");
+  kbEl.textContent = JSON.stringify(<?php /* placeholder replaced at paste-time */ ?>, null, 2);
+})();
+</script>
+
+<!-- The agent will replace the PHP-style placeholder above with the KB JSON at emit time. -->
+<script>
+try{
+  const kb=JSON.parse(document.getElementById("kb").textContent);
+  const errs=validateKB(kb);
+  const chip=document.getElementById("validChip");
+  const box=document.getElementById("kbErrors");
+  if(errs.length){
+    chip.textContent="schema: invalid";
+    chip.classList.add("bad");
+    box.classList.remove("hide");
+    box.textContent = "Schema errors:\\n- " + errs.join("\\n- ");
+  }else{
+    chip.textContent="schema: valid";
+    chip.classList.add("good");
+    render(kb); wireSearch();
+  }
+}catch(e){
+  const chip=document.getElementById("validChip");
+  const box=document.getElementById("kbErrors");
+  chip.textContent="schema: parse error";
+  chip.classList.add("bad");
+  box.classList.remove("hide");
+  box.textContent = "KB parse error: " + e.message;
+}
+</script>
+</body>
+</html>
