@@ -1,0 +1,32 @@
+<!-- /pocket-deploy/ai-s01-2/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>AI s01 — Part 2: Sequence Models Under Strain</title>
+<style>
+:root{--bg:#0b1020;--panel:#0f172a;--ink:#e5e7eb;--muted:#94a3b8;--brand:#60a5fa;--border:#1f2940}
+@media(prefers-color-scheme:light){:root{--bg:#f5f7fb;--panel:#fff;--ink:#1b2a41;--muted:#34495e;--brand:#2563eb;--border:#e3e9f3}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,Segoe UI,Inter,Arial;padding:2rem}
+.c{max-width:880px;margin:0 auto;background:var(--panel);border:1px solid var(--border);border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+.nav{display:flex;gap:.5rem;flex-wrap:wrap;padding:.75rem;border-bottom:1px solid var(--border)}.nav a{padding:.45rem .7rem;border:1px solid var(--border);border-radius:999px;text-decoration:none;color:var(--ink)}.nav a:hover{border-color:var(--brand);color:var(--brand)}
+.h{padding:1.25rem 1.5rem}.intro{color:var(--muted);font-style:italic;margin:.25rem 0 1rem}
+.p{padding:0 1.5rem 1.4rem}.p p{margin:1.05rem 0}.f{padding:1rem 1.5rem;border-top:1px solid var(--border);color:var(--muted);font-size:.95rem}
+</style></head>
+<body><article class="c">
+<nav class="nav">
+  <a href="/pocket-deploy/dashboard-ai-s01/">← Dashboard</a>
+  <a href="/pocket-deploy/ai-s01-1/">Previous</a>
+  <a href="/pocket-deploy/ai-s01-3/">Next →</a>
+</nav>
+<header class="h"><h1>Sequence Models Under Strain — Part 2</h1><p class="intro">The pre-transformer toolbox worked, but its engineering pains grew faster than its accuracy as sequences lengthened and domains diversified.</p></header>
+<section class="p">
+<p>Long-range dependency was the core stressor. RNNs preserved order but diluted signals over distance; LSTMs introduced gates to preserve state yet paid a serial cost. Attention modules helped retrieval but still rode atop recurrence, so the model could not examine all token interactions simultaneously. Tasks that demanded cross-document reference, multihop reasoning, or global consistency failed disproportionately, revealing that the architecture encoded proximity far more readily than structure.</p>
+<p>Training dynamics compounded the problem. Teacher forcing taught models to predict the next token given the gold history, but inference required conditioning on the model’s own outputs. Small mistakes cascaded, and beam search traded diversity for likelihood heuristics. Scheduled sampling, curriculum learning, and auxiliary losses chipped away at exposure bias without dissolving it. Stability tricks multiplied—layer normalization, gradient clipping, weight decay—raising operational burden while only modestly improving robustness.</p>
+<p>Parallelism ceilings were unforgiving. GPUs thrived on wide batches, yet time-step dependencies serialized computation. Pipelining across layers and sequence chunks fought for utilization but added latency and complexity. Memory pressure forced short sequences or heavy checkpointing; either way, throughput suffered. As datasets ballooned, teams spent more time juggling batch sizes, sequence truncation, and optimizer states than pushing architectural frontiers.</p>
+<p>Representation learning improved with embeddings and character/subword models, but compositionality lagged. Word vectors captured similarity, not syntax or discourse. CNN-RNN hybrids read locally then propagated summaries forward, smearing information across time. Trees and graph encoders promised structure awareness yet struggled to scale to web-scale corpora. The community sought a mechanism that could express arbitrary token-token relations uniformly while mapping cleanly to dense linear algebra.</p>
+<p>Serving constraints echoed training woes. Autoregressive decoders produced tokens one at a time, limiting throughput and complicating latency targets for translation or captioning. Beam width affected both quality and cost, while batching interacted poorly with unpredictable sequence lengths. Systems carried bespoke heuristics for early stopping, detokenization, and cache reuse. Gains were incremental, and production reliability often hinged on careful guardrails rather than intrinsic model stability.</p>
+<p>A brief synthesis clarifies the bind. Consider four pressures—global context, stable training, hardware efficiency, and predictable serving. CNNs excelled at hardware efficiency and local features; RNNs preserved order and offered stable, incremental prediction; attention aided selective recall; but no element unified all four pressures. What the field lacked was a simple, parallelizable backbone where attention did not patch recurrence but replaced it, enabling global interaction in one compute graph.</p>
+<p>That absence explains the appetite for a clean slate in 2017. By elevating attention to the organizing primitive and removing recurrence, a model could inspect every pairwise relationship at once, align naturally with matrix multiplications, and lengthen context without drowning gradients. The path from brittle sequence handling to scalable global reasoning opened, setting up the acceleration that would define the next era.</p>
+</section>
+<footer class="f">Sources: established pre-2017 results on RNN/LSTM training, exposure bias, beam search effects, and deployment constraints.</footer>
+</article></body></html>
