@@ -1,0 +1,31 @@
+<!-- /pocket-deploy/ai-s01-1/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>AI s01 — Part 1: Foundations & Frictions</title>
+<style>
+:root{--bg:#0b1020;--panel:#0f172a;--ink:#e5e7eb;--muted:#94a3b8;--brand:#60a5fa;--border:#1f2940}
+@media(prefers-color-scheme:light){:root{--bg:#f5f7fb;--panel:#fff;--ink:#1b2a41;--muted:#34495e;--brand:#2563eb;--border:#e3e9f3}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,Segoe UI,Inter,Arial;padding:2rem}
+.c{max-width:880px;margin:0 auto;background:var(--panel);border:1px solid var(--border);border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+.nav{display:flex;gap:.5rem;flex-wrap:wrap;padding:.75rem;border-bottom:1px solid var(--border)}.nav a{padding:.45rem .7rem;border:1px solid var(--border);border-radius:999px;text-decoration:none;color:var(--ink)}.nav a:hover{border-color:var(--brand);color:var(--brand)}
+.h{padding:1.25rem 1.5rem}.intro{color:var(--muted);font-style:italic;margin:.25rem 0 1rem}
+.p{padding:0 1.5rem 1.4rem}.p p{margin:1.05rem 0}.f{padding:1rem 1.5rem;border-top:1px solid var(--border);color:var(--muted);font-size:.95rem}
+</style></head>
+<body><article class="c">
+<nav class="nav">
+  <a href="/pocket-deploy/dashboard-ai-s01/">← Dashboard</a>
+  <a href="/pocket-deploy/ai-s01-2/">Next →</a>
+</nav>
+<header class="h"><h1>Foundations & Frictions — Part 1</h1><p class="intro">Before transformers, progress was real yet restless: clever architectures kept meeting hard limits of memory, parallelism, and sequence understanding.</p></header>
+<section class="p">
+<p>Statistical language modeling first leaned on n-grams: counts, smoothing, and back-off rules that modeled local context but forgot distant words. Neural networks arrived to learn dense representations that generalized beyond counts. Word embeddings such as word2vec and GloVe compressed semantics into vectors, enabling analogies and similarity search. Yet these gains happened mostly within short windows. Models still struggled to connect distant evidence, and performance rose slowly with data because the architectures did not efficiently reuse context across long sequences.</p>
+<p>CNNs and RNNs became the workhorses for text and speech. Convolutions extracted local patterns in parallel, while recurrent connections carried state through time for sequences. LSTMs and GRUs mitigated vanishing gradients, letting signals flow further than vanilla RNNs. But training remained sequential along the time dimension, limiting hardware utilization. Gradient propagation over hundreds or thousands of steps remained brittle, and careful initialization, clipping, and schedule tuning were routine necessities to keep learning stable.</p>
+<p>Seq2seq with attention was a breakthrough, pairing an encoder–decoder with a learned focus over source tokens. Early attention modules acted like soft pointers, letting the decoder query specific positions rather than compressing everything into a single vector. Machine translation benefitted first, then summarization and question answering. Still, the recurrent scaffolding imposed a serial dependency that bottlenecked throughput. Attention sat inside an RNN frame that could not fully exploit parallel hardware, and context windows were modest by today’s standards.</p>
+<p>Data pipelines matured alongside architectures. Large crawls, deduplication, and filtering shaped corpora quality, while subword tokenization balanced vocabulary size and coverage. Yet domain shift and long-tail phenomena routinely degraded outputs. Without broad pretraining objectives and massive scale, systems memorized local quirks rather than abstract regularities. Labeling costs pressed teams toward semi-supervised tricks, distant supervision, and multitask setups that partially reused signal but rarely unlocked generality at scale.</p>
+<p>Compute scaled but inefficiently. GPUs excelled at batched matrix multiplies, yet sequence models forced awkward trade-offs between batch size and time steps. Memory ceilings curtailed sequence length; checkpointing and gradient accumulation softened the blow at the cost of wall-clock time. Distributed training added complexity: parameter servers, synchronous updates, and fragile all-reduce choreography. The promise of scale was visible but gated by architectures that did not map cleanly onto parallel hardware for long sequences.</p>
+<p>Evaluation also lagged ambition. BLEU and ROUGE rewarded n-gram overlap more than grounded understanding, while perplexity tracked token likelihood rather than task utility. Error analyses pointed to brittle coherence, missed long-range dependencies, and poor handling of rare entities. Researchers could diagnose failure modes—exposure bias in teacher forcing, compounding errors in decoding, beam search pathologies—yet fixes were incremental. The field needed a design that let models read everything at once and reason with relationships globally.</p>
+<p>A pattern emerged: local modeling was easy and scalable; global reasoning was fragile and slow. The best systems combined CNNs for efficiency with RNNs for sequence order and sprinkled attention for selective recall. Even so, memory had to pass step-by-step, and gradients weakened with distance. The stage was set for an approach that elevated attention from a helpful add-on to the organizing principle, swapped recurrence for parallelism, and turned long-range structure from a liability into the main act.</p>
+</section>
+<footer class="f">Sources: standard pre-2017 ML literature on n-grams, word embeddings, CNN/RNN/LSTM/GRU, seq2seq with additive/dot-product attention.</footer>
+</article></body></html>
