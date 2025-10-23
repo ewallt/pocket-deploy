@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Real Analysis: Foundations — Part 2</title>
+<style>
+:root{
+  --bg:#0f172a;
+  --panel:#1f2937;
+  --ink:#e5e7eb;
+  --muted:#94a3b8;
+  --brand:#60a5fa;
+  --border:#1f2937;
+}
+@media(prefers-color-scheme:light){
+  :root{
+    --bg:#f8fafc;
+    --panel:#ffffff;
+    --ink:#1e293b;
+    --muted:#64748b;
+    --brand:#3b82f6;
+    --border:#e2e8f0;
+  }
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,Apple Color Emoji,Segoe UI Emoji;
+}
+.wrapper{max-width:760px; margin:0 auto; padding:48px 20px}
+.panel{
+  background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:28px;
+  box-shadow:0 0 0 1px rgba(0,0,0,.12) inset;
+}
+h1{margin:0 0 8px; font-size:2rem; line-height:1.2}
+.lead{color:var(--muted); margin:0 0 24px}
+a{color:var(--brand); text-decoration:none}
+a:hover{text-decoration:underline}
+article p{margin:0 0 16px}
+hr{border:0; border-top:1px solid var(--border); margin:24px 0}
+.nav{display:flex; gap:12px; margin-bottom:24px; flex-wrap:wrap}
+.nav a{
+  padding:10px 14px; border:1px solid var(--border); border-radius:10px;
+  background:rgba(96,165,250,.08); color:var(--ink);
+}
+small.muted{color:var(--muted); display:block; margin-top:24px}
+</style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="panel">
+      <div class="nav" aria-label="Navigation">
+        <a href="/pocket-deploy/dashboard-real-analysis-s01/">Dashboard</a>
+        <a href="/pocket-deploy/real-analysis-s01-1/">Prev</a>
+        <a href="/pocket-deploy/real-analysis-s01-3/">Next</a>
+      </div>
+
+      <h1>Real Analysis: Foundations</h1>
+      <p class="lead">Part 2 · Sequences and Convergence</p>
+
+      <article>
+        <p>Sequences form the primary tool for analyzing limits, continuity, and convergence in real analysis. A sequence is a function from the natural numbers to the real numbers, typically written (xₙ) or {xₙ}. The behavior of sequences as n approaches infinity captures the notion of approximation and limiting processes. Convergence provides a precise framework for determining when a sequence approaches a specific value, replacing intuitive notions of "getting closer" with quantitative epsilon-based criteria. Understanding sequences and their limits is essential for defining continuity, derivatives, integrals, and infinite series.</p>
+
+        <p>A sequence (xₙ) converges to a limit L ∈ ℝ if for every ε > 0, there exists N ∈ ℕ such that |xₙ − L| < ε for all n ≥ N. This definition formalizes the idea that terms eventually remain arbitrarily close to L. The limit, if it exists, is unique: if (xₙ) converges to both L and M, then |L − M| < 2ε for any ε > 0, implying L = M. Convergent sequences are bounded, though the converse is false; for example, (−1)ⁿ is bounded but oscillates without converging. Notation: lim_{n→∞} xₙ = L or xₙ → L.</p>
+
+        <p>Algebraic properties of limits simplify computations. If (xₙ) → L and (yₙ) → M, then (xₙ + yₙ) → L + M, (xₙyₙ) → LM, and if M ≠ 0 and yₙ ≠ 0 for all n, then (xₙ/yₙ) → L/M. These rules follow from the epsilon-delta definition and the triangle inequality. The squeeze theorem provides another useful tool: if xₙ ≤ yₙ ≤ zₙ for all n and both (xₙ) and (zₙ) converge to L, then (yₙ) → L. This theorem is invaluable for proving limits when direct computation is difficult.</p>
+
+        <p>Monotone sequences exhibit particularly well-behaved convergence properties. A sequence is monotone increasing if xₙ ≤ xₙ₊₁ for all n, and monotone decreasing if xₙ ≥ xₙ₊₁. The Monotone Convergence Theorem states that every bounded monotone sequence converges. Specifically, if (xₙ) is increasing and bounded above, it converges to sup{xₙ}; if decreasing and bounded below, it converges to inf{xₙ}. This theorem relies fundamentally on the completeness of ℝ and fails in ℚ. For instance, the sequence xₙ = (1 + 1/n)ⁿ is increasing and bounded, hence converges; its limit is the transcendental number e.</p>
+
+        <p>Cauchy sequences provide an alternative convergence criterion independent of knowing the limit in advance. A sequence (xₙ) is Cauchy if for every ε > 0, there exists N such that |xₘ − xₙ| < ε for all m, n ≥ N. In ℝ, completeness guarantees that every Cauchy sequence converges: Cauchy sequences are bounded, and by Bolzano-Weierstrass, contain a convergent subsequence; the entire sequence then converges to the same limit. Conversely, every convergent sequence is Cauchy. This equivalence makes Cauchy criteria essential in metric space theory and functional analysis.</p>
+
+        <p>Subsequences refine the analysis of sequence behavior. Given a sequence (xₙ), a subsequence (x_{nₖ}) selects terms indexed by a strictly increasing sequence of natural numbers. Every subsequence of a convergent sequence converges to the same limit. The Bolzano-Weierstrass Theorem asserts that every bounded sequence in ℝ has a convergent subsequence. This theorem, another consequence of completeness, underpins compactness arguments and is central to proving the extreme value theorem and the uniform continuity of continuous functions on compact intervals. Sequences with multiple subsequential limits cannot converge, while those with a unique subsequential limit do converge.</p>
+
+        <p>Divergence to infinity provides a notion of unboundedness. We write xₙ → ∞ if for every M > 0, there exists N such that xₙ > M for all n ≥ N. Similarly, xₙ → −∞ if xₙ < −M eventually. Divergent sequences may oscillate, diverge to infinity, or exhibit other unbounded behavior. Limit superior and limit inferior (lim sup and lim inf) capture the largest and smallest subsequential limits, providing invariants even when the sequence itself does not converge. These concepts extend to series, integrals, and other areas where convergence plays a key role.</p>
+      </article>
+
+      <hr />
+      <div class="nav" aria-label="Navigation">
+        <a href="/pocket-deploy/dashboard-real-analysis-s01/">Dashboard</a>
+        <a href="/pocket-deploy/real-analysis-s01-1/">Prev</a>
+        <a href="/pocket-deploy/real-analysis-s01-3/">Next</a>
+      </div>
+      <small class="muted">Real Analysis · Series 1 of 3</small>
+    </div>
+  </div>
+</body>
+</html>
