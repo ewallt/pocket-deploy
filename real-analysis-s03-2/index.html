@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Real Analysis: Advanced Topics — Part 2</title>
+<style>
+:root{
+  --bg:#0f172a;
+  --panel:#1f2937;
+  --ink:#e5e7eb;
+  --muted:#94a3b8;
+  --brand:#60a5fa;
+  --border:#1f2937;
+}
+@media(prefers-color-scheme:light){
+  :root{
+    --bg:#f8fafc;
+    --panel:#ffffff;
+    --ink:#1e293b;
+    --muted:#64748b;
+    --brand:#3b82f6;
+    --border:#e2e8f0;
+  }
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,Apple Color Emoji,Segoe UI Emoji;
+}
+.wrapper{max-width:760px; margin:0 auto; padding:48px 20px}
+.panel{
+  background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:28px;
+  box-shadow:0 0 0 1px rgba(0,0,0,.12) inset;
+}
+h1{margin:0 0 8px; font-size:2rem; line-height:1.2}
+.lead{color:var(--muted); margin:0 0 24px}
+a{color:var(--brand); text-decoration:none}
+a:hover{text-decoration:underline}
+article p{margin:0 0 16px}
+hr{border:0; border-top:1px solid var(--border); margin:24px 0}
+.nav{display:flex; gap:12px; margin-bottom:24px; flex-wrap:wrap}
+.nav a{
+  padding:10px 14px; border:1px solid var(--border); border-radius:10px;
+  background:rgba(96,165,250,.08); color:var(--ink);
+}
+small.muted{color:var(--muted); display:block; margin-top:24px}
+</style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="panel">
+      <div class="nav" aria-label="Navigation">
+        <a href="/pocket-deploy/dashboard-real-analysis-s03/">Dashboard</a>
+        <a href="/pocket-deploy/real-analysis-s03-1/">Prev</a>
+        <a href="/pocket-deploy/real-analysis-s03-3/">Next</a>
+      </div>
+
+      <h1>Real Analysis: Advanced Topics</h1>
+      <p class="lead">Part 2 · Uniform Convergence</p>
+
+      <article>
+        <p>Uniform convergence strengthens pointwise convergence by requiring that the rate of convergence be independent of the point in the domain. A sequence (fₙ) converges uniformly to f on E if for every ε > 0, there exists N (depending only on ε, not on x) such that |fₙ(x) − f(x)| < ε for all x ∈ E and all n ≥ N. This uniformity ensures that convergence occurs "at the same rate" across the entire domain, preserving continuity, enabling term-by-term integration, and justifying interchange of limits. Uniform convergence is central to Fourier analysis, differential equations, and approximation theory.</p>
+
+        <p>The distinction between pointwise and uniform convergence is crucial. Pointwise convergence allows N to depend on x, so different parts of the domain may converge at vastly different rates. Uniform convergence requires a single N that works for all x simultaneously. For example, fₙ(x) = xⁿ on [0, 1) converges pointwise to 0 but not uniformly: near x = 1, convergence is arbitrarily slow. For any ε < 1, taking x close to 1 ensures xⁿ > ε for arbitrarily large n. In contrast, fₙ(x) = x/n on [0, 1] converges uniformly to 0, since |x/n| ≤ 1/n < ε for n > 1/ε, independent of x.</p>
+
+        <p>The uniform norm provides a metric perspective on uniform convergence. Define ‖f‖_∞ = sup{|f(x)| : x ∈ E} for bounded functions. Then fₙ → f uniformly if and only if ‖fₙ − f‖_∞ → 0. This reformulation identifies uniform convergence as convergence in the supremum norm, turning function space into a normed space. The completeness of this space under the uniform norm (when restricted to continuous or bounded functions) parallels completeness of ℝ, enabling functional analysis techniques like Banach space theory.</p>
+
+        <p>Uniform convergence preserves continuity: if fₙ are continuous on E and fₙ → f uniformly, then f is continuous on E. The proof uses the triangle inequality: |f(x) − f(y)| ≤ |f(x) − fₙ(x)| + |fₙ(x) − fₙ(y)| + |fₙ(y) − f(y)|. Given ε > 0, choose N such that |fₙ(x) − f(x)| < ε/3 for all x and n ≥ N. Continuity of fₙ provides δ such that |fₙ(x) − fₙ(y)| < ε/3 for |x − y| < δ. Combining these yields |f(x) − f(y)| < ε, proving f continuous. Pointwise convergence lacks this property, as fₙ(x) = xⁿ demonstrated.</p>
+
+        <p>Uniform convergence allows term-by-term integration: if fₙ are Riemann integrable on [a, b] and fₙ → f uniformly, then f is integrable and ∫ₐᵇ fₙ → ∫ₐᵇ f. The proof estimates |∫ fₙ − ∫ f| = |∫ (fₙ − f)| ≤ ∫ |fₙ − f| ≤ (b − a)‖fₙ − f‖_∞ → 0. This justifies interchanging limit and integral, a key tool in Fourier series and improper integrals. For example, if Σ fₙ converges uniformly on [a, b], then ∫ Σ fₙ = Σ ∫ fₙ, enabling term-by-term integration of series.</p>
+
+        <p>Term-by-term differentiation requires stronger conditions. If fₙ are differentiable, fₙ → f pointwise, and fₙ' → g uniformly, then f is differentiable and f' = g. Uniform convergence of derivatives is essential; uniform convergence of fₙ alone does not suffice. For instance, fₙ(x) = (sin nx)/n converges uniformly to 0, but fₙ'(x) = cos nx does not converge at all. The theorem ensures that under appropriate conditions, (Σ fₙ)' = Σ fₙ', a formula used extensively in power series and differential equations.</p>
+
+        <p>The Cauchy criterion characterizes uniform convergence: (fₙ) converges uniformly on E if and only if for every ε > 0, there exists N such that |fₘ(x) − fₙ(x)| < ε for all x ∈ E and all m, n ≥ N. This criterion parallels Cauchy completeness for sequences in ℝ and extends to function spaces, showing that uniform convergence makes continuous functions a complete metric space. The Weierstrass M-test implies uniform convergence via the Cauchy criterion: if Σ Mₙ converges, then partial sums form a uniform Cauchy sequence.</p>
+
+        <p>Applications of uniform convergence permeate analysis. The Stone-Weierstrass theorem guarantees polynomial approximation of continuous functions uniformly on compact intervals. Fourier series converge uniformly for sufficiently smooth periodic functions, enabling representation of functions as trigonometric series. Numerical methods rely on uniform convergence to ensure approximation error bounds hold across entire domains. Understanding uniform convergence is essential for rigorous analysis of infinite processes, providing the bridge between pointwise behavior and global function properties in calculus, functional analysis, and applied mathematics.</p>
+      </article>
+
+      <hr />
+      <div class="nav" aria-label="Navigation">
+        <a href="/pocket-deploy/dashboard-real-analysis-s03/">Dashboard</a>
+        <a href="/pocket-deploy/real-analysis-s03-1/">Prev</a>
+        <a href="/pocket-deploy/real-analysis-s03-3/">Next</a>
+      </div>
+      <small class="muted">Real Analysis · Series 3 of 3</small>
+    </div>
+  </div>
+</body>
+</html>

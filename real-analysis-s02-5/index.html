@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Real Analysis: Differentiation & Integration — Part 5</title>
+<style>
+:root{
+  --bg:#0f172a;
+  --panel:#1f2937;
+  --ink:#e5e7eb;
+  --muted:#94a3b8;
+  --brand:#60a5fa;
+  --border:#1f2937;
+}
+@media(prefers-color-scheme:light){
+  :root{
+    --bg:#f8fafc;
+    --panel:#ffffff;
+    --ink:#1e293b;
+    --muted:#64748b;
+    --brand:#3b82f6;
+    --border:#e2e8f0;
+  }
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,Apple Color Emoji,Segoe UI Emoji;
+}
+.wrapper{max-width:760px; margin:0 auto; padding:48px 20px}
+.panel{
+  background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:28px;
+  box-shadow:0 0 0 1px rgba(0,0,0,.12) inset;
+}
+h1{margin:0 0 8px; font-size:2rem; line-height:1.2}
+.lead{color:var(--muted); margin:0 0 24px}
+a{color:var(--brand); text-decoration:none}
+a:hover{text-decoration:underline}
+article p{margin:0 0 16px}
+hr{border:0; border-top:1px solid var(--border); margin:24px 0}
+.nav{display:flex; gap:12px; margin-bottom:24px; flex-wrap:wrap}
+.nav a{
+  padding:10px 14px; border:1px solid var(--border); border-radius:10px;
+  background:rgba(96,165,250,.08); color:var(--ink);
+}
+small.muted{color:var(--muted); display:block; margin-top:24px}
+</style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="panel">
+      <div class="nav" aria-label="Navigation">
+        <a href="/pocket-deploy/dashboard-real-analysis-s02/">Dashboard</a>
+        <a href="/pocket-deploy/real-analysis-s02-4/">Prev</a>
+      </div>
+
+      <h1>Real Analysis: Differentiation & Integration</h1>
+      <p class="lead">Part 5 · Improper Integrals and Convergence</p>
+
+      <article>
+        <p>Improper integrals extend Riemann integration to unbounded intervals and functions with singularities. Standard Riemann integration requires bounded functions on finite intervals; improper integrals relax these conditions by taking limits. Two main types arise: integrals over infinite intervals, such as ∫₁^∞ 1/x² dx, and integrals of unbounded functions, such as ∫₀¹ 1/√x dx. Convergence of improper integrals depends on limiting behavior, analogous to series convergence. These integrals appear in probability (computing expectations), physics (potential energy), and Fourier analysis (transform theory).</p>
+
+        <p>For an unbounded interval, define ∫ₐ^∞ f(x) dx = lim_{R→∞} ∫ₐᴿ f(x) dx, provided the limit exists. If the limit is finite, the integral converges; otherwise, it diverges. For example, ∫₁^∞ 1/x² dx = lim_{R→∞} [−1/x]₁ᴿ = lim_{R→∞} (1 − 1/R) = 1, so the integral converges. In contrast, ∫₁^∞ 1/x dx = lim_{R→∞} [ln x]₁ᴿ = lim_{R→∞} ln R = ∞, so this integral diverges. The p-test states that ∫₁^∞ 1/xᵖ dx converges if p > 1 and diverges if p ≤ 1, providing a fundamental benchmark.</p>
+
+        <p>For functions with singularities, suppose f is unbounded near b but continuous on [a, b). Define ∫ₐᵇ f(x) dx = lim_{ε→0⁺} ∫ₐ^{b−ε} f(x) dx. If the limit exists, the integral converges. For instance, ∫₀¹ 1/√x dx = lim_{ε→0⁺} [2√x]_ε¹ = lim_{ε→0⁺} (2 − 2√ε) = 2, so the integral converges despite the singularity at 0. The p-test for singularities states that ∫₀¹ 1/xᵖ dx converges if p < 1 and diverges if p ≥ 1. Note the reversed inequality compared to the infinite interval case.</p>
+
+        <p>Comparison tests determine convergence by bounding the integrand. If 0 ≤ f(x) ≤ g(x) for x ≥ a and ∫ₐ^∞ g converges, then ∫ₐ^∞ f converges. Conversely, if f ≥ g ≥ 0 and ∫ₐ^∞ g diverges, then ∫ₐ^∞ f diverges. For example, since 1/(x² + x) < 1/x² for x ≥ 1 and ∫₁^∞ 1/x² dx converges, ∫₁^∞ 1/(x² + x) dx converges. The limit comparison test refines this: if f, g > 0 and lim_{x→∞} f(x)/g(x) = L ∈ (0, ∞), then ∫ₐ^∞ f and ∫ₐ^∞ g converge or diverge together.</p>
+
+        <p>Absolute convergence provides a stronger notion. An improper integral ∫ₐ^∞ f converges absolutely if ∫ₐ^∞ |f| converges. Absolute convergence implies convergence, but not conversely. For instance, ∫₀^∞ (sin x)/x² dx converges absolutely because |(sin x)/x²| ≤ 1/x² and ∫₁^∞ 1/x² dx converges. However, ∫₀^∞ (sin x)/x dx converges conditionally: the integral converges (Dirichlet's test), but ∫₀^∞ |(sin x)/x| dx diverges. Absolute convergence guarantees robustness under rearrangement and is essential in Fourier and Laplace transforms.</p>
+
+        <p>The Gamma function illustrates improper integrals in action. Defined as Γ(s) = ∫₀^∞ t^{s−1} e^{−t} dt for s > 0, the Gamma function generalizes factorials: Γ(n) = (n−1)! for positive integers n. The integrand has a singularity at 0 if s < 1 and decays exponentially as t → ∞. Convergence follows from comparison with p-test near 0 and exponential decay at infinity. The Gamma function satisfies Γ(s+1) = sΓ(s), enabling extension to complex arguments via analytic continuation. It appears in probability (Gamma distribution), number theory (zeta function), and physics (partition functions).</p>
+
+        <p>Improper integrals require careful handling: convergence is not automatic, and manipulations valid for proper integrals may fail. For instance, term-by-term integration of series requires uniform convergence, and changing order of integration in iterated improper integrals needs justification via Fubini's or Tonelli's theorems. Numerical computation of improper integrals uses truncation and singularity removal, requiring error analysis. Despite these subtleties, improper integrals extend the reach of integration theory to infinite domains and unbounded functions, enabling calculus to address a far broader class of problems than finite Riemann integrals alone.</p>
+
+        <p>Series 2 concludes the classical calculus framework of real analysis, covering derivatives, the Mean Value Theorem, Riemann integration, the Fundamental Theorem, and improper integrals. Series 3 will explore advanced topics: function sequences and series, uniform convergence, power series, metric spaces, and an introduction to Lebesgue theory. Together, these series provide a comprehensive foundation in real analysis, equipping the reader with tools for further study in functional analysis, measure theory, and applications across mathematics and science.</p>
+      </article>
+
+      <hr />
+      <div class="nav" aria-label="Navigation">
+        <a href="/pocket-deploy/dashboard-real-analysis-s02/">Dashboard</a>
+        <a href="/pocket-deploy/real-analysis-s02-4/">Prev</a>
+      </div>
+      <small class="muted">Real Analysis · Series 2 of 3</small>
+    </div>
+  </div>
+</body>
+</html>

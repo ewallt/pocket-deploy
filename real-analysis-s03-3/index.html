@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Real Analysis: Advanced Topics — Part 3</title>
+<style>
+:root{
+  --bg:#0f172a;
+  --panel:#1f2937;
+  --ink:#e5e7eb;
+  --muted:#94a3b8;
+  --brand:#60a5fa;
+  --border:#1f2937;
+}
+@media(prefers-color-scheme:light){
+  :root{
+    --bg:#f8fafc;
+    --panel:#ffffff;
+    --ink:#1e293b;
+    --muted:#64748b;
+    --brand:#3b82f6;
+    --border:#e2e8f0;
+  }
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,Apple Color Emoji,Segoe UI Emoji;
+}
+.wrapper{max-width:760px; margin:0 auto; padding:48px 20px}
+.panel{
+  background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:28px;
+  box-shadow:0 0 0 1px rgba(0,0,0,.12) inset;
+}
+h1{margin:0 0 8px; font-size:2rem; line-height:1.2}
+.lead{color:var(--muted); margin:0 0 24px}
+a{color:var(--brand); text-decoration:none}
+a:hover{text-decoration:underline}
+article p{margin:0 0 16px}
+hr{border:0; border-top:1px solid var(--border); margin:24px 0}
+.nav{display:flex; gap:12px; margin-bottom:24px; flex-wrap:wrap}
+.nav a{
+  padding:10px 14px; border:1px solid var(--border); border-radius:10px;
+  background:rgba(96,165,250,.08); color:var(--ink);
+}
+small.muted{color:var(--muted); display:block; margin-top:24px}
+</style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="panel">
+      <div class="nav" aria-label="Navigation">
+        <a href="/pocket-deploy/dashboard-real-analysis-s03/">Dashboard</a>
+        <a href="/pocket-deploy/real-analysis-s03-2/">Prev</a>
+        <a href="/pocket-deploy/real-analysis-s03-4/">Next</a>
+      </div>
+
+      <h1>Real Analysis: Advanced Topics</h1>
+      <p class="lead">Part 3 · Power Series and Taylor Series</p>
+
+      <article>
+        <p>Power series are infinite series of the form Σ aₙ(x − c)ⁿ, where aₙ are coefficients and c is the center. These series represent functions on intervals of convergence, providing analytic expressions for exponentials, trigonometric functions, and solutions to differential equations. The radius of convergence R determines the interval (c − R, c + R) on which the series converges, with R computed via the ratio or root test. Within the radius of convergence, power series can be differentiated and integrated term-by-term, making them powerful tools for computation and approximation. Taylor series express smooth functions as power series centered at a point, formalizing local polynomial approximation.</p>
+
+        <p>The convergence of power series exhibits three-region behavior. For a series Σ aₙ(x − c)ⁿ, there exists R ∈ [0, ∞] such that the series converges absolutely for |x − c| < R, diverges for |x − c| > R, and may converge or diverge at the boundary points x = c ± R. The radius of convergence is R = 1/lim sup |aₙ|^(1/n), or equivalently R = lim |aₙ/aₙ₊₁| when this limit exists. For instance, Σ xⁿ/n! has R = ∞ (converges everywhere), Σ n!xⁿ has R = 0 (converges only at 0), and Σ xⁿ has R = 1 (converges on (−1, 1)).</p>
+
+        <p>Within the interval of convergence, power series define continuous functions. If f(x) = Σ aₙ(x − c)ⁿ for |x − c| < R, then f is continuous on (c − R, c + R). Moreover, the series converges uniformly on any compact subinterval [c − r, c + r] with r < R, ensuring that properties like continuity are inherited from the partial sums. This uniform convergence on compacta allows rigorous manipulation: substituting power series into other power series, solving functional equations, and iterating series expansions all rely on this principle.</p>
+
+        <p>Term-by-term differentiation and integration hold within the radius of convergence. If f(x) = Σ aₙ(x − c)ⁿ for |x − c| < R, then f is infinitely differentiable on (c − R, c + R) and f'(x) = Σ n aₙ(x − c)^(n−1). The differentiated series has the same radius of convergence R. Similarly, ∫ f = Σ aₙ(x − c)^(n+1)/(n+1) + C. These operations enable solving differential equations via series: substituting y = Σ aₙxⁿ into y' = y yields Σ n aₙxⁿ⁻¹ = Σ aₙxⁿ, determining coefficients recursively. Examples include Bessel functions and Legendre polynomials arising from differential equations in physics.</p>
+
+        <p>Taylor series represent functions as power series centered at a point. If f has derivatives of all orders at c, the Taylor series is Σ f^(n)(c)(x − c)ⁿ/n!. Convergence to f(x) requires that the remainder term Rₙ(x) = f(x) − Sₙ(x) tends to zero, where Sₙ is the nth partial sum. Taylor's theorem with Lagrange remainder gives Rₙ(x) = f^(n+1)(ξ)(x − c)^(n+1)/(n+1)! for some ξ between c and x. For example, eˣ = Σ xⁿ/n! converges for all x since |Rₙ(x)| ≤ e^|x| |x|^(n+1)/(n+1)! → 0.</p>
+
+        <p>Analytic functions are those equal to their Taylor series in some neighborhood of each point. Exponential, trigonometric, and logarithmic functions are analytic on their domains. Analyticity implies infinite differentiability (C^∞), but not conversely: the function f(x) = e^(−1/x²) for x ≠ 0 and f(0) = 0 is C^∞ everywhere, yet its Taylor series at 0 is identically zero, not converging to f. This example shows Taylor series may converge to something other than the original function. Analyticity is a stronger regularity condition central to complex analysis and differential geometry.</p>
+
+        <p>Power series manipulation includes addition, multiplication, and composition. If f(x) = Σ aₙxⁿ and g(x) = Σ bₙxⁿ both converge for |x| < R, then (f + g)(x) = Σ (aₙ + bₙ)xⁿ and (fg)(x) = Σ cₙxⁿ with cₙ = Σ_{k=0}^n aₖbₙ₋ₖ (Cauchy product). Composition f(g(x)) requires |g(x)| within the radius of f, yielding another power series. These operations enable algebraic manipulation of functions as formal series, techniques foundational in combinatorics (generating functions), probability (moment generating functions), and quantum field theory (perturbative expansions).</p>
+
+        <p>Power series and Taylor series bridge discrete and continuous mathematics, providing exact representations of transcendental functions and approximate solutions to intractable problems. They enable numerical computation of functions, asymptotic analysis of growth rates, and perturbative solutions to nonlinear equations. Understanding convergence, differentiation, and manipulation of power series is essential for advanced calculus, complex analysis, and mathematical physics, forming a cornerstone of modern analysis.</p>
+      </article>
+
+      <hr />
+      <div class="nav" aria-label="Navigation">
+        <a href="/pocket-deploy/dashboard-real-analysis-s03/">Dashboard</a>
+        <a href="/pocket-deploy/real-analysis-s03-2/">Prev</a>
+        <a href="/pocket-deploy/real-analysis-s03-4/">Next</a>
+      </div>
+      <small class="muted">Real Analysis · Series 3 of 3</small>
+    </div>
+  </div>
+</body>
+</html>

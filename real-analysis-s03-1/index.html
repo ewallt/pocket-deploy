@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Real Analysis: Advanced Topics — Part 1</title>
+<style>
+:root{
+  --bg:#0f172a;
+  --panel:#1f2937;
+  --ink:#e5e7eb;
+  --muted:#94a3b8;
+  --brand:#60a5fa;
+  --border:#1f2937;
+}
+@media(prefers-color-scheme:light){
+  :root{
+    --bg:#f8fafc;
+    --panel:#ffffff;
+    --ink:#1e293b;
+    --muted:#64748b;
+    --brand:#3b82f6;
+    --border:#e2e8f0;
+  }
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,Apple Color Emoji,Segoe UI Emoji;
+}
+.wrapper{max-width:760px; margin:0 auto; padding:48px 20px}
+.panel{
+  background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:28px;
+  box-shadow:0 0 0 1px rgba(0,0,0,.12) inset;
+}
+h1{margin:0 0 8px; font-size:2rem; line-height:1.2}
+.lead{color:var(--muted); margin:0 0 24px}
+a{color:var(--brand); text-decoration:none}
+a:hover{text-decoration:underline}
+article p{margin:0 0 16px}
+hr{border:0; border-top:1px solid var(--border); margin:24px 0}
+.nav{display:flex; gap:12px; margin-bottom:24px; flex-wrap:wrap}
+.nav a{
+  padding:10px 14px; border:1px solid var(--border); border-radius:10px;
+  background:rgba(96,165,250,.08); color:var(--ink);
+}
+small.muted{color:var(--muted); display:block; margin-top:24px}
+</style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="panel">
+      <div class="nav" aria-label="Navigation">
+        <a href="/pocket-deploy/dashboard-real-analysis-s03/">Dashboard</a>
+        <a href="/pocket-deploy/real-analysis-s03-2/">Next</a>
+      </div>
+
+      <h1>Real Analysis: Advanced Topics</h1>
+      <p class="lead">Part 1 · Sequences and Series of Functions</p>
+
+      <article>
+        <p>Sequences and series of functions extend the convergence theory of numerical sequences to function spaces. A sequence (fₙ) of functions on a set E converges pointwise to f if for each x ∈ E, the numerical sequence (fₙ(x)) converges to f(x). Series of functions Σ fₙ are treated analogously: the sequence of partial sums Sₙ = f₁ + ⋯ + fₙ converges pointwise if Sₙ(x) → S(x) for each x. This framework enables representation of functions as infinite sums, crucial for Fourier series, power series, and approximation theory. However, pointwise convergence alone does not preserve continuity, differentiability, or integrability.</p>
+
+        <p>Pointwise convergence is defined locally at each point. For each x ∈ E and each ε > 0, there exists N (depending on both ε and x) such that |fₙ(x) − f(x)| < ε for all n ≥ N. This definition allows N to vary across the domain, so convergence may be rapid at some points and arbitrarily slow at others. For example, fₙ(x) = xⁿ on [0, 1] converges pointwise to f(x) = 0 for x ∈ [0, 1) and f(1) = 1. The limit function is discontinuous despite each fₙ being continuous, illustrating that pointwise convergence does not preserve continuity.</p>
+
+        <p>Function series converge pointwise if their partial sums do. The geometric series Σ xⁿ converges pointwise to 1/(1 − x) for |x| < 1. The harmonic series of functions Σ 1/(n² + x²) converges pointwise for all x ∈ ℝ, since for each fixed x, the terms decrease like 1/n² and the series converges by comparison with Σ 1/n². Determining pointwise convergence often reduces to analyzing numerical series at each point, leveraging convergence tests like comparison, ratio, and root tests.</p>
+
+        <p>Preservation of properties under pointwise limits fails in general. If fₙ are continuous and fₙ → f pointwise, f need not be continuous, as seen with fₙ(x) = xⁿ on [0, 1]. If fₙ are differentiable with fₙ → f pointwise, f need not be differentiable; even if both fₙ → f and fₙ' → g pointwise, we may have g ≠ f'. Similarly, ∫ fₙ need not converge to ∫ f. For example, let fₙ be a tall thin spike of height n and width 1/n centered at 0; then fₙ → 0 pointwise, but ∫ fₙ = 1 for all n, so ∫ fₙ ↛ ∫ 0.</p>
+
+        <p>The Weierstrass M-test provides sufficient conditions for convergence of function series. If |fₙ(x)| ≤ Mₙ for all x ∈ E and all n, and Σ Mₙ converges, then Σ fₙ converges uniformly on E (uniform convergence will be defined in the next article, but roughly means convergence is uniform across x). For instance, Σ (sin nx)/n² converges uniformly on ℝ since |(sin nx)/n²| ≤ 1/n² and Σ 1/n² converges. The M-test simplifies verification and is widely used in Fourier analysis and complex analysis.</p>
+
+        <p>Term-by-term operations require justification. Interchanging limits, derivatives, and integrals with infinite sums demands conditions beyond pointwise convergence. For example, term-by-term differentiation of Σ fₙ yields Σ fₙ' only under uniform convergence of the derivative series. Without such conditions, manipulations can produce incorrect results. These subtleties motivate the study of uniform convergence, which guarantees preservation of continuity and allows term-by-term integration. Understanding pointwise convergence and its limitations is the first step toward rigorous function space analysis.</p>
+
+        <p>Applications of function sequences include numerical approximation, where polynomials or step functions approximate continuous functions, and solution methods for differential equations, where iterative schemes produce sequences converging to solutions. The Stone-Weierstrass theorem asserts that continuous functions on compact intervals can be uniformly approximated by polynomials, formalizing the intuition that smooth functions are limits of simpler ones. Sequences and series of functions thus form the foundation for constructive analysis, spectral theory, and functional analysis, extending real analysis into infinite-dimensional spaces.</p>
+      </article>
+
+      <hr />
+      <div class="nav" aria-label="Navigation">
+        <a href="/pocket-deploy/dashboard-real-analysis-s03/">Dashboard</a>
+        <a href="/pocket-deploy/real-analysis-s03-2/">Next</a>
+      </div>
+      <small class="muted">Real Analysis · Series 3 of 3</small>
+    </div>
+  </div>
+</body>
+</html>

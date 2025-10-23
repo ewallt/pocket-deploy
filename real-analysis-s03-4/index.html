@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Real Analysis: Advanced Topics — Part 4</title>
+<style>
+:root{
+  --bg:#0f172a;
+  --panel:#1f2937;
+  --ink:#e5e7eb;
+  --muted:#94a3b8;
+  --brand:#60a5fa;
+  --border:#1f2937;
+}
+@media(prefers-color-scheme:light){
+  :root{
+    --bg:#f8fafc;
+    --panel:#ffffff;
+    --ink:#1e293b;
+    --muted:#64748b;
+    --brand:#3b82f6;
+    --border:#e2e8f0;
+  }
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,Apple Color Emoji,Segoe UI Emoji;
+}
+.wrapper{max-width:760px; margin:0 auto; padding:48px 20px}
+.panel{
+  background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:28px;
+  box-shadow:0 0 0 1px rgba(0,0,0,.12) inset;
+}
+h1{margin:0 0 8px; font-size:2rem; line-height:1.2}
+.lead{color:var(--muted); margin:0 0 24px}
+a{color:var(--brand); text-decoration:none}
+a:hover{text-decoration:underline}
+article p{margin:0 0 16px}
+hr{border:0; border-top:1px solid var(--border); margin:24px 0}
+.nav{display:flex; gap:12px; margin-bottom:24px; flex-wrap:wrap}
+.nav a{
+  padding:10px 14px; border:1px solid var(--border); border-radius:10px;
+  background:rgba(96,165,250,.08); color:var(--ink);
+}
+small.muted{color:var(--muted); display:block; margin-top:24px}
+</style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="panel">
+      <div class="nav" aria-label="Navigation">
+        <a href="/pocket-deploy/dashboard-real-analysis-s03/">Dashboard</a>
+        <a href="/pocket-deploy/real-analysis-s03-3/">Prev</a>
+        <a href="/pocket-deploy/real-analysis-s03-5/">Next</a>
+      </div>
+
+      <h1>Real Analysis: Advanced Topics</h1>
+      <p class="lead">Part 4 · Metric Spaces</p>
+
+      <article>
+        <p>Metric spaces generalize the notion of distance from Euclidean space to arbitrary sets, providing a unified framework for convergence, continuity, and compactness. A metric space (X, d) consists of a set X and a distance function d: X × X → [0, ∞) satisfying non-negativity (d(x, y) ≥ 0 with equality if and only if x = y), symmetry (d(x, y) = d(y, x)), and the triangle inequality (d(x, z) ≤ d(x, y) + d(y, z)). Examples include Euclidean space ℝⁿ with d(x, y) = |x − y|, function spaces with supremum or integral norms, and discrete spaces with d(x, y) = 1 for x ≠ y.</p>
+
+        <p>The metric induces a topology via open balls. The open ball B(x, r) = {y ∈ X : d(x, y) < r} consists of all points within distance r of x. A set U ⊆ X is open if for every x ∈ U, there exists r > 0 such that B(x, r) ⊆ U. A set is closed if its complement is open. These definitions generalize the open and closed sets of ℝ, enabling topological reasoning in abstract spaces. For example, in the discrete metric, every set is both open and closed, while in ℝ with the usual metric, open intervals are open and closed intervals are closed.</p>
+
+        <p>Convergence in metric spaces uses the metric directly. A sequence (xₙ) converges to x if for every ε > 0, there exists N such that d(xₙ, x) < ε for all n ≥ N. Equivalently, xₙ → x if d(xₙ, x) → 0 in ℝ. Limits are unique in metric spaces due to the triangle inequality: if xₙ → x and xₙ → y, then d(x, y) ≤ d(x, xₙ) + d(xₙ, y) → 0, so x = y. This uniqueness, absent in general topological spaces, simplifies analysis and ensures determinism in limiting processes.</p>
+
+        <p>Continuity generalizes via metric preservation. A function f: (X, dₓ) → (Y, dᵧ) is continuous at x if for every ε > 0, there exists δ > 0 such that dₓ(x', x) < δ implies dᵧ(f(x'), f(x)) < ε. Equivalently, f is continuous at x if xₙ → x implies f(xₙ) → f(x). A function is continuous if it is continuous at every point. This definition encompasses continuity of functions between ℝⁿ spaces, uniform spaces, and function spaces, unifying diverse notions under a single framework. For instance, linear operators between normed spaces are continuous if and only if they are bounded.</p>
+
+        <p>Completeness in metric spaces mirrors completeness of ℝ. A sequence (xₙ) in X is Cauchy if for every ε > 0, there exists N such that d(xₘ, xₙ) < ε for all m, n ≥ N. A metric space is complete if every Cauchy sequence converges. Euclidean space ℝⁿ is complete, as are closed subsets thereof. The rationals ℚ with the usual metric are not complete: Cauchy sequences converging to irrationals do not converge in ℚ. Completeness is crucial for fixed-point theorems, contraction mapping principles, and existence proofs in differential equations.</p>
+
+        <p>Compactness extends the Heine-Borel characterization. A subset K of a metric space is compact if every open cover has a finite subcover. In metric spaces, compactness is equivalent to sequential compactness (every sequence has a convergent subsequence) and to being complete and totally bounded (for every ε > 0, K can be covered by finitely many ε-balls). In ℝⁿ, Heine-Borel identifies compact sets as closed and bounded. Compact metric spaces inherit many properties of finite sets: continuous functions attain extrema, and continuous bijections are homeomorphisms.</p>
+
+        <p>Examples of metric spaces illustrate the breadth of the theory. The space C([a, b]) of continuous functions with supremum norm ‖f‖_∞ = sup |f(x)| is a complete metric space, foundational in functional analysis. The space L²([a, b]) of square-integrable functions with d(f, g) = (∫ |f − g|²)^(1/2) is complete (a Hilbert space) and central to quantum mechanics and signal processing. Discrete metrics turn any set into a metric space, useful in combinatorics and computer science. These diverse examples demonstrate the unifying power of metric space abstraction.</p>
+
+        <p>Metric spaces provide the natural setting for generalizing real analysis to abstract contexts. Convergence, continuity, compactness, and completeness—concepts first developed for ℝ—extend seamlessly to metric spaces, enabling analysis of function spaces, sequence spaces, and geometric objects. Subsequent study leads to Banach spaces (complete normed vector spaces), Hilbert spaces (complete inner product spaces), and ultimately to general topology and manifold theory. Understanding metric spaces is essential for modern analysis, geometry, and applications across mathematics and physics.</p>
+      </article>
+
+      <hr />
+      <div class="nav" aria-label="Navigation">
+        <a href="/pocket-deploy/dashboard-real-analysis-s03/">Dashboard</a>
+        <a href="/pocket-deploy/real-analysis-s03-3/">Prev</a>
+        <a href="/pocket-deploy/real-analysis-s03-5/">Next</a>
+      </div>
+      <small class="muted">Real Analysis · Series 3 of 3</small>
+    </div>
+  </div>
+</body>
+</html>

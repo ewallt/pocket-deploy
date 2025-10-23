@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Real Analysis: Differentiation & Integration — Part 3</title>
+<style>
+:root{
+  --bg:#0f172a;
+  --panel:#1f2937;
+  --ink:#e5e7eb;
+  --muted:#94a3b8;
+  --brand:#60a5fa;
+  --border:#1f2937;
+}
+@media(prefers-color-scheme:light){
+  :root{
+    --bg:#f8fafc;
+    --panel:#ffffff;
+    --ink:#1e293b;
+    --muted:#64748b;
+    --brand:#3b82f6;
+    --border:#e2e8f0;
+  }
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,Apple Color Emoji,Segoe UI Emoji;
+}
+.wrapper{max-width:760px; margin:0 auto; padding:48px 20px}
+.panel{
+  background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:28px;
+  box-shadow:0 0 0 1px rgba(0,0,0,.12) inset;
+}
+h1{margin:0 0 8px; font-size:2rem; line-height:1.2}
+.lead{color:var(--muted); margin:0 0 24px}
+a{color:var(--brand); text-decoration:none}
+a:hover{text-decoration:underline}
+article p{margin:0 0 16px}
+hr{border:0; border-top:1px solid var(--border); margin:24px 0}
+.nav{display:flex; gap:12px; margin-bottom:24px; flex-wrap:wrap}
+.nav a{
+  padding:10px 14px; border:1px solid var(--border); border-radius:10px;
+  background:rgba(96,165,250,.08); color:var(--ink);
+}
+small.muted{color:var(--muted); display:block; margin-top:24px}
+</style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="panel">
+      <div class="nav" aria-label="Navigation">
+        <a href="/pocket-deploy/dashboard-real-analysis-s02/">Dashboard</a>
+        <a href="/pocket-deploy/real-analysis-s02-2/">Prev</a>
+        <a href="/pocket-deploy/real-analysis-s02-4/">Next</a>
+      </div>
+
+      <h1>Real Analysis: Differentiation & Integration</h1>
+      <p class="lead">Part 3 · Riemann Integration</p>
+
+      <article>
+        <p>The Riemann integral provides a rigorous definition of area under a curve, extending geometric intuition to arbitrary bounded functions. Given a function f: [a, b] → ℝ, the integral ∫ₐᵇ f(x) dx is constructed by partitioning the interval, forming approximating sums, and taking limits as partition mesh tends to zero. A function is Riemann integrable if upper and lower sums converge to the same value. Continuous functions and monotone functions are Riemann integrable, as are functions with finitely many discontinuities. Integration provides tools for computing areas, volumes, arc lengths, and physical quantities like work and probability.</p>
+
+        <p>A partition P of [a, b] is a finite sequence a = x₀ < x₁ < ⋯ < xₙ = b dividing the interval into subintervals [xᵢ₋₁, xᵢ]. The mesh or norm of P, denoted ‖P‖, is the maximum subinterval length max(xᵢ − xᵢ₋₁). For a bounded function f, define the upper sum U(f, P) = Σ Mᵢ(xᵢ − xᵢ₋₁), where Mᵢ = sup{f(x) : x ∈ [xᵢ₋₁, xᵢ]}, and the lower sum L(f, P) = Σ mᵢ(xᵢ − xᵢ₋₁), where mᵢ = inf{f(x) : x ∈ [xᵢ₋₁, xᵢ]}. Upper sums overestimate area; lower sums underestimate.</p>
+
+        <p>Refinement improves approximation. If P' refines P (contains all points of P plus possibly more), then L(f, P) ≤ L(f, P') ≤ U(f, P') ≤ U(f, P). Taking suprema and infima over all partitions yields the lower integral inf U(f, P) and upper integral sup L(f, P). A function f is Riemann integrable on [a, b] if the lower and upper integrals coincide; their common value is ∫ₐᵇ f(x) dx. Equivalently, for every ε > 0, there exists a partition P with U(f, P) − L(f, P) < ε.</p>
+
+        <p>Continuous functions on closed bounded intervals are Riemann integrable. The proof uses uniform continuity: given ε > 0, choose δ such that |f(x) − f(y)| < ε/(b − a) whenever |x − y| < δ. Partition [a, b] with mesh less than δ; then Mᵢ − mᵢ < ε/(b − a), so U(f, P) − L(f, P) < ε. This argument demonstrates how compactness and continuity interact to guarantee integrability. Monotone functions are also integrable, as oscillation within subintervals can be controlled uniformly.</p>
+
+        <p>Riemann sums generalize upper and lower sums by choosing sample points freely. For a partition P and sample points cᵢ ∈ [xᵢ₋₁, xᵢ], the Riemann sum is R(f, P, {cᵢ}) = Σ f(cᵢ)(xᵢ − xᵢ₋₁). If f is integrable, then for every ε > 0, there exists δ > 0 such that |R(f, P, {cᵢ}) − ∫ₐᵇ f| < ε whenever ‖P‖ < δ, regardless of sample point choice. This criterion justifies numerical integration methods like midpoint, trapezoidal, and Simpson's rules, which approximate integrals via Riemann sums with specific sample strategies.</p>
+
+        <p>The integral satisfies linearity and order properties. If f and g are integrable on [a, b] and c ∈ ℝ, then ∫(f + g) = ∫f + ∫g and ∫(cf) = c∫f. If f ≤ g on [a, b], then ∫f ≤ ∫g. The absolute value inequality |∫f| ≤ ∫|f| follows from order properties. Additivity over intervals holds: ∫ₐᶜ f + ∫ᶜᵇ f = ∫ₐᵇ f for a < c < b. These properties enable algebraic manipulation of integrals and underpin comparison theorems and mean value inequalities.</p>
+
+        <p>Not all bounded functions are Riemann integrable. The Dirichlet function, defined as f(x) = 1 if x is rational and f(x) = 0 if x is irrational, is bounded on [0, 1] but not Riemann integrable: upper sums equal 1 while lower sums equal 0 for any partition. This example motivates the Lebesgue integral, which integrates a broader class of functions by partitioning the range rather than the domain. However, for continuous or piecewise continuous functions, Riemann integration suffices and provides geometric intuition.</p>
+
+        <p>Riemann integration transforms calculus from differentiation-focused to a balanced framework incorporating both local and global analysis. The Fundamental Theorem of Calculus, explored in the next article, reveals the deep connection between derivatives and integrals, showing that integration reverses differentiation. Understanding Riemann sums and integrability criteria equips the analyst with tools for computing areas, solving differential equations, and modeling accumulation processes across science and engineering.</p>
+      </article>
+
+      <hr />
+      <div class="nav" aria-label="Navigation">
+        <a href="/pocket-deploy/dashboard-real-analysis-s02/">Dashboard</a>
+        <a href="/pocket-deploy/real-analysis-s02-2/">Prev</a>
+        <a href="/pocket-deploy/real-analysis-s02-4/">Next</a>
+      </div>
+      <small class="muted">Real Analysis · Series 2 of 3</small>
+    </div>
+  </div>
+</body>
+</html>

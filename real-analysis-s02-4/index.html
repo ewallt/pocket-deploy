@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Real Analysis: Differentiation & Integration — Part 4</title>
+<style>
+:root{
+  --bg:#0f172a;
+  --panel:#1f2937;
+  --ink:#e5e7eb;
+  --muted:#94a3b8;
+  --brand:#60a5fa;
+  --border:#1f2937;
+}
+@media(prefers-color-scheme:light){
+  :root{
+    --bg:#f8fafc;
+    --panel:#ffffff;
+    --ink:#1e293b;
+    --muted:#64748b;
+    --brand:#3b82f6;
+    --border:#e2e8f0;
+  }
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,Apple Color Emoji,Segoe UI Emoji;
+}
+.wrapper{max-width:760px; margin:0 auto; padding:48px 20px}
+.panel{
+  background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:28px;
+  box-shadow:0 0 0 1px rgba(0,0,0,.12) inset;
+}
+h1{margin:0 0 8px; font-size:2rem; line-height:1.2}
+.lead{color:var(--muted); margin:0 0 24px}
+a{color:var(--brand); text-decoration:none}
+a:hover{text-decoration:underline}
+article p{margin:0 0 16px}
+hr{border:0; border-top:1px solid var(--border); margin:24px 0}
+.nav{display:flex; gap:12px; margin-bottom:24px; flex-wrap:wrap}
+.nav a{
+  padding:10px 14px; border:1px solid var(--border); border-radius:10px;
+  background:rgba(96,165,250,.08); color:var(--ink);
+}
+small.muted{color:var(--muted); display:block; margin-top:24px}
+</style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="panel">
+      <div class="nav" aria-label="Navigation">
+        <a href="/pocket-deploy/dashboard-real-analysis-s02/">Dashboard</a>
+        <a href="/pocket-deploy/real-analysis-s02-3/">Prev</a>
+        <a href="/pocket-deploy/real-analysis-s02-5/">Next</a>
+      </div>
+
+      <h1>Real Analysis: Differentiation & Integration</h1>
+      <p class="lead">Part 4 · Fundamental Theorem of Calculus</p>
+
+      <article>
+        <p>The Fundamental Theorem of Calculus (FTC) unifies differentiation and integration, revealing them as inverse operations. The theorem has two parts: the first states that integration produces antiderivatives, while the second enables computation of definite integrals via antiderivatives. Together, these results transform integration from a limit of sums into an algebraic process, making calculus a powerful computational tool. The FTC underpins applications ranging from physics and engineering to probability and economics, providing the theoretical foundation for solving differential equations and computing accumulated change.</p>
+
+        <p>The First Fundamental Theorem of Calculus addresses the derivative of an integral function. If f is continuous on [a, b] and F(x) = ∫ₐˣ f(t) dt, then F is continuous on [a, b], differentiable on (a, b), and F'(x) = f(x) for all x ∈ (a, b). In other words, differentiation undoes integration: the rate of accumulation of f equals f itself. This result shows that every continuous function has an antiderivative, a fact not obvious from the definition of derivative. The proof uses the Mean Value Theorem for integrals and the definition of derivative.</p>
+
+        <p>To prove FTC Part 1, compute F'(x) = lim_{h→0} [F(x+h) − F(x)]/h = lim_{h→0} (1/h)∫ₓˣ⁺ʰ f(t) dt. By the Mean Value Theorem for integrals, there exists c between x and x+h such that ∫ₓˣ⁺ʰ f(t) dt = f(c)h. Thus F'(x) = lim_{h→0} f(c). Continuity of f ensures f(c) → f(x) as h → 0, yielding F'(x) = f(x). This argument illustrates how integral and differential perspectives converge through continuity and limiting processes.</p>
+
+        <p>The Second Fundamental Theorem of Calculus provides the evaluation formula for definite integrals. If f is continuous on [a, b] and G is any antiderivative of f (meaning G' = f), then ∫ₐᵇ f(x) dx = G(b) − G(a). This result reduces integration to finding antiderivatives and evaluating at endpoints, bypassing Riemann sum limits. The proof applies FTC Part 1: let F(x) = ∫ₐˣ f(t) dt; then F'(x) = f(x) = G'(x), so F − G is constant. Evaluating at a gives F(a) − G(a) = 0 − G(a), hence F(b) = G(b) − G(a).</p>
+
+        <p>The notation G(b) − G(a) is often written as G(x)|ₐᵇ or [G(x)]ₐᵇ, emphasizing evaluation at boundaries. For example, ∫₀^π sin(x) dx = [−cos(x)]₀^π = (−cos π) − (−cos 0) = 1 + 1 = 2. This computational simplicity contrasts sharply with Riemann sum approximation. The FTC transforms integration into an algebraic operation, making calculus accessible for practical computation. However, finding antiderivatives can be challenging; integration by parts, substitution, and partial fractions are techniques developed to address this.</p>
+
+        <p>Integration by substitution is the chain rule in reverse. If g is continuously differentiable on [a, b] and f is continuous on g([a, b]), then ∫ₐᵇ f(g(x))g'(x) dx = ∫_{g(a)}^{g(b)} f(u) du. The proof applies the chain rule to the antiderivative of f. For example, ∫ x cos(x²) dx uses substitution u = x², du = 2x dx, yielding (1/2)∫ cos(u) du = (1/2)sin(u) + C = (1/2)sin(x²) + C. Substitution simplifies integrands by transforming variables, a fundamental technique in calculus courses.</p>
+
+        <p>Integration by parts derives from the product rule: ∫ u dv = uv − ∫ v du. If u and v are continuously differentiable, this formula redistributes the integrand, often simplifying evaluation. For instance, ∫ x eˣ dx uses u = x, dv = eˣ dx, giving ∫ x eˣ dx = x eˣ − ∫ eˣ dx = x eˣ − eˣ + C = eˣ(x − 1) + C. Repeated application handles higher powers and products of polynomials with exponentials or trigonometric functions. Integration by parts is essential in deriving recurrence relations and solving integrals in Fourier analysis and probability.</p>
+
+        <p>The FTC extends to piecewise continuous functions and generalizes to higher dimensions via Stokes' theorem and the divergence theorem. In multivariable calculus, these results relate integrals over regions to integrals over boundaries, unifying differential and integral calculus in ℝⁿ. The FTC's conceptual elegance—that local rates of change aggregate to global change—echoes throughout mathematics, from Green's theorem to the Gauss-Bonnet theorem in differential geometry. Mastering the FTC equips the analyst with the central tool of calculus, bridging theory and computation across disciplines.</p>
+      </article>
+
+      <hr />
+      <div class="nav" aria-label="Navigation">
+        <a href="/pocket-deploy/dashboard-real-analysis-s02/">Dashboard</a>
+        <a href="/pocket-deploy/real-analysis-s02-3/">Prev</a>
+        <a href="/pocket-deploy/real-analysis-s02-5/">Next</a>
+      </div>
+      <small class="muted">Real Analysis · Series 2 of 3</small>
+    </div>
+  </div>
+</body>
+</html>

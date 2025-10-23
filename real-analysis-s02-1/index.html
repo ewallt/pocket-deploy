@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Real Analysis: Differentiation & Integration — Part 1</title>
+<style>
+:root{
+  --bg:#0f172a;
+  --panel:#1f2937;
+  --ink:#e5e7eb;
+  --muted:#94a3b8;
+  --brand:#60a5fa;
+  --border:#1f2937;
+}
+@media(prefers-color-scheme:light){
+  :root{
+    --bg:#f8fafc;
+    --panel:#ffffff;
+    --ink:#1e293b;
+    --muted:#64748b;
+    --brand:#3b82f6;
+    --border:#e2e8f0;
+  }
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,Apple Color Emoji,Segoe UI Emoji;
+}
+.wrapper{max-width:760px; margin:0 auto; padding:48px 20px}
+.panel{
+  background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:28px;
+  box-shadow:0 0 0 1px rgba(0,0,0,.12) inset;
+}
+h1{margin:0 0 8px; font-size:2rem; line-height:1.2}
+.lead{color:var(--muted); margin:0 0 24px}
+a{color:var(--brand); text-decoration:none}
+a:hover{text-decoration:underline}
+article p{margin:0 0 16px}
+hr{border:0; border-top:1px solid var(--border); margin:24px 0}
+.nav{display:flex; gap:12px; margin-bottom:24px; flex-wrap:wrap}
+.nav a{
+  padding:10px 14px; border:1px solid var(--border); border-radius:10px;
+  background:rgba(96,165,250,.08); color:var(--ink);
+}
+small.muted{color:var(--muted); display:block; margin-top:24px}
+</style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="panel">
+      <div class="nav" aria-label="Navigation">
+        <a href="/pocket-deploy/dashboard-real-analysis-s02/">Dashboard</a>
+        <a href="/pocket-deploy/real-analysis-s02-2/">Next</a>
+      </div>
+
+      <h1>Real Analysis: Differentiation & Integration</h1>
+      <p class="lead">Part 1 · Derivatives and Differentiability</p>
+
+      <article>
+        <p>The derivative measures instantaneous rate of change, formalizing intuitions about velocity, slope, and marginal behavior. A function f: ℝ → ℝ is differentiable at c if the limit lim_{h→0} [f(c+h) − f(c)]/h exists; this limit is the derivative f'(c). Geometrically, the derivative represents the slope of the tangent line to the graph at (c, f(c)). Differentiability implies continuity, but the converse is false: f(x) = |x| is continuous at 0 but not differentiable there. The derivative transforms calculus into a precise tool for optimization, approximation, and modeling dynamic systems.</p>
+
+        <p>The difference quotient [f(c+h) − f(c)]/h compares average rate of change over an interval [c, c+h] to the instantaneous rate as h → 0. If this limit exists, f is differentiable at c; if not, f may have a corner, cusp, vertical tangent, or discontinuity. For example, f(x) = x^(1/3) has a vertical tangent at 0, so f'(0) does not exist. One-sided derivatives generalize the definition: the right-hand derivative uses h → 0⁺, the left-hand derivative uses h → 0⁻. Differentiability requires both one-sided derivatives to exist and agree.</p>
+
+        <p>Differentiation rules simplify computation. The sum rule states (f + g)' = f' + g'; the product rule gives (fg)' = f'g + fg'; the quotient rule yields (f/g)' = (f'g − fg')/g² for g ≠ 0. These follow from limit laws and algebraic manipulation. The chain rule handles composition: if g is differentiable at c and f is differentiable at g(c), then (f ∘ g)'(c) = f'(g(c)) · g'(c). This rule is central to implicit differentiation, parametric curves, and multivariable calculus. Power, exponential, logarithmic, and trigonometric functions have standard derivatives forming a computational toolkit.</p>
+
+        <p>Higher-order derivatives measure rates of change of rates of change. The second derivative f'' describes concavity: f'' > 0 implies f is concave up, f'' < 0 implies concave down. Inflection points occur where f'' changes sign. The nth derivative f^(n) generalizes this, appearing in Taylor series and differential equations. A function is called smooth or C^∞ if derivatives of all orders exist and are continuous. Polynomial functions are smooth everywhere; piecewise functions may have discontinuous derivatives at junctions.</p>
+
+        <p>Differentiability has deep connections to local linearization. If f is differentiable at c, then f(c+h) = f(c) + f'(c)h + o(h), where o(h)/h → 0 as h → 0. This approximation means the tangent line y = f(c) + f'(c)(x − c) is the best linear approximation to f near c. Error analysis, Newton's method, and differential calculus all rely on this principle. In higher dimensions, the derivative becomes a linear map (Jacobian matrix), generalizing the scalar derivative and enabling multivariable optimization and manifold theory.</p>
+
+        <p>Critical points, where f'(c) = 0 or f'(c) does not exist, are candidates for local extrema. The First Derivative Test uses sign changes of f' to identify local maxima and minima: if f' changes from positive to negative at c, then f has a local maximum at c. The Second Derivative Test examines f''(c): if f'(c) = 0 and f''(c) > 0, then c is a local minimum; if f''(c) < 0, a local maximum. These tests underpin optimization in economics, engineering, and machine learning.</p>
+
+        <p>Counterexamples clarify the boundaries of differentiability. The Weierstrass function is continuous everywhere but differentiable nowhere, demonstrating that continuity does not imply differentiability. Functions can have derivatives that are not continuous, as in f(x) = x² sin(1/x) for x ≠ 0 and f(0) = 0, where f'(0) exists but f' is discontinuous at 0. These pathologies motivate refined notions like absolute continuity and Sobolev spaces in advanced analysis.</p>
+
+        <p>The derivative is the cornerstone of calculus, linking algebra, geometry, and analysis. Subsequent articles will explore the Mean Value Theorem, which leverages differentiability to draw global conclusions from local information, and the Fundamental Theorem of Calculus, which connects differentiation and integration. Mastering derivatives equips the analyst with tools for solving differential equations, optimizing functions, and understanding change across mathematics and science.</p>
+      </article>
+
+      <hr />
+      <div class="nav" aria-label="Navigation">
+        <a href="/pocket-deploy/dashboard-real-analysis-s02/">Dashboard</a>
+        <a href="/pocket-deploy/real-analysis-s02-2/">Next</a>
+      </div>
+      <small class="muted">Real Analysis · Series 2 of 3</small>
+    </div>
+  </div>
+</body>
+</html>

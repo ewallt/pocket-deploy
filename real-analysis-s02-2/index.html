@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Real Analysis: Differentiation & Integration — Part 2</title>
+<style>
+:root{
+  --bg:#0f172a;
+  --panel:#1f2937;
+  --ink:#e5e7eb;
+  --muted:#94a3b8;
+  --brand:#60a5fa;
+  --border:#1f2937;
+}
+@media(prefers-color-scheme:light){
+  :root{
+    --bg:#f8fafc;
+    --panel:#ffffff;
+    --ink:#1e293b;
+    --muted:#64748b;
+    --brand:#3b82f6;
+    --border:#e2e8f0;
+  }
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,Apple Color Emoji,Segoe UI Emoji;
+}
+.wrapper{max-width:760px; margin:0 auto; padding:48px 20px}
+.panel{
+  background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:28px;
+  box-shadow:0 0 0 1px rgba(0,0,0,.12) inset;
+}
+h1{margin:0 0 8px; font-size:2rem; line-height:1.2}
+.lead{color:var(--muted); margin:0 0 24px}
+a{color:var(--brand); text-decoration:none}
+a:hover{text-decoration:underline}
+article p{margin:0 0 16px}
+hr{border:0; border-top:1px solid var(--border); margin:24px 0}
+.nav{display:flex; gap:12px; margin-bottom:24px; flex-wrap:wrap}
+.nav a{
+  padding:10px 14px; border:1px solid var(--border); border-radius:10px;
+  background:rgba(96,165,250,.08); color:var(--ink);
+}
+small.muted{color:var(--muted); display:block; margin-top:24px}
+</style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="panel">
+      <div class="nav" aria-label="Navigation">
+        <a href="/pocket-deploy/dashboard-real-analysis-s02/">Dashboard</a>
+        <a href="/pocket-deploy/real-analysis-s02-1/">Prev</a>
+        <a href="/pocket-deploy/real-analysis-s02-3/">Next</a>
+      </div>
+
+      <h1>Real Analysis: Differentiation & Integration</h1>
+      <p class="lead">Part 2 · Mean Value Theorem and Applications</p>
+
+      <article>
+        <p>The Mean Value Theorem (MVT) is one of the most important results in calculus, asserting that for any differentiable function on an interval, there exists a point where the instantaneous rate of change equals the average rate of change. Formally, if f is continuous on [a, b] and differentiable on (a, b), then there exists c ∈ (a, b) such that f'(c) = [f(b) − f(a)]/(b − a). This theorem links local behavior (derivatives) to global behavior (function values), enabling proofs of monotonicity criteria, Taylor's theorem, and L'Hôpital's rule.</p>
+
+        <p>Rolle's Theorem is a special case and serves as the foundation for proving MVT. It states that if f is continuous on [a, b], differentiable on (a, b), and f(a) = f(b), then there exists c ∈ (a, b) such that f'(c) = 0. Intuitively, if a continuous differentiable function returns to its starting value, it must have a horizontal tangent somewhere in between. The proof uses the Extreme Value Theorem: if f is constant, every point works; otherwise, f attains a maximum or minimum in (a, b), where the derivative must vanish.</p>
+
+        <p>The Mean Value Theorem follows from Rolle's Theorem by a clever auxiliary function. Define g(x) = f(x) − [f(b) − f(a)]/(b − a) · (x − a). Then g(a) = f(a) and g(b) = f(a), so Rolle's Theorem applies to g, yielding c ∈ (a, b) with g'(c) = 0. Computing g'(c) gives f'(c) − [f(b) − f(a)]/(b − a) = 0, which is exactly the MVT conclusion. This construction—modifying the function to make endpoints equal—is a recurring technique in analysis.</p>
+
+        <p>The MVT has immediate consequences for monotonicity. If f' > 0 on an interval I, then f is strictly increasing on I: for any a < b in I, MVT gives f(b) − f(a) = f'(c)(b − a) > 0. Similarly, f' < 0 implies strict decrease, and f' = 0 implies f is constant. These criteria connect derivative sign to function behavior, forming the basis of curve sketching and optimization. For example, if f'(x) = 0 for all x in an interval, then f must be constant there, a fact used repeatedly in solving differential equations.</p>
+
+        <p>Cauchy's Mean Value Theorem generalizes MVT to pairs of functions. If f and g are continuous on [a, b], differentiable on (a, b), and g' never vanishes, then there exists c ∈ (a, b) such that [f(b) − f(a)]/[g(b) − g(a)] = f'(c)/g'(c). Taking g(x) = x recovers the standard MVT. Cauchy's MVT is the key tool in proving L'Hôpital's rule, which evaluates indeterminate limits of the form 0/0 or ∞/∞ by comparing derivatives.</p>
+
+        <p>L'Hôpital's rule states that if lim_{x→a} f(x) = lim_{x→a} g(x) = 0 (or both ±∞) and lim_{x→a} f'(x)/g'(x) exists, then lim_{x→a} f(x)/g(x) = lim_{x→a} f'(x)/g'(x). The proof applies Cauchy's MVT repeatedly. L'Hôpital's rule is invaluable for computing limits like lim_{x→0} (sin x)/x = 1 or lim_{x→∞} x/e^x = 0, and extends to iterated applications for more complex indeterminate forms. However, incorrect use is common; the rule requires verifying hypotheses and may fail if derivatives oscillate.</p>
+
+        <p>Taylor's theorem with remainder expresses functions as polynomials plus error terms, generalizing linear approximation. If f has n+1 derivatives on an interval containing c, then f(x) = f(c) + f'(c)(x−c) + f''(c)(x−c)²/2! + ⋯ + f^(n)(c)(x−c)ⁿ/n! + Rₙ(x), where the remainder Rₙ(x) = f^(n+1)(ξ)(x−c)^(n+1)/(n+1)! for some ξ between c and x (Lagrange form). The MVT is Taylor's theorem for n = 0. Taylor series, power series, and asymptotic analysis all build on this foundation.</p>
+
+        <p>The MVT and its variants illustrate how calculus transforms local differential information into global integral conclusions. Derivatives encode rates of change; the MVT guarantees that average change can be realized instantaneously. Subsequent articles will explore integration, which reverses differentiation, and the Fundamental Theorem of Calculus, which formalizes this duality. Together, these results constitute the core of real analysis and underpin applications across physics, engineering, economics, and beyond.</p>
+      </article>
+
+      <hr />
+      <div class="nav" aria-label="Navigation">
+        <a href="/pocket-deploy/dashboard-real-analysis-s02/">Dashboard</a>
+        <a href="/pocket-deploy/real-analysis-s02-1/">Prev</a>
+        <a href="/pocket-deploy/real-analysis-s02-3/">Next</a>
+      </div>
+      <small class="muted">Real Analysis · Series 2 of 3</small>
+    </div>
+  </div>
+</body>
+</html>
