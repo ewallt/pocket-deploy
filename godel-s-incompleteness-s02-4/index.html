@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Gödel's Incompleteness: Proof Sketch — Part 4</title>
+<style>
+:root{--bg:#0f172a;--panel:#1f2937;--ink:#e5e7eb;--muted:#94a3b8;--brand:#60a5fa;--border:#1f2937}
+@media(prefers-color-scheme:light){:root{--bg:#f8fafc;--panel:#ffffff;--ink:#1e293b;--muted:#64748b;--brand:#3b82f6;--border:#e2e8f0}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,Apple Color Emoji,Segoe UI Emoji}
+.wrapper{max-width:760px;margin:0 auto;padding:48px 20px}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:28px;box-shadow:0 0 0 1px rgba(0,0,0,.12) inset}
+h1{margin:0 0 8px;font-size:2rem;line-height:1.2}
+.lead{color:var(--muted);margin:0 0 24px}
+a{color:var(--brand);text-decoration:none}
+a:hover{text-decoration:underline}
+article p{margin:0 0 16px}
+hr{border:0;border-top:1px solid var(--border);margin:24px 0}
+.nav{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+.nav a{padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:rgba(96,165,250,.08);color:var(--ink)}
+small.muted{color:var(--muted);display:block;margin-top:24px}
+</style>
+</head>
+<body>
+<div class="wrapper"><div class="panel">
+<div class="nav"><a href="/pocket-deploy/dashboard-godel-s-incompleteness-s02/">Dashboard</a><a href="/pocket-deploy/godel-s-incompleteness-s02-3/">Prev</a><a href="/pocket-deploy/godel-s-incompleteness-s02-5/">Next</a></div>
+<h1>Gödel's Incompleteness: Proof Sketch</h1>
+<p class="lead">Part 4 · The Second Incompleteness Theorem Stated: The Impossibility of Self-Proof</p>
+<article>
+<p>Gödel's Second Incompleteness Theorem states: If a formal system F is consistent and sufficiently strong (capable of formalizing basic arithmetic), then F cannot prove its own consistency. More precisely, let Con(F) be a formula in F's language asserting "F is consistent," formalized as "there is no proof in F of a contradiction (such as 0 = 1)." The theorem says that if F is consistent, then F does not prove Con(F). This result is even more striking than the First Theorem: not only is F incomplete, but it cannot even certify its own reliability. Any attempt to prove consistency must use methods or principles beyond the system itself. Hilbert's program, which sought a finitary consistency proof for arithmetic, is thereby shown to be impossible within the very system it aims to justify.</p>
+
+<p>The statement Con(F) can be formalized using Gödel numbering. Consistency means "there is no proof of both a formula A and its negation ¬A," or equivalently, "there is no proof of a specific contradiction like 0 = S(0)." Let c be the Gödel number of the formula 0 = S(0), which is clearly false. Then Con(F) := ¬Prov(c), asserting "the false formula 0 = S(0) is not provable," i.e., F is consistent. This is an arithmetic statement expressible in PA. If F could prove Con(F), it would prove its own consistency. The Second Theorem shows that if F is consistent, this is impossible: F cannot prove ¬Prov(c) for the contradiction c.</p>
+
+<p>The Second Theorem follows from the First via a subtle argument. Recall that the First Theorem constructs a formula G asserting ¬Prov(g), where g is G's Gödel number. G is true but unprovable in F (assuming consistency). Now, the proof of the First Theorem can itself be formalized within F: F can derive (informally) "If F is consistent, then G is unprovable." Formalizing this, F can prove the implication Con(F) → G. This is because the meta-mathematical reasoning used in proving the First Theorem (diagonalization, properties of Prov) can be carried out within F's arithmetic. Suppose F proves Con(F). Then by modus ponens on Con(F) → G and Con(F), F would prove G. But the First Theorem tells us that if F is consistent, G is not provable. Thus, if F is consistent and proves Con(F), it proves G, contradicting the First Theorem. Therefore, F cannot prove Con(F).</p>
+
+<p>The argument requires that F can formalize its own proof theory. For PA and stronger systems, this is indeed possible: the syntactic manipulations of formulas and proofs, being finite and algorithmic, are expressible as arithmetic operations on Gödel numbers. The provability predicate Prov(x) and the consistency statement Con(F) are both definable within F. Gödel showed that all the reasoning steps of the First Theorem's proof can be internalized in F, yielding the provable implication Con(F) → G. This internalization is non-trivial—it demonstrates that formal systems are powerful enough to reason about their own structure, yet not powerful enough to certify their own consistency.</p>
+
+<p>The Second Theorem does not mean F is inconsistent or that consistency is unknowable. It means F cannot prove Con(F) using only F's axioms and rules. Consistency proofs are possible using stronger systems or different axioms. For example, Gentzen proved the consistency of PA using transfinite induction up to the ordinal ε₀, a principle not formalizable in PA but acceptable to many mathematicians. Such proofs use methods beyond the system in question, sidestepping Gödel's restriction. The Second Theorem blocks only internal, self-contained consistency proofs, not all consistency proofs whatsoever.</p>
+
+<p>The theorem has profound implications for Hilbert's program. Hilbert aimed to prove the consistency of mathematics using only finitary, concrete methods—methods that could be formalized in a weak subsystem of arithmetic. He believed that such a proof would secure mathematics' foundations without relying on infinitary or abstract principles. Gödel's Second Theorem shows this is impossible: any system strong enough to prove significant mathematics (like PA) cannot prove its own consistency using only finitary methods formalizable within itself. To prove PA's consistency, one must use stronger principles, such as Gentzen's transfinite induction. But these principles are themselves in need of justification, leading to an infinite regress. Hilbert's dream of a finitary, self-contained foundation is unattainable.</p>
+
+<p>Despite its negative implications, the Second Theorem has constructive aspects. It clarifies the relationship between systems of different strengths: weaker systems cannot prove the consistency of stronger ones. This establishes a hierarchy of logical power, guiding proof theorists and logicians in understanding what can be proven where. It also highlights the inevitability of assumptions in mathematics: every formal system rests on axioms that cannot be justified from within. Mathematics requires a leap of faith—accepting axioms as plausible or useful without internal proof. This does not undermine mathematics but reveals its nature as an open, exploratory discipline rather than a closed, self-justifying structure. The Second Incompleteness Theorem, like the First, is a landmark in mathematical logic, transforming our understanding of proof, consistency, and the foundations of knowledge.</p>
+</article>
+<hr />
+<div class="nav"><a href="/pocket-deploy/dashboard-godel-s-incompleteness-s02/">Dashboard</a><a href="/pocket-deploy/godel-s-incompleteness-s02-3/">Prev</a><a href="/pocket-deploy/godel-s-incompleteness-s02-5/">Next</a></div>
+<small class="muted">Gödel's Incompleteness · Series 2 of 3</small>
+</div></div>
+</body>
+</html>
