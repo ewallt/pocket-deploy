@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<parameter name="charset" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Galois Theory: Origins and Foundations — Part 5</title>
+<style>
+:root{--bg:#0f172a;--panel:#1f2937;--ink:#e5e7eb;--muted:#94a3b8;--brand:#60a5fa;--border:#1f2937}
+@media(prefers-color-scheme:light){:root{--bg:#f8fafc;--panel:#ffffff;--ink:#1e293b;--muted:#64748b;--brand:#3b82f6;--border:#e2e8f0}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,Apple Color Emoji,Segoe UI Emoji}
+.wrapper{max-width:760px;margin:0 auto;padding:48px 20px}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:28px;box-shadow:0 0 0 1px rgba(0,0,0,.12) inset}
+h1{margin:0 0 8px;font-size:2rem;line-height:1.2}
+.lead{color:var(--muted);margin:0 0 24px}
+a{color:var(--brand);text-decoration:none}
+a:hover{text-decoration:underline}
+article p{margin:0 0 16px}
+hr{border:0;border-top:1px solid var(--border);margin:24px 0}
+.nav{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+.nav a{padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:rgba(96,165,250,.08);color:var(--ink)}
+small.muted{color:var(--muted);display:block;margin-top:24px}
+</style>
+</head>
+<body>
+<div class="wrapper"><div class="panel">
+<div class="nav"><a href="/pocket-deploy/dashboard-galois-theory-s01/">Dashboard</a><a href="/pocket-deploy/galois-theory-s01-4/">Prev</a></div>
+<h1>Galois Theory: Origins and Foundations</h1>
+<p class="lead">Part 5 · From Equations to Automorphisms</p>
+<article>
+<p>The central insight of Galois theory is that symmetries of polynomial roots encode solvability. Given a polynomial f(x) ∈ F[x], its splitting field K contains all roots α₁, ..., αₙ, and automorphisms of K that fix F permute these roots while preserving all algebraic relations among them. These automorphisms form a group, the Galois group Gal(K/F), whose structure determines whether f is solvable by radicals. For example, consider f(x) = x² − 2 over ℚ. The roots are ±√2, and the splitting field is K = ℚ(√2). The only nontrivial automorphism swaps √2 and −√2, so Gal(K/ℚ) ≅ ℤ₂, a simple abelian group. This reflects the simplicity of the quadratic formula: extracting a square root corresponds to a degree-2 extension with a cyclic Galois group.</p>
+<p>Automorphisms of field extensions are isomorphisms from the field to itself that fix a specified base field. If K/F is an extension, an automorphism σ: K → K is F-linear if σ(a) = a for all a ∈ F. These automorphisms form a group under composition, denoted Aut(K/F). When K is the splitting field of a separable polynomial over F (a Galois extension), Aut(K/F) is precisely the Galois group Gal(K/F). The group operation is function composition, the identity is the trivial automorphism, and inverses exist because automorphisms are bijections. Galois groups are finite when the extension has finite degree, and |Gal(K/F)| = [K:F] for Galois extensions, a consequence of the Fundamental Theorem of Galois Theory.</p>
+<p>Consider the polynomial f(x) = x³ − 2 over ℚ. The roots are ∛2, ω∛2, and ω²∛2, where ω = e^(2πi/3) is a primitive cube root of unity. The splitting field is K = ℚ(∛2, ω), and [K:ℚ] = 6, since ℚ(∛2) has degree 3 over ℚ (minimal polynomial x³ − 2) and ℚ(∛2, ω) has degree 2 over ℚ(∛2) (minimal polynomial of ω over ℚ(∛2) is x² + x + 1). Automorphisms in Gal(K/ℚ) are determined by where they send ∛2 and ω. There are three choices for ∛2 (any of the three roots) and two choices for ω (either ω or ω²), giving |Gal(K/ℚ)| = 6. This group is isomorphic to S₃, the symmetric group on three elements, which is non-abelian yet solvable, reflecting that x³ − 2 is solvable by radicals.</p>
+<p>The action of the Galois group on roots reveals algebraic dependencies. If σ ∈ Gal(K/F) and f(α) = 0, then f(σ(α)) = 0 as well, because σ preserves polynomial evaluation: σ(f(α)) = f(σ(α)) and σ fixes coefficients in F. Thus, automorphisms permute the roots of f, inducing a homomorphism Gal(K/F) → Sₙ where n is the number of roots. When f is irreducible and K is the splitting field, this homomorphism is often injective, embedding the Galois group into the symmetric group. The image is a transitive subgroup of Sₙ (the group acts transitively on roots of an irreducible polynomial), and different polynomials yield different subgroups. The Galois group encodes which roots can be expressed in terms of others and which algebraic relations hold, translating geometric symmetry into algebraic structure.</p>
+<p>Fixed fields provide the inverse perspective: given a subgroup H ≤ Gal(K/F), the fixed field K^H = {α ∈ K : σ(α) = α for all σ ∈ H} is an intermediate extension F ⊆ K^H ⊆ K. The Fundamental Theorem of Galois Theory establishes a bijection between subgroups of Gal(K/F) and intermediate fields, reversing inclusion: if H₁ ⊆ H₂, then K^(H₂) ⊆ K^(H₁). Moreover, [K:K^H] = |H| and Gal(K/K^H) = H. Normal subgroups correspond to normal (Galois) extensions: H is normal in Gal(K/F) if and only if K^H/F is a Galois extension, and then Gal(K^H/F) ≅ Gal(K/F)/H. This correspondence transforms field-theoretic problems into group-theoretic ones, allowing techniques from group theory to resolve questions about field extensions and polynomial solvability.</p>
+<p>Solvable groups capture the essence of solvability by radicals. A group G is solvable if there exists a sequence of subgroups {e} = G₀ ⊴ G₁ ⊴ ··· ⊴ Gₙ = G where each Gᵢ is normal in Gᵢ₊₁ and each quotient Gᵢ₊₁/Gᵢ is abelian. Abelian groups are solvable, as are groups built from abelian pieces. S₃ is solvable: take G₀ = {e}, G₁ = A₃ (the alternating group, order 3), G₂ = S₃; the quotients are ℤ₃ and ℤ₂, both abelian. However, S₅ is not solvable because it contains A₅, a simple non-abelian group that cannot be broken into abelian quotients. Galois showed that a polynomial f ∈ F[x] is solvable by radicals if and only if its Galois group over F is a solvable group. Quadratics, cubics, and quartics have solvable Galois groups (subgroups of S₂, S₃, S₄), hence solvable formulas; the general quintic has Galois group S₅, which is not solvable, explaining the impossibility result.</p>
+<p>The connection between radicals and solvable groups arises from radical extensions. An extension K/F is a radical extension if K = F(α₁, ..., αₙ) where each αᵢ satisfies αᵢ^(mᵢ) ∈ F(α₁, ..., αᵢ₋₁) for some integer mᵢ (i.e., αᵢ is an mᵢ-th root of an element in the previous tower). Adjoining an n-th root corresponds to an extension whose Galois group is a subgroup of the cyclic group ℤₙ, which is abelian. Building a radical extension involves a tower of such extensions, each contributing an abelian layer to the Galois group. If a polynomial's splitting field lies within a radical extension of F, its Galois group is solvable. Conversely, if the Galois group is solvable, a radical extension containing the splitting field can be constructed. This equivalence, Galois's crowning achievement, elegantly unites the algebraic operation of extracting roots with the structural property of group solvability, answering centuries of questions about polynomial equations.</p>
+</article>
+<hr />
+<div class="nav"><a href="/pocket-deploy/dashboard-galois-theory-s01/">Dashboard</a><a href="/pocket-deploy/galois-theory-s01-4/">Prev</a></div>
+<small class="muted">Galois Theory · Series 1 of 3</small>
+</div></div>
+</body>
+</html>

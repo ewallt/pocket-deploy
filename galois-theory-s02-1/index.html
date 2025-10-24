@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Galois Theory: Structure and Examples — Part 1</title>
+<style>
+:root{--bg:#0f172a;--panel:#1f2937;--ink:#e5e7eb;--muted:#94a3b8;--brand:#60a5fa;--border:#1f2937}
+@media(prefers-color-scheme:light){:root{--bg:#f8fafc;--panel:#ffffff;--ink:#1e293b;--muted:#64748b;--brand:#3b82f6;--border:#e2e8f0}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,Apple Color Emoji,Segoe UI Emoji}
+.wrapper{max-width:760px;margin:0 auto;padding:48px 20px}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:28px;box-shadow:0 0 0 1px rgba(0,0,0,.12) inset}
+h1{margin:0 0 8px;font-size:2rem;line-height:1.2}
+.lead{color:var(--muted);margin:0 0 24px}
+a{color:var(--brand);text-decoration:none}
+a:hover{text-decoration:underline}
+article p{margin:0 0 16px}
+hr{border:0;border-top:1px solid var(--border);margin:24px 0}
+.nav{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+.nav a{padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:rgba(96,165,250,.08);color:var(--ink)}
+small.muted{color:var(--muted);display:block;margin-top:24px}
+</style>
+</head>
+<body>
+<div class="wrapper"><div class="panel">
+<div class="nav"><a href="/pocket-deploy/dashboard-galois-theory-s02/">Dashboard</a><a href="/pocket-deploy/galois-theory-s02-2/">Next</a></div>
+<h1>Galois Theory: Structure and Examples</h1>
+<p class="lead">Part 1 · The Fundamental Theorem of Galois Theory</p>
+<article>
+<p>The Fundamental Theorem of Galois Theory is the cornerstone result connecting field theory and group theory. It establishes a precise correspondence between the subgroups of a Galois group and the intermediate field extensions, reversing inclusion and preserving structural relationships. Specifically, if K/F is a finite Galois extension with Galois group G = Gal(K/F), there is a bijection between the set of intermediate fields {L : F ⊆ L ⊆ K} and the set of subgroups of G. Under this bijection, subgroup H corresponds to the fixed field K^H = {α ∈ K : σ(α) = α for all σ ∈ H}. Moreover, [L:F] = |G|/|H| and [K:L] = |H|, relating field degrees to group orders. This theorem transforms problems about field extensions into problems about group structure, a translation that yields powerful insights and computational tools.</p>
+<p>The correspondence reverses inclusion: if H₁ ⊆ H₂ are subgroups of G, then K^(H₂) ⊆ K^(H₁). A larger subgroup fixes more elements, hence produces a smaller fixed field. This inversion is natural from the perspective of symmetry: more symmetries leave fewer elements invariant. The extremes illustrate the principle clearly. The trivial subgroup {e} fixes only those elements invariant under all automorphisms, namely F itself, so K^{e} = K (the identity fixes everything). The full group G fixes only the base field F, so K^G = F. Intermediate subgroups correspond to intermediate fields, and the lattice of subgroups (ordered by inclusion) is anti-isomorphic to the lattice of intermediate fields, providing a dictionary between algebraic and group-theoretic hierarchies.</p>
+<p>Normal subgroups of the Galois group correspond to normal (Galois) extensions. A subgroup H ≤ G is normal if gHg⁻¹ = H for all g ∈ G. When H is normal, the fixed field K^H forms a Galois extension over F, and the Galois group Gal(K^H/F) is isomorphic to the quotient group G/H. This parallels the notion of normal extensions: K^H/F is normal if every irreducible polynomial in F[x] with a root in K^H splits completely in K^H. The connection between normal subgroups and normal extensions allows techniques from group theory—such as quotients and homomorphisms—to be applied directly to field extensions. Non-normal subgroups correspond to non-Galois intermediate extensions, which lack the full symmetry structure and do not enjoy the same correspondence properties.</p>
+<p>To illustrate, consider K = ℚ(∛2, ω) where ω = e^(2πi/3), the splitting field of x³ − 2 over F = ℚ. We know Gal(K/ℚ) ≅ S₃, with six automorphisms. Let σ: ∛2 ↦ ω∛2, ω ↦ ω, and τ: ∛2 ↦ ∛2, ω ↦ ω². Then G = ⟨σ, τ⟩ with σ³ = τ² = e and τστ = σ⁻¹. The subgroup H = ⟨σ⟩ ≅ ℤ₃ has order 3, so the fixed field L = K^H has degree [K:L] = 3, hence [L:ℚ] = 6/3 = 2. Since σ fixes ω but permutes the cube roots of 2, we find L = ℚ(ω). This is a Galois extension of ℚ with Galois group Gal(ℚ(ω)/ℚ) ≅ ℤ₂ (complex conjugation). The subgroup H = ⟨σ⟩ is normal in S₃ (it is the alternating group A₃), confirming that L/ℚ is Galois, and indeed Gal(L/ℚ) ≅ G/H ≅ S₃/A₃ ≅ ℤ₂.</p>
+<p>The theorem also describes how intermediate extensions interact. If F ⊆ E ⊆ L ⊆ K are fields with K/F Galois, then Gal(K/L) is a subgroup of Gal(K/E), and restriction of automorphisms induces a homomorphism Gal(K/E) → Gal(L/E). When L/E is Galois, this homomorphism is surjective with kernel Gal(K/L), yielding the isomorphism Gal(L/E) ≅ Gal(K/E)/Gal(K/L). This factorization mirrors the tower law for degrees: [L:E] = [K:E]/[K:L]. Galois theory thus provides a group-theoretic interpretation of field towers, with quotient groups corresponding to lower extensions and subgroups to upper extensions. This interplay is essential for analyzing radical extensions and proving solvability criteria.</p>
+<p>A key application is determining all intermediate fields of a given Galois extension by finding all subgroups of the Galois group. Since finite group structure is well-studied, this approach often succeeds where direct field-theoretic methods struggle. For example, if Gal(K/F) ≅ ℤₚ for prime p, the only subgroups are {e} and the full group, so the only intermediate fields are F and K—the extension is simple. If Gal(K/F) ≅ D₄ (the dihedral group of order 8), there are several subgroups (cyclic, Klein four-group, etc.), each corresponding to an intermediate field. Identifying these subgroups and computing their fixed fields gives a complete description of the lattice of intermediate extensions, something that would be difficult to achieve without Galois theory.</p>
+<p>The Fundamental Theorem requires that the extension be Galois: finite, normal, and separable. Without these conditions, the correspondence breaks down. For instance, consider the extension ℚ(∛2)/ℚ, which is not normal (it does not contain all roots of x³ − 2). The Galois group of the splitting field ℚ(∛2, ω) over ℚ is S₃, but restricting to ℚ(∛2) loses the full automorphism group (only the identity fixes ℚ and stays within ℚ(∛2)). Intermediate fields exist (such as ℚ itself), but they do not correspond neatly to subgroups of a Galois group over ℚ(∛2). This underscores the importance of working within Galois extensions: the Fundamental Theorem provides its full power only when the extension has sufficient symmetry, encoded by normality and separability. When these conditions hold, the theorem elegantly unifies field theory and group theory, offering a profound tool for understanding algebraic structures.</p>
+</article>
+<hr />
+<div class="nav"><a href="/pocket-deploy/dashboard-galois-theory-s02/">Dashboard</a><a href="/pocket-deploy/galois-theory-s02-2/">Next</a></div>
+<small class="muted">Galois Theory · Series 2 of 3</small>
+</div></div>
+</body>
+</html>
