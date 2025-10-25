@@ -30,27 +30,33 @@ Given topic and number of series, calculate all paths using canonical slugging.
 3. Replace all non-alphanumeric characters with single dash "-"
 4. Collapse multiple consecutive dashes to single dash
 5. Trim leading/trailing dashes
+6. APPEND "-claude" suffix
 
 Examples:
-"Real Analysis" → "real-analysis"
-"Gödel's Incompleteness" → "godel-s-incompleteness"
-"Open Theism" → "open-theism"
+"Real Analysis" → "real-analysis-claude"
+"Gödel's Incompleteness" → "godel-s-incompleteness-claude"
+"Open Theism" → "open-theism-claude"
+
+Note: This suffix convention helps distinguish libraries created by different AIs:
+- Claude Code uses "-claude"
+- ChatGPT uses "-gpt"
+- Gemini uses "-gem"
 ```
 
 **Path calculation:**
 ```
-LIBRARY_SLUG = Slugify(TOPIC)
+LIBRARY_SLUG = Slugify(TOPIC)  // Now includes -claude suffix
 SERIES_ID = s01, s02, s03... (2-digit zero-padded)
 SERIES_SLUG = {LIBRARY_SLUG}-{SERIES_ID}
 
 For 3-series library on "Open Theism":
-- Library dashboard: dashboard-library-open-theism
-- Series 1 dashboard: dashboard-open-theism-s01
-- Series 1 articles: open-theism-s01-1, open-theism-s01-2, ..., open-theism-s01-5
-- Series 2 dashboard: dashboard-open-theism-s02
-- Series 2 articles: open-theism-s02-1, open-theism-s02-2, ..., open-theism-s02-5
-- Series 3 dashboard: dashboard-open-theism-s03
-- Series 3 articles: open-theism-s03-1, open-theism-s03-2, ..., open-theism-s03-5
+- Library dashboard: dashboard-library-open-theism-claude
+- Series 1 dashboard: dashboard-open-theism-claude-s01
+- Series 1 articles: open-theism-claude-s01-1, open-theism-claude-s01-2, ..., open-theism-claude-s01-5
+- Series 2 dashboard: dashboard-open-theism-claude-s02
+- Series 2 articles: open-theism-claude-s02-1, open-theism-claude-s02-2, ..., open-theism-claude-s02-5
+- Series 3 dashboard: dashboard-open-theism-claude-s03
+- Series 3 articles: open-theism-claude-s03-1, open-theism-claude-s03-2, ..., open-theism-claude-s03-5
 
 Total files: 1 + (3 × 1) + (3 × 5) = 19 files
 ```
@@ -557,19 +563,19 @@ All content served from: `https://ewallt.github.io/pocket-deploy/`
 - Article: `/{SERIES_SLUG}-{N}/`
 
 Example for "Open Theism":
-- `https://ewallt.github.io/pocket-deploy/dashboard-library-open-theism/`
-- `https://ewallt.github.io/pocket-deploy/dashboard-open-theism-s01/`
-- `https://ewallt.github.io/pocket-deploy/open-theism-s01-1/`
+- `https://ewallt.github.io/pocket-deploy/dashboard-library-open-theism-claude/`
+- `https://ewallt.github.io/pocket-deploy/dashboard-open-theism-claude-s01/`
+- `https://ewallt.github.io/pocket-deploy/open-theism-claude-s01-1/`
 
 ### Common Slugs Reference
 ```
-"Real Analysis" → real-analysis
-"Galois Theory" → galois-theory
-"Gödel's Incompleteness" → godel-s-incompleteness
-"Cantor and the Infinite" → cantor-and-the-infinite
-"Open Theism" → open-theism
-"World War 2" → world-war-2
-"Roman Empire" → roman-empire
+"Real Analysis" → real-analysis-claude
+"Galois Theory" → galois-theory-claude
+"Gödel's Incompleteness" → godel-s-incompleteness-claude
+"Cantor and the Infinite" → cantor-and-the-infinite-claude
+"Open Theism" → open-theism-claude
+"World War 2" → world-war-2-claude
+"Roman Empire" → roman-empire-claude
 ```
 
 ---
@@ -635,10 +641,10 @@ Series 3: Criticisms, Implications, and Contemporary Relevance
 I'll create a 3-series library (15 articles + 4 dashboards = 19 files) on Open Theism.
 
 File structure:
-- dashboard-library-open-theism
-- dashboard-open-theism-s01 + 5 articles
-- dashboard-open-theism-s02 + 5 articles
-- dashboard-open-theism-s03 + 5 articles
+- dashboard-library-open-theism-claude
+- dashboard-open-theism-claude-s01 + 5 articles
+- dashboard-open-theism-claude-s02 + 5 articles
+- dashboard-open-theism-claude-s03 + 5 articles
 
 Creating all directories and files now...
 
@@ -654,7 +660,7 @@ Summary:
 - Pushed to: claude/colorful-reader-agent-011CUPGcLZzPRYstDHgR68bM
 
 Once merged to gh-pages, available at:
-https://ewallt.github.io/pocket-deploy/dashboard-library-open-theism/
+https://ewallt.github.io/pocket-deploy/dashboard-library-open-theism-claude/
 ```
 
 ---
