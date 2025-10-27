@@ -5,6 +5,7 @@ This wiki curates the Open Theism Codex articles into a navigable reference. Eac
 ## Library Structure
 
 ### Series 1 — Introduction and Core Tenets
+<!-- Restored the five original wiki notes for Series 1 -->
 1. [What is Open Theism?](./open-theism-codex-s01-1.md) — Defines the movement's core convictions about divine knowledge, creaturely freedom, and relational sovereignty.
 2. [God, Time, and Foreknowledge](./open-theism-codex-s01-2.md) — Examines how open theists reinterpret omniscience, temporality, and the ontology of future contingents.
 3. [The Argument from Human Freedom](./open-theism-codex-s01-3.md) — Evaluates claims that exhaustive foreknowledge undermines reciprocal love and genuine choice.
