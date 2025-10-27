@@ -163,6 +163,7 @@ wiki-page-{PAGE1_SLUG} wiki-page-{PAGE2_SLUG} wiki-page-{PAGE3_SLUG}
 ### Step 5: Git Protocol
 
 **Branch naming convention:**
+
 ```
 {AI_PREFIX}/wiki-agent-{SESSION_ID}
 
@@ -173,6 +174,7 @@ Where {AI_PREFIX} is:
 ```
 
 **Git commands:**
+
 ```bash
 git add -A
 git commit -m "Add wiki: {HOME_TITLE} – {COUNT_SUBJECTS} subjects, {COUNT_TOPICS} topics, {COUNT_PAGES} pages
@@ -403,7 +405,7 @@ small.muted{color:var(--muted);display:block;margin-top:24px}
 <title>{PAGE_TITLE}</title>
 <style>
 :root{--bg:#0f172a;--panel:#1f2937;--ink:#e5e7eb;--muted:#94a3b8;--brand:#60a5fa;--border:#1f2937}
-@media (prefers-color-scheme: light){:root{--bg:#f8fafc;--panel:#ffffff;--ink:#1e293b;--muted:#64748b;--border:#3b82f6;--border:#e2e8f0}}
+@media (prefers-color-scheme: light){:root{--bg:#f8fafc;--panel:#ffffff;--ink:#1e293b;--muted:#64748b;--brand:#3b82f6;--border:#3b82f6;--border:#e2e8f0}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
 .wrapper{max-width:860px;margin:0 auto;padding:48px 20px}
@@ -488,6 +490,35 @@ small.muted{color:var(--muted);display:block;margin-top:24px}
 
 ---
 
+## Cross-Linking via Link Registry (Codex-Managed)
+
+**Goal:** Centralize internal linking decisions so that pages remain clean and links stay consistent across the wiki.
+
+**Registry file:** `wiki-link-map-codex.json` (repo root)
+
+**Concepts**
+
+* **targets:** Map stable page keys (e.g., `s01-2`) to canonical paths (`/pocket-deploy/open-theism-codex-s01-2/`) and known anchors (IDs that exist in the destination HTML).
+* **pages rules:** For each source page key, declare:
+
+  * `inline`: small list of `{ "match": "phrase", "hrefKey": "TARGET[#anchor]" }` items to wrap the first occurrence of that phrase (max 1–2 per paragraph).
+  * `seeAlso`: short curated list of related links to render in a “See also” section near the end of the article.
+
+**Apply flow (idempotent)**
+
+1. Codex reads the registry, resolves `hrefKey` to `/pocket-deploy/...` (+ `#anchor` if present).
+2. Wraps the first occurrence of each `match` not already inside a link, enforcing density (≤2 per paragraph).
+3. Replaces or creates a `See also` list matching `seeAlso` exactly.
+4. Re-running does not duplicate links.
+
+**Maintenance**
+
+* Add new pages to **targets** when created; populate `anchors` with real `id` attributes found in the HTML.
+* Keep `inline` lists small and meaningful; aim for 6–14 total links/page including “See also”.
+* All edits to linking happen in the registry; avoid hand-editing links in HTML.
+
+---
+
 ## Validation Checklist
 
 * **Index present:** `wiki-index-{HOME_SLUG}.json` loads on all pages
@@ -498,6 +529,8 @@ small.muted{color:var(--muted);display:block;margin-top:24px}
 * **CSS:** Inline tokens; light/dark via media query
 * **Counts:** Directories created for every Subject/Topic/Page entry
 * **JSON/HTML sync:** All pages referenced in JSON have corresponding directories
+* **Registry present:** `wiki-link-map-codex.json` parses; every `hrefKey` resolves to a `targets` entry; anchors exist in destination files
+* **Link density:** ≤2 auto-inserted inline links per paragraph; “See also” ≤5 items
 * **Git:** Clean working tree after commit
 
 ---
@@ -508,6 +541,7 @@ small.muted{color:var(--muted);display:block;margin-top:24px}
 
   1. overwrite, 2) create only missing, or 3) use new slugs.
 * **Index mismatch:** If JSON references a missing page, create the page skeleton or remove stubs—report action taken.
+* **Registry errors:** If a `hrefKey` has no matching target or anchor, skip inserting that link and report it.
 * **Partial sessions:** Commit completed subset with a clear message; resume later.
 
 ---
@@ -519,11 +553,13 @@ When provided a Home title and a Subject/Topic/Page outline:
 1. Acknowledge input and show computed structure.
 2. Generate/update `wiki-index-{HOME_SLUG}.json`.
 3. Create directories and all `index.html` files (Home → Subjects → Topics → Pages).
-4. Commit and push on `{AI_PREFIX}/wiki-agent-{SESSION_ID}`.
-5. Report completion with Home URL.
+4. Initialize or update `wiki-link-map-codex.json` (optional at creation time).
+5. Apply registry to pages with rules (idempotent).
+6. Commit and push on `{AI_PREFIX}/wiki-agent-{SESSION_ID}`.
+7. Report completion with Home URL.
 
 ---
 
 ## End of Instructions
 
-**Remember:** The wiki structure is extensible. To add content after initial creation, simply create the HTML file and add an entry to the JSON index. No template modifications required.
+**Remember:** The wiki structure is extensible. To add content after initial creation, create the HTML file, add an entry to the JSON index, and—if cross-links are desired—add rules to the link registry and re-apply.
