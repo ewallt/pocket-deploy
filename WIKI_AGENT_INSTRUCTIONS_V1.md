@@ -185,6 +185,8 @@ Flat-sidebar wiki with dark/light themes, breadcrumb nav, and single JSON index.
 git push -u origin {AI_PREFIX}/wiki-agent-{SESSION_ID}
 ```
 
+> **Troubleshooting:** If GitHub shows “codex does not support updating PRs that are outside of codex,” rename your working branch to follow the `codex/wiki-agent-{SESSION_ID}` pattern (for example, `git branch -M codex/wiki-agent-1234`) and push again.
+
 ### Step 6: Completion Report
 
 Provide counts and the Home URL:
