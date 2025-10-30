@@ -5,11 +5,12 @@ This wiki curates the Open Theism Codex articles into a navigable reference. Eac
 ## Library Structure
 
 ### Series 1 — Introduction and Core Tenets
-1. [What is Open Theism?](./open-theism-codex-s01-1.md) — Defines the movement's core convictions about divine knowledge, creaturely freedom, and relational sovereignty.
-2. [God, Time, and Foreknowledge](./open-theism-codex-s01-2.md) — Examines how open theists reinterpret omniscience, temporality, and the ontology of future contingents.
-3. [The Argument from Human Freedom](./open-theism-codex-s01-3.md) — Evaluates claims that exhaustive foreknowledge undermines reciprocal love and genuine choice.
-4. [Divine Providence in an Open Future](./open-theism-codex-s01-4.md) — Explores responsive providence, pastoral implications, and adaptive guidance.
-5. [Biblical Language of Divine Change](./open-theism-codex-s01-5.md) — Surveys narrative and prophetic passages that depict God relenting, grieving, or revising plans.
+
+- [Part 1 · What is Open Theism?: Defining the Core View.](../open-theism-codex-s01-1/index.html)
+- [Part 2 · God, Time, and Foreknowledge: The Central Question.](../open-theism-codex-s01-2/index.html)
+- [Part 3 · The Argument from Human Freedom: Does Determinism Conflict with Love?](../open-theism-codex-s01-3/index.html)
+- [Part 4 · Divine Providence in an Open Future: How God Guides and Responds.](../open-theism-codex-s01-4/index.html)
+- [Part 5 · Biblical Language of Divine Change: Scripture's Portrayal of God.](../open-theism-codex-s01-5/index.html)
 
 ### Series 2 — Scriptural Basis, History, and Key Debates
 1. [Interpreting Predictive Prophecy](./open-theism-codex-s02-1.md) — Outlines conditional prophecy and the distinction between divine intention and exhaustive scripting.
