@@ -5,71 +5,133 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Open Theism Codex Wiki</title>
 <style>
-:root{--bg:#0f172a;--panel:#111827;--ink:#e5e7eb;--muted:#94a3b8;--accent:#38bdf8;--border:#1f2937}
-@media(prefers-color-scheme:light){:root{--bg:#f8fafc;--panel:#ffffff;--ink:#1f2937;--muted:#64748b;--accent:#0284c7;--border:#e2e8f0}}
+:root{
+  --bg:#0f172a;--panel:#111827;--ink:#e5e7eb;--muted:#94a3b8;--brand:#60a5fa;--border:#1f2937;
+  --sidebar-w:240px; /* like wiki left nav */
+  --content-max:980px; /* standard (not wide) */
+}
+@media (prefers-color-scheme: light){
+  :root{--bg:#f8fafc;--panel:#ffffff;--ink:#1e293b;--muted:#64748b;--brand:#3b82f6;--border:#e2e8f0}
+}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,Apple Color Emoji,Segoe UI Emoji}
-.wrapper{max-width:940px;margin:0 auto;padding:48px 20px}
-.panel{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:40px;box-shadow:0 0 0 1px rgba(15,23,42,.45) inset}
-h1{margin:0;font-size:2.4rem;line-height:1.2}
-.lead{margin:12px 0 32px;color:var(--muted)}
-a{color:var(--accent);text-decoration:none}
-a:hover{text-decoration:underline}
-.section{margin-bottom:40px}
-.section h2{font-size:1.4rem;margin:0 0 18px;color:var(--accent)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+.shell{min-height:100vh;display:flex;align-items:stretch}
+.sidebar{
+  width:var(--sidebar-w);
+  background:#0f172a;
+  border-right:1px solid rgba(15,23,42,.35);
+  padding:18px 14px 24px;
+  position:sticky;top:0;align-self:flex-start;
+}
+.sidebar h2{font-size:.9rem;margin:0 0 10px}
+.sidebar button{background:none;border:0;color:var(--ink);cursor:pointer}
+.sidebar ul{list-style:none;margin:0;padding:0}
+.sidebar li{margin:2px 0}
+.sidebar a{color:var(--ink);text-decoration:none;font-size:.9rem;display:block;padding:4px 4px 4px 0;border-radius:4px}
+.sidebar a:hover{background:rgba(96,165,250,.08)}
+.sidebar .child{padding-left:14px;font-size:.9rem}
+.page{
+  flex:1;
+  min-width:0;
+  padding:32px 32px 56px;
+  display:flex;
+  justify-content:center;
+}
+.page-inner{
+  width:100%;
+  max-width:var(--content-max);
+  background:var(--panel);
+  border:1px solid rgba(15,23,42,.4);
+  border-radius:12px;
+  padding:28px 28px 40px;
+  box-shadow:0 0 0 1px rgba(0,0,0,.05) inset;
+}
+h1{margin:0 0 12px;font-size:2.1rem;line-height:1.15}
+.lead{color:var(--muted);margin:0 0 20px}
+.links{display:flex;flex-wrap:wrap;gap:12px;margin:0 0 24px}
+.links a{padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:rgba(96,165,250,.08);color:var(--ink);text-decoration:none}
+.links a:hover{text-decoration:underline}
+.section{margin-bottom:32px}
+.section h2{font-size:1.35rem;margin:0 0 16px;color:var(--brand)}
 .toc{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:12px}
 .toc li{margin:0}
 ol{margin:0;padding-left:20px}
 ol li{margin-bottom:14px}
 .badge{display:inline-flex;align-items:center;gap:8px;font-size:.85rem;color:var(--muted)}
-.links{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:32px}
-.links a{padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:rgba(56,189,248,.1);color:var(--ink)}
-footer{margin-top:40px;color:var(--muted);font-size:.9rem}
+.tip{margin-top:22px;font-size:.75rem;color:var(--muted)}
+.sidebar.hidden{display:none}
+@media(max-width:960px){
+  .shell{flex-direction:column}
+  .sidebar{width:100%;position:static;display:flex;gap:12px;overflow-x:auto}
+  .page{padding:20px}
+  .page-inner{max-width:100%}
+}
 </style>
 </head>
 <body>
-<div class="wrapper"><div class="panel">
-<h1>Open Theism Codex Wiki</h1>
-<p class="lead">Curated reference notes derived from the Colorful Reader Open Theism Codex. Use this hub to jump to any study, trace themes across the series, or return to the visual dashboards.</p>
-<div class="links">
-  <a href="/pocket-deploy/dashboard-library-open-theism-codex/">Library Dashboard</a>
-  <a href="/pocket-deploy/dashboard-open-theism-codex-s01/">Series 1 Dashboard</a>
-  <a href="/pocket-deploy/dashboard-open-theism-codex-s02/">Series 2 Dashboard</a>
-  <a href="/pocket-deploy/dashboard-open-theism-codex-s03/">Series 3 Dashboard</a>
+<div class="shell">
+  <aside class="sidebar">
+    <h2>Contents</h2>
+    <ul>
+      <li><a href="/pocket-deploy/wiki-open-theism-codex/">Open Theism</a></li>
+      <li class="child"><a href="/pocket-deploy/open-theism-codex-s01-1/">Series 1 — Introduction and Core Tenets</a></li>
+      <li class="child"><a href="/pocket-deploy/open-theism-codex-s02-1/">Series 2 — Scriptural Basis, History, and Key Debates</a></li>
+      <li class="child"><a href="/pocket-deploy/open-theism-codex-s03-1/">Series 3 — Criticisms, Implications, and Contemporary Relevance</a></li>
+    </ul>
+    <p class="tip">Tip: press “s” to toggle sidebar.</p>
+  </aside>
+  <main class="page">
+    <div class="page-inner">
+      <h1>Open Theism Codex Wiki</h1>
+      <p class="lead">Curated reference notes derived from the Colorful Reader Open Theism Codex. Use this hub to jump to any study, trace themes across the series, or return to the visual dashboards.</p>
+      <div class="links">
+        <a href="/pocket-deploy/dashboard-library-open-theism-codex/">Library Dashboard</a>
+        <a href="/pocket-deploy/dashboard-open-theism-codex-s01/">Series 1 Dashboard</a>
+        <a href="/pocket-deploy/dashboard-open-theism-codex-s02/">Series 2 Dashboard</a>
+        <a href="/pocket-deploy/dashboard-open-theism-codex-s03/">Series 3 Dashboard</a>
+      </div>
+      <div class="section">
+        <p class="lead">Series 1 of 3 · Open Theism</p>
+        <ul class="toc">
+          <li><a href="/pocket-deploy/open-theism-codex-s01-1/">Part 1 · What is Open Theism?: Defining the Core View.</a></li>
+          <li><a href="/pocket-deploy/open-theism-codex-s01-2/">Part 2 · God, Time, and Foreknowledge: The Central Question.</a></li>
+          <li><a href="/pocket-deploy/open-theism-codex-s01-3/">Part 3 · The Argument from Human Freedom: Does Determinism Conflict with Love?</a></li>
+          <li><a href="/pocket-deploy/open-theism-codex-s01-4/">Part 4 · Divine Providence in an Open Future: How God Guides and Responds.</a></li>
+          <li><a href="/pocket-deploy/open-theism-codex-s01-5/">Part 5 · Biblical Language of Divine Change: Scripture's Portrayal of God.</a></li>
+        </ul>
+      </div>
+      <div class="section">
+        <h2>Series 2 — Scriptural Basis, History, and Key Debates</h2>
+        <ol>
+          <li><a href="/pocket-deploy/wiki-open-theism-codex/open-theism-codex-s02-1/">Interpreting Predictive Prophecy</a> — Outlines conditional prophecy and the distinction between divine intention and exhaustive scripting.</li>
+          <li><a href="/pocket-deploy/wiki-open-theism-codex/open-theism-codex-s02-2/">Key Old Testament Texts</a> — Investigates passages such as Genesis 6, Exodus 32, and Jonah 3 with an openness hermeneutic.</li>
+          <li><a href="/pocket-deploy/wiki-open-theism-codex/open-theism-codex-s02-3/">Key New Testament Texts</a> — Analyzes themes of foreknowledge, prayer, and agency across the Gospels and Epistles.</li>
+          <li><a href="/pocket-deploy/wiki-open-theism-codex/open-theism-codex-s02-4/">Historical Roots and Precedents</a> — Traces antecedents from patristic debates to modern evangelical discussions.</li>
+          <li><a href="/pocket-deploy/wiki-open-theism-codex/open-theism-codex-s02-5/">Open Theism vs. Classical Theism</a> — Compares divine attributes, metaphysics, and hermeneutical commitments.</li>
+        </ol>
+      </div>
+      <div class="section">
+        <h2>Series 3 — Criticisms, Implications, and Contemporary Relevance</h2>
+        <ol>
+          <li><a href="/pocket-deploy/wiki-open-theism-codex/open-theism-codex-s03-1/">Criticisms of Open Theism</a> — Summarizes objections about sovereignty, prophecy, and doctrinal coherence.</li>
+          <li><a href="/pocket-deploy/wiki-open-theism-codex/open-theism-codex-s03-2/">Alternative Models</a> — Contrasts Arminianism, Molinism, and Calvinism as different accounts of foreknowledge and freedom.</li>
+          <li><a href="/pocket-deploy/wiki-open-theism-codex/open-theism-codex-s03-3/">Practical Implications</a> — Reflects on prayer, pastoral care, and faithful living amid uncertainty.</li>
+          <li><a href="/pocket-deploy/wiki-open-theism-codex/open-theism-codex-s03-4/">Philosophical Considerations</a> — Engages analytic discussions about time, modality, and logic.</li>
+          <li><a href="/pocket-deploy/wiki-open-theism-codex/open-theism-codex-s03-5/">Open Theism Today</a> — Reviews current scholarship, denominational responses, and future research paths.</li>
+        </ol>
+      </div>
+      <footer>
+        <span class="badge">15 articles · Updated from Colorful Reader HTML studies</span>
+      </footer>
+    </div>
+  </main>
 </div>
-<div class="section">
-<p class="lead">Series 1 of 3 · Open Theism</p>
-<ul class="toc">
-  <li><a href="/pocket-deploy/open-theism-codex-s01-1/">Part 1 · What is Open Theism?: Defining the Core View.</a></li>
-  <li><a href="/pocket-deploy/open-theism-codex-s01-2/">Part 2 · God, Time, and Foreknowledge: The Central Question.</a></li>
-  <li><a href="/pocket-deploy/open-theism-codex-s01-3/">Part 3 · The Argument from Human Freedom: Does Determinism Conflict with Love?</a></li>
-  <li><a href="/pocket-deploy/open-theism-codex-s01-4/">Part 4 · Divine Providence in an Open Future: How God Guides and Responds.</a></li>
-  <li><a href="/pocket-deploy/open-theism-codex-s01-5/">Part 5 · Biblical Language of Divine Change: Scripture's Portrayal of God.</a></li>
-</ul>
-</div>
-<div class="section">
-<h2>Series 2 — Scriptural Basis, History, and Key Debates</h2>
-<ol>
-  <li><a href="/pocket-deploy/wiki-open-theism-codex/open-theism-codex-s02-1/">Interpreting Predictive Prophecy</a> — Outlines conditional prophecy and the distinction between divine intention and exhaustive scripting.</li>
-  <li><a href="/pocket-deploy/wiki-open-theism-codex/open-theism-codex-s02-2/">Key Old Testament Texts</a> — Investigates passages such as Genesis 6, Exodus 32, and Jonah 3 with an openness hermeneutic.</li>
-  <li><a href="/pocket-deploy/wiki-open-theism-codex/open-theism-codex-s02-3/">Key New Testament Texts</a> — Analyzes themes of foreknowledge, prayer, and agency across the Gospels and Epistles.</li>
-  <li><a href="/pocket-deploy/wiki-open-theism-codex/open-theism-codex-s02-4/">Historical Roots and Precedents</a> — Traces antecedents from patristic debates to modern evangelical discussions.</li>
-  <li><a href="/pocket-deploy/wiki-open-theism-codex/open-theism-codex-s02-5/">Open Theism vs. Classical Theism</a> — Compares divine attributes, metaphysics, and hermeneutical commitments.</li>
-</ol>
-</div>
-<div class="section">
-<h2>Series 3 — Criticisms, Implications, and Contemporary Relevance</h2>
-<ol>
-  <li><a href="/pocket-deploy/wiki-open-theism-codex/open-theism-codex-s03-1/">Criticisms of Open Theism</a> — Summarizes objections about sovereignty, prophecy, and doctrinal coherence.</li>
-  <li><a href="/pocket-deploy/wiki-open-theism-codex/open-theism-codex-s03-2/">Alternative Models</a> — Contrasts Arminianism, Molinism, and Calvinism as different accounts of foreknowledge and freedom.</li>
-  <li><a href="/pocket-deploy/wiki-open-theism-codex/open-theism-codex-s03-3/">Practical Implications</a> — Reflects on prayer, pastoral care, and faithful living amid uncertainty.</li>
-  <li><a href="/pocket-deploy/wiki-open-theism-codex/open-theism-codex-s03-4/">Philosophical Considerations</a> — Engages analytic discussions about time, modality, and logic.</li>
-  <li><a href="/pocket-deploy/wiki-open-theism-codex/open-theism-codex-s03-5/">Open Theism Today</a> — Reviews current scholarship, denominational responses, and future research paths.</li>
-</ol>
-</div>
-<footer>
-<span class="badge">15 articles · Updated from Colorful Reader HTML studies</span>
-</footer>
-</div></div>
+<script>
+document.addEventListener('keydown',e=>{
+  if(e.key.toLowerCase()==='s'){
+    document.querySelector('.sidebar').classList.toggle('hidden');
+  }
+});
+</script>
 </body>
 </html>
