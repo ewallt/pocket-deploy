@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Unintended Consequences</title>
+  <style>
+    :root{
+      --canvas:#0f172a;--ink:#e2e8f0;--muted:#94a3b8;--sidebar-bg:#1e293b;
+      --card-bg:#1e293b;--card-border:rgba(148,163,184,.2);
+      --accent:#38bdf8;--accent-dark:#0ea5e9;--active-tab-bg:var(--canvas);
+      --consequence-bg:rgba(244,63,94,.05);--consequence-border:rgba(244,63,94,.3);
+      --solution-bg:rgba(56,189,248,.05);--solution-border:rgba(56,189,248,.3);
+    }
+    *,*::before,*::after{box-sizing:border-box}
+    body{margin:0;background:var(--canvas);color:var(--ink);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+    .app-layout{display:flex;height:100vh}
+    .source-nav{width:240px;flex-shrink:0;background:var(--sidebar-bg);padding:2rem 1rem;border-right:1px solid var(--card-border);overflow-y:auto}
+    .source-nav h1{font-size:1.25rem;margin:0 0.5rem 1.5rem}
+    .nav-tab{display:block;width:100%;background:none;border:0;color:var(--muted);font:600 1rem/1.5 system-ui;padding:.75rem 1rem;border-radius:8px;text-align:left;cursor:pointer;transition:all .2s}
+    .nav-tab:hover{color:var(--ink)}
+    .nav-tab.active{background:var(--active-tab-bg);color:#fff}
+    .content-area{flex-grow:1;padding:2rem 2.5rem;overflow-y:auto}
+
+    /* Grid: fixed-ish card width; natural left alignment */
+    .card-group{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(320px,420px));
+      gap:1.5rem;
+      align-items:start;       /* independent heights by default */
+      grid-auto-rows:auto;
+      justify-content:start;   /* leave extra space on the right */
+    }
+    .card-group.synced{
+      align-items:stretch;     /* initial: equal heights (per row) */
+      grid-auto-rows:1fr;
+    }
+    .card-group.synced .card{ height:100%; }
+
+    .card-group:not(.active){display:none}
+
+    .card{
+      background:var(--card-bg);
+      border:1px solid var(--card-border);
+      border-radius:12px;
+      padding:1.5rem;
+      display:flex;
+      flex-direction:column;
+      box-shadow:0 8px 25px rgba(0,0,0,.2);
+      width:100%;
+      min-width:0;
+    }
+    .card h3{font-size:1.25rem;margin:0 0 1rem}
+
+    .step{margin-bottom:1rem;padding:1rem;border-radius:8px;border:1px solid}
+    .step[data-label="Problem"]{border-color:var(--card-border)}
+    .step[data-label="Solution"]{background:var(--solution-bg);border-color:var(--solution-border)}
+    .step[data-label="Consequence"]{background:var(--consequence-bg);border-color:var(--consequence-border)}
+    .step[data-label]::before{display:block;font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem}
+    .step[data-label="Problem"]::before{content:"The Problem";color:var(--muted)}
+    .step[data-label="Solution"]::before{content:"The (Intended) Solution";color:var(--accent)}
+    .step[data-label="Consequence"]::before{content:"The Unintended Consequence";color:#f43f5e}
+    .step p{margin:0;font-size:.95rem}
+
+    .card .controls{margin-top:auto;padding-top:1rem}
+    .reveal-btn{font-size:.9rem;font-weight:600;color:var(--canvas);background:var(--accent);border:0;border-radius:6px;padding:.75rem 1rem;width:100%;cursor:pointer;transition:background-color .2s}
+    .reveal-btn:hover{background:var(--accent-dark)}
+    .card.complete .reveal-btn{background:#64748b;color:#fff}
+
+    .hidden{display:none}
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="source-nav">
+      <h1>Sources</h1>
+      <button class="nav-tab active" data-target="source-reason">Reason</button>
+      <button class="nav-tab" data-target="source-hoover">Hoover Institution</button>
+      <button class="nav-tab" data-target="source-changelab">ChangeLab Solutions</button>
+      <button class="nav-tab" data-target="source-voxdev">VoxDev</button>
+    </aside>
+
+    <main class="content-area">
+      <!-- REASON (Vol. 1–19) -->
+      <div id="source-reason" class="card-group active">
+        <!-- Vol. 1 -->
+        <div class="card" data-state="closed">
+          <h3>Osborne Reef (Florida)</h3>
+          <div class="step" data-label="Problem"><p>South Florida wanted an artificial reef to boost marine habitat and tourism.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Sink ~2 million discarded car tires offshore—cheap, durable, easy to stack.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Storms snapped the ties; tires roamed the seafloor, sandblasting natural reefs and entangling wildlife. Cleanup divers are still chasing the “permanent” fix.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>Corn Ethanol Subsidies</h3>
+          <div class="step" data-label="Problem"><p>Reduce oil dependence and help the climate, preferably with a patriotic crop.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Mandate/bless ethanol blending and subsidize corn-based biofuel production.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Land and feed prices jumped, marginal acres got plowed, and the net climate benefit proved…diet-soda sized once you count fertilizer and fuel.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>ACA Employer Coverage Quirk</h3>
+          <div class="step" data-label="Problem"><p>Keep workers insured without dumping them onto the individual market.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Craft employer-mandate rules and plan definitions to prevent coverage games.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Some firms trimmed hours or benefits to thread the letter of the law—draw a box and payroll learns origami.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+
+        <!-- Vol. 2 -->
+        <div class="card" data-state="closed">
+          <h3>Prostitution Crackdowns</h3>
+          <div class="step" data-label="Problem"><p>Reduce sex work and associated crime.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Sweeps, stings, and harsher penalties.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Work moved online or to riskier streets; harm concentrated among the most vulnerable.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>Sin Taxes (Soda/Tobacco)</h3>
+          <div class="step" data-label="Problem"><p>Nudge healthier choices and fund services.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Per-unit excise taxes on “bad” goods.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Cross-border shopping, product switching, and regressivity—calories and nicotine migrate faster than tax bases.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>Urban Renewal</h3>
+          <div class="step" data-label="Problem"><p>Revitalize “blighted” neighborhoods.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Clear-and-build with generous eminent domain.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Community networks erased, displacement up, projects aged badly—blight cured with a different kind of damage.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+
+        <!-- Vol. 3 -->
+        <div class="card" data-state="closed">
+          <h3>Window Tax (1696)</h3>
+          <div class="step" data-label="Problem"><p>Raise revenue without intrusive audits.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Tax houses by counting windows.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Owners bricked panes; homes got darker and stuffier—light became a taxable luxury.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>Nude-Dancing Buffer Rules</h3>
+          <div class="step" data-label="Problem"><p>Reduce nuisances around adult venues.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Strict distancing and layout mandates.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Clubs re-engineered floor plans and job titles; compliance up, intent down.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>Vice-District Zoning</h3>
+          <div class="step" data-label="Problem"><p>Contain adult businesses in one area.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Create a tightly defined “tolerance zone.”</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Rents spiked inside the zone, activities leaked elsewhere—containment became concentration.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+
+        <!-- Vol. 4 -->
+        <div class="card" data-state="closed">
+          <h3>Paper-Mill “Black Liquor” Credit</h3>
+          <div class="step" data-label="Problem"><p>Encourage biofuels.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Tax credit for certain biofuel blends.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Mills tweaked processes to qualify and harvested subsidies—innovation followed the money, not the mission.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>Billboard Bans</h3>
+          <div class="step" data-label="Problem"><p>Reduce visual clutter and distraction.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Outlaw traditional billboards.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>On-premise and mobile signage proliferated—fewer “billboards,” more signs.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>Gender Pay-Gap Laws</h3>
+          <div class="step" data-label="Problem"><p>Close documented wage gaps.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Restrict salary-history questions and mandate ranges.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Some firms low-anchored ranges or paused hiring; compliance up, signal quality not.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+
+        <!-- Vol. 5 -->
+        <div class="card" data-state="closed">
+          <h3>Anti–Price-Gouging Laws</h3>
+          <div class="step" data-label="Problem"><p>Keep essentials affordable during emergencies.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Cap “excessive” price increases.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Empty shelves and longer outages—price signals silenced, trucks stay home.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>School Report Cards</h3>
+          <div class="step" data-label="Problem"><p>Inform parents and improve accountability.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Publish simple A–F ratings.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Teaching narrowed to metrics; complex learning became extra credit.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>Youth Curfews</h3>
+          <div class="step" data-label="Problem"><p>Reduce nighttime crime and disorder.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Ban minors from public spaces after set hours.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Police–youth friction rose; incidents shifted earlier, not away.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+
+        <!-- Vol. 6 -->
+        <div class="card" data-state="closed">
+          <h3>Minimum-Wage Hikes</h3>
+          <div class="step" data-label="Problem"><p>Boost incomes for the lowest-paid workers.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Mandate a higher wage floor.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Hours shaved, roles automated, entry-level slots vanished first.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>Deposit/Redemption Schemes</h3>
+          <div class="step" data-label="Problem"><p>Incentivize recycling and reduce litter.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Pay per container returned.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Cross-border can-running and professional scavenging—trash became currency.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>Wild-Boar Culls</h3>
+          <div class="step" data-label="Problem"><p>Reduce crop damage and collisions.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Pay hunters per boar tail.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Populations rebounded as habitat/feeding improved to sustain the bounty.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+
+        <!-- Vol. 7 -->
+        <div class="card" data-state="closed">
+          <h3>Alcohol Prohibition</h3>
+          <div class="step" data-label="Problem"><p>Eliminate alcohol’s social harms.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>National ban on production and sale.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Black markets, stronger spirits, and organized crime.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>Seat-Belt Mandates &amp; Risk Compensation</h3>
+          <div class="step" data-label="Problem"><p>Reduce auto fatalities.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Require seat belts and enforce usage.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Some drivers felt safer and drove more aggressively—physics improved, behavior not always.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>Drought Relief Pricing</h3>
+          <div class="step" data-label="Problem"><p>Ensure cheap water during shortages.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Keep prices low in a drought.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Conservation incentives collapsed; reservoirs didn’t.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+
+        <!-- Vol. 8 -->
+        <div class="card" data-state="closed">
+          <h3>Rent Control</h3>
+          <div class="step" data-label="Problem"><p>Make housing affordable for tenants.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Cap rents and restrict increases.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Supply shrank and maintenance lagged; “affordable” became museum-label housing.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>Plastic-Bag Bans</h3>
+          <div class="step" data-label="Problem"><p>Cut waste and litter.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Ban thin single-use checkout bags.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Sales of thicker trash bags rose; plastic weight per household went up.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>Cobra Bounty</h3>
+          <div class="step" data-label="Problem"><p>Reduce dangerous urban snakes.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Pay cash for each dead cobra.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>People bred cobras for harvest; when the bounty ended, surplus slithered back.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+
+        <!-- Vol. 9 -->
+        <div class="card" data-state="closed">
+          <h3>Antwerp Price Controls (1585 Siege)</h3>
+          <div class="step" data-label="Problem"><p>Keep food affordable for a besieged city.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Impose strict ceiling prices.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Sellers smuggled or withheld stock; scarcity and hunger worsened.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>England’s Window Tax (1696)</h3>
+          <div class="step" data-label="Problem"><p>Raise revenue without snooping incomes.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Tax houses by counting windows.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Openings bricked up; sunlight became a luxury good.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>“Cash for Clunkers” (2009)</h3>
+          <div class="step" data-label="Problem"><p>Stimulate auto sales and retire gas guzzlers.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Pay bounties to scrap old cars and buy new ones.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Usable cars destroyed, used-market prices jumped, gains front-loaded rather than real.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+
+        <!-- Vol. 10 -->
+        <div class="card" data-state="closed">
+          <h3>The Streisand Effect</h3>
+          <div class="step" data-label="Problem"><p>Suppress an unflattering image and protect privacy.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Sue and demand removal.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>The lawsuit amplified the image—nothing goes viral faster than attempted silence.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>Sesame as an Allergen</h3>
+          <div class="step" data-label="Problem"><p>Protect consumers with clear labeling.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Add sesame to the major-allergen list.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Some manufacturers added sesame (trace-but-real) to simplify compliance, making avoidance harder.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>Soccer’s Golden Goal</h3>
+          <div class="step" data-label="Problem"><p>Make extra time more exciting.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>First goal in extra time wins immediately.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Teams grew cautious to avoid instant death; promised drama, delivered risk-aversion.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+
+        <!-- Vol. 11 -->
+        <div class="card" data-state="closed">
+          <h3>Mexico’s “Sowing Life” Tree Subsidy</h3>
+          <div class="step" data-label="Problem"><p>Incentivize reforestation and rural income.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Pay landowners to plant trees on eligible land.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Some cleared existing forest to qualify—reforestation via deforestation.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>Israeli Daycare Late Fees</h3>
+          <div class="step" data-label="Problem"><p>Parents picking up kids late.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Impose a modest per-minute fee.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Lateness increased as the moral norm became a price.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>New York Alcohol Law Tweak</h3>
+          <div class="step" data-label="Problem"><p>Clean up quirky retail rules and improve safety.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Adjust who can sell what, when, and how.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Distortions and workarounds proliferated—“technically compliant” booze logistics.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+
+        <!-- Vol. 12 -->
+        <div class="card" data-state="closed">
+          <h3>Texas Medical Center Bird Nets</h3>
+          <div class="step" data-label="Problem"><p>Stop birds nesting in hospital ventilation.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Install wide netting across structures.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Wildlife trapped, debris collected, rescue runs became routine.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>California Proposition 65 Warnings</h3>
+          <div class="step" data-label="Problem"><p>Inform consumers of potential chemical exposure.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Mandate warnings at low thresholds.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Label overload turned risk signals into background noise.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>Carbon-Credit Loopholes</h3>
+          <div class="step" data-label="Problem"><p>Encourage emission cuts via offsets.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Let companies fund “equivalent reductions” elsewhere.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Creative accounting birthed phantom forests and over-counted savings.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+
+        <!-- Vol. 13 -->
+        <div class="card" data-state="closed">
+          <h3>Oakland Gun Buyback</h3>
+          <div class="step" data-label="Problem"><p>Get dangerous firearms off the street.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>No-questions-asked buybacks with cash/gift cards.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Junk-gun arbitrage: buy cheap, turn in dear, go home richer.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>Afghanistan “Cash for Poppies”</h3>
+          <div class="step" data-label="Problem"><p>End opium cultivation by paying to destroy crops.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Compensate eradication to promote legal farming.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Destroy, collect cash, replant—heroin steady, honesty eradicated.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>CAFE Fuel-Efficiency Rules</h3>
+          <div class="step" data-label="Problem"><p>Reduce oil use and emissions from cars.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Corporate average fuel-economy targets with penalties.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Up-sizing into “light trucks”; paper gains, heavier fleets.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+
+        <!-- Vol. 14 -->
+        <div class="card" data-state="closed">
+          <h3>$1 Coins for Airline Miles</h3>
+          <div class="step" data-label="Problem"><p>Move dollar coins into circulation and save printing costs.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Free shipping on bulk $1 coin orders from the U.S. Mint.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Points hackers bought pallets, banked miles, redeposited coins—circulation stayed theoretical.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>Sri Lanka’s Fertilizer Ban</h3>
+          <div class="step" data-label="Problem"><p>Cut costs and go “all organic” fast.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Overnight prohibition on synthetic inputs.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Yields collapsed, imports surged—soil chemistry ignored the press release.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>Hawaii’s Mongoose “Rat Fix”</h3>
+          <div class="step" data-label="Problem"><p>Control rats on sugar plantations.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Import mongooses as biological control.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Day-active mongooses ate native birds; rats (night shift) carried on.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+
+        <!-- Vol. 15 -->
+        <div class="card" data-state="closed">
+          <h3>Edmonton Noise Scoreboards</h3>
+          <div class="step" data-label="Problem"><p>Quiet roaring traffic.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Roadside displays grading driver noise.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Some motorists revved to set high scores—gamified civility became a leaderboard for loud.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>San Francisco “No Red-State Vendors”</h3>
+          <div class="step" data-label="Problem"><p>Align procurement with city values.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Ban contracts with firms from disfavored jurisdictions.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Purchasing snarled, costs rose, exemptions bloomed.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>Pennsylvania Political-Cartoon Rule</h3>
+          <div class="step" data-label="Problem"><p>Keep official channels neutral.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Restrict “political” imagery in certain contexts.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Vague lines chilled speech and multiplied fights over what counted.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+
+        <!-- Vol. 16 -->
+        <div class="card" data-state="closed">
+          <h3>DoorDash “Free Listing”</h3>
+          <div class="step" data-label="Problem"><p>More delivery options and orders.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Add restaurants to the app without consent.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Wrong menus/prices, confused staff; some owners blocked orders—growth hacked, trust subtracted.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>AI Answer Boxes</h3>
+          <div class="step" data-label="Problem"><p>Give users instant answers.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Prominent AI summaries at the top of results.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Confident hallucinations; fewer clicks for publishers, extra cleanup for reality.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>French Wikipedia Policy Tweak</h3>
+          <div class="step" data-label="Problem"><p>Curb edit wars and low-quality changes.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>New moderation/consensus rules.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Over-correction chilled useful edits; process up, knowledge flow down.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+
+        <!-- Vol. 17 -->
+        <div class="card" data-state="closed">
+          <h3>Post-War Beef Price Controls (1946)</h3>
+          <div class="step" data-label="Problem"><p>Make staple foods affordable during shortages.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Cap beef prices.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Back-channel sales and reduced supply; dinner got theoretical.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>LED Traffic Lights in Snow Country</h3>
+          <div class="step" data-label="Problem"><p>Save energy and maintenance costs.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Switch to low-heat LED signals.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Snow/ice lingered on lenses; safety improved on the utility bill, not always at intersections.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>Fossil Bounties (1930s Indonesia)</h3>
+          <div class="step" data-label="Problem"><p>Encourage scientific discovery.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Pay cash for fossil finds.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Breakage into multiple “finds”; payouts optimized, preservation not.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+
+        <!-- Vol. 18 -->
+        <div class="card" data-state="closed">
+          <h3>3D-Printed “Gun Buyback” Hack</h3>
+          <div class="step" data-label="Problem"><p>Reduce firearms via buybacks.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Pay per weapon turned in.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Printed parts redeemed for gift cards—disarmament became a cottage industry.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>Jakarta’s “3-in-1” Occupancy Rule</h3>
+          <div class="step" data-label="Problem"><p>Cut traffic by requiring three occupants in certain zones.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Roadside compliance checks.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Paid passenger “jockeys” filled seats; cars stayed.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>Scratch-and-Sniff Gas-Leak Mailer</h3>
+          <div class="step" data-label="Problem"><p>Teach residents the smell of a gas leak.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Postcards with a scented spot.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Many assumed leaks and flooded emergency lines—safety campaign stress-tested panic.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+
+        <!-- Vol. 19 -->
+        <div class="card" data-state="closed">
+          <h3>Obscenity Website Blocks</h3>
+          <div class="step" data-label="Problem"><p>Protect the public from explicit content.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Broad filters and site-level blocks.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Over-blocking of legitimate resources and whack-a-mole routing.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>Used-Cooking-Oil Crackdowns</h3>
+          <div class="step" data-label="Problem"><p>Stop theft and spills around grease bins.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Tight rules and enforcement on collection.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Black-market grease prices spiked; thieves upgraded from siphons to cargo vans.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>D.C. Tipped Minimum-Wage Hike</h3>
+          <div class="step" data-label="Problem"><p>Raise take-home pay for tipped workers.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Phase out the tip credit and increase base wage.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>More service fees, fewer slow-hour shifts, tip confusion—pay rose on paper, math got murkier at the table.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+      </div>
+
+      <!-- HOOVER (Vol. 1–2) -->
+      <div id="source-hoover" class="card-group">
+        <!-- Vol. 1 -->
+        <div class="card" data-state="closed">
+          <h3>Rent Control</h3>
+          <div class="step" data-label="Problem"><p>Keep housing affordable for tenants in expensive cities.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Cap allowable rent increases and limit evictions to protect existing renters.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Landlords convert units to condos or withdraw them from rental markets entirely; new construction slows; maintenance declines. The lucky few keep cheap flats—everyone else finds fewer flats to rent at all.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>Minimum Wage Increases</h3>
+          <div class="step" data-label="Problem"><p>Raise incomes for low-wage workers and reduce inequality.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Mandate higher hourly pay.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Some firms cut hours, automate tasks, or hire fewer entry-level workers. A few workers earn more; others earn nothing. The policy gains headlines faster than experience.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>Corporate Tax Hikes</h3>
+          <div class="step" data-label="Problem"><p>Fund public services and ensure corporations “pay their fair share.”</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Raise corporate income tax rates.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Investment shifts abroad, wages stagnate, and tax avoidance blooms—proving that capital, like water, prefers downhill gradients.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>Environmental Regulations (Auto Emissions)</h3>
+          <div class="step" data-label="Problem"><p>Cut air pollution and protect public health.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Mandate catalytic converters and ever-tighter emissions limits.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Clean cars became more expensive, prolonging the life of older, dirtier ones; meanwhile, firms discovered creative cheating devices (see: dieselgate). Regulatory success met human ingenuity at a crossroads.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>Welfare Expansion</h3>
+          <div class="step" data-label="Problem"><p>Alleviate poverty and provide a safety net.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Broaden eligibility, extend duration, and increase benefit levels.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Some recipients face disincentives to return to work or increase hours, as higher earnings trigger sudden benefit losses—the welfare cliff with scenic views.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>Agricultural Price Supports</h3>
+          <div class="step" data-label="Problem"><p>Protect farmers from volatile markets and keep food prices stable.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Government buys or subsidizes surplus production.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Surpluses mount, storage costs balloon, and international markets distort. Wheat mountains, butter oceans, and a thriving trade in unintended abundance.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+
+        <!-- Vol. 2 -->
+        <div class="card" data-state="closed">
+          <h3>Tariffs and Trade Wars</h3>
+          <div class="step" data-label="Problem"><p>Protect domestic jobs and industries from “unfair” foreign competition.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Impose tariffs and quotas on imported goods to raise their prices and level the playing field.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Inputs get pricier for downstream firms; exports face retaliation; jobs shift from competitive users to protected producers. The shield for one sector becomes shrapnel for many others.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>Price-Gouging Bans</h3>
+          <div class="step" data-label="Problem"><p>Stop exploitative price spikes during emergencies.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Cap prices or forbid “excessive” increases after disasters.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>With prices unable to signal scarcity, shelves empty faster and resupply lags; black markets and queue economies bloom. Fairness at the register, unfairness in the parking lot.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>Occupational Licensing</h3>
+          <div class="step" data-label="Problem"><p>Ensure quality and safety in personal services (hair, nails, childcare, trades).</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Require training hours, exams, and licenses before practicing.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Fewer entrants, higher prices, less mobility across states—and incumbents enjoy a quiet moat. Consumer protection doubles as producer protection.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>Zoning and Height Limits</h3>
+          <div class="step" data-label="Problem"><p>Preserve neighborhood character and prevent congestion.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Strict single-family zoning, height caps, and discretionary approvals.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>New housing bottlenecks, prices climb, and workers sprawl outward to find anything they can afford—producing the very traffic the rules meant to tame.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>Fuel Economy Standards (Rebound &amp; Mix)</h3>
+          <div class="step" data-label="Problem"><p>Cut gasoline use and tailpipe emissions.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Mandate higher fleet fuel-efficiency (CAFE) targets.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Cheaper-per-mile driving encourages more miles (rebound), and makers may shift toward heavier classifications with looser standards. Cleaner per mile, but more miles—and sometimes more metal.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+        <div class="card" data-state="closed">
+          <h3>Eviction Moratoria</h3>
+          <div class="step" data-label="Problem"><p>Prevent mass displacement during economic shocks.</p></div>
+          <div class="step solution hidden" data-label="Solution"><p>Temporarily bar evictions for nonpayment and pause removals.</p></div>
+          <div class="step consequence hidden" data-label="Consequence"><p>Arrears accumulate, small landlords exit or tighten screening, and post-moratorium filings surge. A pause button for crisis can become a skip button for future renters.</p></div>
+          <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+        </div>
+      </div>
+
+      <!-- CHANGELAB -->
+<div id="source-changelab" class="card-group">
+  <!-- Local Laws, Vol. 1 -->
+  <div class="card" data-state="closed">
+    <h3>Nuisance Laws</h3>
+    <div class="step" data-label="Problem"><p>Curb activities that threaten health or safety (noise, hazardous waste, criminal activity).</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Enact “nuisance” ordinances that penalize repeat incidents with fines or eviction.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Victims (e.g., domestic violence survivors) can be labeled the nuisance and evicted, discouraging future calls for help and making neighborhoods less safe.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Jaywalking Laws</h3>
+    <div class="step" data-label="Problem"><p>Reduce pedestrian crashes.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Ticket crossings outside marked crosswalks; raise fines to deter risky behavior.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Criminalizes normal responses to car-centric street design; imposes high fines on people who walk and can even lead to extreme prosecutions when safe crossings are impractically far away.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Fines for Minor Infractions</h3>
+    <div class="step" data-label="Problem"><p>Encourage compliance with local rules (traffic, parking, small code violations).</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Use fines, fees, and court costs; suspend licenses or escalate penalties for nonpayment.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Costs snowball into debt, license loss, job loss, and even jail—effectively penalizing poverty rather than deterring harm.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Privatizing Water</h3>
+    <div class="step" data-label="Problem"><p>Fix aging water systems without overburdening city budgets.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Transfer operation or ownership to private utilities.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Higher rates, less transparency, and poorer service—especially in rural or low-income communities—leaving residents paying more for a basic necessity.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Occupancy Standards for Rental Housing</h3>
+    <div class="step" data-label="Problem"><p>Prevent dangerous overcrowding in homes.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Set caps on how many people (especially unrelated people) may share a unit.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Complaint-driven enforcement and unequal definitions of “family” enable bias, target low-income renters and students, and reduce affordable shared housing options.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Criminalizing Food Sharing</h3>
+    <div class="step" data-label="Problem"><p>Ensure food safety in public spaces.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Require permits or restrict outdoor meal service to stringent conditions.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Charitable groups face citations or arrests for feeding unhoused people, effectively punishing both helpers and those most in need.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <!-- Local Laws, Vol. 2 -->
+  <div class="card" data-state="closed">
+    <h3>Parking Minimums</h3>
+    <div class="step" data-label="Problem"><p>Ensure enough on-site parking so neighbors aren’t overrun by spillover.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Require a fixed number of off-street spaces per new unit or business.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Raises construction costs, kills small infill, spreads everything farther apart—so people drive more to reach anything. The cure for parking scarcity creates…more driving and parking scarcity.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Zero-Tolerance School Discipline</h3>
+    <div class="step" data-label="Problem"><p>Improve safety and order on campus.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Mandatory suspensions/expulsions for listed offenses; little discretion.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Higher suspension rates (especially for minor infractions), widened racial disparities, lower academic outcomes—and the school-to-whatever-comes-next pipeline gets a little greased.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>State Preemption of Local Health/Safety Rules</h3>
+    <div class="step" data-label="Problem"><p>Avoid a patchwork of regulations that confuses businesses.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>State laws blocking cities from setting stricter standards (wages, rentals, public health measures).</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Local governments can’t tailor fixes to local problems; cities stuck with one-size-fits-none while the underlying issues (housing, wages, heat, smoke) keep acting local.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Sit-Lie and Anti-Loitering Ordinances</h3>
+    <div class="step" data-label="Problem"><p>Address sidewalk obstruction and public disorder.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Ban sitting/lying or “loitering” in designated areas; citations escalate to arrest.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Criminalizes being poor outside; pushes people block to block without adding services—moving the problem on a schedule set by the citation printer.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Youth Curfews</h3>
+    <div class="step" data-label="Problem"><p>Reduce juvenile crime and late-night victimization.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Citywide curfews with fines or custody for violations.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Most activity shifts earlier, police time goes to status offenses, and disparities widen; the clock changes, not the causes.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Food-Truck Restrictions</h3>
+    <div class="step" data-label="Problem"><p>Keep streets orderly and fair to brick-and-mortar restaurants.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Tight buffer zones, limited hours, special permits, commissary rules.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Fewer low-cost vendors, less culinary variety, and empty lots that could have been lively. Protection from competition doubles as protection from customers.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+</div>
+
+
+      <!-- VOXDEV -->
+<div id="source-voxdev" class="card-group">
+  <div class="card" data-state="closed">
+    <h3>South Asia’s Vulture Collapse (Diclofenac Ban Saga)</h3>
+    <div class="step" data-label="Problem"><p>Farmers in South Asia needed affordable pain relief for working livestock; keeping cattle healthy protects household income and food security.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Widespread veterinary use of diclofenac: effective, cheap, and great for sore bovines—so routine that residues were common in carcasses left for scavengers.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Vultures ate those carcasses, suffered diclofenac-induced kidney failure, and crashed by ~95% in some species. With vultures gone, dog populations swelled around rotting carrion, driving more rabies risk; governments later banned veterinary diclofenac and promoted safer substitutes like meloxicam.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Kingpin Decapitation Strategy</h3>
+    <div class="step" data-label="Problem"><p>Drug-cartel violence in Latin America, with governments under pressure to show decisive progress.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>“Decapitation” strategies: target kingpins for arrest or neutralisation, plus high-visibility crackdowns to disrupt trafficking routes. Looks tough, polls great.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Remove a boss and you invite splintering and turf wars. Evidence from Mexico links kingpin targeting to cartel fragmentation and sharply higher homicide rates—cut off the head, grow three.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>School Cash Transfers (Morocco)</h3>
+    <div class="step" data-label="Problem"><p>Morocco wanted to cut primary-school dropout and boost enrolment.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Scale up a conditional cash transfer (Tayssir), paying families if children enrol and attend. It worked: dropout fell by about 1.3 percentage points.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Supply didn’t scale with demand. Average class size rose by 3.6 students and test scores fell. Schooling went up; learning went down—at least until resources caught up.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Biometric ID for Welfare Delivery (India’s Aadhaar)</h3>
+    <div class="step" data-label="Problem"><p>Fraud and “ghost” beneficiaries plagued welfare programs; the fix seemed obvious: tighten verification, digitize payments, and cut leakages.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Link benefits to a national biometric ID (fingerprints/iris scans) to authenticate and automate disbursements directly.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Digital precision met analog realities: fingerprint mismatches, power cuts, and poor connectivity sometimes locked out legitimate recipients. Efficiency rose on paper; exclusion rose on the ground.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Sin Taxes and Substitution Effects</h3>
+    <div class="step" data-label="Problem"><p>Governments sought to curb unhealthy consumption—sugar, alcohol, tobacco—through excise taxes that would nudge better habits.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Levy targeted “sin taxes” to make vice pricier and virtue more appealing; revenue doubles as a public-health win.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Consumers substitute: sugary-drink taxes can shift purchases to untaxed high-calorie items; smokers trade down to cheaper brands or informal markets. One vice down, several side quests unlocked.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Housing Subsidies and Urban Sprawl (Indonesia’s Mortgage Incentives)</h3>
+    <div class="step" data-label="Problem"><p>Urban housing shortages made affordable ownership politically urgent.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Offer mortgage interest subsidies and credit programs for low-income buyers to expand the formal housing market.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Most take-up occurred on the distant fringe where land is cheap but infrastructure thin. Commutes lengthened, emissions rose, and informal settlements persisted near jobs. Units up, urban efficiency down.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+</div>
+
+    </main>
+  </div>
+
+  <script>
+    // Track one open card globally
+    let openCard = null;
+
+    function resetCard(card){
+      if(!card) return;
+      const sol = card.querySelector('.solution');
+      const cons = card.querySelector('.consequence');
+      const btn = card.querySelector('.reveal-btn');
+      if(sol) sol.classList.add('hidden');
+      if(cons) cons.classList.add('hidden');
+      if(btn) btn.textContent = 'Reveal Solution';
+      card.classList.remove('complete');
+      card.dataset.state = 'closed';
+    }
+
+    function closeAllCards(){
+      document.querySelectorAll('.card').forEach(resetCard);
+      openCard = null;
+      document.querySelectorAll('.card-group').forEach(g => g.classList.add('synced'));
+    }
+
+    function updateGroupSync(group){
+      const anyOpen = [...group.querySelectorAll('.card')]
+        .some(c => c.dataset.state !== 'closed');
+      group.classList.toggle('synced', !anyOpen);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // start fully closed & equal-height rows
+      closeAllCards();
+
+      // one delegated click listener
+      document.addEventListener('click', (e) => {
+        // Tabs
+        const tabBtn = e.target.closest('.nav-tab');
+        if (tabBtn){
+          const targetId = tabBtn.getAttribute('data-target');
+          if (!tabBtn.classList.contains('active')){
+            document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+            document.querySelectorAll('.card-group').forEach(g=>g.classList.remove('active'));
+            tabBtn.classList.add('active');
+            const group = document.getElementById(targetId);
+            if (group) group.classList.add('active');
+            closeAllCards(); // reset & resync on tab switch
+          }
+          return;
+        }
+
+        // Card reveal
+        const reveal = e.target.closest('.reveal-btn');
+        if (!reveal) return;
+
+        const card  = reveal.closest('.card');
+        const group = card.closest('.card-group');
+        if (!card || !group) return;
+
+        // Close a previously open card (global: one at a time)
+        if (openCard && openCard !== card){
+          const prevGroup = openCard.closest('.card-group');
+          resetCard(openCard);
+          if (prevGroup) updateGroupSync(prevGroup);
+          openCard = null;
+        }
+
+        const sol = card.querySelector('.solution');
+        const cons = card.querySelector('.consequence');
+        const state = card.dataset.state || 'closed';
+
+        if (state === 'closed'){
+          sol.classList.remove('hidden');
+          reveal.textContent = 'Reveal Consequence';
+          card.dataset.state = 'solution';
+          openCard = card;
+        } else if (state === 'solution'){
+          cons.classList.remove('hidden');
+          reveal.textContent = 'Reset Example';
+          card.classList.add('complete');
+          card.dataset.state = 'consequence';
+          openCard = card;
+        } else {
+          resetCard(card);
+          openCard = null;
+        }
+
+        // Update that group's sync mode
+        updateGroupSync(group);
+      });
+    });
+  </script>
+</body>
+</html>
