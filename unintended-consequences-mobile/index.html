@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Unintended Consequences</title>
+    <style>
+        :root {
+            --canvas: #0f172a;
+            --ink: #e2e8f0;
+            --muted: #94a3b8;
+            --sidebar-bg: #1e293b;
+            --card-bg: #1e293b;
+            --card-border: rgba(148, 163, 184, .2);
+            --accent: #38bdf8;
+            --accent-dark: #0ea5e9;
+            --active-tab-bg: var(--canvas);
+            --consequence-bg: rgba(244, 63, 94, .05);
+            --consequence-border: rgba(244, 63, 94, .3);
+            --solution-bg: rgba(56, 189, 248, .05);
+            --solution-border: rgba(56, 189, 248, .3);
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--canvas);
+            color: var(--ink);
+            font: 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+        }
+
+        /* App Layout */
+        .app-layout {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Sidebar / Tabs */
+        .source-nav {
+            width: 240px;
+            flex-shrink: 0;
+            background: var(--sidebar-bg);
+            padding: 2rem 1rem;
+            border-right: 1px solid var(--card-border);
+            overflow-y: auto;
+        }
+        
+        .source-nav h1 {
+            font-size: 1.25rem;
+            margin: 0 0.5rem 1.5rem;
+        }
+
+        .nav-tab {
+            display: block;
+            width: 100%;
+            background: none;
+            border: 0;
+            color: var(--muted);
+            font: 600 1rem/1.5 system-ui;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav-tab:hover {
+            color: var(--ink);
+        }
+
+        .nav-tab.active {
+            background: var(--active-tab-bg);
+            color: white;
+        }
+        
+        /* Main Content Area */
+        .content-area {
+            flex-grow: 1;
+            padding: 2rem 2.5rem;
+            overflow-y: auto;
+        }
+
+        /* Card Groups (one per source) */
+        .card-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card-group:not(.active) {
+            display: none;
+        }
+
+        /* Card styles */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, .2);
+        }
+
+        .card h3 {
+            font-size: 1.25rem;
+            margin: 0 0 1rem;
+        }
+
+        .step {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid;
+        }
+        
+        .step[data-label="Problem"] {
+            border-color: var(--card-border);
+        }
+        .step[data-label="Solution"] {
+            background: var(--solution-bg);
+            border-color: var(--solution-border);
+        }
+        .step[data-label="Consequence"] {
+            background: var(--consequence-bg);
+            border-color: var(--consequence-border);
+        }
+
+        .step[data-label]::before {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            margin-bottom: 0.5rem;
+        }
+        
+        .step[data-label="Problem"]::before {
+            content: 'The Problem';
+            color: var(--muted);
+        }
+        .step[data-label="Solution"]::before {
+            content: 'The (Intended) Solution';
+            color: var(--accent);
+        }
+        .step[data-label="Consequence"]::before {
+            content: 'The Unintended Consequence';
+            color: #f43f5e;
+        }
+        
+        .step p {
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        .card .controls {
+            margin-top: auto;
+            padding-top: 1rem;
+        }
+
+        .reveal-btn {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--canvas);
+            background: var(--accent);
+            border: 0;
+            border-radius: 6px;
+            padding: 0.75rem 1rem;
+            width: 100%;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .reveal-btn:hover {
+            background: var(--accent-dark);
+        }
+        
+        .card.complete .reveal-btn {
+            background: #64748b;
+            color: white;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-layout">
+        
+        <aside class="source-nav">
+            <h1>Sources</h1>
+            <button class="nav-tab active" data-target="source-reason">Reason</button>
+            <button class="nav-tab" data-target="source-hoover">Hoover Institution</button>
+            <button class="nav-tab" data-target="source-changelab">ChangeLab Solutions</button>
+            <button class="nav-tab" data-target="source-voxdev">VoxDev</button>
+        </aside>
+
+        <main class="content-area">
+
+            <div id="source-reason" class="card-group active">
+                <div class="card">
+                    <h3>Osborne Reef (Florida)</h3>
+                    <div class="step" data-label="Problem">
+                        <p>South Florida wanted an artificial reef to boost marine habitat and tourism.</p>
+                    </div>
+                    <div class="step solution hidden" data-label="Solution">
+                        <p>Sink ~2 million discarded car tires offshore—cheap, durable, easy to stack.</p>
+                    </div>
+                    <div class="step consequence hidden" data-label="Consequence">
+                        <p>Storms snapped the ties; tires roamed the seafloor, sandblasting natural reefs and entangling wildlife. Cleanup divers are still chasing the “permanent” fix.</p>
+                    </div>
+                    <div class="controls">
+                        <button class="reveal-btn">Reveal Solution</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>Corn Ethanol Subsidies</h3>
+                    <div class="step" data-label="Problem">
+                        <p>Reduce oil dependence and help the climate, preferably with a patriotic crop.</p>
+                    </div>
+                    <div class="step solution hidden" data-label="Solution">
+                        <p>Mandate/bless ethanol blending and subsidize corn-based biofuel production.</p>
+                    </div>
+                    <div class="step consequence hidden" data-label="Consequence">
+                        <p>Land and feed prices jumped, marginal acres got plowed, and the net climate benefit proved…diet-soda sized once you count fertilizer and fuel.</p>
+                    </div>
+                    <div class="controls">
+                        <button class="reveal-btn">Reveal Solution</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>ACA Employer Coverage Quirk</h3>
+                    <div class="step" data-label="Problem">
+                        <p>Keep workers insured without dumping them onto the individual market.</p>
+                    </div>
+                    <div class="step solution hidden" data-label="Solution">
+                        <p>Craft employer-mandate rules and plan definitions to prevent coverage games.</p>
+                    </div>
+                    <div class="step consequence hidden" data-label="Consequence">
+                        <p>Some firms trimmed hours or benefits to thread the letter of the law—draw a box and payroll learns origami.</p>
+                    </div>
+                    <div class="controls">
+                        <button class="reveal-btn">Reveal Solution</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="source-hoover" class="card-group">
+                <div class="card">
+                    <h3>Rent Control</h3>
+                    <div class="step" data-label="Problem">
+                        <p>Keep housing affordable for tenants in expensive cities.</p>
+                    </div>
+                    <div class="step solution hidden" data-label="Solution">
+                        <p>Cap allowable rent increases and limit evictions to protect existing renters.</p>
+                    </div>
+                    <div class="step consequence hidden" data-label="Consequence">
+                        <p>Landlords convert units to condos or withdraw them from rental markets; new construction slows. The lucky few keep cheap flats—everyone else finds fewer flats to rent at all.</p>
+                    </div>
+                    <div class="controls">
+                        <button class="reveal-btn">Reveal Solution</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>Minimum Wage Increases</h3>
+                    <div class="step" data-label="Problem">
+                        <p>Raise incomes for low-wage workers and reduce inequality.</p>
+                    </div>
+                    <div class="step solution hidden" data-label="Solution">
+                        <p>Mandate higher hourly pay.</p>
+                    </div>
+                    <div class="step consequence hidden" data-label="Consequence">
+                        <p>Some firms cut hours, automate tasks, or hire fewer entry-level workers. A few workers earn more; others earn nothing. The policy gains headlines faster than experience.</p>
+                    </div>
+                    <div class="controls">
+                        <button class="reveal-btn">Reveal Solution</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>Corporate Tax Hikes</h3>
+                    <div class="step" data-label="Problem">
+                        <p>Fund public services and ensure corporations “pay their fair share.”</p>
+                    </div>
+                    <div class="step solution hidden" data-label="Solution">
+                        <p>Raise corporate income tax rates.</p>
+                    </div>
+                    <div class="step consequence hidden" data-label="Consequence">
+                        <p>Investment shifts abroad, wages stagnate, and tax avoidance blooms—proving that capital, like water, prefers downhill gradients.</p>
+                    </div>
+                    <div class="controls">
+                        <button class="reveal-btn">Reveal Solution</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="source-changelab" class="card-group">
+                <div class="card">
+                    <h3>Nuisance Laws</h3>
+                    <div class="step" data-label="Problem">
+                        <p>Curb activities that threaten health or safety (noise, hazardous waste, criminal activity).</p>
+                    </div>
+                    <div class="step solution hidden" data-label="Solution">
+                        <p>Enact “nuisance” ordinances that penalize repeat incidents with fines or eviction.</p>
+                    </div>
+                    <div class="step consequence hidden" data-label="Consequence">
+                        <p>Victims (e.g., domestic violence survivors) can be labeled the nuisance and evicted, discouraging future calls for help and making neighborhoods less safe.</p>
+                    </div>
+                    <div class="controls">
+                        <button class="reveal-btn">Reveal Solution</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>Jaywalking Laws</h3>
+                    <div class="step" data-label="Problem">
+                        <p>Reduce pedestrian crashes.</p>
+                    </div>
+                    <div class="step solution hidden" data-label="Solution">
+                        <p>Ticket crossings outside marked crosswalks; raise fines to deter risky behavior.</p>
+                    </div>
+                    <div class="step consequence hidden" data-label="Consequence">
+                        <p>Criminalizes normal responses to car-centric street design; imposes high fines on people who walk and can lead to extreme prosecutions when safe crossings are impractically far away.</p>
+                    </div>
+                    <div class="controls">
+                        <button class="reveal-btn">Reveal Solution</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>Fines for Minor Infractions</h3>
+                    <div class="step" data-label="Problem">
+                        <p>Encourage compliance with local rules (traffic, parking, small code violations).</p>
+                    </div>
+                    <div class="step solution hidden" data-label="Solution">
+                        <p>Use fines, fees, and court costs; suspend licenses or escalate penalties for nonpayment.</p>
+                    </div>
+                    <div class="step consequence hidden" data-label="Consequence">
+                        <p>Costs snowball into debt, license loss, job loss, and even jail—effectively penalizing poverty rather than deterring harm.</p>
+                    </div>
+                    <div class="controls">
+                        <button class="reveal-btn">Reveal Solution</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="source-voxdev" class="card-group">
+                <div class="card">
+                    <h3>South Asia’s Vulture Collapse</h3>
+                    <div class="step" data-label="Problem">
+                        <p>Farmers in South Asia needed affordable pain relief for working livestock.</p>
+                    </div>
+                    <div class="step solution hidden" data-label="Solution">
+                        <p>Widespread veterinary use of diclofenac: effective, cheap, and great for sore bovines—so routine that residues were common in carcasses left for scavengers.</p>
+                    </div>
+                    <div class="step consequence hidden" data-label="Consequence">
+                        <p>Vultures ate those carcasses, suffered kidney failure, and crashed by ~95%. With vultures gone, dog populations swelled around rotting carrion, driving more rabies risk.</p>
+                    </div>
+                    <div class="controls">
+                        <button class="reveal-btn">Reveal Solution</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>Kingpin Decapitation Strategy</h3>
+                    <div class="step" data-label="Problem">
+                        <p>Drug-cartel violence in Latin America, with governments under pressure to show decisive progress.</p>
+                    </div>
+                    <div class="step solution hidden" data-label="Solution">
+                        <p>“Decapitation” strategies: target kingpins for arrest or neutralisation, plus high-visibility crackdowns to disrupt trafficking routes. Looks tough, polls great.</p>
+                    </div>
+                    <div class="step consequence hidden" data-label="Consequence">
+                        <p>Remove a boss and you invite splintering and turf wars. Evidence from Mexico links kingpin targeting to cartel fragmentation and sharply higher homicide rates—cut off the head, grow three.</p>
+                    </div>
+                    <div class="controls">
+                        <button class="reveal-btn">Reveal Solution</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>School Cash Transfers (Morocco)</h3>
+                    <div class="step" data-label="Problem">
+                        <p>Morocco wanted to cut primary-school dropout and boost enrolment.</p>
+                    </div>
+                    <div class="step solution hidden" data-label="Solution">
+                        <p>Scale up a conditional cash transfer (Tayssir), paying families if children enrol and attend. It worked: dropout fell by about 1.3 percentage points.</p>
+                    </div>
+                    <div class="step consequence hidden" data-label="Consequence">
+                        <p>Supply didn’t scale with demand. Average class size rose by 3.6 students and test scores fell. Schooling went up; learning went down—at least until resources caught up.</p>
+                    </div>
+                    <div class="controls">
+                        <button class="reveal-btn">Reveal Solution</button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // --- NEW, SIMPLER LOGIC ---
+
+        // Function to reset a single card to its "closed" state
+        function resetCard(card) {
+            if (!card) return;
+            card.querySelector('.solution').classList.add('hidden');
+            card.querySelector('.consequence').classList.add('hidden');
+            card.querySelector('.reveal-btn').textContent = 'Reveal Solution';
+            card.classList.remove('complete');
+        }
+
+        // A single variable to track the currently open card
+        let currentlyOpenCard = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- 1. Card Reveal Logic ---
+            const allButtons = document.querySelectorAll('.reveal-btn');
+            
+            allButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const clickedCard = btn.closest('.card');
+                    const solution = clickedCard.querySelector('.solution');
+                    const consequence = clickedCard.querySelector('.consequence');
+                    
+                    const isClosed = solution.classList.contains('hidden');
+
+                    if (isClosed) {
+                        // This card is closed, and the user wants to open it.
+                        
+                        // 1. Close the *previously* open card (if one exists and it's not this one)
+                        if (currentlyOpenCard && currentlyOpenCard !== clickedCard) {
+                            resetCard(currentlyOpenCard);
+                        }
+                        
+                        // 2. Open *this* card to the Solution state
+                        solution.classList.remove('hidden');
+                        btn.textContent = 'Reveal Consequence';
+                        
+                        // 3. Set this card as the new "currentlyOpenCard"
+                        currentlyOpenCard = clickedCard;
+                        
+                    } else {
+                        // This card is *already* open. User is advancing or closing it.
+                        if (consequence.classList.contains('hidden')) {
+                            // It's at Solution state -> Advance to Consequence state
+                            consequence.classList.remove('hidden');
+                            btn.textContent = 'Reset Example';
+                            clickedCard.classList.add('complete');
+                            // currentlyOpenCard remains this card
+                        } else {
+                            // It's at Consequence state -> Close/Reset this card
+                            resetCard(clickedCard);
+                            // There is no open card now
+                            currentlyOpenCard = null;
+                        }
+                    }
+                });
+            });
+
+            // --- 2. Tab-Switching Logic ---
+            const tabs = document.querySelectorAll('.nav-tab');
+            const groups = document.querySelectorAll('.card-group');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const targetId = tab.getAttribute('data-target');
+
+                    // Don't do anything if the tab is already active
+                    if (tab.classList.contains('active')) {
+                        return;
+                    }
+
+                    // Reset the "open card" tracker
+                    currentlyOpenCard = null;
+
+                    // Remove active state from all tabs and groups
+                    tabs.forEach(t => t.classList.remove('active'));
+                    groups.forEach(g => g.classList.remove('active'));
+
+                    // Add active state to the clicked tab
+                    tab.classList.add('active');
+
+                    // Show the target group and reset all its cards
+                    const targetGroup = document.getElementById(targetId);
+                    targetGroup.classList.add('active');
+                    targetGroup.querySelectorAll('.card').forEach(card => resetCard(card));
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
