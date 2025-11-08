@@ -25,6 +25,7 @@
       --otf-pad: 16px;
       --otf-gap: 14px;
       --otf-maxw: 1060px;
+      --otf-scrollpad: 90px; /* anchor offset for sticky header */
     }
     @media (prefers-color-scheme: light) {
       :root {
@@ -49,7 +50,13 @@
       font: 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji","Segoe UI Emoji";
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+      scroll-behavior: smooth;
+      /* Global offset so anchored sections clear the sticky header */
+      scroll-padding-top: var(--otf-scrollpad);
     }
+
+    /* Ensure each section also reserves space when targeted */
+    section[id] { scroll-margin-top: var(--otf-scrollpad); }
 
     /* Layout */
     .otf-shell {
@@ -102,6 +109,7 @@
       box-shadow: var(--otf-shadow);
       transition: transform .12s ease, background .2s ease, border-color .2s ease;
       cursor: pointer;
+      white-space: nowrap;
     }
     .otf-chip:hover { transform: translateY(-1px) }
     .otf-chip:active { transform: translateY(0) }
@@ -264,6 +272,35 @@
     /* Links */
     a { color: var(--otf-brand) }
     .otf-src a { word-break: break-word }
+
+    /* ---------- Mobile optimizations ---------- */
+    @media (max-width: 600px) {
+      :root { --otf-scrollpad: 70px; } /* slightly smaller offset on phones */
+
+      .otf-head-inner {
+        grid-template-columns: 1fr auto;
+        padding: 10px 14px;
+      }
+      .otf-title { font-size: 20px; }
+      .otf-sub { display: none; } /* free vertical space */
+
+      /* Turn section chips into a horizontal, swipeable bar */
+      nav.otf-nav {
+        overflow-x: auto;
+        white-space: nowrap;
+        padding-bottom: 6px;
+        gap: 6px;
+      }
+      nav.otf-nav a {
+        display: inline-block;
+        padding: 6px 10px;
+        font-weight: 700;
+      }
+
+      /* Slightly tighter cards and hero on phones */
+      .otf-hero-inner { padding: 14px; }
+      .otf-card { padding: 14px; }
+    }
   </style>
 </head>
 <body>
@@ -452,7 +489,7 @@
 
       document.getElementById('otf-year').textContent = new Date().getFullYear();
 
-      // Smooth scroll for header anchors (optional nicety)
+      // Smooth anchor scroll is handled by CSS; keep JS guard for older browsers
       document.querySelectorAll('nav.otf-nav a, .otf-actions a').forEach(a => {
         a.addEventListener('click', (e) => {
           const hash = a.getAttribute('href');
