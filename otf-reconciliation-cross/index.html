@@ -1,451 +1,527 @@
-<!doctype html>
+<!DOCTYPE html>
 
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="description" content="An on-the-fly single page site exploring reconciliation and the cross through restorative justice." />
-  <meta name="theme-color" content="#0f172a" />
-  <title>Reconciliation & the Cross — Restorative Justice (otf)</title>
-  <style>
-    :root{
-      --otf-bg:#0b1020;
-      --otf-panel:#111833;
-      --otf-ink:#e6ecff;
-      --otf-muted:#a7b0cc;
-      --otf-brand:#8bb9ff;
-      --otf-accent:#c0ffe1;
-      --otf-border:#26325b;
-      --otf-chip:#1a2347;
-      --otf-good:#7FFFD4;
-      --otf-bad:#FF6B6B;
-      --otf-shadow:0 8px 24px rgba(0,0,0,.35);
-      --otf-radius:14px;
-      --otf-radius-sm:10px;
-      --otf-maxw:1060px;
-      --otf-scrollpad:120px; /* increased for mobile header */
-    }
-    @media (prefers-color-scheme:light){
-      :root{
-        --otf-bg:#f8fafc;
-        --otf-panel:#ffffff;
-        --otf-ink:#0b1020;
-        --otf-muted:#465169;
-        --otf-brand:#2153ff;
-        --otf-accent:#068466;
-        --otf-border:#e6eaf5;
-        --otf-chip:#eef3ff;
-        --otf-shadow:0 10px 30px rgba(0,0,0,.08);
-      }
-    }
-    *{box-sizing:border-box}
-    html,body{
-      margin:0;
-      background:
-        radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
-        radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
-        var(--otf-bg);
-      color:var(--otf-ink);
-      font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,"Helvetica Neue",Arial,"Apple Color Emoji","Segoe UI Emoji";
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-      scroll-behavior:smooth;
-      scroll-padding-top:var(--otf-scrollpad);
-    }
-    section[id]{scroll-margin-top:var(--otf-scrollpad)}
-    header.otf-head{
-      position:sticky;top:0;z-index:30;
-      backdrop-filter:saturate(1.1) blur(8px);
-      background:color-mix(in oklab,var(--otf-bg) 85%, transparent);
-      border-bottom:1px solid var(--otf-border);
-    }
-    .otf-head-inner{
-      max-width:var(--otf-maxw);
-      margin:0 auto;
-      padding:12px 14px;
-    }
-    .otf-title-row{
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:12px;
-      margin-bottom:10px;
-    }
-    .otf-title-content{
-      flex:1;
-      min-width:0;
-    }
-    .otf-title{
-      margin:0; font-weight:800; letter-spacing:-.02em;
-      font-size:clamp(18px,4vw,26px); line-height:1.2;
-    }
-    .otf-sub{
-      color:var(--otf-muted); 
-      font-size:clamp(12px,2.5vw,13px); 
-      margin-top:4px;
-      line-height:1.4;
-    }
-    .otf-theme-mobile{
-      flex-shrink:0;
-      border:1px solid var(--otf-border); 
-      background:var(--otf-chip); 
-      color:var(--otf-ink);
-      border-radius:50%; 
-      width:44px;
-      height:44px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:20px;
-      cursor:pointer;
-      -webkit-tap-highlight-color:transparent;
-    }
-    .otf-controls{
-      display:grid;
-      gap:10px;
-      grid-template-columns:1fr;
-    }
-    .otf-selectwrap{
-      display:flex; 
-      align-items:center; 
-      gap:6px;
-      background:var(--otf-panel);
-      border:1px solid var(--otf-border);
-      border-radius:12px;
-      padding:0 14px;
-      box-shadow:var(--otf-shadow);
-      min-height:48px;
-      -webkit-tap-highlight-color:transparent;
-    }
-    .otf-selectwrap label{
-      font-weight:700; 
-      font-size:13px; 
-      color:var(--otf-muted); 
-      white-space:nowrap;
-      display:none;
-    }
-    select.otf-select{
-      appearance:none; -webkit-appearance:none; -moz-appearance:none;
-      background:transparent; 
-      border:none; 
-      color:var(--otf-ink);
-      font-weight:600; 
-      font-size:15px;
-      padding:12px 0;
-      width:100%;
-      outline:none;
-      -webkit-tap-highlight-color:transparent;
-    }
-    .otf-shell{max-width:var(--otf-maxw); margin:16px auto 80px; padding:0 14px}
-    .otf-hero,.otf-card{
-      background:var(--otf-panel); border:1px solid var(--otf-border);
-      border-radius:var(--otf-radius); box-shadow:var(--otf-shadow);
-      padding:clamp(16px,4vw,20px);
-    }
-    .otf-hero{margin-top:12px}
-    h2{margin:.2em 0 .6em; font-size:clamp(20px,4.5vw,22px); line-height:1.3}
-    h3{margin:0 0 .7em; font-size:clamp(18px,4vw,20px); line-height:1.3}
-    .otf-grid{display:grid; grid-template-columns:1fr; gap:16px; margin-top:16px}
-    .otf-list{list-style:none; margin:0; padding:0; display:grid; gap:10px}
-    .otf-list li{
-      background:color-mix(in oklab,var(--otf-chip) 65%, transparent); 
-      border:1px solid var(--otf-border); 
-      border-radius:10px; 
-      padding:12px 14px;
-      line-height:1.5;
-    }
-    .otf-evidence{display:grid; gap:12px; grid-template-columns:1fr}
-    .otf-verse{
-      background:linear-gradient(180deg,color-mix(in oklab,var(--otf-chip) 65%, transparent), var(--otf-panel)); 
-      border:1px solid var(--otf-border); 
-      border-radius:10px; 
-      padding:14px;
-    }
-    .otf-ref{font-weight:800; font-size:15px; margin-bottom:6px}
-    .otf-note{color:var(--otf-muted); line-height:1.5}
-    .otf-timeline{position:relative; display:grid; gap:14px; padding-left:8px}
-    .otf-timeline::before{
-      content:""; 
-      position:absolute; 
-      left:10px; 
-      top:6px; 
-      bottom:6px; 
-      width:2px; 
-      background:var(--otf-border)
-    }
-    .otf-step{position:relative; padding-left:32px; line-height:1.5}
-    .otf-step::before{
-      content:""; 
-      position:absolute; 
-      left:4px; 
-      top:.35em; 
-      width:14px; 
-      height:14px; 
-      border-radius:50%; 
-      background:var(--otf-brand); 
-      border:2px solid var(--otf-panel)
-    }
-    .otf-bad{border-left:4px solid var(--otf-bad); padding-left:12px}
-    .otf-good{border-left:4px solid var(--otf-good); padding-left:12px}
-    footer.otf-foot{
-      max-width:var(--otf-maxw); 
-      margin:26px auto 0; 
-      padding:0 14px 60px; 
-      color:var(--otf-muted);
-      font-size:14px;
-      line-height:1.5;
-    }
-    a{color:var(--otf-brand)}
-    .otf-skip{position:absolute; left:-9999px; top:-9999px}
-    .otf-skip:focus{
-      left:8px; 
-      top:8px; 
-      background:var(--otf-brand); 
-      color:#001; 
-      padding:8px 12px; 
-      border-radius:8px
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reconciliation & The Cross</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
 ```
-/* Tablet and up */
-@media (min-width:640px){
-  :root{--otf-scrollpad:80px}
-  .otf-controls{
-    grid-template-columns:1fr 1fr;
-  }
-  .otf-selectwrap label{
-    display:block;
-  }
-  select.otf-select{
-    padding-right:20px;
-  }
-  .otf-sub{font-size:13px}
-}
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        line-height: 1.6;
+        color: #2c3e50;
+        background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
+        min-height: 100vh;
+        padding-bottom: 2rem;
+    }
 
-@media (min-width:860px){
-  .otf-grid{grid-template-columns:1.4fr .9fr}
-  .otf-evidence{grid-template-columns:1fr 1fr}
-  .otf-title-row{
-    align-items:center;
-  }
-  .otf-controls{
-    grid-template-columns:repeat(3, 1fr);
-  }
-}
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 1rem;
+    }
+
+    header {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+        color: #1e40af;
+        font-size: 1.75rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+        color: #718096;
+        font-size: 0.95rem;
+        font-style: italic;
+    }
+
+    .main-answer {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        border-left: 4px solid #1e40af;
+    }
+
+    .main-answer h2 {
+        color: #1e40af;
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+    }
+
+    .main-answer p {
+        font-size: 1.05rem;
+        line-height: 1.7;
+    }
+
+    .section {
+        background: white;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+
+    .section-header {
+        padding: 1.25rem 1.5rem;
+        background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
+        color: white;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .section-header:active {
+        opacity: 0.9;
+    }
+
+    .section-header h2 {
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+
+    .section-icon {
+        font-size: 1.5rem;
+        transition: transform 0.3s ease;
+    }
+
+    .section.active .section-icon {
+        transform: rotate(180deg);
+    }
+
+    .section-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease;
+    }
+
+    .section.active .section-content {
+        max-height: 5000px;
+    }
+
+    .section-inner {
+        padding: 1.5rem;
+    }
+
+    h3 {
+        color: #1e40af;
+        font-size: 1.15rem;
+        margin: 1.5rem 0 0.75rem 0;
+    }
+
+    h3:first-child {
+        margin-top: 0;
+    }
+
+    .concept-list, .scripture-list {
+        list-style: none;
+    }
+
+    .concept-item, .scripture-item {
+        background: #f7fafc;
+        border-left: 3px solid #1e40af;
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+        border-radius: 4px;
+    }
+
+    .concept-item strong, .scripture-item strong {
+        color: #1e40af;
+        display: block;
+        margin-bottom: 0.25rem;
+    }
+
+    .scripture-ref {
+        color: #1e40af;
+        text-decoration: none;
+        font-weight: 600;
+        border-bottom: 2px dotted #1e40af;
+        cursor: pointer;
+        padding: 0 2px;
+    }
+
+    .scripture-ref:hover {
+        background: #edf2f7;
+        border-bottom-style: solid;
+    }
+
+    .timeline {
+        border-left: 3px solid #1e40af;
+        padding-left: 1.5rem;
+        margin-left: 0.5rem;
+    }
+
+    .timeline-item {
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -1.75rem;
+        top: 0.25rem;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #1e40af;
+        border: 3px solid white;
+        box-shadow: 0 0 0 2px #1e40af;
+    }
+
+    .timeline-item strong {
+        color: #1e40af;
+        display: block;
+        margin-bottom: 0.25rem;
+    }
+
+    .glossary-grid {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .glossary-term {
+        background: #f7fafc;
+        padding: 1rem;
+        border-radius: 6px;
+        border-left: 3px solid #1e40af;
+    }
+
+    .glossary-term strong {
+        color: #1e40af;
+        display: block;
+        margin-bottom: 0.25rem;
+        font-size: 1.05rem;
+    }
+
+    .critique-item {
+        background: #fff5f5;
+        border-left: 3px solid #e53e3e;
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+        border-radius: 4px;
+    }
+
+    .source {
+        background: #edf2f7;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-top: 1.5rem;
+        font-size: 0.9rem;
+        color: #4a5568;
+    }
+
+    .source strong {
+        color: #2d3748;
+    }
+
+    .back-to-top {
+        position: fixed;
+        bottom: 2rem;
+        right: 1rem;
+        background: #1e40af;
+        color: white;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .back-to-top.visible {
+        opacity: 1;
+    }
+
+    .back-to-top:active {
+        transform: scale(0.95);
+    }
+
+    @media (max-width: 480px) {
+        h1 {
+            font-size: 1.5rem;
+        }
+        
+        .section-header h2 {
+            font-size: 1.1rem;
+        }
+        
+        .container {
+            padding: 0.75rem;
+        }
+        
+        header {
+            padding: 1.5rem 1rem;
+        }
+    }
+</style>
 ```
 
-  </style>
 </head>
 <body>
-  <a class="otf-skip" href="#otf-main">Skip to content</a>
-
-  <header class="otf-head" role="banner">
-    <div class="otf-head-inner">
-      <div class="otf-title-row">
-        <div class="otf-title-content">
-          <h1 class="otf-title">Reconciliation &amp; the Cross</h1>
-          <div class="otf-sub">A restorative-justice reading centered on God's covenant faithfulness</div>
-        </div>
-        <button id="otf-theme-toggle" class="otf-theme-mobile" aria-pressed="false" aria-label="Toggle theme">🌗</button>
-      </div>
-      <div class="otf-controls">
-        <div class="otf-selectwrap">
-          <label for="otf-section">Section</label>
-          <select id="otf-section" class="otf-select" aria-label="Jump to section">
-            <option value="">📑 Jump to section...</option>
-            <option value="#otf-main-answer">Main Answer</option>
-            <option value="#otf-enhanced">Enhanced View</option>
-            <option value="#otf-concepts">Concepts</option>
-            <option value="#otf-evidence">Evidence</option>
-            <option value="#otf-timeline">Timeline</option>
-            <option value="#otf-critiques">Critiques</option>
-            <option value="#otf-glossary">Glossary</option>
-            <option value="#otf-source">Source</option>
-          </select>
-        </div>
-        <div class="otf-selectwrap">
-          <label for="otf-scripture">Scriptures</label>
-          <select id="otf-scripture" class="otf-select" aria-label="Jump to scripture">
-            <option value="">📖 Key scriptures...</option>
-            <option value="#otf-verse-mic6-8">Micah 6:8</option>
-            <option value="#otf-verse-hos6-6">Hosea 6:6</option>
-            <option value="#otf-verse-ps103">Psalm 103:8–12</option>
-            <option value="#otf-verse-isa1-17-18">Isaiah 1:17–18</option>
-            <option value="#otf-verse-lk15">Luke 15</option>
-            <option value="#otf-verse-mt9-13-12-7">Matthew 9:13; 12:7</option>
-            <option value="#otf-verse-2co5-19">2 Corinthians 5:19</option>
-            <option value="#otf-verse-rom5-8">Romans 5:8</option>
-            <option value="#otf-verse-jn8-10-11">John 8:10–11</option>
-            <option value="#otf-verse-col1-20">Colossians 1:20</option>
-          </select>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <main id="otf-main" class="otf-shell" role="main">
-    <section class="otf-hero" id="otf-main-answer">
-      <h2>Justice that Restores, Mercy that Reconciles</h2>
-      <p><strong>Idol Killer</strong> emphasizes that Scripture repeatedly presents forgiveness and justice as restorative, not dependent on retribution. God's justice flows from covenant faithfulness—His consistent desire to restore <em>shalom</em>, not to balance moral accounts through punishment. The series highlights key passages where God forgives without demanding equivalent suffering, showing that divine justice is realized through mercy, truth, and transformation rather than transaction.</p>
-    </section>
+    <div class="container">
+        <header>
+            <h1>Reconciliation & The Cross</h1>
+            <p class="subtitle">Exploring God's Restorative Justice in Scripture</p>
+        </header>
 
 ```
-<div class="otf-grid" id="otf-enhanced">
-  <section class="otf-card">
-    <h3>Enhanced View — Key Scriptures for Restorative Justice</h3>
-    <ul class="otf-list">
-      <li>Biblical justice (<em>mishpat</em> and <em>tsedeqah</em>) involves putting things right, not exacting retribution.</li>
-      <li>The prophetic and Gospel traditions stress that God delights in mercy, not sacrifice.</li>
-      <li>Forgiveness in Scripture is relational and proactive—God initiates restoration even before repentance.</li>
-      <li>Idol Killer's use of Scripture aims to show that retribution misunderstands both God's character and purpose in judgment.</li>
-    </ul>
-  </section>
-  <aside class="otf-card">
-    <h3>Quick Notes</h3>
-    <p class="otf-muted">Use the two dropdowns above to navigate. The first jumps to sections; the second jumps directly to a specific passage within Evidence.</p>
-  </aside>
+    <div class="main-answer">
+        <h2>Core Thesis</h2>
+        <p>Scripture repeatedly presents forgiveness and justice as <strong>restorative</strong>, not dependent on retribution. God's justice flows from covenant faithfulness—His consistent desire to restore shalom, not to balance moral accounts through punishment. Key passages show that God forgives without demanding equivalent suffering, revealing that divine justice is realized through mercy, truth, and transformation rather than transaction.</p>
+    </div>
+
+    <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2>📖 Key Scriptures</h2>
+            <span class="section-icon">▼</span>
+        </div>
+        <div class="section-content">
+            <div class="section-inner">
+                <h3>Overview</h3>
+                <p>Biblical justice (Hebrew <em>mishpat</em> and <em>tsedeqah</em>) involves putting things right, not exacting retribution. The prophetic and Gospel traditions stress that God delights in mercy, not sacrifice. Forgiveness in Scripture is relational and proactive—God initiates restoration even before repentance.</p>
+
+                <h3>Primary Texts</h3>
+                <ul class="scripture-list">
+                    <li class="scripture-item">
+                        <strong>Micah 6:8</strong>
+                        God requires justice, mercy, and humility, not offerings or punishment.
+                    </li>
+                    <li class="scripture-item">
+                        <strong>Hosea 6:6</strong>
+                        "I desire mercy, not sacrifice." Forgiveness comes from steadfast love.
+                    </li>
+                    <li class="scripture-item">
+                        <strong>Psalm 103:8–12</strong>
+                        God is slow to anger, abounding in mercy, and removes sins freely.
+                    </li>
+                    <li class="scripture-item">
+                        <strong>Isaiah 1:17–18</strong>
+                        "Learn to do good… though your sins are scarlet, they shall be white as snow." Restoration replaces penalty.
+                    </li>
+                    <li class="scripture-item">
+                        <strong>Luke 15 (Prodigal Son)</strong>
+                        The father forgives and restores without punishment.
+                    </li>
+                    <li class="scripture-item">
+                        <strong>Matthew 9:13 / 12:7</strong>
+                        Jesus repeats Hosea's principle: mercy over sacrifice.
+                    </li>
+                    <li class="scripture-item">
+                        <strong>2 Corinthians 5:19</strong>
+                        "God was in Christ reconciling the world to Himself, not counting their trespasses."
+                    </li>
+                    <li class="scripture-item">
+                        <strong>Romans 5:8</strong>
+                        God's love is demonstrated while we were sinners, not after satisfaction.
+                    </li>
+                    <li class="scripture-item">
+                        <strong>John 8:10–11</strong>
+                        The woman caught in adultery: forgiveness offered before repentance or restitution.
+                    </li>
+                    <li class="scripture-item">
+                        <strong>Colossians 1:20</strong>
+                        Christ makes peace through the cross by reconciliation, not punishment.
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2>💡 Core Concepts</h2>
+            <span class="section-icon">▼</span>
+        </div>
+        <div class="section-content">
+            <div class="section-inner">
+                <ul class="concept-list">
+                    <li class="concept-item">
+                        <strong>Covenantal Justice</strong>
+                        Rooted in relationship and faithfulness, not penalty. God's justice maintains covenant bonds rather than extracting payment.
+                    </li>
+                    <li class="concept-item">
+                        <strong>Mercy Triumphs over Judgment</strong>
+                        James 2:13 expresses the moral essence of divine justice—mercy is not opposed to justice but fulfills it.
+                    </li>
+                    <li class="concept-item">
+                        <strong>Forgiveness as Power</strong>
+                        God's forgiveness transforms rather than excuses. It's an active force that heals and renews, not passive overlooking.
+                    </li>
+                    <li class="concept-item">
+                        <strong>Repentance as Healing</strong>
+                        The goal is restoration, not debt payment. Repentance is turning toward wholeness, not satisfying legal demands.
+                    </li>
+                    <li class="concept-item">
+                        <strong>Wrath as Consequence</strong>
+                        Often self-chosen alienation, not inflicted divine payback. God's "wrath" can be understood as the natural result of rejecting life.
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2>📜 Timeline</h2>
+            <span class="section-icon">▼</span>
+        </div>
+        <div class="section-content">
+            <div class="section-inner">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <strong>Prophets</strong>
+                        Call Israel back to restorative covenant justice, emphasizing God's desire for mercy over ritual sacrifice.
+                    </div>
+                    <div class="timeline-item">
+                        <strong>Jesus' Ministry</strong>
+                        Embodies God's mercy-based justice through healing, forgiveness, and table fellowship with sinners.
+                    </div>
+                    <div class="timeline-item">
+                        <strong>Pauline Theology</strong>
+                        Centers reconciliation and new creation, presenting the cross as God's act of peace-making.
+                    </div>
+                    <div class="timeline-item">
+                        <strong>Modern Re-evaluations</strong>
+                        Theologians rediscover justice as healing (Boyd, Myers, Wright, Idol Killer) rather than retribution.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2>⚠️ Critiques of Retributive Views</h2>
+            <span class="section-icon">▼</span>
+        </div>
+        <div class="section-content">
+            <div class="section-inner">
+                <div class="critique-item">
+                    <strong>Ignoring Mercy Texts:</strong> Retributive readings often overlook or reinterpret mercy-centered passages, subordinating them to legalistic frameworks.
+                </div>
+                <div class="critique-item">
+                    <strong>Narrow Justice Definition:</strong> Some PSA advocates narrowly apply "justice" to wrath alone, detaching it from mercy and restoration.
+                </div>
+                <div class="critique-item">
+                    <strong>Divine Split Personality:</strong> Idol Killer warns this creates an artificial tension—love vs. justice—contrary to Scripture's unified vision of God's character.
+                </div>
+                <div class="critique-item">
+                    <strong>Resolution Through Restoration:</strong> Restorative readings resolve this split, presenting judgment as purification and renewal rather than punishment.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2>📚 Glossary</h2>
+            <span class="section-icon">▼</span>
+        </div>
+        <div class="section-content">
+            <div class="section-inner">
+                <div class="glossary-grid">
+                    <div class="glossary-term">
+                        <strong>Mishpat</strong>
+                        God's restorative judgment in Hebrew thought—justice that makes things right.
+                    </div>
+                    <div class="glossary-term">
+                        <strong>Tsedeqah</strong>
+                        Righteousness that restores harmony and right relationships.
+                    </div>
+                    <div class="glossary-term">
+                        <strong>Shalom</strong>
+                        Wholeness and peace arising from right relationship with God and others.
+                    </div>
+                    <div class="glossary-term">
+                        <strong>Metanoia</strong>
+                        Repentance as a profound change of heart and direction, not mere regret.
+                    </div>
+                    <div class="glossary-term">
+                        <strong>Reconciliation</strong>
+                        The act of restoring relationship and peace with God through Christ.
+                    </div>
+                    <div class="glossary-term">
+                        <strong>Mercy</strong>
+                        Compassion that fulfills justice through love, not punishment.
+                    </div>
+                </div>
+
+                <div class="source">
+                    <strong>Source:</strong> Drawn from Idol Killer's Penal Substitutionary Atonement video series, especially Episode 1's analysis of mercy-centered justice, supported by biblical texts above and related theological discussions (e.g., Greg Boyd, J.D. Myers, N.T. Wright).
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<section class="otf-card" id="otf-concepts">
-  <h3>Concepts</h3>
-  <ol class="otf-list">
-    <li><strong>Covenantal Justice</strong> – Rooted in relationship and faithfulness, not penalty.</li>
-    <li><strong>Mercy Triumphs over Judgment</strong> – <em>James 2:13</em> expresses the moral essence of divine justice.</li>
-    <li><strong>Forgiveness as Power</strong> – God's forgiveness transforms rather than excuses.</li>
-    <li><strong>Repentance as Healing</strong> – The goal is restoration, not debt payment.</li>
-    <li><strong>Wrath as Consequence</strong> – Often self-chosen alienation, not inflicted divine payback.</li>
-  </ol>
-</section>
+<button class="back-to-top" onclick="scrollToTop()" id="backToTop">
+    ↑
+</button>
 
-<section class="otf-card" id="otf-evidence">
-  <h3>Evidence (Scripture Passages)</h3>
-  <div class="otf-evidence">
-    <article class="otf-verse" id="otf-verse-mic6-8">
-      <div class="otf-ref">Micah 6:8</div>
-      <div class="otf-note">God requires justice, mercy, and humility, not offerings or punishment.</div>
-    </article>
-    <article class="otf-verse" id="otf-verse-hos6-6">
-      <div class="otf-ref">Hosea 6:6</div>
-      <div class="otf-note">"I desire mercy, not sacrifice." Forgiveness comes from steadfast love.</div>
-    </article>
-    <article class="otf-verse" id="otf-verse-ps103">
-      <div class="otf-ref">Psalm 103:8–12</div>
-      <div class="otf-note">God is slow to anger, abounding in mercy, and removes sins freely.</div>
-    </article>
-    <article class="otf-verse" id="otf-verse-isa1-17-18">
-      <div class="otf-ref">Isaiah 1:17–18</div>
-      <div class="otf-note">"Learn to do good… though your sins are scarlet, they shall be white as snow." Restoration replaces penalty.</div>
-    </article>
-    <article class="otf-verse" id="otf-verse-lk15">
-      <div class="otf-ref">Luke 15</div>
-      <div class="otf-note">The father forgives and restores without punishment (Prodigal Son).</div>
-    </article>
-    <article class="otf-verse" id="otf-verse-mt9-13-12-7">
-      <div class="otf-ref">Matthew 9:13; 12:7</div>
-      <div class="otf-note">Jesus repeats Hosea's principle: mercy over sacrifice.</div>
-    </article>
-    <article class="otf-verse" id="otf-verse-2co5-19">
-      <div class="otf-ref">2 Corinthians 5:19</div>
-      <div class="otf-note">"God was in Christ reconciling the world to Himself, not counting their trespasses."</div>
-    </article>
-    <article class="otf-verse" id="otf-verse-rom5-8">
-      <div class="otf-ref">Romans 5:8</div>
-      <div class="otf-note">God's love is demonstrated while we were sinners, not after satisfaction.</div>
-    </article>
-    <article class="otf-verse" id="otf-verse-jn8-10-11">
-      <div class="otf-ref">John 8:10–11</div>
-      <div class="otf-note">The woman caught in adultery: forgiveness offered before repentance or restitution.</div>
-    </article>
-    <article class="otf-verse" id="otf-verse-col1-20">
-      <div class="otf-ref">Colossians 1:20</div>
-      <div class="otf-note">Christ makes peace through the cross by reconciliation, not punishment.</div>
-    </article>
-  </div>
-</section>
+<script>
+    function toggleSection(header) {
+        const section = header.parentElement;
+        const allSections = document.querySelectorAll('.section');
+        
+        allSections.forEach(s => {
+            if (s !== section && s.classList.contains('active')) {
+                s.classList.remove('active');
+            }
+        });
+        
+        section.classList.toggle('active');
+    }
 
-<section class="otf-card" id="otf-timeline">
-  <h3>Timeline</h3>
-  <div class="otf-timeline">
-    <div class="otf-step"><strong>Prophets:</strong> call Israel back to restorative covenant justice.</div>
-    <div class="otf-step"><strong>Jesus' ministry:</strong> embodies God's mercy-based justice.</div>
-    <div class="otf-step"><strong>Pauline theology:</strong> centers reconciliation and new creation.</div>
-    <div class="otf-step"><strong>Modern re-evaluations:</strong> rediscover justice as healing (Boyd, Myers, Wright, Idol Killer).</div>
-  </div>
-</section>
+    function scrollToTop() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }
 
-<section class="otf-card" id="otf-critiques">
-  <h3>Critiques</h3>
-  <ul class="otf-list">
-    <li class="otf-bad"><strong>Retributive readings</strong> ignore mercy texts or reinterpret them legally.</li>
-    <li class="otf-bad">Some PSA advocates narrowly apply "justice" to wrath, detaching it from mercy.</li>
-    <li class="otf-bad">Idol Killer warns this creates a <em>divine split personality</em>—love vs. justice—contrary to Scripture's unity of God's character.</li>
-    <li class="otf-good"><strong>Restorative readings</strong> resolve this split, presenting judgment as purification and renewal.</li>
-  </ul>
-</section>
+    window.addEventListener('scroll', () => {
+        const backToTop = document.getElementById('backToTop');
+        if (window.pageYOffset > 300) {
+            backToTop.classList.add('visible');
+        } else {
+            backToTop.classList.remove('visible');
+        }
+    });
 
-<section class="otf-card" id="otf-glossary">
-  <h3>Glossary</h3>
-  <div class="otf-list">
-    <div><strong>Mishpat</strong> — God's restorative judgment in Hebrew thought.</div>
-    <div><strong>Tsedeqah</strong> — Righteousness that restores harmony.</div>
-    <div><strong>Shalom</strong> — Wholeness and peace arising from right relationship.</div>
-    <div><strong>Metanoia</strong> — Repentance as a change of heart and direction.</div>
-    <div><strong>Reconciliation</strong> — The act of restoring relationship and peace with God.</div>
-    <div><strong>Mercy</strong> — Compassion that fulfills justice through love, not punishment.</div>
-  </div>
-</section>
-
-<section class="otf-card" id="otf-source">
-  <h3>Source</h3>
-  <p>Drawn from <strong>Idol Killer's Penal Substitutionary Atonement</strong> video series, especially Episode 1's analysis of mercy-centered justice, supported by the biblical texts above and related theological discussions (e.g., Greg Boyd, J.D. Myers, N.T. Wright).</p>
-</section>
+    // Open first section by default
+    document.addEventListener('DOMContentLoaded', () => {
+        const firstSection = document.querySelector('.section');
+        if (firstSection) {
+            firstSection.classList.add('active');
+        }
+    });
+</script>
 ```
-
-  </main>
-
-  <footer class="otf-foot" role="contentinfo">
-    <div>© <span id="otf-year"></span> Reconciliation &amp; the Cross — Restorative Justice. Built "on the fly" (<code>otf-*</code> classes &amp; ids).</div>
-  </footer>
-
-  <script>
-    (function(){
-      const themeBtn = document.getElementById('otf-theme-toggle');
-      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const KEY='otf-theme';
-      const saved = localStorage.getItem(KEY);
-      const isDark = saved ? saved==='dark' : prefersDark;
-      function apply(mode){
-        document.documentElement.style.colorScheme=mode;
-        localStorage.setItem(KEY,mode);
-        themeBtn.setAttribute('aria-pressed', mode==='dark'?'true':'false');
-      }
-      apply(isDark?'dark':'light');
-      themeBtn.addEventListener('click', ()=> {
-        const current=document.documentElement.style.colorScheme|| (isDark?'dark':'light');
-        apply(current==='dark'?'light':'dark');
-      });
-      document.getElementById('otf-year').textContent=new Date().getFullYear();
-
-      function jumpTo(hash){
-        if(!hash) return;
-        const el=document.querySelector(hash);
-        if(!el) return;
-        el.scrollIntoView({behavior:'smooth', block:'start'});
-        history.replaceState(null,'',hash);
-      }
-      const sectionSelect = document.getElementById('otf-section');
-      const scriptureSelect = document.getElementById('otf-scripture');
-      
-      sectionSelect.addEventListener('change', e=> {
-        jumpTo(e.target.value);
-        e.target.value = '';
-      });
-      scriptureSelect.addEventListener('change', e=> {
-        jumpTo(e.target.value);
-        e.target.value = '';
-      });
-    })();
-  </script>
 
 </body>
 </html>
