@@ -7,300 +7,121 @@
   <meta name="theme-color" content="#0f172a" />
   <title>Reconciliation & the Cross — Restorative Justice (otf)</title>
   <style>
-    :root {
-      --otf-bg: #0b1020;
-      --otf-panel: #111833;
-      --otf-ink: #e6ecff;
-      --otf-muted: #a7b0cc;
-      --otf-brand: #8bb9ff;
-      --otf-accent: #c0ffe1;
-      --otf-border: #26325b;
-      --otf-chip: #1a2347;
-      --otf-good: #7FFFD4;
-      --otf-warn: #FFD166;
-      --otf-bad: #FF6B6B;
-      --otf-shadow: 0 10px 30px rgba(0,0,0,0.35);
-      --otf-radius: 14px;
-      --otf-radius-sm: 10px;
-      --otf-pad: 16px;
-      --otf-gap: 14px;
-      --otf-maxw: 1060px;
-      --otf-scrollpad: 90px; /* anchor offset for sticky header */
+    :root{
+      --otf-bg:#0b1020;
+      --otf-panel:#111833;
+      --otf-ink:#e6ecff;
+      --otf-muted:#a7b0cc;
+      --otf-brand:#8bb9ff;
+      --otf-accent:#c0ffe1;
+      --otf-border:#26325b;
+      --otf-chip:#1a2347;
+      --otf-good:#7FFFD4;
+      --otf-bad:#FF6B6B;
+      --otf-shadow:0 8px 24px rgba(0,0,0,.35);
+      --otf-radius:14px;
+      --otf-radius-sm:10px;
+      --otf-maxw:1060px;
+      --otf-scrollpad:72px; /* anchor offset for sticky header */
     }
-    @media (prefers-color-scheme: light) {
-      :root {
-        --otf-bg: #f8fafc;
-        --otf-panel: #ffffff;
-        --otf-ink: #0b1020;
-        --otf-muted: #465169;
-        --otf-brand: #2153ff;
-        --otf-accent: #068466;
-        --otf-border: #e6eaf5;
-        --otf-chip: #eef3ff;
-        --otf-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    @media (prefers-color-scheme:light){
+      :root{
+        --otf-bg:#f8fafc;
+        --otf-panel:#ffffff;
+        --otf-ink:#0b1020;
+        --otf-muted:#465169;
+        --otf-brand:#2153ff;
+        --otf-accent:#068466;
+        --otf-border:#e6eaf5;
+        --otf-chip:#eef3ff;
+        --otf-shadow:0 10px 30px rgba(0,0,0,.08);
       }
     }
-    * { box-sizing: border-box }
-    html, body {
-      margin: 0;
-      background: radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
-                  radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
-                  var(--otf-bg);
-      color: var(--otf-ink);
-      font: 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji","Segoe UI Emoji";
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      scroll-behavior: smooth;
-      /* Global offset so anchored sections clear the sticky header */
-      scroll-padding-top: var(--otf-scrollpad);
+    *{box-sizing:border-box}
+    html,body{
+      margin:0;
+      background:
+        radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
+        radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
+        var(--otf-bg);
+      color:var(--otf-ink);
+      font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,"Helvetica Neue",Arial,"Apple Color Emoji","Segoe UI Emoji";
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      scroll-behavior:smooth;
+      scroll-padding-top:var(--otf-scrollpad);
     }
-
-    /* Ensure each section also reserves space when targeted */
-    section[id] { scroll-margin-top: var(--otf-scrollpad); }
-
-    /* Layout */
-    .otf-shell {
-      max-width: var(--otf-maxw);
-      margin: clamp(16px, 3vw, 28px) auto 80px;
-      padding: 0 clamp(14px, 2.4vw, 24px);
+    section[id]{scroll-margin-top:var(--otf-scrollpad)}
+    header.otf-head{
+      position:sticky;top:0;z-index:30;
+      backdrop-filter:saturate(1.1) blur(8px);
+      background:color-mix(in oklab,var(--otf-bg) 85%, transparent);
+      border-bottom:1px solid var(--otf-border);
     }
-    header.otf-head {
-      position: sticky; top: 0; z-index: 20;
-      backdrop-filter: saturate(1.2) blur(8px);
-      background: color-mix(in oklab, var(--otf-bg) 85%, transparent);
-      border-bottom: 1px solid var(--otf-border);
+    .otf-head-inner{
+      max-width:var(--otf-maxw);
+      margin:0 auto;
+      padding:10px 14px;
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:10px; align-items:center;
     }
-    .otf-head-inner {
-      max-width: var(--otf-maxw);
-      margin: 0 auto;
-      padding: 14px clamp(14px, 2.4vw, 24px);
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 10px;
-      align-items: center;
+    .otf-title{
+      margin:0; font-weight:800; letter-spacing:-.02em;
+      font-size:clamp(18px,2.8vw,26px); line-height:1.2;
     }
-    .otf-title {
-      font-weight: 800;
-      line-height: 1.15;
-      letter-spacing: -0.02em;
-      font-size: clamp(22px, 2.6vw, 36px);
-      margin: 0;
+    .otf-sub{color:var(--otf-muted); font-size:13px; margin-top:2px}
+    .otf-controls{
+      display:grid; gap:8px;
+      grid-auto-flow:column;
+      align-items:center;
     }
-    .otf-sub {
-      color: var(--otf-muted);
-      font-size: clamp(12px, 1.4vw, 14px);
-      margin-top: 4px;
+    .otf-selectwrap{
+      display:flex; align-items:center; gap:6px;
+      background:var(--otf-panel);
+      border:1px solid var(--otf-border);
+      border-radius:999px;
+      padding:6px 10px;
+      box-shadow:var(--otf-shadow);
+      min-width:0;
     }
-
-    /* Chips / buttons */
-    .otf-actions {
-      display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+    .otf-selectwrap label{font-weight:700; font-size:12px; color:var(--otf-muted); white-space:nowrap}
+    select.otf-select{
+      appearance:none; -webkit-appearance:none; -moz-appearance:none;
+      background:transparent; border:none; color:var(--otf-ink);
+      font-weight:700; padding-right:20px; min-width:140px; max-width:42vw;
+      outline:none;
     }
-    .otf-chip {
-      --padx: 14px;
-      display: inline-flex; align-items: center; gap: 8px;
-      background: var(--otf-chip);
-      color: var(--otf-ink);
-      border: 1px solid var(--otf-border);
-      padding: 8px var(--padx);
-      border-radius: 999px;
-      text-decoration: none;
-      font-weight: 600;
-      box-shadow: var(--otf-shadow);
-      transition: transform .12s ease, background .2s ease, border-color .2s ease;
-      cursor: pointer;
-      white-space: nowrap;
+    .otf-theme{border:1px solid var(--otf-border); background:var(--otf-chip); color:var(--otf-ink);
+      border-radius:999px; padding:6px 12px; font-weight:700; cursor:pointer}
+    .otf-shell{max-width:var(--otf-maxw); margin:16px auto 80px; padding:0 14px}
+    .otf-hero,.otf-card{
+      background:var(--otf-panel); border:1px solid var(--otf-border);
+      border-radius:var(--otf-radius); box-shadow:var(--otf-shadow);
+      padding:clamp(12px,2.4vw,20px);
     }
-    .otf-chip:hover { transform: translateY(-1px) }
-    .otf-chip:active { transform: translateY(0) }
-    .otf-chip--brand { background: color-mix(in oklab, var(--otf-brand) 18%, var(--otf-chip)); }
-    .otf-chip--accent { background: color-mix(in oklab, var(--otf-accent) 20%, var(--otf-chip)); }
-
-    /* Intro block */
-    .otf-hero {
-      margin-top: clamp(18px, 3vw, 28px);
-      background: linear-gradient(180deg, color-mix(in oklab, var(--otf-panel) 85%, transparent), var(--otf-panel));
-      border: 1px solid var(--otf-border);
-      border-radius: var(--otf-radius);
-      box-shadow: var(--otf-shadow);
-      overflow: clip;
-    }
-    .otf-hero-inner {
-      padding: clamp(16px, 3vw, 28px);
-      display: grid;
-      gap: 14px;
-    }
-    .otf-hero h2 {
-      margin: 0 0 6px;
-      font-size: clamp(18px, 2.1vw, 22px);
-      letter-spacing: -0.01em;
-    }
-    .otf-kicker {
-      color: var(--otf-muted);
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: .12em;
-      font-size: 12px;
-    }
-    .otf-lead {
-      font-size: clamp(16px, 1.9vw, 18px);
-    }
-
-    /* Grid sections */
-    .otf-grid {
-      margin-top: 18px;
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 16px;
-    }
-    @media (min-width: 860px) {
-      .otf-grid { grid-template-columns: 1.4fr .9fr; }
-    }
-
-    .otf-card {
-      background: var(--otf-panel);
-      border: 1px solid var(--otf-border);
-      border-radius: var(--otf-radius);
-      padding: clamp(14px, 2.5vw, 22px);
-      box-shadow: var(--otf-shadow);
-    }
-    .otf-card h3 {
-      margin: 0 0 10px;
-      font-size: clamp(16px, 2vw, 20px);
-      letter-spacing: -0.01em;
-    }
-    .otf-card p, .otf-card li { color: var(--otf-ink) }
-    .otf-muted { color: var(--otf-muted) }
-
-    /* Lists */
-    .otf-list {
-      display: grid; gap: 10px; padding: 0; margin: 0; list-style: none;
-    }
-    .otf-list li {
-      background: color-mix(in oklab, var(--otf-chip) 65%, transparent);
-      border: 1px solid var(--otf-border);
-      border-radius: var(--otf-radius-sm);
-      padding: 10px 12px;
-    }
-
-    /* Evidence cards */
-    .otf-evidence {
-      display: grid; gap: 12px;
-      grid-template-columns: 1fr;
-    }
-    @media (min-width: 700px) {
-      .otf-evidence { grid-template-columns: 1fr 1fr; }
-    }
-    .otf-verse {
-      background: linear-gradient(180deg, color-mix(in oklab, var(--otf-chip) 65%, transparent), var(--otf-panel));
-      border: 1px solid var(--otf-border);
-      border-radius: var(--otf-radius-sm);
-      padding: 12px;
-    }
-    .otf-verse .otf-ref {
-      font-weight: 800;
-      letter-spacing: .01em;
-    }
-    .otf-verse .otf-note { color: var(--otf-muted) }
-
-    /* Timeline */
-    .otf-timeline {
-      position: relative;
-      display: grid; gap: 14px;
-      padding-left: 8px;
-    }
-    .otf-timeline::before {
-      content: "";
-      position: absolute; left: 10px; top: 6px; bottom: 6px;
-      width: 2px; background: var(--otf-border);
-    }
-    .otf-step {
-      position: relative; padding-left: 32px;
-    }
-    .otf-step::before {
-      content: "";
-      position: absolute; left: 4px; top: .35em;
-      width: 14px; height: 14px; border-radius: 50%;
-      background: var(--otf-brand); border: 2px solid var(--otf-panel);
-      box-shadow: 0 0 0 4px color-mix(in oklab, var(--otf-brand) 18%, transparent);
-    }
-    .otf-step strong { font-weight: 800 }
-
-    /* Critique tags */
-    .otf-bad { border-left: 4px solid var(--otf-bad); padding-left: 10px; }
-    .otf-good { border-left: 4px solid var(--otf-good); padding-left: 10px; }
-
-    /* Footer */
-    footer.otf-foot {
-      margin: 26px auto 0;
-      max-width: var(--otf-maxw);
-      padding: 24px clamp(14px, 2.4vw, 24px) 60px;
-      color: var(--otf-muted);
-    }
-
-    /* Anchor nav */
-    nav.otf-nav {
-      display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;
-    }
-    nav.otf-nav a {
-      text-decoration: none;
-      color: var(--otf-ink);
-      border: 1px solid var(--otf-border);
-      background: var(--otf-chip);
-      border-radius: 999px;
-      padding: 6px 12px;
-      font-weight: 600;
-    }
-    nav.otf-nav a:hover { outline: 2px solid color-mix(in oklab, var(--otf-brand) 30%, transparent) }
-
-    /* Small helpers */
-    .otf-kv {
-      display: grid; grid-template-columns: 1fr; gap: 8px;
-    }
-    .otf-kv div { display: flex; gap: 8px; align-items: baseline }
-    .otf-term { min-width: 110px; font-weight: 800; color: var(--otf-ink) }
-    .otf-def { color: var(--otf-ink) }
-
-    @media (min-width: 560px) {
-      .otf-kv { grid-template-columns: 1fr 1fr; }
-    }
-
-    /* Skip link */
-    .otf-skip { position: absolute; left: -9999px; top: -9999px }
-    .otf-skip:focus { left: 8px; top: 8px; background: var(--otf-brand); color: #001; padding: 8px 12px; border-radius: 8px }
-
-    /* Links */
-    a { color: var(--otf-brand) }
-    .otf-src a { word-break: break-word }
-
-    /* ---------- Mobile optimizations ---------- */
-    @media (max-width: 600px) {
-      :root { --otf-scrollpad: 70px; } /* slightly smaller offset on phones */
-
-      .otf-head-inner {
-        grid-template-columns: 1fr auto;
-        padding: 10px 14px;
-      }
-      .otf-title { font-size: 20px; }
-      .otf-sub { display: none; } /* free vertical space */
-
-      /* Turn section chips into a horizontal, swipeable bar */
-      nav.otf-nav {
-        overflow-x: auto;
-        white-space: nowrap;
-        padding-bottom: 6px;
-        gap: 6px;
-      }
-      nav.otf-nav a {
-        display: inline-block;
-        padding: 6px 10px;
-        font-weight: 700;
-      }
-
-      /* Slightly tighter cards and hero on phones */
-      .otf-hero-inner { padding: 14px; }
-      .otf-card { padding: 14px; }
-    }
+    .otf-hero{margin-top:12px}
+    h2{margin:.2em 0 .4em; font-size:clamp(18px,2.1vw,22px)}
+    h3{margin:0 0 .6em; font-size:clamp(16px,2vw,20px)}
+    .otf-grid{display:grid; grid-template-columns:1fr; gap:16px; margin-top:16px}
+    @media (min-width:860px){.otf-grid{grid-template-columns:1.4fr .9fr}}
+    .otf-list{list-style:none; margin:0; padding:0; display:grid; gap:10px}
+    .otf-list li{background:color-mix(in oklab,var(--otf-chip) 65%, transparent); border:1px solid var(--otf-border); border-radius:10px; padding:10px 12px}
+    .otf-evidence{display:grid; gap:12px; grid-template-columns:1fr}
+    @media (min-width:700px){.otf-evidence{grid-template-columns:1fr 1fr}}
+    .otf-verse{background:linear-gradient(180deg,color-mix(in oklab,var(--otf-chip) 65%, transparent), var(--otf-panel)); border:1px solid var(--otf-border); border-radius:10px; padding:12px}
+    .otf-ref{font-weight:800}
+    .otf-note{color:var(--otf-muted)}
+    .otf-timeline{position:relative; display:grid; gap:12px; padding-left:8px}
+    .otf-timeline::before{content:""; position:absolute; left:10px; top:6px; bottom:6px; width:2px; background:var(--otf-border)}
+    .otf-step{position:relative; padding-left:32px}
+    .otf-step::before{content:""; position:absolute; left:4px; top:.35em; width:14px; height:14px; border-radius:50%; background:var(--otf-brand); border:2px solid var(--otf-panel)}
+    .otf-bad{border-left:4px solid var(--otf-bad); padding-left:10px}
+    .otf-good{border-left:4px solid var(--otf-good); padding-left:10px}
+    footer.otf-foot{max-width:var(--otf-maxw); margin:26px auto 0; padding:0 14px 60px; color:var(--otf-muted)}
+    a{color:var(--otf-brand)}
+    .otf-skip{position:absolute; left:-9999px; top:-9999px}
+    .otf-skip:focus{left:8px; top:8px; background:var(--otf-brand); color:#001; padding:8px 12px; border-radius:8px}
   </style>
 </head>
 <body>
@@ -311,35 +132,45 @@
       <div>
         <h1 class="otf-title">Reconciliation &amp; the Cross</h1>
         <div class="otf-sub">A restorative-justice reading centered on God’s covenant faithfulness</div>
-        <nav class="otf-nav" aria-label="Sections">
-          <a href="#otf-main-answer">Main Answer</a>
-          <a href="#otf-enhanced">Enhanced View</a>
-          <a href="#otf-concepts">Concepts</a>
-          <a href="#otf-evidence">Evidence</a>
-          <a href="#otf-timeline">Timeline</a>
-          <a href="#otf-critiques">Critiques</a>
-          <a href="#otf-glossary">Glossary</a>
-          <a href="#otf-source">Source</a>
-        </nav>
       </div>
-      <div class="otf-actions">
-        <button class="otf-chip otf-chip--brand" id="otf-theme-toggle" aria-pressed="false" title="Toggle theme">🌗 Theme</button>
-        <a class="otf-chip otf-chip--accent" href="#otf-evidence">📜 Key Scriptures</a>
+      <div class="otf-controls">
+        <div class="otf-selectwrap">
+          <label for="otf-section">Section</label>
+          <select id="otf-section" class="otf-select" aria-label="Jump to section">
+            <option value="#otf-main-answer">Main Answer</option>
+            <option value="#otf-enhanced">Enhanced View</option>
+            <option value="#otf-concepts">Concepts</option>
+            <option value="#otf-evidence">Evidence</option>
+            <option value="#otf-timeline">Timeline</option>
+            <option value="#otf-critiques">Critiques</option>
+            <option value="#otf-glossary">Glossary</option>
+            <option value="#otf-source">Source</option>
+          </select>
+        </div>
+        <div class="otf-selectwrap">
+          <label for="otf-scripture">Key Scriptures</label>
+          <select id="otf-scripture" class="otf-select" aria-label="Jump to scripture">
+            <option value="#otf-verse-mic6-8">Micah 6:8</option>
+            <option value="#otf-verse-hos6-6">Hosea 6:6</option>
+            <option value="#otf-verse-ps103">Psalm 103:8–12</option>
+            <option value="#otf-verse-isa1-17-18">Isaiah 1:17–18</option>
+            <option value="#otf-verse-lk15">Luke 15</option>
+            <option value="#otf-verse-mt9-13-12-7">Matthew 9:13; 12:7</option>
+            <option value="#otf-verse-2co5-19">2 Corinthians 5:19</option>
+            <option value="#otf-verse-rom5-8">Romans 5:8</option>
+            <option value="#otf-verse-jn8-10-11">John 8:10–11</option>
+            <option value="#otf-verse-col1-20">Colossians 1:20</option>
+          </select>
+        </div>
+        <button id="otf-theme-toggle" class="otf-theme" aria-pressed="false" title="Toggle theme">🌗 Theme</button>
       </div>
     </div>
   </header>
 
   <main id="otf-main" class="otf-shell" role="main">
     <section class="otf-hero" id="otf-main-answer">
-      <div class="otf-hero-inner">
-        <div class="otf-kicker">Main Answer</div>
-        <h2>Justice that Restores, Mercy that Reconciles</h2>
-        <p class="otf-lead">
-          <strong>Idol Killer</strong> emphasizes that Scripture repeatedly presents forgiveness and justice as restorative, not dependent on retribution.
-          God’s justice flows from covenant faithfulness—His consistent desire to restore <em>shalom</em>, not to balance moral accounts through punishment.
-          The series highlights key passages where God forgives without demanding equivalent suffering, showing that divine justice is realized through mercy, truth, and transformation rather than transaction.
-        </p>
-      </div>
+      <h2>Justice that Restores, Mercy that Reconciles</h2>
+      <p><strong>Idol Killer</strong> emphasizes that Scripture repeatedly presents forgiveness and justice as restorative, not dependent on retribution. God’s justice flows from covenant faithfulness—His consistent desire to restore <em>shalom</em>, not to balance moral accounts through punishment. The series highlights key passages where God forgives without demanding equivalent suffering, showing that divine justice is realized through mercy, truth, and transformation rather than transaction.</p>
     </section>
 
     <div class="otf-grid" id="otf-enhanced">
@@ -353,20 +184,13 @@
         </ul>
       </section>
       <aside class="otf-card">
-        <h3>Quick Jump</h3>
-        <p class="otf-muted">Navigate core material:</p>
-        <div class="otf-kv" style="margin-top:6px">
-          <div><span class="otf-term">Concepts</span><span class="otf-def"><a href="#otf-concepts">Five pillars</a></span></div>
-          <div><span class="otf-term">Evidence</span><span class="otf-def"><a href="#otf-evidence">Scripture set</a></span></div>
-          <div><span class="otf-term">Timeline</span><span class="otf-def"><a href="#otf-timeline">Story arc</a></span></div>
-          <div><span class="otf-term">Critiques</span><span class="otf-def"><a href="#otf-critiques">Common errors</a></span></div>
-          <div><span class="otf-term">Glossary</span><span class="otf-def"><a href="#otf-glossary">Key terms</a></span></div>
-        </div>
+        <h3>Quick Notes</h3>
+        <p class="otf-muted">Use the two dropdowns above to navigate. The first jumps to sections; the second jumps directly to a specific passage within Evidence.</p>
       </aside>
     </div>
 
-    <section class="otf-card" id="otf-concepts" aria-labelledby="otf-concepts-h">
-      <h3 id="otf-concepts-h">Concepts</h3>
+    <section class="otf-card" id="otf-concepts">
+      <h3>Concepts</h3>
       <ol class="otf-list">
         <li><strong>Covenantal Justice</strong> – Rooted in relationship and faithfulness, not penalty.</li>
         <li><strong>Mercy Triumphs over Judgment</strong> – <em>James 2:13</em> expresses the moral essence of divine justice.</li>
@@ -376,64 +200,64 @@
       </ol>
     </section>
 
-    <section class="otf-card" id="otf-evidence" aria-labelledby="otf-evidence-h">
-      <h3 id="otf-evidence-h">Evidence (Scripture Passages)</h3>
+    <section class="otf-card" id="otf-evidence">
+      <h3>Evidence (Scripture Passages)</h3>
       <div class="otf-evidence">
-        <article class="otf-verse">
+        <article class="otf-verse" id="otf-verse-mic6-8">
           <div class="otf-ref">Micah 6:8</div>
           <div class="otf-note">God requires justice, mercy, and humility, not offerings or punishment.</div>
         </article>
-        <article class="otf-verse">
+        <article class="otf-verse" id="otf-verse-hos6-6">
           <div class="otf-ref">Hosea 6:6</div>
           <div class="otf-note">“I desire mercy, not sacrifice.” Forgiveness comes from steadfast love.</div>
         </article>
-        <article class="otf-verse">
+        <article class="otf-verse" id="otf-verse-ps103">
           <div class="otf-ref">Psalm 103:8–12</div>
           <div class="otf-note">God is slow to anger, abounding in mercy, and removes sins freely.</div>
         </article>
-        <article class="otf-verse">
+        <article class="otf-verse" id="otf-verse-isa1-17-18">
           <div class="otf-ref">Isaiah 1:17–18</div>
           <div class="otf-note">“Learn to do good… though your sins are scarlet, they shall be white as snow.” Restoration replaces penalty.</div>
         </article>
-        <article class="otf-verse">
+        <article class="otf-verse" id="otf-verse-lk15">
           <div class="otf-ref">Luke 15</div>
           <div class="otf-note">The father forgives and restores without punishment (Prodigal Son).</div>
         </article>
-        <article class="otf-verse">
+        <article class="otf-verse" id="otf-verse-mt9-13-12-7">
           <div class="otf-ref">Matthew 9:13; 12:7</div>
           <div class="otf-note">Jesus repeats Hosea’s principle: mercy over sacrifice.</div>
         </article>
-        <article class="otf-verse">
+        <article class="otf-verse" id="otf-verse-2co5-19">
           <div class="otf-ref">2 Corinthians 5:19</div>
           <div class="otf-note">“God was in Christ reconciling the world to Himself, not counting their trespasses.”</div>
         </article>
-        <article class="otf-verse">
+        <article class="otf-verse" id="otf-verse-rom5-8">
           <div class="otf-ref">Romans 5:8</div>
           <div class="otf-note">God’s love is demonstrated while we were sinners, not after satisfaction.</div>
         </article>
-        <article class="otf-verse">
+        <article class="otf-verse" id="otf-verse-jn8-10-11">
           <div class="otf-ref">John 8:10–11</div>
           <div class="otf-note">The woman caught in adultery: forgiveness offered before repentance or restitution.</div>
         </article>
-        <article class="otf-verse">
+        <article class="otf-verse" id="otf-verse-col1-20">
           <div class="otf-ref">Colossians 1:20</div>
           <div class="otf-note">Christ makes peace through the cross by reconciliation, not punishment.</div>
         </article>
       </div>
     </section>
 
-    <section class="otf-card" id="otf-timeline" aria-labelledby="otf-timeline-h">
-      <h3 id="otf-timeline-h">Timeline</h3>
-      <div class="otf-timeline" role="list">
-        <div class="otf-step" role="listitem"><strong>Prophets:</strong> call Israel back to restorative covenant justice.</div>
-        <div class="otf-step" role="listitem"><strong>Jesus’ ministry:</strong> embodies God’s mercy-based justice.</div>
-        <div class="otf-step" role="listitem"><strong>Pauline theology:</strong> centers reconciliation and new creation.</div>
-        <div class="otf-step" role="listitem"><strong>Modern re-evaluations:</strong> rediscover justice as healing (Boyd, Myers, Wright, Idol Killer).</div>
+    <section class="otf-card" id="otf-timeline">
+      <h3>Timeline</h3>
+      <div class="otf-timeline">
+        <div class="otf-step"><strong>Prophets:</strong> call Israel back to restorative covenant justice.</div>
+        <div class="otf-step"><strong>Jesus’ ministry:</strong> embodies God’s mercy-based justice.</div>
+        <div class="otf-step"><strong>Pauline theology:</strong> centers reconciliation and new creation.</div>
+        <div class="otf-step"><strong>Modern re-evaluations:</strong> rediscover justice as healing (Boyd, Myers, Wright, Idol Killer).</div>
       </div>
     </section>
 
-    <section class="otf-card" id="otf-critiques" aria-labelledby="otf-critiques-h">
-      <h3 id="otf-critiques-h">Critiques</h3>
+    <section class="otf-card" id="otf-critiques">
+      <h3>Critiques</h3>
       <ul class="otf-list">
         <li class="otf-bad"><strong>Retributive readings</strong> ignore mercy texts or reinterpret them legally.</li>
         <li class="otf-bad">Some PSA advocates narrowly apply “justice” to wrath, detaching it from mercy.</li>
@@ -442,24 +266,21 @@
       </ul>
     </section>
 
-    <section class="otf-card" id="otf-glossary" aria-labelledby="otf-glossary-h">
-      <h3 id="otf-glossary-h">Glossary</h3>
-      <div class="otf-kv">
-        <div><span class="otf-term">Mishpat</span><span class="otf-def">God’s restorative judgment in Hebrew thought.</span></div>
-        <div><span class="otf-term">Tsedeqah</span><span class="otf-def">Righteousness that restores harmony.</span></div>
-        <div><span class="otf-term">Shalom</span><span class="otf-def">Wholeness and peace arising from right relationship.</span></div>
-        <div><span class="otf-term">Metanoia</span><span class="otf-def">Repentance as a change of heart and direction.</span></div>
-        <div><span class="otf-term">Reconciliation</span><span class="otf-def">The act of restoring relationship and peace with God.</span></div>
-        <div><span class="otf-term">Mercy</span><span class="otf-def">Compassion that fulfills justice through love, not punishment.</span></div>
+    <section class="otf-card" id="otf-glossary">
+      <h3>Glossary</h3>
+      <div class="otf-list">
+        <div><strong>Mishpat</strong> — God’s restorative judgment in Hebrew thought.</div>
+        <div><strong>Tsedeqah</strong> — Righteousness that restores harmony.</div>
+        <div><strong>Shalom</strong> — Wholeness and peace arising from right relationship.</div>
+        <div><strong>Metanoia</strong> — Repentance as a change of heart and direction.</div>
+        <div><strong>Reconciliation</strong> — The act of restoring relationship and peace with God.</div>
+        <div><strong>Mercy</strong> — Compassion that fulfills justice through love, not punishment.</div>
       </div>
     </section>
 
-    <section class="otf-card otf-src" id="otf-source" aria-labelledby="otf-source-h">
-      <h3 id="otf-source-h">Source</h3>
-      <p>
-        Drawn from <strong>Idol Killer’s Penal Substitutionary Atonement</strong> video series, especially Episode 1’s analysis of mercy-centered justice,
-        supported by the biblical texts above and related theological discussions (e.g., Greg Boyd, J.D. Myers, N.T. Wright).
-      </p>
+    <section class="otf-card" id="otf-source">
+      <h3>Source</h3>
+      <p>Drawn from <strong>Idol Killer’s Penal Substitutionary Atonement</strong> video series, especially Episode 1’s analysis of mercy-centered justice, supported by the biblical texts above and related theological discussions (e.g., Greg Boyd, J.D. Myers, N.T. Wright).</p>
     </section>
   </main>
 
@@ -468,41 +289,33 @@
   </footer>
 
   <script>
-    (function() {
-      const btn = document.getElementById('otf-theme-toggle');
+    (function(){
+      const themeBtn = document.getElementById('otf-theme-toggle');
       const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const STORAGE_KEY = 'otf-theme';
-      const saved = localStorage.getItem(STORAGE_KEY);
-      const isDark = saved ? saved === 'dark' : prefersDark;
-
-      function applyTheme(mode) {
-        document.documentElement.style.colorScheme = mode;
-        localStorage.setItem(STORAGE_KEY, mode);
-        btn.setAttribute('aria-pressed', mode === 'dark' ? 'true' : 'false');
+      const KEY='otf-theme';
+      const saved = localStorage.getItem(KEY);
+      const isDark = saved ? saved==='dark' : prefersDark;
+      function apply(mode){
+        document.documentElement.style.colorScheme=mode;
+        localStorage.setItem(KEY,mode);
+        themeBtn.setAttribute('aria-pressed', mode==='dark'?'true':'false');
       }
-      applyTheme(isDark ? 'dark' : 'light');
-
-      btn.addEventListener('click', () => {
-        const current = document.documentElement.style.colorScheme || (isDark ? 'dark' : 'light');
-        applyTheme(current === 'dark' ? 'light' : 'dark');
+      apply(isDark?'dark':'light');
+      themeBtn.addEventListener('click', ()=> {
+        const current=document.documentElement.style.colorScheme|| (isDark?'dark':'light');
+        apply(current==='dark'?'light':'dark');
       });
+      document.getElementById('otf-year').textContent=new Date().getFullYear();
 
-      document.getElementById('otf-year').textContent = new Date().getFullYear();
-
-      // Smooth anchor scroll is handled by CSS; keep JS guard for older browsers
-      document.querySelectorAll('nav.otf-nav a, .otf-actions a').forEach(a => {
-        a.addEventListener('click', (e) => {
-          const hash = a.getAttribute('href');
-          if (hash && hash.startsWith('#')) {
-            const el = document.querySelector(hash);
-            if (el) {
-              e.preventDefault();
-              el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              history.pushState(null, '', hash);
-            }
-          }
-        });
-      });
+      function jumpTo(hash){
+        if(!hash) return;
+        const el=document.querySelector(hash);
+        if(!el) return;
+        el.scrollIntoView({behavior:'smooth', block:'start'});
+        history.replaceState(null,'',hash);
+      }
+      document.getElementById('otf-section').addEventListener('change', e=> jumpTo(e.target.value));
+      document.getElementById('otf-scripture').addEventListener('change', e=> jumpTo(e.target.value));
     })();
   </script>
 </body>
