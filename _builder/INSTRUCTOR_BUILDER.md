@@ -1,8 +1,11 @@
 # Instructor Snapshot → Web Page Builder
 
+> How to fetch this file:
+> `Fetch https://raw.githubusercontent.com/ewallt/pocket-deploy/gh-pages/_builder/INSTRUCTOR_BUILDER.md`
+
 ## Purpose
-Defines how to convert a structured Instructor Snapshot (v6.5 export) into a deployable single-file HTML page.  
-All builds use the same layout, light/dark auto-theming, and accordion behavior as shown in the Example Web App below.
+Deterministic handoff for converting a structured **Instructor Snapshot (v6.5+/export)** into a deployable, single-file HTML page.  
+This document **does not modify the Instructor’s menus/options**; it only specifies how to build the HTML once a snapshot is provided.
 
 ---
 
@@ -15,15 +18,58 @@ Main Answer The Old Testament sacrificial system reveals God’s justice as rest
 
 ---
 
+
+---
+
 ## Step 3. Builder Rules
-- Keep the overall HTML structure, theme, and JavaScript behavior exactly as shown in the Example Web App.
-- Replace only the content sections with text from the new Snapshot input.
-- Maintain section order:  
-  Main Answer → Enhanced View → Concepts → Evidence → Timeline → Critiques → Glossary → Source.
-- Use light/dark auto-theming from the Example Web App.
-- Do not add libraries or modify CSS/JS structure.
-- Output a single self-contained `index.html` file.
+
+### Snapshot Contract (must match exactly)
+Sections and labels (in this order):
+1) Main Answer  
+2) Enhanced View — Overview  
+3) Concepts  
+4) Evidence  
+5) Timeline  
+6) Critiques  
+7) Glossary  
+8) Source
+
+Formatting guidelines:
+- Keep entries succinct and single-line where possible.
+- **Evidence**: `Reference — one-sentence note`.
+- **Timeline**: `Label — short clause`.
+- **Glossary**: `Term — one sentence`.
+
+### Transformation Rules
+- **Keep** the layout, light/dark auto-theming, and JS behavior exactly as shown in the Example Web App.
+- **Replace only content** inside the section bodies with the new Snapshot text. Preserve headings, accordion structure, IDs/ARIA, and classes.
+- Maintain section order exactly as the Snapshot Contract specifies.
+- Do **not** add external libraries, fonts, images, or remote assets.
+- Produce a single, self-contained `index.html` with inline CSS and minimal inline JS.
+
+### Output Requirements
+- Return the **full** `index.html` in one code block **with no commentary**.
+- Use the page title and any subtitle exactly as provided (or as shown in the Example Web App pattern).
+- Ensure accordions:
+  - Toggle via button
+  - Update `aria-expanded` correctly
+  - Only one open at a time
+  - First section may open by default (match example)
+- Preserve accessibility (focus states, roles/labels) from the Example Web App.
+
+### Links
 - Viewer link format:  
   `https://ewallt.github.io/pocket-deploy/<folder>/index.html`
 - Placeholder link format:  
   `https://github.com/ewallt/pocket-deploy/new/gh-pages?filename=<folder>/index.html`
+
+---
+
+## Handoff Protocol (what the user will provide at build time)
+- **Folder**: `is-<slug>`
+- **Title**: `<short page title>`
+- **Snapshot**: Text that exactly matches the Snapshot Contract above
+
+**Instruction to Builder** (ChatGPT):  
+“Use the fetched builder instructions. Keep the same layout/theme as the Example Web App. Replace the content with this Snapshot. Output a single `index.html` with no commentary.”
+
