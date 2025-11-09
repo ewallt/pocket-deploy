@@ -4,20 +4,50 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Restorative Justice & the Sacrificial System</title>
-  <meta name="theme-color" content="#0b1020" />
+  <meta name="theme-color" content="#0f172a" />
   <style>
+    /* New theme tokens (light/dark auto) from Debates example */
     :root{
-      --otf-bg:#0b1020;
-      --otf-panel:#111833;
-      --otf-ink:#e6ecff;
-      --otf-muted:#a7b0cc;
-      --otf-brand:#8bb9ff;
-      --otf-accent:#c0ffe1;
-      --otf-border:#26325b;
-      --otf-shadow:0 8px 24px rgba(0,0,0,.35);
+      --canvas:#0f172a;
+      --panel-bg:#ffffff;
+      --panel-border:rgba(15,23,42,.08);
+      --ink:#0f172a;
+      --ink-muted:rgba(15,23,42,.75);
+      --active-bg:rgba(37,99,235,.06);
+      --divider:rgba(148,163,184,.25);
+      /* Derived brand/accent to harmonize with Debates palette */
+      --brand:#2563eb;      /* cobalt-600 */
+      --accent:#60a5fa;     /* sky-400 */
+      --shadow:0 12px 40px rgba(15,23,42,.18);
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --canvas:#020617;
+        --panel-bg:#0f172a;
+        --panel-border:rgba(148,163,184,.12);
+        --ink:#e2e8f0;
+        --ink-muted:rgba(226,232,240,.75);
+        --active-bg:rgba(96,165,250,.12);
+        --divider:rgba(15,23,42,.35);
+        --brand:#60a5fa;   /* lighter brand in dark */
+        --accent:#93c5fd;
+        --shadow:0 16px 45px rgba(0,0,0,.35);
+      }
+    }
+
+    /* Map existing site tokens to new theme (no structural changes) */
+    :root{
+      --otf-bg:var(--canvas);
+      --otf-panel:var(--panel-bg);
+      --otf-ink:var(--ink);
+      --otf-muted:var(--ink-muted);
+      --otf-brand:var(--brand);
+      --otf-accent:var(--accent);
+      --otf-border:var(--panel-border);
+      --otf-shadow:var(--shadow);
       --otf-radius:14px;
       --otf-radius-sm:10px;
-      --otf-danger:#ff6b6b;
+      --otf-danger:#ef4444; /* consistent danger tone */
     }
 
     *{box-sizing:border-box;margin:0;padding:0}
@@ -26,10 +56,7 @@
       font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Helvetica,Arial,sans-serif;
       line-height:1.6;
       color:var(--otf-ink);
-      background:
-        radial-gradient(1100px 500px at 8% -6%, rgba(139,185,255,.18), transparent 60%),
-        radial-gradient(900px 420px at 96% 8%, rgba(192,255,225,.14), transparent 60%),
-        var(--otf-bg);
+      background:var(--otf-bg);
       min-height:100vh;
       -webkit-font-smoothing:antialiased;
       -moz-osx-font-smoothing:grayscale;
@@ -37,7 +64,7 @@
 
     .otf-container{max-width:900px;margin:0 auto;padding:1rem}
     header.otf-header{
-      background:linear-gradient(180deg, color-mix(in oklab,var(--otf-panel) 86%, transparent), var(--otf-panel));
+      background:var(--otf-panel);
       border:1px solid var(--otf-border);
       border-radius:var(--otf-radius);
       padding:2rem 1.25rem;
@@ -45,7 +72,7 @@
       box-shadow:var(--otf-shadow);
     }
     header.otf-header h1{
-      font-size:1.75rem;letter-spacing:-.0125em;margin-bottom:.4rem
+      font-size:1.75rem;letter-spacing:-.0125em;margin-bottom:.4rem;color:var(--otf-ink)
     }
     header.otf-header p{color:var(--otf-muted)}
 
@@ -64,13 +91,13 @@
     .otf-core h2{
       font-size:1.25rem;color:var(--otf-brand);margin-bottom:.75rem
     }
-    .otf-core p{font-size:1.05rem;line-height:1.75}
+    .otf-core p{font-size:1.05rem;line-height:1.75;color:var(--otf-ink)}
 
-    /* Accordion */
+    /* Accordion (unchanged behavior, colors themed) */
     .otf-section{margin-bottom:1rem;overflow:hidden}
     .otf-toggle{
       width:100%;
-      background:linear-gradient(135deg,#1a2a6b 0%,#0f172a 100%);
+      background:linear-gradient(135deg, color-mix(in oklab,var(--otf-bg) 85%, var(--active-bg)), var(--otf-bg));
       color:var(--otf-ink);
       border:none;
       text-align:left;
@@ -95,45 +122,61 @@
 
     h3.otf-sub{color:var(--otf-brand);font-size:1.05rem;margin:.2rem 0 .7rem}
 
-    /* Lists & items */
     .otf-list{list-style:none}
     .otf-item{
-      background:color-mix(in oklab,#1a2347 78%, transparent);
+      background:color-mix(in oklab,var(--otf-panel) 70%, var(--active-bg));
       border:1px solid var(--otf-border);
       border-left:3px solid var(--otf-brand);
       border-radius:var(--otf-radius-sm);
       padding:1rem;margin-bottom:.75rem;
+      color:var(--otf-ink);
     }
     .otf-item strong{color:var(--otf-brand);display:block;margin-bottom:.25rem}
 
     /* Timeline */
     .otf-timeline{border-left:3px solid var(--otf-brand);padding-left:1rem;margin-left:.5rem}
-    .otf-timeline .otf-step{position:relative;margin-bottom:1.15rem}
+    .otf-timeline .otf-step{position:relative;margin-bottom:1.15rem;color:var(--otf-ink)}
     .otf-timeline .otf-step::before{
       content:"";position:absolute;left:-1.6rem;top:.25rem;
       width:12px;height:12px;border-radius:50%;
       background:var(--otf-brand);border:3px solid var(--otf-panel);
-      box-shadow:0 0 0 2px var(--otf-brand);
+      box-shadow:0 0 0 2px color-mix(in oklab,var(--otf-brand) 85%, var(--otf-bg));
     }
     .otf-timeline .otf-step strong{color:var(--otf-brand);display:block;margin-bottom:.2rem}
 
     /* Critiques */
-    .otf-crit{border-left:3px solid var(--otf-danger);background:color-mix(in oklab,var(--otf-danger) 12%, var(--otf-panel));border:1px solid var(--otf-border);border-radius:8px;padding:1rem;margin-bottom:.75rem}
+    .otf-crit{
+      border-left:3px solid var(--otf-danger);
+      background:color-mix(in oklab,var(--otf-panel) 75%, rgba(239,68,68,.12));
+      border:1px solid var(--otf-border);
+      border-radius:8px;padding:1rem;margin-bottom:.75rem;color:var(--otf-ink)
+    }
 
     /* Glossary */
     .otf-grid{display:grid;gap:1rem}
-    .otf-term{border:1px solid var(--otf-border);border-left:3px solid var(--otf-brand);background:color-mix(in oklab,#1a2347 72%, transparent);border-radius:10px;padding:1rem}
+    .otf-term{
+      border:1px solid var(--otf-border);
+      border-left:3px solid var(--otf-brand);
+      background:color-mix(in oklab,var(--otf-panel) 78%, var(--active-bg));
+      border-radius:10px;padding:1rem;color:var(--otf-ink)
+    }
     .otf-term strong{color:var(--otf-brand);display:block;margin-bottom:.25rem}
 
     /* Source */
-    .otf-source{font-size:.95rem;color:var(--otf-muted);border:1px solid var(--otf-border);border-radius:10px;background:color-mix(in oklab,#1a2347 62%, transparent);padding:1rem;margin-top:.75rem}
+    .otf-source{
+      font-size:.95rem;color:var(--otf-muted);
+      border:1px solid var(--otf-border);
+      border-radius:10px;
+      background:color-mix(in oklab,var(--otf-panel) 72%, var(--active-bg));
+      padding:1rem;margin-top:.75rem
+    }
     .otf-source strong{color:var(--otf-ink)}
 
     /* Back to top */
     .otf-top{
       position:fixed;bottom:1.25rem;right:1rem;width:50px;height:50px;
       border-radius:50%;border:none;cursor:pointer;
-      background:var(--otf-brand);color:#001;font-weight:900;font-size:1.4rem;
+      background:var(--otf-brand);color:#fff;font-weight:900;font-size:1.4rem;
       display:flex;align-items:center;justify-content:center;
       box-shadow:var(--otf-shadow);
       opacity:0;visibility:hidden;transition:opacity .25s ease, visibility .25s ease, transform .1s ease;
@@ -294,13 +337,11 @@
     const sections = document.querySelectorAll('.otf-section');
     sections.forEach(section => {
       const btn = section.querySelector('.otf-toggle');
-      const content = section.querySelector('.otf-content');
       btn.addEventListener('click', () => {
         const isOpen = section.getAttribute('aria-expanded') === 'true';
         sections.forEach(s => {
           s.setAttribute('aria-expanded','false');
-          const b = s.querySelector('.otf-toggle');
-          b.setAttribute('aria-expanded','false');
+          s.querySelector('.otf-toggle').setAttribute('aria-expanded','false');
         });
         section.setAttribute('aria-expanded', String(!isOpen));
         btn.setAttribute('aria-expanded', String(!isOpen));
