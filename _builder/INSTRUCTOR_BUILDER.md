@@ -1,11 +1,17 @@
+
 # Instructor Snapshot → Web Page Builder
 
-> How to fetch this file:
+> **How to fetch this file:**
 > `Fetch https://raw.githubusercontent.com/ewallt/pocket-deploy/gh-pages/_builder/INSTRUCTOR_BUILDER.md`
 
 ## Purpose
-Deterministic handoff for converting a structured **Instructor Snapshot (v6.5+/export)** into a deployable, single-file HTML page.  
-This document **does not modify the Instructor’s menus/options**; it only specifies how to build the HTML once a snapshot is provided.
+
+Deterministic handoff for converting a structured **Instructor Snapshot (v6.5+)** into a deployable, single-file HTML page.
+This document does **not** modify how the Instructor behaves.
+Its purpose is only to describe how to:
+
+1. **Identify** the Snapshot when the user selects option **9**, and
+2. **Transform** that Snapshot into the fixed-template HTML web app.
 
 ---
 
@@ -18,58 +24,183 @@ Main Answer The Old Testament sacrificial system reveals God’s justice as rest
 
 ---
 
+# Step 3. Builder Rules
+
+## 3.1 Snapshot Identification (Option 9)
+
+When the user selects **Option 9 — Fetch Prompt** inside the Instructor:
+
+1. **Snapshot Source**
+   The Snapshot is extracted **from the Instructor’s most recent answer**, using only:
+
+   * **Main Answer** (the 2–4 paragraph answer), and
+   * **Enhanced View sections** (Overview → Source), exactly as written.
+
+2. **Snapshot Boundaries**
+   The Snapshot **must not** include:
+
+   * “Next Options” list
+   * Navigation items
+   * Menu structures
+   * Prompts (e.g., “Choose an option…”)
+   * Any interactive or meta text
+
+3. **Snapshot = Frozen content only**
+   The Snapshot is a *verbatim* capture of the current node’s content.
+   It is not regenerated, summarized, rearranged, or reinterpreted.
+
+4. **Title & Subtitle Sourcing**
+
+   * **Title** = The node’s subject/title used in the Instructor answer.
+   * **Subtitle** = Optional phrase provided by the user in the build handoff.
+     If the user does not supply a subtitle, omit the subtitle line in the header.
 
 ---
 
-## Step 3. Builder Rules
+## 3.2 Snapshot Contract (must match exactly)
 
-### Snapshot Contract (must match exactly)
-Sections and labels (in this order):
-1) Main Answer  
-2) Enhanced View — Overview  
-3) Concepts  
-4) Evidence  
-5) Timeline  
-6) Critiques  
-7) Glossary  
-8) Source
+The Snapshot consists of the following labeled sections, in this exact order:
 
-Formatting guidelines:
-- Keep entries succinct and single-line where possible.
-- **Evidence**: `Reference — one-sentence note`.
-- **Timeline**: `Label — short clause`.
-- **Glossary**: `Term — one sentence`.
+1. **Main Answer**
+2. **Overview**
+3. **Concepts**
+4. **Evidence**
+5. **Timeline**
+6. **Critiques**
+7. **Glossary**
+8. **Source**
 
-### Transformation Rules
-- **Keep** the layout, light/dark auto-theming, and JS behavior exactly as shown in the Example Web App.
-- **Replace only content** inside the section bodies with the new Snapshot text. Preserve headings, accordion structure, IDs/ARIA, and classes.
-- Maintain section order exactly as the Snapshot Contract specifies.
-- Do **not** add external libraries, fonts, images, or remote assets.
-- Produce a single, self-contained `index.html` with inline CSS and minimal inline JS.
+Additional rules:
 
-### Output Requirements
-- Return the **full** `index.html` in one code block **with no commentary**.
-- Use the page title and any subtitle exactly as provided (or as shown in the Example Web App pattern).
-- Ensure accordions:
-  - Toggle via button
-  - Update `aria-expanded` correctly
-  - Only one open at a time
-  - First section may open by default (match example)
-- Preserve accessibility (focus states, roles/labels) from the Example Web App.
+* All sections must be present and in correct order.
+* No extra sections allowed.
 
-### Links
-- Viewer link format:  
+Formatting expectations:
+
+* **Concepts**: one bullet/line per concept.
+* **Evidence**: `Reference — short explanatory sentence`.
+* **Timeline**: `Period/Label — short clause`.
+* **Glossary**: `Term — one-sentence definition`.
+* Content should be text-only; no markdown syntax, no HTML tags.
+
+Escaping:
+
+* Escape `<`, `>`, `&`, `"`, and `'` for safe HTML insertion.
+
+---
+
+## 3.3 Validation Rules & Failure Behavior
+
+Before building the web app, the Builder must:
+
+1. Verify all 8 sections exist and follow the correct order.
+2. Confirm each section contains non-empty text after trimming.
+3. Confirm Concepts / Evidence / Timeline / Glossary entries follow the required formats.
+4. Reject snapshots with mislabeled, missing, or extra sections.
+
+**Failure Behavior:**
+If validation fails, return a concise error report listing the exact problems.
+Do **not** attempt to fix, rewrite, or infer missing content.
+
+---
+
+## 3.4 Transformation Rules
+
+1. **Fixed Template**
+   Use the layout, styling, and JS behavior exactly as shown in the Example Web App.
+
+2. **Replace only content**, specifically:
+
+   * Replace the **Core Thesis/Main Answer** text.
+   * Replace the contents of each accordion section:
+
+     * Overview
+     * Concepts
+     * Evidence
+     * Timeline
+     * Critiques
+     * Glossary
+     * Source
+
+3. **Preserve all structure**:
+
+   * Header
+   * Title and optional subtitle
+   * Accordion containers
+   * IDs, classes, roles, and ARIA attributes
+   * Toggle behaviors (open/close, `aria-expanded`, only one open at a time)
+
+4. **No external additions**:
+
+   * Do not add fonts, libraries, or remote assets.
+   * No external CSS or JS files.
+   * No images unless already present in the snapshot text.
+
+5. **Deterministic Output**
+
+   * Same snapshot → byte-identical HTML output.
+   * No timestamps or randomization.
+   * Include a small HTML comment:
+     `<!-- INSTRUCTOR_BUILDER v1.1 -->`
+
+---
+
+## 3.5 Section → Template Mapping
+
+| Snapshot Section | Template Location                              |
+| ---------------- | ---------------------------------------------- |
+| **Main Answer**  | Core Thesis `<p>` block                        |
+| **Overview**     | First accordion panel (Overview)               |
+| **Concepts**     | `<ul>` list of `.otf-item` elements            |
+| **Evidence**     | `<ul>` list with optional bold references      |
+| **Timeline**     | `.otf-timeline` containing `.otf-step` entries |
+| **Critiques**    | One `.otf-crit` block per critique             |
+| **Glossary**     | `.otf-grid` with one `.otf-term` per item      |
+| **Source**       | `.otf-source` panel                            |
+
+Accordion toggle heading text should follow the pattern:
+**“📖 Enhanced View — <Title>”**
+Concepts/Evidence/etc. retain their standard section labels.
+
+---
+
+## 3.6 Output Requirements
+
+When building the final file:
+
+1. Return the **entire** `index.html` in a single code block.
+2. **No commentary or explanation**.
+3. Inline all CSS and JS exactly as shown in the Example Web App.
+4. Open the first accordion section by default if the example does.
+5. Maintain all accessibility behavior:
+
+   * Keyboard-focus outlines
+   * `aria-expanded`
+   * Proper roles and region labels
+
+---
+
+## 3.7 Links
+
+* **Viewer link format:**
   `https://ewallt.github.io/pocket-deploy/<folder>/index.html`
-- Placeholder link format:  
+
+* **Placeholder link format:**
   `https://github.com/ewallt/pocket-deploy/new/gh-pages?filename=<folder>/index.html`
 
+The Builder does not automatically generate or insert these links unless the user requests them.
+
 ---
 
-## Handoff Protocol (what the user will provide at build time)
-- **Folder**: `is-<slug>`
-- **Title**: `<short page title>`
-- **Snapshot**: Text that exactly matches the Snapshot Contract above
+# Handoff Protocol (User → Builder)
 
-**Instruction to Builder** (ChatGPT):  
+When the user requests a build, they supply:
+
+* **Folder**: `is-<slug>`
+* **Title**: short page title
+* **Subtitle** (optional)
+* **Snapshot**: must match the Snapshot Contract
+
+**Instruction to Builder (ChatGPT):**
 “Use the fetched builder instructions. Keep the same layout/theme as the Example Web App. Replace the content with this Snapshot. Output a single `index.html` with no commentary.”
 
