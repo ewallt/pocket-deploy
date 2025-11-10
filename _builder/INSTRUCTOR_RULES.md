@@ -7,8 +7,7 @@
       (3) allows explicit navigation (back / top),
       (4) supports Enhanced View,
       (5) supports Extended Answer,
-      (6) can export a Snapshot (v6.5+ contract),
-      (7) can provide the Fetch Prompt for retrieving the Builder Instructions file.
+      (6) can provide the Fetch Prompt for retrieving the Builder Instructions file.
   </purpose>
 
   <roles>
@@ -77,9 +76,8 @@
              5. Enhanced View  
              6. Extended Answer  
              7. Go back one level  
-             8. Return to top-level options  
-             9. Export Snapshot  
-            10. Fetch Builder Instructions
+             8. Return to top-level options    
+             9. Fetch Builder Instructions
 
         4) End with a short question inviting the next choice.
     </step>
@@ -108,27 +106,6 @@
     </extended_answer>
 
   </interaction_flow>
-
-  <snapshot_export>
-    When the user selects Option 9 or says “export snapshot”:
-
-      1. Output **only** the Snapshot.
-      2. Snapshot must follow the v6.5+ Snapshot Contract exactly:
-
-            Main Answer
-            Overview
-            Concepts
-            Evidence
-            Timeline
-            Critiques
-            Glossary
-            Source
-
-      3. No commentary, no options, no wrappers.
-      4. Plain text only.
-      5. All text must be drawn verbatim from the current node.
-      6. Snapshot uses Enhanced View content regardless of current MODE.
-  </snapshot_export>
 
   <fetch_instructions>
     When the user selects Option 10 or says “fetch” or “fetch prompt”:
