@@ -197,34 +197,6 @@
     }
     .source strong{color:var(--ink)}
 
-    /* Tooltip styles */
-    .verse-tooltip{
-      position:fixed;
-      max-width:520px;
-      background:color-mix(in oklab, var(--panel) 85%, black);
-      color:var(--ink);
-      border:1px solid var(--border);
-      border-radius:10px;
-      padding:0.9rem 1rem;
-      box-shadow:var(--shadow);
-      z-index:2000;
-      line-height:1.5;
-      font-size:.98rem;
-    }
-    .verse-tooltip .ref{
-      display:block;
-      font-weight:700;
-      color:var(--brand);
-      margin-bottom:.35rem;
-      letter-spacing:.01em;
-    }
-    .verse-tooltip .src{
-      display:block;
-      margin-top:.5rem;
-      color:var(--muted);
-      font-size:.9rem;
-    }
-
     .back-to-top{
       position:fixed;bottom:1.5rem;right:1rem;
       background:var(--brand);color:#001;
@@ -246,6 +218,22 @@
       header{padding:1.5rem 1rem}
     }
   </style>
+
+  <!-- RefTagger (Blue Bible-style scripture hover) -->
+  <script>
+    var refTagger = {
+      settings: {
+        bibleVersion: "KJV",
+        tooltip: "on",
+        roundCorners: true,
+        socialSharing: [],
+        tagChapters: true,
+        caseInsensitive: true,
+        noSearchTagNames: ["code", "pre", "script", "style"]
+      }
+    };
+  </script>
+  <script src="https://api.reftagger.com/v2/RefTagger.js"></script>
 </head>
 <body>
   <div class="container">
@@ -272,43 +260,43 @@
           <h3>Primary Texts</h3>
           <ul class="scripture-list">
             <li class="scripture-item">
-              <strong><span class="scripture-ref" data-ref="Exodus 34:6–7">Exodus 34:6–7</span></strong>
+              <strong><span class="scripture-ref">Exodus 34:6–7</span></strong>
               God’s self-revelation: compassionate, gracious, slow to anger, abounding in steadfast love and faithfulness; forgives yet addresses wrongdoing.
             </li>
             <li class="scripture-item">
-              <strong><span class="scripture-ref" data-ref="Deuteronomy 10:17–19">Deuteronomy 10:17–19</span></strong>
+              <strong><span class="scripture-ref">Deuteronomy 10:17–19</span></strong>
               The God who shows no partiality, executes justice for the orphan and widow, loves the foreigner—so Israel must love the foreigner too.
             </li>
             <li class="scripture-item">
-              <strong><span class="scripture-ref" data-ref="Psalm 103:8–14">Psalm 103:8–14</span></strong>
+              <strong><span class="scripture-ref">Psalm 103:8–14</span></strong>
               YHWH is merciful and gracious, remembers we are dust, and removes sin far from us.
             </li>
             <li class="scripture-item">
-              <strong><span class="scripture-ref" data-ref="Psalm 145:8–9">Psalm 145:8–9</span></strong>
+              <strong><span class="scripture-ref">Psalm 145:8–9</span></strong>
               The creedal attributes applied universally: the Lord is good to all; mercy over all His works.
             </li>
             <li class="scripture-item">
-              <strong><span class="scripture-ref" data-ref="Isaiah 1:16–18">Isaiah 1:16–18</span></strong>
+              <strong><span class="scripture-ref">Isaiah 1:16–18</span></strong>
               Wash, make yourselves clean; seek justice, correct oppression—“though your sins are scarlet, they shall be white as snow.”
             </li>
             <li class="scripture-item">
-              <strong><span class="scripture-ref" data-ref="Hosea 11:8–9">Hosea 11:8–9</span></strong>
+              <strong><span class="scripture-ref">Hosea 11:8–9</span></strong>
               God’s heart recoils at destroying; “I am God and not a man”—divine holiness chooses compassion over wrathful annihilation.
             </li>
             <li class="scripture-item">
-              <strong><span class="scripture-ref" data-ref="Micah 6:6–8">Micah 6:6–8</span></strong>
+              <strong><span class="scripture-ref">Micah 6:6–8</span></strong>
               What the Lord requires: do justice, love mercy, walk humbly—not sacrificial payoffs.
             </li>
             <li class="scripture-item">
-              <strong><span class="scripture-ref" data-ref="Jonah 4:2">Jonah 4:2</span></strong>
+              <strong><span class="scripture-ref">Jonah 4:2</span></strong>
               Jonah cites the creed to explain God’s relenting mercy toward Nineveh.
             </li>
             <li class="scripture-item">
-              <strong><span class="scripture-ref" data-ref="Ezekiel 18:23,32">Ezekiel 18:23,32</span></strong>
+              <strong><span class="scripture-ref">Ezekiel 18:23,32</span></strong>
               God takes no pleasure in the death of the wicked; calls for turning and living.
             </li>
             <li class="scripture-item">
-              <strong><span class="scripture-ref" data-ref="Jeremiah 31:31–34">Jeremiah 31:31–34</span></strong>
+              <strong><span class="scripture-ref">Jeremiah 31:31–34</span></strong>
               New covenant: God writes the law on hearts and remembers sin no more—restoration through intimate knowledge, not retribution.
             </li>
           </ul>
@@ -436,7 +424,7 @@
           </div>
 
           <div class="source">
-            <strong>Source:</strong> Grounded in the OT creedal refrain (Exod 34:6–7; Num 14:18; Neh 9:17; Joel 2:13) and prophetic/wisdom traditions emphasizing restorative justice and steadfast love; Scripture excerpts displayed from the public-domain KJV (selected lines).
+            <strong>Source:</strong> Grounded in the OT creedal refrain (Exod 34:6–7; Num 14:18; Neh 9:17; Joel 2:13) and prophetic/wisdom traditions emphasizing restorative justice and steadfast love.
           </div>
         </div>
       </div>
@@ -467,89 +455,6 @@
       const first = document.querySelector('.section');
       if(first) first.classList.add('active');
     });
-
-    // --- Scripture Hover Plugin (no dependencies) ---
-    (function(){
-      const VERSES = {
-        "Exodus 34:6–7": "The LORD, The LORD God, merciful and gracious, longsuffering, and abundant in goodness and truth, keeping mercy for thousands, forgiving iniquity and transgression and sin, and that will by no means clear the guilty...",
-        "Deuteronomy 10:17–19": "For the LORD your God is God of gods, and Lord of lords, a great God... who doth execute the judgment of the fatherless and widow, and loveth the stranger, in giving him food and raiment. Love ye therefore the stranger...",
-        "Psalm 103:8–14": "The LORD is merciful and gracious, slow to anger, and plenteous in mercy... He hath not dealt with us after our sins... For he knoweth our frame; he remembereth that we are dust.",
-        "Psalm 145:8–9": "The LORD is gracious, and full of compassion; slow to anger, and of great mercy. The LORD is good to all: and his tender mercies are over all his works.",
-        "Isaiah 1:16–18": "Wash you, make you clean; put away the evil of your doings... Seek judgment, relieve the oppressed... though your sins be as scarlet, they shall be as white as snow...",
-        "Hosea 11:8–9": "How shall I give thee up, Ephraim?... mine heart is turned within me... I will not execute the fierceness of mine anger... for I am God, and not man...",
-        "Micah 6:6–8": "Wherewith shall I come before the LORD... He hath shewed thee, O man, what is good; and what doth the LORD require of thee, but to do justly, and to love mercy, and to walk humbly with thy God?",
-        "Jonah 4:2": "I knew that thou art a gracious God, and merciful, slow to anger, and of great kindness, and repentest thee of the evil.",
-        "Ezekiel 18:23,32": "Have I any pleasure at all that the wicked should die? saith the Lord GOD... For I have no pleasure in the death of him that dieth... wherefore turn yourselves, and live ye.",
-        "Jeremiah 31:31–34": "I will make a new covenant... I will put my law in their inward parts... for I will forgive their iniquity, and I will remember their sin no more."
-      };
-
-      let tooltipEl = null;
-
-      function showTooltip(target){
-        const ref = target.getAttribute('data-ref');
-        const text = VERSES[ref];
-        if(!text) return;
-
-        if(!tooltipEl){
-          tooltipEl = document.createElement('div');
-          tooltipEl.className = 'verse-tooltip';
-          document.body.appendChild(tooltipEl);
-        }
-
-        tooltipEl.innerHTML = `<span class="ref">${ref}</span>${escapeHtml(text)}<span class="src">KJV (selected)</span>`;
-
-        const rect = target.getBoundingClientRect();
-        const padding = 8;
-        const top = Math.max(12, rect.bottom + padding);
-        let left = rect.left;
-
-        const maxLeft = window.innerWidth - tooltipEl.offsetWidth - 12;
-        requestAnimationFrame(() => {
-          const width = tooltipEl.offsetWidth;
-          let computedLeft = Math.min(left, Math.max(12, maxLeft));
-          computedLeft = Math.max(12, Math.min(rect.left + (rect.width/2) - (width/2), maxLeft));
-          tooltipEl.style.top = `${top + window.scrollY}px`;
-          tooltipEl.style.left = `${computedLeft + window.scrollX}px`;
-          tooltipEl.style.visibility = 'visible';
-        });
-      }
-
-      function hideTooltip(){
-        if(tooltipEl){
-          tooltipEl.style.visibility = 'hidden';
-        }
-      }
-
-      function escapeHtml(str){
-        return str.replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
-      }
-
-      document.addEventListener('mouseenter', (e) => {
-        const t = e.target.closest('.scripture-ref');
-        if(t) showTooltip(t);
-      }, true);
-      document.addEventListener('mouseleave', (e) => {
-        const t = e.target.closest('.scripture-ref');
-        if(t) hideTooltip();
-      }, true);
-
-      document.addEventListener('click', (e) => {
-        const t = e.target.closest('.scripture-ref');
-        if(t){
-          if(tooltipEl && tooltipEl.style.visibility === 'visible'){
-            hideTooltip();
-          }else{
-            showTooltip(t);
-          }
-          e.preventDefault();
-        }else{
-          hideTooltip();
-        }
-      });
-
-      window.addEventListener('scroll', hideTooltip, {passive:true});
-      window.addEventListener('resize', hideTooltip);
-    })();
   </script>
 </body>
 </html>
