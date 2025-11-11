@@ -93,7 +93,13 @@
     }
     @media (max-width:980px){ .grid{grid-template-columns:repeat(3, minmax(0,1fr));} }
     @media (max-width:720px){ .grid{grid-template-columns:repeat(2, minmax(0,1fr));} }
-    @media (max-width:480px){ .grid{grid-template-columns:1fr;} h1{font-size:1.6rem} }
+    @media (max-width:480px){
+      .grid{grid-template-columns:1fr;}
+      h1{font-size:1.6rem}
+      .chip{padding:.6rem .8rem}
+      .btn{padding:.7rem .9rem;font-size:1rem}
+      .card p{min-height:auto}
+    }
 
     .card{
       background:var(--panel);
@@ -130,15 +136,11 @@
 
     .actions{display:flex;gap:.5rem;margin-top:.35rem}
     .btn{
-      flex:1;
+      width:100%;
       text-align:center;text-decoration:none;
       background:linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%);
       color:#e6ecff;border:1px solid var(--border);
       padding:.55rem .7rem;border-radius:10px;font-weight:600;font-size:.9rem;
-    }
-    .btn.secondary{
-      background:color-mix(in oklab,var(--chip) 75%, transparent);
-      color:var(--ink);
     }
 
     footer{
@@ -174,85 +176,76 @@
       <div id="grid" class="grid" aria-live="polite"></div>
     </main>
 
-    <footer>Add or edit items in the <code>apps</code> array within the script below.</footer>
+    <footer>Public view: “Open” only. Owner page can include “Edit.”</footer>
   </div>
 
   <script>
-    // ---- Configure your “is-” apps here ----
+    // ---- Configure your “is-” apps here (public: Open only) ----
     const apps = [
       {
         id:"is-biblical-faith",
         title:"Biblical Faith",
         blurb:"What faith encompasses in Scripture: relational trust that results in love-filled obedience.",
         tags:["faith","grace"],
-        view:"https://ewallt.github.io/pocket-deploy/is-biblical-faith/index.html",
-        edit:"https://github.com/ewallt/pocket-deploy/edit/gh-pages/is-biblical-faith/index.html"
+        view:"https://ewallt.github.io/pocket-deploy/is-biblical-faith/index.html"
       },
       {
         id:"is-character-of-god-ot",
         title:"Character of God (OT)",
         blurb:"YHWH’s mercy, justice, and covenant faithfulness as the Old Testament’s interpretive center.",
         tags:["character","cross","hope"],
-        view:"https://ewallt.github.io/pocket-deploy/is-character-of-god-ot/index.html",
-        edit:"https://github.com/ewallt/pocket-deploy/edit/gh-pages/is-character-of-god-ot/index.html"
+        view:"https://ewallt.github.io/pocket-deploy/is-character-of-god-ot/index.html"
       },
       {
         id:"is-crucified-god-and-hope",
         title:"Crucified God & Hope",
         blurb:"Divine solidarity with sufferers and the promised future breaking into the present.",
         tags:["cross","hope"],
-        view:"https://ewallt.github.io/pocket-deploy/is-crucified-god-and-hope/index.html",
-        edit:"https://github.com/ewallt/pocket-deploy/edit/gh-pages/is-crucified-god-and-hope/index.html"
+        view:"https://ewallt.github.io/pocket-deploy/is-crucified-god-and-hope/index.html"
       },
       {
         id:"is-cruciform-god",
         title:"The Cruciform God",
         blurb:"The cross as God’s full self-revelation; power redefined as self-giving, enemy-loving love.",
         tags:["cross","character"],
-        view:"https://ewallt.github.io/pocket-deploy/is-cruciform-god/index.html",
-        edit:"https://github.com/ewallt/pocket-deploy/edit/gh-pages/is-cruciform-god/index.html"
+        view:"https://ewallt.github.io/pocket-deploy/is-cruciform-god/index.html"
       },
       {
         id:"is-how-evil-emerged",
         title:"How Evil Emerged",
         blurb:"A biblical–cosmic overview of rebellion, freedom, and the long war against accusation.",
         tags:["conflict","character","hope"],
-        view:"https://ewallt.github.io/pocket-deploy/is-how-evil-emerged/index.html",
-        edit:"https://github.com/ewallt/pocket-deploy/edit/gh-pages/is-how-evil-emerged/index.html"
+        view:"https://ewallt.github.io/pocket-deploy/is-how-evil-emerged/index.html"
       },
       {
         id:"is-jesus-centered-gospel",
         title:"Grace That Liberates",
         blurb:"A Jesus-centered gospel where grace precedes transformation and fuels everyday discipleship.",
         tags:["grace","faith","teaching"],
-        view:"https://ewallt.github.io/pocket-deploy/is-jesus-centered-gospel/index.html",
-        edit:"https://github.com/ewallt/pocket-deploy/edit/gh-pages/is-jesus-centered-gospel/index.html"
+        view:"https://ewallt.github.io/pocket-deploy/is-jesus-centered-gospel/index.html"
       },
       {
         id:"is-larger-view",
         title:"The Larger View",
         blurb:"God’s character and government vindicated through Christ in the great controversy.",
         tags:["character","cross","conflict"],
-        view:"https://ewallt.github.io/pocket-deploy/is-larger-view/index.html",
-        edit:"https://github.com/ewallt/pocket-deploy/edit/gh-pages/is-larger-view/index.html"
+        view:"https://ewallt.github.io/pocket-deploy/is-larger-view/index.html"
       },
       {
         id:"is-restorative-sacrificial-system",
         title:"Restorative Sacrificial System",
         blurb:"Reading sacrifice as pedagogy of healing and reconciliation rather than quid-pro-quo payment.",
         tags:["sacrifice","character","cross"],
-        view:"https://ewallt.github.io/pocket-deploy/is-restorative-sacrificial-system/index.html",
-        edit:"https://github.com/ewallt/pocket-deploy/edit/gh-pages/is-restorative-sacrificial-system/index.html"
+        view:"https://ewallt.github.io/pocket-deploy/is-restorative-sacrificial-system/index.html"
       },
       {
         id:"is-sermon-on-the-mount",
         title:"Sermon on the Mount",
         blurb:"Jesus’ kingdom ethic for real life: beatitudes, enemy-love, integrity, and prayer.",
         tags:["teaching","grace","cross"],
-        view:"https://ewallt.github.io/pocket-deploy/is-sermon-on-the-mount/index.html",
-        edit:"https://github.com/ewallt/pocket-deploy/edit/gh-pages/is-sermon-on-the-mount/index.html"
+        view:"https://ewallt.github.io/pocket-deploy/is-sermon-on-the-mount/index.html"
       }
-      // Note: “is-gospel-hub” (this page) and “is-instructor-snapshot” are intentionally omitted.
+      // Note: “is-gospel-hub” and “is-instructor-snapshot” omitted.
     ];
 
     // ---- Render cards ----
@@ -274,7 +267,6 @@
         </div>
         <div class="actions">
           <a class="btn" href="${app.view}" target="_blank" rel="noopener">Open</a>
-          <a class="btn secondary" href="${app.edit}" target="_blank" rel="noopener">Edit</a>
         </div>
       `;
       return el;
