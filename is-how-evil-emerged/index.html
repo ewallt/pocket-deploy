@@ -1,0 +1,468 @@
+Great — I’ll generate the full How Evil Emerged: A Biblical–Cosmic Overview web app exactly like the last two, with:
+
+✅ identical layout
+✅ identical CSS
+✅ RefTagger (scripture hover) built in
+✅ all sections populated with new content
+✅ a single clean ```html block for easy iPhone copy/paste
+
+Here it is.
+
+⸻
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>How Evil Emerged: A Biblical–Cosmic Overview</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111833;
+      --ink:#e6ecff;
+      --muted:#a7b0cc;
+      --brand:#8bb9ff;
+      --accent:#c0ffe1;
+      --border:#26325b;
+      --chip:#1a2347;
+      --bad:#ff6b6b;
+      --shadow:0 8px 28px rgba(0,0,0,.35);
+      --radius:12px;
+      --radius-sm:8px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+      line-height:1.6;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
+        radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+      padding-bottom:2rem;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .container{max-width:860px;margin:0 auto;padding:1rem}
+
+    header{
+      background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:2rem 1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+    }
+
+    h1{
+      color:var(--ink);
+      font-size:1.75rem;
+      margin-bottom:.5rem;
+      letter-spacing:-.015em;
+    }
+
+    .subtitle{
+      color:var(--muted);
+      font-size:.95rem;
+      font-style:italic;
+    }
+
+    .main-answer{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+      border-left:4px solid var(--brand);
+    }
+
+    .main-answer h2{
+      color:var(--brand);
+      font-size:1.3rem;
+      margin-bottom:1rem;
+      letter-spacing:.01em;
+    }
+
+    .main-answer p{font-size:1.05rem;line-height:1.7}
+
+    .section{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      margin-bottom:1rem;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .section-header{
+      padding:1.1rem 1.25rem;
+      background:linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%);
+      color:var(--ink);
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      border-bottom:1px solid var(--border);
+    }
+
+    .section-header h2{
+      font-size:1.15rem;
+      font-weight:700;
+      letter-spacing:.01em;
+    }
+
+    .section-icon{font-size:1.35rem;transition:transform .3s ease}
+    .section.active .section-icon{transform:rotate(180deg)}
+
+    .section-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+    .section.active .section-content{max-height:5000px}
+
+    .section-inner{padding:1.25rem}
+
+    h3{
+      color:var(--brand);
+      font-size:1.08rem;
+      margin:1.3rem 0 .65rem 0;
+      letter-spacing:.01em;
+    }
+    h3:first-child{margin-top:0}
+
+    .concept-list,.scripture-list{list-style:none}
+
+    .concept-item,.scripture-item{
+      background:color-mix(in oklab,var(--chip) 75%, transparent);
+      border-left:3px solid var(--brand);
+      padding:1rem;
+      margin-bottom:.75rem;
+      border-radius:var(--radius-sm);
+      border:1px solid var(--border);
+    }
+
+    .timeline{
+      border-left:3px solid var(--brand);
+      padding-left:1.25rem;
+      margin-left:.5rem;
+    }
+
+    .timeline-item{
+      margin-bottom:1.25rem;
+      position:relative;
+    }
+
+    .timeline-item::before{
+      content:'';
+      position:absolute;left:-1.65rem;top:.25rem;
+      width:12px;height:12px;border-radius:50%;
+      background:var(--brand);border:3px solid var(--panel);
+      box-shadow:0 0 0 2px var(--brand);
+    }
+
+    .glossary-grid{display:grid;gap:1rem}
+    .glossary-term{
+      background:color-mix(in oklab,var(--chip) 75%, transparent);
+      padding:1rem;border-radius:6px;
+      border-left:3px solid var(--brand);
+      border:1px solid var(--border);
+    }
+
+    .critique-item{
+      background:color-mix(in oklab, var(--bad) 12%, var(--panel));
+      border-left:3px solid var(--bad);
+      padding:1rem;margin-bottom:.75rem;border-radius:4px;
+      border:1px solid var(--border);
+    }
+
+    .source{
+      background:color-mix(in oklab,var(--chip) 65%, transparent);
+      border-radius:8px;padding:1rem;margin-top:1.2rem;
+      font-size:.95rem;color:var(--muted);
+      border:1px solid var(--border);
+    }
+
+    .back-to-top{
+      position:fixed;bottom:1.5rem;right:1rem;
+      background:var(--brand);color:#001;
+      width:50px;height:50px;border-radius:50%;
+      border:none;font-size:1.5rem;cursor:pointer;
+      box-shadow:var(--shadow);opacity:0;transition:opacity .3s ease;
+      z-index:1000;display:flex;align-items:center;justify-content:center;
+      font-weight:900;
+    }
+    .back-to-top.visible{opacity:1}
+
+  </style>
+
+  <!-- RefTagger -->
+  <script>
+    var refTagger = {
+      settings: {
+        bibleVersion: "KJV",
+        tooltip: "on",
+        roundCorners: true,
+        socialSharing: [],
+        tagChapters: true,
+        caseInsensitive: true,
+        noSearchTagNames: ["code","pre","script","style"]
+      }
+    };
+  </script>
+  <script src="https://api.reftagger.com/v2/RefTagger.js" defer></script>
+</head>
+<body>
+  <div class="container">
+
+    <header>
+      <h1>How Evil Emerged: A Biblical–Cosmic Overview</h1>
+      <p class="subtitle">Free Will, Cosmic Rebellion, and the Story Behind the Story</p>
+    </header>
+
+    <div class="main-answer">
+      <h2>Core Thesis</h2>
+      <p>Scripture presents evil not as a divine creation but as the tragic outworking of freedom misused. The biblical story traces evil to a rupture in heaven—a free creature who exalted self over love—and then to a rupture on earth as humanity believed lies about God’s character. Evil spreads through deception, accusation, rivalry, violence, and idolatry, culminating in a cosmic conflict between God’s self-giving love and the powers of destruction. God’s response is not coercive eradication but redemptive unveiling through Christ, whose cross exposes and defeats the forces of accusation and death.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📖 Key Scriptures</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+
+          <h3>Overview</h3>
+          <p>From Genesis to Revelation, evil is portrayed as arising from personal rebellion, deception, and the breakdown of relational trust. Biblical authors emphasize freedom, responsibility, and the spiritual powers at work in the world.</p>
+
+          <h3>Primary Texts</h3>
+          <ul class="scripture-list">
+            <li class="scripture-item">
+              <strong>Genesis 3</strong>
+              The serpent deceives; distrust of God leads to alienation, shame, and relational fracture.
+            </li>
+            <li class="scripture-item">
+              <strong>Isaiah 14:12–15</strong>
+              A taunt against Babylon also echoes the pattern of a proud, fallen heavenly being.
+            </li>
+            <li class="scripture-item">
+              <strong>Ezekiel 28:12–17</strong>
+              The “anointed guardian” becomes corrupt through pride and violence.
+            </li>
+            <li class="scripture-item">
+              <strong>Revelation 12:7–12</strong>
+              Cosmic conflict: the dragon accuses, deceives, and wages war on God’s people.
+            </li>
+            <li class="scripture-item">
+              <strong>John 8:44</strong>
+              The devil is a liar from the beginning; evil spreads through deception.
+            </li>
+            <li class="scripture-item">
+              <strong>Romans 5:12</strong>
+              Sin enters the world through one human and death through sin—contagion of corruption.
+            </li>
+            <li class="scripture-item">
+              <strong>1 John 3:8</strong>
+              The Son of God appears to destroy the works of the devil.
+            </li>
+            <li class="scripture-item">
+              <strong>Colossians 2:15</strong>
+              Christ disarms the powers, triumphing over them at the cross.
+            </li>
+            <li class="scripture-item">
+              <strong>Hebrews 2:14–15</strong>
+              Jesus breaks the devil’s power of death and frees us from fear’s bondage.
+            </li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>💡 Core Concepts</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+
+          <ul class="concept-list">
+            <li class="concept-item">
+              <strong>Creaturely Freedom</strong>
+              Love requires freedom; evil emerges when free beings use that freedom to exalt self over God and neighbor.
+            </li>
+            <li class="concept-item">
+              <strong>Cosmic Rebellion</strong>
+              Scripture hints at a heavenly being whose pride and deception catalyzed a spiritual conflict affecting creation.
+            </li>
+            <li class="concept-item">
+              <strong>Accusation & Deception</strong>
+              Evil spreads through lies about God and others; the “accuser” foments distrust and division.
+            </li>
+            <li class="concept-item">
+              <strong>Human Participation</strong>
+              Adam and Eve join the rebellion by believing false narratives, rupturing relationships and unleashing death.
+            </li>
+            <li class="concept-item">
+              <strong>Spiritual Powers</strong>
+              Biblical authors describe “principalities and powers” influencing human systems, violence, and idolatry.
+            </li>
+            <li class="concept-item">
+              <strong>Christ’s Victory</strong>
+              Jesus defeats the powers not through force but self-giving love, unmasking evil and liberating humanity.
+            </li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📜 Timeline</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+
+          <div class="timeline">
+            <div class="timeline-item">
+              <strong>Heavenly Rebellion</strong>
+              A free, exalted being falls through pride and spreads deception (Isaiah 14; Ezekiel 28).
+            </div>
+            <div class="timeline-item">
+              <strong>Edenic Temptation</strong>
+              The serpent distorts God’s character, leading humanity to mistrust and disobey (Genesis 3).
+            </div>
+            <div class="timeline-item">
+              <strong>Human History of Violence</strong>
+              Cain’s murder, the flood, Babel, and empires reveal escalating corruption.
+            </div>
+            <div class="timeline-item">
+              <strong>Prophets & Powers</strong>
+              Israel’s prophets confront idolatry, injustice, and spiritual darkness behind worldly systems.
+            </div>
+            <div class="timeline-item">
+              <strong>Christ’s Appearing</strong>
+              Jesus exposes and defeats the powers through revelation, love, and the cross.
+            </div>
+            <div class="timeline-item">
+              <strong>Final Defeat of Evil</strong>
+              Revelation envisions evil’s ultimate end and God’s creation renewed in peace.
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>⚠️ Common Misreadings</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+
+          <div class="critique-item">
+            <strong>Divine Causation of Evil:</strong> Scripture never portrays God as creating evil; freedom and rebellion are the sources.
+          </div>
+          <div class="critique-item">
+            <strong>Ignoring the Cosmic Dimension:</strong> Evil is not only human; spiritual powers shape systems and societies.
+          </div>
+          <div class="critique-item">
+            <strong>Minimizing Deception:</strong> Evil’s power lies in lies—twisting God’s character and human identity.
+          </div>
+          <div class="critique-item">
+            <strong>Violent Victory Assumptions:</strong> Christ conquers not through coercion but through sacrificial love that unmasks evil.
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📚 Glossary</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+
+          <div class="glossary-grid">
+            <div class="glossary-term">
+              <strong>Accuser</strong>
+              Title for Satan meaning “one who brings charges,” fostering distrust and condemnation.
+            </div>
+            <div class="glossary-term">
+              <strong>Cosmic Conflict</strong>
+              The spiritual struggle described in Scripture between God’s kingdom and rebellious powers.
+            </div>
+            <div class="glossary-term">
+              <strong>Free Will</strong>
+              The God-given ability to choose love or self-exaltation; the condition for both love and the possibility of evil.
+            </div>
+            <div class="glossary-term">
+              <strong>Principalities & Powers</strong>
+              Spiritual or systemic forces shaping human behavior, culture, and oppression.
+            </div>
+            <div class="glossary-term">
+              <strong>Deception</strong>
+              The distortion of truth that drives rebellion against God and neighbor.
+            </div>
+            <div class="glossary-term">
+              <strong>Christus Victor</strong>
+              The New Testament theme that Christ defeats evil powers through self-giving love and resurrection.
+            </div>
+          </div>
+
+          <div class="source">
+            <strong>Source:</strong> Core biblical conflict texts (Genesis 3; Isaiah 14; Ezekiel 28; Revelation 12) interpreted through freedom, deception, and Christ’s victory themes present throughout Scripture.
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <button class="back-to-top" onclick="scrollToTop()" id="backToTop" aria-label="Back to top">↑</button>
+
+  <script>
+    function toggleSection(header){
+      const section = header.parentElement;
+      const all = document.querySelectorAll('.section');
+      all.forEach(s => { if(s !== section && s.classList.contains('active')) s.classList.remove('active'); });
+      section.classList.toggle('active');
+      if (window.refTagger && refTagger.tag) {
+        setTimeout(() => refTagger.tag(), 0);
+      }
+    }
+
+    window.addEventListener('scroll', () => {
+      const btn = document.getElementById('backToTop');
+      if(window.pageYOffset > 300){ btn.classList.add('visible'); }
+      else { btn.classList.remove('visible'); }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const first = document.querySelector('.section');
+      if(first) first.classList.add('active');
+      if (window.refTagger && refTagger.tag) refTagger.tag();
+    });
+
+    function scrollToTop(){
+      window.scrollTo({ top:0, behavior:'smooth' });
+    }
+  </script>
+
+</body>
+</html>
