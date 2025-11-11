@@ -163,6 +163,10 @@
         <button class="chip" data-tag="character">Character of God</button>
         <button class="chip" data-tag="hope">Hope</button>
         <button class="chip" data-tag="grace">Grace</button>
+        <button class="chip" data-tag="faith">Faith</button>
+        <button class="chip" data-tag="teaching">Teaching</button>
+        <button class="chip" data-tag="sacrifice">Sacrifice</button>
+        <button class="chip" data-tag="conflict">Cosmic Conflict</button>
       </div>
     </header>
 
@@ -177,38 +181,78 @@
     // ---- Configure your “is-” apps here ----
     const apps = [
       {
-        id:"is-larger-view",
-        title:"The Larger View",
-        blurb:"God’s character and government vindicated through Christ in the great controversy.",
-        tags:["cross","character"],
-        view:"https://ewallt.github.io/pocket-deploy/is-larger-view/index.html",
-        edit:"https://github.com/ewallt/pocket-deploy/new/gh-pages?filename=is-larger-view/index.html"
+        id:"is-biblical-faith",
+        title:"Biblical Faith",
+        blurb:"What faith encompasses in Scripture: relational trust that results in love-filled obedience.",
+        tags:["faith","grace"],
+        view:"https://ewallt.github.io/pocket-deploy/is-biblical-faith/index.html",
+        edit:"https://github.com/ewallt/pocket-deploy/new/gh-pages?filename=is-biblical-faith/index.html"
       },
       {
-        id:"is-cruciform-god",
-        title:"The Cruciform God",
-        blurb:"The cross as God’s full self-revelation; power redefined as self-giving love.",
-        tags:["cross"],
-        view:"https://ewallt.github.io/pocket-deploy/is-cruciform-god/index.html",
-        edit:"https://github.com/ewallt/pocket-deploy/new/gh-pages?filename=is-cruciform-god/index.html"
+        id:"is-character-of-god-ot",
+        title:"Character of God (OT)",
+        blurb:"YHWH’s mercy, justice, and covenant faithfulness as the Old Testament’s interpretive center.",
+        tags:["character","cross","hope"],
+        view:"https://ewallt.github.io/pocket-deploy/is-character-of-god-ot/index.html",
+        edit:"https://github.com/ewallt/pocket-deploy/new/gh-pages?filename=is-character-of-god-ot/index.html"
       },
       {
         id:"is-crucified-god-and-hope",
-        title:"Crucified God & Theology of Hope",
+        title:"Crucified God & Hope",
         blurb:"Divine solidarity with sufferers and the promised future breaking into the present.",
-        tags:["hope","cross"],
+        tags:["cross","hope"],
         view:"https://ewallt.github.io/pocket-deploy/is-crucified-god-and-hope/index.html",
         edit:"https://github.com/ewallt/pocket-deploy/new/gh-pages?filename=is-crucified-god-and-hope/index.html"
       },
       {
+        id:"is-cruciform-god",
+        title:"The Cruciform God",
+        blurb:"The cross as God’s full self-revelation; power redefined as self-giving, enemy-loving love.",
+        tags:["cross","character"],
+        view:"https://ewallt.github.io/pocket-deploy/is-cruciform-god/index.html",
+        edit:"https://github.com/ewallt/pocket-deploy/new/gh-pages?filename=is-cruciform-god/index.html"
+      },
+      {
+        id:"is-how-evil-emerged",
+        title:"How Evil Emerged",
+        blurb:"A biblical–cosmic overview of rebellion, freedom, and the long war against accusation.",
+        tags:["conflict","character","hope"],
+        view:"https://ewallt.github.io/pocket-deploy/is-how-evil-emerged/index.html",
+        edit:"https://github.com/ewallt/pocket-deploy/new/gh-pages?filename=is-how-evil-emerged/index.html"
+      },
+      {
         id:"is-jesus-centered-gospel",
         title:"Grace That Liberates",
-        blurb:"A Jesus-centered gospel where grace precedes transformation and fuels discipleship.",
-        tags:["grace"],
+        blurb:"A Jesus-centered gospel where grace precedes transformation and fuels everyday discipleship.",
+        tags:["grace","faith","teaching"],
         view:"https://ewallt.github.io/pocket-deploy/is-jesus-centered-gospel/index.html",
         edit:"https://github.com/ewallt/pocket-deploy/new/gh-pages?filename=is-jesus-centered-gospel/index.html"
+      },
+      {
+        id:"is-larger-view",
+        title:"The Larger View",
+        blurb:"God’s character and government vindicated through Christ in the great controversy.",
+        tags:["character","cross","conflict"],
+        view:"https://ewallt.github.io/pocket-deploy/is-larger-view/index.html",
+        edit:"https://github.com/ewallt/pocket-deploy/new/gh-pages?filename=is-larger-view/index.html"
+      },
+      {
+        id:"is-restorative-sacrificial-system",
+        title:"Restorative Sacrificial System",
+        blurb:"Reading sacrifice as pedagogy of healing and reconciliation rather than quid-pro-quo payment.",
+        tags:["sacrifice","character","cross"],
+        view:"https://ewallt.github.io/pocket-deploy/is-restorative-sacrificial-system/index.html",
+        edit:"https://github.com/ewallt/pocket-deploy/new/gh-pages?filename=is-restorative-sacrificial-system/index.html"
+      },
+      {
+        id:"is-sermon-on-the-mount",
+        title:"Sermon on the Mount",
+        blurb:"Jesus’ kingdom ethic for real life: beatitudes, enemy-love, integrity, and prayer.",
+        tags:["teaching","grace","cross"],
+        view:"https://ewallt.github.io/pocket-deploy/is-sermon-on-the-mount/index.html",
+        edit:"https://github.com/ewallt/pocket-deploy/new/gh-pages?filename=is-sermon-on-the-mount/index.html"
       }
-      // To add more entries, push additional objects here with {id,title,blurb,tags,view,edit}
+      // Note: “is-gospel-hub” (this page) and “is-instructor-snapshot” are intentionally omitted.
     ];
 
     // ---- Render cards ----
@@ -242,7 +286,8 @@
       apps
         .filter(a=>{
           const tagOk = activeTag==='all' ? true : a.tags.map(t=>t.toLowerCase()).includes(activeTag);
-          const qOk = !q || a.title.toLowerCase().includes(q) || a.blurb.toLowerCase().includes(q) || a.tags.join(' ').toLowerCase().includes(q);
+          const text = (a.title + ' ' + a.blurb + ' ' + a.tags.join(' ')).toLowerCase();
+          const qOk = !q || text.includes(q);
           return tagOk && qOk;
         })
         .forEach(a=>grid.appendChild(makeCard(a)));
