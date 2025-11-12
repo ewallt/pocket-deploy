@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Siege of Leningrad (1941–44)</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111833;
+      --ink:#e6ecff;
+      --muted:#a7b0cc;
+      --brand:#8bb9ff;
+      --accent:#c0ffe1;
+      --border:#26325b;
+      --chip:#1a2347;
+      --bad:#ff6b6b;
+      --shadow:0 8px 28px rgba(0,0,0,.35);
+      --radius:12px;
+      --radius-sm:8px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+      line-height:1.6;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
+        radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+      padding-bottom:2rem;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .container{max-width:860px;margin:0 auto;padding:1rem}
+
+    header{
+      background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:2rem 1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+    }
+
+    h1{
+      color:var(--ink);
+      font-size:1.75rem;
+      margin-bottom:.5rem;
+      letter-spacing:-.015em;
+    }
+
+    .subtitle{
+      color:var(--muted);
+      font-size:.95rem;
+      font-style:italic;
+    }
+
+    .breadcrumb{
+      margin-bottom:1rem;
+      font-size:.9rem;
+    }
+    .breadcrumb a{color:var(--brand);text-decoration:none}
+    .breadcrumb span{color:var(--muted)}
+
+    .main-answer{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+      border-left:4px solid var(--brand);
+    }
+
+    .main-answer h2{
+      color:var(--brand);
+      font-size:1.3rem;
+      margin-bottom:1rem;
+      letter-spacing:.01em;
+    }
+
+    .main-answer p{font-size:1.05rem;line-height:1.7}
+
+    .section{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      margin-bottom:1rem;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .section-header{
+      padding:1.1rem 1.25rem;
+      background:linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%);
+      color:var(--ink);
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      border-bottom:1px solid var(--border);
+    }
+
+    .section-header h2{
+      font-size:1.15rem;
+      font-weight:700;
+      letter-spacing:.01em;
+    }
+
+    .section-icon{font-size:1.35rem;transition:transform .3s ease}
+    .section.active .section-icon{transform:rotate(180deg)}
+
+    .section-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+    .section.active .section-content{max-height:5000px}
+
+    .section-inner{padding:1.25rem}
+
+    h3{
+      color:var(--brand);
+      font-size:1.08rem;
+      margin:1.3rem 0 .65rem 0;
+      letter-spacing:.01em;
+    }
+    h3:first-child{margin-top:0}
+
+    .list-item{
+      background:color-mix(in oklab,var(--chip) 75%, transparent);
+      border-left:3px solid var(--brand);
+      padding:1rem;
+      margin-bottom:.75rem;
+      border-radius:var(--radius-sm);
+      border:1px solid var(--border);
+    }
+
+    .timeline{
+      border-left:3px solid var(--brand);
+      padding-left:1.25rem;
+      margin-left:.5rem;
+    }
+
+    .timeline-item{
+      margin-bottom:1.25rem;
+      position:relative;
+    }
+
+    .timeline-item::before{
+      content:'';
+      position:absolute;left:-1.65rem;top:.25rem;
+      width:12px;height:12px;border-radius:50%;
+      background:var(--brand);border:3px solid var(--panel);
+      box-shadow:0 0 0 2px var(--brand);
+    }
+
+    .timeline-item strong{color:var(--brand);display:block;margin-bottom:.25rem}
+
+    .source{
+      background:color-mix(in oklab,var(--chip) 65%, transparent);
+      border-radius:8px;padding:1rem;margin-top:1.2rem;
+      font-size:.95rem;color:var(--muted);
+      border:1px solid var(--border);
+    }
+    .source strong{color:var(--ink)}
+
+    .back-to-top{
+      position:fixed;bottom:1.5rem;right:1rem;
+      background:var(--brand);color:#001;
+      width:50px;height:50px;border-radius:50%;
+      border:none;font-size:1.5rem;cursor:pointer;
+      box-shadow:var(--shadow);opacity:0;transition:opacity .3s ease;
+      z-index:1000;display:flex;align-items:center;justify-content:center;
+      font-weight:900;
+    }
+    .back-to-top.visible{opacity:1}
+    .back-to-top:active{transform:scale(.96)}
+
+    a{color:var(--brand)}
+
+    @media (max-width:480px){
+      h1{font-size:1.5rem}
+      .section-header h2{font-size:1.05rem}
+      .container{padding:.75rem}
+      header{padding:1.5rem 1rem}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="https://ewallt.github.io/pocket-deploy/is-ww2-hub/index.html">WWII Hub</a> <span>›</span> Siege of Leningrad
+    </div>
+
+    <header>
+      <h1>Siege of Leningrad (1941–44)</h1>
+      <p class="subtitle">872 Days of Encirclement, Starvation, and Endurance</p>
+    </header>
+
+    <div class="main-answer">
+      <h2>Core Summary</h2>
+      <p>From September 1941 to January 1944, German and Finnish forces besieged Leningrad (now St. Petersburg) in one of the longest and most devastating sieges in history. Over a million civilians perished, primarily from starvation and cold. Despite immense suffering, the city never surrendered, and Soviet forces eventually broke the blockade in 1944, transforming the siege into a symbol of resilience and sacrifice.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🎯 Strategic Context</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Axis Objectives:</strong> Capture or destroy Leningrad as part of Operation Barbarossa, eliminating the USSR's second-largest city and a major industrial and symbolic center.
+          </div>
+          <div class="list-item">
+            <strong>Soviet Situation:</strong> The Red Army mounted a desperate defense to preserve the cradle of the Bolshevik Revolution and maintain a northern stronghold.
+          </div>
+          <div class="list-item">
+            <strong>Geographic Importance:</strong> Leningrad's location on the Baltic granted access to the sea, while its factories and shipyards were vital to Soviet war production.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🪖 Forces & Commanders</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Axis:</strong> German Army Group North under Field Marshal Wilhelm Ritter von Leeb, later Georg von Küchler, supported by Finnish forces to the north under Marshal Carl Gustaf Emil Mannerheim.
+          </div>
+          <div class="list-item">
+            <strong>Soviet:</strong> Leningrad Front commanders including Marshal Kliment Voroshilov, later Georgy Zhukov, Leonid Govorov, and political leader Andrei Zhdanov.
+          </div>
+          <div class="list-item">
+            <strong>Forces Engaged:</strong> Hundreds of thousands of troops on both sides; over 2.5 million civilians trapped within the city.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📜 Siege Timeline</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="timeline">
+            <div class="timeline-item">
+              <strong>September 8, 1941:</strong> German forces complete the encirclement; the siege officially begins.
+            </div>
+            <div class="timeline-item">
+              <strong>Winter 1941–42:</strong> Catastrophic starvation; rations drop to 125 grams of bread per day; the "Road of Life" across frozen Lake Ladoga provides limited supply.
+            </div>
+            <div class="timeline-item">
+              <strong>1942–43:</strong> Continued bombardment and blockade; Soviet attempts to break through meet limited success.
+            </div>
+            <div class="timeline-item">
+              <strong>January 18, 1943:</strong> Operation Iskra opens a narrow land corridor, easing supply but not ending the siege.
+            </div>
+            <div class="timeline-item">
+              <strong>January 27, 1944:</strong> Soviet forces launch the final offensive; the siege is fully lifted, and Leningrad is liberated.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>⚡ Turning Points</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Road of Life:</strong> The ice road across Lake Ladoga enabled critical evacuation and resupply, sustaining the city through the worst winters.
+          </div>
+          <div class="list-item">
+            <strong>Operation Iskra (1943):</strong> Soviet forces opened a narrow land corridor, reducing but not eliminating the suffering.
+          </div>
+          <div class="list-item">
+            <strong>Final Liberation (1944):</strong> A coordinated offensive drove German forces away, ending 872 days of encirclement.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🏁 Outcomes & Consequences</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Human Cost:</strong> Over 1 million civilians died, mostly from starvation, cold, and disease; hundreds of thousands more perished in military operations.
+          </div>
+          <div class="list-item">
+            <strong>Strategic Impact:</strong> The city's survival tied down Axis forces and preserved a vital Soviet stronghold on the Baltic.
+          </div>
+          <div class="list-item">
+            <strong>Psychological Victory:</strong> Leningrad's refusal to surrender became a potent symbol of Soviet determination and defiance.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🏰 Historical Significance</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Symbol of Suffering and Endurance:</strong> The siege stands as one of the most harrowing civilian ordeals of World War II, memorialized in Russian culture and memory.
+          </div>
+          <div class="list-item">
+            <strong>Military Lessons:</strong> Demonstrated the limits of siege warfare against a determined defender with external support.
+          </div>
+          <div class="list-item">
+            <strong>Legacy:</strong> Leningrad was awarded the title "Hero City" of the Soviet Union; today, monuments and museums preserve the memory of the siege.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📚 Sources</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="source">
+            <strong>Primary:</strong> Leningrad diaries (Anna Ostroumova-Lebedeva, Lidiya Ginzburg); Soviet military reports; German Army Group North records.
+          </div>
+          <div class="source">
+            <strong>Secondary:</strong> Harrison Salisbury, <em>The 900 Days: The Siege of Leningrad</em> (1969); Anna Reid, <em>Leningrad: The Epic Siege of World War II, 1941–1944</em> (2011); David Glantz, <em>The Battle for Leningrad</em> (2002).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="back-to-top" onclick="scrollToTop()" id="backToTop" aria-label="Back to top">↑</button>
+
+  <script>
+    function toggleSection(header){
+      const section = header.parentElement;
+      const all = document.querySelectorAll('.section');
+      all.forEach(s => { if(s !== section && s.classList.contains('active')) s.classList.remove('active'); });
+      section.classList.toggle('active');
+    }
+
+    window.addEventListener('scroll', () => {
+      const btn = document.getElementById('backToTop');
+      if(window.pageYOffset > 300){ btn.classList.add('visible'); }
+      else { btn.classList.remove('visible'); }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const first = document.querySelector('.section');
+      if(first) first.classList.add('active');
+    });
+
+    function scrollToTop(){
+      window.scrollTo({ top:0, behavior:'smooth' });
+    }
+  </script>
+</body>
+</html>
