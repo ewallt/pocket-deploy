@@ -367,6 +367,12 @@
           return tagOk && qOk;
         })
         .forEach(a=>grid.appendChild(makeCard(a)));
+
+      // Defensive: ensure same-tab navigation (strip any stray attributes)
+      grid.querySelectorAll('a.btn').forEach(a=>{
+        a.removeAttribute('target');
+        a.removeAttribute('rel');
+      });
     }
 
     // ---- Interactions ----
