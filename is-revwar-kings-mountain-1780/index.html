@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>King's Mountain (1780)</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111833;
+      --ink:#e6ecff;
+      --muted:#a7b0cc;
+      --brand:#8bb9ff;
+      --accent:#c0ffe1;
+      --border:#26325b;
+      --chip:#1a2347;
+      --bad:#ff6b6b;
+      --shadow:0 8px 28px rgba(0,0,0,.35);
+      --radius:12px;
+      --radius-sm:8px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+      line-height:1.6;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
+        radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+      padding-bottom:2rem;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .container{max-width:860px;margin:0 auto;padding:1rem}
+
+    header{
+      background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:2rem 1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+    }
+
+    h1{
+      color:var(--ink);
+      font-size:1.75rem;
+      margin-bottom:.5rem;
+      letter-spacing:-.015em;
+    }
+
+    .subtitle{
+      color:var(--muted);
+      font-size:.95rem;
+      font-style:italic;
+    }
+
+    .breadcrumb{
+      margin-bottom:1rem;
+      font-size:.9rem;
+    }
+    .breadcrumb a{color:var(--brand);text-decoration:none}
+    .breadcrumb span{color:var(--muted)}
+
+    .main-answer{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+      border-left:4px solid var(--brand);
+    }
+
+    .main-answer h2{
+      color:var(--brand);
+      font-size:1.3rem;
+      margin-bottom:1rem;
+      letter-spacing:.01em;
+    }
+
+    .main-answer p{font-size:1.05rem;line-height:1.7}
+
+    .section{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      margin-bottom:1rem;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .section-header{
+      padding:1.1rem 1.25rem;
+      background:linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%);
+      color:var(--ink);
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      border-bottom:1px solid var(--border);
+    }
+
+    .section-header h2{
+      font-size:1.15rem;
+      font-weight:700;
+      letter-spacing:.01em;
+    }
+
+    .section-icon{font-size:1.35rem;transition:transform .3s ease}
+    .section.active .section-icon{transform:rotate(180deg)}
+
+    .section-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+    .section.active .section-content{max-height:5000px}
+
+    .section-inner{padding:1.25rem}
+
+    h3{
+      color:var(--brand);
+      font-size:1.08rem;
+      margin:1.3rem 0 .65rem 0;
+      letter-spacing:.01em;
+    }
+    h3:first-child{margin-top:0}
+
+    .list-item{
+      background:color-mix(in oklab,var(--chip) 75%, transparent);
+      border-left:3px solid var(--brand);
+      padding:1rem;
+      margin-bottom:.75rem;
+      border-radius:var(--radius-sm);
+      border:1px solid var(--border);
+    }
+
+    .timeline{
+      border-left:3px solid var(--brand);
+      padding-left:1.25rem;
+      margin-left:.5rem;
+    }
+
+    .timeline-item{
+      margin-bottom:1.25rem;
+      position:relative;
+    }
+
+    .timeline-item::before{
+      content:'';
+      position:absolute;left:-1.65rem;top:.25rem;
+      width:12px;height:12px;border-radius:50%;
+      background:var(--brand);border:3px solid var(--panel);
+      box-shadow:0 0 0 2px var(--brand);
+    }
+
+    .timeline-item:last-child{
+      margin-bottom:0;
+    }
+
+    .timeline-item:last-child::before{
+      width:16px;
+      height:16px;
+      left:-1.75rem;
+      background:var(--accent);
+      box-shadow:0 0 0 2px var(--accent);
+    }
+
+    .timeline-item strong{color:var(--brand);display:block;margin-bottom:.25rem}
+
+    .critique-item{
+      background:color-mix(in oklab, var(--bad) 12%, var(--panel));
+      border-left:3px solid var(--bad);
+      padding:1rem;margin-bottom:.75rem;border-radius:4px;
+      border:1px solid var(--border);
+    }
+
+    .source{
+      background:color-mix(in oklab,var(--chip) 65%, transparent);
+      border-radius:8px;padding:1rem;margin-top:1.2rem;
+      font-size:.95rem;color:var(--muted);
+      border:1px solid var(--border);
+    }
+    .source strong{color:var(--ink)}
+
+    .back-to-top{
+      position:fixed;bottom:1.5rem;right:1rem;
+      background:var(--brand);color:#001;
+      width:50px;height:50px;border-radius:50%;
+      border:none;font-size:1.5rem;cursor:pointer;
+      box-shadow:var(--shadow);opacity:0;transition:opacity .3s ease;
+      z-index:1000;display:flex;align-items:center;justify-content:center;
+      font-weight:900;
+    }
+    .back-to-top.visible{opacity:1}
+    .back-to-top:active{transform:scale(.96)}
+
+    a{color:var(--brand)}
+
+    @media (max-width:480px){
+      h1{font-size:1.5rem}
+      .section-header h2{font-size:1.05rem}
+      .container{padding:.75rem}
+      header{padding:1.5rem 1rem}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="https://ewallt.github.io/pocket-deploy/is-revwar-hub/index.html">Revolutionary War Hub</a> <span>›</span> King's Mountain
+    </div>
+
+    <header>
+      <h1>King's Mountain (1780)</h1>
+      <p class="subtitle">Overmountain Men Strike Back</p>
+    </header>
+
+    <div class="main-answer">
+      <h2>Core Summary</h2>
+      <p>On October 7, 1780, backwoods militia from the Appalachian frontier surrounded and annihilated a Loyalist force atop King's Mountain, South Carolina. Major Patrick Ferguson commanded 1,100 Loyalist militia occupying a rocky ridge he considered impregnable. Approximately 900 "Overmountain Men"—frontiersmen from what is now Tennessee and western Virginia and North Carolina—surrounded the position and attacked uphill from all sides. After an hour of brutal fighting, Ferguson was killed and his entire force destroyed. The victory shattered British plans to pacify the Carolina backcountry and marked a turning point in the Southern campaign.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🎯 Strategic Context</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>British Southern Strategy:</strong> After Charleston's fall, Cornwallis dispersed forces across the Carolinas to pacify the region. Ferguson's Loyalist militia was to secure the western frontier and rally Loyalist support.
+          </div>
+          <div class="list-item">
+            <strong>Ferguson's Threat:</strong> Ferguson issued warnings to frontier settlements, threatening to march over the mountains and destroy homesteads if the settlers didn't swear allegiance to the Crown.
+          </div>
+          <div class="list-item">
+            <strong>Frontiersmen Respond:</strong> Rather than wait for invasion, Overmountain Men gathered at Sycamore Shoals and marched east to find Ferguson. They crossed the mountains in early autumn, determined to destroy his force.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🪖 Forces & Commanders</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Loyalist:</strong> Major Patrick Ferguson commanded approximately 1,100 Loyalist militia (American Tories), mostly from North and South Carolina. Ferguson, a British regular officer, was the only British soldier present.
+          </div>
+          <div class="list-item">
+            <strong>Patriot:</strong> Approximately 900 frontiersmen under colonels William Campbell, Isaac Shelby, John Sevier, Joseph McDowell, Benjamin Cleveland, and others. Armed with rifles, experienced hunters and Indian fighters.
+          </div>
+          <div class="list-item">
+            <strong>Casualties:</strong> Loyalist: 157 killed (including Ferguson), 163 wounded, 698 captured. Patriot: 28 killed, 62 wounded. After the battle, patriots executed several prisoners in retaliation for Loyalist atrocities.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📅 Timeline</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="timeline">
+            <div class="timeline-item">
+              <strong>September 25:</strong> Overmountain Men muster at Sycamore Shoals (present-day Tennessee) and march east over the mountains in pursuit of Ferguson.
+            </div>
+            <div class="timeline-item">
+              <strong>October 6:</strong> Patriots locate Ferguson's position atop King's Mountain. They surround the ridge during the night, cutting off escape routes.
+            </div>
+            <div class="timeline-item">
+              <strong>October 7, 3:00 PM:</strong> Attack begins. Frontiersmen advance uphill from all sides, using trees and rocks for cover. Ferguson's men fire downhill, but overshooting is common on steep slopes.
+            </div>
+            <div class="timeline-item">
+              <strong>3:30 PM:</strong> Ferguson leads bayonet charges down the slopes, temporarily driving attackers back. But patriots regroup and resume climbing from all directions.
+            </div>
+            <div class="timeline-item">
+              <strong>4:00 PM:</strong> Ferguson killed trying to break through patriot lines. Loyalist resistance collapses. White flags raised, but shooting continues for several minutes. Patriots accept surrender. Nine prisoners later hanged for war crimes.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>⚡ Turning Points</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Rifle vs. Musket:</strong> The frontiersmen's rifles were far more accurate than Loyalist muskets. From cover, they picked off Ferguson's officers and men. Loyalist bayonet charges couldn't reach them.
+          </div>
+          <div class="list-item">
+            <strong>Encirclement:</strong> Ferguson's "impregnable" position became a trap once patriots surrounded the ridge. Loyalists had no retreat route and were fired upon from all directions.
+          </div>
+          <div class="list-item">
+            <strong>Ferguson's Death:</strong> Ferguson's leadership held the Loyalist line together. When he fell—shot multiple times while trying to break out—Loyalist morale collapsed. His second-in-command immediately surrendered.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📊 Outcomes</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Complete Loyalist Defeat:</strong> Ferguson's entire force was killed or captured. The disaster destroyed British plans to secure the western Carolinas and demoralized Loyalist militia throughout the region.
+          </div>
+          <div class="list-item">
+            <strong>Cornwallis Retreats:</strong> Upon hearing of King's Mountain, Cornwallis abandoned his invasion of North Carolina and withdrew to South Carolina. His exposed left flank was now vulnerable.
+          </div>
+          <div class="list-item">
+            <strong>Partisan Warfare Intensifies:</strong> The victory energized patriot partisans. Loyalists became cautious about openly supporting the British, undermining Britain's entire Southern strategy.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🔍 Historical Significance</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <p style="margin-bottom:1rem">King's Mountain was an American civil war in miniature—no British regulars fought there, only Loyalist and patriot Americans. Thomas Jefferson called it "the turn of the tide of success." The battle demonstrated the limits of Britain's Southern strategy. Without loyal, capable militia to hold territory, British regulars couldn't pacify vast regions. Cornwallis wrote that the defeat "unhappily proved the first link of a chain of evils that followed in regular succession until they at last ended in the total loss of America." Modern historians agree that King's Mountain, though small, had strategic consequences far beyond its size. It proved that frontiersmen could defeat organized forces and that Loyalist strength in the South was illusory.</p>
+          <div class="source">
+            <strong>Primary Sources:</strong> Accounts from Isaac Shelby, William Campbell, and other patriot leaders; Cornwallis's correspondence.
+          </div>
+          <div class="source">
+            <strong>Key Works:</strong> Lyman C. Draper, <em>King's Mountain and Its Heroes</em> (1881); Wilma Dykeman, <em>With Fire and Sword: The Battle of King's Mountain, 1780</em> (1991).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="back-to-top" onclick="scrollToTop()">↑</button>
+
+  <script>
+    function toggleSection(header){
+      const section = header.parentElement;
+      const allSections = document.querySelectorAll('.section');
+      allSections.forEach(s=>{
+        if(s !== section) s.classList.remove('active');
+      });
+      section.classList.toggle('active');
+    }
+
+    function scrollToTop(){
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    window.addEventListener('scroll', ()=>{
+      const btn = document.querySelector('.back-to-top');
+      if(window.scrollY > 300){
+        btn.classList.add('visible');
+      } else {
+        btn.classList.remove('visible');
+      }
+    });
+  </script>
+</body>
+</html>
