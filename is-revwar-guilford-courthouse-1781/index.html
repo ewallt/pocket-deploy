@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Guilford Courthouse (1781)</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111833;
+      --ink:#e6ecff;
+      --muted:#a7b0cc;
+      --brand:#8bb9ff;
+      --accent:#c0ffe1;
+      --border:#26325b;
+      --chip:#1a2347;
+      --bad:#ff6b6b;
+      --shadow:0 8px 28px rgba(0,0,0,.35);
+      --radius:12px;
+      --radius-sm:8px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+      line-height:1.6;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
+        radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+      padding-bottom:2rem;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .container{max-width:860px;margin:0 auto;padding:1rem}
+
+    header{
+      background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:2rem 1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+    }
+
+    h1{
+      color:var(--ink);
+      font-size:1.75rem;
+      margin-bottom:.5rem;
+      letter-spacing:-.015em;
+    }
+
+    .subtitle{
+      color:var(--muted);
+      font-size:.95rem;
+      font-style:italic;
+    }
+
+    .breadcrumb{
+      margin-bottom:1rem;
+      font-size:.9rem;
+    }
+    .breadcrumb a{color:var(--brand);text-decoration:none}
+    .breadcrumb span{color:var(--muted)}
+
+    .main-answer{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+      border-left:4px solid var(--brand);
+    }
+
+    .main-answer h2{
+      color:var(--brand);
+      font-size:1.3rem;
+      margin-bottom:1rem;
+      letter-spacing:.01em;
+    }
+
+    .main-answer p{font-size:1.05rem;line-height:1.7}
+
+    .section{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      margin-bottom:1rem;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .section-header{
+      padding:1.1rem 1.25rem;
+      background:linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%);
+      color:var(--ink);
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      border-bottom:1px solid var(--border);
+    }
+
+    .section-header h2{
+      font-size:1.15rem;
+      font-weight:700;
+      letter-spacing:.01em;
+    }
+
+    .section-icon{font-size:1.35rem;transition:transform .3s ease}
+    .section.active .section-icon{transform:rotate(180deg)}
+
+    .section-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+    .section.active .section-content{max-height:5000px}
+
+    .section-inner{padding:1.25rem}
+
+    h3{
+      color:var(--brand);
+      font-size:1.08rem;
+      margin:1.3rem 0 .65rem 0;
+      letter-spacing:.01em;
+    }
+    h3:first-child{margin-top:0}
+
+    .list-item{
+      background:color-mix(in oklab,var(--chip) 75%, transparent);
+      border-left:3px solid var(--brand);
+      padding:1rem;
+      margin-bottom:.75rem;
+      border-radius:var(--radius-sm);
+      border:1px solid var(--border);
+    }
+
+    .timeline{
+      border-left:3px solid var(--brand);
+      padding-left:1.25rem;
+      margin-left:.5rem;
+    }
+
+    .timeline-item{
+      margin-bottom:1.25rem;
+      position:relative;
+    }
+
+    .timeline-item::before{
+      content:'';
+      position:absolute;left:-1.65rem;top:.25rem;
+      width:12px;height:12px;border-radius:50%;
+      background:var(--brand);border:3px solid var(--panel);
+      box-shadow:0 0 0 2px var(--brand);
+    }
+
+    .timeline-item:last-child{
+      margin-bottom:0;
+    }
+
+    .timeline-item:last-child::before{
+      width:16px;
+      height:16px;
+      left:-1.75rem;
+      background:var(--accent);
+      box-shadow:0 0 0 2px var(--accent);
+    }
+
+    .timeline-item strong{color:var(--brand);display:block;margin-bottom:.25rem}
+
+    .critique-item{
+      background:color-mix(in oklab, var(--bad) 12%, var(--panel));
+      border-left:3px solid var(--bad);
+      padding:1rem;margin-bottom:.75rem;border-radius:4px;
+      border:1px solid var(--border);
+    }
+
+    .source{
+      background:color-mix(in oklab,var(--chip) 65%, transparent);
+      border-radius:8px;padding:1rem;margin-top:1.2rem;
+      font-size:.95rem;color:var(--muted);
+      border:1px solid var(--border);
+    }
+    .source strong{color:var(--ink)}
+
+    .back-to-top{
+      position:fixed;bottom:1.5rem;right:1rem;
+      background:var(--brand);color:#001;
+      width:50px;height:50px;border-radius:50%;
+      border:none;font-size:1.5rem;cursor:pointer;
+      box-shadow:var(--shadow);opacity:0;transition:opacity .3s ease;
+      z-index:1000;display:flex;align-items:center;justify-content:center;
+      font-weight:900;
+    }
+    .back-to-top.visible{opacity:1}
+    .back-to-top:active{transform:scale(.96)}
+
+    a{color:var(--brand)}
+
+    @media (max-width:480px){
+      h1{font-size:1.5rem}
+      .section-header h2{font-size:1.05rem}
+      .container{padding:.75rem}
+      header{padding:1.5rem 1rem}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="https://ewallt.github.io/pocket-deploy/is-revwar-hub/index.html">Revolutionary War Hub</a> <span>›</span> Guilford Courthouse
+    </div>
+
+    <header>
+      <h1>Guilford Courthouse (1781)</h1>
+      <p class="subtitle">A Pyrrhic British Victory</p>
+    </header>
+
+    <div class="main-answer">
+      <h2>Core Summary</h2>
+      <p>On March 15, 1781, General Nathanael Greene fought General Charles Cornwallis near Guilford Courthouse, North Carolina. Greene positioned approximately 4,400 Continental troops and militia in three defensive lines across wooded terrain. Cornwallis attacked with 1,900 battle-hardened regulars. After fierce fighting that raged for over two hours, Greene withdrew his army intact. Cornwallis held the field but lost over a quarter of his force—casualties he could not replace. Charles James Fox told Parliament, "Another such victory would ruin the British army." The battle forced Cornwallis to abandon the Carolinas and march toward Virginia, setting the stage for Yorktown.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🎯 Strategic Context</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Greene's Strategy:</strong> After Cowpens, Greene led Cornwallis on an exhausting chase across North Carolina—"the Race to the Dan." Once reinforced with militia, Greene turned to fight, seeking to inflict maximum casualties on Cornwallis.
+          </div>
+          <div class="list-item">
+            <strong>Cornwallis's Gamble:</strong> Having burned his baggage to move faster in pursuit of Greene, Cornwallis needed decisive victory to justify his weakened, exhausted army and validate his Carolina campaign.
+          </div>
+          <div class="list-item">
+            <strong>Tactical Challenge:</strong> Greene knew his militia couldn't match British regulars in open battle. He deployed them in a defensive position where terrain and depth could offset British advantages.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🪖 Forces & Commanders</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>American:</strong> General Nathanael Greene commanded approximately 4,400 troops—1,600 Continental regulars (including veterans from Maryland and Delaware), 2,800 militia from North Carolina and Virginia. Positioned in three lines over half a mile deep.
+          </div>
+          <div class="list-item">
+            <strong>British:</strong> General Charles Cornwallis led roughly 1,900 regulars—Guards regiments, Highlanders, German mercenaries, and light infantry. Elite troops exhausted by weeks of campaigning.
+          </div>
+          <div class="list-item">
+            <strong>Casualties:</strong> American: 78 killed, 183 wounded. British: 93 killed, 413 wounded, 26 missing—532 total, over 27% of the force. Critically, most wounded officers and sergeants, devastating unit leadership.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📅 Timeline</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="timeline">
+            <div class="timeline-item">
+              <strong>March 15, noon:</strong> Cornwallis advances toward Greene's position. American militia in first line (North Carolina) waits behind a split-rail fence along a cleared field.
+            </div>
+            <div class="timeline-item">
+              <strong>1:30 PM:</strong> British attack begins. North Carolina militia fires volleys and withdraws—some in disorder, but the line slows the British advance. British pursue into woods.
+            </div>
+            <div class="timeline-item">
+              <strong>2:00 PM:</strong> British reach second line (Virginia militia). Sustained, brutal fighting. Virginia militia stands longer than expected, delivering heavy casualties. British Guards and light infantry eventually flank and break the line.
+            </div>
+            <div class="timeline-item">
+              <strong>2:30 PM:</strong> British assault third line (Continental regulars). Fierce close-quarters combat. Maryland and Delaware Continentals counterattack, nearly breaking British Guards. Fighting at bayonet range.
+            </div>
+            <div class="timeline-item">
+              <strong>3:30 PM:</strong> Cornwallis orders his artillery to fire grapeshot into the melee, killing his own troops along with Americans. Greene, seeing British desperation and his own mission accomplished (inflicting casualties), withdraws his army intact. Cornwallis holds field but cannot pursue.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>⚡ Turning Points</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Virginia Militia Stands:</strong> The second line's unexpectedly stubborn resistance bled the British advance. By the time regulars hit Greene's third line, British units were disordered and exhausted.
+          </div>
+          <div class="list-item">
+            <strong>Continental Counterattack:</strong> Maryland and Delaware Continentals nearly broke through British lines in fierce counterattacks. Only Cornwallis's desperate use of artillery firing into the melee stopped them.
+          </div>
+          <div class="list-item">
+            <strong>Greene's Withdrawal:</strong> Rather than risk his army, Greene withdrew while still capable of fighting. This preserved his force for future operations while leaving Cornwallis victorious but crippled.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📊 Outcomes</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Pyrrhic British Victory:</strong> Cornwallis won the field but lost over a quarter of his army. He lacked supplies, reinforcements, and the strength to pursue Greene or hold territory.
+          </div>
+          <div class="list-item">
+            <strong>Strategic American Victory:</strong> Greene's army remained intact and would reconquer the Carolinas within months. His strategy of trading space for British casualties succeeded brilliantly.
+          </div>
+          <div class="list-item">
+            <strong>Cornwallis's Fateful Decision:</strong> Unable to sustain operations in the Carolinas, Cornwallis marched to Virginia seeking reinforcement and victory. This decision led directly to Yorktown.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🔍 Historical Significance</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <p style="margin-bottom:1rem">Guilford Courthouse exemplifies Nathanael Greene's strategic genius. He lost the battle but won the campaign. His famous comment, "We fight, get beat, rise, and fight again," captured his attritional strategy perfectly. Cornwallis could win tactical victories but couldn't replace losses. Greene could retreat, regroup, and return. Historian Lawrence Babits notes that Guilford "broke the British army in the South as surely as if Greene had destroyed it outright." Within seven months, Cornwallis would surrender at Yorktown. The road from Guilford Courthouse led inexorably to American independence. It remains a masterclass in how a weaker force can defeat a stronger one through strategic patience and operational art.</p>
+          <div class="source">
+            <strong>Primary Sources:</strong> Greene's correspondence with Washington, Cornwallis's reports, participant accounts including Sergeant Roger Lamb.
+          </div>
+          <div class="source">
+            <strong>Key Works:</strong> John Buchanan, <em>The Road to Guilford Courthouse</em> (1997); Lawrence E. Babits and Joshua B. Howard, <em>Long, Obstinate, and Bloody: The Battle of Guilford Courthouse</em> (2009).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="back-to-top" onclick="scrollToTop()">↑</button>
+
+  <script>
+    function toggleSection(header){
+      const section = header.parentElement;
+      const allSections = document.querySelectorAll('.section');
+      allSections.forEach(s=>{
+        if(s !== section) s.classList.remove('active');
+      });
+      section.classList.toggle('active');
+    }
+
+    function scrollToTop(){
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    window.addEventListener('scroll', ()=>{
+      const btn = document.querySelector('.back-to-top');
+      if(window.scrollY > 300){
+        btn.classList.add('visible');
+      } else {
+        btn.classList.remove('visible');
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Trenton (1776)</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111833;
+      --ink:#e6ecff;
+      --muted:#a7b0cc;
+      --brand:#8bb9ff;
+      --accent:#c0ffe1;
+      --border:#26325b;
+      --chip:#1a2347;
+      --bad:#ff6b6b;
+      --shadow:0 8px 28px rgba(0,0,0,.35);
+      --radius:12px;
+      --radius-sm:8px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+      line-height:1.6;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
+        radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+      padding-bottom:2rem;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .container{max-width:860px;margin:0 auto;padding:1rem}
+
+    header{
+      background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:2rem 1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+    }
+
+    h1{
+      color:var(--ink);
+      font-size:1.75rem;
+      margin-bottom:.5rem;
+      letter-spacing:-.015em;
+    }
+
+    .subtitle{
+      color:var(--muted);
+      font-size:.95rem;
+      font-style:italic;
+    }
+
+    .breadcrumb{
+      margin-bottom:1rem;
+      font-size:.9rem;
+    }
+    .breadcrumb a{color:var(--brand);text-decoration:none}
+    .breadcrumb span{color:var(--muted)}
+
+    .main-answer{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+      border-left:4px solid var(--brand);
+    }
+
+    .main-answer h2{
+      color:var(--brand);
+      font-size:1.3rem;
+      margin-bottom:1rem;
+      letter-spacing:.01em;
+    }
+
+    .main-answer p{font-size:1.05rem;line-height:1.7}
+
+    .section{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      margin-bottom:1rem;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .section-header{
+      padding:1.1rem 1.25rem;
+      background:linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%);
+      color:var(--ink);
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      border-bottom:1px solid var(--border);
+    }
+
+    .section-header h2{
+      font-size:1.15rem;
+      font-weight:700;
+      letter-spacing:.01em;
+    }
+
+    .section-icon{font-size:1.35rem;transition:transform .3s ease}
+    .section.active .section-icon{transform:rotate(180deg)}
+
+    .section-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+    .section.active .section-content{max-height:5000px}
+
+    .section-inner{padding:1.25rem}
+
+    h3{
+      color:var(--brand);
+      font-size:1.08rem;
+      margin:1.3rem 0 .65rem 0;
+      letter-spacing:.01em;
+    }
+    h3:first-child{margin-top:0}
+
+    .list-item{
+      background:color-mix(in oklab,var(--chip) 75%, transparent);
+      border-left:3px solid var(--brand);
+      padding:1rem;
+      margin-bottom:.75rem;
+      border-radius:var(--radius-sm);
+      border:1px solid var(--border);
+    }
+
+    .timeline{
+      border-left:3px solid var(--brand);
+      padding-left:1.25rem;
+      margin-left:.5rem;
+    }
+
+    .timeline-item{
+      margin-bottom:1.25rem;
+      position:relative;
+    }
+
+    .timeline-item::before{
+      content:'';
+      position:absolute;left:-1.65rem;top:.25rem;
+      width:12px;height:12px;border-radius:50%;
+      background:var(--brand);border:3px solid var(--panel);
+      box-shadow:0 0 0 2px var(--brand);
+    }
+
+    .timeline-item:last-child{
+      margin-bottom:0;
+    }
+
+    .timeline-item:last-child::before{
+      width:16px;
+      height:16px;
+      left:-1.75rem;
+      background:var(--accent);
+      box-shadow:0 0 0 2px var(--accent);
+    }
+
+    .timeline-item strong{color:var(--brand);display:block;margin-bottom:.25rem}
+
+    .critique-item{
+      background:color-mix(in oklab, var(--bad) 12%, var(--panel));
+      border-left:3px solid var(--bad);
+      padding:1rem;margin-bottom:.75rem;border-radius:4px;
+      border:1px solid var(--border);
+    }
+
+    .source{
+      background:color-mix(in oklab,var(--chip) 65%, transparent);
+      border-radius:8px;padding:1rem;margin-top:1.2rem;
+      font-size:.95rem;color:var(--muted);
+      border:1px solid var(--border);
+    }
+    .source strong{color:var(--ink)}
+
+    .back-to-top{
+      position:fixed;bottom:1.5rem;right:1rem;
+      background:var(--brand);color:#001;
+      width:50px;height:50px;border-radius:50%;
+      border:none;font-size:1.5rem;cursor:pointer;
+      box-shadow:var(--shadow);opacity:0;transition:opacity .3s ease;
+      z-index:1000;display:flex;align-items:center;justify-content:center;
+      font-weight:900;
+    }
+    .back-to-top.visible{opacity:1}
+    .back-to-top:active{transform:scale(.96)}
+
+    a{color:var(--brand)}
+
+    @media (max-width:480px){
+      h1{font-size:1.5rem}
+      .section-header h2{font-size:1.05rem}
+      .container{padding:.75rem}
+      header{padding:1.5rem 1rem}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="https://ewallt.github.io/pocket-deploy/is-revwar-hub/index.html">Revolutionary War Hub</a> <span>›</span> Trenton
+    </div>
+
+    <header>
+      <h1>Trenton (1776)</h1>
+      <p class="subtitle">Washington Crosses the Delaware</p>
+    </header>
+
+    <div class="main-answer">
+      <h2>Core Summary</h2>
+      <p>On Christmas night 1776, George Washington led 2,400 Continental soldiers across the ice-choked Delaware River to launch a surprise attack on Hessian forces garrisoned in Trenton, New Jersey. The Continental Army overwhelmed the garrison, capturing nearly 900 prisoners and military supplies. Coming after months of devastating defeats, the victory electrified colonial morale and convinced many soldiers to reenlist despite hardship. It proved that Washington could outmaneuver his opponents and that the Revolution could survive its darkest hour.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🎯 Strategic Context</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Desperate Circumstances:</strong> Washington's army had retreated across New Jersey after losing New York. Enlistments were expiring, and the Continental cause seemed on the verge of collapse.
+          </div>
+          <div class="list-item">
+            <strong>British Overconfidence:</strong> General Howe had pursued the Continental Army to the Delaware, then dispersed his forces into winter quarters. Hessian troops held outposts across New Jersey, believing Washington incapable of offensive action.
+          </div>
+          <div class="list-item">
+            <strong>Washington's Gamble:</strong> A bold stroke was needed to reverse momentum. Washington planned coordinated attacks across the Delaware, though only his own column succeeded in crossing due to weather and ice.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🪖 Forces & Commanders</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Continental:</strong> General George Washington commanded approximately 2,400 men, including troops under Generals Nathanael Greene and John Sullivan. They crossed at McConkey's Ferry.
+          </div>
+          <div class="list-item">
+            <strong>Hessian:</strong> Colonel Johann Rall commanded three regiments totaling about 1,400 soldiers—the Rall, Lossberg, and Knyphausen regiments—plus artillery.
+          </div>
+          <div class="list-item">
+            <strong>Casualties:</strong> Continental: 2 killed from exposure, 5 wounded. Hessian: 22 killed, 83 wounded, 896 captured. Rall was mortally wounded leading a counterattack.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📅 Timeline</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="timeline">
+            <div class="timeline-item">
+              <strong>December 25, 6:00 PM:</strong> Continental troops begin crossing the Delaware in Durham boats amid snow, sleet, and ice floes. The operation takes longer than expected.
+            </div>
+            <div class="timeline-item">
+              <strong>December 26, 4:00 AM:</strong> All troops across. Washington marches south toward Trenton, nine miles away. Two columns advance along separate routes.
+            </div>
+            <div class="timeline-item">
+              <strong>8:00 AM:</strong> Continental forces attack Trenton from north and south simultaneously. Hessians, many recovering from Christmas celebrations, are caught by surprise.
+            </div>
+            <div class="timeline-item">
+              <strong>8:30 AM:</strong> Continental artillery commands Trenton's streets. Hessian attempts to deploy are disrupted. Rall tries to organize a counterattack but is shot from his horse.
+            </div>
+            <div class="timeline-item">
+              <strong>9:30 AM:</strong> Hessian forces surrender. Washington quickly recrosses the Delaware with prisoners and captured supplies before British reinforcements arrive.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>⚡ Turning Points</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>The Crossing:</strong> Despite brutal weather, Washington's troops completed the night crossing. Boats piloted by Marblehead fishermen navigated ice floes that could have doomed the operation.
+          </div>
+          <div class="list-item">
+            <strong>Complete Surprise:</strong> Hessian sentries spotted the attack only minutes before Continental troops entered the town. The garrison had no time to form defensive lines.
+          </div>
+          <div class="list-item">
+            <strong>Artillery Dominance:</strong> Captain Alexander Hamilton's and Captain Thomas Forrest's artillery pieces controlled the main streets, preventing organized Hessian resistance and forcing surrender.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📊 Outcomes</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Military Success:</strong> Washington captured nearly 900 prisoners, six Hessian cannons, thousands of muskets, and much-needed supplies. Continental casualties were negligible.
+          </div>
+          <div class="list-item">
+            <strong>Strategic Shift:</strong> British and Hessian forces evacuated positions across western New Jersey. Washington regained the initiative and followed up with a victory at Princeton a week later.
+          </div>
+          <div class="list-item">
+            <strong>Morale Revolution:</strong> The victory reversed plummeting colonial morale. Soldiers reenlisted. Congress reconvened. Foreign observers reconsidered American prospects. Thomas Paine wrote, "These are the times that try men's souls," just before the battle—Trenton answered his call.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🔍 Historical Significance</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <p style="margin-bottom:1rem">Trenton stands as one of the most consequential surprise attacks in military history. Washington's bold gamble saved the Revolution at its lowest point. The victory demonstrated that American forces could execute complex operations and defeat professional European soldiers. Historian David Hackett Fischer called it "a turning point in a long struggle, not only for American independence but also for the future of human liberty." Emanuel Leutze's iconic 1851 painting cemented the Delaware crossing in American memory as a symbol of determination against overwhelming odds.</p>
+          <div class="source">
+            <strong>Primary Sources:</strong> Washington's correspondence, pension applications from soldiers who crossed the Delaware, Hessian regimental records.
+          </div>
+          <div class="source">
+            <strong>Key Works:</strong> David Hackett Fischer, <em>Washington's Crossing</em> (2004); William M. Dwyer, <em>The Day Is Ours!: November 1776–January 1777</em> (1983).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="back-to-top" onclick="scrollToTop()">↑</button>
+
+  <script>
+    function toggleSection(header){
+      const section = header.parentElement;
+      const allSections = document.querySelectorAll('.section');
+      allSections.forEach(s=>{
+        if(s !== section) s.classList.remove('active');
+      });
+      section.classList.toggle('active');
+    }
+
+    function scrollToTop(){
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    window.addEventListener('scroll', ()=>{
+      const btn = document.querySelector('.back-to-top');
+      if(window.scrollY > 300){
+        btn.classList.add('visible');
+      } else {
+        btn.classList.remove('visible');
+      }
+    });
+  </script>
+</body>
+</html>
