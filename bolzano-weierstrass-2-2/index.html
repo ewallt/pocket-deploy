@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Series 2 — Bolzano–Weierstrass · Part 2: Neighborhoods &amp; Epsilon-Balls</title>
+<title>Series 2 — Part 2 · Neighborhoods &amp; Epsilon-Balls</title>
 <style>
 :root{
   --bg:#0f172a;
@@ -45,26 +45,26 @@ small.muted{color:var(--muted)}
       <p class="lead">Part 2 · Neighborhoods &amp; Epsilon-Balls</p>
 
       <article>
-        <p>To make sense of convergence we need a vocabulary for proximity. Informal talk about “getting arbitrarily close” is appealing but imprecise. Mathematicians resolve this by encoding closeness in neighborhoods and ε-balls. A neighborhood of a point \(a\) is any set containing some open interval around \(a\); an ε-ball is the specific interval \((a-\varepsilon, a+\varepsilon)\). These constructions let us translate narrative descriptions into quantifiable conditions: to be close means to lie inside every ε-ball of small enough radius.</p>
+        <p>Before we can navigate the Bolzano–Weierstrass Theorem, we must learn the grammar of neighborhoods. At a point \(a\), the most familiar neighborhood is an open interval \((a - \varepsilon, a + \varepsilon)\), capturing all real numbers within a distance \(\varepsilon\). This epsilon-ball encodes the intuitive statement “stay close to \(a\)” but makes it precise enough for proofs. By varying \(\varepsilon\), we generate a hierarchy of closeness that analysis relies on to define limits, continuity, and convergence.</p>
 
-        <p>The open-interval picture hides a subtlety: the endpoint behavior matters. Deleted neighborhoods remove the point at the center, capturing the idea that we can approach \(a\) without necessarily evaluating the function or sequence at \(a\) itself. This tweak is crucial for statements about limits because it lets us ignore the behavior at finitely many exceptional indices while still guaranteeing proximity for all remaining terms. When proving Bolzano–Weierstrass, we repeatedly isolate subcollections of sequence elements that lie inside progressively smaller neighborhoods.</p>
+        <p>Neighborhoods come in several flavors. Deleted neighborhoods, for example, remove the point \(a\) itself, producing \(0 < |x - a| < \varepsilon\). They allow us to discuss the behavior of a function near a point without referencing the value at the point. Half-open intervals and rays represent directional neighborhoods, essential when limits differ depending on the approach from above or below. Each variation still shares the same heart: distances measured by absolute value.</p>
 
-        <p>Introducing ε language also clarifies the role of quantifiers. Saying “for every ε > 0 there exists N such that …” forces us to control infinitely many possible tolerances simultaneously. The order of quantifiers matters: first we fix the tolerance (no matter how demanding), then we produce an index that satisfies it. This discipline prevents hand-waving and ensures proofs scale beyond specific examples. When we later build the nested-interval argument, each step will shrink the ε-ball and demonstrate how to choose subsequent indices.</p>
+        <p>The epsilon machinery intertwines with quantifiers. Saying that \(x_n\) converges to \(L\) means that for every \(\varepsilon > 0\), there exists an index \(N\) such that whenever \(n \geq N\), the term \(x_n\) lives inside the \(\varepsilon\)-ball around \(L\). This “for every” followed by “there exists” pattern enforces discipline. Rather than eyeballing a graph, we must exhibit how large \(N\) needs to be, or at least show that such an \(N\) exists. Neighborhoods allow us to translate qualitative tendencies into quantifiable bounds.</p>
 
-        <p>Neighborhoods do more than formalize limits; they unify various continuity and convergence concepts. A function is continuous at \(a\) precisely when it maps sufficiently small neighborhoods of \(a\) into neighborhoods of \(f(a)\). A sequence converges to \(L\) when eventually all its terms fall inside every neighborhood of \(L\). By phrasing everything in terms of open sets, we make the connection to topology explicit and prepare the ground for higher-dimensional generalizations where intervals become balls or other basic open sets.</p>
+        <p>In the context of sequences, neighborhoods highlight why boundedness is a meaningful precondition. A bounded sequence fits entirely inside some fixed ball around the origin, meaning there is an \(M\) with \(|x_n| \leq M\) for all \(n\). Without this global neighborhood, even the epsilon language cannot pin down convergence because the sequence might wander off to infinity. Neighborhoods therefore serve dual roles: local control near a candidate limit and global control via bounding balls.</p>
 
-        <p>For Bolzano–Weierstrass, neighborhoods are the lenses through which we observe accumulation points. If a point \(L\) is a limit point of a sequence, then every neighborhood of \(L\) contains infinitely many terms. The theorem will guarantee the existence of such an \(L\) by systematically constructing smaller and smaller neighborhoods that retain infinitely many elements. Understanding how neighborhoods capture infinite repetition is therefore the conceptual bridge between boundedness and convergence.</p>
+        <p>Epsilon-balls also underpin the language of open sets. Any open subset of ℝ can be described as a union of such balls, making them fundamental building blocks for topology. This perspective becomes vital later when we reinterpret Bolzano–Weierstrass as a statement about compactness: every sequence in a compact set has a convergent subsequence whose limit remains inside the set. Compact sets, in turn, can be described via finite subcovers of open balls, tying the theorem back to neighborhood language.</p>
 
-        <p>As you move forward, keep this vocabulary at hand. The ε–N framework might feel pedantic at first, but it gives us the tools to manipulate sequences with surgical precision. The next article applies these ideas to bound constraints, showing how simple inequalities can fence sequences inside intervals ripe for the Bolzano–Weierstrass machinery.</p>
+        <p>Keeping neighborhoods at the forefront prepares us for the rest of the series. Next we examine bounded sequences directly, cataloging examples that either settle down or refuse to do so. Along the way, epsilon-balls act as our measuring tape, letting us articulate exactly how close or how confined a sequence truly is.</p>
       </article>
 
       <hr />
       <div class="nav" aria-label="Navigation">
         <a href="/pocket-deploy/bolzano-weierstrass-2-1/">Previous</a>
         <a href="/pocket-deploy/bolzano-weierstrass-2-3/">Next</a>
-        <a href="/pocket-deploy/dashboard-bolzano-weierstrass-2/">Back to Dashboard</a>
+        <a href="/pocket-deploy/dashboard-bolzano-weierstrass-2/">Table of Contents</a>
       </div>
-      <small class="muted">Sources: Undergraduate real analysis texts, lecture notes on ε–δ language, and topology primers on neighborhoods.</small>
+      <small class="muted">Tone: Wiki-style · Theme: Navy (Dark)</small>
     </div>
   </div>
 </body>

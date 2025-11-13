@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Series 2 — Bolzano–Weierstrass · Part 3: Bounded Sequences</title>
+<title>Series 2 — Part 3 · Bounded Sequences</title>
 <style>
 :root{
   --bg:#0f172a;
@@ -45,26 +45,26 @@ small.muted{color:var(--muted)}
       <p class="lead">Part 3 · Bounded Sequences</p>
 
       <article>
-        <p>Boundedness sounds innocuous: a sequence \((x_n)\) is bounded if there exists a real number \(M\) with \(|x_n| \le M\) for all \(n\). Yet this simple inequality carries deep consequences. Bounding a sequence prevents it from escaping to infinity and confines every term inside a fixed interval \([-M,M]\). Within that interval, we can use completeness of the real numbers to reason about accumulation points, because nested intervals and supremum arguments only work when the set under consideration is bounded above and below.</p>
+        <p>A sequence \((x_n)\) is bounded if we can find a real number \(M\) such that \(|x_n| \leq M\) for all \(n\). Visually, every point of the sequence lies inside the horizontal band between \(-M\) and \(M\). This simple definition hides a wealth of behavior. Some bounded sequences converge outright, such as \(x_n = 1/n\). Others, like \((-1)^n\), refuse to settle but still never leave the band. The Bolzano–Weierstrass Theorem is interesting precisely because boundedness alone does not force a limit—yet it ensures that some subsequence will behave nicely.</p>
 
-        <p>Concrete examples make the definition vivid. The sequence \(x_n = (-1)^n\) is bounded between \(-1\) and \(1\) but never converges; nevertheless it has convergent subsequences, namely the subsequences picking out all even indices or all odd indices. By contrast, \(x_n = n\) has no such bound and therefore no convergent subsequence—its values diverge without revisiting any region. Oscillatory sequences like \(\sin n\) remain bounded within \([-1,1]\); Bolzano–Weierstrass assures us we can find subsequences approaching any accumulation point in that range.</p>
+        <p>Examples clarify the distinction. The sequence defined by the decimal truncations of \(\pi\) (3, 3.1, 3.14, …) is bounded and convergent because the truncations approach \(\pi\). By contrast, \(x_n = \sin n\) is bounded between -1 and 1 but oscillates in a seemingly unpredictable manner. Despite that chaos, the theorem tells us we can always extract a subsequence converging to any number in [-1, 1] that occurs as a limit point. In other words, the set of subsequential limits captures the cluster points of the sequence, and boundedness guarantees that this set is nonempty.</p>
 
-        <p>Bounding is often established through comparison tests or physical intuition. Energy conservation might yield \(|x_n| \le E\), while inequality chains in proofs show that partial sums cannot exceed certain thresholds. When working with iterative algorithms, we frequently maintain invariants ensuring the iterates stay inside a feasible region; this invariant becomes the boundedness hypothesis that triggers Bolzano–Weierstrass later on.</p>
+        <p>Bounding can be symmetric, as with absolute values, or asymmetric, as when \(m \leq x_n \leq M\). For monotone sequences, bounding from one side already suffices. A sequence that is monotone increasing and bounded above must converge to its least upper bound. This monotone convergence theorem is a special case where Bolzano–Weierstrass becomes unnecessary because the sequence itself converges. When monotonicity fails, we fall back on subsequences and the compactness intuition driving Bolzano–Weierstrass.</p>
 
-        <p>The link between boundedness and compactness is already visible in one dimension. Closed and bounded intervals \([a,b]\) are compact in \(\mathbb{R}\), meaning every sequence they contain possesses a convergent subsequence. Bolzano–Weierstrass is essentially the sequential compactness statement for \([a,b]\). Recognizing this connection helps when transitioning to Series 3, where we explore Heine–Borel and broader compactness notions. For now, it suffices to see that bounding the sequence forces all its values into a compact playground.</p>
+        <p>It is instructive to analyze failures of boundedness. The harmonic sequence of partial sums, \(H_n = 1 + 1/2 + \cdots + 1/n\), diverges to infinity. No matter which subsequence we choose, the terms eventually exceed any prescribed bound, so no convergent subsequence can exist. Recognizing divergence through unbounded growth is a common strategy: if an argument relies on Bolzano–Weierstrass but the hypotheses secretly allow the sequence to escape, we know something is amiss.</p>
 
-        <p>Pragmatically, verifying boundedness is usually simpler than finding a limit directly. You might not know where a sequence converges, but you can often show that it cannot exceed a certain magnitude by exploiting monotonicity, convexity, or conservation laws. This reductionist step clears the way for Bolzano–Weierstrass to guarantee the existence of convergent subsequences, at which point more specialized arguments can identify the actual limits.</p>
+        <p>Boundedness also interacts with algebraic operations. The sum or product of bounded sequences remains bounded, and continuous transformations of bounded sequences stay bounded as well. These closure properties help in constructing new examples and in verifying that hypotheses of the theorem persist through intermediate steps. For instance, if \((x_n)\) is bounded and \(f\) is continuous on the containing interval, then \(f(x_n)\) is bounded—a vital observation when pushing subsequence arguments through functions.</p>
 
-        <p>In the next article we formalize the Bolzano–Weierstrass theorem itself, expressing the boundedness hypothesis and subsequence conclusion with precision. Keep these examples in mind—they illustrate the variety of behaviors that still fall under the theorem’s protective umbrella.</p>
+        <p>With these examples and properties in place, we are ready to state Bolzano–Weierstrass formally. The next article articulates the theorem, highlights equivalent formulations, and situates it within the broader narrative of compactness in real analysis.</p>
       </article>
 
       <hr />
       <div class="nav" aria-label="Navigation">
         <a href="/pocket-deploy/bolzano-weierstrass-2-2/">Previous</a>
         <a href="/pocket-deploy/bolzano-weierstrass-2-4/">Next</a>
-        <a href="/pocket-deploy/dashboard-bolzano-weierstrass-2/">Back to Dashboard</a>
+        <a href="/pocket-deploy/dashboard-bolzano-weierstrass-2/">Table of Contents</a>
       </div>
-      <small class="muted">Sources: Standard real analysis references, examples from numerical analysis, and discussions on sequential compactness.</small>
+      <small class="muted">Tone: Wiki-style · Theme: Navy (Dark)</small>
     </div>
   </div>
 </body>

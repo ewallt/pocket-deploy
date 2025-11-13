@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Series 2 — Bolzano–Weierstrass · Part 4: The Theorem Itself</title>
+<title>Series 2 — Part 4 · The Theorem Itself</title>
 <style>
 :root{
   --bg:#0f172a;
@@ -45,26 +45,26 @@ small.muted{color:var(--muted)}
       <p class="lead">Part 4 · The Theorem Itself</p>
 
       <article>
-        <p>We can now state the theorem that bears Bolzano and Weierstrass’s names: every bounded sequence in \(\mathbb{R}\) has a convergent subsequence. More formally, if \((x_n)\) is a sequence and there exists \(M > 0\) with \(|x_n| \le M\) for all \(n\), then there is a subsequence \((x_{n_k})\) and a limit \(L\in\mathbb{R}\) such that \(\lim_{k\to\infty} x_{n_k} = L\). The power of the statement lies in what it promises: even when the original sequence resists convergence, we can extract a convergent thread from its infinite fabric.</p>
+        <p>The Bolzano–Weierstrass Theorem states: every bounded sequence of real numbers has a convergent subsequence. To unpack the claim, recall that a subsequence \((x_{n_k})\) selects terms along an infinite increasing index list \(n_1 < n_2 < \cdots\). The theorem does not promise that \((x_n)\) converges, only that we can choose a subsequence that does. The limit of this subsequence may depend on the selection, but at least one such limit always exists.</p>
 
-        <p>The theorem’s hypothesis and conclusion are both sharp. If we drop boundedness, counterexamples abound: \(x_n = n\) has no convergent subsequence. If we weaken the conclusion to “has a Cauchy subsequence,” the result becomes equivalent because in \(\mathbb{R}\) every Cauchy sequence converges. The interplay between boundedness and completeness is precisely what forces convergence; without completeness (as in \(\mathbb{Q}\)), a bounded sequence can have a Cauchy subsequence converging to an irrational number, which lies outside the space.</p>
+        <p>Several equivalent formulations illuminate the theorem’s reach. One states that every infinite bounded subset of ℝ has an accumulation point—that is, a point where every neighborhood contains infinitely many elements of the set. Another recasts the theorem in terms of sequential compactness: a subset of ℝ is sequentially compact if and only if it is closed and bounded. These equivalences foreshadow the transition from sequences to topology in Series 3.</p>
 
-        <p>The standard proof follows the nested-interval method. Begin by enclosing the sequence inside an interval \([a_0,b_0]\) that captures all terms. Bisect the interval into \([a_0, m]\) and \([m, b_0]\) where \(m = (a_0 + b_0)/2\). At least one half contains infinitely many sequence elements; choose that half and label it \([a_1,b_1]\). Repeat the process indefinitely, producing a nested sequence of closed intervals whose lengths shrink by a factor of two each time. Completeness tells us the intersection \(\bigcap [a_k,b_k]\) is nonempty and contains a point \(L\).</p>
+        <p>Classical proofs usually deploy a nested interval argument. Starting with a bounded sequence, we place it inside a closed interval. We split the interval into two halves; at least one half contains infinitely many sequence terms. We choose that half and repeat. The nested intervals shrink in length, and completeness of ℝ guarantees that their intersection contains a point \(L\). By selecting one term from the sequence in each chosen interval, we obtain a subsequence converging to \(L\). The theorem’s power stems from this ability to pin down infinitely many terms that cluster together.</p>
 
-        <p>To build the subsequence, select indices inductively. Because each interval \([a_k,b_k]\) contains infinitely many terms, we can choose an index \(n_k\) larger than \(n_{k-1}\) with \(x_{n_k} \in [a_k,b_k]\). The resulting subsequence is trapped inside intervals whose diameters approach zero, forcing the terms to converge to \(L\). The ε–N definition confirms this intuition: given any ε, pick \(k\) with \(b_k - a_k < 2\varepsilon\); for all \(j \ge k\), the term \(x_{n_j}\) lies within ε of \(L\).</p>
+        <p>Bolzano originally approached the result via the least upper bound property, while Weierstrass emphasized the sequential perspective. Modern expositions often blend the two, employing completeness to justify the existence of the intersection point and then using sequences to show actual convergence. The interplay between order properties and metric properties is a recurring theme in analysis.</p>
 
-        <p>This proof highlights the hidden infrastructure supporting the theorem. We rely on the completeness of \(\mathbb{R}\) to guarantee a point in the nested intersection and on the Archimedean property to ensure intervals shrink effectively. The strategy also foreshadows compactness arguments: the nested intervals form a decreasing family of nonempty compact sets whose intersection remains nonempty. Recognizing these themes prepares us for the more abstract framing in Series 3.</p>
+        <p>The theorem’s consequences extend beyond isolated exercises. It underlies the proof that closed intervals are compact, supports Arzelà–Ascoli-type results for function sequences, and ensures that bounded monotone sequences converge. When combined with Cauchy’s criterion for convergence, Bolzano–Weierstrass helps demonstrate that ℝ is complete: every Cauchy sequence has a convergent subsequence, which must converge to the same limit as the original sequence.</p>
 
-        <p>Before tackling that abstraction, the final article in Series 2 distills proof intuition. We will translate the formal steps into a narrative and explore alternative perspectives—including the monotone subsequence theorem—that lead to the same conclusion.</p>
+        <p>Having stated the theorem, we turn next to the intuition that makes the nested interval argument tick. The upcoming article distills the proof into a mental model centered on bisection, clustering, and the inevitability of convergence inside a shrinking cage.</p>
       </article>
 
       <hr />
       <div class="nav" aria-label="Navigation">
         <a href="/pocket-deploy/bolzano-weierstrass-2-3/">Previous</a>
         <a href="/pocket-deploy/bolzano-weierstrass-2-5/">Next</a>
-        <a href="/pocket-deploy/dashboard-bolzano-weierstrass-2/">Back to Dashboard</a>
+        <a href="/pocket-deploy/dashboard-bolzano-weierstrass-2/">Table of Contents</a>
       </div>
-      <small class="muted">Sources: Proof outlines from Rudin and Abbott, lecture notes on nested intervals, and discussions on completeness.</small>
+      <small class="muted">Tone: Wiki-style · Theme: Navy (Dark)</small>
     </div>
   </div>
 </body>

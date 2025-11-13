@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Series 2 — Bolzano–Weierstrass · Part 5: Proof Intuition</title>
+<title>Series 2 — Part 5 · Proof Intuition</title>
 <style>
 :root{
   --bg:#0f172a;
@@ -45,26 +45,26 @@ small.muted{color:var(--muted)}
       <p class="lead">Part 5 · Proof Intuition</p>
 
       <article>
-        <p>The nested-interval proof can feel mechanical, so it helps to translate the steps into a story about chasing infinitely many beads on a string. Each bead represents a sequence term. Because the beads stay within a bounded interval, we can place our hands on the interval’s endpoints and repeatedly squeeze toward the middle. At every squeeze we trap infinitely many beads in one hand. The limit point \(L\) emerges where our hands ultimately settle; the subsequence simply records the beads we kept touching along the way.</p>
+        <p>The nested interval proof of Bolzano–Weierstrass feels like a game of twenty questions against an unruly sequence. We start with a bounded interval capturing all terms. By bisecting the interval, we ask: “Does infinitely many of the sequence live on the left or the right?” One of the halves must host infinitely many points; otherwise the sequence would be finite. We choose that half and repeat the question. Each answer narrows the hiding spot for the subsequence we are chasing.</p>
 
-        <p>Visualizing the process illuminates why bisection works. If we stand at the center \(m\) of \([a,b]\) and ask whether infinitely many terms lie to the left or right, at least one side must say yes. Choosing that side ensures progress because the chosen subinterval’s length halves at each step. Even if the sequence dances chaotically, infinitely many terms remain inside the shrinking corridor, forcing all selected subsequence terms to cluster together.</p>
+        <p>Because the intervals shrink by a factor of two at each step, their lengths approach zero. Completeness of ℝ ensures that the intersection of these nested closed intervals contains at least one point \(L\). Intuitively, we can picture the sequence as dust settling inside a funnel that becomes arbitrarily tight. No matter how erratically the original sequence behaves, the funnel’s exit pinpoints a candidate limit.</p>
 
-        <p>Another intuition comes from the monotone subsequence theorem: every sequence has a monotone subsequence, and every bounded monotone sequence converges. The proof uses a pigeonhole-style argument—classify indices as peaks or not, then extract an increasing or decreasing subsequence. Once monotonicity enters, the Monotone Convergence Theorem delivers the limit. This alternative path reveals Bolzano–Weierstrass as a disguised combinatorial statement about order structure.</p>
+        <p>To build an actual subsequence converging to \(L\), we select terms one by one. After choosing the interval at stage \(k\), we pick a sequence element inside it with an index larger than all previously chosen indices. This is always possible because the interval contains infinitely many sequence terms by construction. The resulting subsequence stays inside successively smaller intervals, forcing its terms to approach \(L\).</p>
 
-        <p>Probabilistic metaphors also help. Imagine throwing darts at a dartboard corresponding to the bounded interval. Infinitely many throws guarantee that at least one tiny region of the board collects infinitely many hits. We can zoom in on that region repeatedly, echoing the nested intervals. The “almost sure” language of probability mirrors the idea that some subcollection of throws—our subsequence—behaves predictably.</p>
+        <p>Another perspective frames the proof as a compactness argument. The closed interval is compact, meaning every sequence inside it has a convergent subsequence. Rather than invoking compactness directly, the nested interval proof constructs the limit point explicitly. The method mirrors binary search: each step cuts possibilities in half, and the completeness of ℝ guarantees that the infinite search converges.</p>
 
-        <p>Ultimately, Bolzano–Weierstrass is about extracting order from chaos. Whether we use intervals, monotonicity, or probabilistic clustering, the theorem says we can always find a disciplined path through an unruly sequence. That message prepares us for Series 3, where the vocabulary shifts to compactness, sequential compactness, and completeness. The same intuition will carry us through those generalizations.</p>
+        <p>We can generalize the intuition to higher dimensions and abstract spaces by replacing intervals with closed balls and halving with a more flexible covering argument. The common thread remains: we steadily confine the sequence within smaller and smaller cages until only one point can survive. That strategy motivates the Heine–Borel theorem and other compactness results explored in Series 3.</p>
 
-        <p>Before moving on, revisit earlier examples and try to run the proof by hand: pick a bounded, nonconvergent sequence, locate successive intervals, and write down the subsequence indices explicitly. Doing so cements the mechanics and ensures the theorem feels trustworthy rather than mysterious.</p>
+        <p>While the rigorous proof requires epsilon–delta bookkeeping, this hand-wavy sketch captures the essence. Boundedness provides a starting cage, bisection generates nested cages, and completeness ensures a point persists in the intersection. Once we recognize these ingredients, Bolzano–Weierstrass transforms from a mysterious guarantee into a predictable outcome of systematic squeezing.</p>
       </article>
 
       <hr />
       <div class="nav" aria-label="Navigation">
         <a href="/pocket-deploy/bolzano-weierstrass-2-4/">Previous</a>
         <a href="#" aria-disabled="true">Next</a>
-        <a href="/pocket-deploy/dashboard-bolzano-weierstrass-2/">Back to Dashboard</a>
+        <a href="/pocket-deploy/dashboard-bolzano-weierstrass-2/">Table of Contents</a>
       </div>
-      <small class="muted">Sources: Intuitive expositions from analysis seminars, discussions of monotone subsequences, and probabilistic analogies in teaching notes.</small>
+      <small class="muted">Tone: Wiki-style · Theme: Navy (Dark)</small>
     </div>
   </div>
 </body>
