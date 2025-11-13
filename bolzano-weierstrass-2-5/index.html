@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Series 2 — Part 5 · Proof Intuition</title>
+<style>
+:root{
+  --bg:#0f172a;
+  --panel:#1f2937;
+  --ink:#e5e7eb;
+  --muted:#94a3b8;
+  --brand:#60a5fa;
+  --border:#1f2937;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,Apple Color Emoji,Segoe UI Emoji;
+}
+.wrapper{max-width:760px; margin:0 auto; padding:48px 20px}
+.panel{
+  background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:28px;
+  box-shadow:0 0 0 1px rgba(0,0,0,.12) inset;
+}
+h1{margin:0 0 8px; font-size:2rem; line-height:1.2}
+.lead{color:var(--muted); margin:0 0 24px}
+a{color:var(--brand); text-decoration:none}
+a:hover{text-decoration:underline}
+article p{margin:0 0 16px}
+hr{border:0; border-top:1px solid var(--border); margin:24px 0}
+.nav{display:flex; gap:12px; margin-top:24px; flex-wrap:wrap}
+.nav a{
+  padding:10px 14px; border:1px solid var(--border); border-radius:10px;
+  background:rgba(255,255,255,.02); color:var(--ink)
+}
+.nav a[aria-disabled="true"]{display:none}
+small.muted{color:var(--muted)}
+</style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="panel">
+      <h1>Series 2 — Bolzano–Weierstrass</h1>
+      <p class="lead">Part 5 · Proof Intuition</p>
+
+      <article>
+        <p>The nested interval proof of Bolzano–Weierstrass feels like a game of twenty questions against an unruly sequence. We start with a bounded interval capturing all terms. By bisecting the interval, we ask: “Does infinitely many of the sequence live on the left or the right?” One of the halves must host infinitely many points; otherwise the sequence would be finite. We choose that half and repeat the question. Each answer narrows the hiding spot for the subsequence we are chasing.</p>
+
+        <p>Because the intervals shrink by a factor of two at each step, their lengths approach zero. Completeness of ℝ ensures that the intersection of these nested closed intervals contains at least one point \(L\). Intuitively, we can picture the sequence as dust settling inside a funnel that becomes arbitrarily tight. No matter how erratically the original sequence behaves, the funnel’s exit pinpoints a candidate limit.</p>
+
+        <p>To build an actual subsequence converging to \(L\), we select terms one by one. After choosing the interval at stage \(k\), we pick a sequence element inside it with an index larger than all previously chosen indices. This is always possible because the interval contains infinitely many sequence terms by construction. The resulting subsequence stays inside successively smaller intervals, forcing its terms to approach \(L\).</p>
+
+        <p>Another perspective frames the proof as a compactness argument. The closed interval is compact, meaning every sequence inside it has a convergent subsequence. Rather than invoking compactness directly, the nested interval proof constructs the limit point explicitly. The method mirrors binary search: each step cuts possibilities in half, and the completeness of ℝ guarantees that the infinite search converges.</p>
+
+        <p>We can generalize the intuition to higher dimensions and abstract spaces by replacing intervals with closed balls and halving with a more flexible covering argument. The common thread remains: we steadily confine the sequence within smaller and smaller cages until only one point can survive. That strategy motivates the Heine–Borel theorem and other compactness results explored in Series 3.</p>
+
+        <p>While the rigorous proof requires epsilon–delta bookkeeping, this hand-wavy sketch captures the essence. Boundedness provides a starting cage, bisection generates nested cages, and completeness ensures a point persists in the intersection. Once we recognize these ingredients, Bolzano–Weierstrass transforms from a mysterious guarantee into a predictable outcome of systematic squeezing.</p>
+      </article>
+
+      <hr />
+      <div class="nav" aria-label="Navigation">
+        <a href="/pocket-deploy/bolzano-weierstrass-2-4/">Previous</a>
+        <a href="#" aria-disabled="true">Next</a>
+        <a href="/pocket-deploy/dashboard-bolzano-weierstrass-2/">Table of Contents</a>
+      </div>
+      <small class="muted">Tone: Wiki-style · Theme: Navy (Dark)</small>
+    </div>
+  </div>
+</body>
+</html>

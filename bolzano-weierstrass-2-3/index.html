@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Series 2 — Part 3 · Bounded Sequences</title>
+<style>
+:root{
+  --bg:#0f172a;
+  --panel:#1f2937;
+  --ink:#e5e7eb;
+  --muted:#94a3b8;
+  --brand:#60a5fa;
+  --border:#1f2937;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,Apple Color Emoji,Segoe UI Emoji;
+}
+.wrapper{max-width:760px; margin:0 auto; padding:48px 20px}
+.panel{
+  background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:28px;
+  box-shadow:0 0 0 1px rgba(0,0,0,.12) inset;
+}
+h1{margin:0 0 8px; font-size:2rem; line-height:1.2}
+.lead{color:var(--muted); margin:0 0 24px}
+a{color:var(--brand); text-decoration:none}
+a:hover{text-decoration:underline}
+article p{margin:0 0 16px}
+hr{border:0; border-top:1px solid var(--border); margin:24px 0}
+.nav{display:flex; gap:12px; margin-top:24px; flex-wrap:wrap}
+.nav a{
+  padding:10px 14px; border:1px solid var(--border); border-radius:10px;
+  background:rgba(255,255,255,.02); color:var(--ink)
+}
+.nav a[aria-disabled="true"]{display:none}
+small.muted{color:var(--muted)}
+</style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="panel">
+      <h1>Series 2 — Bolzano–Weierstrass</h1>
+      <p class="lead">Part 3 · Bounded Sequences</p>
+
+      <article>
+        <p>A sequence \((x_n)\) is bounded if we can find a real number \(M\) such that \(|x_n| \leq M\) for all \(n\). Visually, every point of the sequence lies inside the horizontal band between \(-M\) and \(M\). This simple definition hides a wealth of behavior. Some bounded sequences converge outright, such as \(x_n = 1/n\). Others, like \((-1)^n\), refuse to settle but still never leave the band. The Bolzano–Weierstrass Theorem is interesting precisely because boundedness alone does not force a limit—yet it ensures that some subsequence will behave nicely.</p>
+
+        <p>Examples clarify the distinction. The sequence defined by the decimal truncations of \(\pi\) (3, 3.1, 3.14, …) is bounded and convergent because the truncations approach \(\pi\). By contrast, \(x_n = \sin n\) is bounded between -1 and 1 but oscillates in a seemingly unpredictable manner. Despite that chaos, the theorem tells us we can always extract a subsequence converging to any number in [-1, 1] that occurs as a limit point. In other words, the set of subsequential limits captures the cluster points of the sequence, and boundedness guarantees that this set is nonempty.</p>
+
+        <p>Bounding can be symmetric, as with absolute values, or asymmetric, as when \(m \leq x_n \leq M\). For monotone sequences, bounding from one side already suffices. A sequence that is monotone increasing and bounded above must converge to its least upper bound. This monotone convergence theorem is a special case where Bolzano–Weierstrass becomes unnecessary because the sequence itself converges. When monotonicity fails, we fall back on subsequences and the compactness intuition driving Bolzano–Weierstrass.</p>
+
+        <p>It is instructive to analyze failures of boundedness. The harmonic sequence of partial sums, \(H_n = 1 + 1/2 + \cdots + 1/n\), diverges to infinity. No matter which subsequence we choose, the terms eventually exceed any prescribed bound, so no convergent subsequence can exist. Recognizing divergence through unbounded growth is a common strategy: if an argument relies on Bolzano–Weierstrass but the hypotheses secretly allow the sequence to escape, we know something is amiss.</p>
+
+        <p>Boundedness also interacts with algebraic operations. The sum or product of bounded sequences remains bounded, and continuous transformations of bounded sequences stay bounded as well. These closure properties help in constructing new examples and in verifying that hypotheses of the theorem persist through intermediate steps. For instance, if \((x_n)\) is bounded and \(f\) is continuous on the containing interval, then \(f(x_n)\) is bounded—a vital observation when pushing subsequence arguments through functions.</p>
+
+        <p>With these examples and properties in place, we are ready to state Bolzano–Weierstrass formally. The next article articulates the theorem, highlights equivalent formulations, and situates it within the broader narrative of compactness in real analysis.</p>
+      </article>
+
+      <hr />
+      <div class="nav" aria-label="Navigation">
+        <a href="/pocket-deploy/bolzano-weierstrass-2-2/">Previous</a>
+        <a href="/pocket-deploy/bolzano-weierstrass-2-4/">Next</a>
+        <a href="/pocket-deploy/dashboard-bolzano-weierstrass-2/">Table of Contents</a>
+      </div>
+      <small class="muted">Tone: Wiki-style · Theme: Navy (Dark)</small>
+    </div>
+  </div>
+</body>
+</html>
