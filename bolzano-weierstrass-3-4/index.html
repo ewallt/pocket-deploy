@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Series 3 — Machinery &amp; Consequences · Part 4: EVT &amp; Heine–Cantor</title>
+<style>
+:root{
+  --bg:#0f172a;
+  --panel:#1f2937;
+  --ink:#e5e7eb;
+  --muted:#94a3b8;
+  --brand:#60a5fa;
+  --border:#1f2937;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,Apple Color Emoji,Segoe UI Emoji;
+}
+.wrapper{max-width:760px; margin:0 auto; padding:48px 20px}
+.panel{
+  background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:28px;
+  box-shadow:0 0 0 1px rgba(0,0,0,.12) inset;
+}
+h1{margin:0 0 8px; font-size:2rem; line-height:1.2}
+.lead{color:var(--muted); margin:0 0 24px}
+a{color:var(--brand); text-decoration:none}
+a:hover{text-decoration:underline}
+article p{margin:0 0 16px}
+hr{border:0; border-top:1px solid var(--border); margin:24px 0}
+.nav{display:flex; gap:12px; margin-top:24px; flex-wrap:wrap}
+.nav a{
+  padding:10px 14px; border:1px solid var(--border); border-radius:10px;
+  background:rgba(255,255,255,.02); color:var(--ink)
+}
+.nav a[aria-disabled="true"]{display:none}
+small.muted{color:var(--muted)}
+</style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="panel">
+      <h1>Series 3 — Machinery &amp; Consequences</h1>
+      <p class="lead">Part 4 · EVT &amp; Heine–Cantor</p>
+
+      <article>
+        <p>Two flagship results demonstrate the power of compactness in analysis: the Extreme Value Theorem (EVT) and the Heine–Cantor theorem. The EVT states that a continuous function on a compact set attains its maximum and minimum. Heine–Cantor asserts that a continuous function on a compact set is uniformly continuous. Both are direct descendants of Bolzano–Weierstrass because their proofs reduce to extracting convergent subsequences within bounded domains.</p>
+
+        <p>To prove the EVT, take a continuous function \(f : K \to \mathbb{R}\) on a compact set \(K\). Consider a sequence \((x_n)\) in \(K\) with \(f(x_n)\) approaching the supremum of \(f(K)\). Sequential compactness provides a convergent subsequence \(x_{n_k} \to x^*\) with \(x^* \in K\). Continuity then yields \(f(x_{n_k}) \to f(x^*)\), showing \(f(x^*)\) equals the supremum and therefore is a maximum. Without compactness, the maximizing sequence might drift toward a boundary point outside \(K\), leaving the supremum unattained.</p>
+
+        <p>Heine–Cantor follows a similar logic but applied to uniform continuity. Suppose \(f\) is continuous on compact \(K\). Assume for contradiction that \(f\) fails to be uniformly continuous. Then there exists ε > 0 and sequences \((x_n)\), \((y_n)\) in \(K\) such that \(d(x_n,y_n)\to 0\) while \(|f(x_n) - f(y_n)| \ge ε\). Sequential compactness lets us extract subsequences converging to points \(x^* = y^*\) in \(K\). Continuity of \(f\) forces \(|f(x_{n_k}) - f(y_{n_k})|\to 0\), contradicting the assumed ε-gap. The contradiction shows that a single δ works for every ε, establishing uniform continuity.</p>
+
+        <p>These theorems have far-reaching consequences. The EVT guarantees that optimization problems on closed intervals possess solutions—vital for calculus, economics, and physics. Uniform continuity enables interchange of limits and integrals, control of approximation errors, and stability of numerical methods. Whenever analysts rely on compact domains to prevent blow-ups, they are invoking the spirit of Bolzano–Weierstrass.</p>
+
+        <p>Understanding the role of compactness also clarifies why the conclusions fail in noncompact settings. Continuous functions on open intervals need not achieve extrema, and uniform continuity can break down when points escape to infinity or approach excluded boundary points. Sequential arguments quickly reveal the failure: maximizing sequences may diverge, and pairs of points may race toward missing limits.</p>
+
+        <p>Armed with EVT and Heine–Cantor, we turn in the final article to higher-dimensional and abstract settings, examining how Bolzano–Weierstrass adapts—or fails—to spaces beyond the real line.</p>
+      </article>
+
+      <hr />
+      <div class="nav" aria-label="Navigation">
+        <a href="/pocket-deploy/bolzano-weierstrass-3-3/">Previous</a>
+        <a href="/pocket-deploy/bolzano-weierstrass-3-5/">Next</a>
+        <a href="/pocket-deploy/dashboard-bolzano-weierstrass-3/">Back to Dashboard</a>
+      </div>
+      <small class="muted">Sources: Analysis proofs of EVT and Heine–Cantor, optimization texts, and lecture notes on uniform continuity.</small>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Series 2 — Bolzano–Weierstrass · Part 2: Neighborhoods &amp; Epsilon-Balls</title>
+<style>
+:root{
+  --bg:#0f172a;
+  --panel:#1f2937;
+  --ink:#e5e7eb;
+  --muted:#94a3b8;
+  --brand:#60a5fa;
+  --border:#1f2937;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,Apple Color Emoji,Segoe UI Emoji;
+}
+.wrapper{max-width:760px; margin:0 auto; padding:48px 20px}
+.panel{
+  background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:28px;
+  box-shadow:0 0 0 1px rgba(0,0,0,.12) inset;
+}
+h1{margin:0 0 8px; font-size:2rem; line-height:1.2}
+.lead{color:var(--muted); margin:0 0 24px}
+a{color:var(--brand); text-decoration:none}
+a:hover{text-decoration:underline}
+article p{margin:0 0 16px}
+hr{border:0; border-top:1px solid var(--border); margin:24px 0}
+.nav{display:flex; gap:12px; margin-top:24px; flex-wrap:wrap}
+.nav a{
+  padding:10px 14px; border:1px solid var(--border); border-radius:10px;
+  background:rgba(255,255,255,.02); color:var(--ink)
+}
+.nav a[aria-disabled="true"]{display:none}
+small.muted{color:var(--muted)}
+</style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="panel">
+      <h1>Series 2 — Bolzano–Weierstrass</h1>
+      <p class="lead">Part 2 · Neighborhoods &amp; Epsilon-Balls</p>
+
+      <article>
+        <p>To make sense of convergence we need a vocabulary for proximity. Informal talk about “getting arbitrarily close” is appealing but imprecise. Mathematicians resolve this by encoding closeness in neighborhoods and ε-balls. A neighborhood of a point \(a\) is any set containing some open interval around \(a\); an ε-ball is the specific interval \((a-\varepsilon, a+\varepsilon)\). These constructions let us translate narrative descriptions into quantifiable conditions: to be close means to lie inside every ε-ball of small enough radius.</p>
+
+        <p>The open-interval picture hides a subtlety: the endpoint behavior matters. Deleted neighborhoods remove the point at the center, capturing the idea that we can approach \(a\) without necessarily evaluating the function or sequence at \(a\) itself. This tweak is crucial for statements about limits because it lets us ignore the behavior at finitely many exceptional indices while still guaranteeing proximity for all remaining terms. When proving Bolzano–Weierstrass, we repeatedly isolate subcollections of sequence elements that lie inside progressively smaller neighborhoods.</p>
+
+        <p>Introducing ε language also clarifies the role of quantifiers. Saying “for every ε > 0 there exists N such that …” forces us to control infinitely many possible tolerances simultaneously. The order of quantifiers matters: first we fix the tolerance (no matter how demanding), then we produce an index that satisfies it. This discipline prevents hand-waving and ensures proofs scale beyond specific examples. When we later build the nested-interval argument, each step will shrink the ε-ball and demonstrate how to choose subsequent indices.</p>
+
+        <p>Neighborhoods do more than formalize limits; they unify various continuity and convergence concepts. A function is continuous at \(a\) precisely when it maps sufficiently small neighborhoods of \(a\) into neighborhoods of \(f(a)\). A sequence converges to \(L\) when eventually all its terms fall inside every neighborhood of \(L\). By phrasing everything in terms of open sets, we make the connection to topology explicit and prepare the ground for higher-dimensional generalizations where intervals become balls or other basic open sets.</p>
+
+        <p>For Bolzano–Weierstrass, neighborhoods are the lenses through which we observe accumulation points. If a point \(L\) is a limit point of a sequence, then every neighborhood of \(L\) contains infinitely many terms. The theorem will guarantee the existence of such an \(L\) by systematically constructing smaller and smaller neighborhoods that retain infinitely many elements. Understanding how neighborhoods capture infinite repetition is therefore the conceptual bridge between boundedness and convergence.</p>
+
+        <p>As you move forward, keep this vocabulary at hand. The ε–N framework might feel pedantic at first, but it gives us the tools to manipulate sequences with surgical precision. The next article applies these ideas to bound constraints, showing how simple inequalities can fence sequences inside intervals ripe for the Bolzano–Weierstrass machinery.</p>
+      </article>
+
+      <hr />
+      <div class="nav" aria-label="Navigation">
+        <a href="/pocket-deploy/bolzano-weierstrass-2-1/">Previous</a>
+        <a href="/pocket-deploy/bolzano-weierstrass-2-3/">Next</a>
+        <a href="/pocket-deploy/dashboard-bolzano-weierstrass-2/">Back to Dashboard</a>
+      </div>
+      <small class="muted">Sources: Undergraduate real analysis texts, lecture notes on ε–δ language, and topology primers on neighborhoods.</small>
+    </div>
+  </div>
+</body>
+</html>
