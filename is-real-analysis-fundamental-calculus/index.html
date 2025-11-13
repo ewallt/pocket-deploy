@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Fundamental Theorem of Calculus</title>
+  <style>
+    :root{--bg:#0b1020;--panel:#111833;--ink:#e6ecff;--muted:#a7b0cc;--brand:#8bb9ff;--accent:#c0ffe1;--border:#26325b;--chip:#1a2347;--bad:#ff6b6b;--shadow:0 8px 28px rgba(0,0,0,.35);--radius:12px;--radius-sm:8px}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;color:var(--ink);background:radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),var(--bg);line-height:1.6;min-height:100vh;padding-bottom:2rem;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+    .container{max-width:860px;margin:0 auto;padding:1rem}
+    .breadcrumb{margin-bottom:1rem;font-size:.92rem}
+    .breadcrumb a{color:var(--brand);text-decoration:none}
+    .breadcrumb span{color:var(--muted);margin:0 .5rem}
+    header{background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));border:1px solid var(--border);border-radius:var(--radius);padding:2rem 1.5rem;margin-bottom:1.25rem;box-shadow:var(--shadow)}
+    h1{font-size:1.75rem;color:var(--ink);margin-bottom:.4rem;letter-spacing:-.015em}
+    .subtitle{color:var(--muted);font-size:.95rem;font-style:italic}
+    .main-answer{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.25rem;box-shadow:var(--shadow);border-left:4px solid var(--brand)}
+    .main-answer h2{color:var(--brand);font-size:1.25rem;margin-bottom:.8rem}
+    .main-answer p{font-size:1.03rem;line-height:1.7;color:var(--muted)}
+    .section{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:1rem;box-shadow:var(--shadow);overflow:hidden}
+    .section-header{padding:1.05rem 1.25rem;background:linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%);color:var(--ink);cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;border-bottom:1px solid var(--border)}
+    .section-header h2{font-size:1.12rem;font-weight:700;letter-spacing:.01em}
+    .section-icon{font-size:1.35rem;transition:transform .3s ease}
+    .section.active .section-icon{transform:rotate(180deg)}
+    .section-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+    .section.active .section-content{max-height:5000px}
+    .section-inner{padding:1.25rem}
+    h3{color:var(--brand);font-size:1.06rem;margin:1.1rem 0 .6rem 0;letter-spacing:.01em}
+    h3:first-child{margin-top:0}
+    .list-item{background:color-mix(in oklab,var(--chip) 75%, transparent);border-left:3px solid var(--brand);padding:1rem;margin-bottom:.75rem;border-radius:var(--radius-sm);border:1px solid var(--border);color:var(--muted)}
+    .list-item strong{color:var(--brand);display:block;margin-bottom:.25rem}
+    .example-block{background:color-mix(in oklab,var(--chip) 65%, transparent);border-radius:var(--radius-sm);border:1px solid var(--border);padding:1rem;margin-bottom:.75rem;color:var(--muted)}
+    .example-block strong{color:var(--accent);display:block;margin-bottom:.25rem}
+    .source{background:color-mix(in oklab,var(--chip) 65%, transparent);border-radius:8px;padding:1rem;margin-top:1rem;font-size:.95rem;color:var(--muted);border:1px solid var(--border)}
+    .source strong{color:var(--ink)}
+    .back-to-top{position:fixed;bottom:1.5rem;right:1rem;background:var(--brand);color:#001;width:50px;height:50px;border-radius:50%;border:none;font-size:1.5rem;cursor:pointer;box-shadow:var(--shadow);opacity:0;transition:opacity .3s ease;z-index:1000;display:flex;align-items:center;justify-content:center;font-weight:900}
+    .back-to-top.visible{opacity:1}
+    .back-to-top:active{transform:scale(.96)}
+    a{color:var(--brand)}
+    @media (max-width:480px){h1{font-size:1.5rem}.section-header h2{font-size:1.05rem}.container{padding:.75rem}header{padding:1.5rem 1rem}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="https://ewallt.github.io/pocket-deploy/is-real-analysis-hub/index.html">Real Analysis Hub</a>
+      <span>›</span>
+      Fundamental Theorem of Calculus
+    </div>
+
+    <header>
+      <h1>Fundamental Theorem of Calculus</h1>
+      <p class="subtitle">Integration and differentiation are inverse operations</p>
+    </header>
+
+    <section class="main-answer">
+      <h2>Concept Snapshot</h2>
+      <p>
+        The Fundamental Theorem of Calculus (FTC) establishes the profound connection between differentiation and integration,
+        showing they are inverse processes. Part I states that if f is continuous on [a,b], then F(x) = ∫ₐˣ f(t) dt is
+        differentiable and F'(x) = f(x). Part II states that if F is an antiderivative of f on [a,b], then ∫ₐᵇ f(x) dx = F(b) − F(a).
+        Together, these results transform calculus from two separate operations into a unified theory.
+      </p>
+    </section>
+
+    <section class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🧩 Concept Overview</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Part I (Differentiation of Integral).</strong>
+            If f : [a,b] → ℝ is continuous, then F(x) = ∫ₐˣ f(t) dt is continuous on [a,b], differentiable on (a,b), and F'(x) = f(x).
+          </div>
+          <div class="list-item">
+            <strong>Part II (Evaluation via Antiderivative).</strong>
+            If f is integrable on [a,b] and F is any antiderivative of f (i.e., F'(x) = f(x)), then ∫ₐᵇ f(x) dx = F(b) − F(a).
+          </div>
+          <div class="list-item">
+            <strong>Role in Analysis.</strong>
+            The FTC is the central result of calculus. It allows us to evaluate definite integrals via antiderivatives, proves that continuous functions have antiderivatives, and unifies the geometric notion of area with the algebraic process of finding antiderivatives.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📚 Assumptions & Definitions</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Riemann Integral.</strong>
+            ∫ₐᵇ f(x) dx is defined as the limit of Riemann sums: lim_{‖P‖→0} Σ f(cᵢ)Δxᵢ where P is a partition of [a,b].
+          </div>
+          <div class="list-item">
+            <strong>Antiderivative.</strong>
+            F is an antiderivative of f on [a,b] if F'(x) = f(x) for all x ∈ (a,b). If F and G are both antiderivatives, then F − G is constant.
+          </div>
+          <div class="list-item">
+            <strong>Continuity Requirement.</strong>
+            Part I requires f to be continuous. Part II only requires f to be integrable (weaker condition) but needs F to exist and be differentiable with F' = f.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🧮 Proof Outline</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <h3>Part I: F(x) = ∫ₐˣ f(t) dt is differentiable with F'(x) = f(x)</h3>
+          <div class="list-item">
+            <strong>Step 1 – Difference quotient.</strong>
+            Compute [F(x+h) − F(x)]/h = [∫ₐˣ⁺ʰ f(t) dt − ∫ₐˣ f(t) dt]/h = (1/h)∫ₓˣ⁺ʰ f(t) dt.
+          </div>
+          <div class="list-item">
+            <strong>Step 2 – Mean Value Theorem for Integrals.</strong>
+            Since f is continuous on [x, x+h], ∃c ∈ [x, x+h] with ∫ₓˣ⁺ʰ f(t) dt = f(c)·h. Thus [F(x+h) − F(x)]/h = f(c).
+          </div>
+          <div class="list-item">
+            <strong>Step 3 – Take limit.</strong>
+            As h → 0, c → x (since c ∈ [x, x+h]). By continuity of f, f(c) → f(x). Thus lim_{h→0} [F(x+h) − F(x)]/h = f(x), so F'(x) = f(x).
+          </div>
+
+          <h3>Part II: ∫ₐᵇ f(x) dx = F(b) − F(a)</h3>
+          <div class="list-item">
+            <strong>Proof via Riemann sums.</strong>
+            Let P = {a = x₀ < x₁ < ⋯ < xₙ = b} be a partition. By MVT, F(xᵢ) − F(xᵢ₋₁) = F'(cᵢ)(xᵢ − xᵢ₋₁) = f(cᵢ)Δxᵢ for some cᵢ ∈ [xᵢ₋₁, xᵢ]. Summing: F(b) − F(a) = Σ f(cᵢ)Δxᵢ, which is a Riemann sum. Taking limit as ‖P‖ → 0 gives ∫ₐᵇ f(x) dx = F(b) − F(a).
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>💡 Key Insights & Intuition</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Inverse Operations.</strong>
+            The FTC shows differentiation and integration undo each other: d/dx ∫ₐˣ f(t) dt = f(x) and ∫ₐᵇ F'(x) dx = F(b) − F(a).
+          </div>
+          <div class="list-item">
+            <strong>Area and Slope Connection.</strong>
+            Part I says: the derivative of the area function equals the height of the curve. Part II says: to find area, evaluate the antiderivative at endpoints.
+          </div>
+          <div class="list-item">
+            <strong>Why Continuity Matters.</strong>
+            Part I needs continuity to ensure the integral exists and to apply MVT for integrals. Without continuity, F might not be differentiable everywhere.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>⚙️ Applications & Examples</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="example-block">
+            <strong>Computing Definite Integrals.</strong>
+            To evaluate ∫₀¹ x² dx, note that F(x) = x³/3 is an antiderivative of x². By FTC Part II: ∫₀¹ x² dx = F(1) − F(0) = 1/3 − 0 = 1/3.
+          </div>
+          <div class="example-block">
+            <strong>Existence of Antiderivatives.</strong>
+            FTC Part I guarantees every continuous function has an antiderivative. For example, f(x) = e^(−x²) has no elementary antiderivative formula, but F(x) = ∫₀ˣ e^(−t²) dt defines one.
+          </div>
+          <div class="example-block">
+            <strong>Chain Rule for Integrals.</strong>
+            If g is differentiable, then d/dx ∫ₐᵍ⁽ˣ⁾ f(t) dt = f(g(x))·g'(x) by chain rule and FTC Part I.
+          </div>
+          <div class="example-block">
+            <strong>Net Change Theorem.</strong>
+            If v(t) is velocity, then ∫ₜ₁ᵗ² v(t) dt = s(t₂) − s(t₁) gives net displacement, where s'(t) = v(t).
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🔁 Connections & Extensions</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Mean Value Theorem.</strong>
+            FTC Part II uses MVT in its proof. Both theorems connect local behavior (derivatives) to global behavior (function values).
+          </div>
+          <div class="list-item">
+            <strong>Lebesgue Integration.</strong>
+            FTC extends to Lebesgue theory: if f is Lebesgue integrable and F(x) = ∫ₐˣ f(t) dt, then F' = f almost everywhere.
+          </div>
+          <div class="list-item">
+            <strong>Stokes' Theorem.</strong>
+            The FTC is the 1-dimensional case of Stokes' Theorem, which generalizes to manifolds: ∫_{∂M} ω = ∫_M dω.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🧠 Historical Note</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Origins.</strong>
+            Isaac Newton (1660s) and Gottfried Leibniz (1670s) independently discovered the FTC, though neither proved it rigorously. Newton viewed it as relating "fluxions" (derivatives) to "fluents" (antiderivatives).
+          </div>
+          <div class="list-item">
+            <strong>Rigorization.</strong>
+            Augustin-Louis Cauchy (1820s) gave the first rigorous definition of the integral and proof of the FTC using limits. Bernhard Riemann (1850s) refined the integral definition.
+          </div>
+          <div class="source">
+            <strong>Further Reading:</strong> Michael Spivak, <em>Calculus</em>, ch. 13; Tom Apostol, <em>Calculus Vol. 1</em>; Walter Rudin, <em>Principles of Mathematical Analysis</em>, ch. 6.
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <button class="back-to-top" id="backToTop" onclick="scrollToTop()" aria-label="Back to top">↑</button>
+
+  <script>
+    function toggleSection(header){const section = header.parentElement;const all = document.querySelectorAll('.section');all.forEach(s => {if(s !== section && s.classList.contains('active')) s.classList.remove('active')});section.classList.toggle('active')}
+    window.addEventListener('scroll', () => {const btn = document.getElementById('backToTop');if(window.pageYOffset > 300){ btn.classList.add('visible'); }else { btn.classList.remove('visible'); }});
+    document.addEventListener('DOMContentLoaded', () => {const first = document.querySelector('.section');if(first) first.classList.add('active')});
+    function scrollToTop(){window.scrollTo({ top:0, behavior:'smooth' })}
+  </script>
+</body>
+</html>
