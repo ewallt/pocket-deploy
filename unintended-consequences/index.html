@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Unintended Consequences</title>
+  <style>
+    :root{
+      --canvas:#0f172a;--ink:#e2e8f0;--muted:#94a3b8;--sidebar-bg:#1e293b;
+      --card-bg:#1e293b;--card-border:rgba(148,163,184,.2);
+      --accent:#38bdf8;--accent-dark:#0ea5e9;--active-tab-bg:var(--canvas);
+      --consequence-bg:rgba(244,63,94,.05);--consequence-border:rgba(244,63,94,.3);
+      --solution-bg:rgba(56,189,248,.05);--solution-border:rgba(56,189,248,.3);
+    }
+    *,*::before,*::after{box-sizing:border-box}
+    body{margin:0;background:var(--canvas);color:var(--ink);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+    .app-layout{display:flex;height:100vh}
+    .source-nav{width:240px;flex-shrink:0;background:var(--sidebar-bg);padding:2rem 1rem;border-right:1px solid var(--card-border);overflow-y:auto}
+    .source-nav h1{font-size:1.25rem;margin:0 0.5rem 1.5rem}
+    .nav-tab{display:block;width:100%;background:none;border:0;color:var(--muted);font:600 1rem/1.5 system-ui;padding:.75rem 1rem;border-radius:8px;text-align:left;cursor:pointer;transition:all .2s}
+    .nav-tab:hover{color:var(--ink)}
+    .nav-tab.active{background:var(--active-tab-bg);color:#fff}
+    .content-area{flex-grow:1;padding:2rem 2.5rem;overflow-y:auto}
+
+    /* Grid: fixed-ish card width; natural left alignment */
+    .card-group{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); /* Adjusted for more flexibility */
+      gap:1.5rem;
+      align-items:start;       /* independent heights by default */
+      grid-auto-rows:auto;
+      justify-content:start;   /* leave extra space on the right */
+    }
+    .card-group.synced{
+      align-items:stretch;     /* initial: equal heights (per row) */
+      grid-auto-rows:1fr;
+    }
+    .card-group.synced .card{ height:100%; }
+
+    .card-group:not(.active){display:none}
+
+    .card{
+      background:var(--card-bg);
+      border:1px solid var(--card-border);
+      border-radius:12px;
+      padding:1.5rem;
+      display:flex;
+      flex-direction:column;
+      box-shadow:0 8px 25px rgba(0,0,0,.2);
+      width:100%;
+      min-width:0;
+    }
+    .card h3{font-size:1.25rem;margin:0 0 1rem}
+
+    .step{margin-bottom:1rem;padding:1rem;border-radius:8px;border:1px solid}
+    .step[data-label="Problem"]{border-color:var(--card-border)}
+    .step[data-label="Solution"]{background:var(--solution-bg);border-color:var(--solution-border)}
+    .step[data-label="Consequence"]{background:var(--consequence-bg);border-color:var(--consequence-border)}
+    .step[data-label]::before{display:block;font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem}
+    .step[data-label="Problem"]::before{content:"The Problem";color:var(--muted)}
+    .step[data-label="Solution"]::before{content:"The (Intended) Solution";color:var(--accent)}
+    .step[data-label="Consequence"]::before{content:"The Unintended Consequence";color:#f43f5e}
+    .step p{margin:0;font-size:.95rem}
+
+    .card .controls{margin-top:auto;padding-top:1rem}
+    .reveal-btn{font-size:.9rem;font-weight:600;color:var(--canvas);background:var(--accent);border:0;border-radius:6px;padding:.75rem 1rem;width:100%;cursor:pointer;transition:background-color .2s}
+    .reveal-btn:hover{background:var(--accent-dark)}
+    .card.complete .reveal-btn{background:#64748b;color:#fff}
+
+    .hidden{display:none}
+
+    /* --- MOBILE-FRIENDLY STYLES --- */
+    @media (max-width: 768px) {
+      .app-layout {
+        flex-direction: column; /* Stack sidebar and content vertically */
+        height: auto; /* Allow page to scroll */
+      }
+      .source-nav {
+        width: 100%; /* Make nav full-width */
+        height: auto;
+        padding: 1rem;
+        border-right: 0;
+        border-bottom: 1px solid var(--card-border);
+        overflow-y: visible;
+        display: flex; /* Arrange title and tabs horizontally */
+        flex-wrap: wrap; /* Allow tabs to wrap on small screens */
+        align-items: center;
+      }
+      .source-nav h1 {
+        margin: 0 1rem 0 0; /* Adjust spacing for horizontal layout */
+        flex-shrink: 0;
+      }
+      .nav-tab {
+        width: auto; /* Allow tabs to size to their content */
+        flex-grow: 1; /* Let tabs share the available space */
+        text-align: center; /* Center text inside tabs */
+        margin: 0.25rem;
+      }
+      .content-area {
+        padding: 1.5rem 1rem; /* Reduce padding for smaller screens */
+        overflow-y: visible;
+      }
+      .card-group {
+         /* Ensure cards stack in a single column */
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="source-nav">
+      <h1>Sources</h1>
+      <button class="nav-tab active" data-target="source-reason">Reason</button>
+      <button class="nav-tab" data-target="source-hoover">Hoover</button>
+      <button class="nav-tab" data-target="source-changelab">ChangeLab</button>
+      <button class="nav-tab" data-target="source-voxdev">VoxDev</button>
+    </aside>
+
+    <main class="content-area">
+      <!-- REASON (Vol. 1–19) -->
+<div id="source-reason" class="card-group active">
+  <!-- Vol. 1 -->
+  <div class="card" data-state="closed">
+    <h3>Osborne Reef (Florida)</h3>
+    <div class="step" data-label="Problem"><p>South Florida's natural reefs were degraded and tourism officials wanted to boost marine habitat, attract fish, and create new dive sites to benefit the local economy.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Between 1972 and 1974, dump approximately 2 million discarded tires offshore, bundled together with steel clips. Tires seemed ideal—cheap, abundant, durable, easy to stack, and full of holes for sea life. The logic was simple: instant artificial reef at minimal cost.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Hurricanes and wave action broke the steel clips within years. Freed tires roamed the seafloor like tumbleweeds, sandblasting and crushing the natural coral reefs they were meant to supplement. They entangled wildlife and prevented new reef growth. Cleanup efforts began in 2007 and continue today—divers have retrieved over 100,000 tires, but hundreds of thousands remain scattered across the ocean floor. The "permanent" solution created a multi-generational cleanup project.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Corn Ethanol Subsidies</h3>
+    <div class="step" data-label="Problem"><p>Rising oil prices and energy security concerns made reducing petroleum dependence urgent. Climate advocates wanted renewable fuels, farmers wanted crop subsidies, and everyone wanted a domestic, "patriotic" solution.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Federal mandates required ethanol blending in gasoline while subsidies incentivized massive corn-ethanol production. The Renewable Fuel Standard set ambitious targets for biofuel use, channeling billions into corn-based ethanol infrastructure.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Corn prices surged as fuel competed with food for acreage. Farmers plowed marginal land, increasing fertilizer runoff and environmental damage. The climate math proved disappointing—when accounting for fertilizer production, tractor fuel, processing energy, and land-use changes, corn ethanol's net carbon benefit barely exceeded break-even. Food prices jumped globally as American corn exports declined. The program successfully transferred wealth to corn growers and ethanol producers while delivering climate benefits that, generously measured, approximated diet soda: technically present, functionally negligible.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>ACA Employer Coverage Quirk</h3>
+    <div class="step" data-label="Problem"><p>The Affordable Care Act needed to expand coverage without forcing employers to dump workers onto individual exchanges, which would overwhelm the new marketplaces and trigger political backlash.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Mandate that employers with 50+ full-time employees offer affordable health insurance or face penalties. Define "full-time" as 30+ hours per week, set affordability standards, and create detailed plan requirements to prevent gaming the system.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>The regulations created a bright line that employers could engineer around. Some firms capped worker hours at 29 per week to avoid the mandate, leaving employees with reduced hours and no coverage. Others trimmed benefits to meet the letter of affordability requirements while making plans less useful. Franchise chains and retail businesses restructured staffing models around the 30-hour threshold. Draw a regulatory box and payroll departments learn origami—the rules were followed precisely while the spirit got shredded.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <!-- Vol. 2 -->
+  <div class="card" data-state="closed">
+    <h3>Prostitution Crackdowns</h3>
+    <div class="step" data-label="Problem"><p>Cities wanted to reduce street prostitution, associated crime, drug use, and neighborhood complaints about visible sex work.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Intensified enforcement through police sweeps, undercover stings, and harsher criminal penalties for both sex workers and clients. Increase arrests to drive the trade underground or away entirely.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Sex work migrated to less visible, more dangerous locations—isolated streets, online platforms with less screening, areas farther from services and police protection. Workers had less time to screen clients when constantly evading enforcement. Violence concentrated among the most vulnerable workers who couldn't risk police contact due to immigration status, prior records, or drug use. Criminalization pushed the trade into shadows rather than eliminating it, making harm reduction and exit services harder to deliver.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Sin Taxes (Soda/Tobacco)</h3>
+    <div class="step" data-label="Problem"><p>Governments sought to discourage unhealthy consumption while generating revenue to fund public services and health programs.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Levy per-unit excise taxes on cigarettes, sugary drinks, and other "sin" products. The tax would nudge consumers toward healthier choices while the revenue funded public goods.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Consumers near tax borders drove across lines for cheaper purchases—Jersey smokes, Pennsylvania soda. Product substitution thrived: tax sugary drinks and sales shifted to untaxed sweetened teas, sports drinks, and high-calorie snacks. Cigarette taxes pushed smokers toward cheaper brands and roll-your-own tobacco rather than quitting. The regressivity hit hard—low-income households spent higher percentages of income on these taxes. Calories and nicotine proved more migratory than tax bases, flowing easily around obstacles while revenue fell short of projections.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Urban Renewal</h3>
+    <div class="step" data-label="Problem"><p>Post-war cities contained "blighted" neighborhoods with aging infrastructure, poor housing stock, and concentrated poverty that middle-class residents were fleeing.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Use federal funding and aggressive eminent domain to clear entire neighborhoods, demolish old structures, and build modern housing projects, commercial centers, and highways. Modernize cities through comprehensive redevelopment.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Thriving communities—often Black and brown neighborhoods deemed "blighted" by white planners—were bulldozed, destroying social networks, businesses, and cultural institutions that made them functional despite poverty. Thousands faced forced displacement with inadequate compensation. The replacement projects—sterile towers, isolated from street life and economic opportunity—aged badly and concentrated poverty rather than alleviating it. Highways carved through minority neighborhoods, not wealthy white ones. Urban renewal successfully eliminated "blight" by razing neighborhoods that worked, replacing functional communities with architectural failures that reproduced poverty in concrete form.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <!-- Vol. 3 -->
+  <div class="card" data-state="closed">
+    <h3>Window Tax (1696)</h3>
+    <div class="step" data-label="Problem"><p>England needed tax revenue but lacked capacity to assess income accurately. Intrusive home inspections to value property provoked resistance and were administratively difficult.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Tax houses based on visible windows—easily counted from outside, roughly correlated with wealth and property size, no interior snooping required. Progressive rates meant bigger houses paid more.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Property owners bricked up windows to reduce tax liability. Homes grew darker, stuffier, and less healthy as natural light and ventilation declined. New construction featured fewer windows from the start. The tax on illumination effectively made daylight a luxury good that only the wealthy could afford. Health outcomes worsened in working-class housing as ventilation-dependent disease spread more easily. The tax persisted until 1851, leaving Britain's architectural legacy dotted with bricked-up window voids.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Nude-Dancing Buffer Rules</h3>
+    <div class="step" data-label="Problem"><p>Cities wanted to regulate adult entertainment venues without outright bans, reducing secondary effects like crime and neighborhood complaints while respecting First Amendment protections.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Impose strict physical separation requirements between performers and patrons, mandatory stage configurations, lighting standards, and distance rules. Regulate the activity's form without banning the speech.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Clubs hired architects and lawyers to engineer technically compliant layouts that preserved the business model—creative stage designs, redefined job titles, and choreography that worked within the rules. Compliance increased while the regulatory intent remained unfulfilled. The regulations spawned an industry of workarounds, demonstrating that regulating protected speech through granular physical requirements produces elaborate compliance theater.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Vice-District Zoning</h3>
+    <div class="step" data-label="Problem"><p>Cities wanted to contain adult businesses—strip clubs, porn shops, massage parlors—rather than scatter them throughout neighborhoods where they generated complaints.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Create designated "tolerance zones" where adult businesses could legally operate, concentrating them in specific areas while banning them elsewhere. Containment through geography.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Rents within the tolerance zones skyrocketed as limited space met concentrated demand. Activities inevitably leaked outside boundaries as businesses evaded restrictions or operated illegally where economics made sense. The containment zones created concentrated markets rather than containing the activity—essentially giving adult businesses a regulated monopoly area while doing little to address the concerns that motivated the zoning. Containment became concentration, complete with premium rents for vice-zone real estate.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <!-- Vol. 4 -->
+  <div class="card" data-state="closed">
+    <h3>Paper-Mill "Black Liquor" Credit</h3>
+    <div class="step" data-label="Problem"><p>Policymakers wanted to incentivize alternative fuel development and reduce fossil fuel dependence through tax credits for biofuel blending.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Offer generous tax credits for blending alternative fuels with fossil fuels. The credits would make biofuels economically competitive and spur innovation in the renewable energy sector.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Paper mills discovered a loophole: "black liquor," a wood-pulp byproduct they'd always burned for energy, could be mixed with a bit of diesel to qualify as a "biofuel blend." Mills added diesel to something that already worked fine without it—purely to harvest tax credits worth billions. No new renewable energy got generated; fossil fuel consumption actually increased slightly. The credit rewarded paper companies for gaming the system rather than advancing the stated environmental goal. Innovation followed the money straight to the subsidy arbitrage desk, not the mission.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Billboard Bans</h3>
+    <div class="step" data-label="Problem"><p>Communities wanted to reduce visual clutter along highways and in neighborhoods, improve aesthetics, and minimize driver distraction from advertising.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Ban or severely restrict traditional off-premise billboards through local ordinances. Remove existing signs through amortization requirements or buyouts.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Advertising migrated to unregulated categories. On-premise signs grew larger and more numerous since businesses could advertise at their own locations. Mobile billboards—trucks driving around with ads—proliferated since they weren't stationary structures. Digital signs, vehicle wraps, and guerrilla marketing filled the visual space. The regulations succeeded at eliminating traditional billboards while doing little to reduce actual advertising or visual clutter—they simply shifted it to less-regulated forms. Fewer "billboards," more signs.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Gender Pay-Gap Laws</h3>
+    <div class="step" data-label="Problem"><p>Documented gender wage gaps persisted, partly attributed to salary negotiation disadvantages and employers using prior salary history to perpetuate pay disparities across jobs.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Ban employers from asking about salary history and require disclosure of pay ranges in job postings. Level the information playing field and prevent historical discrimination from following workers.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Some employers responded by posting extremely wide pay ranges that conveyed little useful information, or by anchoring ranges at the low end to minimize starting salaries. Others paused hiring in covered jurisdictions or restructured compensation to reduce transparency. Compliance increased while some of the information asymmetry simply shifted form. The laws likely helped some workers while others found that published ranges became anchors pulling offers downward rather than up. Signal quality didn't necessarily improve just because disclosure increased.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <!-- Vol. 5 -->
+  <div class="card" data-state="closed">
+    <h3>Anti–Price-Gouging Laws</h3>
+    <div class="step" data-label="Problem"><p>Natural disasters and emergencies triggered price spikes for essentials—water, generators, hotel rooms—that looked exploitative and left vulnerable populations unable to afford necessities.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Cap price increases during declared emergencies, typically limiting them to a percentage above pre-emergency levels. Prosecute sellers who charge "unconscionable" prices for essential goods.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Price caps eliminated the market signal that normally alerts suppliers to urgent scarcity and compensates them for extraordinary delivery costs. Distant suppliers with emergency stock had no incentive to rush goods to disaster zones when prices couldn't cover expedited shipping or hazard pay. Local inventory disappeared quickly as residents hoarded at artificially low prices. Shelves stayed empty longer as resupply lagged. Black markets emerged where those with resources paid premium prices off the books while those without paid with time in long queues or went without entirely. The laws guaranteed fairness for early arrivals while ensuring scarcity for everyone else.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>School Report Cards</h3>
+    <div class="step" data-label="Problem"><p>Schools lacked accountability and parents needed simple, comparable information about school quality to make informed choices about their children's education.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Publish straightforward A–F letter grades for schools based on standardized test scores, graduation rates, and other measurable metrics. Make school performance transparent and easily understandable.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Teaching narrowed to focus intensely on tested subjects and testable formats. Art, music, social studies, critical thinking, and other unmeasured aspects of education became extracurricular luxuries. Test prep displaced deeper learning as schools optimized for the metrics that determined their grades. Gaming proliferated—strategic student exclusion, teaching to specific test questions, even cheating scandals. The simple grades captured something, but reduced complex educational quality to a single letter, ensuring that what got measured got taught while everything else became optional. Complex learning became extra credit.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Youth Curfews</h3>
+    <div class="step" data-label="Problem"><p>Cities wanted to reduce juvenile crime and victimization during late-night hours when parental supervision was minimal and trouble most likely.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Ban minors from public spaces after specified hours—typically 10 PM or 11 PM on school nights, later on weekends. Police could detain violators and fine parents, establishing clear boundaries for teen behavior.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Research showed juvenile crime and victimization simply shifted to earlier hours rather than declining overall. Police resources went toward status offenses instead of actual crimes. Enforcement disparities widened as minority youth in over-policed neighborhoods faced more citations. Teens with legitimate late-night activities—jobs, family responsibilities, transportation delays—faced police contact that soured relationships rather than built safety. The clock changed; the causes of crime didn't.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <!-- Vol. 6 -->
+  <div class="card" data-state="closed">
+    <h3>Minimum-Wage Hikes</h3>
+    <div class="step" data-label="Problem"><p>Full-time workers at minimum wage couldn't afford basic necessities, while income inequality widened. Raising the wage floor seemed like direct economic justice.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Mandate substantial increases to the minimum wage, often to $15 or more per hour, to ensure workers could support themselves without public assistance.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Employers facing higher labor costs cut hours to stay within budget, leaving some workers with higher rates but smaller paychecks. Others automated positions where feasible—self-checkout, ordering kiosks, scheduling software replacing schedulers. Entry-level positions disappeared as employers demanded more experience to justify higher wages, eliminating the bottom rungs of the employment ladder. Some workers benefited with higher earnings; others never got hired at all. The policy helped visible workers while creating an invisible class priced out of their first job.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Deposit/Redemption Schemes</h3>
+    <div class="step" data-label="Problem"><p>Beverage containers littered streets and clogged landfills. Recycling rates were low and environmental groups wanted market incentives to change behavior.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Charge deposits on beverage containers at purchase, refundable when consumers return them for recycling. Financial incentives would boost recycling rates dramatically.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Cross-border arbitrage bloomed where deposit values varied—people bought containers in low-deposit states and returned them in high-deposit states for profit. Professional scavengers emerged, creating informal markets in redeemable containers. While recycling rates did increase, the systems proved expensive to administer and prompted complaints about redemption center availability. In the secondary economy, trash literally became currency, with predictable gaming and arbitrage.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Wild-Boar Culls</h3>
+    <div class="step" data-label="Problem"><p>Wild boar populations damaged crops, caused vehicle collisions, and disrupted ecosystems across parts of Europe and Asia.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Pay bounties to hunters for each boar killed, typically requiring proof like tails or ears. Economic incentives would reduce populations more effectively than regulation alone.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Hunters became boar farmers. Rather than eliminate populations, some actively managed them as sustainable bounty sources—protecting breeding stock, supplementing feed, improving habitat. Populations stabilized or grew in areas where bounty payments exceeded hunting costs. The financial incentive optimized for bounty collection, not population control. Some hunters even bred boars specifically for the tail-collection trade.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <!-- Vol. 7 -->
+  <div class="card" data-state="closed">
+    <h3>Alcohol Prohibition</h3>
+    <div class="step" data-label="Problem"><p>Alcohol consumption contributed to domestic violence, poverty, health problems, and social disorder. The temperance movement argued eliminating alcohol would eliminate these harms.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>The 18th Amendment banned production, sale, and transportation of alcoholic beverages nationwide. Complete prohibition would end alcohol's social costs.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Alcohol production moved underground. Speakeasies proliferated, organized crime syndicates emerged to meet demand, and violence accompanied black-market competition. Bootleggers produced stronger spirits—more profit per volume when smuggling. Quality control vanished, causing poisonings and deaths from tainted alcohol. Law enforcement corruption spread as prohibition created massive illegal profit opportunities. The policy criminalized millions of otherwise law-abiding citizens while funding organized crime's growth. Repeal came in 1933 after the cure proved worse than the disease.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Seat-Belt Mandates &amp; Risk Compensation</h3>
+    <div class="step" data-label="Problem"><p>Motor vehicle crashes killed and injured thousands annually. Most fatalities involved unbelted occupants who could have survived with restraints.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Mandate seat-belt installation in all vehicles and require usage, with fines for noncompliance. Engineer vehicles to be safer and require occupants to use safety equipment.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Seat belts absolutely saved lives—this is not disputed. However, some drivers exhibited "risk compensation," feeling safer with belts and thus driving more aggressively, faster, or less attentively. The safety margin got partially consumed by riskier behavior. Pedestrian and cyclist injuries may have increased slightly as protected drivers took more risks. The net result remained positive—fatalities declined—but the gains were smaller than pure engineering calculations predicted because human behavior adjusted to the new safety margin. Physics improved; behavior didn't always.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Drought Relief Pricing</h3>
+    <div class="step" data-label="Problem"><p>Severe droughts threatened water supplies, but raising prices during emergencies seemed exploitative and would burden low-income households.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Maintain low water prices during droughts, supplement with voluntary conservation appeals and limited-use restrictions. Keep water affordable when people need it most.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>With prices unchanged, conservation incentives evaporated. Those who could afford it used water freely—watering lawns, filling pools—while reservoirs dwindled. Voluntary appeals worked for the conscientious minority while the majority continued normal usage. Price signals that could have distributed scarcity through market mechanisms got silenced, ensuring shortage distribution through rationing, restrictions, and eventually mandatory cutbacks. Conservation incentives collapsed; reservoirs didn't, but came close.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <!-- Vol. 8 -->
+  <div class="card" data-state="closed">
+    <h3>Rent Control</h3>
+    <div class="step" data-label="Problem"><p>Housing costs in expensive cities had become unaffordable for existing tenants, threatening displacement as neighborhoods gentrified.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Cap rents and restrict increases, typically to inflation or fixed percentages. Protect current tenants from price shocks and preserve economic diversity.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Landlords converted apartments to condos, withdrew units from rental markets, or let properties deteriorate since rent caps made maintenance unprofitable. New construction stalled as developers avoided rent-controlled markets. Supply constricted while demand remained strong, leaving newcomers competing for a shrinking pool of units. Winners stayed in below-market apartments indefinitely; losers faced impossible searches. Housing that remained "affordable" for the lucky few aged into museum pieces while everyone else scrambled for fewer options at any price.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Plastic-Bag Bans</h3>
+    <div class="step" data-label="Problem"><p>Single-use plastic bags clogged landfills, littered landscapes, and harmed marine life. Environmentalists wanted to reduce plastic waste at its source.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Ban thin single-use checkout bags at grocery stores and retail outlets. Shoppers would bring reusable bags or buy sturdier alternatives, cutting plastic waste.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Reusable bags never showed up reliably, so many shoppers bought thicker plastic bags at checkout—technically compliant but substantially heavier. Households that formerly reused flimsy grocery bags as trash liners bought dedicated trash bags instead, often thicker than the banned bags. Multiple studies found total plastic weight per household actually increased post-ban as thin, multi-use bags got replaced by thicker, single-purpose products. Plastic waste shifted categories rather than declining.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Cobra Bounty</h3>
+    <div class="step" data-label="Problem"><p>Delhi faced dangerous cobra infestations. Venomous snakes in urban areas threatened public safety, particularly for children and vulnerable residents.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>The British colonial government offered cash bounties for dead cobras. Financial incentives would motivate the public to hunt snakes and reduce populations quickly.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Enterprising individuals began breeding cobras specifically to kill for bounty payments. When authorities discovered the fraud and canceled the program, breeders released their now-worthless snakes. The cobra population allegedly increased beyond the original problem. The bounty successfully created a cobra farming industry while doing nothing to address wild populations. The story has become the namesake for perverse incentive policies where solutions make problems worse.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <!-- Vol. 9 -->
+  <div class="card" data-state="closed">
+    <h3>Antwerp Price Controls (1585 Siege)</h3>
+    <div class="step" data-label="Problem"><p>During the Siege of Antwerp, food grew scarce as Spanish forces blockaded the city. Prices spiked, threatening starvation for those who couldn't afford inflated costs.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>City authorities imposed strict price ceilings on food to keep it affordable for all citizens during the emergency. Fixed prices would prevent profiteering and ensure equitable distribution.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Sellers facing capped prices smuggled goods out of the city where they'd fetch market rates, or hoarded supplies waiting for better conditions. Public markets emptied as merchants withheld stock. Black markets flourished at prices far above the official ceilings. The legal market disappeared while illegal trade thrived, leaving those unable to access black markets—the very people the controls aimed to help—facing worse scarcity and hunger. Price controls turned shortage into famine.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>England's Window Tax (1696)</h3>
+    <div class="step" data-label="Problem"><p>England needed tax revenue but lacked administrative capacity to accurately assess income or property values. Intrusive home inspections provoked resistance.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Tax houses based on the number of windows, which could be counted from the street without entering homes. Window count roughly correlated with property size and wealth.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Property owners bricked up existing windows and built new structures with minimal openings. Homes grew darker and stuffier as natural light and ventilation declined, contributing to health problems in working-class housing. Sunlight became a luxury good only the wealthy could afford to pay for. The tax persisted until 1851, leaving Britain's architectural heritage dotted with bricked-up window cavities.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>"Cash for Clunkers" (2009)</h3>
+    <div class="step" data-label="Problem"><p>The Great Recession crushed auto sales while environmental concerns focused on fuel-inefficient older vehicles. Stimulate the economy and retire gas guzzlers simultaneously.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Pay substantial rebates—$3,500 to $4,500—to consumers who traded old, inefficient vehicles for new, fuel-efficient ones. Traded vehicles would be destroyed, permanently removing them from the road.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>The program destroyed perfectly functional used vehicles that low-income buyers depended on, pushing used-car prices upward and making transportation less affordable for those who couldn't buy new. Many traded vehicles were worth less than the rebate, meaning taxpayers subsidized purchases that would have happened anyway at lower cost. Environmental benefits were front-loaded—one-time improvements from the initial trade—rather than sustained over time. Sales spiked during the program then crashed afterward, demonstrating demand timing shifted rather than increased. The program successfully transferred wealth to those who could already afford new cars while making used vehicles scarcer and pricier for everyone else.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <!-- Vol. 10 -->
+  <div class="card" data-state="closed">
+    <h3>The Streisand Effect</h3>
+    <div class="step" data-label="Problem"><p>An aerial photograph of Barbra Streisand's Malibu cliff-top mansion appeared in a California Coastal Records Project documenting erosion. She wanted it removed to protect her privacy.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>File a $50 million lawsuit demanding removal of the image and alleging privacy violations. Legal action would force the photograph's removal and deter future privacy invasions.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Before the lawsuit, the image had been downloaded exactly six times—two by Streisand's lawyers. The lawsuit generated massive media coverage, and hundreds of thousands of people viewed, downloaded, and shared the photograph out of curiosity about what was being suppressed. The attempt to hide the image ensured its permanent viral status. The effect has since named the phenomenon: efforts to hide or suppress information online often dramatically amplify its spread. Nothing goes viral faster than attempted silence.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Sesame as an Allergen</h3>
+    <div class="step" data-label="Problem"><p>Sesame allergies were increasingly common but weren't covered under federal allergen-labeling requirements, leaving affected consumers unable to easily identify safe products.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Add sesame to the Food Allergen Labeling and Consumer Protection Act's major allergen list, requiring clear labeling and manufacturing protocols to prevent cross-contamination.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Some manufacturers, rather than implement costly cleaning protocols to prevent trace cross-contamination, simply added sesame deliberately to products that never contained it before. This "compliance" strategy was cheaper than separating production lines or deep-cleaning equipment. Consumers with sesame allergies suddenly found products that were previously safe now contained sesame intentionally—expanding the list of foods they must avoid. The regulation meant to protect through transparency instead incentivized manufacturers to add allergens, making avoidance harder rather than easier.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Soccer's Golden Goal</h3>
+    <div class="step" data-label="Problem"><p>Tied soccer matches going to extra time often produced cautious, boring play as both teams feared defeat more than they sought victory.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Implement "golden goal" rules where the first goal scored in extra time immediately ends the match. Sudden-death drama would force attacking play and create exciting finishes.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Teams became even more cautious, terrified of conceding the match-ending goal. Defensive play dominated extra time as the risk of attacking—leaving yourself exposed—vastly exceeded the reward. The rule promised drama but delivered risk-aversion, producing some of the most boring extra-time soccer ever witnessed. FIFA abandoned the golden goal in 2004 after it consistently failed to generate the attacking football it was designed to encourage.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <!-- Vol. 11 -->
+  <div class="card" data-state="closed">
+    <h3>Mexico's "Sowing Life" Tree Subsidy</h3>
+    <div class="step" data-label="Problem"><p>Mexico wanted to address deforestation, combat climate change, and provide rural income through a large-scale reforestation program.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Pay landowners to plant trees on eligible land. The "Sembrando Vida" program would green the countryside while providing steady income to rural communities.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>The program specified that payments only applied to land newly planted with trees, not existing forests. Some landowners cleared standing forest to qualify their land as "newly planted" and collect payments. Satellite imagery documented forest loss in program areas as perverse incentives encouraged deforestation-for-reforestation. The program successfully subsidized tree planting while accidentally subsidizing tree cutting—net environmental benefit unclear, but the irony crystal clear.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Israeli Daycare Late Fees</h3>
+    <div class="step" data-label="Problem"><p>Parents at Israeli daycare centers frequently picked up their children late, forcing staff to stay beyond scheduled hours without compensation.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Impose a modest per-minute fine for late pickups. The financial penalty would deter tardiness and compensate workers for extended hours.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Late pickups increased after the fine was introduced. Parents previously constrained by social norms and guilt now felt they'd purchased the right to be late—the fine transformed a moral obligation into a market transaction. What was once "imposing on the teacher's kindness" became "a service I'm paying for." When researchers later removed the fine, late pickups remained elevated; the moral norm, once commodified, didn't return. The fine successfully converted a social relationship into a commercial transaction, and in the process destroyed the social incentive it meant to supplement.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>New York Alcohol Law Tweak</h3>
+    <div class="step" data-label="Problem"><p>New York's alcohol retail regulations contained quirks and inconsistencies that seemed outdated, unsafe, or nonsensical. Reformers wanted to modernize and rationalize the rules.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Adjust licensing categories, modify who could sell which products when, and clarify regulations to improve safety and reduce bureaucratic tangles.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Each adjustment created new bright lines that industry participants immediately optimized around. Retailers restructured operations to exploit definitional boundaries. New categories of "technically compliant" businesses emerged that followed the letter while evading the spirit. Unintended loopholes appeared as rules interacted unpredictably. The reforms successfully created a more complex regulatory landscape that spawned creative compliance strategies and workarounds—"technically compliant" booze logistics became an art form.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <!-- Vol. 12 -->
+  <div class="card" data-state="closed">
+    <h3>Texas Medical Center Bird Nets</h3>
+    <div class="step" data-label="Problem"><p>Birds nesting in Houston's Texas Medical Center ventilation systems and parking structures created sanitation issues, clogged equipment, and posed infection risks for a major hospital complex.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Install wide netting across structures and openings to prevent birds from accessing nesting sites. Physical barriers would keep birds out without harming them.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Birds, bats, and other wildlife became trapped within and under the nets, unable to escape. Debris accumulated in the netting, requiring constant maintenance. Dead animals collected in nets, creating the sanitation problems the netting was meant to prevent. Rescue organizations ran routine operations to free trapped wildlife. The barriers successfully kept birds out of some areas while creating new hazards and maintenance burdens elsewhere.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>California Proposition 65 Warnings</h3>
+    <div class="step" data-label="Problem"><p>Californians unknowingly encountered cancer-causing chemicals and reproductive toxins in everyday products. Full disclosure would empower informed consumer choices.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Require warnings on any product containing chemicals known to cause cancer or reproductive harm above minimal thresholds. Businesses must post warnings at entrances where exposures might occur.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>The law set thresholds so low that warnings appeared everywhere—coffee shops, parking garages, hardware stores, apartment buildings, nearly every commercial space. The ubiquity rendered warnings meaningless; consumers saw them so constantly they stopped processing the information. Over-warning replaced under-warning as the problem. Real risks got lost in the noise. Label overload turned what was meant to be a critical safety signal into ignorable background static.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Carbon-Credit Loopholes</h3>
+    <div class="step" data-label="Problem"><p>Directly reducing every emission source was expensive or impractical. Offset markets could incentivize equivalent reductions elsewhere while giving companies flexibility.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Allow companies to purchase carbon credits representing emission reductions achieved elsewhere—forest preservation, renewable energy projects, methane capture. One ton reduced anywhere equals one ton offset at the source.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Verification proved difficult and fraud proliferated. Projects claimed credit for forests that were never threatened, reductions that would have happened anyway, or savings counted multiple times by different buyers. Companies "offset" emissions with phantom reductions that existed primarily on paper. Additionality—ensuring the reduction wouldn't have occurred without the credit—was nearly impossible to verify. Creative accounting birthed phantom forests, allowed business-as-usual to masquerade as climate action, and let polluters purchase moral licenses to continue emitting. Some offsets represented real reductions; many represented accounting fiction.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <!-- Vol. 13 -->
+  <div class="card" data-state="closed">
+    <h3>Oakland Gun Buyback</h3>
+    <div class="step" data-label="Problem"><p>Oakland wanted to reduce firearms in circulation, particularly illegal or unwanted guns that might be used in crimes or accidents.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Host no-questions-asked gun buyback events offering cash or gift cards for any firearm turned in. Make disposal easy, profitable, and anonymous.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Savvy participants bought cheap, barely-functional guns at pawn shops or gun shows for $50–$100 and immediately turned them in for $200 gift cards—pure arbitrage. Functional weapons people actually wanted stayed in circulation while buybacks collected junk guns nobody would use criminally anyway. The program successfully created a profitable side business in junk-gun arbitrage while doing little to affect crime guns. Buy cheap, turn in dear, go home richer.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Afghanistan "Cash for Poppies"</h3>
+    <div class="step" data-label="Problem"><p>Afghan opium cultivation funded the Taliban and fueled the global heroin trade. Eradication would cut terrorist financing and drug supply.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Pay farmers to destroy their opium poppy crops and compensate them for the loss, incentivizing a shift to legal agriculture.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Farmers grew poppies specifically to collect eradication payments. They'd harvest part of the crop for opium, report the rest to authorities for destruction and payment, then replant for the next season. Some reported the same fields multiple times. Opium production remained steady or increased while farmers collected guaranteed payments. The program successfully created a new revenue stream for poppy farmers—eradication subsidies—without meaningfully reducing cultivation. Destroy, collect cash, replant. Heroin production steady; honesty eradicated.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>CAFE Fuel-Efficiency Rules</h3>
+    <div class="step" data-label="Problem"><p>American vehicles consumed vast amounts of gasoline, contributing to oil dependence, emissions, and air pollution. Better fuel economy would address all three concerns.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Mandate Corporate Average Fuel Economy standards requiring automakers to meet fleet-wide miles-per-gallon targets, with different standards for cars versus light trucks.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>The separate standards for "light trucks"—originally meant for farm and commercial vehicles—created an exploitable loophole. Automakers marketed SUVs, crossovers, and pickups to consumers as lifestyle vehicles while classifying them as light trucks subject to looser standards. The American fleet shifted dramatically toward heavier vehicles that technically met standards but often consumed more fuel than the sedans they replaced. Station wagons became SUVs; cars became crossovers. The regulations achieved paper gains in per-vehicle efficiency while accidentally engineering a shift toward heavier, larger vehicles. Cleaner per mile, but more miles in bigger machines.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <!-- Vol. 14 -->
+  <div class="card" data-state="closed">
+    <h3>$1 Coins for Airline Miles</h3>
+    <div class="step" data-label="Problem"><p>The U.S. Mint wanted dollar coins to circulate, reducing expensive paper currency printing costs. Previous attempts had failed due to lack of consumer adoption.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Offer free shipping on bulk dollar coin orders from the U.S. Mint website, and allow purchase with credit cards. Convenience would drive adoption.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Travel rewards enthusiasts discovered they could order thousands of dollars in coins, pay by credit card to earn airline miles, then immediately deposit the coins back at their bank and pay off the credit card. Free airline miles with zero cost or float. Some people ordered pallets of coins in a pure arbitrage scheme. Circulation numbers technically increased—coins moved from Mint to consumer to bank and back—but actual use remained minimal. The Mint closed the loophole, and dollar coins returned to vaults. Circulation stayed theoretical while points hackers flew free.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Sri Lanka's Fertilizer Ban</h3>
+    <div class="step" data-label="Problem"><p>Sri Lanka wanted to reduce fertilizer import costs, promote organic farming, and position itself as the world's first fully organic agriculture nation.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Ban synthetic fertilizer imports and sales overnight in 2021, forcing immediate transition to organic farming methods. Go big, go fast, lead the world.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Crop yields collapsed by 20–50% almost immediately. Rice production fell sharply in a country previously self-sufficient. Food prices spiked, imports surged to cover shortfalls, and the agricultural economy cratered. Farmers lacked organic alternatives at scale, and soil couldn't immediately replace decades of synthetic nutrient supplementation. The policy triggered food shortages and contributed to economic crisis and political upheaval. The government reversed course within months, but the damage persisted. Soil chemistry ignored the press release about going organic.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Hawaii's Mongoose "Rat Fix"</h3>
+    <div class="step" data-label="Problem"><p>Rats plagued Hawaiian sugar plantations, destroying crops and reducing yields. Conventional control methods—traps, poison—proved insufficient against the rodent population.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Import mongooses from India as biological control agents. Mongooses are natural predators of rats and would control the population naturally, solving the problem without chemicals.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Mongooses hunt during the day. Hawaiian rats are primarily nocturnal. The two species barely overlapped temporally, so mongoose predation on rats remained minimal. Meanwhile, day-active mongooses feasted on native ground-nesting birds, eggs, and endemic species that had evolved without mammalian predators. Bird populations crashed. Mongooses became an invasive species disaster while rats continued their nocturnal crop damage. The introduced predators decimated native wildlife on the night shift while rats carried on undisturbed during the day shift.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <!-- Vol. 15 -->
+  <div class="card" data-state="closed">
+    <h3>Edmonton Noise Scoreboards</h3>
+    <div class="step" data-label="Problem"><p>Traffic noise complaints prompted Edmonton to seek creative solutions to encourage quieter driving through residential areas.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Install roadside displays that measured vehicle noise and showed drivers a "grade" or score. Positive feedback would encourage quieter driving behavior.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Some drivers treated the displays as a challenge, deliberately revving engines to "win" by registering the highest noise score. The scoreboards gamified the behavior they were meant to discourage, creating a leaderboard for loud. Civic responsibility got converted into a competition. The displays successfully made noise monitoring visible while accidentally making noise a score to beat.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>San Francisco "No Red-State Vendors"</h3>
+    <div class="step" data-label="Problem"><p>San Francisco wanted to align city procurement with progressive values by avoiding business with states whose policies conflicted with city principles.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Ban city contracts with companies headquartered in states with certain policies the city deemed objectionable—restrictions on abortion access, LGBTQ rights, etc.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>The banned list grew rapidly, eventually covering numerous states. Finding compliant vendors for specialized needs became difficult or impossible, snarling procurement. Costs rose as the restricted vendor pool meant less competition. Exemptions proliferated as practical reality forced workarounds. The policy successfully signaled values while complicating operations and increasing expenses. Purchasing got politicized; efficiency declined; exemptions bloomed.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Pennsylvania Political-Cartoon Rule</h3>
+    <div class="step" data-label="Problem"><p>Pennsylvania wanted to keep government communications neutral and avoid the appearance that official channels were being used for political messaging.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Restrict "political" imagery and content in certain official contexts, including what public employees could share. Maintain nonpartisanship through content rules.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Defining "political" proved impossible without vague standards that chilled speech. What counted as political satire versus acceptable commentary? Where was the line between news and opinion? Enforcement became arbitrary and fights multiplied over borderline cases. The vague boundaries created uncertainty that led to self-censorship and contentious disputes about what crossed the line. Speech got chilled; litigation multiplied; clarity never arrived.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <!-- Vol. 16 -->
+  <div class="card" data-state="closed">
+    <h3>DoorDash "Free Listing"</h3>
+    <div class="step" data-label="Problem"><p>DoorDash wanted to expand restaurant selection and capture market share by offering the most comprehensive delivery options available.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Add restaurants to the platform without their consent or knowledge, using publicly available menus and pricing. More options would attract customers and create network effects.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Restaurants discovered they were "on DoorDash" when confused delivery drivers showed up with orders they never agreed to fulfill. Menus were outdated, prices wrong, special instructions ignored. Staff scrambled to handle unexpected orders while regular customers waited. Some restaurants actively blocked DoorDash drivers or posted signs refusing service. Customer experience suffered from wrong orders and confusion. The growth hack worked—listings expanded—but at the cost of restaurant relationships and service quality. Growth hacked; trust subtracted.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>AI Answer Boxes</h3>
+    <div class="step" data-label="Problem"><p>Search engines wanted to provide immediate answers to user queries without requiring clicks through to source websites. Faster answers would improve user experience.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Place AI-generated summary answer boxes prominently at the top of search results, synthesizing information from multiple sources into a coherent response.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>The AI confidently presented hallucinations and errors as facts, mixing accurate information with plausible-sounding nonsense. Publishers who created the original content saw traffic crater as users got "answers" without clicking through—eliminating their ad revenue and undermining the content creation ecosystem. When AI answers were wrong, users had no source to verify against. Confident hallucinations proliferated; publishers lost revenue; reality required extra cleanup. The boxes successfully delivered instant answers of variable relationship to truth.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>French Wikipedia Policy Tweak</h3>
+    <div class="step" data-label="Problem"><p>French Wikipedia faced edit wars, vandalism, and low-quality contributions that degraded article quality and exhausted volunteer moderators.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Implement stricter moderation requirements and consensus-building processes before edits go live. More gatekeeping would improve quality control.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>The over-correction chilled productive editing. Casual contributors faced bureaucratic hurdles that discouraged participation. Minor improvements and timely updates got delayed or abandoned as the process grew cumbersome. Edit volume declined along with vandalism, but so did the crowd-sourced vitality that made Wikipedia valuable. The encyclopedia grew more accurate but less current, more controlled but less dynamic. Process went up; knowledge flow went down.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <!-- Vol. 17 -->
+  <div class="card" data-state="closed">
+    <h3>Post-War Beef Price Controls (1946)</h3>
+    <div class="step" data-label="Problem"><p>Post-WWII meat shortages persisted as rationing ended but supply remained tight. Politicians wanted to keep staple foods affordable during the transition to peacetime economy.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Maintain wartime price controls on beef, capping retail prices below market-clearing levels to protect consumers from price spikes.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Ranchers withheld cattle from official markets, selling through back channels or simply holding stock waiting for controls to lift. Legal supply dried up as meat disappeared from retail shelves. Black markets flourished at prices far above the caps. The controls successfully kept official prices low while ensuring nothing was available at official prices. Those with connections bought meat; everyone else got theory. Dinner became theoretical.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>LED Traffic Lights in Snow Country</h3>
+    <div class="step" data-label="Problem"><p>Municipalities wanted to reduce energy costs and maintenance by replacing incandescent traffic lights with more efficient LED signals.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Switch traffic signals to LED technology, which uses far less energy, lasts longer, and requires less frequent bulb replacement. The savings would be immediate and substantial.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Incandescent bulbs generate enough heat to melt snow and ice accumulating on signal lenses. LEDs produce almost no heat. In winter conditions, snow and ice covered LED signals, obscuring them from drivers and creating safety hazards at intersections. Some jurisdictions had to add heating elements or return to incandescent bulbs in critical locations. The technology improved efficiency on the utility bill but sometimes degraded safety at intersections during the exact conditions when clear signals matter most.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Fossil Bounties (1930s Indonesia)</h3>
+    <div class="step" data-label="Problem"><p>Indonesia wanted to encourage paleontological discovery and build museum collections by incentivizing local residents to report fossil finds.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Pay cash bounties for fossil discoveries, with payment per specimen turned in. Economic incentives would motivate searches and direct finds to proper scientific study.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Finders broke large fossils into multiple pieces to maximize bounty payments—one skeleton became many "discoveries." Scientific value plummeted as context was destroyed and specimens were fragmented. Payouts got optimized while preservation didn't. The program successfully incentivized finding fossils while accidentally incentivizing their destruction for profit.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <!-- Vol. 18 -->
+  <div class="card" data-state="closed">
+    <h3>3D-Printed "Gun Buyback" Hack</h3>
+    <div class="step" data-label="Problem"><p>Cities wanted to reduce firearms in circulation through no-questions-asked buyback programs offering payment for turned-in weapons.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Pay fixed amounts—often $50–$200—for any firearm turned in during buyback events, no identification or background check required.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Enterprising individuals 3D-printed barely-functional firearm components or receivers that technically qualified as guns under the buyback terms, then redeemed them en masse for gift cards worth more than the printing material cost. Some people turned gun buybacks into profitable manufacturing operations, churning out minimal-compliance firearms specifically for redemption. The programs successfully created a cottage industry in buyback arbitrage while collecting weapons nobody would use criminally. Disarmament became a side hustle.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Jakarta's "3-in-1" Occupancy Rule</h3>
+    <div class="step" data-label="Problem"><p>Jakarta's traffic congestion was crushing. Authorities wanted to reduce vehicle numbers during peak hours by encouraging carpooling.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Require vehicles entering certain zones during rush hours to carry at least three occupants. Roadside enforcement would verify compliance and turn away violators.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>An informal labor market emerged immediately: "jockeys"—usually women and children—waited at zone entrances to be hired as passengers, then hopped out after the checkpoint. Drivers paid jockeys small fees to meet occupancy requirements, then continued as single occupants. Vehicle numbers didn't decline; a new form of precarious micro-employment was created. The regulation successfully spawned a jockey industry while traffic remained unchanged. Paid passengers filled seats; cars stayed on the road.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Scratch-and-Sniff Gas-Leak Mailer</h3>
+    <div class="step" data-label="Problem"><p>Many residents didn't recognize the distinctive odor of natural gas leaks, potentially missing warning signs of dangerous situations.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Mail scratch-and-sniff postcards replicating the smell of natural gas so residents could learn to recognize the odor. Public education through direct sensory experience.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Thousands of recipients scratched the card, smelled the gas odor, and immediately assumed they had a real leak. Emergency call centers were overwhelmed with reports from panicked residents who couldn't distinguish the sample smell from an actual leak. Response resources got tied up investigating thousands of false alarms while the educational campaign created the exact panic it meant to prevent. The safety campaign successfully taught people the smell while stress-testing emergency response systems.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <!-- Vol. 19 -->
+  <div class="card" data-state="closed">
+    <h3>Obscenity Website Blocks</h3>
+    <div class="step" data-label="Problem"><p>Governments wanted to protect citizens, especially children, from explicit sexual content online by restricting access to pornographic websites.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Implement broad filtering systems that block entire domains or IP addresses associated with explicit content. ISP-level enforcement would prevent access at the infrastructure level.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Filters over-blocked, catching legitimate health resources, LGBTQ support sites, sex education materials, and unrelated domains that happened to share servers or IP ranges with targeted sites. Meanwhile, users quickly discovered VPNs, proxy servers, and mirror sites, making blocks trivial to circumvent. The game of blocking and circumventing became endless whack-a-mole. Filters successfully restricted access for the least technically savvy while blocking legitimate resources and teaching everyone else about VPNs.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Used-Cooking-Oil Crackdowns</h3>
+    <div class="step" data-label="Problem"><p>Restaurant grease bins attracted thieves who stole used cooking oil for resale to biodiesel producers. Thefts and spills created messes and cost businesses revenue from legitimate oil recyclers.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Tighten regulations on used cooking oil collection, requiring permits and licenses. Strict enforcement would shut down the theft and black-market trade.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Used cooking oil became more valuable as restrictions created artificial scarcity in the legal market. Black-market prices spiked, making theft more profitable. Thieves upgraded from individuals with buckets to organized operations with tanker trucks hitting multiple locations per night. Grease theft grew more sophisticated and widespread as regulatory restrictions created lucrative opportunities for those willing to operate illegally. The crackdown successfully increased the value of the contraband it meant to eliminate.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>D.C. Tipped Minimum-Wage Hike</h3>
+    <div class="step" data-label="Problem"><p>Tipped workers in Washington, D.C. earned low base wages, depending on tips to reach minimum wage. Advocates wanted to eliminate the tip credit and guarantee higher base pay.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Phase out the tip credit system and raise the tipped minimum wage to match the regular minimum wage. Workers would get guaranteed higher pay regardless of tip fluctuations.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Restaurants added service fees to bills rather than raising menu prices, creating customer confusion about whether to tip on top of the fee. Some establishments cut slow-hour shifts since higher base wages made marginal service periods unprofitable. Tip pooling and distribution got restructured. Workers in high-end restaurants where tips were generous sometimes earned less than before as base wages rose but tip percentages fell. Pay rose on paper while the actual take-home math got murkier, varying by restaurant type and customer response. The table got more complex; clarity declined.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+</div>
+
+      <!-- HOOVER (Vol. 1–2) -->
+<div id="source-hoover" class="card-group">
+  <!-- Vol. 1 -->
+  <div class="card" data-state="closed">
+    <h3>Rent Control</h3>
+    <div class="step" data-label="Problem"><p>Housing costs in expensive cities had become unaffordable for existing tenants, particularly long-term residents facing rapid rent increases as neighborhoods changed. Displacement threatened communities and political pressure demanded action.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Implement rent control ordinances capping allowable annual rent increases—often tied to inflation or fixed percentages—and restrict evictions to specific causes. Protect current tenants from price shocks and preserve economic diversity in gentrifying neighborhoods. The caps would freeze affordability in place.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Landlords responded rationally to artificially suppressed returns. They converted rent-controlled apartments to condos exempt from restrictions, withdrew units from rental markets entirely, or let properties deteriorate since rent caps made maintenance unrewarding. New construction plummeted—why build rental housing with capped returns when other investments pay better? Housing supply constricted precisely when cities needed it most. The lottery winners who secured rent-controlled units stayed forever, hoarding below-market housing regardless of need, while newcomers—young families, workers relocating for jobs—faced brutal competition for the shrinking pool of available units at any price. Rent control successfully protected a lucky minority while making everyone else worse off. The policy preserved affordable housing for a few by ensuring there was less housing for everyone.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Minimum Wage Increases</h3>
+    <div class="step" data-label="Problem"><p>Workers in low-wage jobs struggled to afford basic necessities despite full-time work. Income inequality widened while executive pay soared. Raising the wage floor seemed like straightforward economic justice.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Mandate substantial increases to the minimum wage—often to $15 or $20 per hour—to ensure living wages, boost purchasing power for the working poor, and reduce reliance on public assistance. Higher pay would lift workers out of poverty directly.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Labor is not exempt from the laws of supply and demand. Employers facing mandated wage increases cut hours to maintain payroll budgets, leaving workers with higher rates but smaller paychecks. Others accelerated automation—self-checkout kiosks and ordering tablets don't demand $15 per hour. Entry-level positions vanished as employers hired fewer, more experienced workers who could justify the higher wage, closing the bottom rungs of the employment ladder. Some workers got raises; others got nothing—no job, no experience, no entry point to the workforce. The policy played well in headlines and helped workers who kept full-time hours, but created an invisible class of never-employed young people priced out of their first opportunities. Wage floors became employment ceilings for the least skilled.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Corporate Tax Hikes</h3>
+    <div class="step" data-label="Problem"><p>Growing deficits and calls for new social programs required revenue, while corporations reported record profits. Making companies "pay their fair share" offered a politically popular funding mechanism that wouldn't directly hit voters.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Raise corporate income tax rates significantly—perhaps returning to pre-2017 levels or higher—to fund expanded public services and reduce inequality. Corporations can afford it, and shareholders should contribute more to the public good.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Capital proved more mobile than politicians assumed. Corporations shifted investment, headquarters, and intellectual property to lower-tax jurisdictions—Ireland, Singapore, Switzerland—bleeding tax base and jobs rather than simply paying more. Those that stayed passed costs downstream: workers absorbed the burden through stagnant wages (labor can't relocate as easily as capital), consumers paid through higher prices, and shareholders—including pension funds for teachers, nurses, and firefighters—took hits to retirement accounts. Tax avoidance strategies bloomed as accountants and lawyers earned fortunes engineering structures to minimize exposure. Actual tax revenue often disappointed projections as the base eroded and behavior shifted. The policy successfully punished the immobile—workers and domestic investors—while sophisticated global operations gamed the system. Capital, like water, flows downhill toward lower rates, and no amount of political rhetoric repeals that gradient.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Environmental Regulations (Auto Emissions)</h3>
+    <div class="step" data-label="Problem"><p>Air pollution from vehicle exhaust caused respiratory illness, smog, and environmental damage. Public health and the planet demanded cleaner cars and stricter emissions standards.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Mandate catalytic converters, tighten emissions limits progressively over time, and require extensive testing. Force automakers to develop cleaner technology through regulatory pressure. Compliance would become mandatory; the market would adapt.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Cleaner cars cost more to manufacture. Higher new-vehicle prices pushed budget-conscious buyers toward used cars, extending the operational life of older, dirtier vehicles that the regulations aimed to replace. The fleet cleaned up more slowly than projected as people kept clunkers running rather than upgrading. Meanwhile, manufacturers facing impossible standards discovered "impossible" meant "expensive to comply with honestly"—so some cheated instead. Volkswagen's "defeat device" scandal epitomized the problem: emissions controls that worked during testing but switched off during normal driving. Regulatory stringency met engineering reality and corporate incentives at an intersection where fraud looked profitable. Other makers found legal loopholes or exploited testing conditions that bore little resemblance to real-world driving. The regulations achieved some genuine progress—modern cars pollute far less than 1970s models—but also demonstrated that overly aggressive standards invite evasion and can backfire by keeping dirty vehicles in service longer. Regulatory success met human ingenuity, and human ingenuity brought lawyers and engineers.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Welfare Expansion</h3>
+    <div class="step" data-label="Problem"><p>Poverty persisted despite economic growth, and existing safety-net programs left gaps that trapped families in hardship. Expanding eligibility, benefits, and duration would alleviate suffering and provide genuine security.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Broaden program eligibility to cover more households, increase benefit levels to better meet actual needs, extend duration of assistance, and add new programs to address gaps. A more generous safety net would catch people who currently fall through.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Benefit structures created brutal work disincentives through means-testing cliff effects. Earn an extra dollar crossing an income threshold and lose hundreds in benefits—housing vouchers, SNAP, childcare assistance, Medicaid—vanishing all at once. The effective marginal tax rate on additional earnings exceeded 100% for some families, meaning taking a better job or working more hours actively made them poorer. Rational recipients stayed under thresholds or reduced work to preserve benefits, creating the "welfare cliff" where climbing toward self-sufficiency meant stepping off a financial precipice. Some recipients navigated the system expertly to maximize benefits; others felt trapped, wanting to work more but unable to afford the benefit loss. Welfare expansion successfully provided critical support to families in need while simultaneously building perverse incentives against the self-improvement it ostensibly encouraged. The safety net worked—sometimes too well, cushioning people who wanted to climb but couldn't risk the fall.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Agricultural Price Supports</h3>
+    <div class="step" data-label="Problem"><p>Farmers faced volatile commodity prices that could swing wildly based on weather, global markets, and unpredictable demand—threatening farm incomes, rural communities, and food security. Stable prices would stabilize lives.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Government guarantees minimum prices by purchasing surplus production when market prices fall below support levels, or pays farmers directly to supplement low market prices. Farmers get income certainty; consumers get price stability; rural communities survive.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Guaranteed prices divorced production from demand. Farmers grew commodity crops regardless of actual need because the government stood ready to buy overages at attractive prices. Surpluses mounted into literal mountains—warehouses stuffed with subsidized wheat, vast holdings of powdered milk, butter reserves measured in tons. Storage costs ballooned into taxpayer expense. International markets distorted as American surpluses got dumped abroad below cost, undermining farmers in developing countries and triggering trade disputes. Domestic farmers optimized for subsidy capture rather than market signals, locking in inefficient production patterns. Environmental incentives flipped as price supports encouraged intensive monoculture farming and discouraged diversification. The programs successfully protected farm incomes while creating vast stockpiles of unintended abundance, enriching large agribusiness operations most adept at gaming the system, and ensuring taxpayers bought crops nobody wanted at prices nobody would pay. Wheat mountains, butter oceans, and a thriving trade in agricultural absurdity.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <!-- Vol. 2 -->
+  <div class="card" data-state="closed">
+    <h3>Tariffs and Trade Wars</h3>
+    <div class="step" data-label="Problem"><p>Domestic industries faced foreign competition—often from countries with lower labor costs or different regulatory standards—threatening American jobs and manufacturing capacity. "Unfair" trade practices demanded protective response.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Impose tariffs and quotas on imported goods to raise their prices and level the playing field for domestic producers. The revenue funds the Treasury while protecting strategic industries and American workers from low-wage foreign competition. Win-win, except for foreigners.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Tariffs are taxes on imported inputs, and modern manufacturing uses imported inputs everywhere. The steel tariff protecting domestic mills raised costs for automakers, appliance manufacturers, construction firms, and every business using steel—destroying more jobs in steel-using industries than it saved in steel-making ones. Trading partners retaliated against American exports, hammering farmers and manufacturers who lost foreign markets. Consumers paid higher prices for both protected goods and domestic products that no longer faced competitive pressure. Supply chains contorted as companies scrambled to dodge tariffs through transshipment schemes or relocated production entirely. The policy successfully protected narrow industries while spreading costs and job losses broadly. The shield for steel became shrapnel for everyone else. Protectionism delivered protection for the politically connected at the expense of the economically rational, illustrating that while concentrated benefits make for great photo ops at factory openings, diffuse costs show up quietly in everyone's shopping carts and unemployment lines.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Price-Gouging Bans</h3>
+    <div class="step" data-label="Problem"><p>Natural disasters and emergencies triggered price spikes for essentials—water, gasoline, generators, hotel rooms—that looked like exploitation. Sellers profiting from others' desperation offended fairness and demanded intervention.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Enact laws capping prices during emergencies, banning "excessive" increases above pre-disaster levels. Keep essentials affordable when people need them most and prevent exploitation of vulnerable consumers. Fairness demands it; decency requires it.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Price caps silenced the market's most important signal: scarcity. Without prices rising to reflect suddenly limited supply and urgent demand, incentives broke everywhere. Locals hoarded extra gasoline and water "just in case" since there was no price penalty for overconsumption. Distant suppliers with emergency stocks had no reason to incur the cost and risk of rushing goods to disaster zones—capped prices didn't cover expedited shipping or hazard pay. Store shelves emptied faster as first-comers grabbed everything at pre-disaster prices, leaving late arrivals with nothing at any price. Black markets bloomed as desperate people paid cash premiums to whoever had supplies. Queue economies replaced price-based allocation, rewarding those with time to wait rather than those with urgent needs. The policy delivered fairness at the register for the lucky few who arrived early—and empty shelves, dark hotels, and bone-dry gas pumps for everyone else. Prices stayed "reasonable"; availability vanished. Fairness at the register, unfairness in the parking lot, and generators sitting idle in warehouses three states away because shipping them wasn't worth the capped price.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Occupational Licensing</h3>
+    <div class="step" data-label="Problem"><p>Consumers needed protection from incompetent or dangerous practitioners in personal services—hairstylists, nail technicians, childcare providers, contractors—where quality differences matter and information asymmetries run high.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Require extensive training, pass examinations, and obtain state licenses before practicing. Set clear standards for competence, mandate continuing education, and create boards to discipline bad actors. Quality through certification; safety through gatekeeping.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Licensing boards—often dominated by existing practitioners—set requirements that protected incumbents more than consumers. Hundreds or thousands of training hours for jobs learned on-the-job in weeks created costly barriers benefiting established professionals who faced less competition. Prices rose as supply constricted; consumers paid more for services that weren't measurably safer. Geographic mobility collapsed as state-specific licenses trapped workers—a licensed cosmetologist in California started from scratch in Texas despite identical skills. Military spouses, immigrants, and career-changers faced insurmountable hurdles re-credentialing across state lines. Entry-level opportunities vanished as licensing raised floors beyond where beginners could start. The requirements bore little relation to actual safety risks—why does shampooing hair require 1,500 training hours while EMTs need 150? Consumer protection doubled as producer protection, with incumbents enjoying a regulatory moat against competition. The licenses certified compliance with bureaucratic hurdles more than competence at the work.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Zoning and Height Limits</h3>
+    <div class="step" data-label="Problem"><p>Neighborhoods wanted to preserve their character, prevent overcrowding, maintain property values, and avoid traffic congestion from overly dense development. Controlling growth protected existing residents' quality of life.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Implement strict single-family zoning preventing multi-unit development, height limits capping building stories, minimum lot sizes requiring sprawl, and discretionary approval processes giving neighbors veto power. Development would remain controlled, compatible, and car-friendly.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>The regulations choked housing supply exactly where demand concentrated—economically vibrant cities with jobs and amenities. Unable to build upward or densely, housing construction couldn't keep pace with population growth. Prices climbed relentlessly as supply constraints met steady demand. Workers priced out of job-rich cities sprawled outward to distant suburbs—hour-long commutes in search of affordable housing. The suburban exodus generated the exact traffic congestion that zoning supposedly prevented, as thousands of cars daily bridged the gap between where people could afford to live and where jobs existed. Cities that could have housed another million residents in walkable density instead pushed them fifty miles out, ensuring car-dependence and highway gridlock. Young workers, families, and essential employees couldn't afford neighborhoods that banned apartments. The regulations successfully preserved neighborhood character by ensuring only the wealthy could afford the neighborhood, and protected current residents from congestion by exporting it to the highways they created. Zoning manufactured the housing crisis it pretended to solve.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Fuel Economy Standards (Rebound &amp; Mix)</h3>
+    <div class="step" data-label="Problem"><p>Transportation accounted for the largest share of oil consumption and greenhouse emissions. More efficient vehicles would cut fuel use, reduce emissions, save consumers money, and decrease oil dependence.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Mandate progressively higher Corporate Average Fuel Economy (CAFE) standards requiring automakers to meet fleet-wide miles-per-gallon targets. Force technological improvement through regulation; the market would deliver efficient vehicles.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Fuel efficiency improvements triggered the "rebound effect"—driving becomes cheaper per mile, so people drive more miles. Commuters opted for distant suburbs, road trips increased, and total vehicle miles traveled climbed even as per-mile fuel use fell. The efficiency gains got partially consumed by increased driving, undermining total fuel savings. Meanwhile, CAFE's structure regulated by vehicle class with lighter trucks facing looser standards. Automakers responded by redefining cars as "light trucks"—SUVs, crossovers, and pickups exploded in popularity partly because manufacturers could meet standards more easily in the truck category. The American vehicle fleet grew heavier and larger even as individual models grew more efficient. Pedestrian and cyclist deaths increased as heavier vehicles dominated roads. The standards delivered genuine per-vehicle efficiency improvements while accidentally engineering a shift toward bigger, heavier vehicles that often burned more total fuel. Cleaner per mile, but more miles driven in larger vehicles—and sometimes more metal wrapping less passenger space because safety equipment and efficiency technology added weight. The regulations worked exactly as designed while missing the larger point.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Eviction Moratoria</h3>
+    <div class="step" data-label="Problem"><p>Economic crises—pandemic lockdowns, sudden unemployment waves—threatened mass evictions and homelessness as tenants lost income but rent came due. Preventing displacement protected public health and social stability.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Temporarily ban evictions for nonpayment, freeze rent obligations, and pause eviction proceedings. Give tenants breathing room to recover financially without fear of losing their homes during unprecedented disruption.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>The moratoria stopped evictions—and also stopped rent payments. Arrears mounted month by month with no mechanism for repayment or forgiveness, leaving unclear who would ultimately absorb losses. Small landlords, themselves overleveraged and dependent on rent to cover mortgages, faced financial ruin and exited the rental market entirely—selling to corporate buyers or simply abandoning properties. Those who stayed tightened tenant screening dramatically post-moratorium, demanding perfect credit and higher incomes to offset increased risk. When moratoria finally lifted, eviction filings surged as accumulated cases hit the courts simultaneously, creating the delayed displacement the policy meant to prevent. Future renters paid the price through higher deposits, stricter standards, and landlords' learned lesson about political risk in residential rental markets. The pause button for crisis became a skip button for marginal future tenants whom landlords now avoided. The moratoria successfully delayed evictions and protected sitting tenants during the emergency—while making rental housing scarcer and more expensive for everyone who came after.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+</div>
+
+      <!-- CHANGELAB -->
+<div id="source-changelab" class="card-group">
+  <!-- Local Laws, Vol. 1 -->
+  <div class="card" data-state="closed">
+    <h3>Nuisance Laws</h3>
+    <div class="step" data-label="Problem"><p>Local governments wanted tools to shut down properties where repeated criminal activity, noise complaints, or health hazards threatened neighborhood safety and quality of life.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Cities enacted "nuisance property" ordinances holding landlords and residents accountable for multiple police calls or code violations within a set timeframe. Rack up enough incidents—often just two or three—and face fines, license revocation, or eviction. The goal was to pressure problem properties into cleaning up their act.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>The laws punished victims along with perpetrators. Domestic violence survivors who repeatedly called police for protection found themselves labeled nuisances, threatened with eviction for "excessive" 911 calls. Faced with losing their homes, many stopped reporting abuse entirely. Neighborhoods grew nominally quieter as violence went unreported, not prevented. The ordinances made help-seeking itself a liability, effectively penalizing victims for their abusers' actions.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Jaywalking Laws</h3>
+    <div class="step" data-label="Problem"><p>Pedestrian deaths and injuries from mid-block crossings prompted safety concerns, particularly as automobile traffic increased and streets grew more dangerous for people on foot.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Municipalities criminalized crossing outside marked crosswalks—"jaywalking"—with tickets and escalating fines designed to train pedestrians to use designated crossing points. Enforcement would deter risky behavior and keep people safe.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>The laws criminalized rational responses to car-centric infrastructure. When crosswalks are spaced a quarter-mile apart and require lengthy waits at signals, people cross where they need to—not where engineers drew lines. Enforcement fell disproportionately on low-income neighborhoods and people of color, turning ordinary walking into a fineable offense. The real danger—street design prioritizing vehicle speed over pedestrian safety—remained unaddressed while tickets punished people for navigating hostile infrastructure. In extreme cases, pedestrians hit by cars faced jaywalking prosecutions while drivers went free.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Fines for Minor Infractions</h3>
+    <div class="step" data-label="Problem"><p>Municipalities sought compliance with traffic laws, parking regulations, and local code requirements while generating revenue to fund services and courts.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Layer fines, court fees, and administrative costs onto minor violations. Add late penalties for missed payments, license suspensions for unpaid tickets, and potential arrest warrants for court no-shows. Each step escalates pressure to pay and comply.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>For people living paycheck to paycheck, a $100 parking ticket becomes a financial crisis. Miss the payment deadline and it doubles. Skip court because you can't afford to miss work and a warrant issues. Lose your license and you can't drive to the job that barely covers rent. Lose the job and the debt becomes permanent. The system effectively criminalizes being too poor to absorb arbitrary penalties, transforming minor infractions into life-derailing debt traps while wealthier violators simply pay and forget.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Privatizing Water</h3>
+    <div class="step" data-label="Problem"><p>Aging municipal water infrastructure needed billions in repairs and upgrades, but cash-strapped cities couldn't afford the investment without crushing tax increases or bond measures voters might reject.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Transfer water system operation—or outright ownership—to private utilities with capital to invest and expertise to manage. The private sector would modernize infrastructure while freeing city budgets, and market discipline would drive efficiency.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Private operators answered to shareholders, not citizens. Rates climbed to maximize returns, often hitting rural and low-income communities hardest while service quality stagnated or declined. Infrastructure investment focused on profitable areas; maintenance lagged where margins were thin. Public oversight evaporated behind corporate confidentiality claims, leaving residents with higher bills, worse water, and no accountability lever to pull. When things went wrong—contamination, service failures, billing disputes—the public utility's responsiveness vanished, replaced by customer-service scripts and profit-protection lawyers.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Occupancy Standards for Rental Housing</h3>
+    <div class="step" data-label="Problem"><p>Genuinely dangerous overcrowding—too many people in too little space, straining safety systems and creating health hazards—needed reasonable limits to protect residents.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Local ordinances capped the number of occupants per unit, often with special restrictions on unrelated individuals living together. The rules set minimums for square footage per person and limited non-family members sharing housing.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Complaint-driven enforcement turned occupancy standards into weapons of bias. Neighbors weaponized the rules against college students, immigrant families, and low-income renters splitting costs to afford housing. Definitions of "family" embedded discrimination—the nuclear family was fine; everyone else got scrutinized. Enforcement fell disproportionately on marginalized communities while actual health hazards went unchecked. Students, immigrants, and struggling families lost legal housing arrangements that made rent feasible, pushing them further into poverty or substandard conditions.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Criminalizing Food Sharing</h3>
+    <div class="step" data-label="Problem"><p>Cities wanted to ensure food safety in public spaces, prevent foodborne illness from unregulated distribution, and maintain control over where and how people congregate.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Require permits, inspections, and commercial-kitchen facilities for any public food service. Restrict where meals can be served, when distributions can occur, and how many people can be fed. Enforce with citations, fines, and potential arrest for violations.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Charitable groups feeding unhoused people—often the only consistent meals many received—suddenly faced criminal penalties. Churches, volunteers, and mutual-aid networks got cited or arrested for handing out sandwiches in parks. The ostensible concern for food safety masked discomfort with visible poverty and the gatherings that food sharing enabled. The regulations successfully eliminated the "problem" of visible charity while doing nothing to address hunger or homelessness.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <!-- Local Laws, Vol. 2 -->
+  <div class="card" data-state="closed">
+    <h3>Parking Minimums</h3>
+    <div class="step" data-label="Problem"><p>Planners feared new development would create parking shortages, forcing residents and customers to flood nearby streets with cars, angering existing neighbors and causing political headaches.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Mandate a minimum number of off-street parking spaces for every new housing unit, business, or development—typically far more than actual demand requires. Developers must build parking whether tenants want it or not, ensuring ample supply and keeping street parking free for everyone.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Parking mandates killed density and walkability while ensuring car-dependence. Construction costs jumped—parking is expensive to build, especially in structures—making housing and retail more expensive and pushing small-scale development underwater financially. Cities spread outward rather than upward as parking requirements consumed scarce land. Destinations sprawled farther apart, making walking or transit impractical and forcing everyone to drive—which required more parking, which spread things further apart. The snake ate its tail: trying to solve parking problems created vast parking deserts that generated more driving, which demanded more parking.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Zero-Tolerance School Discipline</h3>
+    <div class="step" data-label="Problem"><p>Schools wanted to establish order, deter serious misconduct, and demonstrate they were "tough on discipline" in response to high-profile incidents and political pressure to "get control" of classrooms.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Implement rigid zero-tolerance policies with mandatory suspensions or expulsions for specified offenses—weapons, drugs, fighting, insubordination—removing administrator discretion. The rules would be clear, consistent, and send an unmistakable message that misbehavior had automatic consequences.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Minor infractions—toy guns, aspirin, butter knives in lunch boxes, schoolyard shoving—triggered the same suspensions as serious threats. Suspension rates soared, particularly for trivial violations, while doing nothing to improve safety or behavior. Racial disparities exploded as Black students faced harsher discipline for identical conduct. Suspended students fell behind academically, disengaged from school, and faced higher dropout rates. The "school-to-prison pipeline" gained institutional scaffolding as early disciplinary records followed students and normalized exclusion.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>State Preemption of Local Health/Safety Rules</h3>
+    <div class="step" data-label="Problem"><p>Businesses and industry groups complained that differing city-by-city regulations created compliance nightmares, raising costs and creating confusion across jurisdictions. Uniformity would simplify operations and reduce regulatory burden.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>State legislatures passed preemption laws blocking cities from enacting stricter standards than state minimums—covering minimum wages, rental regulations, sick leave, environmental protections, and public health measures. One state standard would govern everyone, ensuring regulatory predictability.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Preemption stripped local governments of their ability to respond to local conditions. Miami couldn't address its rental affordability crisis differently than rural Florida. Phoenix couldn't set heat-exposure protections tougher than state minimums despite literally deadly summer temperatures. Cities with higher costs of living couldn't raise wages to match. Local democratic processes became irrelevant as state-level politics—often more influenced by industry lobbying—overrode municipal problem-solving. Uniformity delivered stagnation while local problems kept acting local.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Sit-Lie and Anti-Loitering Ordinances</h3>
+    <div class="step" data-label="Problem"><p>Business districts and tourist areas faced complaints about people sitting, sleeping, or lingering on sidewalks—camping, panhandling, or simply existing in public space in ways that made others uncomfortable.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Ban sitting or lying on sidewalks during business hours in designated zones, or prohibit "loitering" without clear purpose. Enforce with citations that escalate to arrest warrants for repeat violations. Clear the sidewalks, restore order, make public spaces "welcoming" again.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>The ordinances criminalized homelessness itself—when you have no private space, all of life happens in public. Citations piled up on people with no homes to go to, no money to pay fines, and no means to contest charges. Enforcement pushed unhoused people block to block, neighborhood to neighborhood, jurisdiction to jurisdiction in an endless shuffle that solved nothing while generating arrest records that made housing and employment even harder to obtain. No services were added; no shelter capacity increased; no root causes addressed.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Youth Curfews</h3>
+    <div class="step" data-label="Problem"><p>Cities wanted to reduce juvenile crime, prevent victimization of young people during late-night hours, and give parents another tool to keep teens out of trouble after dark.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Enact citywide curfews prohibiting minors from public spaces after specified hours—typically 10 PM or midnight on weeknights, later on weekends. Police could detain violators, issue fines to parents, and establish clear boundaries for acceptable teen presence.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Crime didn't decline—it just changed schedules. Research showed juvenile crime and victimization simply shifted to earlier hours rather than disappearing. Meanwhile, enforcement consumed police resources on status offenses rather than actual crimes, and disparities widened as enforcement fell hardest on minority youth in over-policed neighborhoods. Teens with legitimate reasons to be out—work, family responsibilities, transit delays—faced citations and police contact, souring police-community relations.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Food-Truck Restrictions</h3>
+    <div class="step" data-label="Problem"><p>Brick-and-mortar restaurants complained that mobile vendors operated with lower overhead, less regulation, and "unfair" advantages—while cities worried about traffic, sanitation, and losing control of the streetscape.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Restrict food trucks through tight buffer zones from established restaurants, limited operating hours, special permits with high fees and caps on total numbers, mandatory commissary requirements, and designated zones. Level the playing field and protect existing businesses from mobile competition.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>The regulations successfully choked a low-cost path to food entrepreneurship. Would-be vendors faced insurmountable barriers—expensive permits in scarce supply, buffer zones that eliminated viable locations, commissary requirements adding overhead that defeated mobile economics. Cities lost culinary diversity, empty lots stayed empty rather than hosting vibrant food scenes, and consumers lost access to affordable, varied food options. Regulatory capture dressed as urban planning: established businesses used city hall to eliminate rivals under the pretense of fairness and order.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+</div>
+
+      <!-- VOXDEV -->
+<div id="source-voxdev" class="card-group">
+  <div class="card" data-state="closed">
+    <h3>South Asia's Vulture Collapse (Diclofenac Ban Saga)</h3>
+    <div class="step" data-label="Problem"><p>South Asian farmers needed affordable veterinary medicine to keep working livestock healthy—a matter of household survival in agricultural communities where cattle drive livelihoods and food security.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Diclofenac, a cheap and effective anti-inflammatory painkiller, became the go-to treatment for ailing cattle across India, Pakistan, and Nepal. Veterinarians prescribed it widely; farmers relied on it routinely. The drug worked brilliantly for livestock—but left residues in the carcasses of treated animals that died naturally.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Vultures feeding on those carcasses absorbed the drug and suffered catastrophic kidney failure. Three vulture species crashed by over 95% in barely a decade—one of the fastest declines of any bird in history. With nature's cleanup crew gone, rotting livestock carcasses piled up, feral dog populations exploded, and rabies deaths increased sharply. By the time governments banned veterinary diclofenac in 2006 and promoted meloxicam as a safer alternative, the ecological damage had cascaded far beyond dead birds.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Kingpin Decapitation Strategy</h3>
+    <div class="step" data-label="Problem"><p>Latin American governments faced relentless drug-cartel violence and demanded visible results. Traffickers controlled territory, corrupted institutions, and left bodies in their wake—something had to be done, preferably something dramatic.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>The "decapitation" strategy targeted cartel kingpins for capture or killing, aiming to dismantle command structures through high-profile takedowns. It made for excellent press conferences and satisfied voters demanding action. Cut off the head, the thinking went, and the body dies.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Instead, removing bosses triggered violent succession battles as lieutenants fought for control. Cartels splintered into smaller, more aggressive factions competing for territory and routes. Research on Mexico found kingpin arrests strongly correlated with sharp spikes in homicide rates as turf wars erupted. The hydra principle applied: cut off one head, grow three—each angrier and more desperate than the last.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>School Cash Transfers (Morocco)</h3>
+    <div class="step" data-label="Problem"><p>Morocco struggled with high primary-school dropout rates, particularly in rural and poor communities. Getting children into classrooms and keeping them there was an urgent development priority.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>The government scaled up Tayssir, a conditional cash transfer program that paid families for enrolling children and ensuring regular attendance. The incentive worked exactly as designed—dropout rates fell by roughly 1.3 percentage points as more families kept their kids in school.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Success on the enrollment side created a crisis on the supply side. Schools hadn't been resourced for the surge. Average class sizes ballooned by 3.6 students, overwhelming teachers and degrading instruction quality. Test scores actually fell as the system strained under the load. More children sat in classrooms, but learned less—a textbook case of demand stimulus meeting supply constraint. Attendance went up; education went sideways.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Biometric ID for Welfare Delivery (India's Aadhaar)</h3>
+    <div class="step" data-label="Problem"><p>India's massive welfare programs hemorrhaged money to fraud, duplicate claims, and millions of "ghost" beneficiaries who existed only on paper. Reformers saw digitization as the obvious cure—tighten verification, eliminate middlemen, and plug the leaks.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>The Aadhaar system linked welfare benefits to a unique biometric identifier using fingerprints and iris scans. Authentication would be instant and fraud-proof; payments would flow directly to beneficiaries via digital transfers. On spreadsheets and in presentations, it was elegantly efficient.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Digital precision collided with analog reality. Fingerprints worn smooth by manual labor wouldn't scan. Rural connectivity dropped authentication requests into the void. Power cuts froze systems mid-transaction. Elderly and disabled beneficiaries struggled with the technology. The system successfully blocked fraud—and also blocked countless legitimate recipients. Leakage fell, but so did access. Administrative efficiency improved on paper while exclusion increased on the ground, particularly among the very populations the programs aimed to serve.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Sin Taxes and Substitution Effects</h3>
+    <div class="step" data-label="Problem"><p>Governments worldwide wanted to reduce unhealthy consumption—sugary drinks, alcohol, cigarettes—and the public-health costs they imposed. Taxes seemed like an elegant behavioral nudge: make vice expensive, virtue affordable.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>Countries levied targeted excise taxes on specific "sin" products, raising prices to discourage consumption while generating new revenue. The policy promised a double dividend: healthier citizens and fuller coffers.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Consumers proved creative. Soda taxes drove shoppers toward untaxed high-calorie alternatives—sports drinks, sweetened teas, calorie-dense snacks—leaving total calorie consumption largely unchanged. Cigarette taxes pushed smokers toward cheaper brands, roll-your-own tobacco, or informal markets rather than quitting. Alcohol taxes shifted drinkers from bars (taxed, visible, somewhat safer) to home consumption or bootleg sources. The targeted vice declined; adjacent vices bloomed. One health problem down, several substitution side quests unlocked.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+
+  <div class="card" data-state="closed">
+    <h3>Housing Subsidies and Urban Sprawl (Indonesia's Mortgage Incentives)</h3>
+    <div class="step" data-label="Problem"><p>Indonesian cities faced severe housing shortages as urbanization accelerated. Low-income families couldn't afford formal housing, and political pressure demanded solutions that would expand homeownership.</p></div>
+    <div class="step solution hidden" data-label="Solution"><p>The government introduced mortgage interest subsidies and expanded credit programs targeting low-income buyers, making homeownership financially feasible for families previously shut out of formal housing markets. Bureaucratically, it was straightforward: subsidize demand and watch supply respond.</p></div>
+    <div class="step consequence hidden" data-label="Consequence"><p>Supply responded—but in all the wrong places. Developers built where land was cheapest: the urban periphery, far from jobs, transit, and services. Subsidized buyers took what they could afford, which meant long commutes, higher transport costs, and increased emissions as car-dependence became mandatory. Meanwhile, informal settlements near employment centers persisted because formal housing remained unaffordable there. The program successfully boosted homeownership numbers while accidentally engineering sprawl, congestion, and spatial inequality. Housing units went up; urban efficiency went down.</p></div>
+    <div class="controls"><button class="reveal-btn">Reveal Solution</button></div>
+  </div>
+</div>
+
+    </main>
+  </div>
+
+  <script>
+    // Track one open card globally
+    let openCard = null;
+
+    function resetCard(card){
+      if(!card) return;
+      const sol = card.querySelector('.solution');
+      const cons = card.querySelector('.consequence');
+      const btn = card.querySelector('.reveal-btn');
+      if(sol) sol.classList.add('hidden');
+      if(cons) cons.classList.add('hidden');
+      if(btn) btn.textContent = 'Reveal Solution';
+      card.classList.remove('complete');
+      card.dataset.state = 'closed';
+    }
+
+    function closeAllCards(){
+      document.querySelectorAll('.card').forEach(resetCard);
+      openCard = null;
+      document.querySelectorAll('.card-group').forEach(g => g.classList.add('synced'));
+    }
+
+    function updateGroupSync(group){
+      const anyOpen = [...group.querySelectorAll('.card')]
+        .some(c => c.dataset.state !== 'closed');
+      group.classList.toggle('synced', !anyOpen);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // start fully closed & equal-height rows
+      closeAllCards();
+
+      // one delegated click listener
+      document.addEventListener('click', (e) => {
+        // Tabs
+        const tabBtn = e.target.closest('.nav-tab');
+        if (tabBtn){
+          const targetId = tabBtn.getAttribute('data-target');
+          if (!tabBtn.classList.contains('active')){
+            document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+            document.querySelectorAll('.card-group').forEach(g=>g.classList.remove('active'));
+            tabBtn.classList.add('active');
+            const group = document.getElementById(targetId);
+            if (group) group.classList.add('active');
+            closeAllCards(); // reset & resync on tab switch
+          }
+          return;
+        }
+
+        // Card reveal
+        const reveal = e.target.closest('.reveal-btn');
+        if (!reveal) return;
+
+        const card  = reveal.closest('.card');
+        const group = card.closest('.card-group');
+        if (!card || !group) return;
+
+        // Close a previously open card (global: one at a time)
+        if (openCard && openCard !== card){
+          const prevGroup = openCard.closest('.card-group');
+          resetCard(openCard);
+          if (prevGroup) updateGroupSync(prevGroup);
+          openCard = null;
+        }
+
+        const sol = card.querySelector('.solution');
+        const cons = card.querySelector('.consequence');
+        const state = card.dataset.state || 'closed';
+
+        if (state === 'closed'){
+          sol.classList.remove('hidden');
+          reveal.textContent = 'Reveal Consequence';
+          card.dataset.state = 'solution';
+          openCard = card;
+        } else if (state === 'solution'){
+          cons.classList.remove('hidden');
+          reveal.textContent = 'Reset Example';
+          card.classList.add('complete');
+          card.dataset.state = 'consequence';
+          openCard = card;
+        } else {
+          resetCard(card);
+          openCard = null;
+        }
+
+        // Update that group's sync mode
+        updateGroupSync(group);
+      });
+    });
+  </script>
+</body>
+</html>

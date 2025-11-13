@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Restorative Justice & the Sacrificial System</title>
+  <meta name="theme-color" content="#0f172a" />
+  <style>
+    /* New theme tokens (light/dark auto) from Debates example */
+    :root{
+      --canvas:#0f172a;
+      --panel-bg:#ffffff;
+      --panel-border:rgba(15,23,42,.08);
+      --ink:#0f172a;
+      --ink-muted:rgba(15,23,42,.75);
+      --active-bg:rgba(37,99,235,.06);
+      --divider:rgba(148,163,184,.25);
+      /* Derived brand/accent to harmonize with Debates palette */
+      --brand:#2563eb;      /* cobalt-600 */
+      --accent:#60a5fa;     /* sky-400 */
+      --shadow:0 12px 40px rgba(15,23,42,.18);
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --canvas:#020617;
+        --panel-bg:#0f172a;
+        --panel-border:rgba(148,163,184,.12);
+        --ink:#e2e8f0;
+        --ink-muted:rgba(226,232,240,.75);
+        --active-bg:rgba(96,165,250,.12);
+        --divider:rgba(15,23,42,.35);
+        --brand:#60a5fa;   /* lighter brand in dark */
+        --accent:#93c5fd;
+        --shadow:0 16px 45px rgba(0,0,0,.35);
+      }
+    }
+
+    /* Map existing site tokens to new theme (no structural changes) */
+    :root{
+      --otf-bg:var(--canvas);
+      --otf-panel:var(--panel-bg);
+      --otf-ink:var(--ink);
+      --otf-muted:var(--ink-muted);
+      --otf-brand:var(--brand);
+      --otf-accent:var(--accent);
+      --otf-border:var(--panel-border);
+      --otf-shadow:var(--shadow);
+      --otf-radius:14px;
+      --otf-radius-sm:10px;
+      --otf-danger:#ef4444;
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Helvetica,Arial,sans-serif;
+      line-height:1.6;
+      color:var(--otf-ink);
+      background:var(--otf-bg);
+      min-height:100vh;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .otf-container{max-width:900px;margin:0 auto;padding:1rem}
+    header.otf-header{
+      background:var(--otf-panel);
+      border:1px solid var(--otf-border);
+      border-radius:var(--otf-radius);
+      padding:2rem 1.25rem;
+      margin:1rem 0 1.25rem;
+      box-shadow:var(--otf-shadow);
+    }
+    header.otf-header h1{
+      font-size:1.75rem;letter-spacing:-.0125em;margin-bottom:.4rem;color:var(--otf-ink)
+    }
+    header.otf-header p{color:var(--otf-muted)}
+
+    .otf-card{
+      background:var(--otf-panel);
+      border:1px solid var(--otf-border);
+      border-radius:var(--otf-radius);
+      box-shadow:var(--otf-shadow);
+    }
+
+    .otf-core{
+      padding:1.5rem;
+      margin-bottom:1rem;
+      border-left:4px solid var(--otf-brand);
+    }
+    .otf-core h2{
+      font-size:1.25rem;color:var(--otf-brand);margin-bottom:.75rem
+    }
+    .otf-core p{font-size:1.05rem;line-height:1.75;color:var(--otf-ink)}
+
+    /* Accordion (unchanged behavior, colors themed) */
+    .otf-section{margin-bottom:1rem;overflow:hidden}
+    /* Fixed: header readable in light theme */
+    .otf-toggle{
+      width:100%;
+      background:var(--otf-panel);
+      color:var(--otf-ink);
+      border:none;
+      text-align:left;
+      padding:1rem 1.25rem;
+      display:flex;align-items:center;justify-content:space-between;
+      cursor:pointer;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      border-bottom:1px solid var(--otf-border);
+      font-weight:700;
+      letter-spacing:.01em;
+    }
+    .otf-section[aria-expanded="true"] .otf-toggle{
+      background:color-mix(in oklab, var(--active-bg) 35%, var(--otf-panel));
+    }
+    .otf-toggle:focus-visible{outline:3px solid var(--otf-accent);outline-offset:2px;border-radius:8px}
+    .otf-caret{transition:transform .3s ease}
+    .otf-section[aria-expanded="true"] .otf-caret{transform:rotate(180deg)}
+    .otf-content{
+      max-height:0;overflow:hidden;transition:max-height .4s ease;
+      background:var(--otf-panel);
+    }
+    .otf-section[aria-expanded="true"] .otf-content{max-height:5000px}
+    .otf-inner{padding:1.1rem 1.25rem}
+
+    h3.otf-sub{color:var(--otf-brand);font-size:1.05rem;margin:.2rem 0 .7rem}
+
+    .otf-list{list-style:none}
+    .otf-item{
+      background:color-mix(in oklab,var(--otf-panel) 70%, var(--active-bg));
+      border:1px solid var(--otf-border);
+      border-left:3px solid var(--otf-brand);
+      border-radius:var(--otf-radius-sm);
+      padding:1rem;margin-bottom:.75rem;
+      color:var(--otf-ink);
+    }
+    .otf-item strong{color:var(--otf-brand);display:block;margin-bottom:.25rem}
+
+    /* Timeline */
+    .otf-timeline{border-left:3px solid var(--otf-brand);padding-left:1rem;margin-left:.5rem}
+    .otf-timeline .otf-step{position:relative;margin-bottom:1.15rem;color:var(--otf-ink)}
+    .otf-timeline .otf-step::before{
+      content:"";position:absolute;left:-1.6rem;top:.25rem;
+      width:12px;height:12px;border-radius:50%;
+      background:var(--otf-brand);border:3px solid var(--otf-panel);
+      box-shadow:0 0 0 2px color-mix(in oklab,var(--otf-brand) 85%, var(--otf-bg));
+    }
+    .otf-timeline .otf-step strong{color:var(--otf-brand);display:block;margin-bottom:.2rem}
+
+    /* Critiques */
+    .otf-crit{
+      border-left:3px solid var(--otf-danger);
+      background:color-mix(in oklab,var(--otf-panel) 75%, rgba(239,68,68,.12));
+      border:1px solid var(--otf-border);
+      border-radius:8px;padding:1rem;margin-bottom:.75rem;color:var(--otf-ink)
+    }
+
+    /* Glossary */
+    .otf-grid{display:grid;gap:1rem}
+    .otf-term{
+      border:1px solid var(--otf-border);
+      border-left:3px solid var(--otf-brand);
+      background:color-mix(in oklab,var(--otf-panel) 78%, var(--active-bg));
+      border-radius:10px;padding:1rem;color:var(--otf-ink)
+    }
+    .otf-term strong{color:var(--otf-brand);display:block;margin-bottom:.25rem}
+
+    /* Source */
+    .otf-source{
+      font-size:.95rem;color:var(--otf-muted);
+      border:1px solid var(--otf-border);
+      border-radius:10px;
+      background:color-mix(in oklab,var(--otf-panel) 72%, var(--active-bg));
+      padding:1rem;margin-top:.75rem
+    }
+    .otf-source strong{color:var(--otf-ink)}
+
+    /* Back to top */
+    .otf-top{
+      position:fixed;bottom:1.25rem;right:1rem;width:50px;height:50px;
+      border-radius:50%;border:none;cursor:pointer;
+      background:var(--otf-brand);color:#fff;font-weight:900;font-size:1.4rem;
+      display:flex;align-items:center;justify-content:center;
+      box-shadow:var(--otf-shadow);
+      opacity:0;visibility:hidden;transition:opacity .25s ease, visibility .25s ease, transform .1s ease;
+      z-index:1000;
+    }
+    .otf-top:active{transform:scale(.96)}
+    .otf-top.is-visible{opacity:1;visibility:visible}
+
+    a{color:var(--otf-brand);text-decoration-color:color-mix(in oklab,var(--otf-brand) 65%, transparent);text-underline-offset:3px}
+    a:hover{text-decoration-thickness:2px}
+
+    @media (max-width:520px){
+      header.otf-header h1{font-size:1.45rem}
+      .otf-container{padding:.8rem}
+      .otf-toggle{font-size:1rem}
+    }
+  </style>
+</head>
+<body>
+  <div class="otf-container">
+    <header class="otf-header otf-card" id="top">
+      <h1>Restorative Justice & the Sacrificial System</h1>
+      <p>Exploring Scripture’s restorative logic</p>
+    </header>
+
+    <!-- Core Thesis -->
+    <section class="otf-card otf-core" aria-labelledby="core-thesis">
+      <h2 id="core-thesis">Core Thesis</h2>
+      <p>
+        The Old Testament sacrificial system reveals God’s justice as restorative, not retributive. These rituals symbolized purification, reconciliation, and covenant renewal—expressions of divine mercy rather than punishment. The goal was always to cleanse and restore relationship between God and His people, foreshadowing the ultimate revelation of mercy in Christ. Retributive readings miss this trajectory: the sacrifices never satisfied wrath but enacted God’s ongoing desire to dwell among a forgiven and renewed people.
+      </p>
+    </section>
+
+    <!-- Enhanced View -->
+    <section class="otf-card otf-section" aria-expanded="false" id="section-enhanced">
+      <button class="otf-toggle" aria-controls="enhanced-content" aria-expanded="false">
+        <span>📖 Enhanced View — Restorative Logic of the Sacrificial System</span>
+        <span class="otf-caret">▼</span>
+      </button>
+      <div class="otf-content" id="enhanced-content" role="region" aria-labelledby="section-enhanced">
+        <div class="otf-inner">
+          <h3 class="otf-sub">Overview</h3>
+          <ul class="otf-list">
+            <li class="otf-item">The sacrificial system was relational, not transactional: a way for Israel to express repentance, gratitude, and restoration.</li>
+            <li class="otf-item">God initiates forgiveness (“I have given it to you to make atonement,” Lev 17:11); humans do not purchase it.</li>
+            <li class="otf-item">Key distinction: purification of the community versus punishment of an offender.</li>
+            <li class="otf-item">The system culminates in reconciliation, pointing to God’s self-giving love rather than appeased anger.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Concepts -->
+    <section class="otf-card otf-section" aria-expanded="false" id="section-concepts">
+      <button class="otf-toggle" aria-controls="concepts-content" aria-expanded="false">
+        <span>💡 Concepts</span>
+        <span class="otf-caret">▼</span>
+      </button>
+      <div class="otf-content" id="concepts-content" role="region" aria-labelledby="section-concepts">
+        <div class="otf-inner">
+          <ul class="otf-list">
+            <li class="otf-item"><strong>Kippēr (כִּפֵּר)</strong>“to cover,” “cleanse,” or “wipe away,” denoting removal of impurity, not wrath satisfaction.</li>
+            <li class="otf-item"><strong>Mercy Seat (Hilastērion)</strong>The locus of divine presence where forgiveness occurs.</li>
+            <li class="otf-item"><strong>Covenantal Justice</strong>God’s ongoing faithfulness to restore broken relationship.</li>
+            <li class="otf-item"><strong>Symbolic Substitution</strong>Representation of renewal, not penal replacement.</li>
+            <li class="otf-item"><strong>Communal Cleansing</strong>Sin pollutes the sanctuary; ritual restores communal harmony.</li>
+            <li class="otf-item"><strong>Foreshadowing Fulfillment</strong>The sacrifices anticipate God’s ultimate act of reconciling love in Christ.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Evidence -->
+    <section class="otf-card otf-section" aria-expanded="false" id="section-evidence">
+      <button class="otf-toggle" aria-controls="evidence-content" aria-expanded="false">
+        <span>📑 Evidence (Scripture Passages)</span>
+        <span class="otf-caret">▼</span>
+      </button>
+      <div class="otf-content" id="evidence-content" role="region" aria-labelledby="section-evidence">
+        <div class="otf-inner">
+          <ul class="otf-list">
+            <li class="otf-item"><strong>Leviticus 16</strong>The Day of Atonement focuses on purification of the sanctuary; the scapegoat bears sin away, not punished in place of the people.</li>
+            <li class="otf-item"><strong>Psalm 51</strong>“You do not delight in sacrifice… the sacrifices of God are a broken spirit.” True atonement begins in contrition.</li>
+            <li class="otf-item"><strong>Hosea 6:6</strong>“I desire mercy, not sacrifice.” Rituals serve mercy’s purpose, not wrath’s demand.</li>
+            <li class="otf-item"><strong>Isaiah 1:11–18</strong>God rejects empty offerings; justice means defending the oppressed and seeking reconciliation.</li>
+            <li class="otf-item"><strong>Hebrews 9–10</strong>Christ fulfills the cleansing and reconciling function once for all, ending repetition—not as penal payment but as perfect revelation of mercy.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Timeline -->
+    <section class="otf-card otf-section" aria-expanded="false" id="section-timeline">
+      <button class="otf-toggle" aria-controls="timeline-content" aria-expanded="false">
+        <span>📜 Timeline</span>
+        <span class="otf-caret">▼</span>
+      </button>
+      <div class="otf-content" id="timeline-content" role="region" aria-labelledby="section-timeline">
+        <div class="otf-inner">
+          <div class="otf-timeline">
+            <div class="otf-step"><strong>Bronze Age–Mosaic Era</strong>Sacrifice as symbolic communion and covenant renewal.</div>
+            <div class="otf-step"><strong>Prophetic Era (8th–6th cent. BCE)</strong>Moral renewal prioritized over ritual correctness.</div>
+            <div class="otf-step"><strong>Second Temple Period</strong>Emphasis on purity and priestly mediation.</div>
+            <div class="otf-step"><strong>New Testament</strong>Christ revealed as true mercy seat—God reconciling through self-giving love.</div>
+            <div class="otf-step"><strong>Modern</strong>Theologians (Boyd, Wright, Myers, Idol Killer) revive the restorative reading.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Critiques -->
+    <section class="otf-card otf-section" aria-expanded="false" id="section-critiques">
+      <button class="otf-toggle" aria-controls="critiques-content" aria-expanded="false">
+        <span>⚠️ Critiques of the Penal Reading</span>
+        <span class="otf-caret">▼</span>
+      </button>
+      <div class="otf-content" id="critiques-content" role="region" aria-labelledby="section-critiques">
+        <div class="otf-inner">
+          <div class="otf-crit"><strong>Projects later legal frameworks</strong>onto ancient ritual.</div>
+          <div class="otf-crit"><strong>Misunderstands sacrifice</strong>as violence God requires, not symbol God redeems.</div>
+          <div class="otf-crit"><strong>Diminishes covenant intimacy</strong>turning grace into transaction.</div>
+          <div class="otf-crit"><strong>Neglects the prophetic correction</strong>that justice = mercy in action.</div>
+          <div class="otf-crit"><strong>Undermines Christ’s unity with the Father</strong>replacing love with appeasement.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Glossary -->
+    <section class="otf-card otf-section" aria-expanded="false" id="section-glossary">
+      <button class="otf-toggle" aria-controls="glossary-content" aria-expanded="false">
+        <span>📚 Glossary</span>
+        <span class="otf-caret">▼</span>
+      </button>
+      <div class="otf-content" id="glossary-content" role="region" aria-labelledby="section-glossary">
+        <div class="otf-inner">
+          <div class="otf-grid">
+            <div class="otf-term"><strong>Atonement (Kippur)</strong>Restoring unity through cleansing and mercy.</div>
+            <div class="otf-term"><strong>Scapegoat (Azazel)</strong>Symbol of sin’s removal, not substitutionary execution.</div>
+            <div class="otf-term"><strong>Expiation</strong>Removal of sin and impurity.</div>
+            <div class="otf-term"><strong>Propitiation</strong>Later misreading emphasizing appeasement.</div>
+            <div class="otf-term"><strong>Sanctuary</strong>Place of God’s indwelling presence.</div>
+            <div class="otf-term"><strong>Covenant Renewal</strong>Reaffirmation of relationship through mercy.</div>
+          </div>
+
+          <div class="otf-source">
+            <strong>Source:</strong> Drawn from Idol Killer’s Penal Substitutionary Atonement series (Episodes 1–3) and parallel insights from Greg Boyd (Cross Vision), René Girard (I See Satan Fall Like Lightning), and biblical scholarship on Leviticus 16 and Hebrews 9–10.
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Back to Top -->
+  <button class="otf-top" id="otfTopBtn" aria-label="Back to top">↑</button>
+
+  <script>
+    // Accordion behavior: only one open at a time, maintain aria-expanded
+    const sections = document.querySelectorAll('.otf-section');
+    sections.forEach(section => {
+      const btn = section.querySelector('.otf-toggle');
+      btn.addEventListener('click', () => {
+        const isOpen = section.getAttribute('aria-expanded') === 'true';
+        sections.forEach(s => {
+          s.setAttribute('aria-expanded','false');
+          s.querySelector('.otf-toggle').setAttribute('aria-expanded','false');
+        });
+        section.setAttribute('aria-expanded', String(!isOpen));
+        btn.setAttribute('aria-expanded', String(!isOpen));
+      });
+    });
+
+    // Open first section by default
+    if(sections.length){
+      const first = sections[0];
+      first.setAttribute('aria-expanded','true');
+      first.querySelector('.otf-toggle').setAttribute('aria-expanded','true');
+    }
+
+    // Back-to-top
+    const topBtn = document.getElementById('otfTopBtn');
+    topBtn.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
+    window.addEventListener('scroll', () => {
+      if(window.scrollY > 300){
+        topBtn.classList.add('is-visible');
+      } else {
+        topBtn.classList.remove('is-visible');
+      }
+    });
+  </script>
+</body>
+</html>
