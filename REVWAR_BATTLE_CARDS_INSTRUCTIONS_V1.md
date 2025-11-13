@@ -19,6 +19,23 @@ is-revwar-{battle-slug}-{year}/
   └── index.html          # Individual battle page
 ```
 
+## Military History Hub Integration
+
+The Revolutionary War Battle Cards system is part of a larger **Military History Hub** (`is-war-hub`) that provides unified access to multiple war-specific battle card systems.
+
+**Hub of Hubs:** `https://ewallt.github.io/pocket-deploy/is-war-hub/index.html`
+
+The RevWar hub (`is-revwar-hub/index.html`) includes a breadcrumb link back to the Military History Hub, allowing users to navigate between different war systems (Revolutionary War, WW2, and future additions).
+
+**Navigation hierarchy:**
+```
+Military History Hub (is-war-hub)
+  └─ Revolutionary War Hub (is-revwar-hub)
+       └─ Individual Battle Pages (is-revwar-battle-name-year)
+```
+
+**Important:** When creating or updating the RevWar hub, ensure the breadcrumb navigation includes a link to the Military History Hub.
+
 ## Naming Convention
 
 All folders and battle IDs follow this pattern:
@@ -47,6 +64,7 @@ is-revwar-{battle-slug}-{year-range}
 
 The hub (`is-revwar-hub/index.html`) provides:
 
+- **Breadcrumb navigation:** Back to Military History Hub (`is-war-hub`)
 - **Search bar:** Filter by title, tags, or keywords
 - **Tag chips:** Quick filter by theater (northern, southern), type (naval, siege), significance (turning-point)
 - **Battle cards:** Grid layout with title, blurb, tags, and "Open" button

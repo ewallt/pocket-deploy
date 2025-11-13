@@ -20,9 +20,26 @@ The **is-ww2** battle card system is an interactive reference hub for major Worl
 - **Dark-first design** with blue/cyan gradients and system light mode support
 - **Tag-based filtering** by theater, year, type (naval, air, amphibious, etc.)
 - **Collapsible sections** with smooth animations
-- **Breadcrumb navigation** back to hub
+- **Breadcrumb navigation** back to hub and Military History Hub
 - **Mobile-responsive** layout
 - **No external dependencies** except inline JavaScript for interactivity
+
+### Military History Hub Integration
+
+The WW2 Battle Cards system is part of a larger **Military History Hub** (`is-war-hub`) that provides unified access to multiple war-specific battle card systems.
+
+**Hub of Hubs:** `https://ewallt.github.io/pocket-deploy/is-war-hub/index.html`
+
+The WW2 hub (`is-ww2-hub/index.html`) includes a breadcrumb link back to the Military History Hub, allowing users to navigate between different war systems (WW2, Revolutionary War, and future additions).
+
+**Navigation hierarchy:**
+```
+Military History Hub (is-war-hub)
+  └─ WW2 Hub (is-ww2-hub)
+       └─ Individual Battle Pages (is-ww2-battle-name-year)
+```
+
+**Important:** When creating or updating the WW2 hub, ensure the breadcrumb navigation includes a link to the Military History Hub.
 
 ---
 
@@ -58,6 +75,7 @@ is-ww2-battle-of-the-atlantic-1939-45
 
 The hub (`is-ww2-hub/index.html`) contains:
 
+- **Breadcrumb navigation** back to Military History Hub (`is-war-hub`)
 - **JavaScript array** of battle metadata embedded in the HTML
 - **Search input** for text filtering
 - **Tag chips** for category filtering
