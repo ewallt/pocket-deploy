@@ -1,0 +1,38 @@
+<!-- /pocket-deploy/ai-s02-5/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>AI s02 — Part 5: Serving & Inference Scaling</title>
+<style>
+:root{--bg:#0b1020;--panel:#0f172a;--ink:#e5e7eb;--muted:#94a3b8;--brand:#60a5fa;--border:#1f2940}
+@media(prefers-color-scheme:light){:root{--bg:#f5f7fb;--panel:#fff;--ink:#1b2a41;--muted:#34495e;--brand:#2563eb;--border:#e3e9f3}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,Segoe UI,Inter,Arial;padding:2rem}
+.c{max-width:880px;margin:0 auto;background:var(--panel);border:1px solid var(--border);border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+.nav{display:flex;gap:.5rem;flex-wrap:wrap;padding:.75rem;border-bottom:1px solid var(--border)}.nav a{padding:.45rem .7rem;border:1px solid var(--border);border-radius:999px;text-decoration:none;color:var(--ink)}.nav a:hover{border-color:var(--brand);color:var(--brand)}
+.h{padding:1.25rem 1.5rem}.intro{color:var(--muted);font-style:italic;margin:.25rem 0 1rem}
+.p{padding:0 1.5rem 1.4rem}.p p{margin:1.05rem 0}.f{padding:1rem 1.5rem;border-top:1px solid var(--border);color:var(--muted);font-size:.95rem}
+</style></head>
+<body><article class="c">
+<nav class="nav">
+  <a href="/pocket-deploy/dashboard-ai-s02/">← Dashboard</a>
+  <a href="/pocket-deploy/ai-s02-4/">Previous</a>
+</nav>
+<header class="h"><h1>Serving & Inference Scaling — Part 5</h1><p class="intro">As models grew into billions of parameters, the challenge shifted from training them to serving them efficiently for global users.</p></header>
+<section class="p">
+<p>Inference scaling became the hidden art of the transformer era. Large models once reserved for research entered real-time applications, demanding millisecond latency. The hardware–software co-design loop reappeared: model parallelism turned into inference pipelines, with quantization and pruning reducing compute costs. Engineers transformed theoretical architectures into deployable services, learning that post-training engineering defined user experience as much as training itself.</p>
+<p>Historically, each computing revolution birthed similar bottlenecks: from mainframes to cloud, computation always had to be amortized. The rise of model hosting platforms—OpenAI API, Hugging Face Inference, TensorRT, ONNX Runtime—signified the industrialization of inference. Caching, batching, and speculative decoding compressed latency curves. Architecture design and system design merged, birthing “ML systems” as a new academic subfield.</p>
+<p>Sequentially, serving optimization evolved from static compression to dynamic orchestration. Distillation created smaller “student” models approximating larger teachers. Mixture-of-Experts introduced sparsity—only activating sub-modules per token—to balance speed and accuracy. Quantization to 8- or 4-bit precision multiplied throughput. These techniques progressively reduced energy costs while retaining fluency, reflecting the convergence of sustainability and scalability concerns.</p>
+<p>In parallel, cost models changed corporate strategy. Fixed per-query expenses drove the exploration of on-device inference and edge acceleration. Mobile chips and GPUs integrated transformer kernels; browsers gained WebGPU support. Inference thus escaped datacenters, mirroring the personal computing revolution but powered by learned representations instead of hardcoded logic.</p>
+<section>
+<h3>Inference Scaling Overview</h3>
+<table>
+<tr><th>Technique</th><th>Goal</th><th>Result</th></tr>
+<tr><td>Quantization</td><td>Reduce precision</td><td>Faster, smaller model with minor accuracy loss</td></tr>
+<tr><td>Distillation</td><td>Compress large model</td><td>Student replicates teacher behavior efficiently</td></tr>
+<tr><td>MoE routing</td><td>Activate subsets of weights</td><td>Compute savings, flexible scaling</td></tr>
+</table>
+</section>
+<p>The conclusion of the 2017–2021 period revealed a full stack: data, models, and infrastructure integrated into a continuous pipeline. The success of transformers was not only architectural—it was logistical. The ability to serve intelligence at scale completed the transformation from laboratory curiosity to industrial engine.</p>
+</section>
+<footer class="f">Sources: literature on quantization, distillation, MoE, and production inference frameworks (2019–2021).</footer>
+</article></body></html>

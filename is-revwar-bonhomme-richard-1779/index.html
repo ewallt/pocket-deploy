@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bonhomme Richard vs. Serapis (1779)</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111833;
+      --ink:#e6ecff;
+      --muted:#a7b0cc;
+      --brand:#8bb9ff;
+      --accent:#c0ffe1;
+      --border:#26325b;
+      --chip:#1a2347;
+      --bad:#ff6b6b;
+      --shadow:0 8px 28px rgba(0,0,0,.35);
+      --radius:12px;
+      --radius-sm:8px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+      line-height:1.6;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
+        radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+      padding-bottom:2rem;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .container{max-width:860px;margin:0 auto;padding:1rem}
+
+    header{
+      background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:2rem 1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+    }
+
+    h1{
+      color:var(--ink);
+      font-size:1.75rem;
+      margin-bottom:.5rem;
+      letter-spacing:-.015em;
+    }
+
+    .subtitle{
+      color:var(--muted);
+      font-size:.95rem;
+      font-style:italic;
+    }
+
+    .breadcrumb{
+      margin-bottom:1rem;
+      font-size:.9rem;
+    }
+    .breadcrumb a{color:var(--brand);text-decoration:none}
+    .breadcrumb span{color:var(--muted)}
+
+    .main-answer{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+      border-left:4px solid var(--brand);
+    }
+
+    .main-answer h2{
+      color:var(--brand);
+      font-size:1.3rem;
+      margin-bottom:1rem;
+      letter-spacing:.01em;
+    }
+
+    .main-answer p{font-size:1.05rem;line-height:1.7}
+
+    .section{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      margin-bottom:1rem;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .section-header{
+      padding:1.1rem 1.25rem;
+      background:linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%);
+      color:var(--ink);
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      border-bottom:1px solid var(--border);
+    }
+
+    .section-header h2{
+      font-size:1.15rem;
+      font-weight:700;
+      letter-spacing:.01em;
+    }
+
+    .section-icon{font-size:1.35rem;transition:transform .3s ease}
+    .section.active .section-icon{transform:rotate(180deg)}
+
+    .section-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+    .section.active .section-content{max-height:5000px}
+
+    .section-inner{padding:1.25rem}
+
+    h3{
+      color:var(--brand);
+      font-size:1.08rem;
+      margin:1.3rem 0 .65rem 0;
+      letter-spacing:.01em;
+    }
+    h3:first-child{margin-top:0}
+
+    .list-item{
+      background:color-mix(in oklab,var(--chip) 75%, transparent);
+      border-left:3px solid var(--brand);
+      padding:1rem;
+      margin-bottom:.75rem;
+      border-radius:var(--radius-sm);
+      border:1px solid var(--border);
+    }
+
+    .timeline{
+      border-left:3px solid var(--brand);
+      padding-left:1.25rem;
+      margin-left:.5rem;
+    }
+
+    .timeline-item{
+      margin-bottom:1.25rem;
+      position:relative;
+    }
+
+    .timeline-item::before{
+      content:'';
+      position:absolute;left:-1.65rem;top:.25rem;
+      width:12px;height:12px;border-radius:50%;
+      background:var(--brand);border:3px solid var(--panel);
+      box-shadow:0 0 0 2px var(--brand);
+    }
+
+    .timeline-item:last-child{
+      margin-bottom:0;
+    }
+
+    .timeline-item:last-child::before{
+      width:16px;
+      height:16px;
+      left:-1.75rem;
+      background:var(--accent);
+      box-shadow:0 0 0 2px var(--accent);
+    }
+
+    .timeline-item strong{color:var(--brand);display:block;margin-bottom:.25rem}
+
+    .critique-item{
+      background:color-mix(in oklab, var(--bad) 12%, var(--panel));
+      border-left:3px solid var(--bad);
+      padding:1rem;margin-bottom:.75rem;border-radius:4px;
+      border:1px solid var(--border);
+    }
+
+    .source{
+      background:color-mix(in oklab,var(--chip) 65%, transparent);
+      border-radius:8px;padding:1rem;margin-top:1.2rem;
+      font-size:.95rem;color:var(--muted);
+      border:1px solid var(--border);
+    }
+    .source strong{color:var(--ink)}
+
+    .back-to-top{
+      position:fixed;bottom:1.5rem;right:1rem;
+      background:var(--brand);color:#001;
+      width:50px;height:50px;border-radius:50%;
+      border:none;font-size:1.5rem;cursor:pointer;
+      box-shadow:var(--shadow);opacity:0;transition:opacity .3s ease;
+      z-index:1000;display:flex;align-items:center;justify-content:center;
+      font-weight:900;
+    }
+    .back-to-top.visible{opacity:1}
+    .back-to-top:active{transform:scale(.96)}
+
+    a{color:var(--brand)}
+
+    @media (max-width:480px){
+      h1{font-size:1.5rem}
+      .section-header h2{font-size:1.05rem}
+      .container{padding:.75rem}
+      header{padding:1.5rem 1rem}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="https://ewallt.github.io/pocket-deploy/is-revwar-hub/index.html">Revolutionary War Hub</a> <span>›</span> Bonhomme Richard vs. Serapis
+    </div>
+
+    <header>
+      <h1>Bonhomme Richard vs. Serapis (1779)</h1>
+      <p class="subtitle">"I Have Not Yet Begun to Fight!"</p>
+    </header>
+
+    <div class="main-answer">
+      <h2>Core Summary</h2>
+      <p>On September 23, 1779, Captain John Paul Jones's <em>Bonhomme Richard</em> engaged the British frigate HMS <em>Serapis</em> off Flamborough Head, England. What followed was one of naval history's most desperate and legendary battles. Jones lashed his battered, sinking ship alongside <em>Serapis</em> and fought at point-blank range for over three hours. When asked to surrender, Jones reportedly shouted, "I have not yet begun to fight!" Eventually, British captain Richard Pearson surrendered, though <em>Bonhomme Richard</em> sank two days later. The victory electrified American morale and proved that American naval forces could challenge Royal Navy supremacy.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🎯 Strategic Context</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Jones's Raid:</strong> Operating from French ports, Jones commanded a small squadron raiding British waters. His goal was to terrorize British commerce, capture prizes, and demonstrate American naval reach.
+          </div>
+          <div class="list-item">
+            <strong>British Response:</strong> HMS <em>Serapis</em>, a new 50-gun frigate, was escorting a merchant convoy up the English coast. Captain Pearson moved to intercept Jones's squadron and protect the convoy.
+          </div>
+          <div class="list-item">
+            <strong>Audacity at Britain's Doorstep:</strong> Jones was attacking British shipping within sight of England itself—a bold psychological blow against a nation that considered its home waters sacrosanct.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🪖 Forces & Commanders</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>American:</strong> Captain John Paul Jones commanded <em>Bonhomme Richard</em>, a converted French merchant ship with 42 guns and approximately 380 crew (American, French, and British prisoners who volunteered).
+          </div>
+          <div class="list-item">
+            <strong>British:</strong> Captain Richard Pearson commanded HMS <em>Serapis</em>, a purpose-built 50-gun frigate with 320 crew. HMS <em>Countess of Scarborough</em> (20 guns) accompanied the convoy.
+          </div>
+          <div class="list-item">
+            <strong>Casualties:</strong> <em>Bonhomme Richard</em>: approximately 150 killed and wounded. HMS <em>Serapis</em>: 49 killed, 68 wounded. Both ships were shattered—<em>Richard</em> sank, <em>Serapis</em> barely afloat.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📅 Timeline</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="timeline">
+            <div class="timeline-item">
+              <strong>September 23, 7:00 PM:</strong> <em>Bonhomme Richard</em> closes with <em>Serapis</em> off Flamborough Head. Both ships maneuver for advantage in fading light.
+            </div>
+            <div class="timeline-item">
+              <strong>7:15 PM:</strong> Battle opens. British broadsides shatter <em>Richard</em>'s main battery. Two of Jones's largest guns explode, killing crew and damaging the ship. Jones appears outgunned.
+            </div>
+            <div class="timeline-item">
+              <strong>8:00 PM:</strong> Jones grapples <em>Richard</em> to <em>Serapis</em>. Ships locked together, muzzle-to-muzzle. Marines fire from rigging. Grenades thrown onto enemy decks. Hand-to-hand fighting.
+            </div>
+            <div class="timeline-item">
+              <strong>9:30 PM:</strong> American seaman climbs <em>Serapis</em>'s rigging and drops grenades through open hatches, igniting cartridges below deck. Explosion kills dozens and demoralizes British crew.
+            </div>
+            <div class="timeline-item">
+              <strong>10:30 PM:</strong> Captain Pearson strikes his colors. <em>Serapis</em> surrenders. Jones transfers his crew to <em>Serapis</em> as <em>Bonhomme Richard</em> takes on water. On September 25, <em>Richard</em> sinks.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>⚡ Turning Points</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>"I Have Not Yet Begun to Fight!":</strong> When asked if he would surrender his sinking ship, Jones's defiant reply (however embellished in retelling) epitomized his refusal to yield despite desperate circumstances.
+          </div>
+          <div class="list-item">
+            <strong>Grappling:</strong> Recognizing that <em>Serapis</em> had superior firepower, Jones lashed the ships together. This negated British advantages in gunnery and turned the battle into brutal close combat where determination mattered more than firepower.
+          </div>
+          <div class="list-item">
+            <strong>The Grenade Attack:</strong> An American sailor's grenades igniting cartridges on <em>Serapis</em>'s gun deck broke British morale. The explosions and fires convinced Pearson that further resistance was futile.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📊 Outcomes</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Tactical Paradox:</strong> Jones captured <em>Serapis</em> but lost <em>Bonhomme Richard</em>. The victory came at enormous cost, yet Jones sailed the captured British frigate to a French port as a prize.
+          </div>
+          <div class="list-item">
+            <strong>Psychological Impact:</strong> The battle shocked Britain. An American captain had fought a Royal Navy frigate to surrender in British home waters—an unthinkable humiliation that demonstrated the Revolution's reach.
+          </div>
+          <div class="list-item">
+            <strong>Jones as Legend:</strong> The battle made John Paul Jones the Continental Navy's greatest hero. His courage and tactical improvisation became symbols of American naval spirit and determination.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🔍 Historical Significance</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <p style="margin-bottom:1rem">The battle between <em>Bonhomme Richard</em> and <em>Serapis</em> transcended its tactical outcome to become a defining moment in American naval mythology. John Paul Jones embodied aggressive, unyielding spirit—refusing to surrender despite being outgunned and sinking. His famous declaration entered American folklore, symbolizing the refusal to quit even when faced with certain defeat. The battle proved that American naval officers could challenge and defeat Royal Navy captains, inspiring the fledgling U.S. Navy's culture. Naval historian Samuel Eliot Morison called it "the most memorable sea fight of the Revolution." Jones became father of the American naval tradition.</p>
+          <div class="source">
+            <strong>Primary Sources:</strong> Jones's letters to Benjamin Franklin, Captain Pearson's report to the Admiralty, accounts from surviving crew members.
+          </div>
+          <div class="source">
+            <strong>Key Works:</strong> Evan Thomas, <em>John Paul Jones: Sailor, Hero, Father of the American Navy</em> (2003); Samuel Eliot Morison, <em>John Paul Jones: A Sailor's Biography</em> (1959).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="back-to-top" onclick="scrollToTop()">↑</button>
+
+  <script>
+    function toggleSection(header){
+      const section = header.parentElement;
+      const allSections = document.querySelectorAll('.section');
+      allSections.forEach(s=>{
+        if(s !== section) s.classList.remove('active');
+      });
+      section.classList.toggle('active');
+    }
+
+    function scrollToTop(){
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    window.addEventListener('scroll', ()=>{
+      const btn = document.querySelector('.back-to-top');
+      if(window.scrollY > 300){
+        btn.classList.add('visible');
+      } else {
+        btn.classList.remove('visible');
+      }
+    });
+  </script>
+</body>
+</html>

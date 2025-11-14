@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Adaptive Reader (CR/Folio Themes)</title>
+
+  <!-- Tailwind + typography -->
+  <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class'
+    }
+  </script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ---------- THEME VARIABLES (as provided) ---------- */
+
+    /* Default: Newspaper (light, serif) */
+    :root {
+      --bg-gradient: #fdfdf8;
+      --text: #1c1c1c;
+      --accent-text: #8c1c13;
+      --nav-bg: #f1f1eb;
+      --nav-border: #dcdcd3;
+      --nav-text: #1c1c1c;
+      --nav-hover-bg: #e5e5dd;
+      --nav-active-bg: #dcdcd3;
+      --nav-active-text: #1c1c1c;
+      --prose-text: var(--text);
+      --prose-headings: var(--accent-text);
+      --prose-links: var(--accent-text);
+      --prose-bold: var(--text);
+      font-family: 'Merriweather', serif;
+    }
+
+    /* The three alternates use Lato */
+    .theme-emerald-paper,
+    .theme-cyber-blue,
+    .theme-emerald-gold {
+      font-family: 'Lato', sans-serif;
+    }
+
+    body {
+      background: var(--bg-gradient);
+      color: var(--text);
+      transition: background-color .25s, color .25s, background .25s;
+    }
+
+    /* UI tokens */
+    .ui-bg { background-color: var(--nav-bg); }
+    .ui-border { border-color: var(--nav-border); }
+    .text-primary { color: var(--text); }
+    .text-accent { color: var(--accent-text); }
+
+    /* Buttons / tabs */
+    .nav-button, .selectlike {
+      padding:.5rem 1rem; border-radius:.375rem; border:1px solid var(--nav-border);
+      background: var(--nav-bg); color: var(--nav-text);
+      transition: background-color .2s, color .2s, border-color .2s;
+    }
+    .nav-button:hover { background: var(--nav-hover-bg); }
+    .nav-button.active {
+      background: var(--nav-active-bg); color: var(--nav-active-text);
+      border-color: var(--nav-border);
+      border-bottom: 3px solid var(--accent-text);
+    }
+
+    /* Prose coloring */
+    .prose { color: var(--prose-text); }
+    .prose h1, .prose h2, .prose h3,
+    .prose a, .prose strong { color: var(--prose-headings); }
+    .prose a { text-decoration-color: var(--prose-headings); }
+    .prose p.lead { color: var(--prose-text); }
+
+    /* Navy (Dark) extras (you provided) */
+    .theme-cyber-blue .nav-button.active {
+      background-color:#1f2937; color:#e5e7eb; border-bottom-color:#3b82f6; box-shadow: inset 0 -2px 0 0 #3b82f6;
+    }
+    .theme-cyber-blue .prose a {
+      color:#60a5fa; text-decoration-color:#60a5fa;
+    }
+    .theme-cyber-blue .prose a:hover {
+      color:#93c5fd; text-decoration-color:#93c5fd;
+    }
+
+    /* Containers */
+    .nav-container{margin-bottom:1.5rem}
+    .nav-buttons-wrapper{display:flex;flex-wrap:wrap;align-items:center;width:100%}
+    .flex-break{flex-basis:100%;height:0}
+
+    /* Theme toggle */
+    .theme-btn{ padding:.4rem .6rem; border:1px solid var(--nav-border); background:var(--nav-hover-bg); color:var(--nav-text); border-radius:.375rem }
+  </style>
+</head>
+
+<body class="transition-colors duration-300">
+  <!-- Theme toggle (cycles four presets) -->
+  <div class="fixed top-4 right-4 z-50 flex gap-2">
+    <button id="theme-switcher-btn" class="theme-btn" aria-label="toggle theme">
+  ⚙️
+</button>
+  </div>
+
+  <main id="app-container" class="container mx-auto px-4 py-6 max-w-3xl">
+    <header id="hdr" class="ui-bg border ui-border rounded-lg shadow-md p-6 mb-6"></header>
+    <div id="switchers" class="mb-6"></div>
+    <nav id="article-nav" class="ui-bg border ui-border rounded-lg shadow-md p-4 mb-6"></nav>
+    <section id="content" class="ui-bg border ui-border rounded-lg shadow-md p-6 md:p-8"></section>
+  </main>
+
+  <!--
+    ============================================================
+    vvvvvvvvvvvvvv PASTE YOUR JSON CONTENT BELOW vvvvvvvvvvvvvv
+    ============================================================
+  -->
+  <script type="application/json" id="app-data">
+
+{
+  "hays": {
+
+  "rethinking-justification-in-pauls-letters": {
+    "display_order": 10,
+    "title": "Hays - Rethinking Justification in Paul’s Letters",
+    "description": "An exploration of the 'pistis Christou' debate, reframing Pauline justification not around the believer's faith but around the 'faithfulness of Christ.' This topic examines Jesus as a representative figure, the narrative structure of Paul's theology, and the implications for understanding faith itself.",
+    "categories": {
+      "pistis-christou-debate": {
+        "display_order": 10,
+        "name": "The Pistis Christou Debate",
+        "display_name": "Pistis Christou Debate",
+        "introduction": "This section unpacks the pivotal 'pistis Christou' debate, questioning whether the phrase means human 'faith in Christ' or the 'faithfulness of Christ' and exploring the profound grammatical and theological implications of this distinction.",
+        "paragraphs": [
+          {
+            "heading": "“Faith in Christ” or “Faithfulness of Christ”?",
+            "content": "This question represents the core of the 'pistis Christou' debate. The traditional Protestant reading, known as the objective genitive, translates the phrase as human 'faith in Christ.' This places the emphasis on the believer's act of trusting in Jesus for salvation. In contrast, Hays and others argue for the subjective genitive, translating it as 'the faithfulness of Christ.' This reading shifts the emphasis entirely onto Jesus's own obedient fidelity to God's plan, which culminates in his death on the cross. The debate, therefore, centers on whether the primary agent of 'pistis' (faith/faithfulness) in these key Pauline passages is the human believer or Christ himself."
+          },
+          {
+            "heading": "The case for the subjective genitive in Greek grammar",
+            "content": "Grammatically, the genitive case in Greek can express different relationships. Proponents of the subjective view argue that when Paul uses 'pistis' with a personal name in the genitive (like 'Christou'), it often functions like a possessive, indicating an attribute of that person. They point to parallel constructions where the meaning is clearly subjective (e.g., 'the obedience of Christ'). While the objective sense ('faith directed toward Christ') is possible, the subjective reading often requires fewer grammatical assumptions and fits more smoothly into the syntax of passages like Galatians 2:16, where Paul contrasts Christ's act with 'works of the Law.'"
+          },
+          {
+            "heading": "The theological difference between trust in Christ vs. Christ's own faithfulness",
+            "content": "The theological stakes are significant. If 'pistis Christou' means 'faith in Christ,' then the human act of believing is the pivot upon which justification turns. While still a gift, it could be subtly perceived as a human work or contribution. However, if it means 'the faithfulness of Christ,' then justification is grounded entirely in Christ's perfect, completed work. Salvation rests on His act, not ours. Human faith then becomes a response—our participation in the new reality created by Christ's faithfulness—rather than the primary condition for it. This reframes grace as being even more radical."
+          },
+          {
+            "heading": "Why this phrase became a flashpoint in Pauline interpretation",
+            "content": "This seemingly minor grammatical point became a flashpoint because it touches the heart of Reformation theology, particularly the doctrine of 'sola fide' (by faith alone). The traditional reading ('faith in Christ') has been central to Protestant soteriology for centuries, emphasizing the individual's act of belief. Challenging this reading is seen by some as undermining this core tenet. The debate forces a re-examination of whether 'faith' in Paul is primarily an internal human disposition or the objective, historical accomplishment of Jesus Christ, making it a crucial test case for Pauline theology."
+          },
+          {
+            "heading": "Hays’ argument: narrative coherence vs. lexical default",
+            "content": "Richard B. Hays argues that deciding the meaning of 'pistis Christou' shouldn't be based on a simple lexical or grammatical default, but on broader narrative coherence. He contends that Paul's letters presuppose an underlying story about Jesus's life, death, and resurrection. Within this story, a reading of 'the faithfulness of Christ' makes more sense. It aligns with Paul's consistent emphasis on God's action in Christ as the basis of salvation, rather than focusing on the mechanics of human response. For Hays, the story of Jesus's covenant-fulfilling obedience provides the ultimate context for understanding the phrase."
+          }
+        ]
+      },
+      "faithful-representative": {
+        "display_order": 20,
+        "name": "Jesus as the Faithful Representative",
+        "display_name": "Faithful Representative",
+        "introduction": "This category explores the concept of Jesus as the faithful representative for humanity and Israel. It examines how His perfect obedience fulfills the covenant and reverses Adam's failure, establishing a new reality in which believers participate.",
+        "paragraphs": [
+          {
+            "heading": "Christ as the true Israelite who fulfills the covenant",
+            "content": "In this framework, Jesus is not merely a divine figure who appears from outside of history; He is the embodiment of Israel's true vocation. Where corporate Israel was unfaithful to the covenant, Jesus succeeds. He is the one faithful Israelite who lives out the perfect obedience and trust that God required. By doing so, He fulfills the promises made to Abraham and brings Israel's long, complex story to its intended climax. His faithfulness is therefore not a private virtue but a representative act that accomplishes what the nation as a whole could not."
+          },
+          {
+            "heading": "His faithfulness as a new Adamic obedience",
+            "content": "Paul's Christology often draws parallels between Adam and Christ (cf. Romans 5). Just as Adam's one act of disobedience brought condemnation upon all humanity, Christ's one act of perfect, faithful obedience brings justification and life. This 'new Adamic' obedience is seen most clearly in His willing submission to death on a cross, which reverses the pattern of Adamic self-will. Christ's faithfulness, therefore, has cosmic significance, creating a new humanity and offering a solution to the problem introduced at the dawn of human history."
+          },
+          {
+            "heading": "How Paul re-centers salvation history around one man",
+            "content": "By focusing on Jesus's representative faithfulness, Paul radically re-centers the entire story of salvation. It is no longer defined by the story of a people (Israel) and their struggle to keep the Law, but by the story of one Man and His successful act of fidelity. The history of the world now pivots on this singular event. God's plan, from Abraham onward, is seen as leading inexorably to this moment when Jesus, as the representative of both Israel and humanity, would achieve redemption through His own faithfulness."
+          },
+          {
+            "heading": "Participation language in Galatians and Romans",
+            "content": "Paul’s frequent use of phrases like 'in Christ,' 'crucified with Christ,' and 'clothed with Christ' points to a theology of participation. This is not about moral imitation, but about a real, mystical union with Christ enabled by the Spirit. Believers are incorporated into Christ's story. His faithfulness becomes the ground on which they stand, and his death and resurrection become the pattern of their own lives. This language makes more sense if Christ's faithfulness is the objective reality in which believers come to share, rather than just a model for their own faith."
+          },
+          {
+            "heading": "Theological consequences for imputation vs. incorporation",
+            "content": "The traditional view often speaks of 'imputation,' a legal metaphor where Christ's righteousness is credited to a believer's account. The 'faithfulness of Christ' reading leans more heavily toward 'incorporation.' In this model, righteousness is not just a legal status change but a result of being brought into union with the righteous one, Jesus Christ. We are declared righteous because we are now 'in Him,' part of His corporate body. While not mutually exclusive, the emphasis shifts from a purely legal transaction to a more organic, relational, and participatory reality."
+          }
+        ]
+      },
+      "rethinking-faith": {
+        "display_order": 30,
+        "name": "Rethinking the Meaning of “Faith”",
+        "display_name": "Rethinking Faith",
+        "introduction": "This section re-examines the meaning of 'faith' itself, moving it from a purely internal disposition to an act of embodied trust and allegiance. It contrasts this richer definition with the traditional 'faith vs. works' binary.",
+        "paragraphs": [
+          {
+            "heading": "Faith as allegiance and embodied trust",
+            "content": "In the Roman world, 'pistis' often carried the sense of loyalty, allegiance, or fidelity, especially in political or relational contexts. This reading suggests Paul's use of 'faith' is richer than mere intellectual assent to a set of doctrines. It implies an act of entrusting oneself to a new lord—Jesus—and swearing allegiance to his kingdom. This 'faith' is therefore an embodied reality, a reorientation of one's entire life, loyalty, and actions around the person of Jesus Christ as Lord."
+          },
+          {
+            "heading": "Moving beyond legal categories: covenantal faithfulness",
+            "content": "The 'faithfulness of Christ' reading moves the discussion from a purely legal or forensic framework to a covenantal one. 'Righteousness' is less about a legal verdict and more about 'covenant faithfulness'—God's faithfulness to His promises and Christ's faithfulness in fulfilling the human side of the covenant. Human faith, in turn, is our entry into this restored covenant relationship. The language is that of belonging, loyalty, and family, rather than a courtroom."
+          },
+          {
+            "heading": "Contrast with Reformation-era “faith vs. works” binary",
+            "content": "The Protestant Reformation famously framed the debate as 'faith versus works.' However, reading 'pistis Christou' as Christ's faithfulness complicates this binary. The primary contrast in Galatians is not between 'our faith' and 'our works,' but between the 'works of the Law' (as identity markers of a specific ethnic group) and 'the faithfulness of Christ' (an all-inclusive saving event). The problem with the works of the Law was not that they were 'works,' but that they were unable to achieve what only Christ's singular, faithful act could."
+          },
+          {
+            "heading": "Does Paul treat faith as relational or transactional?",
+            "content": "The objective reading ('faith in Christ') can sometimes lead to a transactional understanding of salvation: our faith is the currency we use to 'purchase' justification. The subjective reading ('faithfulness of Christ') strongly supports a relational model. Justification is not a transaction but God's gift of bringing us into a new family or covenant community. This happens through our being united to Christ. Our responsive faith is the way we live within that new relationship, not the price of admission."
+          },
+          {
+            "heading": "Hays’ view on faith as response to God's prior initiative",
+            "content": "For Hays, this entire discussion underscores Paul's unwavering emphasis on divine initiative. God acts first. Christ is faithful first. The Spirit is given first. Human faith is never the ultimate origin of salvation; it is always a response to God's prior, gracious, world-changing act in the faithfulness of Jesus Christ. This perspective guards against any form of human self-righteousness, even a righteousness based on the supposed merit of our own act of believing."
+          }
+        ]
+      },
+      "narrative-structure": {
+        "display_order": 40,
+        "name": "Narrative Structure in Paul’s Theology",
+        "display_name": "Narrative Structure",
+        "introduction": "This category examines Paul's theology as a coherent narrative, not a system of abstract doctrines. It explores how Paul reads Israel's scriptures as a story culminating in the drama of Christ's faithfulness, death, and resurrection.",
+        "paragraphs": [
+          {
+            "heading": "Paul as a reader of Israel’s Scripture through Christ",
+            "content": "Paul did not see Scripture as a flat collection of proof-texts. He read it as a coherent story that was always pointing forward to its fulfillment in Jesus the Messiah. His theological arguments are therefore deeply narrative. He interprets key figures like Abraham and key events like the Exodus through the lens of Christ's death and resurrection. For Paul, to understand Scripture correctly is to understand how it tells the story that leads to Jesus."
+          },
+          {
+            "heading": "Galatians 3 as a retelling of Abraham-to-Christ",
+            "content": "Hays argues that Galatians 3 is not a detour into abstract theology but a masterful, compressed retelling of Israel's entire salvation history. It starts with Abraham, to whom the promise was given (3:8). It then explains the role of the Law as a temporary custodian or 'tutor' (3:24) in the period between promise and fulfillment. Finally, it announces the arrival of the 'seed'—Christ—who fulfills the promise and makes it available to all through his faithfulness (3:16, 29)."
+          },
+          {
+            "heading": "Echoes of Exodus, exile, and restoration in Pauline thought",
+            "content": "Paul's letters are filled with echoes of Israel's core narrative patterns. He speaks of redemption from slavery (Exodus), the curse of being outside the land (Exile), and the creation of a new community through the Spirit (Restoration). Christ's work is presented as the ultimate, definitive version of these events. His death is the true Passover, leading to a new Exodus from slavery to sin, and his resurrection inaugurates the long-awaited restoration and new creation."
+          },
+          {
+            "heading": "Jesus’ story as the climax of Israel’s covenant drama",
+            "content": "For Paul, the life, death, and resurrection of Jesus are not simply an important episode; they are the climax of the entire drama that began with creation and the covenant with Israel. Everything in Scripture was building toward this moment. In Jesus, God's faithfulness and Israel's required faithfulness finally meet. This narrative perspective explains why Paul places such immense weight on the historical events of what Jesus *did*, as it is the fulfillment of the entire biblical story."
+          },
+          {
+            "heading": "The role of crucifixion and resurrection as narrative pivot points",
+            "content": "The cross and the resurrection are the central pivot points of Paul's narrative theology. The crucifixion is not just a tragic death; it is the moment where Christ, in faithfulness, bears the 'curse of the Law' (Gal 3:13), thereby exhausting its power and redeeming those under it. The resurrection is not just a miracle; it is God's vindication of Jesus's faithfulness, the sign that a new age has dawned, and the source of the life-giving Spirit that creates the new covenant community. The entire story hinges on these two events."
+          }
+        ]
+      },
+      "function-of-scripture": {
+        "display_order": 50,
+        "name": "The Function of Scripture in Paul's Argument",
+        "display_name": "Function of Scripture",
+        "introduction": "This section analyzes how Paul uses Israel's Scripture—not as a collection of proof-texts, but as a narrative framework that finds its true meaning and fulfillment in the story of Christ.",
+        "paragraphs": [
+          {
+            "heading": "Intertextual logic in Galatians and Romans",
+            "content": "Paul's use of Scripture is deeply intertextual. He doesn't just quote verses; he weaves them together, often assuming his readers know the original context. He will place a quote from Genesis next to one from Deuteronomy or Habakkuk, creating a new layer of meaning. Understanding his argument requires tracing these scriptural connections and seeing how he builds a cumulative case by showing how different parts of Israel's story converge on the person of Christ."
+          },
+          {
+            "heading": "Paul’s use of Deuteronomy, Habakkuk, and Genesis",
+            "content": "In Galatians 3, Paul strategically deploys key texts. He uses Genesis to establish that the promise to Abraham was based on faith/faithfulness and was intended for all nations. He uses Deuteronomy to explain the 'curse of the Law' that Christ bears. He famously quotes Habakkuk 2:4 ('the righteous will live by faith/faithfulness') as a central pillar of his argument. His selection is not random; he chooses texts that trace the themes of promise, curse, and faithfulness through Israel's history."
+          },
+          {
+            "heading": "Scripture not as proof-text but as narrative frame",
+            "content": "For Paul, Scripture is not a flat database of theological propositions to be proven with isolated verses. Instead, it provides the overarching narrative framework—the story—within which the Christ event makes sense. The Law and the Prophets tell the story of God's promises and Israel's predicament. Paul uses Scripture to shape the problem that only Christ's faithfulness can solve. The texts function to build a dramatic tension that finds its resolution in the gospel."
+          },
+          {
+            "heading": "Christ as the interpretive lens for Torah",
+            "content": "Paul's hermeneutic (his method of interpretation) is fundamentally Christocentric. He re-reads the entire Torah and the Prophets through the lens of Jesus's death and resurrection. This event unlocks the true meaning of the ancient texts. What might have seemed obscure or conditional in the Torah is now revealed in its ultimate context. Christ doesn't abolish the Scripture; for Paul, He fulfills it and reveals its deepest intention."
+          },
+          {
+            "heading": "How “faith” and “promise” are redefined by Scripture",
+            "content": "By tracing these themes through Scripture, Paul redefines them. The 'promise' made to Abraham is shown to be not about national privilege or land, but about the gift of the Spirit and the blessing of justification for all nations. 'Faith' is shown to be not a new invention but the very principle by which Abraham himself was declared righteous. Paul uses Scripture to demonstrate that his gospel is not a novelty but the long-awaited fulfillment of what Scripture had been pointing to all along."
+          }
+        ]
+      },
+      "implications-for-justification": {
+        "display_order": 60,
+        "name": "Implications for Justification Theology",
+        "display_name": "Justification Theology",
+        "introduction": "This category summarizes the profound implications of this reading for the doctrine of justification, shifting the focus from a self-justifying human subject to the all-sufficient, objective work of Christ.",
+        "paragraphs": [
+          {
+            "heading": "What if justification is grounded in Jesus, not us?",
+            "content": "This is the central implication. If the 'faithfulness of Christ' is the basis for justification, then our right standing before God is grounded entirely in an objective, historical event accomplished by someone else. It removes any lingering temptation to see our own act of believing as the meritorious cause of our salvation. The foundation is shifted from our subjective internal state to the objective, external reality of Christ's finished work. Our faith is the means by which we are united to that reality."
+          },
+          {
+            "heading": "The collapse of the self-justifying subject",
+            "content": "Modern Western thought often centers on the autonomous individual who makes choices and performs actions (like believing) to secure their own status. The 'faithfulness of Christ' reading challenges this. The human subject is 'de-centered.' We are not the heroes of our own salvation story; Christ is. We are not self-justifying agents; we are recipients of a justification accomplished for us and in which we are invited to participate. This perspective critiques the individualism inherent in many modern interpretations of faith."
+          },
+          {
+            "heading": "Moving from abstract doctrine to embodied trust",
+            "content": "Framing justification around Christ's faithfulness moves it from an abstract legal or theological concept to a concrete, embodied reality. It's not about satisfying an abstract principle of justice, but about God's Son faithfully living out a story of obedience in real history. This encourages a human response that is similarly embodied—not just mental assent, but a life of allegiance and trust that participates in the pattern of Christ's own faithfulness, expressed through love."
+          },
+          {
+            "heading": "The end of boasting: the cross as divine faithfulness",
+            "content": "Paul is adamant that justification by grace eliminates all human boasting (e.g., Eph 2:9, Rom 3:27). The 'faithfulness of Christ' reading provides the strongest possible basis for this. If even our 'faith' is simply our participation in His prior faithfulness, there is truly no ground left for claiming any contribution. All glory and credit belong to God and to Christ, whose faithful, self-giving act on the cross is the sole ground of our salvation. The cross becomes the ultimate demonstration of God's faithfulness, not a demonstration of our wise decision to believe."
+          },
+          {
+            "heading": "What justification looks like in a narrative context",
+            "content": "In a narrative context, justification is not just a point-in-time declaration but a core part of a story. It is the moment a character is brought out of exile and restored to their proper place in the family. For Paul, justification through Christ's faithfulness means being written into God's great salvation story. It is being rescued from the story of Adam and Sin and incorporated into the story of Christ and New Creation. This narrative understanding gives justification a richer, more dynamic meaning than a purely legal definition might allow."
+          }
+        ]
+      }
+    }
+  },
+  "theological-implications-of-the-faith-of-jesus": {
+    "display_order": 20,
+    "title": "Hays - Theological Implications of ‘The Faith of Jesus’",
+    "description": "This topic delves into the major theological consequences of reading 'pistis Christou' as 'the faith of Jesus.' It covers themes of covenant fulfillment, participatory union with Christ, grace as an apocalyptic event, and the ethical shape of the Christian life.",
+    "categories": {
+      "covenant-fulfillment": {
+        "display_order": 10,
+        "name": "Covenant Fulfillment through Christ",
+        "display_name": "Covenant Fulfillment",
+        "introduction": "This section details how Jesus's faithfulness serves as the fulfillment of God's covenant with Israel. It recasts Jesus as the true covenant partner who accomplishes what Israel could not and re-centers the Abrahamic promise in His person.",
+        "paragraphs": [
+          {
+            "heading": "Jesus as the true covenant partner where Israel failed",
+            "content": "This perspective recasts Jesus as the ultimate protagonist in Israel's covenant story. The Old Testament narrative is marked by God's faithfulness being met with Israel's repeated unfaithfulness. In Jesus, God provides the solution from within Israel itself. Christ, as the one true Israelite, lives out the perfect covenant fidelity that was always required. His obedience isn't just a personal virtue; it is the representative act that fulfills the human side of the covenant partnership, thereby securing its promises not just for Israel, but for all who are incorporated into Him."
+          },
+          {
+            "heading": "Faithfulness as fulfilling the Law, not replacing it",
+            "content": "From this viewpoint, Christ's faithfulness does not simply abolish or replace the Torah. Instead, it fulfills its deepest intention. The Law pointed towards a life of perfect, trusting obedience, which no one could render. Christ's self-giving faithfulness, guided by love, is the ultimate embodiment of what the Torah was always aiming for. In this sense, He is the 'end' (telos) of the Law, not in the sense of termination, but of goal and fulfillment. The Law's purpose is achieved in His faithful act."
+          },
+          {
+            "heading": "The Abrahamic promise re-centered in Christ",
+            "content": "The promise made to Abraham—that in him all nations would be blessed—is central to Paul's argument in Galatians. The 'faithfulness of Christ' reading clarifies how this happens. The promise is not fulfilled through the ethnic lineage of Abraham or their observance of the Law, but through the singular, faithful 'seed' of Abraham, who is Christ (Gal. 3:16). He alone unlocks the promised inheritance (the Spirit) and makes it available to all people, Jew and Gentile, who are united to Him by faith."
+          },
+          {
+            "heading": "“In Christ” as corporate election language",
+            "content": "The recurring Pauline phrase 'in Christ' takes on a powerful corporate meaning. It's not just a statement of personal belief, but of location and identity. To be 'in Christ' is to be part of the new humanity that He represents. This connects to Old Testament ideas of corporate election, where God chose a people (Israel) for Himself. Now, election is redefined: the elect one is Christ, and all who are incorporated into his body through the Spirit become part of God's chosen people, regardless of previous ethnic or social status."
+          },
+          {
+            "heading": "Continuity and disruption in salvation history",
+            "content": "This theological framework creates a dynamic of both continuity and radical disruption. There is continuity because Christ's faithfulness is the fulfillment of God's longstanding promises to Israel. The story is one coherent narrative. However, there is also disruption because Christ's act is so definitive that it redefines the very terms of covenant membership. It breaks down the wall between Jew and Gentile and inaugurates a new age where relationship with God is mediated through Christ's faithfulness alone, not through adherence to the old covenant's national boundary markers."
+          }
+        ]
+      },
+      "participation-union": {
+        "display_order": 20,
+        "name": "Participation and Union with Christ",
+        "display_name": "Participation & Union",
+        "introduction": "This section focuses on the concept of 'participation,' where believers are mystically united with Christ. It distinguishes this from mere imitation and explores how this union transforms a believer's identity, righteousness, and life.",
+        "paragraphs": [
+          {
+            "heading": "Believers share in Christ’s faithfulness, not imitate it",
+            "content": "The distinction between imitation and participation is crucial. 'Imitation' implies standing outside of Christ and trying to copy his actions through our own effort. 'Participation,' as Paul describes it, means being organically united with Christ by the Spirit. We do not generate our own faithfulness to replicate His; rather, we are brought into the sphere of His completed faithfulness. The power for the Christian life comes from this union, from His life being at work in us (Gal. 2:20)."
+          },
+          {
+            "heading": "Dying and rising with Christ in baptism and life",
+            "content": "Baptism, for Paul, is more than a symbol; it is the moment of incorporation into Christ's story. In baptism, the believer participates in Jesus's death (dying to the old self and the old age) and in his resurrection (being raised to a new life powered by the Spirit) (Romans 6). This participation is not a one-time event but the beginning of a new reality. The Christian life becomes a continual living-out of this death-and-resurrection pattern, all grounded in the prior reality of what happened to Christ."
+          },
+          {
+            "heading": "Paul’s vision of transformation through union",
+            "content": "For Paul, salvation is fundamentally about transformation. This transformation is not primarily the result of moral effort or following rules, but a consequence of being united with Christ. By participating in Christ's faithfulness, believers are progressively transformed into his likeness by the Holy Spirit (2 Cor. 3:18). The focus is on a real change in identity and character that flows from this new, vital connection to the resurrected Lord."
+          },
+          {
+            "heading": "Righteousness as relational, not merely declarative",
+            "content": "While traditional views often emphasize the legal, declarative aspect of righteousness (God declares us 'not guilty'), a participationist model highlights its relational nature. To be 'righteous' is to be in a right covenant relationship with God. This status is achieved by being united with the one truly righteous covenant partner, Jesus. It is less like a courtroom verdict and more like being adopted into the royal family—our new status is real and defining because of our relationship to the King."
+          },
+          {
+            "heading": "How participation language reshapes identity",
+            "content": "The language of participation fundamentally reshapes a believer's identity. One's primary identity is no longer defined by ethnicity ('Jew' or 'Greek'), social status ('slave' or 'free'), or gender, but by being 'in Christ' (Gal. 3:28). This new identity is corporate—we belong to the body of Christ—and it is eschatological—we are citizens of the new creation. This understanding breaks down worldly divisions and creates a new basis for community, grounded solely in the shared reality of union with Christ."
+          }
+        ]
+      },
+      "grace-as-apocalyptic": {
+        "display_order": 30,
+        "name": "Grace as Apocalyptic Break-In",
+        "display_name": "Apocalyptic Grace",
+        "introduction": "This section reframes grace not as mere leniency but as God's powerful, world-altering invasion into the present evil age. It presents justification as a decisive rescue accomplished through Christ's apocalyptic faithfulness.",
+        "paragraphs": [
+          {
+            "heading": "Justification as divine invasion, not moral improvement",
+            "content": "In the apocalyptic framework, 'justification' is not a process of gradual moral improvement or God grading on a curve. It is a decisive, world-altering event. It is God's powerful invasion into the present evil age, a break-in from the future to rescue a people for Himself. This divine rescue mission is accomplished through the faithfulness of Christ, whose death and resurrection represent the climactic battle against the powers of sin and death. Justification is God's declaration of victory over these powers on behalf of those in Christ."
+          },
+          {
+            "heading": "The end of the old age through Christ’s faithfulness",
+            "content": "Paul's apocalyptic worldview sees history as divided into two ages: 'the present evil age' and 'the age to come.' Christ's faithful death and his resurrection mark the turning point. His act brought the old age to its end and inaugurated the new creation. Believers, through their union with Christ, have already been transferred out of the dominion of the old age and into the reality of the new, even while they still live physically in the overlap between the two."
+          },
+          {
+            "heading": "Grace as power, not leniency",
+            "content": "In this context, grace (charis) is not merely God's leniency or forgiveness of sins. It is an active, transformative power. Grace is the power of the new creation, unleashed into the world through Christ's resurrection and given to believers via the Holy Spirit. It is the power that enables participation in Christ, transforms the believer, and creates a new form of community life. Grace is God's effective, world-changing force at work."
+          },
+          {
+            "heading": "The cross as cosmic disruption, not private remedy",
+            "content": "From an apocalyptic perspective, the cross is not simply a private transaction to solve an individual's sin problem. It is a public, cosmic event that disrupts the ruling powers of the cosmos. On the cross, God passed judgment on the 'rulers of this age' and broke their power. It is an act of cosmic warfare and liberation. While it has profound personal implications, its significance is universal, marking a fundamental shift in the structure of reality."
+          },
+          {
+            "heading": "Paul’s worldview as conflict between ages",
+            "content": "Understanding Paul requires recognizing that he viewed the world as a site of conflict between two cosmic realms: the present age, under the dominion of Sin and Death, and the age to come, the realm of God's life-giving Spirit. The Christian life is lived on the battlefield of this overlap. Christ's faithfulness was the decisive victory, but the conflict continues until the final consummation. This worldview explains the urgency and cosmic scale of Paul's gospel."
+          }
+        ]
+      },
+      "ethical-implications": {
+        "display_order": 40,
+        "name": "Ethical Implications for the Church",
+        "display_name": "Ethical Implications",
+        "introduction": "This category outlines the ethical consequences of this theology. Christian ethics becomes the practice of living out the pattern of Christ's faithfulness, with love as the primary evidence of participation in the new creation.",
+        "paragraphs": [
+          {
+            "heading": "Living out the faithfulness of Christ in practice",
+            "content": "If salvation is participation in Christ's faithfulness, then Christian ethics is the practice of living out that same pattern of faithfulness in the power of the Spirit. The ethical life is not about earning salvation but about demonstrating the reality of the salvation one has already received. The indicative (what God has done in Christ) becomes the basis for the imperative (how we are to live)."
+          },
+          {
+            "heading": "Faith expressing itself through love (Gal 5:6)",
+            "content": "Paul famously states that what counts is 'faith working through love' (or, 'faithfulness expressing itself through love'). This is the ethical core of his theology. The faithfulness that unites us to Christ naturally overflows into acts of love toward others in the community. Love is not an optional extra but the primary evidence of true participation in Christ's self-giving life. It is the signature characteristic of the new creation."
+          },
+          {
+            "heading": "Imitation of Christ vs. conformity to the world",
+            "content": "Paul calls on believers to 'not be conformed to this world' but to be 'transformed' (Rom 12:2). This transformation involves having the 'mind of Christ' (Phil 2:5). This is a form of imitation, but one that is possible only because of prior participation. Believers are called to consciously adopt the pattern of Christ's self-emptying, obedient faithfulness, particularly his humility and service, as the shape of their own lives and community interactions."
+          },
+          {
+            "heading": "Ethics shaped by narrative, not law codes",
+            "content": "Christian ethics, in this view, is less about adhering to a list of rules or a new law code and more about living appropriately within a story. The story is the gospel—the narrative of Christ's faithful life, death, and resurrection. Ethical decisions are made by asking, 'What does faithfulness to this story look like in this situation?' The community is called to improvise faithfully within the narrative arc of God's redemptive action in Christ."
+          },
+          {
+            "heading": "The cross as the pattern of the Christian life",
+            "content": "The cross is not only the means of salvation but also the defining pattern for Christian ethics. Christ's faithfulness was demonstrated through self-giving, enemy-love, and rejection of power for the sake of others. The community of Christ is therefore called to embody this same cruciform (cross-shaped) pattern in its own life. This means bearing one another's burdens, forgiving, serving, and choosing the way of love over the way of power, reflecting the character of the one in whom they participate."
+          }
+        ]
+      },
+      "redefining-justification": {
+        "display_order": 50,
+        "name": "Redefining Justification and Salvation",
+        "display_name": "Redefining Salvation",
+        "introduction": "This section consolidates the redefinition of key terms. Justification is primarily incorporation, 'saving faith' is Spirit-enabled response, and the central metaphor for salvation shifts from a courtroom to a covenant relationship.",
+        "paragraphs": [
+          {
+            "heading": "Justification as incorporation, not transaction",
+            "content": "This perspective consolidates the idea that justification is fundamentally about incorporation into the body of Christ. While it has a legal dimension (the verdict of 'righteous'), its primary reality is relational and corporate. It is the act by which God makes us part of the faithful people of God, whose identity is determined by the faithfulness of its representative Head, Jesus Christ. The courtroom metaphor is secondary to the family or body metaphor."
+          },
+          {
+            "heading": "What counts as “saving faith”?",
+            "content": "In this model, 'saving faith' is redefined. It is not a meritorious human work that triggers God's favor. Rather, it is the Spirit-enabled human response of trust, allegiance, and entrusting oneself to the reality of what God has already accomplished through Christ's faithfulness. It is the 'amen' to God's action, the means by which we are grafted into the life-giving reality of Christ's own relationship with the Father."
+          },
+          {
+            "heading": "From courtroom to covenant relationship",
+            "content": "The primary metaphor for salvation shifts. While the courtroom (forensic) model is present in Paul, the covenant relationship model becomes more central. Salvation is being brought into the new covenant sealed by Christ's faithfulness. This emphasizes themes of belonging, loyalty, mutual obligation (God's faithfulness to us, our responsive faithfulness to Him), and shared life, which provides a richer and more holistic picture than a purely legal declaration."
+          },
+          {
+            "heading": "Human response grounded in divine initiative",
+            "content": "This entire framework consistently grounds the human response in God's prior action. We can respond in faith only because Christ was first faithful. We can live ethically only because the Spirit of the faithful one has been given to us. Our part is never the initiating cause; it is always the Spirit-empowered consequence of God's saving initiative, which safeguards the principle of salvation 'by grace alone.'"
+          },
+          {
+            "heading": "Salvation as participation in God’s covenant renewal",
+            "content": "Ultimately, salvation is understood as participating in the grand project of God's covenant renewal for the whole world. It is not just about individual souls being saved out of the world, but about being enlisted into God's new creation project, which was launched through the faithfulness of Christ. Believers become agents of this new creation, living out its reality in the present in anticipation of its final consummation."
+          }
+        ]
+      },
+      "jesus-and-law": {
+        "display_order": 60,
+        "name": "Jesus and the Law",
+        "display_name": "Jesus and the Law",
+        "introduction": "This section explores the complex relationship between Jesus's faithfulness and the Torah. It frames Christ as the 'telos' or goal of the Law, fulfilling its ultimate purpose rather than simply keeping its commandments on our behalf.",
+        "paragraphs": [
+          {
+            "heading": "Did Jesus keep the Law on our behalf—or fulfill it differently?",
+            "content": "Some theological systems posit that Jesus perfectly kept the 613 commandments of the Torah as a substitute for us (active obedience). The 'faithfulness of Christ' perspective suggests a different emphasis. Jesus's life was one of perfect faithfulness to God, which is the ultimate goal of the Torah. He fulfilled the Law not by ticking off a checklist of rules, but by embodying its central command—to love God and neighbor—perfectly, culminating in his self-giving death."
+          },
+          {
+            "heading": "Paul’s complex view of Torah post-Christ",
+            "content": "Paul's view of the Torah is complex: it is 'holy, just, and good,' yet it also brings knowledge of sin and the 'curse.' After Christ, the Torah is no longer the defining boundary marker for God's people. Its role as a national covenant charter has been fulfilled and superseded by the new covenant in Christ. However, as Scripture, it remains a source of wisdom and prophecy that points to Christ and instructs the new community on the character of God."
+          },
+          {
+            "heading": "The Law as tutor vs. the Law written on the heart",
+            "content": "In Galatians, Paul describes the Law as a 'tutor' or 'guardian'—a temporary measure to restrain Israel until the arrival of Christ. It was an external guide. With the coming of Christ and the gift of the Spirit, the new covenant reality prophesied by Jeremiah and Ezekiel is realized: the Law is no longer merely an external code but is 'written on the heart.' The Spirit now guides the believer from within to live out the faithfulness that the Law pointed towards."
+          },
+          {
+            "heading": "Jewish-Gentile tension in early Christian ethics",
+            "content": "Much of Paul's ethical instruction is shaped by the tension of creating a single community from both Jews and Gentiles. The 'works of the Law' (like circumcision, dietary laws) were key points of conflict because they were the very things that separated the two groups. By grounding justification in the faithfulness of Christ alone, Paul removes the need for Gentiles to adopt these specific markers of Jewish identity, creating a new, unified basis for community life in the Spirit."
+          },
+          {
+            "heading": "Christ as telos (goal) of the Law in Romans 10:4",
+            "content": "Paul's statement that 'Christ is the end (telos) of the law' is pivotal. The word 'telos' can mean termination, but it more accurately means goal, purpose, or culmination. Christ is not the one who simply stops the Law; He is the one to whom the Law was always pointing. His act of faithfulness is the ultimate objective of the entire legal and covenantal system described in the Torah. Once the goal is reached, the temporary means of getting there (the Law as a covenant charter) are fulfilled and transformed."
+          }
+        ]
+      }
+    }
+  },
+  "broader-theological-and-hermeneutical-relevance": {
+    "display_order": 30,
+    "title": "Hays - Broader Theological and Hermeneutical Relevance",
+    "description": "This topic examines the wider impact of the 'faithfulness of Christ' reading. It addresses challenges to traditional doctrine, implications for ecumenical dialogue, consequences for Bible translation, and its relevance for pastoral ministry and preaching.",
+    "categories": {
+      "doctrinal-challenges": {
+        "display_order": 10,
+        "name": "Doctrinal Challenges to Traditional Justification",
+        "display_name": "Doctrinal Challenges",
+        "introduction": "This category confronts the ways in which the 'faithfulness of Christ' reading challenges traditional doctrines of justification. It questions the 'faith vs. works' binary and critiques modern individualistic models of salvation.",
+        "paragraphs": [
+          {
+            "heading": "What if justification is not primarily about guilt removal?",
+            "content": "Traditional justification models often begin with the problem of human guilt before a holy God, framing justification as a primarily legal or forensic solution. The 'faithfulness of Christ' reading, with its emphasis on participation and covenant, suggests the primary problem might be better understood as slavery to the powers of Sin and Death. Justification, then, is not just a change in legal status (from guilty to not guilty) but a rescue and liberation into the new creation. It is God's powerful reclamation of humanity, accomplished through Christ's faithful invasion of enemy territory."
+          },
+          {
+            "heading": "The collapse of the 'faith vs. works' binary",
+            "content": "The simple 'our faith, not our works' binary, central to the Reformation, is fundamentally challenged. Hays argues the primary Pauline contrast is not between a human action (faith) and other human actions (works), but between God's action in Christ's faithfulness and any human attempt to secure righteousness via 'works of the Law.' In this view, Christ's faithfulness is the ultimate 'work' that achieves salvation. Human faith is our alignment with and participation in His work, not a competing category against our own works."
+          },
+          {
+            "heading": "Hays' critique of individualistic salvation models",
+            "content": "Much of modern Western Christianity frames salvation as an individual's private transaction with God. The 'faithfulness of Christ' reading, with its emphasis on representation and incorporation, is deeply corporate. Justification is about being brought into a people—the body of Christ. Christ acts as the representative head of a new humanity. Salvation is therefore inherently communal, and an individualistic focus misses the new-covenant, new-community dimension that is central to Paul's thought."
+          },
+          {
+            "heading": "Reframing Reformation-era doctrines in light of Christ’s faithfulness",
+            "content": "This perspective requires a reframing of key Reformation doctrines. 'Sola Fide' (by faith alone) is not diminished but is re-grounded: we are saved by faith alone because our faith is a participation in Christ's faithfulness, which alone is sufficient. 'Sola Gratia' (by grace alone) is intensified, as even the initiating 'faith' is Christ's, not ours. The entire framework is shifted from an anthropocentric (human-centered) view of faith to a profoundly Christocentric (Christ-centered) one."
+          },
+          {
+            "heading": "Theological discomfort with a non-anthropocentric justification",
+            "content": "This re-centering away from the human subject and their decision of faith can be theologically unsettling. It challenges long-held assumptions about free will, human response, and the mechanics of conversion. For some, it can feel like it diminishes the importance and responsibility of the human act of believing. Proponents, however, argue that it provides greater assurance, grounding salvation not in the believer's fragile faith but in Christ's unshakeable, completed work of faithfulness."
+          }
+        ]
+      },
+      "ecumenical-dialogue": {
+        "display_order": 20,
+        "name": "Implications for Protestant and Catholic Dialogue",
+        "display_name": "Ecumenical Dialogue",
+        "introduction": "This category explores how grounding justification in Christ's faithfulness, rather than the nature of human response, can provide a common, Christ-centered ground for dialogue between Protestant and Catholic traditions.",
+        "paragraphs": [
+          {
+            "heading": "Shared emphasis on grace—but differing frameworks",
+            "content": "Both Protestant and Catholic traditions have a strong doctrine of grace, but historical debates over justification have created deep divisions. The 'faithfulness of Christ' reading offers a potential path forward by re-contextualizing the debate. It affirms the Protestant insistence on 'grace alone' by grounding justification in Christ's work, while also resonating with the Catholic emphasis on transformation and participation in the divine life. It suggests both traditions may have captured essential aspects of a larger whole."
+          },
+          {
+            "heading": "Can justification be both forensic and participatory?",
+            "content": "The historical standoff has often pitted a 'forensic' (legal declaration) model of justification against a 'participatory' (transformative union) model. The 'pistis Christou' framework suggests this is a false dichotomy. Justification can be understood as God's legal declaration that we are righteous, precisely *because* we have been mystically incorporated into the righteous one, Jesus Christ. The legal status is a consequence of the relational, participatory reality. One does not have to be chosen over the other."
+          },
+          {
+            "heading": "Christ's faithfulness as common theological ground",
+            "content": "Focusing the discussion on the objective, historical event of Christ's own faithfulness provides a powerful common ground for ecumenical dialogue. Both traditions affirm the centrality of Christ's person and work. By shifting the starting point of the justification debate to what Christ has done, rather than the precise nature of the human response, it may be possible to bypass some of the centuries-old logjams and find a more unified, Christ-centered way of speaking about salvation."
+          },
+          {
+            "heading": "De-centering the sinner in favor of a Christocentric model",
+            "content": "Much of the historical debate has been anthropocentric, focusing intensely on the state of the sinner and the nature of their faith or works. A Christocentric model, grounded in Christ's faithfulness, de-centers the sinner. The primary focus is on God's mighty act in His Son. This shift can be a fruitful area for ecumenical agreement, as both traditions can readily affirm that Christ, not the sinner, is the hero and author of salvation."
+          },
+          {
+            "heading": "What this means for ecumenical conversations",
+            "content": "This reading invites a fresh approach in formal ecumenical dialogues like those between Lutherans and Catholics. It allows theologians to ask new questions: How does Christ's representative faithfulness inform our understanding of sacraments like baptism? How does participation in Christ relate to sanctification and good works? By providing a new, biblically-rooted starting point, it has the potential to move conversations beyond entrenched positions and toward a more shared understanding of the Gospel."
+          }
+        ]
+      },
+      "translation-consequences": {
+        "display_order": 30,
+        "name": "Translational and Interpretive Consequences",
+        "display_name": "Translation Consequences",
+        "introduction": "This section examines the real-world consequences for Bible translation, highlighting how the choice between 'faith in' and 'faithfulness of' is a significant act of interpretation that shapes lay understanding of doctrine.",
+        "paragraphs": [
+          {
+            "heading": "Should Bible translations render pistis Christou as “faithfulness”?",
+            "content": "This is a direct, practical consequence of the debate. If Hays and others are correct, then major English translations may be misleading readers. The challenge for translation committees is immense. Translating as 'faithfulness of Christ' would be a significant departure from centuries of tradition (like the King James Version's 'faith in Christ') and could cause confusion. However, leaving it as 'faith in Christ' may obscure what Paul actually intended to communicate."
+          },
+          {
+            "heading": "The role of translation in shaping doctrine",
+            "content": "This debate highlights the immense power of translation in shaping theology and doctrine for laypeople. The choices made by a small group of translators can determine how millions of readers understand a core concept like 'faith.' A single preposition—'in' versus 'of'—can reinforce or challenge entire theological systems. It underscores that no translation is theologically neutral; every translation is an act of interpretation."
+          },
+          {
+            "heading": "The impact of Hays’ work on the NRSV and newer editions",
+            "content": "The scholarly argument for the subjective genitive has been influential enough to affect modern translations. The New Revised Standard Version (NRSV), for which Hays was a contributor, famously includes footnotes at key 'pistis Christou' passages (like Romans 3:22) that say, 'Or *faithfulness of Jesus Christ*.' The NET Bible does the same. This represents a major shift, acknowledging the strong possibility of the subjective reading and making interpretive uncertainty visible to the ordinary reader."
+          },
+          {
+            "heading": "Reader-response and narrative coherence in interpretation",
+            "content": "Hays's method champions narrative coherence as a key interpretive principle. This aligns with certain schools of literary theory, which emphasize that the meaning of a phrase is determined by its function within the larger story being told. It suggests that exegesis cannot be a purely mechanical process of dictionary definitions and grammatical rules, but must also involve a sensitive reading of the text's literary and theological flow. The 'correct' reading is the one that makes the most sense of Paul's entire argument and story."
+          },
+          {
+            "heading": "Does grammar or theology ultimately govern translation?",
+            "content": "The 'pistis Christou' debate is a perfect case study for the tension between grammar and theology in translation. The Greek grammar allows for both the objective ('faith in') and subjective ('faithfulness of') readings. In such cases of ambiguity, what should guide the translator? Should they default to the traditional theological reading, or should they choose the reading that they believe best fits the author's broader context and narrative, even if it challenges tradition? There is no easy answer, and different translation committees have landed on different solutions."
+          }
+        ]
+      },
+      "scholarly-debates": {
+        "display_order": 40,
+        "name": "Ongoing Debates in Pauline Scholarship",
+        "display_name": "Scholarly Debates",
+        "introduction": "This section surveys the ongoing scholarly conversation surrounding the 'pistis Christou' reading, including arguments for the traditional view and the influence of this debate on other schools of Pauline interpretation.",
+        "paragraphs": [
+          {
+            "heading": "Who still defends the “faith in Christ” reading, and why?",
+            "content": "Many respected scholars continue to defend the traditional objective reading ('faith in Christ'). Their arguments are often based on the broader context of Paul's letters, where the call for human faith and belief is undeniable. They argue that Paul can speak of 'believing in Jesus' so frequently that it is the most natural and expected meaning for 'pistis Christou.' They may also contend that the subjective reading creates theological problems, such as potentially downplaying the necessity of a personal human response."
+          },
+          {
+            "heading": "Critiques of Hays: narrative overreach or exegetical clarity?",
+            "content": "While Hays's work has been hugely influential, it is not without its critics. Some scholars argue that his 'narrative substructure' is something he reads *into* Paul's letters, rather than something that is explicitly there. They might accuse him of 'narrative overreach,' where the desire for a coherent story overrides closer grammatical analysis. Others find his reading to be a breakthrough that brings immense exegetical clarity, solving numerous long-standing puzzles in Paul's thought. The debate continues."
+          },
+          {
+            "heading": "Influence on the New Perspective on Paul",
+            "content": "The 'faithfulness of Christ' reading is highly compatible with, and has been widely adopted by, proponents of the New Perspective on Paul (NPP). The NPP re-frames Paul's debate in Galatians as being less about individual salvation from guilt and more about the inclusion of Gentiles into the people of God. The idea that justification is based on Christ's faithfulness, not on 'works of the Law' (seen as Jewish identity markers), fits perfectly with the NPP's emphasis on ecclesiology and covenant."
+          },
+          {
+            "heading": "Tensions with the Apocalyptic Paul school",
+            "content": "There is less tension and more synergy here. The Apocalyptic Paul school emphasizes God's invasive, world-ending action in Christ. The 'faithfulness of Christ' is seen as the very instrument of this apocalyptic invasion. It is the cosmic, singular event that breaks the power of the old age. Scholars in this camp readily embrace the subjective reading because it highlights the divine action and cosmic scale of the gospel, rather than framing it as a smaller, human-centered decision."
+          },
+          {
+            "heading": "The staying power of pistis Christou in scholarship",
+            "content": "For decades, the 'pistis Christou' debate has remained one of the most active and significant areas of Pauline scholarship. Its staying power comes from the fact that it is not a minor point of grammar. It acts as a key that unlocks fundamental questions about grace, faith, Christology, and the very nature of the gospel. How one reads this single phrase has a ripple effect across all of Pauline theology, ensuring that it will remain a central topic of discussion for years to come."
+          }
+        ]
+      },
+      "pastoral-implications": {
+        "display_order": 50,
+        "name": "Preaching and Pastoral Implications",
+        "display_name": "Pastoral Implications",
+        "introduction": "This category translates dense scholarship into practical implications for ministry, focusing on how preaching Christ's faithfulness provides greater assurance for believers and shifts the focus of evangelism and discipleship.",
+        "paragraphs": [
+          {
+            "heading": "Can we preach salvation without focusing on our faith?",
+            "content": "This reading suggests a shift in preaching. Instead of the sermon's climax being a call for the listener to generate a decision of faith, the climax becomes the proclamation of Christ's victorious faithfulness. The call to the listener is then an invitation to trust in and take refuge in what *He* has already done. It shifts the focus of the sermon from the state of the listener's heart to the finished work of Christ, which can be a more grounding and grace-centered message."
+          },
+          {
+            "heading": "Jesus' faithfulness as assurance for struggling believers",
+            "content": "A significant pastoral benefit is the assurance it offers. Many believers struggle with the quality and consistency of their own faith. Grounding salvation in the believer's act of faith can lead to introspection and doubt ('Is my faith strong enough?'). Grounding salvation in Christ's perfect, unwavering faithfulness provides an objective anchor. Assurance rests not on the quality of my faith, but on the quality of His, which never fails."
+          },
+          {
+            "heading": "Shifting the call from belief in to trust with",
+            "content": "The evangelistic call can be subtly reshaped. Instead of simply 'believe in Jesus,' which can sound like mere intellectual assent, the call becomes one of 'entrusting yourself to the faithful one.' It's an invitation to align one's life with what God has done in Christ, to join his new covenant people, and to participate in the new reality created by His faithfulness. This implies a more holistic commitment."
+          },
+          {
+            "heading": "Telling the Gospel as Christ’s story, not just our decision",
+            "content": "This perspective encourages a return to telling the gospel as a story—specifically, Christ's story. It is the narrative of his incarnation, life, teachings, death, and resurrection. Our 'decision' is not the main point of the story; it is the epilogue or our entry into it. Preaching becomes a form of storytelling that announces the good news of what the king has accomplished, inviting listeners to find their own story within His."
+          },
+          {
+            "heading": "What this means for discipleship and spiritual formation",
+            "content": "For discipleship, the focus shifts from 'trying harder' to 'trusting more deeply' in the reality of our union with Christ. Spiritual formation becomes less about moral self-improvement and more about learning to live in the power of the Spirit, participating in the ongoing pattern of Christ's self-giving love. The goal is to have the faithfulness that is already ours 'in Christ' be worked out in every aspect of our lives."
+          }
+        ]
+      },
+      "recentering-narrative": {
+        "display_order": 60,
+        "name": "Re-centering the Gospel Narrative",
+        "display_name": "Re-centering the Gospel",
+        "introduction": "This final category emphasizes the importance of narrative theology, framing the gospel as a dramatic story of God's action in Christ rather than an abstract system of truths, with the cross and resurrection at its center.",
+        "paragraphs": [
+          {
+            "heading": "From system to story: why narrative theology matters",
+            "content": "Many expressions of the gospel present it as a system of abstract, timeless truths (e.g., 'Four Spiritual Laws'). Hays's approach reminds us that for Paul, the gospel was first and foremost a story—a narrative of events that happened in history. This narrative approach is often more compelling and transformative than abstract systems because it engages the whole person—imagination, emotion, and intellect—and invites them into a dramatic plot."
+          },
+          {
+            "heading": "How Paul frames the Gospel as a drama of faithfulness",
+            "content": "Paul presents the gospel as a divine drama. The acts include God's promise to Israel, Israel's struggle, the coming of the Messiah, His faithful obedience unto death, God's vindication of him in the resurrection, the gift of the Spirit, and the creation of a new community. It is a story with characters, plot, conflict, and climax. Understanding the gospel means understanding this dramatic arc and finding our place within it."
+          },
+          {
+            "heading": "Moving beyond abstract principles to embodied truth",
+            "content": "A narrative gospel calls for an embodied response. If the gospel is just a set of principles, our response can be mere intellectual agreement. But if the gospel is the story of Christ's faithfulness, our response must be to live faithfully within that story. Truth is not just something we believe in our minds; it's a reality we participate in with our lives, shaping our habits, relationships, and communities."
+          },
+          {
+            "heading": "Why Hays calls the Gospel “apocalyptic testimony”",
+            "content": "For Hays, the gospel is not a philosophical argument but an 'apocalyptic testimony.' It is a witness to a world-changing event. 'Apocalyptic' means 'unveiling' or 'revelation.' The gospel unveils the true state of the world and announces that God has acted in Christ to defeat the powers of darkness and inaugurate a new creation. It is a proclamation of news, a testimony to what has been seen and experienced."
+          },
+          {
+            "heading": "The cross and resurrection as theological centerlines",
+            "content": "Ultimately, Hays's work, like Paul's, is centered on the cross and resurrection. These are not just components of the story; they are the centerlines around which everything else is organized. The faithfulness of Christ is demonstrated most profoundly at the cross. The power of the new creation is unleashed through the resurrection. Any reading of Paul, and any presentation of the gospel, that does not maintain this narrative and theological center has missed the heart of the matter."
+          }
+        ]
+      }
+    }
+  }
+},
+  "maxwell": {
+  "god-is-love": {
+    "display_order": 10,
+    "title": "Maxwell - God Is Love",
+    "description": "An exploration of love as God's most fundamental quality. This topic delves into the boundless nature of divine love, the risks God takes by granting freedom, and how this love makes Him a dynamically responsible and covenant-keeping God.",
+    "categories": {
+      "most-fundamental-quality": {
+        "display_order": 10,
+        "name": "Most Fundamental Quality",
+        "display_name": "Most Fundamental Quality",
+        "introduction": "This section establishes love not as a mere attribute but as God's very essence. It shows how this core reality is expressed both within the inner life of the Godhead and in all divine actions.",
+        "paragraphs": [
+          {
+            "heading": "Not just an attribute, but God’s essence",
+            "content": "<br/>Love is not one trait among many; it is the very substance of Deity. Scripture’s brief creed—“God is love”—locates benevolence at the core of every other divine quality, so that justice, power, and judgment are love in action, never in tension with it. Grasping this single truth reshapes doctrine into commentary on unfailing affection. Every page of revelation becomes an illustration of compassion seeking to win back trust. In such a universe, true obedience is the glad echo of perceived goodness. This centripetal principle unites all divine activity in a single motivating pulse.<br/><br/><i>See The Larger View, p. 145</i>"
+          },
+          {
+            "heading": "Expressed in God’s inner reality",
+            "content": "<br/>Within the fellowship of Father, Son, and Spirit, love flows in ceaseless self-giving long before any creature existed. Calvary simply unveils in time what eternity has always been. Redemption does not persuade Heaven to change its mind; it invites earth to share the life already pulsing within the Godhead. Participation in that communion is the very heart of salvation, the joy set before us. In that embrace lies the assurance that life eternal is relational, not transactional. Such sharing is what turns theology into doxology, transforming knowledge into joyous trust."
+          }
+        ]
+      },
+      "boundless-infinite-exhaustless": {
+        "display_order": 20,
+        "name": "Boundless, Infinite, Exhaustless",
+        "display_name": "Boundless & Infinite",
+        "introduction": "This category explores the sheer magnitude of divine love. It asserts that human analogies inevitably fall short and that God's affection extends without limit even to those in rebellion.",
+        "paragraphs": [
+          {
+            "heading": "Human analogies always fall short",
+            "content": "<br/>Even the purest parental devotion cannot span the breadth of divine compassion. Eternity itself will still leave creatures marvelling at love’s dimensions, for language fractures before such immensity. All comparisons must therefore be held loosely lest Majesty be shrunk to creaturely size. The cross alone begins to hint at the fathomless tenderness that pulses in the heart of God. Silence becomes the soul’s final act of praise when words betray their poverty. Awe, not analysis, is the appropriate response to limitless mercy."
+          },
+          {
+            "heading": "Eternally self-giving love within the Godhead",
+            "content": "<br/>The Father eternally pours Himself into the Son; the Son answers in delighted reciprocity; the Spirit binds the circle in other-centred joy. Calvary does not originate this movement but publishes it to angels and mortals. Those who trust are swept into the same current of self-forgetting fellowship. Heaven’s own life becomes theirs, now and forever, as shared vitality replaces mere existence. Mutual deference, never rivalry, governs the throne of the cosmos. Thus the Trinity itself is the gospel’s first sermon."
+          },
+          {
+            "heading": "No limit even toward rebels",
+            "content": "<br/>Divine affection pursues the most wayward without fatigue or resentment. “How can I give you up?” cries the wounded parent who longs to heal, not to punish. The cross proves that love pre-existed forgiveness; it did not ignite when blood was shed. Only stubborn refusal can finally place a soul beyond its reach, yet even then grief remains. Love respects freedom even when it breaks the Lover’s heart. Such lament exposes the costliness of grace and the peril of rejecting it."
+          }
+        ]
+      },
+      "leads-god-to-take-risks": {
+        "display_order": 30,
+        "name": "Leads God to Take Risks",
+        "display_name": "Divine Risk-Taking",
+        "introduction": "This section examines how God's love compels Him to take immense risks. These include granting genuine freedom to His creatures and embracing ultimate vulnerability in the Incarnation.",
+        "paragraphs": [
+          {
+            "heading": "Freedom necessitates risk of rebellion",
+            "content": "<br/>Because love cannot compel, genuine freedom must exist even at the hazard of revolt. A universe run by force would be a cosmic penitentiary—something love forever refuses. Liberty grants creatures the option to say no, making trust possible though never mechanized. The resulting controversy showcases how Omnipotence chooses suffering over coercion, proving that love is stronger than fear. Such freedom dignifies the creature and vindicates the Creator before the watching universe. The costliness of liberty thus becomes the clearest evidence of divine goodness."
+          },
+          {
+            "heading": "Incarnation as ultimate vulnerability",
+            "content": "<br/>When the Word became flesh, Infinity embraced the possibility of misunderstanding, betrayal, and death. Every meal shared with sinners—even a traitor—revealed forgiveness that precedes repentance. On the cross the Sin-bearer experienced the awful separation sin causes, not Father-inflicted torment, standing with humanity in its darkest hour. That shared suffering settles each accusation raised against the heart of God. Resurrection then seals the proof that self-giving love cannot be conquered by evil. The risen scars testify forever that power serves, it never subjugates."
+          },
+          {
+            "heading": "Ongoing openness to rejection",
+            "content": "<br/>Even after Calvary, creatures remain free to refuse friendship. The Spirit woos but never shackles the will; love respects choice to the final breath. Persistent rejection must at last be honored, and harvest follows sowing. Such sorrowful consent underscores that relationship—not dominance—is the law of the kingdom. Final judgment therefore reveals consequence rather than coercion, exposing sin’s intrinsic ruin. Love’s grief over lost children becomes the strongest warning against self-chosen exile."
+          }
+        ]
+      },
+      "makes-god-dynamically-responsible": {
+        "display_order": 40,
+        "name": "Makes God Dynamically Responsible",
+        "display_name": "Dynamically Responsible",
+        "introduction": "This category presents a God who is dynamically responsible and engaged with history. His love is expressed through patient, adaptive strategies aimed at healing and restoring trust, not coercion.",
+        "paragraphs": [
+          {
+            "heading": "God’s covenant faithfulness engages history",
+            "content": "<br/>Across millennia the Divine Teacher adapts His methods to human capacity: simple promises, symbolic rituals, prophetic stories, then the living Word. Each stage protects freedom while unveiling character. Discipline, exile, and deliverance all share one objective—winning back trust so healing may begin. History itself becomes a gallery of love’s patience and ingenuity, showing that God never abandons His family. Every chapter whispers, “Can you trust Me now?” and waits for an answering yes. When that answer comes, the covenant reaches its true goal—friendship restored."
+          },
+          {
+            "heading": "Participatory healing rather than coercion",
+            "content": "<br/>Atonement is heaven’s medicine, not a mere ledger entry. When hearts trust the Physician, the remedy can cleanse memory, restore desire, and renew life. Obedience becomes a humble willingness to listen, inviting treatment instead of resisting it. Legal pardon is only the doorway; transformation is the home beyond, where health replaces mere survival. Love’s goal is nothing less than restored likeness to the Healer, so that healed ones become healers in His name. Salvation thus moves from courtroom language to the language of the clinic and family."
+          },
+          {
+            "heading": "Adaptive strategies within the Great Controversy",
+            "content": "<br/>The cosmic debate over God’s government explains the variety of divine interventions. Early acts—flood, fire—exposed sin’s destructive end, yet fear could not secure loyalty. Gentler measures followed, culminating in the cross, where force was forever discredited and love revealed as the greatest power. There the universe sees that fear breeds death, while trusting love brings life unending. Every strategy, whether dramatic or tender, converges on one evidence: God is safe to trust. Victory is finally won not by might but by the persuasive beauty of self-giving love."
+          }
+        ]
+      }
+    }
+  },
+  "trust-and-the-great-controversy": {
+    "display_order": 20,
+    "title": "Maxwell - Trust & the Great Controversy",
+    "description": "This topic reframes the cosmic conflict as a battle over trust. It defines sin as distrust, examines the accusations against God's character, and shows how the cross serves as the ultimate vindication before a universal audience.",
+    "categories": {
+      "nature-of-sin-and-faith": {
+        "display_order": 10,
+        "name": "Nature of Sin & Faith",
+        "display_name": "Sin & Faith",
+        "introduction": "This section defines sin not as mere lawbreaking but as a fundamental rupture of relational trust. Correspondingly, faith is presented as the humble, relational confidence that God seeks to restore.",
+        "paragraphs": [
+          {
+            "heading": "Sin as Distrust, Not Mere Lawbreaking",
+            "content": "<br/>Sin is far more than the violation of a legal code; it is the rupture of relational trust. Lucifer’s first doubts spread like an infection, turning suspicion into cosmic war and leaving the universe trembling on the brink of chaos. Rules merely describe the health that love produces, but distrust corrodes heart, mind, and community until peace is impossible. Thus the real danger is not execution at God’s hand but the destructive harvest of cherished suspicion. Calvary shows that distrust, once released, can kill even the Creator. Healing begins only when that suspicion is replaced by confidence in divine reliability."
+          },
+          {
+            "heading": "Faith Defined as Relational Trust",
+            "content": "<br/>Faith is not a bare admission that God exists—devils possess that and tremble. True faith is a humble willingness to listen, the relational trust captured by the Greek word <em>pistis</em>. God seeks voluntary reverence, admiration, and cooperation born of His proven worthiness. Such trust cannot be commanded or shortcut; it grows as God demonstrates credibility under the most trying circumstances. Forgiveness flows freely, yet it brings lasting healing only when the forgiven are won back to trust. Salvation becomes safe because transformed hearts now delight in the God whose character they once doubted."
+          }
+        ]
+      },
+      "cosmic-conflict-and-audience": {
+        "display_order": 20,
+        "name": "Cosmic Conflict & Audience",
+        "display_name": "Cosmic Conflict",
+        "introduction": "This section outlines the Great Controversy, a cosmic drama waged over God's character before a universal audience. It details Satan's core accusations that God is arbitrary, vengeful, and untrustworthy.",
+        "paragraphs": [
+          {
+            "heading": "Universal Audience in the Cosmic Conflict",
+            "content": "<br/>The Great Controversy is waged before a universal audience—angels and unfallen worlds watch Earth’s drama unfold. Christ’s death was not for humanity alone but to reconcile \"things in heaven\" as Colossians declares. Even loyal beings carried unanswered questions that, if ignored, could have seeded further rebellion. The cross provided the faith-confirming evidence heaven required to trust God eternally. Earth thus serves as a theater where divine truth is displayed for all intelligences. The final result will be an everlasting \"at-one-ment\" binding the entire family of God."
+          },
+          {
+            "heading": "Satan’s Core Accusations Against God",
+            "content": "<br/>Satan portrayed the Creator as arbitrary, vengeful, and unworthy of trust, twisting Eden’s warning into a threat of execution. His boldest claim was that God had lied—sin would not truly result in death. Happiness, he said, lay in self-service, while obedience born of fear warped souls into rebels. The controversy thus turns on a single question: who tells the truth about reality and about God’s motives? Until those accusations were publicly refuted, lingering doubt could poison the universe. Calvary exposes the falsity of every charge and unmasks the lethal nature of selfishness."
+          }
+        ]
+      },
+      "cross-and-vindication": {
+        "display_order": 30,
+        "name": "Cross & Vindication",
+        "display_name": "Cross & Vindication",
+        "introduction": "This category presents the cross not as a legal transaction but as a powerful demonstration of God's character. At Calvary, God's love is vindicated, and atonement is revealed as relational at-one-ment.",
+        "paragraphs": [
+          {
+            "heading": "Cross as Demonstration, Not Transaction",
+            "content": "<br/>Atonement means \"at-one-ment\"—the costly restoration of harmony, not appeasement of divine wrath. Jesus did not die to persuade His Father to be kind; He died to reveal that the Father had always been trustworthy. Calvary acts as a remedy, curing the disease of distrust by displaying love under fire. The focus therefore shifts from legal payment to relational reconciliation and healing. God must be reconciled to no one; we, the suspicious, need reconciliation to Him. The cross is the grand exhibit that God’s heart is the safest place in the universe."
+          },
+          {
+            "heading": "Vindication of Divine Character at Calvary",
+            "content": "<br/>Calvary supplies the most convincing evidence about God’s government. Jesus’ voluntary death proved three things: sin does causally lead to death, the Father does not execute transgressors, and fear-based service breeds rebellion. \"Why have You given Me up?\" reveals divine \"wrath\" as sorrowful release, not active torture. That it was God Himself who suffered prevents the lie that He kills His children. The cross thus forever settles the issue that there is no need to be afraid of God."
+          }
+        ]
+      },
+      "progressive-revelation": {
+        "display_order": 40,
+        "name": "Progressive Revelation",
+        "display_name": "Progressive Revelation",
+        "introduction": "This section describes how God has progressively revealed His trustworthy character throughout history. Scripture serves as a casebook of God's efforts to restore confidence, culminating in Jesus.",
+        "paragraphs": [
+          {
+            "heading": "Progressive Self-Revelation in Scripture",
+            "content": "<br/>God’s self-disclosure unfolded in many ways—promises, symbols, prophets—each tailored to human readiness. Because stubborn hearts misunderstood love, emergency measures like the sacrificial system were added, though they risked obscuring the truth they pointed toward. The Decalogue itself expressed principles of trust in \"Thou-shalt-not\" form because of pervasive rebellion. Ultimately Jesus became the clearest revelation, embodying what could not be fully conveyed at Sinai. His life corrects distortions, showing the Father to be neither arbitrary nor severe. Revelation is therefore progressive, always moving toward clearer pictures of trustworthy love."
+          },
+          {
+            "heading": "Prophetic Narratives as Case Studies in Trust",
+            "content": "<br/>Scripture functions like a medical casebook charting God’s efforts to restore confidence. Abraham grows from faltering apprentice to \"friend of God\"; Moses argues boldly with divine purpose; Job’s loyalty under duress silences heavenly debate. Each story shows that God values honest dialogue over fearful submission. The Prodigal Son parable crowns the testimony: reconciliation occurs the moment the Father’s embrace is accepted, proving love precedes repentance. Servants obey from fear, but friends obey from understanding; such friendship is the real at-one-ment God seeks."
+          }
+        ]
+      }
+    }
+  },
+  "gods-wrath-and-cosmic-freedom": {
+    "display_order": 30,
+    "title": "Maxwell - God’s Wrath & Cosmic Freedom",
+    "description": "This topic reinterprets divine wrath not as active punishment but as God's sorrowful withdrawal, allowing sin's natural consequences to unfold. It examines biblical case studies and the eschatological implications for cosmic freedom.",
+    "categories": {
+      "nature-of-divine-wrath": {
+        "display_order": 10,
+        "name": "Nature of Divine Wrath",
+        "display_name": "Nature of Wrath",
+        "introduction": "This section redefines God's wrath as His sorrowful \"giving up\" of rebels to the natural consequences of their choices. It is a consequential process, not active punishment, proving God is not an executioner.",
+        "paragraphs": [
+          {
+            "heading": "Wrath as “Giving Up” vs. Active Punishment",
+            "content": "<br/>God's wrath is fundamentally His sorrowful withdrawal and loving disappointment from those who persist in rejecting Him, not an arbitrary act of torture or execution. This giving up allows individuals to experience the inevitable and awful consequences of their own rebellious choices, a truth clearly articulated in Romans 1. The prophet Hosea captures this profound divine anguish, crying, \"How, oh how, can I give you up, Ephraim!\", demonstrating God’s deep reluctance to abandon His children. Therefore, the biblical portrayal of God's wrath reveals a heartbroken Father who steps aside when His love is consistently spurned, allowing sin’s inherent, deadly results to unfold. It is a consequential, not a retributive, process, ensuring that death is understood as sin's natural outcome rather than God's direct, vengeful punishment. This perspective clarifies that God does not \"beat up\" or \"burn up\" anyone, but rather allows them to reap what they have sown."
+          },
+          {
+            "heading": "Fear-Based Service Breeds Rebellion",
+            "content": "<br/>God actively does not desire the service of fear, for genuine love, trust, and freedom cannot be compelled or produced by force. When beings serve God out of terror rather than willing affection, it fosters the character of a rebel, undermining the very essence of true relationship. This tragic truth was exemplified by Lucifer, whose initial distrust led to cosmic war, and by the Pharisees, who, despite rigid obedience, harbored a fearsome view of God that ultimately led them to crucify His Son. Such imposed obedience is shallow and temporary, lacking the spontaneous unity God truly desires. Service born of fear transforms professed reverence into \"pretentiously pious enemies\" who, unable to trust, are prone to violence and disloyalty. God seeks a relationship based on understanding and mutual trust, like that shared with Abraham and Moses, where questions are welcomed and fear is dispelled."
+          },
+          {
+            "heading": "God Does Not Torture or Execute",
+            "content": "<br/>It is a profound perversion of God's character to believe that justice demands He torture or execute His children for refusing to love Him. The Cross provides the ultimate answer, clarifying that God is not the one inflicting torment or death. Jesus' experience reveals that death is the natural result of separation from God, the Source of life, rather than a punishment arbitrarily imposed by an \"angry God.\" The tragic story of the father and the rat poison illustrates this: forgiveness cannot counteract the inherent deadly consequences of a destructive choice. Therefore, while sin leads to death, God does not actively \"kill\" or \"torture\" His children; He sorrows over their choice to cut themselves off from life. Calvary powerfully demonstrates that there is no need to be afraid of God, whose warnings about sin are gracious truths, not terrifying threats."
+          }
+        ]
+      },
+      "biblical-case-studies": {
+        "display_order": 20,
+        "name": "Biblical Case Studies",
+        "display_name": "Case Studies",
+        "introduction": "This category examines key biblical events often seen as divine punishment—the Flood, Sodom, and the plagues of Egypt—reinterpreting them as God sorrowfully withdrawing His protection and allowing sin's self-destructive nature to be revealed.",
+        "paragraphs": [
+          {
+            "heading": "Flood & Sodom: Mercy Withdrawn",
+            "content": "<br/>Events like the global Flood and the destruction of Sodom and Gomorrah, often seen as direct divine punishment, are better understood as God's sorrowful withdrawal from those who irrevocably chose rebellion. These were not arbitrary acts of vengeance but moments where God reluctantly allowed individuals and communities to experience the inherent, destructive consequences of their own choices. The loyal angels, though initially approving of such forceful interventions, eventually learned that displays of might, while necessary, did not win hearts or foster genuine repentance. Rather than instilling love, these acts often hardened human hearts further, leading to more distrust and defiance. Thus, these \"hands-off\" moments serve as cosmic object lessons, revealing that sin, when left unchecked by divine restraint and grace, is self-destructive, proving God's warnings about its deadly nature. In witnessing sin collapse upon itself, the universe learns that love alone sustains life and freedom."
+          },
+          {
+            "heading": "Egypt’s Plagues as Self-Chosen Judgment",
+            "content": "<br/>The plagues in Egypt, including the hardening of Pharaoh’s heart, illustrate God's progressive withdrawal of restraint, allowing a rebellious ruler to fully manifest sin’s self-destructive path. Pharaoh's resistance was ultimately his own choice to remain untrusting and disobedient, revealing sin's inherent tendency toward ruin. God’s actions were not to arbitrarily inflict suffering but to demonstrate to the universe the inevitable consequences of persistently rejecting divine love and counsel. Like Romans 1, where God \"gave them up\" to their own behaviors, Pharaoh reaped what he had sown. This narrative underscores that God will not coerce obedience; He respects free will, even when it leads to calamity. The plagues thus stand as a solemn witness, showing the dire outcome of choosing autonomy over trust in the benevolent Creator."
+          },
+          {
+            "heading": "Calvary as Ultimate Illustration of Wrath",
+            "content": "<br/>Jesus' cry, \"My God, my God, why have You given Me up?\", reveals God's wrath as the agonizing experience of complete separation from the Father. This was not the Father punishing or torturing His Son, but sin severing the connection to the Source of life and resulting in death. The universe witnessed that Jesus voluntarily laid down His life, proving that death is sin’s natural consequence, not God's arbitrary execution. This unparalleled act of self-renouncing love answered every cosmic accusation, displaying God as utterly trustworthy and non-coercive. Calvary stands as the most costly and convincing evidence that God seeks reconciliation, not appeasement, and pays an infinite price to restore friendship. By unveiling wrath as release rather than retaliation, the cross warns creation of sin’s suicidal trajectory without fueling fear of the Father."
+          }
+        ]
+      },
+      "eschatological-wrath-and-final-separation": {
+        "display_order": 30,
+        "name": "Eschatological Wrath & Final Separation",
+        "display_name": "Final Separation",
+        "introduction": "This section looks at the end-time manifestation of God's wrath. It frames the seven last plagues and the second death as the final, complete withdrawal of God's presence from the unrepentant.",
+        "paragraphs": [
+          {
+            "heading": "Seven Last Plagues: Wrath Poured Out",
+            "content": "<br/>The \"seven last plagues\" in Revelation mark the final manifestation of God's wrath—His complete withdrawal of the Spirit’s restraining influence from those who have utterly rejected mercy. Once divine grace is removed, the impenitent are given over to the destructive consequences of their own rebellion, leading to societal collapse and self-inflicted ruin. God is not inflicting torment; sin brings its own catastrophic results when His presence is repudiated. This ultimate demonstration clarifies to the universe the absolute incompatibility of sin with peace and freedom. The plagues validate God’s warnings, showing the inevitable dissolution that follows when love and order are decisively cast aside. In every agony, the message echoes: without God, chaos is the only king."
+          },
+          {
+            "heading": "Second Death as Relational Rupture",
+            "content": "<br/>The second death is not eternal torture but the final cessation of existence for those who choose permanent separation from the Source of life. It is the ultimate consequence of refusing God’s healing, not a punitive act of an angry deity. God’s life-giving presence, light to the faithful, becomes a consuming fire to the unrighteous because sin is inherently incompatible with holiness. This tragic end upholds cosmic freedom, demonstrating that a universe founded on love cannot safely coexist with unrepentant rebellion. God allows this natural outcome rather than force eternal life on unwilling beings, ensuring everlasting peace for His loyal creation. The extinguishing of life is therefore self-chosen exile, not imposed vengeance, confirming that love never coerces."
+          }
+        ]
+      }
+    }
+  },
+  "healing-salvation-and-practical-obedience": {
+    "display_order": 40,
+    "title": "Maxwell - Healing Salvation & Practical Obedience",
+    "description": "This topic presents salvation as a process of divine healing rather than a simple legal transaction. It explores how this leads to a relational obedience born of trust, with profound implications for Christian mission and the final restoration of all things.",
+    "categories": {
+      "atonement-as-healing": {
+        "display_order": 10,
+        "name": "Atonement as Healing",
+        "display_name": "Atonement as Healing",
+        "introduction": "This section defines salvation as a form of divine medicine. Atonement is thus a process of healing that goes far beyond a mere legal pardon, aiming for comprehensive character transformation.",
+        "paragraphs": [
+          {
+            "heading": "Salvation as Divine Medicine",
+            "content": "<br/>Salvation is profoundly understood as divine medicine, a healing process, not merely a legal transaction. The Greek word sōzō, often translated as salvation, fundamentally means \"healing,\" signifying a comprehensive restoration of all sin's damage. While God is forgiveness personified and has always extended pardon, this forgiveness only opens the channel for His remedy to be received. Trust is the crucial element; without it, God's gracious provisions are of no avail, for He cannot force healing on an unwilling heart. Our Father’s ultimate longing is to win us back to trust, enabling Him to heal the damage sin has wrought physically, mentally, spiritually, and socially. Re-established trust lets Him transform us with new hearts and right spirits, making us safe for His kingdom."
+          },
+          {
+            "heading": "More Than Legal Pardon",
+            "content": "<br/>Salvation, as God intends it, is far more than a legal pardon or a change in our heavenly record. Sin is a breach of trust that has inflicted devastating physical, mental, spiritual, and social consequences, leaving us dying rather than merely guilty. The atonement is therefore a divine remedy that cures transgression and restores spiritual health, aiming for character transformation, not mere status change. God’s plan is to win us back to confidence so He can fully heal the damage sin has done, truly \"setting us right.\" He will welcome only those who genuinely desire loving kindness, renewed with new hearts and right spirits. Forgiveness, freely granted, simply prepares us to receive the deeper healing of being \"born again.\""
+          }
+        ]
+      },
+      "relational-obedience": {
+        "display_order": 20,
+        "name": "Relational Obedience",
+        "display_name": "Relational Obedience",
+        "introduction": "This category redefines obedience not as forced compliance but as the humble listening that flows from trust. It traces the believer's journey from the status of a servant to that of a friend of God.",
+        "paragraphs": [
+          {
+            "heading": "Obedience as Humble Listening",
+            "content": "<br/>True obedience is not forced compliance but a humble willingness to listen—<em>hupakoē</em>—that flows from genuine trust and love. Like a faithful gatekeeper attentively opening the door, it shows God seeks understanding, not mere servitude. He plainly rejects the service of fear, knowing coerced obedience breeds the character of a rebel—the very essence of sin. Instead, He values the free submission born of deep admiration for His wise and gracious ways. His commandments are thus guarantees of freedom, securing a universe where trust and love prevail. Obedience therefore becomes the joyous expression of healed hearts."
+          },
+          {
+            "heading": "From Servants to Friends",
+            "content": "<br/>The divine invitation calls us from mere servants to genuine friends of God. Jesus declared, \"No longer do I call you servants, for the servant does not know what his master is doing.\" But He added, \"I have called you friends, for everything I heard from My Father I have made known to you\" (John 15:15). While faithful servitude is commendable, God longs for a bond where understanding—not fear or reward—is the prime motive. Servants seek legal standing and avoidance of punishment, whereas friends, like Abraham and Moses, engage in mutual trust and open dialogue. Calvary proves we need not fear God, showing that true at-one-ment is friendship born of admiration and love, never coercion."
+          }
+        ]
+      },
+      "pastoral-and-missional-implications": {
+        "display_order": 30,
+        "name": "Pastoral & Missional Implications",
+        "display_name": "Pastoral Implications",
+        "introduction": "This section draws out the practical implications for Christian ministry. A gospel of trust necessitates a non-violent, persuasive witness, and believers are called to become agents of God's healing in the world.",
+        "paragraphs": [
+          {
+            "heading": "Non-Violent Witness & Enemy-Love",
+            "content": "<br/>A gospel centered on God’s trustworthiness demands a witness marked by non-violence and authentic enemy-love, disarming every hint of coercion. God’s good news about Himself is demonstrated through gracious acts, not forceful assertions or threats. Just as Jesus treated notorious sinners with grace, God pursues us by winning hearts, never by compelling allegiance. We are called to mirror this trust-based approach, gaining confidence through tact, wisdom, and fervent love rather than debate or hostility. Such witness avoids depicting a tyrannical deity who enforces unity through fear, instead revealing His patient, persistent love—even toward resisters. This gracious persuasion mirrors heaven’s strategy for securing the universe in freedom."
+          },
+          {
+            "heading": "Believers as Agents of Healing",
+            "content": "<br/>Recipients of God’s healing salvation become agents in a ministry of reconciliation, health, and justice—living proof of participatory atonement. Salvation means more than improved legal standing; it entails profound character transformation that makes us safe companions for eternity. God longs to see us \"born again\" with new hearts and right spirits, authentically reflecting His own kindness. The church’s mission is to foster this unity and \"at-one-ment\" among those who love and trust the same God. When we cooperate with the divine Physician, allowing Him to heal us, our lives become compelling evidence of His reliability and draw others to Him. Healing thus turns disciples into living parables of the gospel."
+          }
+        ]
+      },
+      "final-restoration-and-new-earth": {
+        "display_order": 40,
+        "name": "Final Restoration & New Earth",
+        "display_name": "Final Restoration",
+        "introduction": "This final section looks ahead to the ultimate outcome of God's redemptive plan: a universe made eternally secure in trust, where rebellion will not arise again and all creation can experience unending growth in joy and knowledge.",
+        "paragraphs": [
+          {
+            "heading": "Universe Secure in Trust",
+            "content": "<br/>God’s redemptive aim is a universe eternally secure in established trust, where every intelligence stands satisfied with His character. The Great Controversy climaxed at the cross, the costliest and most convincing evidence of His self-renouncing love. God submitted His government to creature scrutiny, letting the universe judge for itself. The final judgment—Heaven’s court—settles any lingering questions, confirming the truth of His ways. Thus universal peace, freedom, and security rest on an unshakeable foundation of trust. In such a climate, fear evaporates and gratitude fuels everlasting harmony."
+          },
+          {
+            "heading": "Eternal Growth, No Fear of Rebellion",
+            "content": "<br/>With trust eternally confirmed, the universe can grow forever without the fear of another rebellion. God’s unwavering commitment to cosmic freedom, even at infinite cost, ensures unity based on understanding, never coercion. The lessons of the Great Controversy guarantee that doubts about His character will never again arise. The second death—no torture, only final cessation—prevents a free universe from becoming a cosmic prison. In this order founded on love and trust, all beings expand in knowledge and joy without reservation. Ever-unfolding discoveries await without the shadow of suspicion ever returning."
+          }
+        ]
+      }
+    }
+  }
+}
+}
+  
+
+</script>
+  <!--
+    ============================================================
+    ^^^^^^^^^^^^^^ PASTE YOUR JSON CONTENT ABOVE ^^^^^^^^^^^^^^
+    ============================================================
+  -->
+
+  <script>
+    /* -------------------- THEME SETUP -------------------- */
+    const THEMES = {
+      'newspaper': {
+        name: 'Newspaper',
+        isDark: false,
+        vars: {
+          '--bg-gradient': '#fdfdf8',
+          '--text': '#1c1c1c',
+          '--accent-text': '#8c1c13',
+          '--nav-bg': '#f1f1eb',
+          '--nav-border': '#dcdcd3',
+          '--nav-text': '#1c1c1c',
+          '--nav-hover-bg': '#e5e5dd',
+          '--nav-active-bg': '#dcdcd3',
+          '--nav-active-text': '#1c1c1c',
+          '--prose-text': '#1c1c1c',
+          '--prose-headings': '#8c1c13'
+        },
+        rootClass: '' // serif via :root default
+      },
+      'emerald-paper': {
+        name: 'Emerald Paper',
+        isDark: false,
+        vars: {
+          '--bg-gradient': '#f7fbf9',
+          '--text': '#1e2b28',
+          '--accent-text': '#0f7f6d',
+          '--nav-bg': '#e7f3ef',
+          '--nav-border': '#86c8ba',
+          '--nav-text': '#1e2b28',
+          '--nav-hover-bg': '#d7ece6',
+          '--nav-active-bg': '#bfe3d9',
+          '--nav-active-text': '#1e2b28',
+          '--prose-text': '#1e2b28',
+          '--prose-headings': '#0f7f6d'
+        },
+        rootClass: 'theme-emerald-paper'
+      },
+      'cyber-blue': {
+        name: 'Navy (Dark)',
+        isDark: true,
+        vars: {
+          '--bg-gradient': 'linear-gradient(135deg,#0a0a23 0%, #141433 50%, #0f172a 100%)',
+          '--text': '#e5e7eb',
+          '--accent-text': '#cbd5e1',
+          '--nav-bg': '#0f172a',
+          '--nav-border': '#1f2937',
+          '--nav-text': '#e5e7eb',
+          '--nav-hover-bg': '#111827',
+          '--nav-active-bg': '#1f2937',
+          '--nav-active-text': '#e5e7eb',
+          '--prose-text': '#e5e7eb',
+          '--prose-headings': '#cbd5e1'
+        },
+        rootClass: 'theme-cyber-blue'
+      },
+      'emerald-gold': {
+        name: 'Emerald/Gold',
+        isDark: true,
+        vars: {
+          '--bg-gradient': 'linear-gradient(135deg,#022c22 0%,#064e3b 60%,#065f46 100%)',
+          '--text': '#ecfdf5',
+          '--accent-text': '#f0c475',
+          '--nav-bg': '#064e3b',
+          '--nav-border': '#d4a24c',
+          '--nav-text': '#ecfdf5',
+          '--nav-hover-bg': '#065f46',
+          '--nav-active-bg': '#0b3d31',
+          '--nav-active-text': '#f0c475',
+          '--prose-text': '#a7f3d0',
+          '--prose-headings': '#f0c475'
+        },
+        rootClass: 'theme-emerald-gold'
+      }
+    };
+
+    const THEME_KEYS = ['newspaper','emerald-paper','cyber-blue','emerald-gold'];
+    const root = document.documentElement;
+    const storageKey = 'cr_theme_v2';
+
+    function applyTheme(key){
+      const def = THEMES[key] || THEMES['newspaper'];
+      // reset classes + inline styles
+      root.className = '';
+      root.style.cssText = '';
+      // apply CSS vars
+      for(const [k,v] of Object.entries(def.vars)){ root.style.setProperty(k,v); }
+      // class for font + any theme-specific tweaks
+      if(def.rootClass) root.classList.add(def.rootClass);
+      // dark mode class for Tailwind typography invert
+      if(def.isDark) root.classList.add('dark');
+      localStorage.setItem(storageKey, key);
+      // Re-paint prose invert based on dark
+      paintContent();
+    }
+
+    function nextTheme(){
+      const cur = localStorage.getItem(storageKey) || THEME_KEYS[0];
+      const idx = (THEME_KEYS.indexOf(cur)+1) % THEME_KEYS.length;
+      applyTheme(THEME_KEYS[idx]);
+    }
+
+    document.getElementById('theme-switcher-btn').onclick = nextTheme;
+
+    /* -------------------- APP (unchanged contract) -------------------- */
+    let masterLibrary=null,sortedLibraryIds=null,currentLibraryId=null;
+    let libraryData=null,sortedTopicIds=null,currentTopicId=null,currentArticleId=null;
+
+    const hdr = document.getElementById('hdr');
+    const switchers = document.getElementById('switchers');
+    const nav = document.getElementById('article-nav');
+    const content = document.getElementById('content');
+
+    const looksLikeTopic = o => o && typeof o === 'object' && ('categories' in o || 'title' in o);
+
+    const buildLibrarySwitch = () => !sortedLibraryIds || sortedLibraryIds.length < 2 ? '' : `
+      <div class="nav-container">
+        <select id="library-switcher" class="selectlike w-full">
+          ${sortedLibraryIds.map(id=>{
+            const label=id.replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+            return `<option value="${id}" ${id===currentLibraryId?'selected':''}>${label}</option>`;
+          }).join('')}
+        </select>
+      </div>`;
+
+    const buildTopicSwitch = () => `
+      <div class="nav-container">
+        <select id="topic-switcher" class="selectlike w-full">
+          ${sortedTopicIds.map(tid=>{
+            const t=libraryData[tid];
+            return `<option value="${tid}" ${tid===currentTopicId?'selected':''}>${t.title}</option>`;
+          }).join('')}
+        </select>
+      </div>`;
+
+    const buildNav = (cats,keys) => {
+      let html = '<div class="nav-container"><h3 class="text-accent font-bold mb-2">Select Article:</h3><div class="nav-buttons-wrapper">';
+      keys.forEach(k=>{
+        const a=cats[k];
+        html += `<button class="nav-button mr-2 mb-2 ${k===currentArticleId?'active':''}" data-article-id="${k}">${a.display_name||a.name||k}</button>`;
+        if(a.breakAfter) html+='<div class="flex-break"></div>';
+      });
+      return html + '</div></div>';
+    };
+
+    function paintContent(){
+      // Toggle prose invert class based on theme darkness
+      const isDark = root.classList.contains('dark');
+      content.querySelectorAll('.prose').forEach(el=>{
+        el.classList.remove('prose-invert');
+        if(isDark) el.classList.add('prose-invert');
+      });
+    }
+
+    function render(){
+      if(!libraryData) return;
+
+      sortedTopicIds = Object.keys(libraryData).sort((a,b)=>(libraryData[a].display_order||0)-(libraryData[b].display_order||0));
+      if(!currentTopicId || !libraryData[currentTopicId]) currentTopicId = sortedTopicIds[0];
+      const topic = libraryData[currentTopicId];
+
+      const artKeys = Object.keys(topic.categories||{}).sort((a,b)=>(topic.categories[a].display_order||0)-(topic.categories[b].display_order||0));
+      if(!currentArticleId || !topic.categories[currentArticleId]) currentArticleId = artKeys[0];
+      const art = topic.categories[currentArticleId];
+
+      // Header
+      hdr.innerHTML = `
+        <div class="flex justify-between items-start gap-4">
+          <div>
+            <h1 class="text-3xl font-bold text-accent">${topic.title||''}</h1>
+            ${topic.description?`<p class="mt-2 text-primary/80">${topic.description}</p>`:''}
+          </div>
+        </div>`;
+      document.title = topic.title || 'Adaptive Reader';
+
+      // Switchers
+      switchers.innerHTML = buildLibrarySwitch() + buildTopicSwitch();
+
+      // Article nav
+      nav.innerHTML = buildNav(topic.categories, artKeys);
+
+      // Content
+      const proseCls = 'prose prose-lg max-w-none';
+      content.innerHTML =
+        `<div class="${proseCls}">
+          <h2>${art.name||art.display_name||''}</h2>
+          ${art.introduction?`<p class="lead">${art.introduction}</p>`:''}
+          ${(art.paragraphs||[]).map(p=>`
+            ${p.heading?`<h3>${p.heading}</h3>`:''}
+            ${p.content?`<p>${p.content}</p>`:''}
+          `).join('')}
+        </div>`;
+
+      // Wire events
+      nav.querySelectorAll('.nav-button').forEach(btn => btn.onclick = e => { currentArticleId = e.currentTarget.dataset.articleId; render(); });
+      const ts = document.getElementById('topic-switcher');
+      if(ts) ts.onchange = e => { currentTopicId = e.target.value; currentArticleId = null; render(); };
+      const ls = document.getElementById('library-switcher');
+      if(ls) ls.onchange = e => {
+        currentLibraryId = e.target.value;
+        localStorage.setItem('readerLibraryId', currentLibraryId);
+        libraryData = masterLibrary[currentLibraryId]; currentTopicId = currentArticleId = null; render();
+      };
+
+      // Apply prose invert based on theme
+      paintContent();
+    }
+
+    function init(){
+      // Apply stored/initial theme first to avoid flash
+      applyTheme(localStorage.getItem(storageKey) || 'newspaper');
+
+      let raw=null;
+      const embedded = document.getElementById('app-data').textContent.trim();
+      if(embedded){ raw = JSON.parse(embedded); } else { throw new Error('No JSON in #app-data'); }
+
+      const keys = Object.keys(raw);
+      if(!keys.length) throw new Error('empty data');
+
+      if(looksLikeTopic(raw[keys[0]])){
+        masterLibrary=null; sortedLibraryIds=null; currentLibraryId=null;
+        libraryData = raw;
+      }else{
+        masterLibrary = raw;
+        sortedLibraryIds = keys.sort();
+        currentLibraryId = localStorage.getItem('readerLibraryId');
+        if(!currentLibraryId || !masterLibrary[currentLibraryId]) currentLibraryId = sortedLibraryIds[0];
+        libraryData = masterLibrary[currentLibraryId];
+      }
+      currentTopicId = currentArticleId = null;
+      render();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      try { init(); }
+      catch(err){
+        console.error(err);
+        document.getElementById('content').innerHTML =
+          '<div class="p-4 text-red-500 bg-red-100 rounded"><strong>Error:</strong> Could not load content.</div>';
+      }
+    });
+  </script>
+</body>
+</html>
+

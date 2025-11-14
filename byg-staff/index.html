@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Behold Your God — Teaching Kit</title>
+<meta name="description" content="Single-file handout + flashcards." />
+<style>
+  :root{
+    --bg:#0b1020; --panel:#0f172a; --ink:#e5e7eb; --muted:#94a3b8; --brand:#22d3ee;
+    --chip:#1f2937; --chip-ink:#cbd5e1; --accent:#38bdf8; --border:#1e293b; --card:#111827;
+  }
+  @media (prefers-color-scheme: light){
+    :root{ --bg:#f7fafc; --panel:#ffffff; --ink:#0f172a; --muted:#475569; --brand:#0ea5e9; --chip:#eef2ff; --chip-ink:#3730a3; --accent:#2563eb; --border:#e5e7eb; --card:#ffffff; }
+  }
+  body{margin:0;font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+  /* CORRECTED: Changed padding from '20px' to '0 20px' to remove vertical padding and fix double horizontal padding issue on main content */
+  .wrap{max-width:1000px;margin:0 auto;padding:0 20px}
+  .hdr{position:sticky;top:0;z-index:10;background:var(--panel);border-bottom:1px solid var(--border)}
+  .hdr-inner{display:flex;gap:16px;align-items:center;justify-content:space-between;padding:14px 20px}
+  .title{display:flex;gap:12px;align-items:center;font-weight:700}
+  .badge{font-size:12px;padding:2px 8px;border-radius:999px;background:var(--chip);color:var(--chip-ink)}
+  .tabs{display:flex;gap:8px}
+  .tab{border:1px solid var(--border);background:transparent;color:var(--ink);padding:10px 14px;border-radius:999px;cursor:pointer;font-weight:600}
+  /* Active tab — clean underline indicator (no bright fill) */
+  .tab[aria-selected="true"]{
+    position:relative;
+    background:transparent;
+    color:var(--ink);
+  }
+  .tab[aria-selected="true"]::after{
+    content:"";
+    position:absolute; left:12px; right:12px; bottom:-6px;
+    height:3px; border-radius:3px; background:var(--brand);
+  }
+  .btn{border:1px solid var(--border);background:var(--panel);color:var(--ink);padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:600}
+  .panel{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:20px;margin:20px 0}
+  .fc{border:1px solid var(--border);border-radius:18px;background:var(--card);padding:26px;min-height:220px}
+  .fc-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  .k{color:var(--muted)}
+  .empty{padding:12px;border:1px dashed var(--border);border-radius:10px;color:var(--muted)}
+  /* chips used in handoutHTML */
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+  .chip{background:var(--chip);color:var(--chip-ink);border:1px solid var(--border);padding:6px 10px;border-radius:999px;font-size:12px}
+</style>
+</head>
+<body>
+  <header class="hdr">
+    <div class="hdr-inner">
+      <div class="title">
+        <span style="width:10px;height:10px;border-radius:999px;background:var(--brand)"></span>
+        <span id="headerTitle"></span>
+        <span class="badge" id="badge"></span>
+      </div>
+      <nav class="tabs" role="tablist" aria-label="Sections">
+        <button class="tab" id="t-handout" aria-selected="true" role="tab" aria-controls="tab-handout"></button>
+        <button class="tab" id="t-flashcards" aria-selected="false" role="tab" aria-controls="tab-flashcards"></button>
+      </nav>
+      <div class="actions">
+        <button class="btn" id="copyBtn" title="Copy handout"></button>
+        <button class="btn" id="printBtn" title="Print handout"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section id="tab-handout" class="panel" role="tabpanel" aria-labelledby="t-handout">
+      <div id="handout" class="empty">Loading…</div>
+    </section>
+
+    <section id="tab-flashcards" class="panel" role="tabpanel" aria-labelledby="t-flashcards" hidden>
+      <div class="fc-toolbar">
+        <button class="btn" id="flipBtn"></button>
+        <button class="btn" id="prevBtn"></button>
+        <button class="btn" id="nextBtn"></button>
+        <button class="btn" id="shuffleBtn"></button>
+        <label><input type="checkbox" id="remember" /> <span id="rememberLabel"></span></label>
+        <span id="progress" aria-live="polite"></span>
+      </div>
+
+      <article class="fc" id="card" aria-live="polite">
+        <div class="fc-inner">
+          <div class="fc-side fc-front">
+            <div id="qText"></div>
+            <div id="illusFront" class="k"></div>
+            <div><span id="pageFront"></span> • <span id="frontHint"></span></div>
+          </div>
+          <div class="fc-side fc-back" hidden>
+            <div id="aText"></div>
+            <div id="illusBack" class="k"></div>
+            <div><span id="pageBack"></span> • <span id="backHint"></span></div>
+          </div>
+        </div>
+      </article>
+      <span class="sr-only" id="flipState" aria-live="polite"></span>
+    </section>
+  </main>
+
+  <footer class="wrap"><div id="footerLine" style="padding: 20px 0; text-align: center;"></div></footer>
+
+  <script id="app-data" type="application/json">
+  {
+    "slug": "byg-staff-snake",
+    "chapterBadge": "Staff ↔︎ Serpent",
+    "pageTitle": "Behold Your God — “Staff / Snake” — Teaching Kit",
+    "metaDesc": "Staff/serpent as acted parable: dangerous forces are safe only in God’s hands. Prepares the way for the plagues—God restrains, directs, and overrules nature.",
+    "headerTitle": "Behold Your God",
+    "tabs": { "handout": "Handout", "flashcards": "Flashcards" },
+    "buttons": { "copy":"Copy Handout", "print":"Print", "flip":"Flip", "prev":"Prev", "next":"Next", "shuffle":"Shuffle", "remember":"Remember progress" },
+    "hints": { "front":"Tap Flip or press Space", "back":"Tap Next or ← / →" },
+    "footer": "Behold Your God -- Review",
+    "toasts": { "copied":"Handout copied to clipboard.", "manual":"Select & copy manually.", "shuffled":"Shuffled." },
+
+    "handoutHTML": "<h1>“Staff / Snake” — Teaching Handout</h1><div class=\"chips\"><span class=\"chip\">Theme: Safe in God’s hands</span><span class=\"chip\">Signal: Control of dangerous forces</span><span class=\"chip\">Foreshadow: The Plagues</span></div><div class=\"section\"><h2>Thesis</h2><p class=\"k\">When Moses’ staff is thrown down it becomes a serpent—an image of real, dangerous power beyond human control. Only at God’s command, when taken back up, does it become a staff again—safe, directed, and useful. The acted parable teaches: <em>it matters whose hands it’s in</em>. God alone can restrain, direct, and overrule destructive forces. This prepares the reader to understand the plagues as <em>governed</em> acts under God’s hand, not chaotic nature run amok.</p></div><div class=\"section\"><h2>Key Textual Moments</h2><ul><li><strong>Exod 4:2–4:</strong> Staff → serpent; Moses flees; at God’s word he takes it by the tail and it becomes a staff.</li><li><strong>Exod 7:10–12:</strong> Before Pharaoh, the staff becomes a serpent; the magicians imitate—but Moses’ staff <em>swallows</em> theirs.</li></ul></div><div class=\"section\"><h2>Lessons the Author Draws</h2><ul><li><strong>Danger is real:</strong> The “serpent” represents forces of nature/evil that humans cannot safely manage.</li><li><strong>Safe only in God’s hands:</strong> Under divine command, the threat is restrained and becomes an instrument.</li><li><strong>Imitation ≠ control:</strong> The magicians can mimic the sign, but cannot govern it; God overrules.</li><li><strong>Foreshadowing the plagues:</strong> God will set limits, timings, and boundaries—governed judgments, not blind catastrophe.</li></ul></div><div class=\"section\"><h2>Reading Cues</h2><ul><li>Ask in each scene: <em>Who holds the power here?</em></li><li>Track boundaries, timing, and reversals—marks of God’s restraint.</li><li>Distinguish <strong>displayed power</strong> from <strong>governed power</strong> (under command).</li></ul></div><div class=\"section\"><h2>Discussion Prompts</h2><ul><li>How does the staff/serpent sign prepare us to read the plagues?</li><li>Why is the serpent safe only when taken up at God’s word?</li><li>What does the swallowing of the magicians’ serpents teach about imitation vs. control?</li></ul></div>",
+
+    "cards": [
+      { "q":"Chapter in one line:", "a":"Dangerous forces are safe only in God’s hands; the staff/serpent sign preps us to read the plagues as governed by God.", "page":"Exod 4–7", "illus":"[🪄→🐍→🪄]" },
+      { "q":"What happens when the staff is thrown down?", "a":"It becomes a serpent—power revealed as dangerous beyond human control.", "page":"Exod 4:3", "illus":"[⬇️🐍]" },
+      { "q":"What makes the serpent safe again?", "a":"At God’s command, Moses takes it by the tail; it becomes a staff—power under divine governance.", "page":"Exod 4:4", "illus":"[🖐️🐍→🪄]" },
+      { "q":"What does the swallowing sign show?", "a":"God doesn’t just match power; He overrules it. Imitation is not control.", "page":"Exod 7:12", "illus":"[🐍🐍🐍 ⇢ 🐍]" },
+      { "q":"Main principle:", "a":"It matters whose hands it’s in—only God can restrain and direct destructive forces.", "page":"—", "illus":"[✋🛡️]" },
+      { "q":"How does this prepare for the plagues?", "a":"We expect boundaries, timing, and reversals—evidence of God’s restraint and purpose.", "page":"—", "illus":"[⏱️📏]" },
+      { "q":"What can the magicians do—and not do?", "a":"They can mimic appearance, but cannot govern outcome; their signs are swallowed.", "page":"Exod 7:11–12", "illus":"[🎭≠🧭]" },
+      { "q":"Connection to nuclear-operator analogy:", "a":"Power exists; God restrains/regulates; withdrawal or command determines effect.", "page":"—", "illus":"[⚛️🛠️]" },
+      { "q":"Reader cue:", "a":"When you see power in Exodus, ask: governed by God or running loose?", "page":"—", "illus":"[🔎🧭]" },
+      { "q":"Memory hook:", "a":"Serpent safe when seized at His word.", "page":"—", "illus":"[🗣️➡️✋🐍]" }
+    ]
+  }
+  </script>
+  <script>
+/* ================= REUSABLE LOADER (unchanged across chapters) ================= */
+(function(){
+  const fallback = {
+    slug:"app",
+    chapterBadge:"",
+    pageTitle:"Behold Your God — Teaching Kit",
+    metaDesc:"Single-file handout + flashcards.",
+    headerTitle:"Behold Your God",
+    tabs:{handout:"Handout", flashcards:"Flashcards"},
+    buttons:{copy:"Copy Handout", print:"Print", flip:"Flip", prev:"Prev", next:"Next", shuffle:"Shuffle", remember:"Remember progress"},
+    hints:{front:"Tap Flip or press Space", back:"Tap Next or ← / →"},
+    footer:"Single-file app • System fonts • No external dependencies.",
+    toasts:{copied:"Handout copied to clipboard.", manual:"Select & copy manually.", shuffled:"Shuffled."},
+    handoutHTML:"",
+    cards:[]
+  };
+
+  const cfg = readConfig();
+  loadApp(cfg);
+
+  function readConfig(){
+    try{
+      const el = document.getElementById('app-data');
+      const txt = (el?.textContent || "").trim();
+      if(!txt) return fallback;
+      const obj = JSON.parse(txt);
+      return deepMerge(fallback, obj);
+    }catch{ return fallback; }
+  }
+  function deepMerge(a,b){
+    const out = {...a};
+    for(const k in b){
+      if(b[k] && typeof b[k]==='object' && !Array.isArray(b[k])){
+        out[k] = deepMerge(a[k]||{}, b[k]);
+      }else{
+        out[k] = b[k];
+      }
+    }
+    return out;
+  }
+
+  function loadApp(cfg){
+    // Meta + header
+    document.title = cfg.pageTitle || fallback.pageTitle;
+    const meta = document.querySelector('meta[name="description"]');
+    if(meta) meta.setAttribute('content', cfg.metaDesc || fallback.metaDesc);
+    T('headerTitle', cfg.headerTitle || fallback.headerTitle);
+    T('badge', cfg.chapterBadge || "");
+
+    // Tabs & buttons
+    T('t-handout', cfg.tabs?.handout || fallback.tabs.handout);
+    T('t-flashcards', cfg.tabs?.flashcards || fallback.tabs.flashcards);
+    T('copyBtn', cfg.buttons?.copy || fallback.buttons.copy);
+    T('printBtn', cfg.buttons?.print || fallback.buttons.print);
+    T('flipBtn', cfg.buttons?.flip || fallback.buttons.flip);
+    T('prevBtn', cfg.buttons?.prev || fallback.buttons.prev);
+    T('nextBtn', cfg.buttons?.next || fallback.buttons.next);
+    T('shuffleBtn', cfg.buttons?.shuffle || fallback.buttons.shuffle);
+    T('rememberLabel', cfg.buttons?.remember || fallback.buttons.remember);
+    T('frontHint', cfg.hints?.front || fallback.hints.front);
+    T('backHint',  cfg.hints?.back  || fallback.hints.back);
+    T('footerLine', cfg.footer || fallback.footer);
+
+    // Handout
+    const handoutEl = G('handout');
+    if(cfg.handoutHTML && cfg.handoutHTML.trim()){
+      handoutEl.classList.remove('empty');
+      handoutEl.innerHTML = cfg.handoutHTML;
+    }else{
+      handoutEl.classList.add('empty');
+      handoutEl.innerHTML = 'No handout content.';
+    }
+
+    // Tabs
+    const tabs = {
+      handout: { btn: G('t-handout'),   panel: G('tab-handout') },
+      flash:   { btn: G('t-flashcards'), panel: G('tab-flashcards') }
+    };
+    const showTab = (which)=>{
+      Object.values(tabs).forEach(v=>{ v.btn.setAttribute('aria-selected','false'); v.panel.hidden = true; });
+      tabs[which].btn.setAttribute('aria-selected','true'); tabs[which].panel.hidden = false;
+    };
+    tabs.handout.btn.addEventListener('click', ()=>showTab('handout'));
+    tabs.flash.btn.addEventListener('click', ()=>showTab('flash'));
+
+    // Copy & print
+    G('copyBtn').addEventListener('click', async ()=>{
+      const text = G('handout').innerText.replace(/\n{3,}/g, '\n\n').trim();
+      try{ await navigator.clipboard.writeText(text); toast(cfg.toasts?.copied || fallback.toasts.copied); }
+      catch{
+        const ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
+        document.body.appendChild(ta); ta.focus(); ta.select();
+        try{ document.execCommand('copy'); toast(cfg.toasts?.copied || fallback.toasts.copied); }
+        catch{ toast(cfg.toasts?.manual || fallback.toasts.manual); }
+        ta.remove();
+      }
+    });
+    G('printBtn').addEventListener('click', ()=>window.print());
+
+    // Flashcards
+    const hasCards = Array.isArray(cfg.cards) && cfg.cards.length>0;
+    const cardEl = G('card'), qEl=G('qText'), aEl=G('aText'),
+          illusF=G('illusFront'), illusB=G('illusBack'),
+          pageF=G('pageFront'),  pageB=G('pageBack'),
+          progress=G('progress'), remember=G('remember'),
+          front = cardEl.querySelector('.fc-front'),
+          back  = cardEl.querySelector('.fc-back'),
+          srFlip=G('flipState');
+
+    const LS_KEY = (cfg.slug || 'app') + '-fc';
+    let order = hasCards ? cfg.cards.map((_,i)=>i) : [];
+    let idx = 0, flipped = false;
+
+    try{
+      const saved = localStorage.getItem(LS_KEY);
+      if(saved){
+        const s = JSON.parse(saved);
+        if(Array.isArray(s.order) && s.order.length===order.length) order = s.order;
+        if(Number.isInteger(s.idx)) idx = Math.min(Math.max(0,s.idx), Math.max(order.length-1,0));
+        flipped = !!s.flipped; remember.checked = true;
+      }
+    }catch{}
+
+    function current(){ return hasCards ? cfg.cards[ order[idx] ] : {q:'',a:'',page:'',illus:''}; }
+    function render(){
+      const c = current();
+      qEl.innerHTML = c.q || '';
+      aEl.textContent = c.a || '';
+      illusF.textContent = c.illus || '';
+      illusB.textContent = c.illus || '';
+      pageF.textContent = c.page || '';
+      pageB.textContent = c.page || '';
+      progress.textContent = hasCards ? `Card ${idx+1} / ${cfg.cards.length}` : 'No cards';
+      front.hidden = flipped;
+      back.hidden  = !flipped;
+      srFlip.textContent = flipped ? "Answer shown" : "Question shown";
+      if(remember.checked){
+        localStorage.setItem(LS_KEY, JSON.stringify({order, idx, flipped}));
+      }
+      ['flipBtn','prevBtn','nextBtn','shuffleBtn'].forEach(id=>G(id).disabled = !hasCards);
+    }
+    function flip(){ if(!hasCards) return; flipped = !flipped; render(); }
+    function next(){ if(!hasCards) return; idx = (idx+1) % order.length; flipped=false; render(); }
+    function prev(){ if(!hasCards) return; idx = (idx-1+order.length) % order.length; flipped=false; render(); }
+    function shuffle(){
+      if(!hasCards) return;
+      for(let i=order.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1));
+        [order[i],order[j]]=[order[j],order[i]];
+      }
+      idx=0; flipped=false; render(); toast(cfg.toasts?.shuffled || fallback.toasts.shuffled);
+    }
+
+    G('flipBtn').addEventListener('click', flip);
+    G('nextBtn').addEventListener('click', next);
+    G('prevBtn').addEventListener('click', prev);
+    G('shuffleBtn').addEventListener('click', shuffle);
+    remember.addEventListener('change', ()=>{ if(!remember.checked) localStorage.removeItem(LS_KEY); });
+
+    document.addEventListener('keydown', (e)=>{
+      if(G('t-flashcards').getAttribute('aria-selected')!=='true') return;
+      if(e.key===' '){ e.preventDefault(); flip(); }
+      if(e.key==='ArrowRight') next();
+      if(e.key==='ArrowLeft')  prev();
+    });
+
+    // Initial paint
+    render();
+  }
+
+  // helpers
+  function G(id){ return document.getElementById(id); }
+  function T(id, txt){ const el=G(id); if(el) el.textContent = txt; }
+  function toast(msg){
+    const n=document.createElement('div');
+    n.textContent=msg;
+    Object.assign(n.style,{
+      position:'fixed',bottom:'18px',left:'50%',transform:'translateX(-50%)',
+      background:'var(--panel)',color:'var(--ink)',border:'1px solid var(--border)',
+      padding:'10px 14px',borderRadius:'10px',boxShadow:'0 6px 20px rgba(0,0,0,.18)'
+    });
+    document.body.appendChild(n); setTimeout(()=>n.remove(),1800);
+  }
+})();
+</script>
+</body>
+</html>

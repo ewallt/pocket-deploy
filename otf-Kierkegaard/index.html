@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kierkegaard SPA — Single-Block Content + Themes</title>
+
+
+  <!-- Tailwind via CDN -->
+
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+
+  <style>
+    /* ====== Theme Variables ====== */
+    :root {
+      --bg-gradient: linear-gradient(135deg,#f8fafc 0%,#e2e8f0 100%);
+      --accent-1: #2563eb;  /* blue-600 */
+      --accent-2: #1d4ed8;  /* blue-700 */
+      --text-primary: #1e293b; /* slate-800 */
+      --text-secondary: #475569; /* slate-600 */
+      --ui-background: #ffffff;
+      --ui-background-accent: #f1f5f9;
+      --btn-gradient: linear-gradient(45deg,#2563eb,#1d4ed8);
+    }
+    .theme-navy {
+      --bg-gradient: linear-gradient(135deg,#0a0a23 0%,#1a1a3a 50%,#2e2e5e 100%);
+      --accent-1: #60a5fa;  /* sky-400 */
+      --accent-2: #3b82f6;  /* blue-500 */
+      --text-primary: #f1f5f9; /* slate-100 */
+      --text-secondary: #94a3b8; /* slate-400 */
+      --ui-background: #1e293b;
+      --ui-background-accent: #334155;
+      --btn-gradient: linear-gradient(45deg,#3b82f6,#1e40af);
+    }
+    .theme-emerald {
+      --bg-gradient: linear-gradient(135deg,#022c22 0%,#064e3b 60%,#065f46 100%);
+      --accent-1: #f0c475;  /* gold */
+      --accent-2: #d4a24c;  /* deep gold */
+      --text-primary: #ecfdf5; /* emerald-50 */
+      --text-secondary: #a7f3d0; /* emerald-200 */
+      --ui-background: #064e3b;
+      --ui-background-accent: #065f46;
+      --btn-gradient: linear-gradient(45deg,#10b981,#065f46);
+    }
+
+    /* Base */
+    body { background: var(--bg-gradient); color: var(--text-primary); font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; }
+    .btn {
+      padding: 0.5rem 0.875rem; border-radius: 0.5rem; border: 1px solid var(--accent-2);
+      background: var(--ui-background); color: var(--text-primary); transition: .2s;
+    }
+    .btn:hover { background: var(--btn-gradient); color: #fff; }
+    .btn:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(59,130,246,.6); }
+
+    .tab-btn { padding: .5rem .875rem; border-radius:.5rem; border:1px solid color-mix(in oklab, var(--accent-2) 30%, transparent); background: var(--ui-background); }
+    .tab-btn:hover { background: var(--btn-gradient); color:#fff; border-color: transparent; }
+    .tab-btn.active { background: var(--btn-gradient); color:#fff; border-color: transparent; }
+    .tab-btn:focus-visible { outline:none; box-shadow:0 0 0 3px rgba(59,130,246,.6); }
+
+    .card { background: color-mix(in oklab, var(--ui-background) 92%, transparent); border: 1px solid color-mix(in oklab, var(--accent-2) 25%, transparent); border-radius: 0.75rem; }
+    .muted { color: var(--text-secondary); }
+
+    /* Modal */
+    .modal {
+      display:none; position:fixed; inset:0; z-index:50; background: rgba(0,0,0,.6);
+      align-items:center; justify-content:center;
+    }
+    .modal.show { display:flex; }
+    .modal-panel {
+      background: var(--ui-background); color: var(--text-primary);
+      border:1px solid color-mix(in oklab, var(--accent-2) 25%, transparent);
+      border-radius: .75rem; min-width: 300px; max-width: 90vw;
+    }
+
+    /* High-contrast select in modal (for navy/emerald) */
+    .modal-panel select {
+      background: var(--ui-background);
+      color: var(--text-primary);
+      border: 1px solid color-mix(in oklab, var(--accent-2) 40%, transparent);
+    }
+    .modal-panel option {
+      color: var(--text-primary);
+      background: var(--ui-background);
+    }
+
+    .section-title { color: var(--accent-1); }
+  </style>
+
+
+</head>
+<body class="min-h-screen">
+
+
+  <!-- ===== (1) Top strip: Title + Description ===== -->
+
+
+  <header class="w-full">
+    <div class="px-6 py-6 border-b" style="background: var(--ui-background); border-color: color-mix(in oklab, var(--accent-2) 20%, transparent);">
+      <h1 id="appTitle" class="text-2xl font-bold tracking-tight">Loading…</h1>
+      <p id="appSubtitle" class="muted mt-1 max-w-3xl"> </p>
+    </div>
+
+
+<!-- ===== (2) Second strip: Search + Theme switcher ===== -->
+<div class="px-6 py-3 flex items-center gap-3 justify-between" style="background: var(--ui-background-accent);">
+  <div class="flex-1 max-w-xl">
+    <label for="search" class="sr-only">Search</label>
+    <input id="search" type="search" placeholder="Search terms, concepts, quotes…" class="w-full px-3 py-2 rounded-md border text-sm" />
+  </div>
+  <button id="settingsBtn" class="btn" title="Display settings" aria-haspopup="dialog" aria-controls="settingsModal">⚙️</button>
+</div>
+
+  </header>
+
+
+  <!-- Tabs -->
+
+
+  <nav class="px-6 py-3 flex flex-wrap gap-2" style="background: var(--ui-background-accent); border-bottom: 1px solid color-mix(in oklab, var(--accent-2) 20%, transparent);" role="tablist" aria-label="Primary">
+    <button class="tab-btn" data-tab="overview" role="tab" aria-selected="true" aria-controls="tab-overview">Overview</button>
+    <button class="tab-btn" data-tab="concepts" role="tab" aria-selected="false" aria-controls="tab-concepts">Concepts</button>
+    <button class="tab-btn" data-tab="data" role="tab" aria-selected="false" aria-controls="tab-data">Evidence / Data</button>
+    <button class="tab-btn" data-tab="timeline" role="tab" aria-selected="false" aria-controls="tab-timeline">Timeline</button>
+    <button class="tab-btn" data-tab="critiques" role="tab" aria-selected="false" aria-controls="tab-critiques">Critiques</button>
+    <button class="tab-btn" data-tab="glossary" role="tab" aria-selected="false" aria-controls="tab-glossary">Glossary</button>
+    <button class="tab-btn" data-tab="source" role="tab" aria-selected="false" aria-controls="tab-source">Source</button>
+  </nav>
+
+
+  <!-- Main -->
+
+
+  <main class="px-6 py-8 space-y-8">
+    <!-- Overview -->
+    <section id="tab-overview" class="tab-panel" role="tabpanel" aria-labelledby="Overview">
+      <div class="card p-6">
+        <h2 class="text-xl font-semibold section-title mb-2">Context & Takeaways</h2>
+        <p id="ovr-intro" class="mb-3"></p>
+        <ul id="ovr-bullets" class="list-disc pl-5 space-y-1"></ul>
+      </div>
+      <div class="grid md:grid-cols-2 gap-4" id="ovr-cards"></div>
+    </section>
+
+
+<!-- Concepts -->
+<section id="tab-concepts" class="tab-panel hidden" role="tabpanel" aria-labelledby="Concepts">
+  <div class="card p-6 mb-4">
+    <h2 class="text-xl font-semibold section-title mb-2">Context & Takeaways</h2>
+    <p id="con-intro" class="mb-3"></p>
+    <ul id="con-bullets" class="list-disc pl-5 space-y-1"></ul>
+  </div>
+
+  <!-- Detail panel (top) -->
+  <div id="conceptDetailTop" class="card p-5 mb-4 hidden" aria-live="polite"></div>
+
+  <!-- Cards grid -->
+  <div id="conceptList" class="grid md:grid-cols-2 gap-4"></div>
+
+  <!-- Detail panel (bottom) -->
+  <div id="conceptDetailBottom" class="card p-5 mt-4 hidden" aria-live="polite"></div>
+</section>
+
+<!-- Data -->
+<section id="tab-data" class="tab-panel hidden" role="tabpanel" aria-labelledby="Evidence / Data">
+  <div class="card p-6 mb-4">
+    <h2 class="text-xl font-semibold section-title mb-2">Context & Takeaways</h2>
+    <p id="dat-intro" class="mb-3"></p>
+    <ul id="dat-bullets" class="list-disc pl-5 space-y-1"></ul>
+  </div>
+  <div id="dataBlock" class="space-y-4"></div>
+</section>
+
+<!-- Timeline -->
+<section id="tab-timeline" class="tab-panel hidden" role="tabpanel" aria-labelledby="Timeline">
+  <div class="card p-6 mb-4">
+    <h2 class="text-xl font-semibold section-title mb-2">Context & Takeaways</h2>
+    <p id="tim-intro" class="mb-3"></p>
+    <ul id="tim-bullets" class="list-disc pl-5 space-y-1"></ul>
+  </div>
+  <ol id="timelineList" class="space-y-4"></ol>
+</section>
+
+<!-- Critiques -->
+<section id="tab-critiques" class="tab-panel hidden" role="tabpanel" aria-labelledby="Critiques">
+  <div class="card p-6 mb-4">
+    <h2 class="text-xl font-semibold section-title mb-2">Context & Takeaways</h2>
+    <p id="cri-intro" class="mb-3"></p>
+    <ul id="cri-bullets" class="list-disc pl-5 space-y-1"></ul>
+  </div>
+  <div id="critiquesList" class="space-y-4"></div>
+</section>
+
+<!-- Glossary -->
+<section id="tab-glossary" class="tab-panel hidden" role="tabpanel" aria-labelledby="Glossary">
+  <div class="card p-6 mb-4">
+    <h2 class="text-xl font-semibold section-title mb-2">Context & Takeaways</h2>
+    <p id="glo-intro" class="mb-3"></p>
+    <ul id="glo-bullets" class="list-disc pl-5 space-y-1"></ul>
+  </div>
+  <dl id="glossaryList" class="grid md:grid-cols-2 gap-4"></dl>
+</section>
+
+<!-- Source -->
+<section id="tab-source" class="tab-panel hidden" role="tabpanel" aria-labelledby="Source">
+  <div class="card p-6">
+    <h2 class="text-xl font-semibold section-title mb-2">Source & Provenance</h2>
+    <ul id="provList" class="list-disc pl-5 space-y-1 mb-4"></ul>
+    <h3 class="font-semibold mb-2">Quotes</h3>
+    <ul id="quotesList" class="list-disc pl-5 space-y-1"></ul>
+  </div>
+</section>
+
+  </main>
+
+
+  <!-- Footer -->
+
+
+  <footer class="px-6 py-8 text-sm muted">
+    © 2025 Report SPA • Single-block content demo (swap the JSON below to update everything)
+  </footer>
+
+
+  <!-- Settings Modal -->
+
+
+  <div id="settingsModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <div class="modal-panel p-5 relative">
+      <button id="closeSettings" class="absolute right-3 top-2 btn" aria-label="Close settings">✕</button>
+      <h3 id="settingsTitle" class="text-lg font-semibold mb-3">Display Settings</h3>
+      <div class="space-y-3">
+        <div>
+          <label for="themeSelect" class="block text-sm mb-1">Color theme</label>
+          <select id="themeSelect" class="w-full rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="light">Light (Neutral)</option>
+            <option value="navy">Navy Blue</option>
+            <option value="emerald">Emerald + Gold</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ===== SINGLE-BLOCK CONTENT (drop-in JSON) ===== -->
+
+
+  <script id="report" type="application/json">
+  {
+    "meta": {
+      "title": "The Divine Incognito: Kierkegaard on Why God Rules by Hiding",
+      "subtitle": "Paradox, offense, and the preservation of human freedom — a guided brief",
+      "report_provenance": [
+        { "label": "Compiled by", "detail": "Example Research Unit (Demo)" },
+        { "label": "Last updated", "detail": "2025-08-24" },
+        { "label": "Primary sources", "detail": "Either/Or (1843), Fear and Trembling (1843), Philosophical Fragments (1844), Concluding Unscientific Postscript (1846), The Book on Adler (1847), The Sickness unto Death (1849), Practice in Christianity (1850)" }
+      ]
+    },
+    "sections": [
+      {
+        "id": "overview",
+        "title": "Overview",
+        "intro": "Kierkegaard argues that God governs without coercion: revelation arrives veiled, truth confronts as paradox, and faith must be chosen rather than compelled.",
+        "bullets": [
+          "Hiddenness preserves human freedom while inviting trust.",
+          "The paradox of the God–man blocks neutrality, forcing decision.",
+          "Faith is lived subjectively—appropriated in passion, not proved on paper."
+        ],
+        "items": [
+          {
+            "id": "o1",
+            "label": "Divine Hiddenness",
+            "summary": "Revelation offers enough light to trust, never enough to coerce.",
+            "detail": "God appears “incognito” so that assent remains a free response of love rather than an unavoidable conclusion from evidence."
+          },
+          {
+            "id": "o2",
+            "label": "Paradox & Offense",
+            "summary": "The God–man is an absolute paradox.",
+            "detail": "Christ’s claim provokes either offense or faith; this stumbling-block (skandalon) prevents safe, detached spectatorship."
+          },
+          {
+            "id": "o3",
+            "label": "Truth as Subjectivity",
+            "summary": "Truth must be inwardly appropriated.",
+            "detail": "For existential realities, truth is not merely possessed—it is lived; Christianity demands passionate commitment."
+          },
+          {
+            "id": "o4",
+            "label": "Indirect Communication",
+            "summary": "Stories awaken the self.",
+            "detail": "Parables and indirection aim at inwardness, sending the listener into self-examination rather than passive assent."
+          }
+        ]
+      },
+      {
+        "id": "concepts",
+        "title": "Core Concepts",
+        "intro": "Tap any card to see a fuller explanation in the detail panels above and below the grid.",
+        "bullets": [
+          "Cards: brief identifiers.",
+          "Detail panels: the explanations.",
+          "Replace this JSON to update content."
+        ],
+        "items": [
+          {
+            "id": "c1",
+            "label": "Divine Hiddenness",
+            "summary": "God rules without overwhelming visibility.",
+            "detail": "Kierkegaard describes revelation as “a little announcement”—sufficient for faith, insufficient for proof—so that love can remain voluntary."
+          },
+          {
+            "id": "c2",
+            "label": "Paradox & Offense",
+            "summary": "The God–man blocks neutrality.",
+            "detail": "The Incarnation is an absolute paradox to reason; one either takes offense or makes the leap. The offense is not accidental but essential."
+          },
+          {
+            "id": "c3",
+            "label": "Truth as Subjectivity",
+            "summary": "Existential truth is lived.",
+            "detail": "“Truth is subjectivity” means that in matters of existence, the mode of holding the truth—passionate, responsible commitment—belongs to the truth itself."
+          },
+          {
+            "id": "c4",
+            "label": "Indirect Communication",
+            "summary": "God addresses the free person.",
+            "detail": "Parables, pseudonyms, and irony awaken the reader to choose; they refuse domination by argument and protect the space of decision."
+          },
+          {
+            "id": "c5",
+            "label": "Transparent Dependence",
+            "summary": "Faith as resting in God.",
+            "detail": "Faith is the self “resting transparently in the Power that established it”—dependence without domination, chosen rather than imposed."
+          },
+          {
+            "id": "c6",
+            "label": "Christendom",
+            "summary": "Cultural Christianity as counterfeit.",
+            "detail": "“Christendom” replaces decision with conformity; Kierkegaard insists that faith cannot be inherited like citizenship."
+          },
+          {
+            "id": "c7",
+            "label": "The Leap",
+            "summary": "Decision beyond proofs.",
+            "detail": "The leap does not despise reason; it recognizes reason’s limits in the face of paradox and steps into trust."
+          }
+        ]
+      },
+      {
+        "id": "data",
+        "title": "Evidence / Data",
+        "intro": "Instead of statistics, Kierkegaard’s ‘evidence’ is argumentative and experiential: the form of revelation, the structure of decision, and the pattern of apostolic witness.",
+        "bullets": [
+          "Form: revelation arrives veiled and indirect.",
+          "Decision: paradox forces a non-neutral choice.",
+          "Witness: authority shown in readiness to suffer."
+        ],
+        "items": [
+          {
+            "id": "d1",
+            "label": "Modes of Address",
+            "summary": "Parable, pseudonym, indirectness.",
+            "detail": "Indirection elicits inward appropriation; it resists coercion and keeps God’s address personal and free."
+          },
+          {
+            "id": "d2",
+            "label": "Apostolic Signature",
+            "summary": "Authority without force.",
+            "detail": "True authority, Kierkegaard argues, is marked by suffering witness rather than institutional power (cf. The Book on Adler)."
+          }
+        ]
+      },
+      {
+        "id": "timeline",
+        "title": "Timeline",
+        "intro": "Selected milestones across the authorship, highlighting how themes of paradox, decision, and hiddenness mature.",
+        "bullets": [
+          "1843: Either/Or; Fear and Trembling (the leap).",
+          "1844: Philosophical Fragments (teacher, moment, offense).",
+          "1846–1850: From subjectivity to offense of Christ."
+        ],
+        "items": [
+          { "id":"t1","label":"1843 — Either/Or","detail":"Introduces existential choice and the transition from aesthetic to ethical life." },
+          { "id":"t2","label":"1843 — Fear and Trembling","detail":"Abraham’s faith as passionate inwardness that transcends calculation (Johannes de Silentio)." },
+          { "id":"t3","label":"1844 — Philosophical Fragments","detail":"Johannes Climacus on the divine teacher, the moment, and the offense." },
+          { "id":"t4","label":"1846 — Concluding Unscientific Postscript","detail":"“Truth is subjectivity”: Christianity must be appropriated in existence." },
+          { "id":"t5","label":"1847 — The Book on Adler","detail":"Tests claims to apostolic authority; true authority bears suffering, not domination." },
+          { "id":"t6","label":"1849 — The Sickness unto Death","detail":"Anti-Climacus on despair and the self’s transparent dependence on God." },
+          { "id":"t7","label":"1850 — Practice in Christianity","detail":"Christ as ‘sign of contradiction’; the offense sharpened against Christendom." },
+          { "id":"t8","label":"1855 — Final Polemics & Death","detail":"Attacks on Christendom culminate; Kierkegaard dies at 42." }
+        ]
+      },
+      {
+        "id": "critiques",
+        "title": "Critiques & Implications",
+        "intro": "Debates probe whether Kierkegaard slides into relativism, undercuts the church, or sidelines public reason.",
+        "bullets": [
+          "Relativism worry vs. existential appropriation.",
+          "Church critique vs. renewal of witness.",
+          "Fideism charge vs. limits-of-reason argument."
+        ],
+        "items": [
+          { "id":"k1","label":"Relativism?","summary":"Is ‘truth is subjectivity’ anything goes?","detail":"Kierkegaard restricts it to existential appropriation; claims must still be responsible and coherent with the Christian paradox." },
+          { "id":"k2","label":"Anti-Institutional?","summary":"Is the church rejected?","detail":"He attacks ‘Christendom,’ not the church as such—calling for communities of decision and witness rather than cultural accommodation." },
+          { "id":"k3","label":"Fideism?","summary":"Leap vs. reason.","detail":"The leap recognizes reason’s limits without despising it; argument prepares, but cannot replace, decision." }
+        ]
+      }
+    ],
+    "glossary": [
+      { "term":"Paradox", "definition":"A claim that exceeds conceptual containment, demanding decision (e.g., the God–man)." },
+      { "term":"Offense (Skandalon)", "definition":"The stumbling reaction to Christ that blocks neutrality." },
+      { "term":"Indirect Communication", "definition":"Pedagogy that awakens inwardness via stories, pseudonyms, and irony." },
+      { "term":"Subjectivity", "definition":"The mode of existent appropriation without which Christian truth is not truly held." },
+      { "term":"Christendom", "definition":"Cultural Christianity that confuses belonging with faith." },
+      { "term":"Leap", "definition":"The decision of faith beyond proofs, not against reason but beyond its scope." }
+    ],
+    "quotes": [
+      { "text":"Truth is subjectivity.", "ref":"Concluding Unscientific Postscript (1846)" },
+      { "text":"The paradox is the passion of thought.", "ref":"Philosophical Fragments (1844)" },
+      { "text":"Christ is the sign of contradiction.", "ref":"Practice in Christianity (1850)" }
+    ]
+  }
+  </script>
+
+
+  <!-- ===== App logic: theme, tabs, rendering, search, concepts detail ===== -->
+
+
+  <script>
+    // ---------- Parse single-block content ----------
+    let AppData = {};
+    try {
+      AppData = JSON.parse(document.getElementById('report').textContent);
+    } catch (e) {
+      console.error('JSON parse error:', e);
+      AppData = { meta:{title:'Untitled',subtitle:'',report_provenance:[]}, sections:[], glossary:[], quotes:[] };
+    }
+
+    // ---------- Theme ----------
+    const bodyEl = document.body;
+    const themeSelect = document.getElementById('themeSelect');
+    function applyTheme(name) {
+      bodyEl.classList.remove('theme-navy', 'theme-emerald');
+      if (name === 'navy') bodyEl.classList.add('theme-navy');
+      if (name === 'emerald') bodyEl.classList.add('theme-emerald');
+      localStorage.setItem('themeChoice', name);
+    }
+    (function initTheme(){
+      const saved = localStorage.getItem('themeChoice') || 'light';
+      if (themeSelect) themeSelect.value = saved;
+      applyTheme(saved);
+    })();
+
+    // Settings modal
+    const modal = document.getElementById('settingsModal');
+    document.getElementById('settingsBtn').addEventListener('click', () => {
+      modal.classList.add('show');
+      modal.setAttribute('aria-hidden','false');
+    });
+    document.getElementById('closeSettings').addEventListener('click', () => {
+      modal.classList.remove('show');
+      modal.setAttribute('aria-hidden','true');
+    });
+    modal.addEventListener('click', (e)=>{ if(e.target===modal){ modal.classList.remove('show'); modal.setAttribute('aria-hidden','true'); }});
+    if (themeSelect) themeSelect.addEventListener('change', e => applyTheme(e.target.value));
+
+    // ---------- Helpers ----------
+    const $ = (id)=>document.getElementById(id);
+    const getSection = (sid)=> (AppData.sections||[]).find(s=>s.id===sid);
+
+    // Header
+    $('appTitle').textContent = AppData.meta.title || 'Untitled';
+    $('appSubtitle').textContent = AppData.meta.subtitle || '';
+
+    // Context helpers
+    function renderContext(sectionId, introId, bulletsId){
+      const s = getSection(sectionId);
+      if(!s) return;
+      $(introId).textContent = s.intro || '';
+      const ul = $(bulletsId); ul.innerHTML='';
+      (s.bullets||[]).forEach(b=>{
+        const li=document.createElement('li'); li.textContent=b; ul.appendChild(li);
+      });
+    }
+    renderContext('overview','ovr-intro','ovr-bullets');
+    renderContext('concepts','con-intro','con-bullets');
+    renderContext('data','dat-intro','dat-bullets');
+    renderContext('timeline','tim-intro','tim-bullets');
+    renderContext('critiques','cri-intro','cri-bullets');
+
+    // Overview cards
+    (function(){
+      const s = getSection('overview');
+      const wrap = $('ovr-cards'); if(!s||!wrap) return;
+      wrap.innerHTML='';
+      (s.items||[]).forEach(it=>{
+        const card = document.createElement('article');
+        card.className = 'card p-5';
+        card.innerHTML = `<h3 class="font-semibold mb-1" style="color: var(--accent-1);">${it.label}</h3>
+                          <p class="muted text-sm mb-2">${it.summary||''}</p>
+                          <p>${it.detail||''}</p>`;
+        wrap.appendChild(card);
+      });
+    })();
+
+    // Concepts: cards = short; detail panels = longer (distinct)
+    (function(){
+      const s = getSection('concepts');
+      const wrap = $('conceptList');
+      const topDetail = $('conceptDetailTop');
+      const bottomDetail = $('conceptDetailBottom');
+      if(!s || !wrap) return;
+
+      wrap.innerHTML = '';
+      (s.items||[]).forEach(it=>{
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'card p-5 text-left w-full focus:outline-none focus:ring-2 focus:ring-blue-500';
+        btn.dataset.id = it.id;
+        btn.setAttribute('aria-pressed','false');
+        btn.innerHTML = `
+          <h3 class="font-semibold mb-1" style="color: var(--accent-1);">${it.label}</h3>
+          <p class="muted text-sm">${it.summary||''}</p>
+        `;
+        wrap.appendChild(btn);
+      });
+
+      const cards = Array.from(wrap.querySelectorAll('[data-id]'));
+      let selectedId = null;
+
+      function renderDetail(item){
+        if(!item) {
+          topDetail.classList.add('hidden');
+          bottomDetail.classList.add('hidden');
+          return;
+        }
+        const html = `
+          <div class="text-sm uppercase tracking-wide muted mb-1">Selected concept</div>
+          <h3 class="text-lg font-semibold mb-2" style="color: var(--accent-1);">${item.label}</h3>
+          <p class="mb-2">${item.detail || item.summary || ''}</p>
+        `;
+        topDetail.innerHTML = html;
+        bottomDetail.innerHTML = html;
+        topDetail.classList.remove('hidden');
+        bottomDetail.classList.remove('hidden');
+      }
+
+      function setActive(id){
+        selectedId = id;
+        cards.forEach(c=>{
+          const active = c.dataset.id === id;
+          c.classList.toggle('ring-2', active);
+          c.classList.toggle('ring-offset-2', active);
+          c.classList.toggle('ring-blue-500', active);
+          c.setAttribute('aria-pressed', active ? 'true' : 'false');
+        });
+        const item = (s.items||[]).find(x=>x.id===id);
+        renderDetail(item);
+      }
+
+      wrap.addEventListener('click', (e)=>{
+        const btn = e.target.closest('[data-id]');
+        if(!btn) return;
+        setActive(btn.dataset.id);
+      });
+
+      wrap.addEventListener('keydown', (e)=>{
+        if(!['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Home','End'].includes(e.key)) return;
+        e.preventDefault();
+        const i = cards.findIndex(c=>c.dataset.id===selectedId);
+        let next = i < 0 ? 0 : i;
+        if(e.key==='ArrowRight' || e.key==='ArrowDown') next = Math.min(cards.length-1, i+1);
+        if(e.key==='ArrowLeft'  || e.key==='ArrowUp')   next = Math.max(0, i-1);
+        if(e.key==='Home') next = 0;
+        if(e.key==='End')  next = cards.length-1;
+        const target = cards[next] || cards[0];
+        setActive(target.dataset.id);
+        target.focus();
+      });
+
+      if(cards.length){ setActive(cards[0].dataset.id); }
+    })();
+
+    // Data block
+    (function(){
+      const s = getSection('data');
+      const wrap = $('dataBlock'); if(!s||!wrap) return;
+      wrap.innerHTML='';
+      (s.items||[]).forEach(it=>{
+        const card = document.createElement('article');
+        card.className = 'card p-5';
+        card.innerHTML = `<h3 class="font-semibold mb-1" style="color: var(--accent-1);">${it.label}</h3>
+                          <p class="muted text-sm mb-2">${it.summary||''}</p>
+                          <p>${it.detail||''}</p>`;
+        wrap.appendChild(card);
+      });
+    })();
+
+    // Timeline list
+    (function(){
+      const s = getSection('timeline');
+      const wrap = $('timelineList'); if(!s||!wrap) return;
+      wrap.innerHTML='';
+      (s.items||[]).forEach(it=>{
+        const li=document.createElement('li');
+        li.className='card p-4';
+        li.innerHTML = `<div class="font-semibold" style="color: var(--accent-1);">${it.label}</div>
+                        <div>${it.detail||''}</div>`;
+        wrap.appendChild(li);
+      });
+    })();
+
+    // Critiques
+    (function(){
+      const s = getSection('critiques');
+      const wrap = $('critiquesList'); if(!s||!wrap) return;
+      wrap.innerHTML='';
+      (s.items||[]).forEach(it=>{
+        const card = document.createElement('article');
+        card.className = 'card p-5';
+        card.innerHTML = `<h3 class="font-semibold mb-1" style="color: var(--accent-1);">${it.label}</h3>
+                          <p class="muted text-sm mb-2">${it.summary||''}</p>
+                          <p>${it.detail||''}</p>`;
+        wrap.appendChild(card);
+      });
+    })();
+
+    // Glossary
+    (function(){
+      const wrap = $('glossaryList'); if(!wrap) return;
+      wrap.innerHTML='';
+      (AppData.glossary||[]).forEach(g=>{
+        const dt = document.createElement('div');
+        dt.className = 'card p-5';
+        dt.innerHTML = `<dt class="font-semibold mb-1" style="color: var(--accent-1);">${g.term}</dt>
+                        <dd>${g.definition||''}</dd>`;
+        wrap.appendChild(dt);
+      });
+    })();
+
+    // Source & Quotes
+    (function(){
+      const pl = $('provList'); const ql = $('quotesList');
+      (AppData.meta.report_provenance||[]).forEach(p=>{
+        const li = document.createElement('li'); li.textContent = `${p.label}: ${p.detail}`; pl.appendChild(li);
+      });
+      (AppData.quotes||[]).forEach(q=>{
+        const li = document.createElement('li'); li.textContent = `"${q.text}" — ${q.ref}`; ql.appendChild(li);
+      });
+    })();
+
+    // ---------- Tabs ----------
+    const tabButtons = Array.from(document.querySelectorAll('.tab-btn'));
+    const panels = {
+      overview: document.getElementById('tab-overview'),
+      concepts: document.getElementById('tab-concepts'),
+      data: document.getElementById('tab-data'),
+      timeline: document.getElementById('tab-timeline'),
+      critiques: document.getElementById('tab-critiques'),
+      glossary: document.getElementById('tab-glossary'),
+      source: document.getElementById('tab-source')
+    };
+    function activateTab(key){
+      for(const [k,el] of Object.entries(panels)){
+        el.classList.toggle('hidden', k!==key);
+      }
+      tabButtons.forEach(b=>{
+        const active = b.dataset.tab===key;
+        b.classList.toggle('active', active);
+        b.setAttribute('aria-selected', active ? 'true' : 'false');
+        b.tabIndex = active ? 0 : -1;
+      });
+      localStorage.setItem('activeTab', key);
+      location.hash = key;
+    }
+    tabButtons.forEach(btn=>{
+      btn.addEventListener('click', ()=> activateTab(btn.dataset.tab));
+    });
+    window.addEventListener('hashchange', ()=>{
+      const key = location.hash.replace('#','');
+      if (panels[key]) activateTab(key);
+    });
+    (function initTab(){
+      const fromHash = location.hash.replace('#','');
+      const saved = localStorage.getItem('activeTab') || 'overview';
+      const key = panels[fromHash] ? fromHash : (panels[saved] ? saved : 'overview');
+      activateTab(key);
+    })();
+
+    // ---------- Search (simple demo) ----------
+    const searchBox = document.getElementById('search');
+    function searchAll(term){
+      term = term.trim().toLowerCase();
+      if(!term){ return; }
+      const concepts = getSection('concepts')?.items || [];
+      const hit = concepts.find(c=> (c.label + ' ' + (c.summary||'') + ' ' + (c.detail||'')).toLowerCase().includes(term));
+      if(hit){
+        activateTab('concepts');
+        const el = document.querySelector('[data-id="'+hit.id+'"]');
+        if (el) { el.scrollIntoView({behavior:'smooth', block:'center'}); el.click(); }
+      }
+    }
+    searchBox.addEventListener('keydown', (e)=>{ if(e.key==='Enter') searchAll(e.target.value); });
+  </script>
+
+
+</body>
+</html>

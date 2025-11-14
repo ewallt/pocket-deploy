@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Biblical Faith: What It Encompasses</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111833;
+      --ink:#e6ecff;
+      --muted:#a7b0cc;
+      --brand:#8bb9ff;
+      --accent:#c0ffe1;
+      --border:#26325b;
+      --chip:#1a2347;
+      --bad:#ff6b6b;
+      --shadow:0 8px 28px rgba(0,0,0,.35);
+      --radius:12px;
+      --radius-sm:8px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+      line-height:1.6;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
+        radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+      padding-bottom:2rem;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .container{max-width:860px;margin:0 auto;padding:1rem}
+
+    header{
+      background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:2rem 1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+    }
+
+    h1{
+      color:var(--ink);
+      font-size:1.75rem;
+      margin-bottom:.5rem;
+      letter-spacing:-.015em;
+    }
+
+    .subtitle{
+      color:var(--muted);
+      font-size:.95rem;
+      font-style:italic;
+    }
+
+    .main-answer{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+      border-left:4px solid var(--brand);
+    }
+
+    .main-answer h2{
+      color:var(--brand);
+      font-size:1.3rem;
+      margin-bottom:1rem;
+      letter-spacing:.01em;
+    }
+
+    .main-answer p{font-size:1.05rem;line-height:1.7}
+
+    .section{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      margin-bottom:1rem;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .section-header{
+      padding:1.1rem 1.25rem;
+      background:linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%);
+      color:var(--ink);
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      border-bottom:1px solid var(--border);
+    }
+
+    .section-header:active{opacity:.95}
+
+    .section-header h2{
+      font-size:1.15rem;
+      font-weight:700;
+      letter-spacing:.01em;
+    }
+
+    .section-icon{font-size:1.35rem;transition:transform .3s ease}
+    .section.active .section-icon{transform:rotate(180deg)}
+
+    .section-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+    .section.active .section-content{max-height:5000px}
+
+    .section-inner{padding:1.25rem}
+
+    h3{
+      color:var(--brand);
+      font-size:1.08rem;
+      margin:1.3rem 0 .65rem 0;
+      letter-spacing:.01em;
+    }
+    h3:first-child{margin-top:0}
+
+    .concept-list,.scripture-list{list-style:none}
+
+    .concept-item,.scripture-item{
+      background:color-mix(in oklab,var(--chip) 75%, transparent);
+      border-left:3px solid var(--brand);
+      padding:1rem;
+      margin-bottom:.75rem;
+      border-radius:var(--radius-sm);
+      border:1px solid var(--border);
+    }
+
+    .concept-item strong,.scripture-item strong{
+      color:var(--brand);
+      display:block;
+      margin-bottom:.25rem;
+    }
+
+    .timeline{
+      border-left:3px solid var(--brand);
+      padding-left:1.25rem;
+      margin-left:.5rem;
+    }
+
+    .timeline-item{
+      margin-bottom:1.25rem;
+      position:relative;
+    }
+
+    .timeline-item::before{
+      content:'';
+      position:absolute;left:-1.65rem;top:.25rem;
+      width:12px;height:12px;border-radius:50%;
+      background:var(--brand);border:3px solid var(--panel);
+      box-shadow:0 0 0 2px var(--brand);
+    }
+
+    .timeline-item strong{color:var(--brand);display:block;margin-bottom:.25rem}
+
+    .glossary-grid{display:grid;gap:1rem}
+    .glossary-term{
+      background:color-mix(in oklab,var(--chip) 75%, transparent);
+      padding:1rem;border-radius:6px;
+      border-left:3px solid var(--brand);
+      border:1px solid var(--border);
+    }
+    .glossary-term strong{color:var(--brand);display:block;margin-bottom:.25rem;font-size:1.05rem}
+
+    .critique-item{
+      background:color-mix(in oklab, var(--bad) 12%, var(--panel));
+      border-left:3px solid var(--bad);
+      padding:1rem;margin-bottom:.75rem;border-radius:4px;
+      border:1px solid var(--border);
+    }
+
+    .source{
+      background:color-mix(in oklab,var(--chip) 65%, transparent);
+      border-radius:8px;padding:1rem;margin-top:1.2rem;
+      font-size:.95rem;color:var(--muted);
+      border:1px solid var(--border);
+    }
+    .source strong{color:var(--ink)}
+
+    .back-to-top{
+      position:fixed;bottom:1.5rem;right:1rem;
+      background:var(--brand);color:#001;
+      width:50px;height:50px;border-radius:50%;
+      border:none;font-size:1.5rem;cursor:pointer;
+      box-shadow:var(--shadow);opacity:0;transition:opacity .3s ease;
+      z-index:1000;display:flex;align-items:center;justify-content:center;
+      font-weight:900;
+    }
+    .back-to-top.visible{opacity:1}
+    .back-to-top:active{transform:scale(.96)}
+
+    a{color:var(--brand)}
+
+    @media (max-width:480px){
+      h1{font-size:1.5rem}
+      .section-header h2{font-size:1.05rem}
+      .container{padding:.75rem}
+      header{padding:1.5rem 1rem}
+    }
+  </style>
+
+  <!-- RefTagger (scripture hover) -->
+  <script>
+    var refTagger = {
+      settings: {
+        bibleVersion: "KJV",
+        tooltip: "on",
+        roundCorners: true,
+        socialSharing: [],
+        tagChapters: true,
+        caseInsensitive: true,
+        noSearchTagNames: ["code","pre","script","style"]
+      }
+    };
+  </script>
+  <script src="https://api.reftagger.com/v2/RefTagger.js" defer></script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Biblical Faith: What It Encompasses</h1>
+      <p class="subtitle">Heart-Trust Awakened by God’s Love</p>
+    </header>
+
+    <div class="main-answer">
+      <h2>Core Thesis</h2>
+      <p>Biblical faith is not a human achievement but the heart’s response to God’s prior love revealed in Jesus Christ. It arises from <em>beholding</em> God’s goodness—especially the cross—so that trust, repentance, and obedience spring from love rather than fear (Romans 2:4; 1 John 4:18-19; John 12:32). True faith is relational and transformative: it receives grace, works through love, and bears the fruit of a new life aligned with the Father’s character (Ephesians 2:8-10; Galatians 5:6). Thus faith is the Spirit-created persuasion of the heart that God is as good as Jesus reveals, and it moves us to do His words.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📖 Key Scriptures</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <h3>Overview</h3>
+          <p>Scripture presents faith as trust that comes from hearing and seeing the gospel, centered on Christ’s revelation of the Father. It reshapes motives, liberates from fear, and produces a life of love.</p>
+
+          <h3>Primary Texts</h3>
+          <ul class="scripture-list">
+            <li class="scripture-item">
+              <strong>Romans 10:17</strong>
+              Faith comes by hearing the word of Christ—gospel proclamation creates trust.
+            </li>
+            <li class="scripture-item">
+              <strong>John 3:14-17</strong>
+              God’s love revealed in the lifting up of the Son evokes believing, not perishing.
+            </li>
+            <li class="scripture-item">
+              <strong>John 12:32</strong>
+              “I, if I be lifted up… will draw all.” Faith springs from the attraction of divine love.
+            </li>
+            <li class="scripture-item">
+              <strong>1 John 4:18-19</strong>
+              Perfect love casts out fear; we love because He first loved us.
+            </li>
+            <li class="scripture-item">
+              <strong>Romans 2:4</strong>
+              God’s kindness leads to repentance—change of heart is awakened by goodness.
+            </li>
+            <li class="scripture-item">
+              <strong>Galatians 5:6</strong>
+              What counts is “faith working through love,” not external badges.
+            </li>
+            <li class="scripture-item">
+              <strong>Ephesians 2:8-10</strong>
+              Salvation is by grace through faith—God’s gift—resulting in good works prepared by Him.
+            </li>
+            <li class="scripture-item">
+              <strong>Hebrews 12:2</strong>
+              Jesus, pioneer and perfecter of faith—our eyes fixed on Him form faith within us.
+            </li>
+            <li class="scripture-item">
+              <strong>Hebrews 11:1,6</strong>
+              Faith is confident trust in the unseen God and seeks Him because He is good and rewarding.
+            </li>
+            <li class="scripture-item">
+              <strong>2 Corinthians 5:14-15</strong>
+              “The love of Christ constrains us”—love changes motives and directs life.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>💡 Core Concepts</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <ul class="concept-list">
+            <li class="concept-item">
+              <strong>Faith as Heart-Appreciation</strong>
+              Trust awakens when the heart perceives God’s goodness in Christ; it’s responsive, not self-generated.
+            </li>
+            <li class="concept-item">
+              <strong>Gift, Not Achievement</strong>
+              Faith and repentance are grace-gifts produced by the Spirit through the gospel, not prerequisites we supply.
+            </li>
+            <li class="concept-item">
+              <strong>From Fear to Love</strong>
+              The gospel displaces fear with love; obedience motivated by fear is superficial, but love transforms the will.
+            </li>
+            <li class="concept-item">
+              <strong>Works as Fruit</strong>
+              Good works flow from faith’s new motive; they are evidence, not currency.
+            </li>
+            <li class="concept-item">
+              <strong>Christ-Centered Gaze</strong>
+              Faith grows by looking away from self to Jesus—the pioneer and perfecter of faith.
+            </li>
+            <li class="concept-item">
+              <strong>Eschatological Maturity</strong>
+              God seeks a people whose trusting obedience reflects His character under pressure—love steadfast to the end.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📜 Timeline</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="timeline">
+            <div class="timeline-item">
+              <strong>Promise & Trust</strong>
+              God speaks and calls—faith begins by hearing and trusting His promise (Genesis 12; Romans 4).
+            </div>
+            <div class="timeline-item">
+              <strong>Prophetic Hope</strong>
+              Israel learns that the righteous live by faith and not by sight (Habakkuk 2:4).
+            </div>
+            <div class="timeline-item">
+              <strong>Christ Revealed</strong>
+              In Jesus, the Father’s love is unveiled, creating faith in those who behold Him (John 1; John 12).
+            </div>
+            <div class="timeline-item">
+              <strong>The Cross & Resurrection</strong>
+              Love’s self-giving triumph evokes repentance and trust, launching a Spirit-filled people (Acts 2).
+            </div>
+            <div class="timeline-item">
+              <strong>Life in the Spirit</strong>
+              Faith expresses itself through love, producing a community of integrity, hope, and service (Galatians 5).
+            </div>
+            <div class="timeline-item">
+              <strong>Endurance & Hope</strong>
+              Trials refine faith toward mature love that reflects God’s heart (James 1; 1 Peter 1).
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>⚠️ Common Misreadings</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="critique-item">
+            <strong>Faith as Willpower:</strong> Treating faith as self-produced determination shifts focus from Christ’s revelation to our effort.
+          </div>
+          <div class="critique-item">
+            <strong>Legalistic Exchange:</strong> Making faith a payment God requires undermines grace and breeds fear-based religion.
+          </div>
+          <div class="critique-item">
+            <strong>Belief Without Trust:</strong> Reducing faith to mental assent ignores the relational transformation Scripture describes.
+          </div>
+          <div class="critique-item">
+            <strong>Fruit as Root:</strong> Confusing obedience with the basis of acceptance reverses the gospel’s order and erodes joy.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📚 Glossary</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="glossary-grid">
+            <div class="glossary-term">
+              <strong>Faith</strong>
+              Spirit-awakened heart-trust in God’s goodness revealed in Christ; responsive and transformative.
+            </div>
+            <div class="glossary-term">
+              <strong>Repentance</strong>
+              Gifted change of mind and direction evoked by God’s kindness, turning from fear to love.
+            </div>
+            <div class="glossary-term">
+              <strong>Grace</strong>
+              God’s unmerited favor and empowering presence that creates faith and enables obedience.
+            </div>
+            <div class="glossary-term">
+              <strong>Love (Agape)</strong>
+              Self-giving, steadfast goodness that casts out fear and energizes true obedience.
+            </div>
+            <div class="glossary-term">
+              <strong>Obedience</strong>
+              The fruit of faith’s new motive—doing God’s will because His love has won the heart.
+            </div>
+            <div class="glossary-term">
+              <strong>Perseverance</strong>
+              Trustful endurance that matures faith through trial into resilient love.
+            </div>
+          </div>
+
+          <div class="source">
+            <strong>Source:</strong> A synthesis of biblical themes emphasizing faith as heart-trust awakened by the revelation of God’s love in Christ (e.g., Romans 10:17; John 12:32; 1 John 4:18-19; Galatians 5:6; Ephesians 2:8-10).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="back-to-top" onclick="scrollToTop()" id="backToTop" aria-label="Back to top">↑</button>
+
+  <script>
+    function toggleSection(header){
+      const section = header.parentElement;
+      const all = document.querySelectorAll('.section');
+      all.forEach(s => { if(s !== section && s.classList.contains('active')) s.classList.remove('active'); });
+      section.classList.toggle('active');
+      if (window.refTagger && refTagger.tag) {
+        setTimeout(() => refTagger.tag(), 0);
+      }
+    }
+
+    window.addEventListener('scroll', () => {
+      const btn = document.getElementById('backToTop');
+      if(window.pageYOffset > 300){ btn.classList.add('visible'); }
+      else { btn.classList.remove('visible'); }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const first = document.querySelector('.section');
+      if(first) first.classList.add('active');
+      if (window.refTagger && refTagger.tag) {
+        refTagger.tag();
+      }
+    });
+
+    function scrollToTop(){
+      window.scrollTo({ top:0, behavior:'smooth' });
+    }
+  </script>
+</body>
+</html>

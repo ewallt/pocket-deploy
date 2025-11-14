@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Grace That Liberates: A Jesus-Centered Gospel</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111833;
+      --ink:#e6ecff;
+      --muted:#a7b0cc;
+      --brand:#8bb9ff;
+      --accent:#c0ffe1;
+      --border:#26325b;
+      --chip:#1a2347;
+      --bad:#ff6b6b;
+      --shadow:0 8px 28px rgba(0,0,0,.35);
+      --radius:12px;
+      --radius-sm:8px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+      line-height:1.6;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
+        radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+      padding-bottom:2rem;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .container{max-width:860px;margin:0 auto;padding:1rem}
+
+    header{
+      background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:2rem 1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+    }
+
+    h1{
+      color:var(--ink);
+      font-size:1.75rem;
+      margin-bottom:.5rem;
+      letter-spacing:-.015em;
+    }
+
+    .subtitle{
+      color:var(--muted);
+      font-size:.95rem;
+      font-style:italic;
+    }
+
+    .main-answer{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+      border-left:4px solid var(--brand);
+    }
+
+    .main-answer h2{
+      color:var(--brand);
+      font-size:1.3rem;
+      margin-bottom:1rem;
+      letter-spacing:.01em;
+    }
+
+    .main-answer p{font-size:1.05rem;line-height:1.7}
+
+    .section{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      margin-bottom:1rem;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .section-header{
+      padding:1.1rem 1.25rem;
+      background:linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%);
+      color:var(--ink);
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      border-bottom:1px solid var(--border);
+    }
+
+    .section-header:active{opacity:.95}
+
+    .section-header h2{
+      font-size:1.15rem;
+      font-weight:700;
+      letter-spacing:.01em;
+    }
+
+    .section-icon{font-size:1.35rem;transition:transform .3s ease}
+    .section.active .section-icon{transform:rotate(180deg)}
+
+    .section-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+    .section.active .section-content{max-height:5000px}
+
+    .section-inner{padding:1.25rem}
+
+    h3{
+      color:var(--brand);
+      font-size:1.08rem;
+      margin:1.3rem 0 .65rem 0;
+      letter-spacing:.01em;
+    }
+    h3:first-child{margin-top:0}
+
+    .concept-list,.scripture-list{list-style:none}
+
+    .concept-item,.scripture-item{
+      background:color-mix(in oklab,var(--chip) 75%, transparent);
+      border-left:3px solid var(--brand);
+      padding:1rem;
+      margin-bottom:.75rem;
+      border-radius:var(--radius-sm);
+      border:1px solid var(--border);
+    }
+
+    .concept-item strong,.scripture-item strong{
+      color:var(--brand);
+      display:block;
+      margin-bottom:.25rem;
+    }
+
+    .timeline{
+      border-left:3px solid var(--brand);
+      padding-left:1.25rem;
+      margin-left:.5rem;
+    }
+
+    .timeline-item{
+      margin-bottom:1.25rem;
+      position:relative;
+    }
+
+    .timeline-item::before{
+      content:'';
+      position:absolute;left:-1.65rem;top:.25rem;
+      width:12px;height:12px;border-radius:50%;
+      background:var(--brand);border:3px solid var(--panel);
+      box-shadow:0 0 0 2px var(--brand);
+    }
+
+    .timeline-item strong{color:var(--brand);display:block;margin-bottom:.25rem}
+
+    .glossary-grid{display:grid;gap:1rem}
+    .glossary-term{
+      background:color-mix(in oklab,var(--chip) 75%, transparent);
+      padding:1rem;border-radius:6px;
+      border-left:3px solid var(--brand);
+      border:1px solid var(--border);
+    }
+    .glossary-term strong{color:var(--brand);display:block;margin-bottom:.25rem;font-size:1.05rem}
+
+    .critique-item{
+      background:color-mix(in oklab, var(--bad) 12%, var(--panel));
+      border-left:3px solid var(--bad);
+      padding:1rem;margin-bottom:.75rem;border-radius:4px;
+      border:1px solid var(--border);
+    }
+
+    .source{
+      background:color-mix(in oklab,var(--chip) 65%, transparent);
+      border-radius:8px;padding:1rem;margin-top:1.2rem;
+      font-size:.95rem;color:var(--muted);
+      border:1px solid var(--border);
+    }
+    .source strong{color:var(--ink)}
+
+    .back-to-top{
+      position:fixed;bottom:1.5rem;right:1rem;
+      background:var(--brand);color:#001;
+      width:50px;height:50px;border-radius:50%;
+      border:none;font-size:1.5rem;cursor:pointer;
+      box-shadow:var(--shadow);opacity:0;transition:opacity .3s ease;
+      z-index:1000;display:flex;align-items:center;justify-content:center;
+      font-weight:900;
+    }
+    .back-to-top.visible{opacity:1}
+    .back-to-top:active{transform:scale(.96)}
+
+    a{color:var(--brand)}
+
+    @media (max-width:480px){
+      h1{font-size:1.5rem}
+      .section-header h2{font-size:1.05rem}
+      .container{padding:.75rem}
+      header{padding:1.5rem 1rem}
+    }
+  </style>
+
+  <!-- RefTagger (scripture hover) -->
+  <script>
+    var refTagger = {
+      settings: {
+        bibleVersion: "KJV",
+        tooltip: "on",
+        roundCorners: true,
+        socialSharing: [],
+        tagChapters: true,
+        caseInsensitive: true,
+        noSearchTagNames: ["code","pre","script","style"]
+      }
+    };
+  </script>
+  <script src="https://api.reftagger.com/v2/RefTagger.js" defer></script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Grace That Liberates: A Jesus-Centered Gospel</h1>
+      <p class="subtitle">How the Good News Reframes God, Sin, Faith, and the Church</p>
+    </header>
+
+    <div class="main-answer">
+      <h2>Core Thesis</h2>
+      <p>The gospel is not a sin-management plan or a religious ladder; it is the announcement that God is exactly like Jesus and that His relentless grace is already reaching for every person (John 14:9; Luke 19:10). In Jesus we see that God condemns sin because it destroys us, yet He refuses to condemn sinners—He forgives, restores, and invites us to follow Him into real life (John 8:11; Luke 15). Faith is trusting this good news enough to walk in it; discipleship is learning to love like Jesus in everyday life (Galatians 5:6; Ephesians 2:8–10). The church exists not to guard boundaries but to embody hospitality, reconciliation, and practical mercy that mirror the Father’s heart (2 Corinthians 5:18–20; Matthew 9:13).</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📖 Key Scriptures</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <h3>Overview</h3>
+          <p>These passages frame a Jesus-centered, grace-forward reading of Scripture in which forgiveness precedes transformation and God’s kindness leads to repentance.</p>
+
+          <h3>Primary Texts</h3>
+          <ul class="scripture-list">
+            <li class="scripture-item">
+              <strong>John 14:9</strong>
+              “Whoever has seen Me has seen the Father”—Jesus is the definitive revelation of God.
+            </li>
+            <li class="scripture-item">
+              <strong>Luke 15</strong>
+              Lost sheep, coin, and sons—God’s pursuing, celebratory grace finds and restores the lost.
+            </li>
+            <li class="scripture-item">
+              <strong>John 8:10–11</strong>
+              “Neither do I condemn you… go, and sin no more”—grace precedes and empowers change.
+            </li>
+            <li class="scripture-item">
+              <strong>Matthew 9:10–13</strong>
+              “I desire mercy, not sacrifice”—Jesus shares table fellowship with sinners and redefines holiness around compassion.
+            </li>
+            <li class="scripture-item">
+              <strong>Romans 2:4</strong>
+              God’s kindness leads to repentance—goodness awakens a new mind and direction.
+            </li>
+            <li class="scripture-item">
+              <strong>2 Corinthians 5:19–20</strong>
+              God was in Christ reconciling the world, not counting trespasses—ministry of reconciliation given to the church.
+            </li>
+            <li class="scripture-item">
+              <strong>Romans 5:6–11</strong>
+              While we were enemies, we were reconciled—love initiates, sinners respond.
+            </li>
+            <li class="scripture-item">
+              <strong>Ephesians 2:8–10</strong>
+              Saved by grace through faith for good works prepared in advance—works are fruit, not currency.
+            </li>
+            <li class="scripture-item">
+              <strong>Galatians 5:6</strong>
+              What counts is “faith working through love”—trust that expresses itself as love.
+            </li>
+            <li class="scripture-item">
+              <strong>Luke 7:36–50</strong>
+              Those who know they are forgiven much, love much—grace produces devotion.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>💡 Core Concepts</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <ul class="concept-list">
+            <li class="concept-item">
+              <strong>God Looks Like Jesus</strong>
+              We don’t look past Jesus to define God; we look at Jesus and adjust everything else accordingly (Hebrews 1:3).
+            </li>
+            <li class="concept-item">
+              <strong>Grace Before Change</strong>
+              Divine acceptance comes first and generates transformation; repentance is a response to mercy, not a prerequisite for love (Romans 2:4).
+            </li>
+            <li class="concept-item">
+              <strong>Sin as Dehumanization</strong>
+              Sin damages people and relationships; salvation restores image-bearing life and community (John 10:10).
+            </li>
+            <li class="concept-item">
+              <strong>Faith as Trusting Allegiance</strong>
+              Faith is relational confidence in Jesus that expresses itself as love and obedience (Galatians 5:6; John 14:15).
+            </li>
+            <li class="concept-item">
+              <strong>Table Fellowship as Mission</strong>
+              Jesus practices boundary-breaking hospitality; the church extends the table, not the fence (Luke 5:29–32; Luke 19:1–10).
+            </li>
+            <li class="concept-item">
+              <strong>Scripture Through the Christ Lens</strong>
+              Read difficult texts and doctrines in light of Jesus’ character—especially His mercy and enemy-love (John 1:17–18).
+            </li>
+            <li class="concept-item">
+              <strong>Church as a Reconciling People</strong>
+              Our vocation is to embody grace: peacemaking, forgiveness, practical care for the least (2 Corinthians 5:18–20; Matthew 25:31–40).
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📜 Timeline</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="timeline">
+            <div class="timeline-item">
+              <strong>Seeing God in Jesus</strong>
+              The Gospels present God’s heart in the words and ways of Jesus (John 14:9).
+            </div>
+            <div class="timeline-item">
+              <strong>Cross-Shaped Grace</strong>
+              At Calvary we discover judgment that heals and forgiveness offered to enemies (Luke 23:34; Colossians 2:15).
+            </div>
+            <div class="timeline-item">
+              <strong>Resurrection Invitation</strong>
+              The risen Lord calls sinners, doubters, and outsiders into friendship and mission (John 21; Matthew 28:16–20).
+            </div>
+            <div class="timeline-item">
+              <strong>Spirit-Formed Community</strong>
+              The church learns to practice generosity, reconciliation, and boundary-breaking welcome (Acts 2–4).
+            </div>
+            <div class="timeline-item">
+              <strong>Everyday Discipleship</strong>
+              Apprenticeship to Jesus reorients work, money, enemies, and neighbors around love (Romans 12; James 2).
+            </div>
+            <div class="timeline-item">
+              <strong>New Creation Hope</strong>
+              Grace matures into a people who reflect Christ’s character as a living preview of the kingdom (Revelation 21–22).
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>⚠️ Common Misreadings</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="critique-item">
+            <strong>Grace as Permission:</strong> Confusing grace with indulgence misses that grace heals and empowers holy love, it never excuses harm (Titus 2:11–12).
+          </div>
+          <div class="critique-item">
+            <strong>Faith as Transaction:</strong> Treating faith as a payment God demands undermines gift; faith is trusting reception that bears fruit (Ephesians 2:8–10).
+          </div>
+          <div class="critique-item">
+            <strong>Holiness as Separation from People:</strong> Jesus’ holiness moves toward sinners in redemptive fellowship, not away from them (Matthew 9:10–13).
+          </div>
+          <div class="critique-item">
+            <strong>Church as Gatekeeper:</strong> When boundary-policing replaces table hospitality, the church ceases to reflect the Father’s heart (Luke 15).
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📚 Glossary</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="glossary-grid">
+            <div class="glossary-term">
+              <strong>Grace</strong>
+              God’s unmerited favor and transforming presence that meets us first and changes us from within.
+            </div>
+            <div class="glossary-term">
+              <strong>Repentance</strong>
+              A Spirit-awakened change of mind and direction in response to God’s kindness.
+            </div>
+            <div class="glossary-term">
+              <strong>Faith</strong>
+              Relational trust in Jesus that expresses itself through love and obedience.
+            </div>
+            <div class="glossary-term">
+              <strong>Discipleship</strong>
+              Apprenticeship to Jesus—learning to live His teaching in ordinary life.
+            </div>
+            <div class="glossary-term">
+              <strong>Hospitality</strong>
+              Gospel-shaped welcome that makes space for outsiders and enemies at the table.
+            </div>
+            <div class="glossary-term">
+              <strong>Reconciliation</strong>
+              The restoration of relationships with God and others through embodied forgiveness and peacemaking.
+            </div>
+          </div>
+
+          <div class="source">
+            <strong>Source:</strong> A synthesis of Jesus-centered, grace-forward themes emphasizing forgiveness-first, relational trust, and church as a hospitable, reconciling community (e.g., John 14:9; Luke 15; Matthew 9:13; Romans 2:4; 2 Corinthians 5:19–20; Ephesians 2:8–10).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="back-to-top" onclick="scrollToTop()" id="backToTop" aria-label="Back to top">↑</button>
+
+  <script>
+    function toggleSection(header){
+      const section = header.parentElement;
+      const all = document.querySelectorAll('.section');
+      all.forEach(s => { if(s !== section && s.classList.contains('active')) s.classList.remove('active'); });
+      section.classList.toggle('active');
+      if (window.refTagger && refTagger.tag) {
+        setTimeout(() => refTagger.tag(), 0);
+      }
+    }
+
+    window.addEventListener('scroll', () => {
+      const btn = document.getElementById('backToTop');
+      if(window.pageYOffset > 300){ btn.classList.add('visible'); }
+      else { btn.classList.remove('visible'); }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const first = document.querySelector('.section');
+      if(first) first.classList.add('active');
+      if (window.refTagger && refTagger.tag) {
+        refTagger.tag();
+      }
+    });
+
+    function scrollToTop(){
+      window.scrollTo({ top:0, behavior:'smooth' });
+    }
+  </script>
+</body>
+</html>

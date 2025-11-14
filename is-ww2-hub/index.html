@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WWII Hub</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111833;
+      --ink:#e6ecff;
+      --muted:#a7b0cc;
+      --brand:#8bb9ff;
+      --accent:#c0ffe1;
+      --border:#26325b;
+      --chip:#1a2347;
+      --shadow:0 8px 28px rgba(0,0,0,.35);
+      --radius:14px;
+      --radius-sm:10px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+      line-height:1.6;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
+        radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+      padding-bottom:2rem;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .container{max-width:1100px;margin:0 auto;padding:1rem}
+
+    .breadcrumb{
+      margin-bottom:1rem;
+      font-size:.92rem;
+    }
+    .breadcrumb a{
+      color:var(--brand);
+      text-decoration:none;
+    }
+    .breadcrumb a:hover{
+      text-decoration:underline;
+    }
+    .breadcrumb span{
+      color:var(--muted);
+      margin:0 .5rem;
+    }
+
+    header{
+      background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:2rem 1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+    }
+
+    h1{
+      color:var(--ink);
+      font-size:1.9rem;
+      margin-bottom:.4rem;
+      letter-spacing:-.02em;
+    }
+
+    .subtitle{
+      color:var(--muted);
+      font-size:.98rem;
+      font-style:italic;
+    }
+
+    .toolbar{
+      display:flex;gap:.75rem;flex-wrap:wrap;
+      margin:1rem 0 1.25rem 0;
+    }
+
+    .search{
+      flex:1 1 320px;
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:999px;
+      display:flex;align-items:center;gap:.5rem;
+      padding:.65rem .9rem;
+      box-shadow:var(--shadow);
+    }
+    .search input{
+      width:100%;border:none;background:transparent;color:var(--ink);
+      outline:none;font-size:1rem;
+    }
+    .chip{
+      background:color-mix(in oklab,var(--chip) 75%, transparent);
+      border:1px solid var(--border);
+      color:var(--ink);
+      padding:.5rem .75rem;border-radius:999px;
+      font-size:.9rem;cursor:pointer;user-select:none;
+    }
+    .chip.active{outline:2px solid var(--brand)}
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(4, minmax(0,1fr));
+      gap:1rem;
+    }
+    @media (max-width:980px){ .grid{grid-template-columns:repeat(3, minmax(0,1fr));} }
+    @media (max-width:720px){ .grid{grid-template-columns:repeat(2, minmax(0,1fr));} }
+    @media (max-width:480px){
+      .grid{grid-template-columns:1fr;}
+      h1{font-size:1.6rem}
+      .chip{padding:.6rem .8rem}
+      .btn{padding:.7rem .9rem;font-size:1rem}
+      .card p{min-height:auto}
+    }
+
+    .card{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:1rem;
+      box-shadow:var(--shadow);
+      display:flex;flex-direction:column;gap:.6rem;
+      transition:transform .15s ease, border-color .2s ease;
+      position:relative;
+      overflow:hidden;
+    }
+    .card::after{
+      content:'';
+      position:absolute;inset:0;
+      background:radial-gradient(400px 160px at 110% -10%, rgba(139,185,255,.10), transparent 60%);
+      pointer-events:none;
+    }
+    .card:hover{transform:translateY(-2px);border-color:color-mix(in oklab,var(--brand) 60%, var(--border))}
+    .card h3{
+      color:var(--brand);font-size:1.05rem;letter-spacing:.01em;
+    }
+    .card p{
+      color:var(--muted);font-size:.95rem;line-height:1.5;min-height:3.2em;
+    }
+
+    .tagrow{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.2rem}
+    .tag{
+      font-size:.75rem;color:var(--ink);
+      background:color-mix(in oklab,var(--chip) 65%, transparent);
+      border:1px solid var(--border);
+      padding:.25rem .5rem;border-radius:999px;
+    }
+
+    .actions{display:flex;gap:.5rem;margin-top:.35rem}
+    .btn{
+      width:100%;
+      text-align:center;text-decoration:none;
+      background:linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%);
+      color:#e6ecff;border:1px solid var(--border);
+      padding:.55rem .7rem;border-radius:10px;font-weight:600;font-size:.9rem;
+    }
+
+    footer{
+      margin-top:1.25rem;
+      color:var(--muted);
+      font-size:.88rem;text-align:center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="https://ewallt.github.io/pocket-deploy/is-war-hub/index.html">Military History Hub</a>
+      <span>›</span>
+      World War II
+    </div>
+    <header>
+      <h1>WWII Hub</h1>
+      <p class="subtitle">Key Battles & Campaigns (1939–1945)</p>
+      <div class="toolbar">
+        <div class="search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 21l-4.2-4.2M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <input id="searchInput" type="search" placeholder="Filter by title, theater, year, or tags…" autocomplete="off"/>
+        </div>
+        <button class="chip" data-tag="all">All</button>
+        <button class="chip" data-tag="europe">Europe</button>
+        <button class="chip" data-tag="eastern-front">Eastern Front</button>
+        <button class="chip" data-tag="western-front">Western Front</button>
+        <button class="chip" data-tag="pacific">Pacific</button>
+        <button class="chip" data-tag="north-africa">North Africa</button>
+        <button class="chip" data-tag="air">Air</button>
+        <button class="chip" data-tag="naval">Naval</button>
+        <button class="chip" data-tag="amphibious">Amphibious</button>
+        <button class="chip" data-tag="turning-point">Turning Point</button>
+      </div>
+    </header>
+
+    <main>
+      <div id="grid" class="grid" aria-live="polite"></div>
+    </main>
+
+    <footer>Public view: “Open” only. Owner page can include “Edit.”</footer>
+  </div>
+
+  <script>
+    // ---- Canonical parent (so children can breadcrumb back) ----
+    const PARENT_DASHBOARD = {
+      title: "WWII Hub",
+      url: "https://ewallt.github.io/pocket-deploy/is-ww2-hub/index.html"
+    };
+
+    // ---- Configure WWII battles/campaigns (public: Open only) ----
+    // ids use the required "is-ww2-" prefix
+    const apps = [
+      {
+        id:"is-ww2-invasion-of-poland-1939",
+        title:"Invasion of Poland (1939)",
+        blurb:"Germany and the USSR partition Poland; war in Europe begins.",
+        tags:["europe","western-front","land","1939"],
+        view:"https://ewallt.github.io/pocket-deploy/is-ww2-invasion-of-poland-1939/index.html"
+      },
+      {
+        id:"is-ww2-battle-of-france-1940",
+        title:"Battle of France (1940)",
+        blurb:"Blitzkrieg through the Low Countries; fall of France.",
+        tags:["europe","western-front","land","1940","turning-point"],
+        view:"https://ewallt.github.io/pocket-deploy/is-ww2-battle-of-france-1940/index.html"
+      },
+      {
+        id:"is-ww2-battle-of-britain-1940",
+        title:"Battle of Britain (1940)",
+        blurb:"RAF holds the line in the first major air-only campaign.",
+        tags:["europe","air","1940","turning-point"],
+        view:"https://ewallt.github.io/pocket-deploy/is-ww2-battle-of-britain-1940/index.html"
+      },
+      {
+        id:"is-ww2-battle-of-the-atlantic-1939-45",
+        title:"Battle of the Atlantic (1939–45)",
+        blurb:"U-boat war vs. Allied convoys; lifeline to Britain.",
+        tags:["naval","atlantic","europe","1939","1940","1941","1942","1943","1944","1945"],
+        view:"https://ewallt.github.io/pocket-deploy/is-ww2-battle-of-the-atlantic-1939-45/index.html"
+      },
+      {
+        id:"is-ww2-operation-barbarossa-1941",
+        title:"Operation Barbarossa (1941)",
+        blurb:"Axis invasion of the USSR opens the Eastern Front.",
+        tags:["eastern-front","europe","land","1941"],
+        view:"https://ewallt.github.io/pocket-deploy/is-ww2-operation-barbarossa-1941/index.html"
+      },
+      {
+        id:"is-ww2-battle-of-moscow-1941-42",
+        title:"Battle of Moscow (1941–42)",
+        blurb:"Soviet defense halts the drive on the capital.",
+        tags:["eastern-front","europe","land","1941","1942"],
+        view:"https://ewallt.github.io/pocket-deploy/is-ww2-battle-of-moscow-1941-42/index.html"
+      },
+      {
+        id:"is-ww2-siege-of-leningrad-1941-44",
+        title:"Siege of Leningrad (1941–44)",
+        blurb:"A brutal 872-day siege; immense civilian suffering and endurance.",
+        tags:["eastern-front","europe","land","1941","1942","1943","1944"],
+        view:"https://ewallt.github.io/pocket-deploy/is-ww2-siege-of-leningrad-1941-44/index.html"
+      },
+      {
+        id:"is-ww2-battle-of-stalingrad-1942-43",
+        title:"Battle of Stalingrad (1942–43)",
+        blurb:"Encirclement at the Volga breaks the German offensive.",
+        tags:["eastern-front","europe","land","1942","1943","turning-point"],
+        view:"https://ewallt.github.io/pocket-deploy/is-ww2-battle-of-stalingrad-1942-43/index.html"
+      },
+      {
+        id:"is-ww2-second-battle-of-el-alamein-1942",
+        title:"El Alamein (1942)",
+        blurb:"Montgomery stops Rommel; Axis pushed from Egypt.",
+        tags:["north-africa","europe","land","1942","turning-point"],
+        view:"https://ewallt.github.io/pocket-deploy/is-ww2-second-battle-of-el-alamein-1942/index.html"
+      },
+      {
+        id:"is-ww2-operation-torch-1942",
+        title:"Operation Torch (1942)",
+        blurb:"Allied landings in North Africa open a new front.",
+        tags:["north-africa","amphibious","1942"],
+        view:"https://ewallt.github.io/pocket-deploy/is-ww2-operation-torch-1942/index.html"
+      },
+      {
+        id:"is-ww2-pearl-harbor-1941",
+        title:"Pearl Harbor (1941)",
+        blurb:"Japanese carrier strike brings the U.S. into the war.",
+        tags:["pacific","naval","air","1941"],
+        view:"https://ewallt.github.io/pocket-deploy/is-ww2-pearl-harbor-1941/index.html"
+      },
+      {
+        id:"is-ww2-battle-of-midway-1942",
+        title:"Battle of Midway (1942)",
+        blurb:"U.S. carriers sink four Japanese fleet carriers.",
+        tags:["pacific","naval","air","1942","turning-point"],
+        view:"https://ewallt.github.io/pocket-deploy/is-ww2-battle-of-midway-1942/index.html"
+      },
+      {
+        id:"is-ww2-guadalcanal-campaign-1942-43",
+        title:"Guadalcanal Campaign (1942–43)",
+        blurb:"First major Allied offensive in the Pacific; attritional victory.",
+        tags:["pacific","amphibious","land","naval","air","1942","1943"],
+        view:"https://ewallt.github.io/pocket-deploy/is-ww2-guadalcanal-campaign-1942-43/index.html"
+      },
+      {
+        id:"is-ww2-italian-campaign-1943-45",
+        title:"Italian Campaign (1943–45)",
+        blurb:"From Sicily to the Gothic Line; costly mountain fighting.",
+        tags:["europe","western-front","land","1943","1944","1945","amphibious"],
+        view:"https://ewallt.github.io/pocket-deploy/is-ww2-italian-campaign-1943-45/index.html"
+      },
+      {
+        id:"is-ww2-operation-overlord-d-day-1944",
+        title:"Operation Overlord / D-Day (1944)",
+        blurb:"Allied landings in Normandy open the Western Front.",
+        tags:["europe","western-front","amphibious","1944","turning-point"],
+        view:"https://ewallt.github.io/pocket-deploy/is-ww2-operation-overlord-d-day-1944/index.html"
+      },
+      {
+        id:"is-ww2-operation-bagration-1944",
+        title:"Operation Bagration (1944)",
+        blurb:"Destruction of Army Group Centre; Soviet surge west.",
+        tags:["eastern-front","europe","land","1944"],
+        view:"https://ewallt.github.io/pocket-deploy/is-ww2-operation-bagration-1944/index.html"
+      },
+      {
+        id:"is-ww2-battle-of-the-bulge-1944-45",
+        title:"Battle of the Bulge (1944–45)",
+        blurb:"Hitler’s last major offensive in the West is repulsed.",
+        tags:["europe","western-front","land","1944","1945"],
+        view:"https://ewallt.github.io/pocket-deploy/is-ww2-battle-of-the-bulge-1944-45/index.html"
+      },
+      {
+        id:"is-ww2-iwo-jima-1945",
+        title:"Iwo Jima (1945)",
+        blurb:"Brutal island battle; airfields seized for B-29 escorts.",
+        tags:["pacific","amphibious","land","1945"],
+        view:"https://ewallt.github.io/pocket-deploy/is-ww2-iwo-jima-1945/index.html"
+      },
+      {
+        id:"is-ww2-okinawa-1945",
+        title:"Okinawa (1945)",
+        blurb:"Largest Pacific amphibious assault; heavy casualties on both sides.",
+        tags:["pacific","amphibious","land","naval","air","1945"],
+        view:"https://ewallt.github.io/pocket-deploy/is-ww2-okinawa-1945/index.html"
+      },
+      {
+        id:"is-ww2-battle-of-berlin-1945",
+        title:"Battle of Berlin (1945)",
+        blurb:"Red Army captures Berlin; Nazi Germany collapses.",
+        tags:["eastern-front","europe","land","1945","turning-point"],
+        view:"https://ewallt.github.io/pocket-deploy/is-ww2-battle-of-berlin-1945/index.html"
+      },
+      {
+        id:"is-ww2-battle-of-kursk-1943",
+        title:"Battle of Kursk (1943)",
+        blurb:"The largest tank battle in history and the final major German offensive in the East.",
+        tags:["eastern-front","armor","1943","turning-point"],
+        view:"https://ewallt.github.io/pocket-deploy/is-ww2-battle-of-kursk-1943/index.html"
+      }
+
+    ];
+
+    // ---- Render cards ----
+    const grid = document.getElementById('grid');
+    const searchInput = document.getElementById('searchInput');
+    const chips = Array.from(document.querySelectorAll('.chip'));
+    let activeTag = 'all';
+
+    function makeCard(app){
+      const el = document.createElement('article');
+      el.className = 'card';
+      el.dataset.tags = app.tags.join(' ').toLowerCase();
+      el.dataset.title = app.title.toLowerCase();
+      el.innerHTML = `
+        <h3>${app.title}</h3>
+        <p>${app.blurb}</p>
+        <div class="tagrow">
+          ${app.tags.map(t=>`<span class="tag">#${t}</span>`).join('')}
+        </div>
+        <div class="actions">
+          <a class="btn" href="${app.view}">Open</a>
+        </div>
+      `;
+      return el;
+    }
+
+    function render(){
+      grid.innerHTML = '';
+      const q = (searchInput.value || '').trim().toLowerCase();
+      apps
+        .filter(a=>{
+          const tagOk = activeTag==='all' ? true : a.tags.map(t=>t.toLowerCase()).includes(activeTag);
+          const text = (a.title + ' ' + a.blurb + ' ' + a.tags.join(' ')).toLowerCase();
+          const qOk = !q || text.includes(q);
+          return tagOk && qOk;
+        })
+        .forEach(a=>grid.appendChild(makeCard(a)));
+
+      // Defensive: ensure same-tab navigation (strip any stray attributes)
+      grid.querySelectorAll('a.btn').forEach(a=>{
+        a.removeAttribute('target');
+        a.removeAttribute('rel');
+      });
+    }
+
+    // ---- Interactions ----
+    searchInput.addEventListener('input', render);
+    chips.forEach(chip=>{
+      chip.addEventListener('click', ()=>{
+        chips.forEach(c=>c.classList.remove('active'));
+        chip.classList.add('active');
+        activeTag = chip.dataset.tag;
+        render();
+      });
+    });
+    // default: All active
+    document.querySelector('.chip[data-tag="all"]').classList.add('active');
+
+    // Initial render
+    render();
+  </script>
+</body>
+</html>

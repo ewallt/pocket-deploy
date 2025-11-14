@@ -1,0 +1,40 @@
+<!-- /pocket-deploy/ai-s04-2/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>AI s04 — Part 2: Long Context & Memory Systems</title>
+<style>
+:root{--bg:#0b1020;--panel:#0f172a;--ink:#e5e7eb;--muted:#94a3b8;--brand:#60a5fa;--border:#1f2940}
+@media(prefers-color-scheme:light){:root{--bg:#f5f7fb;--panel:#fff;--ink:#1b2a41;--muted:#34495e;--brand:#2563eb;--border:#e3e9f3}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,Segoe UI,Inter,Arial;padding:2rem}
+.c{max-width:880px;margin:0 auto;background:var(--panel);border:1px solid var(--border);border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+.nav{display:flex;gap:.5rem;flex-wrap:wrap;padding:.75rem;border-bottom:1px solid var(--border)}.nav a{padding:.45rem .7rem;border:1px solid var(--border);border-radius:999px;text-decoration:none;color:var(--ink)}.nav a:hover{border-color:var(--brand);color:var(--brand)}
+.h{padding:1.25rem 1.5rem}.intro{color:var(--muted);font-style:italic;margin:.25rem 0 1rem}
+.p{padding:0 1.5rem 1.4rem}.p p{margin:1.05rem 0}
+.f{padding:1rem 1.5rem;border-top:1px solid var(--border);color:var(--muted);font-size:.95rem}
+table{width:100%;border-collapse:collapse;margin-top:.4rem}th,td{border:1px solid var(--border);padding:.4rem;text-align:left}th{color:var(--brand)}
+</style></head>
+<body><article class="c">
+<nav class="nav">
+  <a href="/pocket-deploy/dashboard-ai-s04/">← Dashboard</a>
+  <a href="/pocket-deploy/ai-s04-1/">Previous</a>
+  <a href="/pocket-deploy/ai-s04-3/">Next →</a>
+</nav>
+<header class="h"><h1>Long Context & Memory Systems — Part 2</h1><p class="intro">No, long context isn’t just a bigger window; it’s a new contract between models and information that blends retrieval, compression, and durable memory.</p></header>
+<section class="p">
+<p><strong>Context setup.</strong> As windows stretched from tens of thousands toward million-token scales, naïve attention became prohibitively expensive and cognitively noisy. The challenge was not merely fitting tokens but using them purposefully. Systems responded with structured inputs (sections, citations, anchors), hierarchical summaries, and index-aware prompting. The historical pattern echoed databases: raw capacity mattered less than organization, cache locality, and the ability to jump directly to what counts.</p>
+<p><strong>Sequential explanation (stage 1 — retrieval inside context).</strong> Early RAG fetched small snippets; long-context models embed those snippets directly alongside the prompt, turning lookup into passive memory. Chunking strategies, navigational headings, and reference links became part of prompt engineering. The model reads a curated “binder” rather than a single page, and answers by weaving citations with fresh synthesis. This reduced hallucinations while preserving flexibility for open-domain questions.</p>
+<p><strong>Stage 2 — compression and rolling summaries.</strong> Persistent sessions demanded editable memory. Lightweight summarizers re-wrote prior turns into canonical notes, preserving entities, decisions, and open threads. Episodic buffers held recent details; semantic stores held enduring facts. The system alternated between verbatim recall when precision mattered and abstract recall when breadth mattered. This mirrored human study habits: highlight, annotate, and condense before exams.</p>
+<p><strong>Stage 3 — reference stability.</strong> Long windows enabled durable anchors: IDs for sources, functions, and past conclusions. Instead of re-describing a tool each time, the model could point to “Tool A v3” and inherit its spec. Document analysis stabilized when sections were tagged with absolute paths and versioned headings. In collaborative settings, this created reproducibility: the same prompt, plus the same bound context, yielded the same decision trace weeks later.</p>
+<p><strong>Parallel comparisons.</strong> Short-context RAG is agile but fragmentary; long-context reading is coherent but compute-heavy. Pure retrieval forgets past sessions; memory systems accumulate wisdom but risk drift. The synthesis is a tiered design: retrieve to seed, read to reason, summarize to remember. Tool calls act as guardrails—verifying numbers or fetching fresh facts when the window is stale or overloaded.</p>
+<p><strong>Sectional synthesis — memory tiers.</strong></p>
+<table>
+<tr><th>Tier</th><th>Contents</th><th>Update cadence</th></tr>
+<tr><td>Episodic</td><td>Recent turns, working notes</td><td>Continuous, rolling</td></tr>
+<tr><td>Semantic</td><td>Stable facts, entities</td><td>On milestone</td></tr>
+<tr><td>External</td><td>Docs, tools, web</td><td>On demand</td></tr>
+</table>
+<p><strong>Conclusion.</strong> Long context transformed prompts into dossiers and chats into projects. By mixing retrieval, structure, and memory, systems replaced brittle one-off answers with persistent understanding—closer to how people study, build, and decide over time.</p>
+</section>
+<footer class="f">Sources note: general advances in long-context attention, retrieval-augmented prompting, and conversational memory circa 2024–2025.</footer>
+</article></body></html>

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Operation Bagration (1944)</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111833;
+      --ink:#e6ecff;
+      --muted:#a7b0cc;
+      --brand:#8bb9ff;
+      --accent:#c0ffe1;
+      --border:#26325b;
+      --chip:#1a2347;
+      --bad:#ff6b6b;
+      --shadow:0 8px 28px rgba(0,0,0,.35);
+      --radius:12px;
+      --radius-sm:8px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+      line-height:1.6;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
+        radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+      padding-bottom:2rem;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .container{max-width:860px;margin:0 auto;padding:1rem}
+
+    .breadcrumb{
+      margin-bottom:1rem;
+      font-size:.9rem;
+    }
+    .breadcrumb a{color:var(--brand);text-decoration:none}
+    .breadcrumb span{color:var(--muted)}
+
+    header{
+      background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:2rem 1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+    }
+
+    h1{
+      color:var(--ink);
+      font-size:1.75rem;
+      margin-bottom:.5rem;
+      letter-spacing:-.015em;
+    }
+
+    .subtitle{
+      color:var(--muted);
+      font-size:.95rem;
+      font-style:italic;
+    }
+
+    .main-answer{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+      border-left:4px solid var(--brand);
+    }
+
+    .main-answer h2{
+      color:var(--brand);
+      font-size:1.3rem;
+      margin-bottom:1rem;
+      letter-spacing:.01em;
+    }
+
+    .main-answer p{font-size:1.05rem;line-height:1.7}
+
+    .section{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      margin-bottom:1rem;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .section-header{
+      padding:1.1rem 1.25rem;
+      background:linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%);
+      color:var(--ink);
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      border-bottom:1px solid var(--border);
+    }
+
+    .section-header h2{
+      font-size:1.15rem;
+      font-weight:700;
+      letter-spacing:.01em;
+    }
+
+    .section-icon{font-size:1.35rem;transition:transform .3s ease}
+    .section.active .section-icon{transform:rotate(180deg)}
+
+    .section-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+    .section.active .section-content{max-height:5000px}
+
+    .section-inner{padding:1.25rem}
+
+    h3{
+      color:var(--brand);
+      font-size:1.08rem;
+      margin:1.3rem 0 .65rem 0;
+      letter-spacing:.01em;
+    }
+    h3:first-child{margin-top:0}
+
+    .list-item{
+      background:color-mix(in oklab,var(--chip) 75%, transparent);
+      border-left:3px solid var(--brand);
+      padding:1rem;
+      margin-bottom:.75rem;
+      border-radius:var(--radius-sm);
+      border:1px solid var(--border);
+    }
+
+    .timeline{
+      border-left:3px solid var(--brand);
+      padding-left:1.25rem;
+      margin-left:.5rem;
+    }
+
+    .timeline-item{
+      margin-bottom:1.25rem;
+      position:relative;
+    }
+
+    .timeline-item::before{
+      content:'';
+      position:absolute;left:-1.65rem;top:.25rem;
+      width:12px;height:12px;border-radius:50%;
+      background:var(--brand);border:3px solid var(--panel);
+      box-shadow:0 0 0 2px var(--brand);
+    }
+
+    .timeline-item strong{color:var(--brand);display:block;margin-bottom:.25rem}
+
+    .source{
+      background:color-mix(in oklab,var(--chip) 65%, transparent);
+      border-radius:8px;padding:1rem;margin-top:1.2rem;
+      font-size:.95rem;color:var(--muted);
+      border:1px solid var(--border);
+    }
+    .source strong{color:var(--ink)}
+
+    .back-to-top{
+      position:fixed;bottom:1.5rem;right:1rem;
+      background:var(--brand);color:#001;
+      width:50px;height:50px;border-radius:50%;
+      border:none;font-size:1.5rem;cursor:pointer;
+      box-shadow:var(--shadow);opacity:0;transition:opacity .3s ease;
+      z-index:1000;display:flex;align-items:center;justify-content:center;
+      font-weight:900;
+    }
+    .back-to-top.visible{opacity:1}
+    .back-to-top:active{transform:scale(.96)}
+
+    a{color:var(--brand)}
+
+    @media (max-width:480px){
+      h1{font-size:1.5rem}
+      .section-header h2{font-size:1.05rem}
+      .container{padding:.75rem}
+      header{padding:1.5rem 1rem}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="https://ewallt.github.io/pocket-deploy/is-ww2-hub/index.html">WWII Hub</a> <span>›</span> Operation Bagration
+    </div>
+
+    <header>
+      <h1>Operation Bagration (1944)</h1>
+      <p class="subtitle">Destruction of Army Group Centre and the Soviet Surge West</p>
+    </header>
+
+    <div class="main-answer">
+      <h2>Core Summary</h2>
+      <p>Launched on 22 June 1944, Operation Bagration was a massive Soviet offensive in Belarus that annihilated Germany’s Army Group Centre, liberated Minsk, and advanced hundreds of kilometers to the west. Coordinated fronts, deception, and overwhelming artillery-airpower integration produced one of the war’s most catastrophic defeats for the Wehrmacht, reshaping the Eastern Front in favor of the Red Army.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🎯 Strategic Context</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Allied Synchronization:</strong> Timed with Western Front operations (post–D-Day) to fracture German reserves and compel multi-front crisis management.
+          </div>
+          <div class="list-item">
+            <strong>Soviet Objectives:</strong> Destroy Army Group Centre, liberate Belarus, and open routes toward Poland and East Prussia.
+          </div>
+          <div class="list-item">
+            <strong>German Dispositions:</strong> Overextended lines, understrength divisions, and a reliance on fixed defenses vulnerable to deep operations and encirclement.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🪖 Forces & Commanders</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Soviet:</strong> 1st Baltic, 1st, 2nd, and 3rd Belorussian Fronts (commanders incl. Bagramyan, Rokossovsky, Chernyakhovsky, and Zakharov); heavy artillery, armor, engineers, and strong air support.
+          </div>
+          <div class="list-item">
+            <strong>German:</strong> Army Group Centre (Field Marshal Ernst Busch, later Walther Model); multiple armies with depleted infantry, limited armor, and inadequate mobile reserves.
+          </div>
+          <div class="list-item">
+            <strong>Scale:</strong> Millions engaged; thousands of tanks and assault guns; massive concentrations of tube artillery and Katyusha rockets.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📜 Battle Timeline</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="timeline">
+            <div class="timeline-item">
+              <strong>22 Jun 1944:</strong> Offensive begins on the third anniversary of Barbarossa; artillery barrages and air strikes smash forward defenses.
+            </div>
+            <div class="timeline-item">
+              <strong>Late Jun:</strong> Breakthroughs at Vitebsk, Orsha, Mogilev, Bobruisk; multiple German corps encircled and destroyed.
+            </div>
+            <div class="timeline-item">
+              <strong>3–4 Jul:</strong> Minsk encircled and liberated; tens of thousands of German troops captured in the “Minsk Pocket.”
+            </div>
+            <div class="timeline-item">
+              <strong>Mid–Late Jul:</strong> Soviet advance reaches the Neman and Vistula approaches; momentum carries toward the borders of East Prussia and Poland.
+            </div>
+            <div class="timeline-item">
+              <strong>Aug 1944:</strong> Follow-on operations stabilize new Soviet front lines deep in previously German-held territory.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>⚡ Turning Points</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Operational Deception (Maskirovka):</strong> Misled German intelligence about main axes, fixing reserves away from real breakthrough sectors.
+          </div>
+          <div class="list-item">
+            <strong>Deep Operations:</strong> Successive echelons exploited breaches rapidly, preventing German reconstitution and enabling large encirclements.
+          </div>
+            <div class="list-item">
+            <strong>Command Crisis:</strong> Replacement of Busch with Model could not reverse systemic collapse amid simultaneous pocket destructions.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🏁 Outcomes & Consequences</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Army Group Centre Destroyed:</strong> Hundreds of thousands of German casualties and prisoners; loss of matériel and command cohesion.
+          </div>
+          <div class="list-item">
+            <strong>Strategic Collapse in Belarus:</strong> Soviet forces advanced up to ~600 km in places, liberating key cities and transport hubs.
+          </div>
+          <div class="list-item">
+            <strong>Pressure on All Fronts:</strong> German High Command diverted scarce reserves; Eastern Front initiative firmly and permanently with the Red Army.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🏰 Historical Significance</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>One of WWII’s Largest Defeats:</strong> Comparable in scale of destruction to Stalingrad, but achieved in a faster, theater-wide offensive.
+          </div>
+          <div class="list-item">
+            <strong>Prelude to Final Offensives:</strong> Set conditions for the Vistula–Oder push and the 1945 drive toward Berlin.
+          </div>
+          <div class="list-item">
+            <strong>Operational Benchmark:</strong> Demonstrated mature Soviet art of combined-arms and deep battle at massive scale.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📚 Sources</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="source">
+            <strong>Primary:</strong> Soviet Front operational summaries; German Heeresgruppe Mitte war diaries; aerial reconnaissance and artillery fire plans.
+          </div>
+          <div class="source">
+            <strong>Secondary:</strong> David Glantz & Jonathan House, <em>When Titans Clashed</em>; David Stahel, <em>Retreat from Moscow</em> (context); Steven Zaloga, <em>Bagration 1944</em>; Earl F. Ziemke, <em>Stalingrad to Berlin</em>.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="back-to-top" onclick="scrollToTop()" id="backToTop" aria-label="Back to top">↑</button>
+
+  <script>
+    function toggleSection(header){
+      const section = header.parentElement;
+      const all = document.querySelectorAll('.section');
+      all.forEach(s => { if(s !== section && s.classList.contains('active')) s.classList.remove('active'); });
+      section.classList.toggle('active');
+    }
+
+    window.addEventListener('scroll', () => {
+      const btn = document.getElementById('backToTop');
+      if(window.pageYOffset > 300){ btn.classList.add('visible'); }
+      else { btn.classList.remove('visible'); }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const first = document.querySelector('.section');
+      if(first) first.classList.add('active');
+    });
+
+    function scrollToTop(){
+      window.scrollTo({ top:0, behavior:'smooth' });
+    }
+  </script>
+</body>
+</html>
