@@ -227,21 +227,17 @@
     }
   </style>
 
-  <!-- RefTagger (scripture hover) -->
-  <script>
-    var refTagger = {
-      settings: {
-        bibleVersion: "KJV",
-        tooltip: "on",
-        roundCorners: true,
-        socialSharing: [],
-        tagChapters: true,
-        caseInsensitive: true,
-        noSearchTagNames: ["code","pre","script","style"]
-      }
-    };
+  <!-- Blue Letter Bible ScriptTagger -->
+  <script src="https://www.blueletterbible.org/assets/scripts/blbToolTip/BLB_ScriptTagger-min.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    BLB.Tagger.Translation = 'KJV';
+    BLB.Tagger.HyperLinks = 'all';
+    BLB.Tagger.HideTanslationAbbrev = false;
+    BLB.Tagger.TargetNewWindow = true;
+    BLB.Tagger.Style = 'par';
+    BLB.Tagger.NoSearchTagNames = 'code,pre,script,style';
+    BLB.Tagger.NoSearchClassNames = 'noTag';
   </script>
-  <script src="https://api.reftagger.com/v2/RefTagger.js" defer></script>
 </head>
 <body>
   <div class="container">
@@ -462,8 +458,9 @@
       const all = document.querySelectorAll('.section');
       all.forEach(s => { if(s !== section && s.classList.contains('active')) s.classList.remove('active'); });
       section.classList.toggle('active');
-      if (window.refTagger && refTagger.tag) {
-        setTimeout(() => refTagger.tag(), 0);
+      // Trigger BLB ScriptTagger to re-scan newly visible content
+      if (window.BLB && BLB.Tagger && BLB.Tagger.pageInit) {
+        setTimeout(() => BLB.Tagger.pageInit(), 0);
       }
     }
 
@@ -476,8 +473,9 @@
     document.addEventListener('DOMContentLoaded', () => {
       const first = document.querySelector('.section');
       if(first) first.classList.add('active');
-      if (window.refTagger && refTagger.tag) {
-        refTagger.tag();
+      // Trigger BLB ScriptTagger to re-scan newly visible content
+      if (window.BLB && BLB.Tagger && BLB.Tagger.pageInit) {
+        BLB.Tagger.pageInit();
       }
     });
 
