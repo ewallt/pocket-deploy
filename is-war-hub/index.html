@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Military History Hub</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111833;
+      --ink:#e6ecff;
+      --muted:#a7b0cc;
+      --brand:#8bb9ff;
+      --accent:#c0ffe1;
+      --border:#26325b;
+      --chip:#1a2347;
+      --shadow:0 8px 28px rgba(0,0,0,.35);
+      --radius:14px;
+      --radius-sm:10px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+      line-height:1.6;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
+        radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+      padding-bottom:2rem;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .container{max-width:1100px;margin:0 auto;padding:1rem}
+
+    header{
+      background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:2rem 1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+    }
+
+    h1{
+      color:var(--ink);
+      font-size:2rem;
+      margin-bottom:.4rem;
+      letter-spacing:-.02em;
+    }
+
+    .subtitle{
+      color:var(--muted);
+      font-size:1rem;
+      font-style:italic;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(3, minmax(0,1fr));
+      gap:1.25rem;
+    }
+    @media (max-width:900px){ .grid{grid-template-columns:repeat(2, minmax(0,1fr));} }
+    @media (max-width:600px){ .grid{grid-template-columns:1fr;} }
+
+    .card{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:1.5rem;
+      box-shadow:var(--shadow);
+      display:flex;
+      flex-direction:column;
+      transition:transform .2s ease, box-shadow .2s ease;
+    }
+    .card:hover{
+      transform:translateY(-2px);
+      box-shadow:0 12px 36px rgba(0,0,0,.45);
+    }
+
+    .card-header{
+      margin-bottom:1rem;
+    }
+
+    .card-title{
+      font-size:1.4rem;
+      color:var(--ink);
+      margin-bottom:.3rem;
+      font-weight:700;
+      letter-spacing:-.015em;
+    }
+
+    .card-meta{
+      color:var(--accent);
+      font-size:.9rem;
+      font-weight:600;
+      margin-bottom:.6rem;
+    }
+
+    .card-description{
+      color:var(--muted);
+      font-size:.95rem;
+      line-height:1.6;
+      margin-bottom:1.25rem;
+      flex:1;
+    }
+
+    .card-stats{
+      display:flex;
+      gap:1rem;
+      margin-bottom:1.25rem;
+      padding:.75rem;
+      background:color-mix(in oklab,var(--chip) 60%, transparent);
+      border-radius:var(--radius-sm);
+      border:1px solid var(--border);
+    }
+
+    .stat{
+      flex:1;
+      text-align:center;
+    }
+
+    .stat-value{
+      font-size:1.5rem;
+      font-weight:700;
+      color:var(--brand);
+      display:block;
+    }
+
+    .stat-label{
+      font-size:.8rem;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.05em;
+    }
+
+    .btn{
+      background:linear-gradient(135deg, var(--brand) 0%, #6a9ceb 100%);
+      color:#001;
+      border:none;
+      padding:.75rem 1rem;
+      border-radius:var(--radius-sm);
+      font-size:1rem;
+      font-weight:700;
+      cursor:pointer;
+      text-decoration:none;
+      display:inline-block;
+      text-align:center;
+      transition:transform .15s ease, box-shadow .15s ease;
+    }
+    .btn:hover{
+      transform:scale(1.02);
+      box-shadow:0 4px 16px rgba(139,185,255,.4);
+    }
+    .btn:active{transform:scale(.98)}
+
+    @media (max-width:480px){
+      h1{font-size:1.65rem}
+      .card-title{font-size:1.25rem}
+      .btn{padding:.7rem .9rem;font-size:.95rem}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Military History Hub</h1>
+      <p class="subtitle">Explore pivotal battles and campaigns that shaped world history</p>
+    </header>
+
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <script>
+    const wars = [
+      {
+        id:"ww2",
+        title:"World War II",
+        period:"1939–1945",
+        battleCount:21,
+        description:"The largest and deadliest conflict in human history, fought across Europe, Asia, Africa, and the Pacific. From the invasion of Poland to the atomic bombs on Hiroshima and Nagasaki, explore the campaigns that defined the modern world.",
+        hub:"https://ewallt.github.io/pocket-deploy/is-ww2-hub/index.html"
+      },
+      {
+        id:"revwar",
+        title:"Revolutionary War",
+        period:"1775–1781",
+        battleCount:12,
+        description:"The American colonies' struggle for independence from Great Britain. From the first shots at Lexington and Concord to the decisive victory at Yorktown, discover the battles that forged a new nation.",
+        hub:"https://ewallt.github.io/pocket-deploy/is-revwar-hub/index.html"
+      }
+    ];
+
+    function render(){
+      const grid = document.getElementById('grid');
+      grid.innerHTML = wars.map(war => `
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">${war.title}</div>
+            <div class="card-meta">${war.period}</div>
+          </div>
+          <div class="card-description">${war.description}</div>
+          <div class="card-stats">
+            <div class="stat">
+              <span class="stat-value">${war.battleCount}</span>
+              <span class="stat-label">Battles</span>
+            </div>
+          </div>
+          <a href="${war.hub}" class="btn">Explore Battles</a>
+        </div>
+      `).join('');
+    }
+
+    render();
+  </script>
+</body>
+</html>

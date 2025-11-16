@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Report SPA — Theme + AppData</title>
+
+  <!-- Tailwind via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* ====== Theme Variables ====== */
+    :root {
+      --bg-gradient: linear-gradient(135deg,#f8fafc 0%,#e2e8f0 100%);
+      --accent-1: #2563eb;  /* blue-600 */
+      --accent-2: #1d4ed8;  /* blue-700 */
+      --text-primary: #1e293b; /* slate-800 */
+      --text-secondary: #475569; /* slate-600 */
+      --ui-background: #ffffff;
+      --ui-background-accent: #f1f5f9;
+      --btn-gradient: linear-gradient(45deg,#2563eb,#1d4ed8);
+    }
+    .theme-navy {
+      --bg-gradient: linear-gradient(135deg,#0a0a23 0%,#1a1a3a 50%,#2e2e5e 100%);
+      --accent-1: #60a5fa;  /* sky-400 */
+      --accent-2: #3b82f6;  /* blue-500 */
+      --text-primary: #f1f5f9; /* slate-100 */
+      --text-secondary: #94a3b8; /* slate-400 */
+      --ui-background: #1e293b;
+      --ui-background-accent: #334155;
+      --btn-gradient: linear-gradient(45deg,#3b82f6,#1e40af);
+    }
+    .theme-emerald {
+      --bg-gradient: linear-gradient(135deg,#022c22 0%,#064e3b 60%,#065f46 100%);
+      --accent-1: #f0c475;  /* gold */
+      --accent-2: #d4a24c;  /* deep gold */
+      --text-primary: #ecfdf5; /* emerald-50 */
+      --text-secondary: #a7f3d0; /* emerald-200 */
+      --ui-background: #064e3b;
+      --ui-background-accent: #065f46;
+      --btn-gradient: linear-gradient(45deg,#10b981,#065f46);
+    }
+
+    /* Base */
+    body { background: var(--bg-gradient); color: var(--text-primary); font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; }
+    .btn {
+      padding: 0.5rem 0.875rem; border-radius: 0.5rem; border: 1px solid var(--accent-2);
+      background: var(--ui-background); color: var(--text-primary); transition: .2s;
+    }
+    .btn:hover { background: var(--btn-gradient); color: #fff; }
+    .tab-btn { @apply btn; }
+    .tab-btn.active { background: var(--btn-gradient); color: #fff; }
+    .card { background: color-mix(in oklab, var(--ui-background) 92%, transparent); border: 1px solid color-mix(in oklab, var(--accent-2) 25%, transparent); border-radius: 0.75rem; }
+    .muted { color: var(--text-secondary); }
+
+    /* Modal */
+    .modal {
+      display:none; position:fixed; inset:0; z-index:50; background: rgba(0,0,0,.6);
+      align-items:center; justify-content:center;
+    }
+    .modal.show { display:flex; }
+    .modal-panel { background: var(--ui-background); color: var(--text-primary); border:1px solid color-mix(in oklab, var(--accent-2) 25%, transparent); border-radius: .75rem; min-width: 300px; max-width: 90vw; }
+
+    /* Utility */
+    .section-title { color: var(--accent-1); }
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <!-- ===== (1) Top strip: Title + Description ===== -->
+  <header class="w-full">
+    <div class="px-6 py-6 border-b" style="background: var(--ui-background); border-color: color-mix(in oklab, var(--accent-2) 20%, transparent);">
+      <h1 id="appTitle" class="text-2xl font-bold tracking-tight">Loading…</h1>
+      <p id="appSubtitle" class="muted mt-1 max-w-3xl"> </p>
+    </div>
+
+    <!-- ===== (2) Second strip: Search + Theme switcher ===== -->
+    <div class="px-6 py-3 flex items-center gap-3 justify-between" style="background: var(--ui-background-accent);">
+      <div class="flex-1 max-w-xl">
+        <label for="search" class="sr-only">Search</label>
+        <input id="search" type="search" placeholder="Search terms, concepts, quotes…" class="w-full px-3 py-2 rounded-md border text-sm" />
+      </div>
+      <button id="settingsBtn" class="btn" title="Display settings">⚙️</button>
+    </div>
+  </header>
+
+  <!-- Tabs -->
+  <nav class="px-6 py-3 flex flex-wrap gap-2" style="background: var(--ui-background-accent); border-bottom: 1px solid color-mix(in oklab, var(--accent-2) 20%, transparent);">
+    <button class="tab-btn" data-tab="overview">Overview</button>
+    <button class="tab-btn" data-tab="concepts">Concepts</button>
+    <button class="tab-btn" data-tab="data">Evidence / Data</button>
+    <button class="tab-btn" data-tab="timeline">Timeline</button>
+    <button class="tab-btn" data-tab="critiques">Critiques</button>
+    <button class="tab-btn" data-tab="glossary">Glossary</button>
+    <button class="tab-btn" data-tab="source">Source</button>
+  </nav>
+
+  <!-- Main -->
+  <main class="px-6 py-8 space-y-8">
+    <!-- Overview -->
+    <section id="tab-overview" class="tab-panel">
+      <div class="card p-6">
+        <h2 class="text-xl font-semibold section-title mb-2">Context & Takeaways</h2>
+        <p id="ovr-intro" class="mb-3"></p>
+        <ul id="ovr-bullets" class="list-disc pl-5 space-y-1"></ul>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-4" id="ovr-cards"></div>
+    </section>
+
+    <!-- Concepts -->
+    <section id="tab-concepts" class="tab-panel hidden">
+      <div class="card p-6 mb-4">
+        <h2 class="text-xl font-semibold section-title mb-2">Context & Takeaways</h2>
+        <p id="con-intro" class="mb-3"></p>
+        <ul id="con-bullets" class="list-disc pl-5 space-y-1"></ul>
+      </div>
+      <div id="conceptList" class="grid md:grid-cols-2 gap-4"></div>
+    </section>
+
+    <!-- Data -->
+    <section id="tab-data" class="tab-panel hidden">
+      <div class="card p-6 mb-4">
+        <h2 class="text-xl font-semibold section-title mb-2">Context & Takeaways</h2>
+        <p id="dat-intro" class="mb-3"></p>
+        <ul id="dat-bullets" class="list-disc pl-5 space-y-1"></ul>
+      </div>
+      <div id="dataBlock" class="space-y-4"></div>
+    </section>
+
+    <!-- Timeline -->
+    <section id="tab-timeline" class="tab-panel hidden">
+      <div class="card p-6 mb-4">
+        <h2 class="text-xl font-semibold section-title mb-2">Context & Takeaways</h2>
+        <p id="tim-intro" class="mb-3"></p>
+        <ul id="tim-bullets" class="list-disc pl-5 space-y-1"></ul>
+      </div>
+      <ol id="timelineList" class="space-y-4"></ol>
+    </section>
+
+    <!-- Critiques -->
+    <section id="tab-critiques" class="tab-panel hidden">
+      <div class="card p-6 mb-4">
+        <h2 class="text-xl font-semibold section-title mb-2">Context & Takeaways</h2>
+        <p id="cri-intro" class="mb-3"></p>
+        <ul id="cri-bullets" class="list-disc pl-5 space-y-1"></ul>
+      </div>
+      <div id="critiquesList" class="space-y-4"></div>
+    </section>
+
+    <!-- Glossary -->
+    <section id="tab-glossary" class="tab-panel hidden">
+      <div class="card p-6 mb-4">
+        <h2 class="text-xl font-semibold section-title mb-2">Context & Takeaways</h2>
+        <p id="glo-intro" class="mb-3"></p>
+        <ul id="glo-bullets" class="list-disc pl-5 space-y-1"></ul>
+      </div>
+      <dl id="glossaryList" class="grid md:grid-cols-2 gap-4"></dl>
+    </section>
+
+    <!-- Source -->
+    <section id="tab-source" class="tab-panel hidden">
+      <div class="card p-6">
+        <h2 class="text-xl font-semibold section-title mb-2">Source & Provenance</h2>
+        <ul id="provList" class="list-disc pl-5 space-y-1 mb-4"></ul>
+        <h3 class="font-semibold mb-2">Quotes</h3>
+        <ul id="quotesList" class="list-disc pl-5 space-y-1"></ul>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="px-6 py-8 text-sm muted">
+    © 2025 Report SPA • Theme switcher + AppData loader demo
+  </footer>
+
+  <!-- Settings Modal -->
+  <div id="settingsModal" class="modal" aria-hidden="true">
+    <div class="modal-panel p-5 relative">
+      <button id="closeSettings" class="absolute right-3 top-2 btn">✕</button>
+      <h3 class="text-lg font-semibold mb-3">Display Settings</h3>
+      <div class="space-y-3">
+        <div>
+          <label for="themeSelect" class="block text-sm mb-1">Color theme</label>
+          <select id="themeSelect" class="w-full border rounded px-2 py-1">
+            <option value="light">Light (Neutral)</option>
+            <option value="navy">Navy Blue</option>
+            <option value="emerald">Emerald + Gold</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== AppData: sample report (replace this JSON for new content) ===== -->
+  <script>
+    const AppData = {
+      meta: {
+        title: "A Brief History of Cognitive Biases",
+        subtitle: "From Early Psychology to the Behavioral Revolution • Knowledge Base",
+        report_provenance: [
+          { label: "Compiled by", detail: "Example Research Unit" },
+          { label: "Last updated", detail: "2025-08-24" },
+          { label: "Primary sources", detail: "Thorndike (1920), Bartlett (1932), Asch (1951), Wason (1960), Kahneman & Tversky (1979), Thaler & Sunstein (2008)" }
+        ]
+      },
+      sections: [
+        {
+          id: "overview",
+          title: "Overview",
+          intro: "Cognitive biases are predictable patterns of deviation from rational judgment caused by mental shortcuts. This overview highlights their historical development and enduring impact.",
+          bullets: [
+            "Biases arise from efficient heuristics that can misfire.",
+            "Key milestones span 1920s psychology to modern behavioral economics.",
+            "Understanding biases improves decisions in policy, markets, and daily life."
+          ],
+          items: [
+            { id:"m1", label:"Prospect Theory (1979)", summary:"Descriptive model of risk with loss aversion.", detail:"Kahneman & Tversky showed outcomes are evaluated vs. reference points; losses loom larger than gains." },
+            { id:"m2", label:"Nobel Recognition (2002, 2017)", summary:"Validation of behavioral approach.", detail:"Kahneman (2002) and Thaler (2017) recognized for integrating psychology with economics." },
+            { id:"m3", label:"Bias Catalogue", summary:"Over 180 documented biases.", detail:"From anchoring to survivorship, a growing taxonomy maps where heuristics mislead." },
+            { id:"m4", label:"Loss Aversion Ratio", summary:"Losses ≈ 2x gains.", detail:"Typical estimates suggest the disutility of losses is about twice the utility of equivalent gains." }
+          ]
+        },
+        {
+          id: "concepts",
+          title: "Core Concepts",
+          intro: "Foundational biases explain many observed judgment errors. These cards summarize four pillars.",
+          bullets: [
+            "Confirmation bias: we seek supportive evidence.",
+            "Anchoring: initial numbers pull estimates.",
+            "Loss aversion: losses weigh heavier than gains."
+          ],
+          items: [
+            { id:"c1", label:"Confirmation Bias", summary:"Seeking confirming evidence.", detail:"People preferentially notice, recall, and test data that confirms prior beliefs." },
+            { id:"c2", label:"Anchoring", summary:"Overweighting first info.", detail:"Initial values serve as anchors; adjustments are insufficient even when anchors are arbitrary." },
+            { id:"c3", label:"Loss Aversion", summary:"Losses > gains.", detail:"Pain of losing ~2x pleasure of winning; drives reference-dependent choices." },
+            { id:"c4", label:"Survivorship Bias", summary:"Ignoring the unseen failures.", detail:"We focus on successes that remain visible; missing data skews inference." }
+          ]
+        },
+        {
+          id: "data",
+          title: "Evidence / Data",
+          intro: "Representative stats and facts that frequently appear in the literature.",
+          bullets: [
+            "Loss aversion often approximates a ~2:1 ratio.",
+            "Bias catalogue exceeds 180 entries across domains.",
+            "Behavioral findings replicated in lab and field."
+          ],
+          items: [
+            { id:"d1", label:"Key Stats", summary:"Quick pulse.", detail:"Loss aversion ratio ≈ 2:1; >180 biases; widespread replication across contexts." }
+          ]
+        },
+        {
+          id: "timeline",
+          title: "Timeline",
+          intro: "Selected milestones from early experiments to applied behavioral policy.",
+          bullets: [
+            "1920: Halo Effect named (Thorndike).",
+            "1951: Asch conformity experiments.",
+            "1979: Prospect Theory published."
+          ],
+          items: [
+            { id:"t1", label:"1920 — Halo Effect", detail:"Trait spillover distorts judgment." },
+            { id:"t2", label:"1932 — Reconstructive Memory", detail:"Bartlett shows memory reshaping." },
+            { id:"t3", label:"1951 — Conformity", detail:"Asch demonstrates social pressure." },
+            { id:"t4", label:"1960 — Confirmation Bias", detail:"Wason 2-4-6 task evidence." },
+            { id:"t5", label:"1979 — Prospect Theory", detail:"Reference dependence and loss aversion." }
+          ]
+        },
+        {
+          id: "critiques",
+          title: "Critiques & Implications",
+          intro: "Debates center on external validity, boundaries of effects, and ethical nudging.",
+          bullets: [
+            "Replicability varies by effect and context.",
+            "Nudging raises autonomy and consent questions.",
+            "Bias literacy can mitigate, not eliminate, errors."
+          ],
+          items: [
+            { id:"k1", label:"Replicability", summary:"Mixed replication record.", detail:"Large-sample preregistrations clarify effect sizes and boundary conditions." },
+            { id:"k2", label:"Ethics of Nudging", summary:"Autonomy vs. welfare.", detail:"Transparent, accountable choice architecture can respect agency while improving outcomes." }
+          ]
+        }
+      ],
+      glossary: [
+        { term:"Heuristic", definition:"A mental shortcut for quick decisions; efficient but fallible." },
+        { term:"Reference Point", definition:"A baseline from which gains/losses are evaluated." },
+        { term:"Choice Architecture", definition:"Design of environments that structure decisions." }
+      ],
+      quotes: [
+        { text:"Losses loom larger than gains.", ref:"Kahneman & Tversky (1979)" },
+        { text:"We see what we expect to see.", ref:"Bartlett (1932)" }
+      ]
+    };
+  </script>
+
+  <!-- ===== App logic: theme, tabs, rendering, search ===== -->
+  <script>
+    // ---------- Theme ----------
+    const bodyEl = document.body;
+    const themeSelect = document.getElementById('themeSelect');
+    function applyTheme(name) {
+      bodyEl.classList.remove('theme-navy', 'theme-emerald');
+      if (name === 'navy') bodyEl.classList.add('theme-navy');
+      if (name === 'emerald') bodyEl.classList.add('theme-emerald');
+      localStorage.setItem('themeChoice', name);
+    }
+    (function initTheme(){
+      const saved = localStorage.getItem('themeChoice') || 'light';
+      if (themeSelect) themeSelect.value = saved;
+      applyTheme(saved);
+    })();
+
+    // Settings modal
+    const modal = document.getElementById('settingsModal');
+    document.getElementById('settingsBtn').addEventListener('click', () => modal.classList.add('show'));
+    document.getElementById('closeSettings').addEventListener('click', () => modal.classList.remove('show'));
+    modal.addEventListener('click', (e)=>{ if(e.target===modal) modal.classList.remove('show'); });
+    if (themeSelect) themeSelect.addEventListener('change', e => applyTheme(e.target.value));
+
+    // ---------- Render from AppData ----------
+    function el(id){ return document.getElementById(id); }
+
+    // Header
+    el('appTitle').textContent = AppData.meta.title || 'Untitled';
+    el('appSubtitle').textContent = AppData.meta.subtitle || '';
+
+    // Overview context
+    function renderContext(sectionId, introId, bulletsId){
+      const s = AppData.sections.find(x=>x.id===sectionId);
+      if(!s) return;
+      el(introId).textContent = s.intro || '';
+      const ul = el(bulletsId); ul.innerHTML='';
+      (s.bullets||[]).forEach(b=>{
+        const li=document.createElement('li'); li.textContent=b; ul.appendChild(li);
+      });
+    }
+    renderContext('overview','ovr-intro','ovr-bullets');
+    renderContext('concepts','con-intro','con-bullets');
+    renderContext('data','dat-intro','dat-bullets');
+    renderContext('timeline','tim-intro','tim-bullets');
+    renderContext('critiques','cri-intro','cri-bullets');
+    renderContext('glossary','glo-intro','glo-bullets');
+
+    // Overview cards
+    (function(){
+      const s = AppData.sections.find(x=>x.id==='overview');
+      const wrap = el('ovr-cards'); if(!s||!wrap) return;
+      wrap.innerHTML='';
+      (s.items||[]).forEach(it=>{
+        const card = document.createElement('article');
+        card.className = 'card p-5';
+        card.innerHTML = `<h3 class="font-semibold mb-1" style="color: var(--accent-1);">${it.label}</h3>
+                          <p class="muted text-sm mb-2">${it.summary||''}</p>
+                          <p>${it.detail||''}</p>`;
+        wrap.appendChild(card);
+      });
+    })();
+
+    // Concepts list
+    (function(){
+      const s = AppData.sections.find(x=>x.id==='concepts');
+      const wrap = el('conceptList'); if(!s||!wrap) return;
+      wrap.innerHTML='';
+      (s.items||[]).forEach(it=>{
+        const card = document.createElement('article');
+        card.className = 'card p-5';
+        card.innerHTML = `<h3 class="font-semibold mb-1" style="color: var(--accent-1);">${it.label}</h3>
+                          <p class="muted text-sm mb-2">${it.summary||''}</p>
+                          <p>${it.detail||''}</p>`;
+        wrap.appendChild(card);
+      });
+    })();
+
+    // Data block (simple text demo; charts can be added later using AppData)
+    (function(){
+      const s = AppData.sections.find(x=>x.id==='data');
+      const wrap = el('dataBlock'); if(!s||!wrap) return;
+      wrap.innerHTML='';
+      (s.items||[]).forEach(it=>{
+        const card = document.createElement('article');
+        card.className = 'card p-5';
+        card.innerHTML = `<h3 class="font-semibold mb-1" style="color: var(--accent-1);">${it.label}</h3>
+                          <p class="muted text-sm mb-2">${it.summary||''}</p>
+                          <p>${it.detail||''}</p>`;
+        wrap.appendChild(card);
+      });
+    })();
+
+    // Timeline list
+    (function(){
+      const s = AppData.sections.find(x=>x.id==='timeline');
+      const wrap = el('timelineList'); if(!s||!wrap) return;
+      wrap.innerHTML='';
+      (s.items||[]).forEach(it=>{
+        const li=document.createElement('li');
+        li.className='card p-4';
+        li.innerHTML = `<div class="font-semibold" style="color: var(--accent-1);">${it.label}</div>
+                        <div>${it.detail||''}</div>`;
+        wrap.appendChild(li);
+      });
+    })();
+
+    // Critiques
+    (function(){
+      const s = AppData.sections.find(x=>x.id==='critiques');
+      const wrap = el('critiquesList'); if(!s||!wrap) return;
+      wrap.innerHTML='';
+      (s.items||[]).forEach(it=>{
+        const card = document.createElement('article');
+        card.className = 'card p-5';
+        card.innerHTML = `<h3 class="font-semibold mb-1" style="color: var(--accent-1);">${it.label}</h3>
+                          <p class="muted text-sm mb-2">${it.summary||''}</p>
+                          <p>${it.detail||''}</p>`;
+        wrap.appendChild(card);
+      });
+    })();
+
+    // Glossary
+    (function(){
+      const wrap = el('glossaryList'); if(!wrap) return;
+      wrap.innerHTML='';
+      (AppData.glossary||[]).forEach(g=>{
+        const dt = document.createElement('div');
+        dt.className = 'card p-5';
+        dt.innerHTML = `<dt class="font-semibold mb-1" style="color: var(--accent-1);">${g.term}</dt>
+                        <dd>${g.definition||''}</dd>`;
+        wrap.appendChild(dt);
+      });
+    })();
+
+    // Source & Quotes
+    (function(){
+      const pl = el('provList'); const ql = el('quotesList');
+      (AppData.meta.report_provenance||[]).forEach(p=>{
+        const li = document.createElement('li'); li.textContent = `${p.label}: ${p.detail}`; pl.appendChild(li);
+      });
+      (AppData.quotes||[]).forEach(q=>{
+        const li = document.createElement('li'); li.textContent = `"${q.text}" — ${q.ref}`; ql.appendChild(li);
+      });
+    })();
+
+    // ---------- Tabs ----------
+    const tabButtons = Array.from(document.querySelectorAll('.tab-btn'));
+    const panels = {
+      overview: document.getElementById('tab-overview'),
+      concepts: document.getElementById('tab-concepts'),
+      data: document.getElementById('tab-data'),
+      timeline: document.getElementById('tab-timeline'),
+      critiques: document.getElementById('tab-critiques'),
+      glossary: document.getElementById('tab-glossary'),
+      source: document.getElementById('tab-source'),
+    };
+    function activateTab(key){
+      for(const [k,el] of Object.entries(panels)){
+        el.classList.toggle('hidden', k!==key);
+      }
+      tabButtons.forEach(b=> b.classList.toggle('active', b.dataset.tab===key));
+      localStorage.setItem('activeTab', key);
+      location.hash = key;
+    }
+    tabButtons.forEach(btn=>{
+      btn.addEventListener('click', ()=> activateTab(btn.dataset.tab));
+    });
+    window.addEventListener('hashchange', ()=>{
+      const key = location.hash.replace('#','');
+      if (panels[key]) activateTab(key);
+    });
+    (function initTab(){
+      const fromHash = location.hash.replace('#','');
+      const saved = localStorage.getItem('activeTab') || 'overview';
+      const key = panels[fromHash] ? fromHash : (panels[saved] ? saved : 'overview');
+      activateTab(key);
+    })();
+
+    // ---------- Search (very simple demo) ----------
+    const searchBox = document.getElementById('search');
+    function searchAll(term){
+      term = term.trim().toLowerCase();
+      if(!term){ return; }
+      // naive search in concepts; you can expand this as needed
+      const concepts = AppData.sections.find(s=>s.id==='concepts')?.items || [];
+      const hit = concepts.find(c=> (c.label+c.summary+c.detail).toLowerCase().includes(term));
+      if(hit){ activateTab('concepts'); location.href='#concepts'; }
+    }
+    searchBox.addEventListener('keydown', (e)=>{ if(e.key==='Enter') searchAll(e.target.value); });
+  </script>
+</body>
+</html>

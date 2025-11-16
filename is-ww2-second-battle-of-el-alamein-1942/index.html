@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Second Battle of El Alamein (1942)</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111833;
+      --ink:#e6ecff;
+      --muted:#a7b0cc;
+      --brand:#8bb9ff;
+      --accent:#c0ffe1;
+      --border:#26325b;
+      --chip:#1a2347;
+      --bad:#ff6b6b;
+      --shadow:0 8px 28px rgba(0,0,0,.35);
+      --radius:12px;
+      --radius-sm:8px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+      line-height:1.6;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
+        radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+      padding-bottom:2rem;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .container{max-width:860px;margin:0 auto;padding:1rem}
+
+    .breadcrumb{
+      margin-bottom:1rem;
+      font-size:.9rem;
+    }
+    .breadcrumb a{color:var(--brand);text-decoration:none}
+    .breadcrumb span{color:var(--muted)}
+
+    header{
+      background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:2rem 1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+    }
+
+    h1{
+      color:var(--ink);
+      font-size:1.75rem;
+      margin-bottom:.5rem;
+      letter-spacing:-.015em;
+    }
+
+    .subtitle{
+      color:var(--muted);
+      font-size:.95rem;
+      font-style:italic;
+    }
+
+    .main-answer{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+      border-left:4px solid var(--brand);
+    }
+
+    .main-answer h2{
+      color:var(--brand);
+      font-size:1.3rem;
+      margin-bottom:1rem;
+      letter-spacing:.01em;
+    }
+
+    .main-answer p{font-size:1.05rem;line-height:1.7}
+
+    .section{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      margin-bottom:1rem;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .section-header{
+      padding:1.1rem 1.25rem;
+      background:linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%);
+      color:var(--ink);
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      border-bottom:1px solid var(--border);
+    }
+
+    .section-header h2{
+      font-size:1.15rem;
+      font-weight:700;
+      letter-spacing:.01em;
+    }
+
+    .section-icon{font-size:1.35rem;transition:transform .3s ease}
+    .section.active .section-icon{transform:rotate(180deg)}
+
+    .section-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+    .section.active .section-content{max-height:5000px}
+
+    .section-inner{padding:1.25rem}
+
+    h3{
+      color:var(--brand);
+      font-size:1.08rem;
+      margin:1.3rem 0 .65rem 0;
+      letter-spacing:.01em;
+    }
+    h3:first-child{margin-top:0}
+
+    .list-item{
+      background:color-mix(in oklab,var(--chip) 75%, transparent);
+      border-left:3px solid var(--brand);
+      padding:1rem;
+      margin-bottom:.75rem;
+      border-radius:var(--radius-sm);
+      border:1px solid var(--border);
+    }
+
+    .timeline{
+      border-left:3px solid var(--brand);
+      padding-left:1.25rem;
+      margin-left:.5rem;
+    }
+
+    .timeline-item{
+      margin-bottom:1.25rem;
+      position:relative;
+    }
+
+    .timeline-item::before{
+      content:'';
+      position:absolute;left:-1.65rem;top:.25rem;
+      width:12px;height:12px;border-radius:50%;
+      background:var(--brand);border:3px solid var(--panel);
+      box-shadow:0 0 0 2px var(--brand);
+    }
+
+    .timeline-item strong{color:var(--brand);display:block;margin-bottom:.25rem}
+
+    .source{
+      background:color-mix(in oklab,var(--chip) 65%, transparent);
+      border-radius:8px;padding:1rem;margin-top:1.2rem;
+      font-size:.95rem;color:var(--muted);
+      border:1px solid var(--border);
+    }
+    .source strong{color:var(--ink)}
+
+    .back-to-top{
+      position:fixed;bottom:1.5rem;right:1rem;
+      background:var(--brand);color:#001;
+      width:50px;height:50px;border-radius:50%;
+      border:none;font-size:1.5rem;cursor:pointer;
+      box-shadow:var(--shadow);opacity:0;transition:opacity .3s ease;
+      z-index:1000;display:flex;align-items:center;justify-content:center;
+      font-weight:900;
+    }
+    .back-to-top.visible{opacity:1}
+    .back-to-top:active{transform:scale(.96)}
+
+    a{color:var(--brand)}
+
+    @media (max-width:480px){
+      h1{font-size:1.5rem}
+      .section-header h2{font-size:1.05rem}
+      .container{padding:.75rem}
+      header{padding:1.5rem 1rem}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="https://ewallt.github.io/pocket-deploy/is-ww2-hub/index.html">WWII Hub</a> <span>›</span> Second Battle of El Alamein
+    </div>
+
+    <header>
+      <h1>Second Battle of El Alamein (1942)</h1>
+      <p class="subtitle">North Africa’s Turning Point</p>
+    </header>
+
+    <div class="main-answer">
+      <h2>Core Summary</h2>
+      <p>From 23 October to 11 November 1942, the British Eighth Army under Bernard Montgomery defeated Erwin Rommel’s Panzerarmee Afrika west of El Alamein, Egypt. The victory ended Axis hopes of seizing the Suez Canal, safeguarded Middle Eastern oil routes, and began a sustained Allied advance that pushed the Axis out of North Africa.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🎯 Strategic Context</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Axis Aim:</strong> Break through to Alexandria and the Suez Canal, cutting Allied lifelines between Europe, the Middle East, and Asia.
+          </div>
+          <div class="list-item">
+            <strong>Allied Aim:</strong> Halt and reverse the Axis advance in Egypt, protect vital sea lanes, and set conditions for a broader counteroffensive.
+          </div>
+          <div class="list-item">
+            <strong>Operational Setting:</strong> Months of attrition along a narrow coastal corridor between the Mediterranean and the Qattara Depression limited maneuver and favored prepared defenses.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🪖 Forces & Commanders</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Allies:</strong> British Eighth Army (Gen. Bernard Montgomery): UK, Australian, New Zealand, South African, Indian, and Free French formations; strong artillery and growing tank strength (Shermans, Grants, Crusaders).
+          </div>
+          <div class="list-item">
+            <strong>Axis:</strong> Panzerarmee Afrika (Field Marshal Erwin Rommel; Gen. Georg Stumme initially): German Afrika Korps and Italian armies (Ariete, Littorio, Folgore), short on fuel, spares, and air cover.
+          </div>
+          <div class="list-item">
+            <strong>Balance:</strong> Allies held advantages in logistics, artillery ammunition, and armor replacements; Axis hampered by extended supply lines from Tripoli/Tunis.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📜 Battle Timeline</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="timeline">
+            <div class="timeline-item">
+              <strong>23–24 Oct:</strong> “Operation Lightfoot” — night artillery barrage; infantry breach minefields (“devil’s gardens”) to create lanes for armor.
+            </div>
+            <div class="timeline-item">
+              <strong>25–28 Oct:</strong> Axis counterattacks contain early penetrations; grinding attrition favors Allied artillery and air support.
+            </div>
+            <div class="timeline-item">
+              <strong>29–31 Oct:</strong> Stalled center; Montgomery regroups for a concentrated blow in the north.
+            </div>
+            <div class="timeline-item">
+              <strong>1–2 Nov:</strong> “Operation Supercharge” — concentrated assault at Tel el Aqqaqir; Axis armored reserves mauled.
+            </div>
+            <div class="timeline-item">
+              <strong>3–4 Nov:</strong> Axis line collapses; Rommel orders retreat toward Fuka and beyond.
+            </div>
+            <div class="timeline-item">
+              <strong>5–11 Nov:</strong> Allied pursuit; capture of thousands of prisoners and equipment as Axis withdraws westward.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>⚡ Turning Points</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Artillery Supremacy:</strong> Massed guns and counter-battery fire neutralized Axis positions and limited effective counterattacks.
+          </div>
+          <div class="list-item">
+            <strong>Minefield Breaches:</strong> Systematic clearance lanes enabled armor to pass and exploit, despite heavy casualties.
+          </div>
+          <div class="list-item">
+            <strong>Operation Supercharge:</strong> Concentrated northern blow broke the armored reserve and forced a general Axis withdrawal.
+          </div>
+          <div class="list-item">
+            <strong>Logistics & Fuel:</strong> Chronic Axis supply shortages undermined operational freedom and resilience under pressure.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🏁 Outcomes & Consequences</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Decisive Allied Victory:</strong> Axis armor and infantry formations suffered irreplaceable losses; defensive line shattered.
+          </div>
+          <div class="list-item">
+            <strong>Strategic Shift:</strong> Momentum in North Africa flipped to the Allies, synchronizing with Operation Torch landings (Nov 1942) and accelerating Axis collapse in Tunisia (May 1943).
+          </div>
+          <div class="list-item">
+            <strong>Psychological Impact:</strong> Lifted Allied morale worldwide; Churchill: “Before Alamein we never had a victory. After Alamein we never had a defeat.”
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🏰 Historical Significance</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Turning of the Tide:</strong> Alongside Stalingrad and Midway, Alamein is widely regarded as a key inflection point of 1942.
+          </div>
+          <div class="list-item">
+            <strong>Operational Lessons:</strong> Integration of artillery, armor, engineers, and air support in a constrained battlespace showcased modern combined arms.
+          </div>
+          <div class="list-item">
+            <strong>Path to Italy:</strong> Clearing North Africa opened the Mediterranean for Allied operations, enabling the invasion of Sicily and mainland Italy in 1943.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📚 Sources</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="source">
+            <strong>Primary:</strong> Eighth Army operational reports; Panzerarmee Afrika signals and diaries; RAF desert air force sortie logs.
+          </div>
+          <div class="source">
+            <strong>Secondary:</strong> Niall Barr, <em>Alamein</em> (2004); John Bierman & Colin Smith, <em>War Without Hate</em> (2002); Rick Atkinson, <em>An Army at Dawn</em> (2002).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="back-to-top" onclick="scrollToTop()" id="backToTop" aria-label="Back to top">↑</button>
+
+  <script>
+    function toggleSection(header){
+      const section = header.parentElement;
+      const all = document.querySelectorAll('.section');
+      all.forEach(s => { if(s !== section && s.classList.contains('active')) s.classList.remove('active'); });
+      section.classList.toggle('active');
+    }
+
+    window.addEventListener('scroll', () => {
+      const btn = document.getElementById('backToTop');
+      if(window.pageYOffset > 300){ btn.classList.add('visible'); }
+      else { btn.classList.remove('visible'); }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const first = document.querySelector('.section');
+      if(first) first.classList.add('active');
+    });
+
+    function scrollToTop(){
+      window.scrollTo({ top:0, behavior:'smooth' });
+    }
+  </script>
+</body>
+</html>

@@ -1,71 +1,19 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Series 2 — Part 2 · Neighborhoods &amp; Epsilon-Balls</title>
-<style>
-:root{
-  --bg:#0f172a;
-  --panel:#1f2937;
-  --ink:#e5e7eb;
-  --muted:#94a3b8;
-  --brand:#60a5fa;
-  --border:#1f2937;
-}
-*{box-sizing:border-box}
-body{
-  margin:0; background:var(--bg); color:var(--ink);
-  font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,Apple Color Emoji,Segoe UI Emoji;
-}
-.wrapper{max-width:760px; margin:0 auto; padding:48px 20px}
-.panel{
-  background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:28px;
-  box-shadow:0 0 0 1px rgba(0,0,0,.12) inset;
-}
-h1{margin:0 0 8px; font-size:2rem; line-height:1.2}
-.lead{color:var(--muted); margin:0 0 24px}
-a{color:var(--brand); text-decoration:none}
-a:hover{text-decoration:underline}
-article p{margin:0 0 16px}
-hr{border:0; border-top:1px solid var(--border); margin:24px 0}
-.nav{display:flex; gap:12px; margin-top:24px; flex-wrap:wrap}
-.nav a{
-  padding:10px 14px; border:1px solid var(--border); border-radius:10px;
-  background:rgba(255,255,255,.02); color:var(--ink)
-}
-.nav a[aria-disabled="true"]{display:none}
-small.muted{color:var(--muted)}
-</style>
-</head>
-<body>
-  <div class="wrapper">
-    <div class="panel">
-      <h1>Series 2 — Bolzano–Weierstrass</h1>
-      <p class="lead">Part 2 · Neighborhoods &amp; Epsilon-Balls</p>
-
-      <article>
-        <p>Before we can navigate the Bolzano–Weierstrass Theorem, we must learn the grammar of neighborhoods. At a point \(a\), the most familiar neighborhood is an open interval \((a - \varepsilon, a + \varepsilon)\), capturing all real numbers within a distance \(\varepsilon\). This epsilon-ball encodes the intuitive statement “stay close to \(a\)” but makes it precise enough for proofs. By varying \(\varepsilon\), we generate a hierarchy of closeness that analysis relies on to define limits, continuity, and convergence.</p>
-
-        <p>Neighborhoods come in several flavors. Deleted neighborhoods, for example, remove the point \(a\) itself, producing \(0 < |x - a| < \varepsilon\). They allow us to discuss the behavior of a function near a point without referencing the value at the point. Half-open intervals and rays represent directional neighborhoods, essential when limits differ depending on the approach from above or below. Each variation still shares the same heart: distances measured by absolute value.</p>
-
-        <p>The epsilon machinery intertwines with quantifiers. Saying that \(x_n\) converges to \(L\) means that for every \(\varepsilon > 0\), there exists an index \(N\) such that whenever \(n \geq N\), the term \(x_n\) lives inside the \(\varepsilon\)-ball around \(L\). This “for every” followed by “there exists” pattern enforces discipline. Rather than eyeballing a graph, we must exhibit how large \(N\) needs to be, or at least show that such an \(N\) exists. Neighborhoods allow us to translate qualitative tendencies into quantifiable bounds.</p>
-
-        <p>In the context of sequences, neighborhoods highlight why boundedness is a meaningful precondition. A bounded sequence fits entirely inside some fixed ball around the origin, meaning there is an \(M\) with \(|x_n| \leq M\) for all \(n\). Without this global neighborhood, even the epsilon language cannot pin down convergence because the sequence might wander off to infinity. Neighborhoods therefore serve dual roles: local control near a candidate limit and global control via bounding balls.</p>
-
-        <p>Epsilon-balls also underpin the language of open sets. Any open subset of ℝ can be described as a union of such balls, making them fundamental building blocks for topology. This perspective becomes vital later when we reinterpret Bolzano–Weierstrass as a statement about compactness: every sequence in a compact set has a convergent subsequence whose limit remains inside the set. Compact sets, in turn, can be described via finite subcovers of open balls, tying the theorem back to neighborhood language.</p>
-
-        <p>Keeping neighborhoods at the forefront prepares us for the rest of the series. Next we examine bounded sequences directly, cataloging examples that either settle down or refuse to do so. Along the way, epsilon-balls act as our measuring tape, letting us articulate exactly how close or how confined a sequence truly is.</p>
-      </article>
-
-      <hr />
-      <div class="nav" aria-label="Navigation">
-        <a href="/pocket-deploy/bolzano-weierstrass-2-1/">Previous</a>
-        <a href="/pocket-deploy/bolzano-weierstrass-2-3/">Next</a>
-        <a href="/pocket-deploy/dashboard-bolzano-weierstrass-2/">Table of Contents</a>
-      </div>
-      <small class="muted">Tone: Wiki-style · Theme: Navy (Dark)</small>
-    </div>
-  </div>
-</body>
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Bolzano–Weierstrass — Part 2: Neighborhoods & Epsilon-Balls</title>
+<style>:root{--bg:#0f1216;--panel:#14181d;--ink:#e6e8eb;--muted:#9aa7b3;--brand:#8aa0b3;--border:#222831}@media(prefers-color-scheme:light){:root{--bg:#f7f5f1;--panel:#ffffff;--ink:#262a2f;--muted:#5b6d7a;--brand:#5b6d7a;--border:#e6e2da}}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,Segoe UI,Inter,Arial;padding:2rem}.c{max-width:880px;margin:0 auto;background:var(--panel);border:1px solid var(--border);border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,.25)}.nav{display:flex;gap:.5rem;flex-wrap:wrap;padding:.75rem;border-bottom:1px solid var(--border)}.nav a{padding:.45rem .7rem;border:1px solid var(--border);border-radius:999px;text-decoration:none;color:var(--ink)}.nav a:hover{border-color:var(--brand);color:var(--brand)}.h{padding:1.25rem 1.5rem}.intro{color:var(--muted);font-style:italic;margin:.25rem 0 1rem}.p{padding:0 1.5rem 1.5rem}.p p{margin:1.1rem 0}.f{padding:1rem 1.5rem;border-top:1px solid var(--border);color:var(--muted);font-size:.95rem}</style></head>
+<body><article class="c">
+<nav class="nav"><a href="/pocket-deploy/dashboard-bolzano-weierstrass-2/">← Dashboard</a><a href="/pocket-deploy/bolzano-weierstrass-2-1/">← Prev</a><a href="/pocket-deploy/bolzano-weierstrass-2-3/">Next →</a></nav>
+<header class="h"><h1>Neighborhoods & Epsilon-Balls</h1><p class="intro">Open intervals, deleted neighborhoods, and the epsilon machinery that makes "arbitrarily close" precise.</p></header>
+<section class="p">
+<p>Intuitive notions of "close" and "near" drive calculus, but rigor demands precision. The ε-machinery of Weierstrass transforms vague proximity into quantified statements. An ε-neighborhood of a point x is the open interval (x − ε, x + ε), capturing all points within distance ε. This simple definition anchors convergence: a sequence converges to L if, for any ε > 0, all but finitely many terms lie in (L − ε, L + ε). The universal quantifier "for any ε" is crucial—it means the sequence must eventually stay arbitrarily close to L, not just close for some convenient tolerance.</p>
+<p>Neighborhoods reveal topological structure. An open interval is open precisely because around each point inside it, you can fit a small ε-neighborhood entirely within the interval. Closed intervals include boundary points where every neighborhood spills outside. This interplay between points and neighborhoods formalizes concepts like interior, boundary, and closure. For sequences, neighborhoods let us phrase "getting close" without ambiguity: we specify a target L and a tolerance ε, then check whether the sequence eventually enters and remains in that ε-ball. The language of neighborhoods converts geometric intuition into logical statements amenable to proof.</p>
+<p>Deleted neighborhoods refine the concept for limit points and accumulation. The deleted neighborhood (x − ε, x + ε) \ {x} excludes x itself. A point L is an accumulation point (or limit point) of a set S if every deleted neighborhood of L contains infinitely many points of S. This definition captures the idea that S clusters around L without requiring L to be in S. For sequences, an accumulation point is a value that subsequences approach, even if the full sequence never settles. BWT's conclusion—that bounded sequences have convergent subsequences—is equivalent to saying bounded sequences have accumulation points, phrased in the language of deleted neighborhoods and clustering.</p>
+<p>The ε-δ framework extends to functions. Continuity at x means that for any ε > 0, there exists δ > 0 such that if |x − y| < δ, then |f(x) − f(y)| < ε. This nests neighborhoods: the δ-neighborhood of x maps into the ε-neighborhood of f(x). Uniform continuity strengthens this by requiring a single δ to work for all x in the domain. Neighborhoods make these distinctions precise. Similarly, limits of functions, derivatives, and integrals all rely on neighborhoods to specify "arbitrarily close" conditions. The ε-ball is the atom of analysis, the building block from which all limit concepts assemble.</p>
+<p>Compactness connects neighborhoods to covering arguments. A set is compact if every open cover (a collection of neighborhoods that together contain the set) has a finite subcover. In ℝ, compact sets are exactly the closed and bounded sets (Heine–Borel). BWT fits into this picture: a bounded sequence lives in a compact interval, and compactness forces the sequence to have accumulation points. Neighborhoods provide the language to state covering properties, and BWT emerges as a sequential manifestation of compactness. The ε-neighborhood, simple as it appears, encodes the completeness and tightness that make ℝ analytically tractable.</p>
+<p>Mastering ε-neighborhoods is essential for understanding BWT and analysis broadly. They transform "close" into a quantified challenge: can you make it work for any ε? They distinguish convergence from mere oscillation, limits from arbitrary values, and compact sets from unbounded sprawls. The ε-ball is the lens through which analysts view proximity, and BWT's guarantee—boundedness yields accumulation—rests on this precise notion of neighborhoods clustering infinitely often around some point.</p>
+</section>
+<footer class="f">Sources: Abbott, Understanding Analysis; Rudin, Principles of Mathematical Analysis; Munkres, Topology (for topological perspective).</footer>
+</article></body>
 </html>

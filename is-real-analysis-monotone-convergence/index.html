@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Monotone Convergence Theorem</title>
+  <style>
+    :root{--bg:#0b1020;--panel:#111833;--ink:#e6ecff;--muted:#a7b0cc;--brand:#8bb9ff;--accent:#c0ffe1;--border:#26325b;--chip:#1a2347;--bad:#ff6b6b;--shadow:0 8px 28px rgba(0,0,0,.35);--radius:12px;--radius-sm:8px}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;color:var(--ink);background:radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),var(--bg);line-height:1.6;min-height:100vh;padding-bottom:2rem;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+    .container{max-width:860px;margin:0 auto;padding:1rem}
+    .breadcrumb{margin-bottom:1rem;font-size:.92rem}
+    .breadcrumb a{color:var(--brand);text-decoration:none}
+    .breadcrumb span{color:var(--muted);margin:0 .5rem}
+    header{background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));border:1px solid var(--border);border-radius:var(--radius);padding:2rem 1.5rem;margin-bottom:1.25rem;box-shadow:var(--shadow)}
+    h1{font-size:1.75rem;color:var(--ink);margin-bottom:.4rem;letter-spacing:-.015em}
+    .subtitle{color:var(--muted);font-size:.95rem;font-style:italic}
+    .main-answer{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.25rem;box-shadow:var(--shadow);border-left:4px solid var(--brand)}
+    .main-answer h2{color:var(--brand);font-size:1.25rem;margin-bottom:.8rem}
+    .main-answer p{font-size:1.03rem;line-height:1.7;color:var(--muted)}
+    .section{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:1rem;box-shadow:var(--shadow);overflow:hidden}
+    .section-header{padding:1.05rem 1.25rem;background:linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%);color:var(--ink);cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;border-bottom:1px solid var(--border)}
+    .section-header h2{font-size:1.12rem;font-weight:700;letter-spacing:.01em}
+    .section-icon{font-size:1.35rem;transition:transform .3s ease}
+    .section.active .section-icon{transform:rotate(180deg)}
+    .section-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+    .section.active .section-content{max-height:5000px}
+    .section-inner{padding:1.25rem}
+    h3{color:var(--brand);font-size:1.06rem;margin:1.1rem 0 .6rem 0;letter-spacing:.01em}
+    h3:first-child{margin-top:0}
+    .list-item{background:color-mix(in oklab,var(--chip) 75%, transparent);border-left:3px solid var(--brand);padding:1rem;margin-bottom:.75rem;border-radius:var(--radius-sm);border:1px solid var(--border);color:var(--muted)}
+    .list-item strong{color:var(--brand);display:block;margin-bottom:.25rem}
+    .example-block{background:color-mix(in oklab,var(--chip) 65%, transparent);border-radius:var(--radius-sm);border:1px solid var(--border);padding:1rem;margin-bottom:.75rem;color:var(--muted)}
+    .example-block strong{color:var(--accent);display:block;margin-bottom:.25rem}
+    .source{background:color-mix(in oklab,var(--chip) 65%, transparent);border-radius:8px;padding:1rem;margin-top:1rem;font-size:.95rem;color:var(--muted);border:1px solid var(--border)}
+    .source strong{color:var(--ink)}
+    .back-to-top{position:fixed;bottom:1.5rem;right:1rem;background:var(--brand);color:#001;width:50px;height:50px;border-radius:50%;border:none;font-size:1.5rem;cursor:pointer;box-shadow:var(--shadow);opacity:0;transition:opacity .3s ease;z-index:1000;display:flex;align-items:center;justify-content:center;font-weight:900}
+    .back-to-top.visible{opacity:1}
+    .back-to-top:active{transform:scale(.96)}
+    a{color:var(--brand)}
+    @media (max-width:480px){h1{font-size:1.5rem}.section-header h2{font-size:1.05rem}.container{padding:.75rem}header{padding:1.5rem 1rem}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="https://ewallt.github.io/pocket-deploy/is-real-analysis-hub/index.html">Real Analysis Hub</a>
+      <span>›</span>
+      Monotone Convergence Theorem
+    </div>
+
+    <header>
+      <h1>Monotone Convergence Theorem</h1>
+      <p class="subtitle">Bounded monotone sequences always converge</p>
+    </header>
+
+    <section class="main-answer">
+      <h2>Concept Snapshot</h2>
+      <p>
+        The Monotone Convergence Theorem (MCT) states that every bounded monotone sequence in ℝ converges to a limit in ℝ.
+        Specifically, if (xₙ) is increasing and bounded above, then xₙ → sup{xₙ}. If (xₙ) is decreasing and bounded below,
+        then xₙ → inf{xₙ}. This elegant result connects order structure (monotonicity) with topology (convergence) and is
+        equivalent to the completeness of ℝ. It is essential for proving convergence of recursive sequences, series, and iterative algorithms.
+      </p>
+    </section>
+
+    <section class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🧩 Concept Overview</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Statement (Increasing Case).</strong>
+            If (xₙ) is increasing (xₙ ≤ xₙ₊₁ for all n) and bounded above (∃M with xₙ ≤ M for all n), then (xₙ) converges to L = sup{xₙ : n ∈ ℕ}.
+          </div>
+          <div class="list-item">
+            <strong>Statement (Decreasing Case).</strong>
+            If (xₙ) is decreasing (xₙ ≥ xₙ₊₁ for all n) and bounded below (∃m with xₙ ≥ m for all n), then (xₙ) converges to L = inf{xₙ : n ∈ ℕ}.
+          </div>
+          <div class="list-item">
+            <strong>Role in Analysis.</strong>
+            MCT provides a simple criterion for convergence: check boundedness and monotonicity. It underpins proofs of series convergence, existence of limits like e and π, and construction of solutions to differential equations via iterative methods.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📚 Assumptions & Definitions</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Monotone Sequence.</strong>
+            A sequence (xₙ) is monotone increasing if xₙ ≤ xₙ₊₁ for all n, and strictly increasing if xₙ < xₙ₊₁. Similarly for decreasing. Monotone means either increasing or decreasing.
+          </div>
+          <div class="list-item">
+            <strong>Bounded Sequence.</strong>
+            A sequence is bounded above if ∃M with xₙ ≤ M for all n. Bounded below if ∃m with xₙ ≥ m. Bounded means both bounded above and below.
+          </div>
+          <div class="list-item">
+            <strong>Supremum and Infimum.</strong>
+            sup S is the least upper bound of S. inf S is the greatest lower bound. By the Least Upper Bound Property of ℝ, every nonempty bounded set has a supremum and infimum in ℝ.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🧮 Proof Outline</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <h3>Proof for Increasing Bounded Sequence</h3>
+          <div class="list-item">
+            <strong>Step 1 – Supremum exists.</strong>
+            Since (xₙ) is bounded above, the set S = {xₙ : n ∈ ℕ} is nonempty and bounded above. By the Least Upper Bound Property, L = sup S exists in ℝ.
+          </div>
+          <div class="list-item">
+            <strong>Step 2 – Show xₙ → L.</strong>
+            Given ε > 0, since L is the supremum, L − ε is not an upper bound. So ∃N with x_N > L − ε. Since (xₙ) is increasing, for all n ≥ N, L − ε < x_N ≤ xₙ ≤ L < L + ε. Thus |xₙ − L| < ε for all n ≥ N, so xₙ → L.
+          </div>
+
+          <h3>Proof for Decreasing Bounded Sequence</h3>
+          <div class="list-item">
+            <strong>Analogous proof.</strong>
+            Let L = inf{xₙ}. Given ε > 0, choose N with x_N < L + ε. Since (xₙ) is decreasing, for n ≥ N, L − ε < L ≤ xₙ ≤ x_N < L + ε, so |xₙ − L| < ε. Thus xₙ → L.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>💡 Key Insights & Intuition</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Why Monotonicity Matters.</strong>
+            Without monotonicity, bounded sequences need not converge. Example: (−1)ⁿ is bounded but oscillates forever.
+          </div>
+          <div class="list-item">
+            <strong>Why Boundedness Matters.</strong>
+            Monotone sequences without bounds diverge to ±∞. Example: xₙ = n is increasing but unbounded, so xₙ → ∞ (not a finite limit).
+          </div>
+          <div class="list-item">
+            <strong>Equivalence to Completeness.</strong>
+            MCT is equivalent to the Least Upper Bound Property. It characterizes completeness of ℝ: in ℚ, increasing bounded sequences need not converge (e.g., decimal approximations to √2).
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>⚙️ Applications & Examples</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="example-block">
+            <strong>Recursive Sequences.</strong>
+            Define x₁ = 1, xₙ₊₁ = √(2 + xₙ). Prove by induction: xₙ ≤ 2 and xₙ ≤ xₙ₊₁. By MCT, xₙ → L. Taking limits: L = √(2 + L), so L² − L − 2 = 0, giving L = 2 (since L > 0).
+          </div>
+          <div class="example-block">
+            <strong>Definition of e.</strong>
+            The sequence xₙ = (1 + 1/n)ⁿ is increasing and bounded above by 3. By MCT, xₙ converges; we define e = lim xₙ ≈ 2.718.
+          </div>
+          <div class="example-block">
+            <strong>Series Convergence.</strong>
+            Partial sums Sₙ = Σ_{k=1}^n aₖ of a series with aₖ ≥ 0 form an increasing sequence. If Sₙ ≤ M, then by MCT, Σ aₖ converges.
+          </div>
+          <div class="example-block">
+            <strong>Nested Intervals.</strong>
+            If [aₙ, bₙ] are nested (aₙ ≤ aₙ₊₁ ≤ bₙ₊₁ ≤ bₙ), then (aₙ) is increasing and bounded above by b₁, so aₙ → α. Similarly bₙ → β. Intersection ⋂ [aₙ, bₙ] = [α, β].
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🔁 Connections & Extensions</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Least Upper Bound Property.</strong>
+            MCT is equivalent to the Least Upper Bound Property (Completeness Axiom). Each implies the other via straightforward arguments.
+          </div>
+          <div class="list-item">
+            <strong>Monotone Convergence Theorem (Integration).</strong>
+            In measure theory, there is a different MCT: if fₙ are nonnegative measurable functions with fₙ ↑ f pointwise, then ∫ fₙ → ∫ f. This is a fundamental tool in Lebesgue integration.
+          </div>
+          <div class="list-item">
+            <strong>Fixed Point Theorems.</strong>
+            MCT is used in proofs of Banach Fixed Point Theorem and other iterative existence results: construct a monotone bounded sequence of approximations that converges to a solution.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🧠 Historical Note</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Origins.</strong>
+            The Monotone Convergence Theorem was recognized implicitly by early analysts but formalized in the 19th century as part of the rigorous foundation of real numbers by Weierstrass, Dedekind, and Cantor.
+          </div>
+          <div class="list-item">
+            <strong>Foundational Role.</strong>
+            MCT is often one of the first major theorems students encounter that depends crucially on completeness of ℝ. It illustrates the power of the Least Upper Bound Property and sets the stage for more advanced analysis.
+          </div>
+          <div class="source">
+            <strong>Further Reading:</strong> Walter Rudin, <em>Principles of Mathematical Analysis</em>, ch. 3; Kenneth Ross, <em>Elementary Analysis</em>; Terence Tao, <em>Analysis I</em>.
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <button class="back-to-top" id="backToTop" onclick="scrollToTop()" aria-label="Back to top">↑</button>
+
+  <script>
+    function toggleSection(header){const section = header.parentElement;const all = document.querySelectorAll('.section');all.forEach(s => {if(s !== section && s.classList.contains('active')) s.classList.remove('active')});section.classList.toggle('active')}
+    window.addEventListener('scroll', () => {const btn = document.getElementById('backToTop');if(window.pageYOffset > 300){ btn.classList.add('visible'); }else { btn.classList.remove('visible'); }});
+    document.addEventListener('DOMContentLoaded', () => {const first = document.querySelector('.section');if(first) first.classList.add('active')});
+    function scrollToTop(){window.scrollTo({ top:0, behavior:'smooth' })}
+  </script>
+</body>
+</html>

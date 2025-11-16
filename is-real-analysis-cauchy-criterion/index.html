@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Cauchy Criterion for Sequences</title>
+  <style>
+    :root{--bg:#0b1020;--panel:#111833;--ink:#e6ecff;--muted:#a7b0cc;--brand:#8bb9ff;--accent:#c0ffe1;--border:#26325b;--chip:#1a2347;--bad:#ff6b6b;--shadow:0 8px 28px rgba(0,0,0,.35);--radius:12px;--radius-sm:8px}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;color:var(--ink);background:radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),var(--bg);line-height:1.6;min-height:100vh;padding-bottom:2rem;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+    .container{max-width:860px;margin:0 auto;padding:1rem}
+    .breadcrumb{margin-bottom:1rem;font-size:.92rem}
+    .breadcrumb a{color:var(--brand);text-decoration:none}
+    .breadcrumb span{color:var(--muted);margin:0 .5rem}
+    header{background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));border:1px solid var(--border);border-radius:var(--radius);padding:2rem 1.5rem;margin-bottom:1.25rem;box-shadow:var(--shadow)}
+    h1{font-size:1.75rem;color:var(--ink);margin-bottom:.4rem;letter-spacing:-.015em}
+    .subtitle{color:var(--muted);font-size:.95rem;font-style:italic}
+    .main-answer{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.25rem;box-shadow:var(--shadow);border-left:4px solid var(--brand)}
+    .main-answer h2{color:var(--brand);font-size:1.25rem;margin-bottom:.8rem}
+    .main-answer p{font-size:1.03rem;line-height:1.7;color:var(--muted)}
+    .section{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:1rem;box-shadow:var(--shadow);overflow:hidden}
+    .section-header{padding:1.05rem 1.25rem;background:linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%);color:var(--ink);cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;border-bottom:1px solid var(--border)}
+    .section-header h2{font-size:1.12rem;font-weight:700;letter-spacing:.01em}
+    .section-icon{font-size:1.35rem;transition:transform .3s ease}
+    .section.active .section-icon{transform:rotate(180deg)}
+    .section-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+    .section.active .section-content{max-height:5000px}
+    .section-inner{padding:1.25rem}
+    h3{color:var(--brand);font-size:1.06rem;margin:1.1rem 0 .6rem 0;letter-spacing:.01em}
+    h3:first-child{margin-top:0}
+    .list-item{background:color-mix(in oklab,var(--chip) 75%, transparent);border-left:3px solid var(--brand);padding:1rem;margin-bottom:.75rem;border-radius:var(--radius-sm);border:1px solid var(--border);color:var(--muted)}
+    .list-item strong{color:var(--brand);display:block;margin-bottom:.25rem}
+    .example-block{background:color-mix(in oklab,var(--chip) 65%, transparent);border-radius:var(--radius-sm);border:1px solid var(--border);padding:1rem;margin-bottom:.75rem;color:var(--muted)}
+    .example-block strong{color:var(--accent);display:block;margin-bottom:.25rem}
+    .source{background:color-mix(in oklab,var(--chip) 65%, transparent);border-radius:8px;padding:1rem;margin-top:1rem;font-size:.95rem;color:var(--muted);border:1px solid var(--border)}
+    .source strong{color:var(--ink)}
+    .back-to-top{position:fixed;bottom:1.5rem;right:1rem;background:var(--brand);color:#001;width:50px;height:50px;border-radius:50%;border:none;font-size:1.5rem;cursor:pointer;box-shadow:var(--shadow);opacity:0;transition:opacity .3s ease;z-index:1000;display:flex;align-items:center;justify-content:center;font-weight:900}
+    .back-to-top.visible{opacity:1}
+    .back-to-top:active{transform:scale(.96)}
+    a{color:var(--brand)}
+    @media (max-width:480px){h1{font-size:1.5rem}.section-header h2{font-size:1.05rem}.container{padding:.75rem}header{padding:1.5rem 1rem}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="https://ewallt.github.io/pocket-deploy/is-real-analysis-hub/index.html">Real Analysis Hub</a>
+      <span>›</span>
+      Cauchy Criterion for Sequences
+    </div>
+
+    <header>
+      <h1>Cauchy Criterion for Sequences</h1>
+      <p class="subtitle">A sequence converges if and only if it is Cauchy</p>
+    </header>
+
+    <section class="main-answer">
+      <h2>Concept Snapshot</h2>
+      <p>
+        The Cauchy Criterion states that a sequence (xₙ) in ℝ converges if and only if it is a Cauchy sequence—meaning
+        that for every ε > 0, there exists N such that |xₘ − xₙ| < ε whenever m, n ≥ N. This criterion is fundamental
+        because it provides a way to test convergence without knowing the limit in advance. It characterizes the completeness
+        of ℝ: every Cauchy sequence in ℝ converges to a limit in ℝ.
+      </p>
+    </section>
+
+    <section class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🧩 Concept Overview</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Statement.</strong>
+            A sequence (xₙ) in ℝ converges to a limit L ∈ ℝ if and only if (xₙ) is Cauchy: for every ε > 0, ∃N such that |xₘ − xₙ| < ε whenever m, n ≥ N.
+          </div>
+          <div class="list-item">
+            <strong>Intuitive Meaning.</strong>
+            Terms of the sequence get arbitrarily close to each other (not just to some unknown limit). If the terms eventually cluster together, they must be approaching a limit.
+          </div>
+          <div class="list-item">
+            <strong>Role in Analysis.</strong>
+            The Cauchy Criterion is essential for proving convergence when the limit is unknown, constructing real numbers from rationals, and establishing completeness of metric spaces.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📚 Assumptions & Definitions</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Cauchy Sequence.</strong>
+            A sequence (xₙ) is Cauchy if for every ε > 0, ∃N ∈ ℕ such that for all m, n ≥ N, |xₘ − xₙ| < ε. In words: the distance between terms becomes arbitrarily small.
+          </div>
+          <div class="list-item">
+            <strong>Convergent Sequence.</strong>
+            A sequence (xₙ) converges to L if for every ε > 0, ∃N such that |xₙ − L| < ε for all n ≥ N. The limit L must exist in ℝ.
+          </div>
+          <div class="list-item">
+            <strong>Completeness of ℝ.</strong>
+            ℝ is complete: every Cauchy sequence in ℝ converges to a limit in ℝ. This is equivalent to the Least Upper Bound Property and distinguishes ℝ from ℚ.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🧮 Proof Outline</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <h3>(⇒) Convergent implies Cauchy</h3>
+          <div class="list-item">
+            <strong>Proof.</strong>
+            Suppose xₙ → L. Given ε > 0, choose N so that |xₙ − L| < ε/2 for all n ≥ N. Then for m, n ≥ N, |xₘ − xₙ| ≤ |xₘ − L| + |L − xₙ| < ε/2 + ε/2 = ε. Thus (xₙ) is Cauchy.
+          </div>
+
+          <h3>(⇐) Cauchy implies Convergent (uses completeness of ℝ)</h3>
+          <div class="list-item">
+            <strong>Step 1 – Cauchy sequences are bounded.</strong>
+            Let ε = 1. Then ∃N with |xₘ − xₙ| < 1 for m, n ≥ N. In particular, |xₙ| ≤ |xₙ − x_N| + |x_N| < 1 + |x_N| for all n ≥ N. Thus (xₙ) is bounded.
+          </div>
+          <div class="list-item">
+            <strong>Step 2 – Bolzano-Weierstrass Theorem.</strong>
+            Since (xₙ) is bounded, it has a convergent subsequence xₙₖ → L for some L ∈ ℝ.
+          </div>
+          <div class="list-item">
+            <strong>Step 3 – The whole sequence converges to L.</strong>
+            Given ε > 0, choose N₁ such that |xₘ − xₙ| < ε/2 for m, n ≥ N₁ (Cauchy condition). Choose K such that nₖ ≥ N₁ and |xₙₖ − L| < ε/2 (subsequence converges). Then for n ≥ N₁, |xₙ − L| ≤ |xₙ − xₙₖ| + |xₙₖ − L| < ε/2 + ε/2 = ε. Thus xₙ → L.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>💡 Key Insights & Intuition</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Why is this useful?</strong>
+            To prove xₙ → L using the definition, you need to know L. The Cauchy Criterion lets you prove convergence without knowing the limit, by checking only that terms get close to each other.
+          </div>
+          <div class="list-item">
+            <strong>Completeness is Essential.</strong>
+            The Cauchy sequence (1, 1.4, 1.41, 1.414, ...) (decimal expansion of √2) is Cauchy in ℚ but does not converge to any rational number. ℝ is complete; ℚ is not.
+          </div>
+          <div class="list-item">
+            <strong>Metric Space Generalization.</strong>
+            A metric space is complete if every Cauchy sequence converges. ℝⁿ is complete, ℚ is not, and (0,1) ⊂ ℝ is not (Cauchy sequence approaching 0 or 1 leaves the space).
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>⚙️ Applications & Examples</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="example-block">
+            <strong>Decimal Expansions.</strong>
+            The sequence 3, 3.1, 3.14, 3.141, ... (digits of π) is Cauchy: |xₘ − xₙ| ≤ 10^{−min(m,n)} → 0. By the Cauchy Criterion, it converges to some real number, which we call π.
+          </div>
+          <div class="example-block">
+            <strong>Series Convergence.</strong>
+            To test if Σ aₙ converges, check if partial sums Sₙ = Σ_{k=1}^n aₖ form a Cauchy sequence. |Sₘ − Sₙ| = |a_{n+1} + ⋯ + aₘ| must be small for large n, m.
+          </div>
+          <div class="example-block">
+            <strong>Nested Intervals.</strong>
+            If [aₙ, bₙ] are nested intervals with bₙ − aₙ → 0, then (aₙ) and (bₙ) are Cauchy. By completeness, they converge to the same limit L, which lies in all intervals.
+          </div>
+          <div class="example-block">
+            <strong>Counterexample in ℚ.</strong>
+            The sequence xₙ = (1 + 1/n)ⁿ is Cauchy but does not converge in ℚ (it converges to e ≈ 2.718 ∉ ℚ).
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🔁 Connections & Extensions</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Bolzano-Weierstrass Theorem.</strong>
+            The proof that Cauchy implies convergent uses Bolzano-Weierstrass: every bounded sequence has a convergent subsequence.
+          </div>
+          <div class="list-item">
+            <strong>Construction of ℝ.</strong>
+            One way to construct ℝ from ℚ is via Cauchy sequences: define ℝ as equivalence classes of Cauchy sequences of rationals, where (xₙ) ~ (yₙ) if xₙ − yₙ → 0.
+          </div>
+          <div class="list-item">
+            <strong>Complete Metric Spaces.</strong>
+            The Cauchy Criterion extends to any metric space (X, d): X is complete if every Cauchy sequence in X converges to a point in X. Examples: ℝⁿ, ℓᵖ spaces, C[a,b] with sup norm.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🧠 Historical Note</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Origins.</strong>
+            Augustin-Louis Cauchy introduced the notion of Cauchy sequences in the 1820s as part of his effort to rigorize calculus. He incorrectly believed that every Cauchy sequence of continuous functions converges to a continuous function (not true without uniform convergence).
+          </div>
+          <div class="list-item">
+            <strong>Completeness.</strong>
+            The Cauchy Criterion highlighted the need for a complete number system. It motivated the rigorous construction of ℝ by Cantor, Dedekind, and Weierstrass in the 1870s.
+          </div>
+          <div class="source">
+            <strong>Further Reading:</strong> Walter Rudin, <em>Principles of Mathematical Analysis</em>, ch. 3; Terence Tao, <em>Analysis I</em>; Kenneth Ross, <em>Elementary Analysis</em>.
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <button class="back-to-top" id="backToTop" onclick="scrollToTop()" aria-label="Back to top">↑</button>
+
+  <script>
+    function toggleSection(header){const section = header.parentElement;const all = document.querySelectorAll('.section');all.forEach(s => {if(s !== section && s.classList.contains('active')) s.classList.remove('active')});section.classList.toggle('active')}
+    window.addEventListener('scroll', () => {const btn = document.getElementById('backToTop');if(window.pageYOffset > 300){ btn.classList.add('visible'); }else { btn.classList.remove('visible'); }});
+    document.addEventListener('DOMContentLoaded', () => {const first = document.querySelector('.section');if(first) first.classList.add('active')});
+    function scrollToTop(){window.scrollTo({ top:0, behavior:'smooth' })}
+  </script>
+</body>
+</html>

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Revolutionary War Hub</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111833;
+      --ink:#e6ecff;
+      --muted:#a7b0cc;
+      --brand:#8bb9ff;
+      --accent:#c0ffe1;
+      --border:#26325b;
+      --chip:#1a2347;
+      --shadow:0 8px 28px rgba(0,0,0,.35);
+      --radius:14px;
+      --radius-sm:10px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+      line-height:1.6;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
+        radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+      padding-bottom:2rem;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .container{max-width:1100px;margin:0 auto;padding:1rem}
+
+    .breadcrumb{
+      margin-bottom:1rem;
+      font-size:.92rem;
+    }
+    .breadcrumb a{
+      color:var(--brand);
+      text-decoration:none;
+    }
+    .breadcrumb a:hover{
+      text-decoration:underline;
+    }
+    .breadcrumb span{
+      color:var(--muted);
+      margin:0 .5rem;
+    }
+
+    header{
+      background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:2rem 1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+    }
+
+    h1{
+      color:var(--ink);
+      font-size:1.9rem;
+      margin-bottom:.4rem;
+      letter-spacing:-.02em;
+    }
+
+    .subtitle{
+      color:var(--muted);
+      font-size:.98rem;
+      font-style:italic;
+    }
+
+    .toolbar{
+      display:flex;gap:.75rem;flex-wrap:wrap;
+      margin:1rem 0 1.25rem 0;
+    }
+
+    .search{
+      flex:1 1 320px;
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:999px;
+      display:flex;align-items:center;gap:.5rem;
+      padding:.65rem .9rem;
+      box-shadow:var(--shadow);
+    }
+    .search input{
+      width:100%;border:none;background:transparent;color:var(--ink);
+      outline:none;font-size:1rem;
+    }
+    .chip{
+      background:color-mix(in oklab,var(--chip) 75%, transparent);
+      border:1px solid var(--border);
+      color:var(--ink);
+      padding:.5rem .75rem;border-radius:999px;
+      font-size:.9rem;cursor:pointer;user-select:none;
+    }
+    .chip.active{outline:2px solid var(--brand)}
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(4, minmax(0,1fr));
+      gap:1rem;
+    }
+    @media (max-width:980px){ .grid{grid-template-columns:repeat(3, minmax(0,1fr));} }
+    @media (max-width:720px){ .grid{grid-template-columns:repeat(2, minmax(0,1fr));} }
+    @media (max-width:480px){
+      .grid{grid-template-columns:1fr;}
+      h1{font-size:1.6rem}
+      .chip{padding:.6rem .8rem}
+      .btn{padding:.7rem .9rem;font-size:1rem}
+      .card p{min-height:auto}
+    }
+
+    .card{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:1rem;
+      box-shadow:var(--shadow);
+      display:flex;flex-direction:column;gap:.6rem;
+      transition:transform .15s ease, border-color .2s ease;
+      position:relative;
+      overflow:hidden;
+    }
+    .card::after{
+      content:'';
+      position:absolute;inset:0;
+      background:radial-gradient(400px 160px at 110% -10%, rgba(139,185,255,.10), transparent 60%);
+      pointer-events:none;
+    }
+    .card:hover{transform:translateY(-2px);border-color:color-mix(in oklab,var(--brand) 60%, var(--border))}
+    .card h3{
+      color:var(--brand);font-size:1.05rem;letter-spacing:.01em;
+    }
+    .card p{
+      color:var(--muted);font-size:.95rem;line-height:1.5;min-height:3.2em;
+    }
+
+    .tagrow{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.2rem}
+    .tag{
+      font-size:.75rem;color:var(--ink);
+      background:color-mix(in oklab,var(--chip) 65%, transparent);
+      border:1px solid var(--border);
+      padding:.25rem .5rem;border-radius:999px;
+    }
+
+    .actions{display:flex;gap:.5rem;margin-top:.35rem}
+    .btn{
+      width:100%;
+      text-align:center;text-decoration:none;
+      background:linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%);
+      color:#e6ecff;border:1px solid var(--border);
+      padding:.55rem .7rem;border-radius:10px;font-weight:600;font-size:.9rem;
+    }
+
+    footer{
+      margin-top:1.25rem;
+      color:var(--muted);
+      font-size:.88rem;text-align:center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="https://ewallt.github.io/pocket-deploy/is-war-hub/index.html">Military History Hub</a>
+      <span>›</span>
+      Revolutionary War
+    </div>
+    <header>
+      <h1>Revolutionary War Hub</h1>
+      <p class="subtitle">Battles That Forged a Nation (1775–1781)</p>
+      <div class="toolbar">
+        <div class="search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 21l-4.2-4.2M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <input id="searchInput" type="search" placeholder="Filter by title, region, year, or tags…" autocomplete="off"/>
+        </div>
+        <button class="chip" data-tag="all">All</button>
+        <button class="chip" data-tag="northern">Northern</button>
+        <button class="chip" data-tag="southern">Southern</button>
+        <button class="chip" data-tag="naval">Naval</button>
+        <button class="chip" data-tag="siege">Siege</button>
+        <button class="chip" data-tag="turning-point">Turning Point</button>
+      </div>
+    </header>
+
+    <main>
+      <div id="grid" class="grid" aria-live="polite"></div>
+    </main>
+
+    <footer>Battles that transformed thirteen colonies into the United States of America.</footer>
+  </div>
+
+  <script>
+    // ---- Canonical parent (so children can breadcrumb back) ----
+    const PARENT_DASHBOARD = {
+      title: "Revolutionary War Hub",
+      url: "https://ewallt.github.io/pocket-deploy/is-revwar-hub/index.html"
+    };
+
+    // ---- Configure Revolutionary War battles ----
+    const apps = [
+      {
+        id:"is-revwar-lexington-concord-1775",
+        title:"Lexington & Concord (1775)",
+        blurb:"The shot heard round the world. Colonial militia face British regulars on the road to Boston.",
+        tags:["northern","1775","early-war"],
+        view:"https://ewallt.github.io/pocket-deploy/is-revwar-lexington-concord-1775/index.html"
+      },
+      {
+        id:"is-revwar-bunker-hill-1775",
+        title:"Bunker Hill (1775)",
+        blurb:"British take the hill, but at devastating cost. \"Don't fire until you see the whites of their eyes.\"",
+        tags:["northern","1775","early-war"],
+        view:"https://ewallt.github.io/pocket-deploy/is-revwar-bunker-hill-1775/index.html"
+      },
+      {
+        id:"is-revwar-trenton-1776",
+        title:"Trenton (1776)",
+        blurb:"Washington crosses the Delaware on Christmas night, capturing Hessian garrison and reviving American morale.",
+        tags:["northern","1776","turning-point"],
+        view:"https://ewallt.github.io/pocket-deploy/is-revwar-trenton-1776/index.html"
+      },
+      {
+        id:"is-revwar-princeton-1777",
+        title:"Princeton (1777)",
+        blurb:"Washington's tactical brilliance continues. British forces routed in New Jersey.",
+        tags:["northern","1777"],
+        view:"https://ewallt.github.io/pocket-deploy/is-revwar-princeton-1777/index.html"
+      },
+      {
+        id:"is-revwar-saratoga-1777",
+        title:"Saratoga (1777)",
+        blurb:"Burgoyne's surrender convinces France to enter the war. The campaign that changed everything.",
+        tags:["northern","1777","turning-point"],
+        view:"https://ewallt.github.io/pocket-deploy/is-revwar-saratoga-1777/index.html"
+      },
+      {
+        id:"is-revwar-monmouth-1778",
+        title:"Monmouth (1778)",
+        blurb:"The last major battle in the North. Continental Army proves it can stand toe-to-toe with British regulars.",
+        tags:["northern","1778"],
+        view:"https://ewallt.github.io/pocket-deploy/is-revwar-monmouth-1778/index.html"
+      },
+      {
+        id:"is-revwar-bonhomme-richard-1779",
+        title:"Bonhomme Richard vs. Serapis (1779)",
+        blurb:"John Paul Jones: \"I have not yet begun to fight!\" A desperate naval victory off the English coast.",
+        tags:["naval","1779"],
+        view:"https://ewallt.github.io/pocket-deploy/is-revwar-bonhomme-richard-1779/index.html"
+      },
+      {
+        id:"is-revwar-charleston-1780",
+        title:"Charleston (1780)",
+        blurb:"Britain's greatest victory. General Lincoln surrenders the city and 5,000 men in devastating siege.",
+        tags:["southern","siege","1780"],
+        view:"https://ewallt.github.io/pocket-deploy/is-revwar-charleston-1780/index.html"
+      },
+      {
+        id:"is-revwar-kings-mountain-1780",
+        title:"King's Mountain (1780)",
+        blurb:"Overmountain Men overwhelm Loyalist militia in South Carolina. A turning point in the Southern campaign.",
+        tags:["southern","1780","turning-point"],
+        view:"https://ewallt.github.io/pocket-deploy/is-revwar-kings-mountain-1780/index.html"
+      },
+      {
+        id:"is-revwar-cowpens-1781",
+        title:"Cowpens (1781)",
+        blurb:"Daniel Morgan's tactical masterpiece. British regulars caught in double envelopment.",
+        tags:["southern","1781"],
+        view:"https://ewallt.github.io/pocket-deploy/is-revwar-cowpens-1781/index.html"
+      },
+      {
+        id:"is-revwar-guilford-courthouse-1781",
+        title:"Guilford Courthouse (1781)",
+        blurb:"Cornwallis wins the field but loses a quarter of his army. A pyrrhic victory that dooms the British campaign.",
+        tags:["southern","1781"],
+        view:"https://ewallt.github.io/pocket-deploy/is-revwar-guilford-courthouse-1781/index.html"
+      },
+      {
+        id:"is-revwar-yorktown-1781",
+        title:"Yorktown (1781)",
+        blurb:"Franco-American forces trap Cornwallis. His surrender effectively ends the war.",
+        tags:["southern","siege","1781","turning-point"],
+        view:"https://ewallt.github.io/pocket-deploy/is-revwar-yorktown-1781/index.html"
+      }
+    ];
+
+    // ---- Render cards ----
+    const grid = document.getElementById('grid');
+    const searchInput = document.getElementById('searchInput');
+    const chips = Array.from(document.querySelectorAll('.chip'));
+    let activeTag = 'all';
+
+    function makeCard(app){
+      const el = document.createElement('article');
+      el.className = 'card';
+      el.dataset.tags = app.tags.join(' ').toLowerCase();
+      el.dataset.title = app.title.toLowerCase();
+      el.innerHTML = `
+        <h3>${app.title}</h3>
+        <p>${app.blurb}</p>
+        <div class="tagrow">
+          ${app.tags.map(t=>`<span class="tag">#${t}</span>`).join('')}
+        </div>
+        <div class="actions">
+          <a class="btn" href="${app.view}">Open</a>
+        </div>
+      `;
+      return el;
+    }
+
+    function render(){
+      grid.innerHTML = '';
+      const q = (searchInput.value || '').trim().toLowerCase();
+      apps
+        .filter(a=>{
+          const tagOk = activeTag==='all' ? true : a.tags.map(t=>t.toLowerCase()).includes(activeTag);
+          const text = (a.title + ' ' + a.blurb + ' ' + a.tags.join(' ')).toLowerCase();
+          const qOk = !q || text.includes(q);
+          return tagOk && qOk;
+        })
+        .forEach(a=>grid.appendChild(makeCard(a)));
+
+      // Defensive: ensure same-tab navigation
+      grid.querySelectorAll('a.btn').forEach(a=>{
+        a.removeAttribute('target');
+        a.removeAttribute('rel');
+      });
+    }
+
+    // ---- Interactions ----
+    searchInput.addEventListener('input', render);
+    chips.forEach(chip=>{
+      chip.addEventListener('click', ()=>{
+        chips.forEach(c=>c.classList.remove('active'));
+        chip.classList.add('active');
+        activeTag = chip.dataset.tag;
+        render();
+      });
+    });
+    // default: All active
+    document.querySelector('.chip[data-tag="all"]').classList.add('active');
+
+    // Initial render
+    render();
+  </script>
+</body>
+</html>

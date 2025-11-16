@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Adaptive Reader</title>
+
+  <!-- Tailwind + typography -->
+  <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+  <script>tailwind.config = { darkMode: 'class' }</script>
+
+  <!-- Optional BLB tagger (safe to leave in) -->
+  <script src="https://www.blueletterbible.org/scripts/blbToolTip/BLB_ScriptTagger-min.js"></script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+
+  <style>
+    /* Typography */
+    .font-newspaper{font-family:'Lora',serif}
+    .font-dark-theme{font-family:'Lora',serif}
+    body{transition:background .3s,color .3s}
+    .prose h1{min-height:7.5rem}
+
+    /* --- Classic Themes (Original) --- */
+    .newspaper-theme{background:#fdfdfd;color:#1a1a1a}
+    .newspaper-theme .nav-button{background:#f8f9fa;border:1px solid #dee2e6;color:#212529}
+    .newspaper-theme .nav-button:hover{background:#e9ecef}
+    .newspaper-theme .nav-button.active{background:#1a1a1a;color:#fdfdfd}
+
+    .dark-theme{background:#2d2d30;color:#fff}
+    .dark-theme .nav-button{background:#3c3c3c;border:1px solid #4a4a4a;color:#ccc}
+    .dark-theme .nav-button:hover{background:#4a4a4a}
+    .dark-theme .nav-button.active{background:#fff;color:#2d2d30}
+    
+    /* --- New Variable-Based Theme Engine --- */
+    :root {
+        --bg-gradient: #fdfdfd;
+        --text: #1a1a1a;
+        --accent-text: #1a1a1a;
+        --nav-bg: #f8f9fa;
+        --nav-border: #dee2e6;
+        --nav-text: #212529;
+        --nav-hover-bg: #e9ecef;
+        --nav-active-bg: #1a1a1a;
+        --nav-active-text: #fdfdfd;
+    }
+    
+    .variable-theme {
+        background: var(--bg-gradient);
+        color: var(--text);
+        font-family: 'Lora', serif;
+    }
+    .variable-theme .prose h1,
+    .variable-theme .prose h2,
+    .variable-theme .prose h3 {
+        color: var(--accent-text);
+    }
+    .variable-theme .nav-button {
+        background-color: var(--nav-bg);
+        border: 1px solid var(--nav-border);
+        color: var(--nav-text);
+    }
+    .variable-theme .nav-button:hover {
+        background-color: var(--nav-hover-bg);
+    }
+    .variable-theme .nav-button.active {
+        background-color: var(--nav-active-bg);
+        color: var(--nav-active-text);
+    }
+    .variable-theme .nav-button.btn-dark-text.active,
+    .variable-theme .nav-button.btn-dark-text:hover {
+        color: var(--nav-active-text);
+    }
+    .variable-theme .nav-button.btn-light-text.active,
+    .variable-theme .nav-button.btn-light-text:hover {
+        color: var(--nav-active-text);
+    }
+
+    /* --- Shared & Modal Styles --- */
+    .nav-container{margin-bottom:2rem}
+    .nav-button{padding:.5rem 1rem;margin:.5rem .5rem .5rem 0;border-radius:.375rem;transition:all .2s;cursor:pointer}
+    #library-switcher,#topic-switcher{padding:.5rem;border-radius:.375rem;margin-bottom:1rem;width:100%;border:1px solid #ccc}
+    .nav-buttons-wrapper{display:flex;flex-wrap:wrap;align-items:center;width:100%}
+    .flex-break{flex-basis:100%;height:0}
+
+    .modal-overlay {
+        display: none; position: fixed; z-index: 1000; left: 0; top: 0;
+        width: 100%; height: 100%;
+        background-color: rgba(0,0,0,0.6);
+        justify-content: center; align-items: center;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal-content {
+        background: #fff; color: #2d2d30; padding: 2rem; border-radius: 8px;
+        text-align: center; position: relative; width: 90%; max-width: 400px;
+    }
+    .dark .modal-content { background: #2d2d30; color: #fff; }
+    .modal-content h3 { font-size: 1.5rem; margin-bottom: 1.5rem; }
+    .modal-content label { font-size: 1.1rem; margin-right: 10px; }
+    #theme-select {
+        background-color: #f0f0f0; color: #2d2d30;
+        border: 1px solid #ccc; border-radius: 5px; padding: 8px; font-size: 1rem;
+    }
+    .dark #theme-select {
+        background-color: #3c3c3c; color: #fff; border-color: #4a4a4a;
+    }
+    .close-btn {
+        position: absolute; top: 10px; right: 15px; color: #aaa;
+        font-size: 28px; font-weight: bold; background: none;
+        border: none; cursor: pointer;
+    }
+  </style>
+</head>
+<body class="font-newspaper newspaper-theme">
+
+  <script id="embedded-content" type="application/json">
+{
+  "fish-and-seafood-sauces": {
+    "display_order": 10,
+    "title": "Fish & Seafood Sauces",
+    "description": "Simple, elegant sauces that make fish and seafood shine. These are the classics that every cook should know - from quick pan sauces to herb-bright finishes.",
+    "categories": {
+      "lemon-butter-sauce": {
+        "display_order": 10,
+        "name": "Lemon Butter Sauce",
+        "display_name": "Lemon Butter Sauce",
+        "introduction": "This is the most important sauce for fish. It's simple, fast, and makes everything taste like it came from a fancy restaurant. The secret is in the timing and temperature.",
+        "paragraphs": [
+          {
+            "heading": "The Magic Behind It",
+            "content": "Lemon butter sauce is really about balance - the richness of butter meeting the brightness of lemon. When you get this right, it transforms simple fish into something special. The French call this 'beurre blanc' but don't let fancy names scare you. This is just good butter, good lemon, and a gentle hand."
+          },
+          {
+            "heading": "How to Make It Work",
+            "content": "Start with a hot pan after cooking your fish. Add a splash of white wine or lemon juice - it should sizzle and bubble. Turn the heat to low, then slowly whisk in cold butter, one small piece at a time. The sauce will become creamy and glossy, like silk. If it breaks apart, your heat is too high. If it won't come together, add a tiny splash of water."
+          },
+          {
+            "heading": "The Perfect Timing",
+            "content": "Make this sauce in the same pan where you cooked your fish - all those golden bits on the bottom are pure flavor. The sauce should take about two minutes from start to finish. Taste and add more lemon if it needs brightness, or a pinch of salt if it needs depth. Serve immediately while it's still glossy."
+          },
+          {
+            "heading": "Natural Variations",
+            "content": "Add fresh herbs like parsley or dill at the end. Try capers for a salty pop, or a touch of garlic for warmth. White wine makes it more sophisticated, but lemon juice alone works perfectly. Some cooks add a tiny bit of cream to make it more stable - this is completely fine."
+          },
+          {
+            "heading": "What Loves This Sauce",
+            "content": "Any fish or seafood becomes elegant with lemon butter sauce. It's perfect on salmon, cod, or shrimp. Try it over steamed vegetables too - asparagus and broccoli especially love this treatment. Even simple pasta becomes dinner-party worthy with this sauce."
+          }
+        ]
+      },
+      "herb-oil-finish": {
+        "display_order": 20,
+        "name": "Herb Oil Finish",
+        "display_name": "Fresh Herb Oils",
+        "introduction": "These bright green oils are like liquid sunshine for your food. They take five minutes to make and transform everything they touch. Think of them as your secret weapon.",
+        "paragraphs": [
+          {
+            "heading": "Why Herb Oils Work",
+            "content": "Fresh herbs mixed with good olive oil create something magical - all the herb flavor gets captured in the oil, and the color becomes this beautiful bright green. It's like having fresh herbs and good olive oil at the same time, but stronger and more concentrated."
+          },
+          {
+            "heading": "The Simple Method",
+            "content": "Take a handful of fresh herbs - parsley, basil, cilantro, whatever you love. Roughly chop them and put them in a small bowl. Pour good olive oil over them until they're covered. Add a pinch of salt and maybe a squeeze of lemon. That's it. Let it sit for ten minutes and the flavors will bloom."
+          },
+          {
+            "heading": "Making It Even Better",
+            "content": "For a smoother oil, blend everything together for thirty seconds. For more intensity, gently warm the oil first - not hot, just warm to touch. Some herbs work better than others: parsley is reliable, basil is sweet, cilantro is bright and fresh. Mint is wonderful with fish."
+          },
+          {
+            "heading": "Quick Variations",
+            "content": "Add garlic for depth, lemon zest for brightness, or red pepper flakes for gentle heat. Try mixing herbs - parsley and mint together is lovely. You can make these oils ahead and keep them in the refrigerator for up to a week."
+          },
+          {
+            "heading": "Where to Use Them",
+            "content": "Drizzle over grilled fish, toss with roasted vegetables, or swirl into soups. They're beautiful on pasta, wonderful on bread, and make any simple dish look professional. A spoonful on top of anything makes it look like it came from a restaurant."
+          }
+        ]
+      },
+      "quick-pan-sauce": {
+        "display_order": 30,
+        "name": "Quick Pan Sauce",
+        "display_name": "Quick Pan Sauces",
+        "introduction": "After you cook fish, your pan holds all the best flavors. These quick sauces capture those flavors and turn them into something wonderful. It's the difference between good and great.",
+        "paragraphs": [
+          {
+            "heading": "The Foundation",
+            "content": "When you cook fish in a pan, those golden-brown bits that stick to the bottom are pure flavor. French cooks call this 'fond' - it's the foundation of great pan sauces. Never throw away a pan with fond in it. Instead, turn it into liquid gold."
+          },
+          {
+            "heading": "The Basic Technique",
+            "content": "With your pan still warm (not burning hot), add a splash of liquid - wine, broth, or even water works. It will bubble and steam, and you'll hear it sizzle. Use a wooden spoon to scrape up all those good bits. They'll dissolve into the liquid and create instant flavor."
+          },
+          {
+            "heading": "Building the Sauce",
+            "content": "Once you've scraped up the fond, you can go many directions. Add butter for richness, cream for smoothness, or just reduce the liquid down until it's concentrated. Taste as you go - does it need salt? Lemon? A touch of herbs? Trust your taste."
+          },
+          {
+            "heading": "Common Variations",
+            "content": "White wine and butter is classic. Lemon juice and capers is bright and fresh. A splash of cream with herbs is comforting. Even just deglazing with water and adding fresh herbs makes a lovely light sauce. The key is using what tastes good to you."
+          },
+          {
+            "heading": "Serving Suggestions",
+            "content": "Pour these sauces over the fish you just cooked, or around it on the plate. They're also wonderful over rice, pasta, or steamed vegetables. The best part is they're ready in minutes and use the flavors already in your pan."
+          }
+        ]
+      }
+    }
+  },
+  "pasta-and-grain-sauces": {
+    "display_order": 20,
+    "title": "Pasta & Grain Sauces",
+    "description": "From simple garlic and oil to rich tomato sauces, these are the foundations of great pasta dishes. Master these basics and you'll never wonder what's for dinner.",
+    "categories": {
+      "aglio-e-olio": {
+        "display_order": 10,
+        "name": "Aglio e Olio",
+        "display_name": "Garlic & Oil (Aglio e Olio)",
+        "introduction": "This is the most important pasta sauce to learn. With just garlic, olive oil, and pasta water, you can create something truly delicious. It's simple, but there are secrets to making it perfect.",
+        "paragraphs": [
+          {
+            "heading": "Why This Matters",
+            "content": "Aglio e olio is the foundation of Italian cooking - it's what you make when there's 'nothing' in the house. But when done right, it's better than complicated sauces. The secret is understanding how garlic, oil, and pasta water work together to create creaminess without cream."
+          },
+          {
+            "heading": "The Gentle Way with Garlic",
+            "content": "Slice your garlic thin - never chop it. Heat olive oil in a large pan over medium-low heat. Add the garlic and let it slowly turn golden, not brown. Brown garlic is bitter garlic. You want it to smell sweet and nutty. This takes patience, but it's worth it."
+          },
+          {
+            "heading": "The Magic of Pasta Water",
+            "content": "Save a cup of pasta water before draining - this starchy water is what makes the sauce creamy. Add the hot, drained pasta to the garlic oil. Then add pasta water, a little at a time, tossing constantly. The starch in the water combines with the oil to create a silky sauce that coats each noodle."
+          },
+          {
+            "heading": "Simple Additions",
+            "content": "Red pepper flakes add gentle heat - add them with the garlic. Fresh parsley at the end adds color and freshness. Some cooks add anchovies for depth (melt them into the oil with the garlic). Lemon zest at the end brightens everything. Each addition should enhance, not compete."
+          },
+          {
+            "heading": "Beyond Pasta",
+            "content": "This technique works with any grain - rice, quinoa, farro. It's wonderful with vegetables too. The method of slow garlic, good oil, and starchy cooking liquid creates satisfaction from the simplest ingredients. Master this and you'll always be able to make something delicious."
+          }
+        ]
+      },
+      "simple-tomato-sauce": {
+        "display_order": 20,
+        "name": "Simple Tomato Sauce",
+        "display_name": "Simple Tomato Sauce",
+        "introduction": "A perfect tomato sauce needs just a few ingredients, but the technique makes all the difference. This is your foundation for countless meals - learn it once, use it forever.",
+        "paragraphs": [
+          {
+            "heading": "The Beauty of Simplicity",
+            "content": "The best tomato sauce tastes like tomatoes, not like a dozen other things. Good canned tomatoes, good olive oil, garlic, and time - that's really all you need. The magic happens when you let the tomatoes cook down and concentrate their flavor."
+          },
+          {
+            "heading": "Choosing Your Tomatoes",
+            "content": "Use whole canned tomatoes and crush them by hand - this gives you control over the texture. San Marzano tomatoes are wonderful if you can find them, but any good whole tomatoes work. Avoid tomatoes with too many ingredients on the label - just tomatoes and maybe salt."
+          },
+          {
+            "heading": "The Slow Build",
+            "content": "Warm olive oil with sliced garlic until fragrant. Add your crushed tomatoes - they'll bubble and splatter at first. Let them cook, stirring occasionally, until they've reduced by about half. This concentrates the flavor and creates the right consistency. It takes about 20-30 minutes."
+          },
+          {
+            "heading": "Seasoning at the Right Time",
+            "content": "Salt the sauce when it's almost done - adding it too early can make the tomatoes tough. Taste and adjust. Some people add a pinch of sugar if the tomatoes are too acidic, but good tomatoes usually don't need it. Fresh basil goes in at the very end to keep it bright."
+          },
+          {
+            "heading": "Using Your Sauce",
+            "content": "This sauce is perfect on pasta, as a base for pizza, or spooned over fish or vegetables. You can add things to it - olives, capers, herbs - but it's beautiful on its own. Make a big batch and freeze portions for quick meals later."
+          }
+        ]
+      },
+      "quick-cream-sauce": {
+        "display_order": 30,
+        "name": "Quick Cream Sauce",
+        "display_name": "Quick Cream Sauces",
+        "introduction": "Cream sauces seem fancy, but they're actually very forgiving. The key is understanding how cream behaves when heated, and how to build flavor without making things heavy.",
+        "paragraphs": [
+          {
+            "heading": "Understanding Cream",
+            "content": "Heavy cream is your friend because it doesn't curdle easily when heated. It can simmer gently and reduce into a rich, coating sauce. The trick is never to boil it hard - gentle heat keeps it smooth and silky."
+          },
+          {
+            "heading": "Building Flavor First",
+            "content": "Start with aromatics - garlic, shallots, or herbs. Cook them gently in a little butter or oil until fragrant. This builds the flavor base. Then add your cream and let it reduce slowly. The cream will pick up all those flavors and become more concentrated."
+          },
+          {
+            "heading": "The Reduction Process",
+            "content": "Let the cream simmer gently until it coats the back of a spoon. This usually takes 5-10 minutes. Don't rush it with high heat - that can make the cream break. Stir occasionally and taste as it reduces. The flavor will intensify as the water evaporates."
+          },
+          {
+            "heading": "Simple Flavor Variations",
+            "content": "Add lemon zest for brightness, fresh herbs for color, or a touch of white wine before the cream for depth. Mushrooms love cream sauces. So do peas and asparagus. A little mustard adds sophistication. Parmesan cheese stirred in at the end creates richness."
+          },
+          {
+            "heading": "Serving Ideas",
+            "content": "These sauces are wonderful with pasta, but don't stop there. They're beautiful over fish, chicken, or vegetables. You can thin them with pasta water for pasta, or keep them thick for spooning over proteins. They reheat gently with a splash of cream or milk."
+          }
+        ]
+      }
+    }
+  },
+  "vegetable-and-salad-sauces": {
+    "display_order": 30,
+    "title": "Vegetable & Salad Sauces",
+    "description": "Fresh, bright sauces that make vegetables irresistible. From classic vinaigrettes to creamy dressings, these sauces turn simple vegetables into the stars of the meal.",
+    "categories": {
+      "classic-vinaigrette": {
+        "display_order": 10,
+        "name": "Classic Vinaigrette",
+        "display_name": "Classic Vinaigrette",
+        "introduction": "A perfect vinaigrette is the foundation of great salads. It's simple - just oil and acid in harmony - but there are techniques that make all the difference between good and extraordinary.",
+        "paragraphs": [
+          {
+            "heading": "The Essential Balance",
+            "content": "Vinaigrette is really a conversation between fat and acid. The fat (olive oil) carries flavor and creates richness. The acid (vinegar or lemon) provides brightness and helps other flavors bloom. When they're in balance, magic happens. A good starting point is three parts oil to one part acid, but trust your taste."
+          },
+          {
+            "heading": "Choosing Your Acid",
+            "content": "Different acids create different personalities. Lemon juice is bright and fresh. Good wine vinegar is mellow and sophisticated. Balsamic is sweet and complex. Rice vinegar is gentle and clean. Try different ones and see what you love. Fresh citrus juice always adds life to a vinaigrette."
+          },
+          {
+            "heading": "The Emulsification Secret",
+            "content": "To make your vinaigrette creamy and stable, start with the acid in a bowl. Add a pinch of salt and any other seasonings. Slowly drizzle in the oil while whisking constantly. This creates an emulsion - the oil and acid actually bind together instead of separating. It makes the dressing coat the leaves better."
+          },
+          {
+            "heading": "Simple Enhancements",
+            "content": "A tiny bit of mustard helps the emulsion and adds depth. Fresh herbs brighten everything. Minced shallots add gentle bite. A touch of honey balances sharp vinegars. Garlic should be used sparingly - a little goes a long way. Each addition should enhance the basic oil-acid harmony."
+          },
+          {
+            "heading": "Beyond Salads",
+            "content": "Great vinaigrette improves almost everything. Drizzle it over roasted vegetables while they're still warm. Use it to dress grains like quinoa or farro. It's wonderful over fish or as a sauce for steamed vegetables. Think of it as liquid seasoning for vegetables."
+          }
+        ]
+      },
+      "tahini-dressing": {
+        "display_order": 20,
+        "name": "Tahini Dressing",
+        "display_name": "Creamy Tahini Dressing",
+        "introduction": "Tahini creates the most wonderful creamy dressings without any dairy. It's nutty, rich, and transforms with just a few simple additions. Once you master this, you'll use it on everything.",
+        "paragraphs": [
+          {
+            "heading": "Understanding Tahini",
+            "content": "Tahini is just ground sesame seeds, but it behaves differently than other ingredients. It's very thick and can seem dry, but when you add liquid slowly, it transforms into something creamy and smooth. Good tahini should taste nutty and rich, not bitter."
+          },
+          {
+            "heading": "The Thinning Process",
+            "content": "Start with a few spoonfuls of tahini in a bowl. Add lemon juice slowly, whisking constantly. At first it might look thick and pasty - don't worry. Keep adding liquid bit by bit - lemon juice, water, or both. Suddenly it will become smooth and creamy. This transformation always feels like magic."
+          },
+          {
+            "heading": "Building Flavors",
+            "content": "Once you have the right consistency, taste and adjust. Add salt to brighten the flavors. A touch of garlic adds depth. Fresh herbs like parsley or mint are beautiful. A drizzle of good olive oil makes it richer. Some people add a tiny bit of maple syrup for sweetness."
+          },
+          {
+            "heading": "Getting the Texture Right",
+            "content": "The perfect tahini dressing should coat vegetables but not be heavy. If it's too thick, add more water or lemon juice. If it's too thin, whisk in a bit more tahini. It should be pourable but substantial. The consistency of thick cream is what you're aiming for."
+          },
+          {
+            "heading": "What It Loves",
+            "content": "Tahini dressing is wonderful on roasted vegetables, especially cauliflower and Brussels sprouts. It's perfect for grain bowls and makes an excellent sauce for fish. Try it as a dip for raw vegetables or drizzled over simple salads. It keeps well in the refrigerator and actually improves after a day."
+          }
+        ]
+      },
+      "herb-buttermilk-dressing": {
+        "display_order": 30,
+        "name": "Herb Buttermilk Dressing",
+        "display_name": "Fresh Herb Buttermilk Dressing",
+        "introduction": "This is like ranch dressing, but fresh and bright instead of heavy. Buttermilk gives it tang and creaminess, while fresh herbs make it taste like summer. It's the dressing that makes people eat more vegetables.",
+        "paragraphs": [
+          {
+            "heading": "The Magic of Buttermilk",
+            "content": "Real buttermilk is tangy and creamy without being heavy. It has natural acidity that brightens flavors and a slight thickness that creates body in dressings. If you can't find buttermilk, you can make a substitute by adding a tablespoon of lemon juice to regular milk and letting it sit for five minutes."
+          },
+          {
+            "heading": "Fresh Herbs Make the Difference",
+            "content": "Use whatever fresh herbs you love - parsley, chives, dill, and mint all work beautifully. Chop them finely so they distribute evenly. The herbs should be vibrant and fresh - wilted herbs will make the dressing taste dull. A mix of herbs is often better than just one."
+          },
+          {
+            "heading": "Creating Creaminess",
+            "content": "Start with buttermilk as your base. Add a spoonful of mayonnaise or Greek yogurt for extra richness and stability. A touch of sour cream makes it even more luxurious. The goal is creamy but not heavy - it should still feel fresh and light."
+          },
+          {
+            "heading": "Seasoning for Balance",
+            "content": "Salt is crucial - it brightens all the other flavors. A squeeze of fresh lemon juice adds extra tang. A tiny bit of garlic powder (not fresh garlic) gives depth without overwhelming the herbs. Black pepper adds gentle heat. Taste and adjust until it makes you want more vegetables."
+          },
+          {
+            "heading": "Perfect Pairings",
+            "content": "This dressing makes any salad special, but it's also wonderful as a dip for raw vegetables or a sauce for roasted ones. It's perfect with crispy lettuce, fresh tomatoes, and cucumbers. Try it over grain bowls or as a sauce for simple fish. It keeps well and actually tastes better the next day."
+          }
+        ]
+      }
+    }
+  },
+  "condiments-and-finishing-sauces": {
+    "display_order": 40,
+    "title": "Condiments & Finishing Sauces",
+    "description": "These are the final touches that transform good food into great food. Small sauces with big impact - the secret weapons of confident cooks.",
+    "categories": {
+      "compound-butter": {
+        "display_order": 10,
+        "name": "Compound Butter",
+        "display_name": "Flavored Compound Butters",
+        "introduction": "Compound butters are just butter mixed with other delicious things. They're incredibly useful - you can make them ahead, keep them in the refrigerator, and they instantly improve almost anything they touch.",
+        "paragraphs": [
+          {
+            "heading": "The Simple Concept",
+            "content": "Take good butter at room temperature and mix in whatever flavors you love. Fresh herbs, lemon zest, garlic, spices - almost anything can become part of a compound butter. The butter carries these flavors and slowly releases them as it melts on hot food."
+          },
+          {
+            "heading": "Getting the Texture Right",
+            "content": "The butter should be soft enough to mix easily but not melted. If it's too hard, cut it into pieces and let it sit at room temperature for about thirty minutes. Once it's soft, you can mash in your additions with a fork or mix them in a bowl."
+          },
+          {
+            "heading": "Classic Combinations",
+            "content": "Herb butter with parsley, chives, and a touch of lemon zest is always wonderful. Garlic butter with minced garlic and parsley is perfect for bread or vegetables. Lemon butter with zest and a pinch of salt brightens fish. Try adding capers, anchovies, or fresh ginger for more complex flavors."
+          },
+          {
+            "heading": "Storing and Shaping",
+            "content": "Once mixed, you can roll the butter in plastic wrap to make a log, then slice off rounds as needed. Or simply pack it into a small container. It keeps in the refrigerator for up to a week, or you can freeze it for months. Having flavored butter ready makes you feel prepared for anything."
+          },
+          {
+            "heading": "Using Compound Butters",
+            "content": "A pat of compound butter on hot fish, vegetables, or pasta instantly creates a sauce. It's wonderful on bread, melted over steamed vegetables, or tossed with hot grains. The slow melt creates richness and carries the flavors throughout the dish. It's like having a sauce ready in seconds."
+          }
+        ]
+      },
+      "quick-chimichurri": {
+        "display_order": 20,
+        "name": "Quick Chimichurri",
+        "display_name": "Fresh Herb Chimichurri",
+        "introduction": "Chimichurri is Argentina's gift to the world - a bright, herby sauce that makes everything taste better. It's like pesto but lighter, more acidic, and incredibly versatile.",
+        "paragraphs": [
+          {
+            "heading": "What Makes Chimichurri Special",
+            "content": "Traditional chimichurri is all about fresh herbs, good oil, and bright acidity. It's not cooked - just chopped herbs mixed with oil and vinegar. The result is intensely fresh and green, with a sharpness that cuts through rich foods and brightens simple ones."
+          },
+          {
+            "heading": "The Essential Elements",
+            "content": "Parsley is the foundation - use flat-leaf parsley for the best flavor. Add some cilantro if you love it. Good olive oil carries the herb flavors. Red wine vinegar or lemon juice provides the brightness. Garlic adds depth, and red pepper flakes give gentle heat."
+          },
+          {
+            "heading": "The Chopping Technique",
+            "content": "Chop the herbs finely but don't turn them into powder. You want small pieces that will coat food without being overwhelming. Some people use a food processor, but hand-chopping gives better texture. The herbs should look vibrant and fresh, not bruised or dark."
+          },
+          {
+            "heading": "Balancing the Flavors",
+            "content": "Start with more herbs than you think you need - about two cups of chopped parsley. Add oil gradually until it looks right - not swimming in oil, but well-coated. Add acid slowly and taste - you want brightness without harshness. A pinch of salt brings everything together."
+          },
+          {
+            "heading": "What It Transforms",
+            "content": "Chimichurri is wonderful on fish, especially grilled or roasted. It brightens roasted vegetables and makes simple pasta special. Try it spooned over eggs, mixed into grain salads, or as a dip for bread. It keeps for several days and actually improves as the flavors meld."
+          }
+        ]
+      },
+      "lemon-aioli": {
+        "display_order": 30,
+        "name": "Lemon Aioli",
+        "display_name": "Simple Lemon Aioli",
+        "introduction": "Aioli is just mayonnaise with attitude - brightened with lemon and garlic. It's creamy, tangy, and makes everything it touches taste more sophisticated. Once you make your own, store-bought seems flat.",
+        "paragraphs": [
+          {
+            "heading": "Starting with Good Mayonnaise",
+            "content": "Use the best mayonnaise you can find, or make your own if you're feeling ambitious. The mayonnaise provides the creamy foundation - everything else just enhances it. Good mayonnaise should taste rich and slightly tangy, not sweet or artificial."
+          },
+          {
+            "heading": "Building the Garlic Flavor",
+            "content": "Fresh garlic can be harsh in raw sauces, so use it carefully. Mince it very finely, or grate it on a microplane for the smoothest texture. Start with less than you think you need - you can always add more. Some cooks add a tiny pinch of salt to the garlic and mash it into a paste."
+          },
+          {
+            "heading": "Adding Brightness",
+            "content": "Fresh lemon juice transforms mayonnaise from heavy to bright. Add it gradually and taste as you go. You want enough to make the sauce lively but not so much that it becomes thin or sharp. Lemon zest adds even more brightness and a lovely flecked appearance."
+          },
+          {
+            "heading": "Perfecting the Consistency",
+            "content": "Good aioli should be thick enough to dollop but smooth enough to spread. If it's too thick, thin it with a little lemon juice or water. If it's too thin, you've probably added too much liquid - next time, add it more slowly. The texture should be creamy and luxurious."
+          },
+          {
+            "heading": "Endless Possibilities",
+            "content": "Lemon aioli is wonderful with fish, perfect as a dip for vegetables, and makes sandwiches special. Try it with roasted potatoes, as a sauce for simple pasta, or dolloped over soups. You can add herbs, capers, or other flavors, but the basic lemon-garlic version is endlessly useful."
+          }
+        ]
+      }
+    }
+  }
+}
+</script>
+
+  <div class="fixed top-4 right-4 z-50">
+    <button id="settings-btn" class="p-2 rounded-full" aria-label="toggle settings">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.096 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+    </button>
+  </div>
+
+  <div id="settings-modal" class="modal-overlay">
+    <div class="modal-content">
+        <button id="close-modal-btn" class="close-btn">×</button>
+        <h3>Display Settings</h3>
+        <label for="theme-select">Theme:</label>
+        <select id="theme-select"></select>
+    </div>
+  </div>
+
+  <main id="app-container" class="prose dark:prose-invert mx-auto max-w-prose p-8"></main>
+
+  <script>
+    /* ---------- state ---------- */
+    let masterLibrary=null,sortedLibraryIds=null,currentLibraryId=null
+    let libraryData=null,sortedTopicIds=null,currentTopicId=null,currentArticleId=null
+    const app=document.getElementById('app-container')
+
+    /* ---------- helpers ---------- */
+    const looksLikeTopic=o=>o&&typeof o==='object'&&('categories'in o||'title'in o)
+
+    /* ---------- rendering ---------- */
+    const buildLibrarySwitch=()=>!sortedLibraryIds||sortedLibraryIds.length<2?'':`
+      <div class="nav-container">
+        <select id="library-switcher" class="nav-button">
+          ${sortedLibraryIds.map(id=>{
+            const label=id.replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase())
+            return `<option value="${id}" ${id===currentLibraryId?'selected':''}>${label}</option>`
+          }).join('')}
+        </select>
+      </div>`
+
+    const buildTopicSwitch=()=>`
+      <div class="nav-container">
+        <select id="topic-switcher" class="nav-button">
+          ${sortedTopicIds.map(tid=>{
+            const t=libraryData[tid];return `<option value="${tid}" ${tid===currentTopicId?'selected':''}>${t.title}</option>`
+          }).join('')}
+        </select>
+      </div>`
+
+    const buildNav=(cats,keys)=>{
+      let html='<div class="nav-container"><h3>Select Article:</h3><div class="nav-buttons-wrapper">'
+      keys.forEach(k=>{
+        const a=cats[k]
+        html+=`<button class="nav-button article-btn ${k===currentArticleId?'active':''}" data-article-id="${k}">${a.display_name}</button>`
+        if(a.breakAfter)html+='<div class="flex-break"></div>'
+      })
+      return html+'</div></div>'
+    }
+
+    function render(){
+      if(!libraryData)return
+      sortedTopicIds=Object.keys(libraryData).sort((a,b)=>(libraryData[a].display_order||0)-(libraryData[b].display_order||0))
+      if(!currentTopicId||!libraryData[currentTopicId])currentTopicId=sortedTopicIds[0]
+      const topic=libraryData[currentTopicId]
+      const artKeys=Object.keys(topic.categories||{}).sort((a,b)=>(topic.categories[a].display_order||0)-(topic.categories[b].display_order||0))
+      if(!currentArticleId||!topic.categories[currentArticleId])currentArticleId=artKeys[0]
+      const art=topic.categories[currentArticleId]
+
+      app.innerHTML=buildLibrarySwitch()+`<h1>${topic.title}</h1>`+buildTopicSwitch()+buildNav(topic.categories,artKeys)+
+        `<h2>${art.name||art.display_name||''}</h2>${art.introduction?`<p>${art.introduction}</p>`:''}`+
+        (art.paragraphs||[]).map(p=>`<h3>${p.heading}</h3><p>${p.content}</p>`).join('')
+      document.title=topic.title||'Adaptive Reader'
+
+      document.querySelectorAll('.article-btn').forEach(btn=>btn.onclick=e=>{
+        currentArticleId=e.target.dataset.articleId;render()
+      })
+      const ts=document.getElementById('topic-switcher')
+      if(ts)ts.onchange=e=>{currentTopicId=e.target.value;currentArticleId=null;render()}
+      const ls=document.getElementById('library-switcher')
+      if(ls)ls.onchange=e=>{
+        currentLibraryId=e.target.value
+        localStorage.setItem('readerLibraryId',currentLibraryId)
+        libraryData=masterLibrary[currentLibraryId];currentTopicId=currentArticleId=null;render()
+      }
+      
+      const themeName = localStorage.getItem('theme') || 'newspaper';
+      applyThemeClasses(themeName);
+    }
+
+    /* ---------- data load ---------- */
+    async function init(){
+      let raw=null
+      try{
+        const res=await fetch('./data/content.json',{cache:'no-store'})
+        if(!res.ok)throw new Error('not ok');raw=await res.json()
+      }catch{
+        const embedded=document.getElementById('embedded-content').textContent.trim()
+        if(!embedded)throw new Error('no data');raw=JSON.parse(embedded)
+      }
+
+      const keys=Object.keys(raw)
+      if(!keys.length)throw new Error('empty data')
+      if(looksLikeTopic(raw[keys[0]])){
+        masterLibrary=null;sortedLibraryIds=null;currentLibraryId=null
+        libraryData=raw
+      }else{
+        masterLibrary=raw
+        sortedLibraryIds=keys.sort()
+        currentLibraryId=localStorage.getItem('readerLibraryId')
+        if(!currentLibraryId||!masterLibrary[currentLibraryId])currentLibraryId=sortedLibraryIds[0]
+        libraryData=masterLibrary[currentLibraryId]
+      }
+      currentTopicId=currentArticleId=null
+      render()
+    }
+
+
+    /* ---------- FINAL THEME ENGINE --- */
+    const THEMES = {
+      'newspaper': { name: 'Newspaper', type: 'classic', isDark: false },
+      'dark': { name: 'Dark', type: 'classic', isDark: true },
+      'cyber-blue': {
+        name: 'Cyber Blue', type: 'variable', isDark: true,
+        vars: {
+          '--bg-gradient': 'linear-gradient(135deg,#0a0a23 0%,#1a1a3a 50%,#2e2e5e 100%)',
+          '--text': '#ecf0f1', '--accent-text': '#a8b8d0',
+          '--nav-bg': '#34495e', '--nav-border': '#4a4a4a', '--nav-text': '#ecf0f1',
+          '--nav-hover-bg': '#4a6078', '--nav-active-bg': '#2e2e5e', '--nav-active-text': '#ecf0f1'
+        },
+        hover_style: 'btn-light-text'
+      },
+      'teal-matrix': {
+        name: 'Teal Matrix', type: 'variable', isDark: true,
+        vars: {
+          '--bg-gradient': 'linear-gradient(135deg,#0a231c 0%,#1a3a31 50%,#2e5e50 100%)',
+          '--text': '#ecf0f1', '--accent-text': '#ace0d5',
+          '--nav-bg': '#345e55', '--nav-border': '#92b3a9', '--nav-text': '#ecf0f1',
+          '--nav-hover-bg': '#427569', '--nav-active-bg': '#0a231c', '--nav-active-text': '#ecf0f1'
+        },
+        hover_style: 'btn-light-text'
+      },
+      'scorched-gold': {
+        name: 'Scorched Gold', type: 'variable', isDark: false,
+        vars: {
+          '--bg-gradient': '#fdfbf5', '--text': '#2a1d15', '--accent-text': '#d4a24c',
+          '--nav-bg': '#f8f4e8', '--nav-border': '#d4a24c', '--nav-text': '#2a1d15',
+          '--nav-hover-bg': '#f0c475', '--nav-active-bg': '#f0c475', '--nav-active-text': '#2a1d15'
+        },
+        hover_style: 'btn-dark-text'
+      }
+    };
+    
+    function applyThemeClasses(themeName) {
+        const theme = THEMES[themeName];
+        if (!theme) return;
+
+        document.body.classList.remove('newspaper-theme', 'dark-theme', 'variable-theme', 'font-newspaper', 'font-dark-theme');
+        document.querySelectorAll('.nav-button').forEach(b => b.classList.remove('btn-light-text', 'btn-dark-text'));
+
+        if (theme.type === 'classic') {
+            document.body.classList.add(theme.isDark ? 'dark-theme' : 'newspaper-theme');
+            document.body.classList.add(theme.isDark ? 'font-dark-theme' : 'font-newspaper');
+        } else {
+            document.body.classList.add('variable-theme');
+            if (theme.hover_style) {
+                document.querySelectorAll('.nav-button').forEach(button => button.classList.add(theme.hover_style));
+            }
+        }
+    }
+
+    function applyThemeVariables(name) {
+      const theme = THEMES[name] || THEMES['newspaper'];
+      
+      document.documentElement.classList.toggle('dark', theme.isDark);
+
+      if (theme.type === 'variable') {
+        for (const [key, value] of Object.entries(theme.vars)) {
+          document.documentElement.style.setProperty(key, value);
+        }
+      } else { 
+        const sampleVars = THEMES['cyber-blue'].vars;
+        Object.keys(sampleVars).forEach(varName => {
+            document.documentElement.style.removeProperty(varName);
+        });
+      }
+    }
+
+    function setTheme(name) {
+      if (THEMES[name]) {
+        localStorage.setItem('theme', name);
+        applyThemeVariables(name);
+        applyThemeClasses(name);
+      }
+    }
+
+    function initializeModal() {
+        const modal = document.getElementById('settings-modal');
+        const openBtn = document.getElementById('settings-btn');
+        const closeBtn = document.getElementById('close-modal-btn');
+        const themeSelect = document.getElementById('theme-select');
+        
+        const currentTheme = localStorage.getItem('theme') || 'newspaper';
+        themeSelect.innerHTML = Object.keys(THEMES).map(key => {
+            const theme = THEMES[key];
+            return `<option value="${key}" ${key === currentTheme ? 'selected' : ''}>${theme.name}</option>`
+        }).join('');
+
+        openBtn.onclick = () => modal.classList.add('show');
+        closeBtn.onclick = () => modal.classList.remove('show');
+        modal.onclick = (event) => { if (event.target === modal) modal.classList.remove('show'); };
+        themeSelect.onchange = (e) => setTheme(e.target.value);
+    }
+
+    /* ---------- boot ---------- */
+    document.addEventListener('DOMContentLoaded',()=>{
+      const currentTheme = localStorage.getItem('theme') || 'newspaper';
+      applyThemeVariables(currentTheme);
+      applyThemeClasses(currentTheme);
+      
+      initializeModal();
+      init().catch(err=>{console.error(err);app.innerHTML='<h1>Error</h1><p>Could not load content.</p>'})
+    })
+  </script>
+</body>
+</html>

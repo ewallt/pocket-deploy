@@ -1,0 +1,41 @@
+<!-- /pocket-deploy/ai-s02-2/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>AI s02 — Part 2: Scale, Benchmarks & Scaling Laws</title>
+<style>
+:root{--bg:#0b1020;--panel:#0f172a;--ink:#e5e7eb;--muted:#94a3b8;--brand:#60a5fa;--border:#1f2940}
+@media(prefers-color-scheme:light){:root{--bg:#f5f7fb;--panel:#fff;--ink:#1b2a41;--muted:#34495e;--brand:#2563eb;--border:#e3e9f3}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,Segoe UI,Inter,Arial;padding:2rem}
+.c{max-width:880px;margin:0 auto;background:var(--panel);border:1px solid var(--border);border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+.nav{display:flex;gap:.5rem;flex-wrap:wrap;padding:.75rem;border-bottom:1px solid var(--border)}.nav a{padding:.45rem .7rem;border:1px solid var(--border);border-radius:999px;text-decoration:none;color:var(--ink)}.nav a:hover{border-color:var(--brand);color:var(--brand)}
+.h{padding:1.25rem 1.5rem}.intro{color:var(--muted);font-style:italic;margin:.25rem 0 1rem}
+.p{padding:0 1.5rem 1.4rem}.p p{margin:1.05rem 0}.f{padding:1rem 1.5rem;border-top:1px solid var(--border);color:var(--muted);font-size:.95rem}
+</style></head>
+<body><article class="c">
+<nav class="nav">
+  <a href="/pocket-deploy/dashboard-ai-s02/">← Dashboard</a>
+  <a href="/pocket-deploy/ai-s02-1/">Previous</a>
+  <a href="/pocket-deploy/ai-s02-3/">Next →</a>
+</nav>
+<header class="h"><h1>Scale, Benchmarks & Scaling Laws — Part 2</h1><p class="intro">Over 2018–2021, the field shifted from architectural search to empirical scaling, where dataset size, compute, and benchmark design became the levers of progress.</p></header>
+<section class="p">
+<p>Benchmarks like GLUE, SuperGLUE, and ImageNet drove model comparison across tasks. Incremental improvements no longer sufficed; the question became “how far can we push?” Empirical lines emerged: more compute + more data + bigger models often yielded consistent gains (within limits). Researchers began plotting error rate vs. compute curves, observing diminishing returns but clear slopes. The insight: optimization of scale itself had become a research front.</p>
+<p>Kaplan et al. (2020) formalized scaling laws: predictive power grows as a power-law function of compute, data, and model size. Their work showed that underutilized compute or undertrained models left plenty of room. The community embraced that model architecture mattered less than hitting sweet spots in compute/data tradeoffs. Labs allocated resources to grid search across sizes rather than network tweaks. The scaling law framework provided contours for risk and return in large experiments.</p>
+<p>Parallel to that, benchmark leakage and overfitting worried researchers. Models began to saturate datasets, prompting more robust splits, new tasks, and adversarial benchmarks. Zero-shot and few-shot capabilities (as in GPT-3) emerged as evaluation modalities that reflected generalization rather than memorization. The pivot from fine-tuned performance to generative inference made benchmark definitions more ambitious—and critical.</p>
+<p>Another development: compute-sharing abstractions. Model parallelism, pipeline parallelism, tensor slicing, and memory optimizations allowed scaling beyond single-device limits. These systems advances married infrastructure with empirical strategy. Engineers treated architecture and scale as a joint optimization: you had to scale your system to verify the scaling law predictions. Labs with flexible compute pipelines gained advantage from this coupling of system and model design.</p>
+<p>To contrast paths: architectural innovation (e.g. novel blocks) receded; scale-driven empirical exploration took center stage. The transition resembled early physics: theory stabilized, experiment exploded. Rather than reinventing models, teams searched the frontier of scale. That shift reshaped both research agendas and resource allocation across academia and industry.</p>
+<section>
+<h3>Summary Table: Scaling Era Tradeoffs</h3>
+<table>
+<tr><th>Axis</th><th>Focus</th><th>Challenge</th></tr>
+<tr><td>Compute →</td><td>Max utilization</td><td>Memory, communication, thermal limits</td></tr>
+<tr><td>Data →</td><td>Volume & diversity</td><td>Quality, deduplication, bias</td></tr>
+<tr><td>Model size →</td><td>Layers & width</td><td>Overfitting, training dynamics</td></tr>
+<tr><td>Benchmarks →</td><td>Robust evaluation</td><td>Leakage, saturation, distribution shift</td></tr>
+</table>
+</section>
+<p>Ultimately, the era’s lesson was that scale is not just brute force—it’s guided exploration. Scaling laws offered guardrails and forecasts, benchmarks set direction, and resource strategy eclipsed incremental block design. The architecture’s simplicity made scaling legible; researchers now asked “how big?” rather than “what new block?” This marked a new computational frontier for AI.</p>
+</section>
+<footer class="f">Sources: Kaplan et al. (2020), trends in GLUE/SuperGLUE, GPT-3, model/infrastructure scaling literature.</footer>
+</article></body></html>

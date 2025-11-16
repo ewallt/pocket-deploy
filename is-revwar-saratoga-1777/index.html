@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Saratoga (1777)</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111833;
+      --ink:#e6ecff;
+      --muted:#a7b0cc;
+      --brand:#8bb9ff;
+      --accent:#c0ffe1;
+      --border:#26325b;
+      --chip:#1a2347;
+      --bad:#ff6b6b;
+      --shadow:0 8px 28px rgba(0,0,0,.35);
+      --radius:12px;
+      --radius-sm:8px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+      line-height:1.6;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
+        radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+      padding-bottom:2rem;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .container{max-width:860px;margin:0 auto;padding:1rem}
+
+    header{
+      background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:2rem 1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+    }
+
+    h1{
+      color:var(--ink);
+      font-size:1.75rem;
+      margin-bottom:.5rem;
+      letter-spacing:-.015em;
+    }
+
+    .subtitle{
+      color:var(--muted);
+      font-size:.95rem;
+      font-style:italic;
+    }
+
+    .breadcrumb{
+      margin-bottom:1rem;
+      font-size:.9rem;
+    }
+    .breadcrumb a{color:var(--brand);text-decoration:none}
+    .breadcrumb span{color:var(--muted)}
+
+    .main-answer{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+      border-left:4px solid var(--brand);
+    }
+
+    .main-answer h2{
+      color:var(--brand);
+      font-size:1.3rem;
+      margin-bottom:1rem;
+      letter-spacing:.01em;
+    }
+
+    .main-answer p{font-size:1.05rem;line-height:1.7}
+
+    .section{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      margin-bottom:1rem;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .section-header{
+      padding:1.1rem 1.25rem;
+      background:linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%);
+      color:var(--ink);
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      border-bottom:1px solid var(--border);
+    }
+
+    .section-header h2{
+      font-size:1.15rem;
+      font-weight:700;
+      letter-spacing:.01em;
+    }
+
+    .section-icon{font-size:1.35rem;transition:transform .3s ease}
+    .section.active .section-icon{transform:rotate(180deg)}
+
+    .section-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+    .section.active .section-content{max-height:5000px}
+
+    .section-inner{padding:1.25rem}
+
+    h3{
+      color:var(--brand);
+      font-size:1.08rem;
+      margin:1.3rem 0 .65rem 0;
+      letter-spacing:.01em;
+    }
+    h3:first-child{margin-top:0}
+
+    .list-item{
+      background:color-mix(in oklab,var(--chip) 75%, transparent);
+      border-left:3px solid var(--brand);
+      padding:1rem;
+      margin-bottom:.75rem;
+      border-radius:var(--radius-sm);
+      border:1px solid var(--border);
+    }
+
+    .timeline{
+      border-left:3px solid var(--brand);
+      padding-left:1.25rem;
+      margin-left:.5rem;
+    }
+
+    .timeline-item{
+      margin-bottom:1.25rem;
+      position:relative;
+    }
+
+    .timeline-item::before{
+      content:'';
+      position:absolute;left:-1.65rem;top:.25rem;
+      width:12px;height:12px;border-radius:50%;
+      background:var(--brand);border:3px solid var(--panel);
+      box-shadow:0 0 0 2px var(--brand);
+    }
+
+    .timeline-item:last-child{
+      margin-bottom:0;
+    }
+
+    .timeline-item:last-child::before{
+      width:16px;
+      height:16px;
+      left:-1.75rem;
+      background:var(--accent);
+      box-shadow:0 0 0 2px var(--accent);
+    }
+
+    .timeline-item strong{color:var(--brand);display:block;margin-bottom:.25rem}
+
+    .critique-item{
+      background:color-mix(in oklab, var(--bad) 12%, var(--panel));
+      border-left:3px solid var(--bad);
+      padding:1rem;margin-bottom:.75rem;border-radius:4px;
+      border:1px solid var(--border);
+    }
+
+    .source{
+      background:color-mix(in oklab,var(--chip) 65%, transparent);
+      border-radius:8px;padding:1rem;margin-top:1.2rem;
+      font-size:.95rem;color:var(--muted);
+      border:1px solid var(--border);
+    }
+    .source strong{color:var(--ink)}
+
+    .back-to-top{
+      position:fixed;bottom:1.5rem;right:1rem;
+      background:var(--brand);color:#001;
+      width:50px;height:50px;border-radius:50%;
+      border:none;font-size:1.5rem;cursor:pointer;
+      box-shadow:var(--shadow);opacity:0;transition:opacity .3s ease;
+      z-index:1000;display:flex;align-items:center;justify-content:center;
+      font-weight:900;
+    }
+    .back-to-top.visible{opacity:1}
+    .back-to-top:active{transform:scale(.96)}
+
+    a{color:var(--brand)}
+
+    @media (max-width:480px){
+      h1{font-size:1.5rem}
+      .section-header h2{font-size:1.05rem}
+      .container{padding:.75rem}
+      header{padding:1.5rem 1rem}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="https://ewallt.github.io/pocket-deploy/is-revwar-hub/index.html">Revolutionary War Hub</a> <span>›</span> Saratoga
+    </div>
+
+    <header>
+      <h1>Saratoga (1777)</h1>
+      <p class="subtitle">The Campaign That Brought France Into the War</p>
+    </header>
+
+    <div class="main-answer">
+      <h2>Core Summary</h2>
+      <p>In autumn 1777, British General John Burgoyne led an army south from Canada toward Albany, intending to split New England from the other colonies. American forces under Generals Horatio Gates and Benedict Arnold blocked Burgoyne near Saratoga, New York. After two battles—Freeman's Farm (September 19) and Bemis Heights (October 7)—Burgoyne's army was surrounded and cut off. On October 17, Burgoyne surrendered 5,900 men. This stunning American victory convinced France to formally enter the war as an ally, transforming the Revolution from a colonial rebellion into a global conflict.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🎯 Strategic Context</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>British Strategy:</strong> The plan called for Burgoyne to march south from Montreal while Howe marched north from New York, converging at Albany to sever New England from the middle and southern colonies.
+          </div>
+          <div class="list-item">
+            <strong>Plan Breaks Down:</strong> General Howe took his army to Philadelphia instead of supporting Burgoyne. A smaller force under General St. Leger retreated from Fort Stanwix. Burgoyne advanced alone into increasingly hostile territory.
+          </div>
+          <div class="list-item">
+            <strong>American Response:</strong> General Gates built fortifications on Bemis Heights, blocking Burgoyne's route south. Militia swarmed from across New England, cutting British supply lines and swelling the American army.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🪖 Forces & Commanders</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>British:</strong> General John Burgoyne commanded approximately 7,200 British regulars, German mercenaries, Loyalists, and Native American allies. By surrender, disease, desertion, and casualties reduced his force to 5,900.
+          </div>
+          <div class="list-item">
+            <strong>American:</strong> General Horatio Gates commanded roughly 12,000 Continentals and militia. General Benedict Arnold led aggressive attacks on the British line. Colonel Daniel Morgan's riflemen played a decisive role.
+          </div>
+          <div class="list-item">
+            <strong>Casualties:</strong> British: approximately 440 killed, 700 wounded, 5,900 captured. American: approximately 90 killed, 240 wounded.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📅 Timeline</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="timeline">
+            <div class="timeline-item">
+              <strong>September 19:</strong> Battle of Freeman's Farm. British attack American positions. Arnold leads counterattacks. Fighting ends inconclusively, but British suffer heavier casualties and fail to break through.
+            </div>
+            <div class="timeline-item">
+              <strong>September 20 – October 6:</strong> Burgoyne digs in, hoping for reinforcements from New York. None come. Militia cut his supply lines. American numbers grow daily.
+            </div>
+            <div class="timeline-item">
+              <strong>October 7:</strong> Battle of Bemis Heights. Burgoyne probes American left. Arnold (defying Gates) leads furious counterattacks. Morgan's riflemen kill British General Simon Fraser. British line collapses. Arnold wounded but victorious.
+            </div>
+            <div class="timeline-item">
+              <strong>October 8–16:</strong> Burgoyne retreats north but is surrounded at Saratoga. Escape routes blocked. Food running out.
+            </div>
+            <div class="timeline-item">
+              <strong>October 17:</strong> Burgoyne surrenders his entire army to Gates. Soldiers march out and lay down arms. News electrifies Europe.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>⚡ Turning Points</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Morgan's Riflemen:</strong> Daniel Morgan's sharpshooters targeted British officers, killing General Fraser and disrupting British command at critical moments. Their accuracy demoralized Burgoyne's troops.
+          </div>
+          <div class="list-item">
+            <strong>Arnold's Aggression:</strong> Benedict Arnold's relentless attacks at Bemis Heights broke the British line. Though Gates tried to sideline him, Arnold disobeyed orders and rallied troops, turning tactical engagement into rout.
+          </div>
+          <div class="list-item">
+            <strong>Militia Mobilization:</strong> Thousands of New England militia answered the call, surrounding Burgoyne and cutting off retreat. British supply lines vanished. The campaign became a siege Burgoyne could not win.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📊 Outcomes</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>French Alliance:</strong> News of Saratoga convinced King Louis XVI and his ministers that America could win. France signed treaties of alliance and commerce in February 1778, providing crucial military and financial support.
+          </div>
+          <div class="list-item">
+            <strong>British Strategy in Ruins:</strong> The loss of an entire army shocked London. British strategy shifted southward. No more major operations would attempt to cut off New England.
+          </div>
+          <div class="list-item">
+            <strong>American Confidence:</strong> Saratoga proved the Continental Army could defeat British regulars in sustained campaigning. Morale soared. European officers began volunteering for American service.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🔍 Historical Significance</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <p style="margin-bottom:1rem">Saratoga ranks among history's most consequential battles. Historian Richard Ketchum calls it "the turning point of the American Revolution." Without French intervention—triggered by Burgoyne's surrender—American independence would have been far less likely. The battle demonstrated the effectiveness of American commanders and troops, the power of militia when properly mobilized, and the vulnerability of British armies operating far from their bases. Burgoyne's defeat convinced European powers that backing American independence was a viable geopolitical strategy. The Revolution became a world war.</p>
+          <div class="source">
+            <strong>Primary Sources:</strong> Burgoyne's <em>A State of the Expedition from Canada</em>, Gates's and Arnold's reports, letters from participants.
+          </div>
+          <div class="source">
+            <strong>Key Works:</strong> Richard M. Ketchum, <em>Saratoga: Turning Point of America's Revolutionary War</em> (1997); John Luzader, <em>Saratoga: A Military History</em> (2010).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="back-to-top" onclick="scrollToTop()">↑</button>
+
+  <script>
+    function toggleSection(header){
+      const section = header.parentElement;
+      const allSections = document.querySelectorAll('.section');
+      allSections.forEach(s=>{
+        if(s !== section) s.classList.remove('active');
+      });
+      section.classList.toggle('active');
+    }
+
+    function scrollToTop(){
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    window.addEventListener('scroll', ()=>{
+      const btn = document.querySelector('.back-to-top');
+      if(window.scrollY > 300){
+        btn.classList.add('visible');
+      } else {
+        btn.classList.remove('visible');
+      }
+    });
+  </script>
+</body>
+</html>

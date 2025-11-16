@@ -1,71 +1,19 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Series 2 — Part 4 · The Theorem Itself</title>
-<style>
-:root{
-  --bg:#0f172a;
-  --panel:#1f2937;
-  --ink:#e5e7eb;
-  --muted:#94a3b8;
-  --brand:#60a5fa;
-  --border:#1f2937;
-}
-*{box-sizing:border-box}
-body{
-  margin:0; background:var(--bg); color:var(--ink);
-  font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,Apple Color Emoji,Segoe UI Emoji;
-}
-.wrapper{max-width:760px; margin:0 auto; padding:48px 20px}
-.panel{
-  background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:28px;
-  box-shadow:0 0 0 1px rgba(0,0,0,.12) inset;
-}
-h1{margin:0 0 8px; font-size:2rem; line-height:1.2}
-.lead{color:var(--muted); margin:0 0 24px}
-a{color:var(--brand); text-decoration:none}
-a:hover{text-decoration:underline}
-article p{margin:0 0 16px}
-hr{border:0; border-top:1px solid var(--border); margin:24px 0}
-.nav{display:flex; gap:12px; margin-top:24px; flex-wrap:wrap}
-.nav a{
-  padding:10px 14px; border:1px solid var(--border); border-radius:10px;
-  background:rgba(255,255,255,.02); color:var(--ink)
-}
-.nav a[aria-disabled="true"]{display:none}
-small.muted{color:var(--muted)}
-</style>
-</head>
-<body>
-  <div class="wrapper">
-    <div class="panel">
-      <h1>Series 2 — Bolzano–Weierstrass</h1>
-      <p class="lead">Part 4 · The Theorem Itself</p>
-
-      <article>
-        <p>The Bolzano–Weierstrass Theorem states: every bounded sequence of real numbers has a convergent subsequence. To unpack the claim, recall that a subsequence \((x_{n_k})\) selects terms along an infinite increasing index list \(n_1 < n_2 < \cdots\). The theorem does not promise that \((x_n)\) converges, only that we can choose a subsequence that does. The limit of this subsequence may depend on the selection, but at least one such limit always exists.</p>
-
-        <p>Several equivalent formulations illuminate the theorem’s reach. One states that every infinite bounded subset of ℝ has an accumulation point—that is, a point where every neighborhood contains infinitely many elements of the set. Another recasts the theorem in terms of sequential compactness: a subset of ℝ is sequentially compact if and only if it is closed and bounded. These equivalences foreshadow the transition from sequences to topology in Series 3.</p>
-
-        <p>Classical proofs usually deploy a nested interval argument. Starting with a bounded sequence, we place it inside a closed interval. We split the interval into two halves; at least one half contains infinitely many sequence terms. We choose that half and repeat. The nested intervals shrink in length, and completeness of ℝ guarantees that their intersection contains a point \(L\). By selecting one term from the sequence in each chosen interval, we obtain a subsequence converging to \(L\). The theorem’s power stems from this ability to pin down infinitely many terms that cluster together.</p>
-
-        <p>Bolzano originally approached the result via the least upper bound property, while Weierstrass emphasized the sequential perspective. Modern expositions often blend the two, employing completeness to justify the existence of the intersection point and then using sequences to show actual convergence. The interplay between order properties and metric properties is a recurring theme in analysis.</p>
-
-        <p>The theorem’s consequences extend beyond isolated exercises. It underlies the proof that closed intervals are compact, supports Arzelà–Ascoli-type results for function sequences, and ensures that bounded monotone sequences converge. When combined with Cauchy’s criterion for convergence, Bolzano–Weierstrass helps demonstrate that ℝ is complete: every Cauchy sequence has a convergent subsequence, which must converge to the same limit as the original sequence.</p>
-
-        <p>Having stated the theorem, we turn next to the intuition that makes the nested interval argument tick. The upcoming article distills the proof into a mental model centered on bisection, clustering, and the inevitability of convergence inside a shrinking cage.</p>
-      </article>
-
-      <hr />
-      <div class="nav" aria-label="Navigation">
-        <a href="/pocket-deploy/bolzano-weierstrass-2-3/">Previous</a>
-        <a href="/pocket-deploy/bolzano-weierstrass-2-5/">Next</a>
-        <a href="/pocket-deploy/dashboard-bolzano-weierstrass-2/">Table of Contents</a>
-      </div>
-      <small class="muted">Tone: Wiki-style · Theme: Navy (Dark)</small>
-    </div>
-  </div>
-</body>
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Bolzano–Weierstrass — Part 4: The Theorem Itself</title>
+<style>:root{--bg:#0f1216;--panel:#14181d;--ink:#e6e8eb;--muted:#9aa7b3;--brand:#8aa0b3;--border:#222831}@media(prefers-color-scheme:light){:root{--bg:#f7f5f1;--panel:#ffffff;--ink:#262a2f;--muted:#5b6d7a;--brand:#5b6d7a;--border:#e6e2da}}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,Segoe UI,Inter,Arial;padding:2rem}.c{max-width:880px;margin:0 auto;background:var(--panel);border:1px solid var(--border);border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,.25)}.nav{display:flex;gap:.5rem;flex-wrap:wrap;padding:.75rem;border-bottom:1px solid var(--border)}.nav a{padding:.45rem .7rem;border:1px solid var(--border);border-radius:999px;text-decoration:none;color:var(--ink)}.nav a:hover{border-color:var(--brand);color:var(--brand)}.h{padding:1.25rem 1.5rem}.intro{color:var(--muted);font-style:italic;margin:.25rem 0 1rem}.p{padding:0 1.5rem 1.5rem}.p p{margin:1.1rem 0}.f{padding:1rem 1.5rem;border-top:1px solid var(--border);color:var(--muted);font-size:.95rem}</style></head>
+<body><article class="c">
+<nav class="nav"><a href="/pocket-deploy/dashboard-bolzano-weierstrass-2/">← Dashboard</a><a href="/pocket-deploy/bolzano-weierstrass-2-3/">← Prev</a><a href="/pocket-deploy/bolzano-weierstrass-2-5/">Next →</a></nav>
+<header class="h"><h1>The Theorem Itself</h1><p class="intro">Statement of Bolzano–Weierstrass: every bounded sequence in ℝ has a convergent subsequence.</p></header>
+<section class="p">
+<p>The Bolzano–Weierstrass Theorem states: If (aₙ) is a bounded sequence of real numbers, then there exists a subsequence (a_{n_k}) that converges to some limit L ∈ ℝ. The hypothesis is boundedness: |aₙ| ≤ M for some M and all n. The conclusion is existence of a convergent subsequence—an infinite selection n₁ < n₂ < n₃ < … such that lim_{k→∞} a_{n_k} = L. The theorem makes no claim about the original sequence converging; it only guarantees that by choosing the right infinite subset of indices, convergence can be achieved. This is an existence statement, often non-constructive—we know such a subsequence exists without necessarily naming the indices explicitly.</p>
+<p>Unpacking "subsequence": a subsequence (a_{n_k}) selects terms from (aₙ) in order, so n₁ < n₂ < n₃ < …. Importantly, k goes to infinity, meaning the subsequence is infinite. Picking the first term, the tenth, the hundredth, the thousandth, and so on yields a subsequence. The subsequence inherits properties like boundedness from the parent sequence but can exhibit simpler behavior—oscillations may smooth out, clusters may focus. BWT exploits this flexibility: even if the full sequence is chaotic, a subsequence can be coaxed into convergence by selecting terms that cluster around a limit point.</p>
+<p>The limit L may or may not lie in the range of the sequence. Consider (−1)ⁿ: no term equals 0, yet a cleverly chosen subsequence might approach other values (though here the only accumulation points are ±1). For sin(n), the accumulation points are dense in [−1, 1], so different subsequences converge to different limits. BWT guarantees at least one such limit exists; it doesn't claim uniqueness. A bounded sequence can have many accumulation points, and BWT provides a subsequence converging to at least one. The theorem is about existence and possibility, not uniqueness or exhaustiveness.</p>
+<p>Boundedness is essential. Consider the sequence aₙ = n, which is unbounded. No subsequence converges to a finite limit; they all tend to infinity. BWT applies only to bounded sequences. In ℝ, boundedness cages the sequence within a compact interval, and compactness forces accumulation points. Without boundedness, sequences can escape to infinity with no convergent subsequence in sight. The theorem's scope is precisely those sequences trapped in a finite region, where completeness of ℝ ensures gaps are filled and clustering occurs.</p>
+<p>The real numbers ℝ are crucial. In ℚ, the theorem fails: the sequence of rational approximations to √2 is bounded in ℚ but has no subsequence converging to a rational limit. The subsequences converge to √2, which lies outside ℚ. BWT distinguishes ℝ from incomplete spaces: ℝ is complete, meaning bounded sequences can't cluster around "missing" points—every accumulation point is already in ℝ. This ties BWT to the Completeness Axiom (least upper bound property). The theorem encodes completeness in sequential language: boundedness plus completeness equals guaranteed convergent subsequences.</p>
+<p>In summary, BWT asserts that boundedness, though weak, guarantees extractable convergence via subsequences. It is a cornerstone of real analysis, reflecting the interplay between boundedness, compactness, and completeness. The theorem's simplicity belies its power: it underpins existence proofs, connects sequential and topological notions of compactness, and ensures that within any bounded infinite process in ℝ, orderly limiting behavior can be found. It is a promise that infinity, when caged, must accumulate.</p>
+</section>
+<footer class="f">Sources: Rudin, Principles of Mathematical Analysis; Abbott, Understanding Analysis; Pugh, Real Mathematical Analysis.</footer>
+</article></body>
 </html>

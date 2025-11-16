@@ -1,71 +1,19 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Series 3 — Part 4 · EVT &amp; Heine–Cantor</title>
-<style>
-:root{
-  --bg:#0f172a;
-  --panel:#1f2937;
-  --ink:#e5e7eb;
-  --muted:#94a3b8;
-  --brand:#60a5fa;
-  --border:#1f2937;
-}
-*{box-sizing:border-box}
-body{
-  margin:0; background:var(--bg); color:var(--ink);
-  font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,Apple Color Emoji,Segoe UI Emoji;
-}
-.wrapper{max-width:760px; margin:0 auto; padding:48px 20px}
-.panel{
-  background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:28px;
-  box-shadow:0 0 0 1px rgba(0,0,0,.12) inset;
-}
-h1{margin:0 0 8px; font-size:2rem; line-height:1.2}
-.lead{color:var(--muted); margin:0 0 24px}
-a{color:var(--brand); text-decoration:none}
-a:hover{text-decoration:underline}
-article p{margin:0 0 16px}
-hr{border:0; border-top:1px solid var(--border); margin:24px 0}
-.nav{display:flex; gap:12px; margin-top:24px; flex-wrap:wrap}
-.nav a{
-  padding:10px 14px; border:1px solid var(--border); border-radius:10px;
-  background:rgba(255,255,255,.02); color:var(--ink)
-}
-.nav a[aria-disabled="true"]{display:none}
-small.muted{color:var(--muted)}
-</style>
-</head>
-<body>
-  <div class="wrapper">
-    <div class="panel">
-      <h1>Series 3 — Machinery &amp; Consequences</h1>
-      <p class="lead">Part 4 · EVT &amp; Heine–Cantor</p>
-
-      <article>
-        <p>The extreme value theorem (EVT) proclaims that a continuous function on a compact set attains both a maximum and a minimum. On closed intervals, this follows directly from Heine–Borel: the continuous image of a compact set is compact, and compact subsets of ℝ are closed and bounded, hence possess maxima and minima. Bolzano–Weierstrass provides the sequential intuition—every sequence in the domain has a convergent subsequence whose image converges, ensuring that suprema and infima are actually achieved.</p>
-
-        <p>The Heine–Cantor theorem delivers uniform continuity on compact sets. If \(f:[a,b]\to ℝ\) is continuous, then for every \(\varepsilon > 0\) there exists \(\delta > 0\) such that whenever \(|x-y| < \delta\), we have \(|f(x) - f(y)| < \varepsilon\). Compactness ensures that the \(\delta\) can be chosen uniformly across the entire interval. The proof typically assumes the contrary and constructs sequences of points whose distances shrink while their images stay apart, contradicting sequential compactness.</p>
-
-        <p>These theorems illustrate how compactness transforms pointwise guarantees into global ones. Continuity alone only assures local control; compactness upgrades that to global control by preventing pathological escapes. EVT guarantees extremal values exist, underpinning optimization problems and existence proofs for differential equations. Heine–Cantor supports error estimates in numerical integration and ensures that continuous functions on compact sets are Riemann integrable.</p>
-
-        <p>The interplay between EVT and Heine–Cantor highlights the dual roles of subsequences and open covers. EVT often uses sequences: take a maximizing sequence and extract a convergent subsequence. Heine–Cantor can be proved using open covers: for each point, choose a neighborhood where continuity provides a delta, then compactness supplies a finite subcover with a minimum delta. Switching between perspectives strengthens our intuition for compactness-driven arguments.</p>
-
-        <p>Beyond ℝ, these results generalize to compact metric spaces. Continuous functions on compact spaces remain bounded and attain their extrema, and uniform continuity follows automatically. However, without compactness, both theorems can fail spectacularly; functions may approach suprema they never reach or display wildly oscillating behavior near boundary points.</p>
-
-        <p>With these consequences in mind, we can step outside the real line. The final article examines how Bolzano–Weierstrass extends to higher dimensions and other metric spaces, and where its promises break down.</p>
-      </article>
-
-      <hr />
-      <div class="nav" aria-label="Navigation">
-        <a href="/pocket-deploy/bolzano-weierstrass-3-3/">Previous</a>
-        <a href="/pocket-deploy/bolzano-weierstrass-3-5/">Next</a>
-        <a href="/pocket-deploy/dashboard-bolzano-weierstrass-3/">Table of Contents</a>
-      </div>
-      <small class="muted">Tone: Wiki-style · Theme: Navy (Dark)</small>
-    </div>
-  </div>
-</body>
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Bolzano–Weierstrass — Part 4: EVT & Heine–Cantor</title>
+<style>:root{--bg:#0f1216;--panel:#14181d;--ink:#e6e8eb;--muted:#9aa7b3;--brand:#8aa0b3;--border:#222831}@media(prefers-color-scheme:light){:root{--bg:#f7f5f1;--panel:#ffffff;--ink:#262a2f;--muted:#5b6d7a;--brand:#5b6d7a;--border:#e6e2da}}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,Segoe UI,Inter,Arial;padding:2rem}.c{max-width:880px;margin:0 auto;background:var(--panel);border:1px solid var(--border);border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,.25)}.nav{display:flex;gap:.5rem;flex-wrap:wrap;padding:.75rem;border-bottom:1px solid var(--border)}.nav a{padding:.45rem .7rem;border:1px solid var(--border);border-radius:999px;text-decoration:none;color:var(--ink)}.nav a:hover{border-color:var(--brand);color:var(--brand)}.h{padding:1.25rem 1.5rem}.intro{color:var(--muted);font-style:italic;margin:.25rem 0 1rem}.p{padding:0 1.5rem 1.5rem}.p p{margin:1.1rem 0}.f{padding:1rem 1.5rem;border-top:1px solid var(--border);color:var(--muted);font-size:.95rem}</style></head>
+<body><article class="c">
+<nav class="nav"><a href="/pocket-deploy/dashboard-bolzano-weierstrass-3/">← Dashboard</a><a href="/pocket-deploy/bolzano-weierstrass-3-3/">← Prev</a><a href="/pocket-deploy/bolzano-weierstrass-3-5/">Next →</a></nav>
+<header class="h"><h1>EVT & Heine–Cantor</h1><p class="intro">Extreme Value Theorem and uniform continuity as consequences of compactness.</p></header>
+<section class="p">
+<p>The Extreme Value Theorem (EVT) states: if f is continuous on a compact set K, then f attains its maximum and minimum on K. In ℝ, this means a continuous function on [a, b] reaches its supremum and infimum—there exist points c, d ∈ [a, b] with f(c) = sup f and f(d) = inf f. This is a fundamental result in calculus and optimization: you're guaranteed extrema exist, not just as limits but as actual function values. The proof hinges on compactness, specifically the sequential compactness provided by BWT. Without compactness, continuous functions can fail to attain extrema—consider f(x) = x on (0, 1), which is continuous but has no maximum on the open interval.</p>
+<p>The proof of EVT via BWT: let M = sup{f(x) : x ∈ K}. By definition of supremum, for each n, there exists xₙ ∈ K with f(xₙ) > M − 1/n. The sequence (xₙ) lies in the compact set K, so by sequential compactness (BWT in ℝ context), it has a subsequence xₙₖ → c for some c ∈ K. Continuity of f gives f(xₙₖ) → f(c). But f(xₙₖ) → M by the squeeze theorem (since M − 1/nₖ < f(xₙₖ) ≤ M and 1/nₖ → 0). Thus f(c) = M, and the supremum is attained. The same argument applies to the infimum. BWT guarantees the convergent subsequence; compactness ensures c ∈ K; continuity ensures the function value converges. All pieces lock together.</p>
+<p>EVT's power is existential: it guarantees a solution without constructing it. In optimization, EVT assures you that a continuous objective over a compact feasible set has an optimal solution. You may not compute it exactly, but you know it exists, so numerical methods can sensibly seek it. The theorem transforms "supremum" (an abstract bound) into "maximum" (an achieved value). This shift from potential to actual is characteristic of compactness: compactness makes limits and bounds tangible. Without BWT and compactness, EVT would fail, and continuous functions could approach but never reach their bounds.</p>
+<p>The Heine–Cantor Theorem asserts: if f is continuous on a compact metric space K, then f is uniformly continuous on K. Uniform continuity strengthens pointwise continuity: for any ε > 0, there exists δ > 0 such that for all x, y ∈ K with d(x, y) < δ, we have |f(x) − f(y)| < ε. The key is δ works uniformly for all x, not varying point by point. On compact sets, continuity automatically upgrades to uniform continuity. For example, f(x) = 1/x is continuous on (0, 1) but not uniformly continuous (δ must shrink near 0). On [1/2, 1], a compact set, it is uniformly continuous.</p>
+<p>Proof of Heine–Cantor via BWT: suppose f is continuous on compact K but not uniformly continuous. Then for some ε > 0, no δ works—meaning for each δ = 1/n, there exist xₙ, yₙ ∈ K with d(xₙ, yₙ) < 1/n but |f(xₙ) − f(yₙ)| ≥ ε. The sequences (xₙ) and (yₙ) lie in compact K, so by BWT, extract a convergent subsequence xₙₖ → x ∈ K. Since d(xₙₖ, yₙₖ) < 1/nₖ → 0, we also have yₙₖ → x. Continuity at x implies f(xₙₖ) → f(x) and f(yₙₖ) → f(x), so |f(xₙₖ) − f(yₙₖ)| → 0, contradicting |f(xₙₖ) − f(yₙₖ)| ≥ ε. Thus f must be uniformly continuous. Again, BWT supplies the convergent subsequence that drives the proof.</p>
+<p>Both EVT and Heine–Cantor illustrate how compactness, via BWT, forces good behavior. Continuity alone can be fragile—functions on non-compact domains may lack extrema or uniform continuity. Compactness tightens the space, preventing pathologies. The common proof technique is: assume failure, construct a problematic sequence, apply BWT to extract a convergent subsequence, use continuity and the limit to derive a contradiction. This pattern recurs throughout analysis: compactness (sequential form via BWT) converts pointwise properties (continuity, boundedness) into uniform or global properties (attained extrema, uniform continuity). BWT is the workhorse enabling these leaps from local to global.</p>
+</section>
+<footer class="f">Sources: Rudin, Principles of Mathematical Analysis (EVT and Heine–Cantor proofs); Abbott, Understanding Analysis (compactness applications); standard calculus and analysis texts.</footer>
+</article></body>
 </html>

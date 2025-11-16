@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Gödel's Incompleteness: Setting the Stage — Part 2</title>
+<style>
+:root{--bg:#0f172a;--panel:#1f2937;--ink:#e5e7eb;--muted:#94a3b8;--brand:#60a5fa;--border:#1f2937}
+@media(prefers-color-scheme:light){:root{--bg:#f8fafc;--panel:#ffffff;--ink:#1e293b;--muted:#64748b;--brand:#3b82f6;--border:#e2e8f0}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,Apple Color Emoji,Segoe UI Emoji}
+.wrapper{max-width:760px;margin:0 auto;padding:48px 20px}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:28px;box-shadow:0 0 0 1px rgba(0,0,0,.12) inset}
+h1{margin:0 0 8px;font-size:2rem;line-height:1.2}
+.lead{color:var(--muted);margin:0 0 24px}
+a{color:var(--brand);text-decoration:none}
+a:hover{text-decoration:underline}
+article p{margin:0 0 16px}
+hr{border:0;border-top:1px solid var(--border);margin:24px 0}
+.nav{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+.nav a{padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:rgba(96,165,250,.08);color:var(--ink)}
+small.muted{color:var(--muted);display:block;margin-top:24px}
+</style>
+</head>
+<body>
+<div class="wrapper"><div class="panel">
+<div class="nav"><a href="/pocket-deploy/dashboard-godel-s-incompleteness-s01/">Dashboard</a><a href="/pocket-deploy/godel-s-incompleteness-s01-1/">Prev</a><a href="/pocket-deploy/godel-s-incompleteness-s01-3/">Next</a></div>
+<h1>Gödel's Incompleteness: Setting the Stage</h1>
+<p class="lead">Part 2 · Formal Systems and Proofs: What Gödel Worked With</p>
+<article>
+<p>A formal system is a precisely defined mathematical framework consisting of a language, axioms, and rules of inference. The language specifies symbols (variables, constants, logical connectives like ∧, ∨, ¬, quantifiers ∀ and ∃) and rules for forming well-formed formulas—strings of symbols with valid syntax. Axioms are formulas assumed to be true without proof, serving as the system's foundation. Rules of inference dictate how to derive new formulas (theorems) from axioms and previously proven theorems. A classic example is modus ponens: from formulas A and A → B, one may derive B. Formal systems eliminate ambiguity and intuition, reducing mathematical reasoning to mechanical symbol manipulation. This mechanization was central to Hilbert's program: if reasoning is purely syntactic, it can be rigorously analyzed and proven consistent.</p>
+
+<p>Peano Arithmetic (PA) exemplifies a formal system suitable for expressing arithmetic. Its language includes symbols for zero (0), the successor function S (representing "plus one"), addition (+), multiplication (×), and the equality relation (=). Variables range over natural numbers. Well-formed formulas combine these symbols using logical connectives and quantifiers. For instance, ∀x (S(x) ≠ 0) states "the successor of any number is not zero," one of Peano's axioms. The axioms of PA include: 0 is a natural number; S is one-to-one and never maps to 0; addition and multiplication are defined recursively (e.g., x + 0 = x, x + S(y) = S(x + y)); and the induction axiom schema, which asserts that any property holding for 0 and inherited by successors holds for all natural numbers. From these axioms, using logical rules, one derives arithmetic truths.</p>
+
+<p>A proof in a formal system is a finite sequence of formulas, each either an axiom or derived from earlier formulas by a rule of inference, culminating in the desired theorem. Proofs are entirely syntactic: their validity depends only on structure, not meaning. For example, proving 2 + 2 = 4 in PA involves unfolding definitions—2 is S(S(0)), 4 is S(S(S(S(0))))—and applying axioms about addition. The proof might span dozens of lines, each a simple symbol manipulation. This formality ensures that proofs are checkable mechanically, even by a computer with no understanding of mathematics. Formal proofs contrast sharply with informal mathematical arguments, which rely on shared intuition and semantic understanding. In a formal system, semantics are deliberately set aside, leaving only syntax.</p>
+
+<p>Consistency and completeness are central properties of formal systems. A system is consistent if it cannot prove both a statement and its negation—there is no formula A such that both A and ¬A are theorems. Consistency is crucial: inconsistent systems are trivial, proving every formula (in classical logic, from a contradiction, anything follows). A system is complete if every well-formed formula A is decidable—either A or ¬A is a theorem. Completeness means the system leaves no questions unanswered. Hilbert hoped to prove that PA and similar systems are both consistent and complete. Consistency would guarantee they never produce nonsense; completeness would ensure they capture all arithmetic truth. Gödel's incompleteness theorems would show these hopes were incompatible.</p>
+
+<p>Semantic completeness differs from syntactic completeness and should not be confused with it. Semantic completeness, proven by Gödel in 1929 for first-order logic, means that every formula valid in all models (true under every interpretation) is provable. This result holds for pure logic but says nothing about specific mathematical theories like PA. Syntactic completeness, relevant to Gödel's incompleteness theorem, asks whether every formula expressible in the system's language is decided by the axioms. First-order logic is semantically complete but syntactically incomplete for arithmetic—there exist arithmetical truths unprovable from PA's axioms. This distinction is subtle yet critical: Gödel's 1929 completeness theorem for logic and his 1931 incompleteness theorem for arithmetic address entirely different questions.</p>
+
+<p>Decidability is another key concept. A formal system is decidable if there exists an algorithm (a finite, mechanical procedure) that determines, for any given formula, whether it is a theorem. Decidability would make mathematics fully algorithmic: feed a statement into the algorithm, and it outputs "provable" or "not provable." Undecidability, by contrast, means no such algorithm exists—some questions cannot be answered by any mechanical procedure. Hilbert's Entscheidungsproblem ("decision problem") asked whether first-order logic is decidable. In 1936, Alonzo Church and Alan Turing independently proved that first-order logic is undecidable, closely connected to Gödel's results. Gödel's incompleteness theorems imply that sufficiently strong consistent systems like PA are undecidable: there is no algorithm to decide all arithmetical truths.</p>
+
+<p>Understanding formal systems prepares us to grasp Gödel's achievement. He worked within formal systems like PA, manipulating symbols and constructing proofs according to strict rules. Yet his theorems reveal limits intrinsic to formalization itself. By treating formulas and proofs as mathematical objects—sequences of symbols subject to arithmetic analysis—Gödel demonstrated that formal systems can encode statements about their own provability. This self-referential capacity, formalized through Gödel numbering, allows the construction of a statement asserting "I am not provable." If the system proves this statement, it contradicts itself; if it does not, the statement is true yet unprovable. This ingenious diagonalization argument, inspired by Cantor's proof that real numbers are uncountable and the liar paradox, lies at the heart of the incompleteness theorems, showing that formalization cannot eliminate all mathematical mystery.</p>
+</article>
+<hr />
+<div class="nav"><a href="/pocket-deploy/dashboard-godel-s-incompleteness-s01/">Dashboard</a><a href="/pocket-deploy/godel-s-incompleteness-s01-1/">Prev</a><a href="/pocket-deploy/godel-s-incompleteness-s01-3/">Next</a></div>
+<small class="muted">Gödel's Incompleteness · Series 1 of 3</small>
+</div></div>
+</body>
+</html>

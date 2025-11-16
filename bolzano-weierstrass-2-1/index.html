@@ -1,71 +1,19 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Series 2 — Part 1 · Why BWT Matters</title>
-<style>
-:root{
-  --bg:#0f172a;
-  --panel:#1f2937;
-  --ink:#e5e7eb;
-  --muted:#94a3b8;
-  --brand:#60a5fa;
-  --border:#1f2937;
-}
-*{box-sizing:border-box}
-body{
-  margin:0; background:var(--bg); color:var(--ink);
-  font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,Apple Color Emoji,Segoe UI Emoji;
-}
-.wrapper{max-width:760px; margin:0 auto; padding:48px 20px}
-.panel{
-  background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:28px;
-  box-shadow:0 0 0 1px rgba(0,0,0,.12) inset;
-}
-h1{margin:0 0 8px; font-size:2rem; line-height:1.2}
-.lead{color:var(--muted); margin:0 0 24px}
-a{color:var(--brand); text-decoration:none}
-a:hover{text-decoration:underline}
-article p{margin:0 0 16px}
-hr{border:0; border-top:1px solid var(--border); margin:24px 0}
-.nav{display:flex; gap:12px; margin-top:24px; flex-wrap:wrap}
-.nav a{
-  padding:10px 14px; border:1px solid var(--border); border-radius:10px;
-  background:rgba(255,255,255,.02); color:var(--ink)
-}
-.nav a[aria-disabled="true"]{display:none}
-small.muted{color:var(--muted)}
-</style>
-</head>
-<body>
-  <div class="wrapper">
-    <div class="panel">
-      <h1>Series 2 — Bolzano–Weierstrass</h1>
-      <p class="lead">Part 1 · Why BWT Matters</p>
-
-      <article>
-        <p>Analysts treat the Bolzano–Weierstrass Theorem as a rite of passage because it answers a deceptively simple question: if we have an infinite process that never leaves a bounded corral, must something orderly emerge? Sequences of real numbers provide the testing ground. They might zigzag, cluster, or spiral, but as long as they stay within some finite cage, Bolzano–Weierstrass promises that a subsequence will calm down and converge. This theorem converts the vague idea of “infinite wiggle room” into a concrete guarantee about limits.</p>
-
-        <p>Historically, the theorem grew out of nineteenth-century efforts to formalize calculus. Augustin-Louis Cauchy and Karl Weierstrass championed epsilon–delta precision, yet early texts still relied on geometric intuition about curves settling down. Bolzano’s 1817 work hinted at the result, but it lacked widespread dissemination until Weierstrass popularized the argument decades later. Their shared insight was that boundedness alone contains enough structure to force convergence, provided the underlying number system is complete.</p>
-
-        <p>The theorem matters because calculus and analysis lean on subsequences to extract order from chaos. Consider approximating roots via iterative methods or studying Fourier coefficients of signals. The sequences that appear may resist straightforward convergence, yet subsequences often reveal hidden stability. Bolzano–Weierstrass transforms this tactic from an art into a rule: whenever you work in ℝ with a bounded sequence, you can count on an orderly subsequence to exist.</p>
-
-        <p>In applications, the guarantee powers compactness arguments, approximation theory, and functional analysis. When we claim that a family of functions attains a best approximation or that a physical system finds equilibrium, we usually convert the problem into statements about sequences. The theorem provides the compactness-like lever needed to extract convergent behavior without guessing which terms will cooperate.</p>
-
-        <p>Beyond theoretical comfort, Bolzano–Weierstrass offers a diagnostic tool. If a sequence refuses to yield a convergent subsequence, we immediately know it cannot be bounded. In numerical simulations, that observation distinguishes instabilities from mere oscillations. In topology and metric space theory, the theorem becomes a litmus test for compactness, hinting at broader structures where sequential behavior captures geometric finiteness.</p>
-
-        <p>This article sets the stage for the rest of Series 2. Subsequent entries introduce the epsilon-language for neighborhoods, examine bounded sequences more concretely, state the theorem carefully, and sketch the intuition behind the nested-interval proof. Together they illustrate how a single compactness principle radiates through real analysis.</p>
-      </article>
-
-      <hr />
-      <div class="nav" aria-label="Navigation">
-        <a href="#" aria-disabled="true">Previous</a>
-        <a href="/pocket-deploy/bolzano-weierstrass-2-2/">Next</a>
-        <a href="/pocket-deploy/dashboard-bolzano-weierstrass-2/">Table of Contents</a>
-      </div>
-      <small class="muted">Tone: Wiki-style · Theme: Navy (Dark)</small>
-    </div>
-  </div>
-</body>
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Bolzano–Weierstrass — Part 1: Why BWT Matters</title>
+<style>:root{--bg:#0f1216;--panel:#14181d;--ink:#e6e8eb;--muted:#9aa7b3;--brand:#8aa0b3;--border:#222831}@media(prefers-color-scheme:light){:root{--bg:#f7f5f1;--panel:#ffffff;--ink:#262a2f;--muted:#5b6d7a;--brand:#5b6d7a;--border:#e6e2da}}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,Segoe UI,Inter,Arial;padding:2rem}.c{max-width:880px;margin:0 auto;background:var(--panel);border:1px solid var(--border);border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,.25)}.nav{display:flex;gap:.5rem;flex-wrap:wrap;padding:.75rem;border-bottom:1px solid var(--border)}.nav a{padding:.45rem .7rem;border:1px solid var(--border);border-radius:999px;text-decoration:none;color:var(--ink)}.nav a:hover{border-color:var(--brand);color:var(--brand)}.h{padding:1.25rem 1.5rem}.intro{color:var(--muted);font-style:italic;margin:.25rem 0 1rem}.p{padding:0 1.5rem 1.5rem}.p p{margin:1.1rem 0}.f{padding:1rem 1.5rem;border-top:1px solid var(--border);color:var(--muted);font-size:.95rem}</style></head>
+<body><article class="c">
+<nav class="nav"><a href="/pocket-deploy/dashboard-bolzano-weierstrass-2/">← Dashboard</a><a href="/pocket-deploy/bolzano-weierstrass-2-2/">Next →</a></nav>
+<header class="h"><h1>Why BWT Matters</h1><p class="intro">Infinite processes, limits of sequences, and the question: does boundedness guarantee convergent subsequences?</p></header>
+<section class="p">
+<p>Analysis confronts infinity constantly. Given a sequence a₁, a₂, a₃, …, we ask whether it converges—whether the terms settle near a single value. Some sequences march steadily toward a limit; others oscillate, wandering without ever stabilizing. When a sequence fails to converge, can we rescue anything from the wreckage? The Bolzano–Weierstrass Theorem (BWT) answers: if the sequence is bounded, we can extract a convergent subsequence. This guarantee transforms impossibility into possibility, turning wild behavior into orderly data by focusing on an infinite subset of terms that do cooperate.</p>
+<p>Boundedness is a minimal constraint. A sequence is bounded if all its terms lie within some fixed interval [−M, M]. Many interesting sequences meet this condition—oscillating trigonometric values, rational approximations to irrationals, partial sums that zig and zag. Without additional structure, a bounded sequence might never converge, cycling endlessly or jumping erratically. Yet BWT insists that within that chaos, some infinite subsequence converges. This is not obvious: boundedness only confines the sequence to a box; it doesn't force the terms to cluster. BWT's power is showing that confinement alone, coupled with the completeness of the reals, is enough to find a convergent thread.</p>
+<p>The theorem underpins major results in analysis. The Extreme Value Theorem, which guarantees a continuous function on a closed interval attains its maximum, relies on BWT through compactness arguments. If you take a sequence of points where the function values approach the supremum, BWT supplies a convergent subsequence, and continuity then locks in the maximum. Similarly, the Arzelà–Ascoli Theorem characterizing compact families of functions hinges on extracting convergent subsequences. BWT is the engine that converts boundedness conditions into actual limits, enabling existence proofs throughout real and functional analysis.</p>
+<p>Concrete problems reveal BWT's utility. Consider optimizing a function over a bounded domain: you generate a sequence of trial points with improving values. Even if the sequence doesn't converge (perhaps it bounces around local optima), BWT extracts a convergent subsequence, which then points toward a critical region. In numerical methods, iterative algorithms often produce bounded sequences; BWT ensures you can pass to a subsequence that converges, letting you analyze limiting behavior and stability. The theorem acts as a safety net: no matter how erratic a bounded sequence, you can always zoom in on convergent behavior by selecting the right indices.</p>
+<p>BWT also clarifies the structure of the real numbers. In the rationals ℚ, bounded sequences can fail to have any convergent subsequence—think of decimal approximations to √2. The reals ℝ are complete precisely because they plug these gaps. BWT encodes completeness in sequential terms: boundedness forces accumulation. This perspective makes ℝ analytically robust, distinguishing it from incomplete spaces. The theorem is a litmus test for completeness, and its failure signals missing points.</p>
+<p>Ultimately, BWT matters because it rescues convergence from non-convergence. It says that boundedness, though weak, is enough to guarantee that infinity has structure. Analysts rely on this when proving existence, constructing solutions, and studying limiting behavior. By guaranteeing convergent subsequences, BWT transforms boundedness from a constraint into a promise—ensuring that within any bounded infinite process, order can be found.</p>
+</section>
+<footer class="f">Sources: Rudin, Principles of Mathematical Analysis; Abbott, Understanding Analysis; standard real analysis texts on compactness and sequential arguments.</footer>
+</article></body>
 </html>

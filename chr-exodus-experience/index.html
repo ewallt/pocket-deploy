@@ -1,0 +1,933 @@
+      <!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Exodus Experience Chronicle Chronicle</title>
+  <style>
+    /* Global Reset & Base Styles */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: "Georgia", serif;
+      line-height: 1.6;
+      background-color: #EAEAEA;
+      color: #333333;
+    }
+
+    /* Top Bar & Mega-Menu Toggle */
+    #master-top-bar {
+      background-color: #2F4F4F;
+      padding: 0.75rem 1rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      display: flex; justify-content: space-between; align-items: center;
+      position: sticky; top: 0; z-index: 250;
+    }
+    #master-top-bar .site-title {
+      font-family:'Rockwell', 'Georgia', serif;
+      color:#E5E5E5;
+      font-size:1.5rem;
+      text-transform:uppercase;
+      letter-spacing:1px;
+      text-shadow:1px 1px 2px rgba(0,0,0,0.4);
+    }
+    #mega-menu-toggle {
+      background:#D3D3D3;color:#2F4F4F;border:2px solid #A9A9A9;border-radius:5px;
+      padding:0.6rem 1.2rem;cursor:pointer;font-family:"Impact",Haettenschweiler,"Arial Narrow Bold",sans-serif;
+      font-size:0.9rem;text-transform:uppercase;letter-spacing:1px;transition:.3s;
+    }
+    #mega-menu-toggle:hover{background:#A9A9A9;color:#fff}
+    #mega-menu-toggle.active{background:#B22222;color:#fff;border-color:#8B0000}
+
+    /* Mega-menu panel */
+    #mega-menu-panel{
+      display:none;position:fixed;top:60px;left:0;width:100%;height:calc(100vh - 60px);
+      background:rgba(47,79,79,.98);z-index:300;padding:2rem;overflow-y:auto;
+      box-shadow:0 5px 15px rgba(0,0,0,.3);animation:fadeInMega .3s ease-out;
+    }
+    @keyframes fadeInMega{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+    #mega-menu-panel.open{display:block}
+    .mega-menu-columns{display:flex;flex-wrap:wrap;gap:2rem;justify-content:space-around}
+    .mega-menu-column{flex:1;min-width:200px;margin-bottom:1rem}
+    .mega-menu-column .theater-heading{
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: #EAEAEA;
+      font-weight: bold;
+      font-size: 1.2rem;
+      margin-bottom: .75rem;
+      padding-bottom: .5rem;
+      border-bottom: 1px solid #778899;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .mega-menu-column .topic-link{
+      display:block;color:#EAEAEA;text-decoration:none;padding:.5rem .25rem;border-radius:2px;
+      transition:.2s;font-size:.95rem;
+    }
+    .mega-menu-column .topic-link:hover{background:#778899;color:#fff}
+    .mega-menu-column .topic-link.active-topic{background:#B22222;color:#fff;font-weight:bold}
+    #page-content{padding-top:60px}
+
+    /* Topic container */
+    .topic-container{
+      display:none;font-family:"Georgia",serif;line-height:1.6;color:#2c3e50;
+      background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+      animation:fadeInTopic .5s ease-in-out;padding:1px 0;min-height:calc(100vh - 60px);
+    }
+    .topic-container.active{display:block}
+    @keyframes fadeInTopic{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+    .topic-container .container{
+      max-width:1200px;margin:20px auto;background:rgba(255,255,255,.95);
+      backdrop-filter:blur(10px);border-radius:20px;box-shadow:0 20px 40px rgba(0,0,0,.1);overflow:hidden;
+    }
+    .topic-container .header{
+      background:linear-gradient(45deg,#1a237e,#3949ab);color:white;padding:3rem 2rem;text-align:center;
+      position:relative;overflow:hidden;
+    }
+    .topic-container .header::before{
+      content:"";position:absolute;top:-50%;left:-50%;width:200%;height:200%;
+      background:url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><circle cx=\"20\" cy=\"20\" r=\"2\" fill=\"rgba(255,255,255,0.05)\"/><circle cx=\"80\" cy=\"40\" r=\"1.5\" fill=\"rgba(255,255,255,0.05)\"/><circle cx=\"40\" cy=\"70\" r=\"1\" fill=\"rgba(255,255,255,0.05)\"/></svg>');
+      animation:float 20s infinite linear;opacity:.7;
+    }
+    @keyframes float{0%{transform:translate(-50px,-50px)}100%{transform:translate(50px,50px)}}
+    .topic-container .header h1{font-size:2.8rem;margin-bottom:.8rem;text-shadow:1px 1px 3px rgba(0,0,0,.4)}
+    .topic-container .header p{font-size:1.1rem;opacity:.85}
+
+    .topic-container .nav{background:#495057;padding:.9rem 0;position:sticky;top:60px;z-index:100}
+    .topic-container .nav-container{max-width:1200px;margin:0 auto;display:flex;justify-content:center;
+      flex-wrap:wrap;gap:.8rem;padding:0 1.5rem}
+    .topic-container .nav-btn{
+      background:linear-gradient(45deg,#5a7a99,#435c74);color:white;border:none;padding:.7rem 1.3rem;
+      border-radius:20px;cursor:pointer;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+      font-size:.85rem;font-weight:bold;transition:.3s;box-shadow:0 3px 12px rgba(0,0,0,.2);
+    }
+    .topic-container .nav-btn:hover{
+      transform:translateY(-2px);box-shadow:0 5px 18px rgba(0,0,0,.3);
+      background:linear-gradient(45deg,#435c74,#304252);
+    }
+    .topic-container .nav-btn.active{
+      background:linear-gradient(45deg,#c0392b,#a93226);box-shadow:0 3px 12px rgba(192,57,43,.4);
+    }
+
+    .topic-container .content{padding:2.5rem 2rem}
+    .topic-container .section{display:none;padding-bottom:1.5rem;margin-bottom:1.5rem;animation:fadeInSection .6s}
+    .topic-container .section.active{display:block}
+    @keyframes fadeInSection{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+
+    .topic-container .section h2{
+      font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;color:#23272a;font-size:2.3rem;
+      margin-bottom:1.8rem;text-align:center;position:relative;padding-bottom:8px;
+    }
+    .topic-container .section h2::after{
+      content:"";position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);
+      width:90px;height:3px;background:linear-gradient(45deg,#5a7a99,#c0392b);border-radius:1.5px;
+    }
+    .topic-container .section h3{
+      font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;color:#343a40;font-size:1.7rem;
+      border-left:3px solid #5a7a99;margin:1.8rem 0 .9rem;padding-left:.9rem;
+    }
+    .topic-container .section h4{
+      font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size: 1.3rem; margin-bottom: 0.9rem; color: #2c3e50;
+    }
+    .topic-container .section p{
+      font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;margin-bottom:1.3rem;font-size:1.05rem;
+      text-align:justify;line-height:1.7;color:#333;
+    }
+
+    /* Figure & impact cards */
+    .figure-grid,.impact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+      gap:1.8rem;margin:1.8rem 0;}
+    .figure-card,.impact-card{
+      background:linear-gradient(135deg,#fdfdfe,#f1f3f5);border-radius:12px;padding:1.8rem;
+      box-shadow:0 7px 20px rgba(0,0,0,.08);transition:.3s;border:1px solid rgba(0,0,0,.08);
+    }
+    .figure-card:hover,.impact-card:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(0,0,0,.12)}
+    .figure-card h4,.impact-card h4{
+      font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;color:#23272a;font-size:1.3rem;
+      margin-bottom:.9rem;padding-bottom:.4rem;border-bottom:2px solid #5a7a99;
+    }
+    .impact-card{text-align:center;border-top:3px solid}
+    .impact-card:nth-child(1){border-top-color:#007bff}.impact-card:nth-child(2){border-top-color:#6c757d}
+    .impact-card:nth-child(3){border-top-color:#ffc107}.impact-card:nth-child(4){border-top-color:#28a745}
+
+    /* Timeline */
+    .battle-timeline{position:relative;margin:2.5rem 0;padding-left:0}
+    .timeline-item{display:flex;margin-bottom:1.8rem;position:relative}
+    .timeline-item::before{
+      content:"";position:absolute;left:18px;top:0;bottom:-1.8rem;width:2px;
+      background:linear-gradient(to bottom,#5a7a99,#435c74);
+    }
+    .timeline-item:last-child::before{height:36px;bottom:auto}
+    .timeline-dot{
+      width:36px;height:36px;background:linear-gradient(45deg,#6c757d,#495057);border-radius:50%;
+      display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:.9em;
+      margin-right:1.8rem;box-shadow:0 3px 8px rgba(0,0,0,.25);flex-shrink:0;z-index:1;
+    }
+    .timeline-content{
+      background:white;padding:1.3rem;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.08);flex:1;
+      border-left:3px solid #5a7a99;
+    }
+    .timeline-content h4{color:#23272a;margin-bottom:.4rem;font-size:1.2rem}
+    .timeline-date{color:#6c757d;font-size:.85rem;font-weight:bold;margin-bottom:.4rem}
+
+    /* Badge Box Styles */
+    .badge-box {
+        background: linear-gradient(135deg,#3a3f44,#495057);
+        color: white;
+        padding: 1.8rem;
+        border-radius: 12px;
+        margin: 1.8rem 0;
+        box-shadow: 0 8px 25px rgba(0,0,0,.25);
+    }
+    .badge-box h4 {
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        color: #ffffff;
+        margin-bottom: .9rem;
+        font-size: 1.3rem;
+    }
+    .topic-container .section .badge-box h4 {
+        color: white;
+    }
+    .badge-box ul {
+        list-style: none;
+        padding-left: 0;
+    }
+    .badge-box li {
+        margin-bottom: .7rem;
+        padding-left: 1.3rem;
+        position: relative;
+    }
+    .badge-box li::before {
+        content: "»";
+        position: absolute;
+        left: 0;
+        color: #ffc107;
+        font-weight: bold;
+    }
+    .badge-box em {
+        color: #17a2b8;
+        font-style: italic;
+    }
+
+    /* Footer */
+    .footer{background:#23272a;color:white;text-align:center;padding:1.8rem;margin-top:2rem}
+
+    /* Responsive tweaks */
+    @media(max-width:768px){
+      #master-top-bar .site-title{font-size:1.2rem}
+      #mega-menu-toggle{font-size:.8rem;padding:.5rem .8rem}
+      #mega-menu-panel{padding:1rem;top:50px;height:calc(100vh - 50px)}
+      #page-content{padding-top:50px}
+      .topic-container .header h1{font-size:2rem}
+      .topic-container .nav{top:50px}
+      .topic-container .nav-container{flex-direction:column;align-items:center}
+      .topic-container .content{padding:1.5rem 1rem}
+      .topic-container .section h2{font-size:1.8rem}
+      .figure-grid{grid-template-columns:1fr}
+      .timeline-item{flex-direction:column}
+      .timeline-dot{margin-right:0;margin-bottom:.9rem;align-self:flex-start}
+    }
+
+
+  </style>
+</head>
+<body>
+
+  <header id="master-top-bar">
+    <span class="site-title">Exodus Experience Chronicle</span>
+    <button id="mega-menu-toggle">Menu</button>
+  </header>
+
+  <nav id="mega-menu-panel">
+    <div id="mega-menu-container" class="mega-menu-columns">
+      <!-- This content is generated by the script -->
+    </div>
+  </nav>
+
+  <div id="page-content">
+    <div id="topic-master-container" class="topic-container">
+      <!-- This content is generated by the script -->
+    </div>
+  </div>
+
+  <script>
+    /*
+    ==================================================================
+    ==                  START: PASTE YOUR DATA HERE                 ==
+    ==================================================================
+    */
+
+    // PASTE YOUR `menuData` OBJECT HERE
+const menuData = [
+  {
+    heading: 'Passover → Sea (Altar → Laver)<br></br>',
+    topics: [
+      { id: 'topic-altar-laver-logic', text: 'Altar → Laver Logic' },
+      { id: 'topic-household-to-nation', text: 'Household to Nation' },
+      { id: 'topic-baptized-into-moses', text: 'Baptized into Moses' },
+      { id: 'topic-mechanics-route-polemic', text: 'Mechanics & Route Polemic' },
+      { id: 'topic-song-at-the-shore', text: 'Song at the Shore' }
+    ]
+  },
+  {
+    heading: 'Waters, Chaos, & New Creation',
+    topics: [
+      { id: 'topic-genesis-echoes-at-the-sea', text: 'Genesis Echoes at the Sea' },
+      { id: 'topic-psalms-sea-theophany', text: 'Psalms’ Sea Theophany' },
+      { id: 'topic-tehom-the-dragon', text: 'Tĕhōm & the Dragon' },
+      { id: 'topic-prophetic-new-exodus-waters', text: 'Prophetic New-Exodus Waters' },
+      { id: 'topic-sea-scenes-in-the-gospels', text: 'Sea Scenes in the Gospels' },
+      { id: 'topic-living-waters-from-the-house', text: 'Living Waters from the House' },
+      { id: 'topic-apocalyptic-waters-primer', text: 'Apocalyptic Waters Primer' }
+    ]
+  },
+  {
+    heading: 'At Sinai: Word & Vocation',
+    topics: [
+      { id: 'topic-arrival-at-sinai', text: 'Arrival at Sinai' },
+      { id: 'topic-law-as-architecture-of-freedom', text: 'Law as Architecture of Freedom' },
+      { id: 'topic-covenant-meal-portable-presence', text: 'Covenant Meal & Portable Presence' }
+    ]
+  },
+  {
+    heading: 'Wilderness Formation',
+    topics: [
+      { id: 'topic-marah-manna-massah', text: 'Marah, Manna, Massah' },
+      { id: 'topic-amalek-intercession', text: 'Amalek & Intercession' }
+    ]
+  },
+  {
+    heading: 'Ingathering Horizon (Temple → Gospel → Mission → Consummation)',
+    topics: [
+      { id: 'topic-temple-sea-lavers', text: 'Temple, Sea & Lavers' },
+      { id: 'topic-jesus-exodus-at-passover', text: 'Jesus’ Exodus at Passover' },
+      { id: 'topic-weeks-pentecost-service-begins', text: 'Weeks/Pentecost — Service Begins' },
+      { id: 'topic-church-baptism-mission', text: 'Church Baptism & Mission' },
+      { id: 'topic-sea-of-glass-the-end-of-the-sea', text: 'Sea of Glass & the End of the Sea' },
+      { id: 'topic-wright-king-jesus-new-exodus', text: 'Wright: King Jesus & the New Exodus' },
+      { id: 'topic-wright-paul-new-exodus', text: 'Wright: Paul’s New-Exodus' }
+    ]
+  }
+];
+
+
+    // PASTE YOUR `masterDataObject` HERE
+
+const masterDataObject = {
+  'topic-altar-laver-logic': {
+    title: 'Altar → Laver Logic',
+    subtitle: 'Explore the theological sequence of blood followed by water, from Passover to the Red Sea, as a template for salvation.',
+    nav: [
+      { id: 'why-water-follows-blood', text: 'Why Water Follows Blood' },
+      { id: 'jurisdiction-shift', text: 'Jurisdiction Shift' },
+      { id: 'priestly-analogy-altar-laver', text: 'Priestly Analogy (Altar→Laver)' },
+      { id: 'pauls-frame-1-cor-10-1-2', text: 'Paul’s Frame (1 Cor 10:1–2)' },
+      { id: 'objections-misreads', text: 'Objections & Misreads' },
+      { id: 'badge', text: 'Field Notes' },
+      { id: 'timeline', text: 'Crossing Timeline' }
+    ],
+    sections: [
+      { id: 'why-water-follows-blood', title: 'Why Water Follows Blood', content: `<h4>A Liturgy in Motion</h4><p>The Exodus unfolds like a liturgy in motion: blood, then water, then word. On Passover night Israel is distinguished by the lamb’s blood (Exod 12). That verdict is juridical—a household is declared under Yahweh’s mercy—yet the people are still trapped between Pharaoh and the sea. What begins at the altar must be sealed at the laver. The Red Sea is that second act: an embodied passage that separates a nation from bondage and constitutes it as a priestly people.</p><h4>The Sanctuary and the Sea</h4><p>Psalm 77 pairs two crucial lines: “Your way, O God, is in the sanctuary” (v.13) and “Your way was in the sea” (v.19). The same divine “way” that structures the sanctuary also structures the historical deliverance. The Red Sea, therefore, functions as the great laver in the Exodus drama, the cleansing and consecrating water that follows the atoning blood of the Passover altar.</p>` },
+      { id: 'jurisdiction-shift', title: 'Jurisdiction Shift', content: `<h3>From Household to Nation</h3><p>The sequence from altar to laver represents a shift in status and jurisdiction. The Passover blood marks individual households for mercy, but the passage through the sea constitutes them as a corporate nation, publicly transferred from Pharaoh’s dominion to Yahweh’s.</p><div class="impact-grid"><div class="impact-card"><h4>Corporate Consecration</h4><p>Paul interprets the event this way: “All were baptized into Moses in the cloud and in the sea” (1 Cor 10:1–2). This is not about individual piety but corporate consecration. An entire people passes through the waters and emerges under a new covenant head.</p></div><div class="impact-card"><h4>Liberation Follows Justification</h4><p>Blood shields from judgment (justification), but the sea breaks Pharaoh’s claim (liberation). Baptism publicly announces a transfer of lordship.</p></div><div class="impact-card"><h4>A Non-Violent Victory</h4><p>Israel does not defeat Egypt with weapons; God opens a way and then closes it. The crossing is not a military achievement but a national baptism. This forms an ethic: God's people are saved by a pathway, not by the sword.</p></div></div>` },
+      { id: 'priestly-analogy-altar-laver', title: 'Priestly Analogy (Altar→Laver)', content: `<h3>A Blueprint for Ministry</h3><p>The laver stood in the courtyard between the altar and the entrance (Exod 30:17–21).</p><div class="figure-grid"><div class="figure-card"><h4>Blood First, Then Water</h4><p>Priests already covered by atoning blood still washed at the laver before service.</p></div><div class="figure-card"><h4>Consecration for Service</h4><p>The water of the laver was not for initial pardon but for consecration for service.</p></div><div class="figure-card"><h4>Israel as a Priestly Nation</h4><p>Called a "kingdom of priests" (Exod 19:6), Israel’s national washing is the Red Sea.</p></div></div>` },
+      { id: 'pauls-frame-1-cor-10-1-2', title: 'Paul’s Frame (1 Cor 10:1–2)', content: `<h4>A Typological Reading</h4><p>Paul frames the event as a type of Christian baptism: “all… baptized into Moses.”</p><h4>Corporate Identity</h4><p>Repeated “all” stresses solidarity. The sea forged a people under a new mediator.</p>` },
+      { id: 'objections-misreads', title: 'Objections & Misreads', content: `<h3>Common Misinterpretations</h3><div class="impact-grid"><div class="impact-card"><h4>Conflating Forgiveness and Liberation</h4><p>Exodus grammar: forgiveness by blood; liberation/consecration by water.</p></div><div class="impact-card"><h4>Individualism</h4><p>Both Passover and the crossing are corporate, nation-forming acts.</p></div><div class="impact-card"><h4>Ignoring the Sequence</h4><p>Blood → water → word is the narrative’s theological grammar.</p></div></div>` },
+      { id: 'badge', title: 'Field Notes', content: `<div class="badge-box"><h4>Key Concepts:</h4><ul><li><strong>Passover:</strong> Atonement (altar) shields from judgment.</li><li><strong>Laver:</strong> Consecration for service following pardon.</li><li><strong>“blood → water → word”:</strong> Justification, consecration, commission.</li><li><strong>Pillar:</strong> Presence that guides and guards the crossing.</li></ul></div>` },
+      { id: 'timeline', title: 'Crossing Timeline', content: `<div class="battle-timeline"><div class="timeline-item"><div class="timeline-dot">1</div><div class="timeline-content"><div class="timeline-date">Lamb selection → Passover</div><h4>Altar</h4><p>Households sheltered by blood.</p></div></div><div class="timeline-item"><div class="timeline-dot">2</div><div class="timeline-content"><div class="timeline-date">Sea-camp → crossing</div><h4>Laver</h4><p>Public liberation and national consecration.</p></div></div></div>` }
+    ]
+  },
+  'topic-household-to-nation': {
+    title: 'Household to Nation',
+    subtitle: 'Trace the movement from private, domestic salvation at Passover to public, national constitution at the Red Sea.',
+    nav: [
+      { id: 'marked-homes', text: 'Marked Homes' },
+      { id: 'public-passage-as-nation-birth', text: 'Public Passage as Nation-Birth' },
+      { id: 'liminal-gate-doorposts-vs-sea-walls', text: 'Liminal Gate: Doorposts vs. Sea Walls' },
+      { id: 'badge', text: 'Field Notes' },
+      { id: 'timeline', text: 'Birth Timeline' }
+    ],
+    sections: [
+      { id: 'marked-homes', title: 'Marked Homes', content: `<h4>Salvation in the Domestic Sphere</h4><p>Passover is a household act—blood on doorposts, a meal in haste. A protected people, not yet a public polity.</p><h4>A People Not Yet Formed</h4><p>A “mixed multitude” departs (Exod 12:38). The crowd needs a constituting act.</p>` },
+      { id: 'public-passage-as-nation-birth', title: 'Public Passage as Nation-Birth', content: `<h3>From Private to Public</h3><p>The Red Sea transforms saved households into a nation in the open field of history.</p><div class="impact-grid"><div class="impact-card"><h4>A Public Act</h4><p>Under the pillar, God publicly claims a people.</p></div><div class="impact-card"><h4>Corporate Identity</h4><p>Shared peril + shared path + shared song = shared identity.</p></div><div class="impact-card"><h4>The Song of the Nation</h4><p>Exodus 15 functions as an anthem of a newborn people.</p></div></div>` },
+      { id: 'liminal-gate-doorposts-vs-sea-walls', title: 'Liminal Gate: Doorposts vs. Sea Walls', content: `<h3>Two Kinds of Thresholds</h3><div class="figure-grid"><div class="figure-card"><h4>The Doorpost</h4><p>Private gate of mercy—family faith enacted.</p></div><div class="figure-card"><h4>The Sea Walls</h4><p>Public gate of lordship—corporate passage into service.</p></div><div class="figure-card"><h4>From Mercy to Mission</h4><p>Both thresholds together craft a nation fit for Sinai.</p></div></div>` },
+      { id: 'badge', title: 'Field Notes', content: `<div class="badge-box"><h4>Key Places & Symbols:</h4><ul><li><strong>Pillar of cloud/fire:</strong> Guarding presence.</li><li><strong>Pi-hahiroth & Baal-zephon:</strong> Hemmed-in becomes holy theater.</li><li><strong>Antiphonal song:</strong> Miriam leads the nation’s response.</li></ul></div>` },
+      { id: 'timeline', title: 'Birth Timeline', content: `<div class="battle-timeline"><div class="timeline-item"><div class="timeline-dot">1</div><div class="timeline-content"><div class="timeline-date">Vigil → march</div><h4>From Home to Journey</h4><p>Private rite to public road.</p></div></div><div class="timeline-item"><div class="timeline-dot">2</div><div class="timeline-content"><div class="timeline-date">Hemmed-in → path opens</div><h4>From Crisis to Nationhood</h4><p>Corridor through chaos creates a people.</p></div></div></div>` }
+    ]
+  },
+  'topic-baptized-into-moses': {
+    title: 'Baptized into Moses',
+    subtitle: 'Unpack Paul’s typological reading of the sea crossing as a corporate baptism and consecration for service.',
+    nav: [
+      { id: 'corporate-baptism-explained', text: 'Corporate Baptism Explained' },
+      { id: 'consecration-for-service', text: 'Consecration for Service' },
+      { id: 'death-birth-symbolism', text: 'Death–Birth Symbolism' },
+      { id: 'sanctuary-overlay-court-plan', text: 'Sanctuary Overlay (Court Plan)' },
+      { id: 'badge', text: 'Field Notes' },
+      { id: 'timeline', text: 'Rite Timeline' }
+    ],
+    sections: [
+      { id: 'corporate-baptism-explained', title: 'Corporate Baptism Explained', content: `<h4>A Collective Rite of Passage</h4><p>“All… baptized into Moses” (1 Cor 10:1–2) signals a single communal passage that forges one body under one head.</p><h4>"Into Moses"</h4><p>Public identification with the mediator and his God; allegiance shifts.</p>` },
+      { id: 'consecration-for-service', title: 'Consecration for Service', content: `<h3>From Pardon to Priesthood</h3><div class="impact-grid"><div class="impact-card"><h4>Priestly Washing</h4><p>Water prepares a forgiven people for holy work.</p></div><div class="impact-card"><h4>Proselyte Baptism</h4><p>Death to old identity; rise into covenant vocation.</p></div><div class="impact-card"><h4>Not for Forgiveness</h4><p>Passover secured pardon; the sea commissions service.</p></div></div>` },
+      { id: 'death-birth-symbolism', title: 'Death–Birth Symbolism', content: `<h4>Buried and Raised</h4><p>Down into death-water, up onto dry land—Romans 6 in narrative form.</p><h4>Definitive Break</h4><p>The waters close over Pharaoh; slavery’s chapter ends.</p>` },
+      { id: 'sanctuary-overlay-court-plan', title: 'Sanctuary Overlay (Court Plan)', content: `<h3>The Courtyard Journey</h3><div class="figure-grid"><div class="figure-card"><h4>Gate</h4><p>Entering holy space.</p></div><div class="figure-card"><h4>Altar</h4><p>Atonement by blood.</p></div><div class="figure-card"><h4>Laver</h4><p>Consecration for service.</p></div><div class="figure-card"><h4>Holy Place</h4><p>Ministry before God.</p></div></div>` },
+      { id: 'badge', title: 'Field Notes', content: `<div class="badge-box"><h4>Key Baptismal Concepts:</h4><ul><li><strong>Laver:</strong> Architectural symbol of consecration.</li><li><strong>Washing rites:</strong> Status-change, not mere hygiene.</li><li><strong>Rom 6:</strong> Death and resurrection participation.</li></ul></div>` },
+      { id: 'timeline', title: 'Rite Timeline', content: `<div class="battle-timeline"><div class="timeline-item"><div class="timeline-dot">A</div><div class="timeline-content"><div class="timeline-date">Altar blood → Laver crossing</div><h4>From Atonement to Consecration</h4><p>Sequence teaches meaning.</p></div></div><div class="timeline-item"><div class="timeline-dot">S</div><div class="timeline-content"><div class="timeline-date">Service begins</div><h4>Ready for Ministry</h4><p>Washed hands, new work.</p></div></div></div>` }
+    ]
+  },
+  'topic-mechanics-of-mercy': {
+    title: 'Mechanics of Mercy',
+    subtitle: 'Explore the divine actions—cloud, wind, and walls—that accomplished Israel’s deliverance at the sea.',
+    nav: [
+      { id: 'god-fights-by-making-a-way', text: 'God Fights by Making a Way' },
+      { id: 'three-signs-cloud-wind-walls', text: 'Three Signs: Cloud, Wind, Walls' },
+      { id: 'badge', text: 'Field Notes' },
+      { id: 'timeline', text: 'Night-to-Dawn Timeline' }
+    ],
+    sections: [
+      { id: 'god-fights-by-making-a-way', title: 'God Fights by Making a Way', content: `<h4>A Non-Military Victory</h4><p>“Stand firm… The LORD will fight for you” (Exod 14:13–14). God saves by reordering creation, not by recruiting an army.</p>` },
+      { id: 'three-signs-cloud-wind-walls', title: 'Three Signs: Cloud, Wind, Walls', content: `<h3>The Triad of Deliverance</h3><div class="impact-grid"><div class="impact-card"><h4>The Cloud: Separation</h4><p>Light for Israel, darkness for Egypt; a barrier of mercy.</p></div><div class="impact-card"><h4>The Wind: Creation</h4><p>All-night east wind (*ruach*)—Genesis echoes of Spirit and sea.</p></div><div class="impact-card"><h4>The Walls: Order</h4><p>Water forms ramparts; chaos is conscripted into service.</p></div></div>` },
+      { id: 'badge', title: 'Field Notes', content: `<div class="badge-box"><h4>Key Symbols of Divine Action:</h4><ul><li><strong>East wind:</strong> Creative breath that pushes back the deep.</li><li><strong>Night watch:</strong> Vigil turns to dawn deliverance.</li><li><strong>“Stand firm”:</strong> Trust is Israel’s warfare.</li></ul></div>` },
+      { id: 'timeline', title: 'Night-to-Dawn Timeline', content: `<div class="battle-timeline"><div class="timeline-item"><div class="timeline-dot">N</div><div class="timeline-content"><div class="timeline-date">Night divide → wind</div><h4>Separation and Creation</h4><p>Cloud moves; wind works.</p></div></div><div class="timeline-item"><div class="timeline-dot">D</div><div class="timeline-content"><div class="timeline-date">Dawn crossing → collapse</div><h4>Deliverance and Judgment</h4><p>Dry ground to shore; waters return.</p></div></div></div>` }
+    ]
+  },
+  'topic-calendrical-placement': {
+    title: 'Calendrical Placement',
+    subtitle: 'Situate the Red Sea crossing within the festival calendar of Unleavened Bread.',
+    nav: [
+      { id: 'where-the-crossing-sits-unleavened-bread', text: 'Where the Crossing Sits (Unleavened Bread)' },
+      { id: 'badge', text: 'Field Notes' },
+      { id: 'timeline', text: 'Festival Timeline' }
+    ],
+    sections: [
+      { id: 'where-the-crossing-sits-unleavened-bread', title: 'Where the Crossing Sits (Unleavened Bread)', content: `<h4>The Feast of Freedom</h4><p>Passover on Nisan 14 is followed by Unleavened Bread (Nisan 15–21). Tradition places the crossing on day seven, framing the week from private table to public shore—mercy consummated in liberty.</p>` },
+      { id: 'badge', title: 'Field Notes', content: `<div class="badge-box"><h4>Key Calendar Points:</h4><ul><li><strong>Nisan 14/15/21:</strong> Blood, march, sea.</li><li><strong>Vigil:</strong> Paired nights of watching—house and shore.</li><li><strong>Count to Weeks:</strong> Rescue to vocation (Pentecost).</li></ul></div>` },
+      { id: 'timeline', title: 'Festival Timeline', content: `<div class="battle-timeline"><div class="timeline-item"><div class="timeline-dot">1</div><div class="timeline-content"><div class="timeline-date">Feast open → journey days</div><h4>From Egypt to the Sea</h4><p>Unleavened Bread frames the march.</p></div></div><div class="timeline-item"><div class="timeline-dot">2</div><div class="timeline-content"><div class="timeline-date">Sea event</div><h4>Climax of the Feast</h4><p>Crossing crowns the week.</p></div></div></div>` }
+    ]
+  },
+  'topic-tehom-the-dragon': {
+    title: 'Tĕhōm & the Dragon',
+    subtitle: 'Creation combat motifs, the Exodus as chaos-taming, and the prophetic hope of a New Exodus.',
+    nav: [
+      { id: 'chaos-motif-creation-exodus', text: 'Chaos Motif (Creation↔Exodus)' },
+      { id: 'names-for-the-powers-rahab-leviathan', text: 'Names for the Powers' },
+      { id: 'cutting-a-path-through-the-deep', text: 'Cutting a Path Through the Deep' },
+      { id: 'prophetic-new-exodus', text: 'Prophetic New-Exodus' },
+      { id: 'badge', text: 'Field Notes' },
+      { id: 'timeline', text: 'Arc Timeline' }
+    ],
+    sections: [
+      { id: 'chaos-motif-creation-exodus', title: 'Chaos Motif (Creation↔Exodus)', content: `<h4>Creation Without Rivalry</h4><p>Ancient myths imagine creation as a duel with a sea-dragon. Scripture subverts that script. In Genesis 1, God does not wrestle the deep; He speaks and the waters obey. Chaos has no throne—only assignment.</p><h4>Exodus as Re-Creation</h4><p>The Red Sea reprises Genesis: wind/breath drives back the waters; dry land appears; a people steps into ordered life. The Exodus isn’t mythic violence—it’s creative speech enacted in history.</p>` },
+      { id: 'names-for-the-powers-rahab-leviathan', title: 'Names for the Powers (Rahab/Leviathan)', content: `<h3>Poetry That Unmasks Empire</h3><div class="impact-grid"><div class="impact-card"><h4>Rahab</h4><p>A chaos-name aimed at Egypt—powerful swagger, empty help.</p></div><div class="impact-card"><h4>Leviathan</h4><p>Multi-headed sea-beast crushed in the Psalms—order triumphs over the many.</p></div><div class="impact-card"><h4>Tannin (Dragon)</h4><p>Prophets mock Pharaoh as a river-dragon; God hooks and hauls him out.</p></div></div>` },
+      { id: 'cutting-a-path-through-the-deep', title: 'Cutting a Path Through the Deep', content: `<h3>Victory by Corridor, Not Corpse</h3><div class="figure-grid"><div class="figure-card"><h4>Pagan Pattern</h4><p>God wins by killing the monster and building with its body.</p></div><div class="figure-card"><h4>Yahweh’s Pattern</h4><p>God wins by making a way. He domesticates chaos into walls that serve His people.</p></div><div class="figure-card"><h4>Ethic Embedded</h4><p>Path-making critiques domination: salvation opens futures; it doesn’t enthrone new tyrants.</p></div></div>` },
+      { id: 'prophetic-new-exodus', title: 'Prophetic New-Exodus', content: `<h4>Hope Rehearsed</h4><p>Exilic prophets preach a second crossing—desert highways, humbled seas, returning ransomed. The first Exodus becomes the grammar for every future deliverance.</p>` },
+      { id: 'badge', title: 'Field Notes (Badge)', content: `<div class="badge-box"><h4>Key Chaos-Control Terms</h4><ul><li><strong>Tĕhōm:</strong> the deep—raw, not rival.</li><li><strong>Rahab / Leviathan:</strong> poetic faces of imperial chaos.</li><li><strong>Dry land:</strong> ordered space where vocation begins.</li></ul></div>` },
+      { id: 'timeline', title: 'Arc Timeline', content: `<div class="battle-timeline"><div class="timeline-item"><div class="timeline-dot">C</div><div class="timeline-content"><div class="timeline-date">Creation</div><h4>Word Tames Waters</h4><p>Speech orders the deep.</p></div></div><div class="timeline-item"><div class="timeline-dot">E</div><div class="timeline-content"><div class="timeline-date">Exodus</div><h4>Path Through Chaos</h4><p>Wind, walls, worship.</p></div></div><div class="timeline-item"><div class="timeline-dot">P</div><div class="timeline-content"><div class="timeline-date">Prophets</div><h4>New-Exodus Hope</h4><p>Road in the wilderness.</p></div></div></div>` }
+    ]
+  },
+  'topic-path-making-as-salvation': {
+    title: 'Path-Making as Salvation',
+    subtitle: 'Two models of power: imperial domination vs. creational world-making.',
+    nav: [
+      { id: 'world-making-vs-domination', text: 'World-Making vs. Domination' },
+      { id: 'sabbath-manna-hospitality', text: 'Sabbath · Manna · Hospitality' },
+      { id: 'badge', text: 'Field Notes' },
+      { id: 'timeline', text: 'Practice Timeline' }
+    ],
+    sections: [
+      { id: 'world-making-vs-domination', title: 'World-Making vs. Domination', content: `<h4>Two Orders on Display</h4><p>Pharaoh’s order is quotas, fear, and bricks. Yahweh’s order is corridors, feast, and song. The sea scene reveals a politics of creation, not coercion—God governs by hospitality to life.</p>` },
+      { id: 'sabbath-manna-hospitality', title: 'Sabbath / Manna / Hospitality', content: `<h3>Ethics That Fit the Path</h3><div class="impact-grid"><div class="impact-card"><h4>Sabbath</h4><p>Weekly resistance to empire’s grind—rest as faith in provision.</p></div><div class="impact-card"><h4>Manna</h4><p>Economy of enough: gather daily, hoard never, share gladly.</p></div><div class="impact-card"><h4>Hospitality</h4><p>Care for the stranger because you were strangers—politics of welcome over weapon.</p></div></div>` },
+      { id: 'badge', title: 'Field Notes (Badge)', content: `<div class="badge-box"><h4>Key Ethical Markers</h4><ul><li><strong>Path > Power:</strong> salvation opens space before it wins debates.</li><li><strong>Limits:</strong> rest and sufficiency protect freedom.</li><li><strong>Care:</strong> mercy moves outward once fear is silenced.</li></ul></div>` },
+      { id: 'timeline', title: 'Practice Timeline', content: `<div class="battle-timeline"><div class="timeline-item"><div class="timeline-dot">1</div><div class="timeline-content"><div class="timeline-date">Sea Path</div><h4>Exit Domination</h4><p>Freedom is a corridor, not a coup.</p></div></div><div class="timeline-item"><div class="timeline-dot">2</div><div class="timeline-content"><div class="timeline-date">Wilderness</div><h4>Habits of Enough</h4><p>Rest, bread, neighbor.</p></div></div></div>` }
+    ]
+  },
+  'topic-living-waters-from-the-house': {
+    title: 'Living Waters from the House',
+    subtitle: 'From laver to Temple “Sea” to the river of life—water as cleansing, healing, and mission.',
+    nav: [
+      { id: 'laver-as-fountain', text: 'Laver as Fountain' },
+      { id: 'cleansing-healing-mission-outflow', text: 'Cleansing · Healing · Mission' },
+      { id: 'temple-river-maps', text: 'Temple River Maps' },
+      { id: 'badge', text: 'Field Notes' },
+      { id: 'timeline', text: 'River Timeline' }
+    ],
+    sections: [
+      { id: 'laver-as-fountain', title: 'Laver as Fountain', content: `<h4>Water, Tamed and Sent</h4><p>The courtyard basin is more than plumbing. The laver concentrates the symbol: chaos domesticated into holiness, water re-purposed to make servants ready.</p><h4>The Bronze Sea</h4><p>Solomon enlarges the sign into a “Sea” on twelve oxen—cosmic water harnessed for priestly cleansing. Worship is the world stabilized under God’s throne.</p>` },
+      { id: 'cleansing-healing-mission-outflow', title: 'Cleansing / Healing / Mission Outflow', content: `<h3>From Basin to River</h3><div class="impact-grid"><div class="impact-card"><h4>Cleansing</h4><p>A fountain opens to purge uncleanness—washing as renewal.</p></div><div class="impact-card"><h4>Healing</h4><p>Temple waters turn deserts green; leaves for the nations.</p></div><div class="impact-card"><h4>Mission</h4><p>Water flows out—the House exists for the world it blesses.</p></div></div>` },
+      { id: 'temple-river-maps', title: 'Temple River Maps', content: `<h3>From Eden to the City</h3><div class="figure-grid"><div class="figure-card"><h4>Eden</h4><p>Headwaters split and wander—life radiates from presence.</p></div><div class="figure-card"><h4>Ezekiel</h4><p>A trickle becomes a torrent—depth grows with distance, grace multiplying outward.</p></div><div class="figure-card"><h4>New Jerusalem</h4><p>Crystal river from the throne—creation healed to its roots.</p></div></div>` },
+      { id: 'badge', title: 'Field Notes (Badge)', content: `<div class="badge-box"><h4>Key River Texts</h4><ul><li><strong>Fountain for cleansing:</strong> washing that renews vocation.</li><li><strong>River that heals:</strong> life for barren places.</li><li><strong>Word-washed people:</strong> water and word form a priestly witness.</li></ul></div>` },
+      { id: 'timeline', title: 'River Timeline', content: `<div class="battle-timeline"><div class="timeline-item"><div class="timeline-dot">L</div><div class="timeline-content"><div class="timeline-date">Laver</div><h4>Consecration</h4><p>Hands made ready.</p></div></div><div class="timeline-item"><div class="timeline-dot">S</div><div class="timeline-content"><div class="timeline-date">Sea</div><h4>Cosmic Basin</h4><p>Chaos subdued for service.</p></div></div><div class="timeline-item"><div class="timeline-dot">R</div><div class="timeline-content"><div class="timeline-date">River</div><h4>Mission</h4><p>Life flows outward.</p></div></div></div>` }
+    ]
+  },
+  'topic-baptism-death-birth': {
+    title: 'Baptism: Death & Birth',
+    subtitle: 'Participation in Christ’s death and resurrection—identity remade at the waters.',
+    nav: [
+      { id: 'buried-and-raised-identity-shift', text: 'Buried & Raised (Identity Shift)' },
+      { id: 'catechesis-renunciations-table', text: 'Catechesis · Renunciations · Table' },
+      { id: 'badge', text: 'Field Notes' },
+      { id: 'timeline', text: 'Initiation Timeline' }
+    ],
+    sections: [
+      { id: 'buried-and-raised-identity-shift', title: 'Buried and Raised (Identity Shift)', content: `<h4>Union, Not Metaphor Only</h4><p>To be baptized is to be bound to Christ’s death and to rise into His life. The Exodus template clarifies the logic: forgiveness precedes, water consecrates, and a new walk begins.</p>` },
+      { id: 'catechesis-renunciations-table', title: 'Catechesis · Renunciations · Table', content: `<h3>How the Church Enacts It</h3><div class="impact-grid"><div class="impact-card"><h4>Catechesis</h4><p>Instruction trains imagination for the new country.</p></div><div class="impact-card"><h4>Renunciations</h4><p>Face west to say no to the old powers; turn east to confess the Lord.</p></div><div class="impact-card"><h4>Table</h4><p>New life joins a new meal—belonging that nourishes vocation.</p></div></div>` },
+      { id: 'badge', title: 'Field Notes (Badge)', content: `<div class="badge-box"><h4>Baptismal Markers</h4><ul><li><strong>Death → Life:</strong> tomb-to-womb passage.</li><li><strong>Body:</strong> initiation into a people, not a solo badge.</li><li><strong>Walk:</strong> rising means practices that fit resurrection.</li></ul></div>` }
+    ]
+  },
+  'topic-marah-manna-massah': {
+    title: 'Marah, Manna, Massah',
+    subtitle: 'Three post-sea tests that retrain a slave people for trust, sufficiency, and presence.',
+    nav: [
+      { id: 'training-after-triumph', text: 'Training After Triumph' },
+      { id: 'bitter-sweet-daily-bread-trust', text: 'Bitter→Sweet · Daily Bread · Trust' },
+      { id: 'field-pins-icons', text: 'Field Pins & Icons' },
+      { id: 'badge', text: 'Field Notes' },
+      { id: 'timeline', text: 'Test Timeline' }
+    ],
+    sections: [
+      { id: 'training-after-triumph', title: 'Training After Triumph', content: `<h4>From Shore Song to School</h4><p>The sea was a birth; the wilderness is a classroom. The question is simple but searching: will a people who sang of God's power now live by His provision? The curriculum moves them from panic to prayer, from hoarding to Sabbath, from suspicion to trust.</p>` },
+      { id: 'bitter-sweet-daily-bread-trust', title: 'Bitter→Sweet · Daily Bread · Trust', content: `<h3>The Three Lessons</h3><div class="impact-grid"><div class="impact-card"><h4>Marah — Bitter to Sweet</h4><p>Thirst exposes fear; a shown tree sweetens the water. God turns harm into healing and binds the people to His statutes.</p></div><div class="impact-card"><h4>Manna — Enough, Not Excess</h4><p>Bread from heaven arrives with rules that unlearn Pharaoh: gather daily, keep none over (except for Sabbath), trust the Giver.</p></div><div class="impact-card"><h4>Massah/Meribah — Is the LORD Among Us?</h4><p>Grumbling peaks; water flows from the struck rock. Presence is proven in lack, not luxury.</p></div></div>` },
+      { id: 'field-pins-icons', title: 'Field Pins & Icons', content: `<h3>Tangible Pedagogy</h3><div class="figure-grid"><div class="figure-card"><h4>Tree at Marah</h4><p>A sign that bitterness can be baptized into blessing.</p></div><div class="figure-card"><h4>Jar of Manna</h4><p>Kept as a witness: daily bread forms daily trust.</p></div><div class="figure-card"><h4>Rock at Horeb</h4><p>Water from the unpromising—provision from the Presence.</p></div></div>` },
+      { id: 'badge', title: 'Field Notes (Badge)', content: `<div class="badge-box"><h4>Key Wilderness Markers</h4><ul><li><strong>Sabbath logic:</strong> freedom guarded by rhythm, not by stockpiles.</li><li><strong>Grumble tests:</strong> pressure reveals allegiance.</li><li><strong>Provision pedagogy:</strong> God teaches by table, not by tyranny.</li></ul></div>` },
+      { id: 'timeline', title: 'Test Timeline', content: `<div class="battle-timeline"><div class="timeline-item"><div class="timeline-dot">M</div><div class="timeline-content"><div class="timeline-date">Marah</div><h4>Bitter to Sweet</h4><p>Healing woven into lack.</p></div></div><div class="timeline-item"><div class="timeline-dot">N</div><div class="timeline-content"><div class="timeline-date">Manna</div><h4>Daily Enough</h4><p>Bread re-trains desire.</p></div></div><div class="timeline-item"><div class="timeline-dot">R</div><div class="timeline-content"><div class="timeline-date">Massah/Meribah</div><h4>Presence Under Pressure</h4><p>Water from the rock.</p></div></div></div>` }
+    ]
+  },
+  'topic-amalek-intercession': {
+    title: 'Amalek & Intercession',
+    subtitle: 'Spirit-dependent warfare: a bannered people who win by prayer, memory, and mutual support.',
+    nav: [
+      { id: 'warfare-without-empire', text: 'Warfare Without Empire' },
+      { id: 'hands-staff-support', text: 'Hands · Staff · Support' },
+      { id: 'badge', text: 'Field Notes' },
+      { id: 'timeline', text: 'Battle Timeline' }
+    ],
+    sections: [
+      { id: 'warfare-without-empire', title: 'Warfare Without Empire', content: `<h4>Another Kind of Fight</h4><p>Amalek strikes the weak from the rear; Israel answers with intercession on the hill and obedience in the valley. The Lord is the warrior; Israel’s posture is dependence, not domination.</p>` },
+      { id: 'hands-staff-support', title: 'Hands, Staff, Support', content: `<h3>How the Victory Is Held</h3><div class="impact-grid"><div class="impact-card"><h4>Raised Hands</h4><p>Prayer frames the field; when Moses wearies, the line falters.</p></div><div class="impact-card"><h4>The Staff of God</h4><p>Same instrument that opened the sea—memory fuels faith for today.</p></div><div class="impact-card"><h4>Aaron & Hur</h4><p>Leaders don’t stand alone; communal support sustains intercession.</p></div></div>` },
+      { id: 'badge', title: 'Field Notes (Badge)', content: `<div class="badge-box"><h4>Banner Theology</h4><ul><li><strong>Yahweh-Nissi:</strong> identity under a divine standard, not a national flag.</li><li><strong>Liturgical warfare:</strong> prayer orders the battle as much as tactics.</li><li><strong>Memorial altar:</strong> victories are archived in worship.</li></ul></div>` },
+      { id: 'timeline', title: 'Battle Timeline', content: `<div class="battle-timeline"><div class="timeline-item"><div class="timeline-dot">A</div><div class="timeline-content"><div class="timeline-date">Attack</div><h4>Predation on the Weak</h4><p>Amalek tests the newly free.</p></div></div><div class="timeline-item"><div class="timeline-dot">I</div><div class="timeline-content"><div class="timeline-date">Intercession</div><h4>Hands Lifted</h4><p>Heaven frames earth’s fight.</p></div></div></div>` }
+    ]
+  },
+  'topic-memory-devices': {
+    title: 'Memory Devices',
+    subtitle: 'How Israel engineers remembrance: sacred times, tangible stones, and told stories.',
+    nav: [
+      { id: 'remember-on-purpose', text: 'Remember on Purpose' },
+      { id: 'calendars-stones-testimonies', text: 'Calendars · Stones · Testimonies' },
+      { id: 'memory-map-gilgal-feasts-scroll', text: 'Memory Map' },
+      { id: 'badge', text: 'Field Notes' },
+      { id: 'timeline', text: 'Memory Timeline' }
+    ],
+    sections: [
+      { id: 'remember-on-purpose', title: 'Remember on Purpose', content: `<h4>Against Amnesia</h4><p>Freedom decays without remembrance. God commands habits that re-present the Exodus so each generation owns the story, not just hears it.</p>` },
+      { id: 'calendars-stones-testimonies', title: 'Calendars · Stones · Testimonies', content: `<h3>Three Memory Engines</h3><div class="impact-grid"><div class="impact-card"><h4>Calendars</h4><p>Feasts dramatize deliverance on an annual loop.</p></div><div class="impact-card"><h4>Stones</h4><p>Staged rocks provoke questions—“What do these mean?”—and cue the tale.</p></div><div class="impact-card"><h4>Testimonies</h4><p>Parents narrate; children inherit courage.</p></div></div>` },
+      { id: 'memory-map-gilgal-feasts-scroll', title: 'Memory Map (Gilgal/Feasts/Scroll)', content: `<h3>Place · Time · Text</h3><div class="figure-grid"><div class="figure-card"><h4>Gilgal</h4><p>Jordan stones—portable Red Sea for a new era.</p></div><div class="figure-card"><h4>Feast Cycle</h4><p>Passover to Weeks to Booths—story becomes season.</p></div><div class="figure-card"><h4>The Scroll</h4><p>Public reading anchors imagination in God’s deeds.</p></div></div>` },
+      { id: 'badge', title: 'Field Notes (Badge)', content: `<div class="badge-box"><h4>Memory Principles</h4><ul><li><strong>Embodied liturgy:</strong> do the story, don’t just tell it.</li><li><strong>Explain the signs:</strong> questions are catechism cues.</li><li><strong>Archive grace:</strong> keep artifacts that preach.</li></ul></div>` },
+      { id: 'timeline', title: 'Memory Timeline', content: `<div class="battle-timeline"><div class="timeline-item"><div class="timeline-dot">S</div><div class="timeline-content"><div class="timeline-date">Sea Song</div><h4>Story Sung</h4><p>Worship seals the crossing.</p></div></div><div class="timeline-item"><div class="timeline-dot">M</div><div class="timeline-content"><div class="timeline-date">Memorials</div><h4>Story Stacked</h4><p>Stones speak to sons and daughters.</p></div></div></div>` }
+    ]
+  },
+  'topic-liturgy-life-in-the-wilderness': {
+    title: 'Liturgy → Life in the Wilderness',
+    subtitle: 'From praise to practice: translating doxology into daily habits.',
+    nav: [
+      { id: 'after-the-amen', text: 'After the Amen' },
+      { id: 'trust-sharing-truthfulness', text: 'Trust · Sharing · Truthfulness' },
+      { id: 'badge', text: 'Field Notes' },
+      { id: 'timeline', text: 'Formation Timeline' }
+    ],
+    sections: [
+      { id: 'after-the-amen', title: 'After the Amen', content: `<h4>Worship as Workshop</h4><p>Exodus 15 crowns the crossing, but its theology must become muscle memory. The wilderness is where lyrics learn logistics.</p>` },
+      { id: 'trust-sharing-truthfulness', title: 'Trust / Sharing / Truthfulness', content: `<h3>Habits That Fit Freedom</h3><div class="impact-grid"><div class="impact-card"><h4>Trust</h4><p>Daily dependence replaces anxious control.</p></div><div class="impact-card"><h4>Sharing</h4><p>Manna-economics curbs hoarding and dignifies the poor.</p></div><div class="impact-card"><h4>Truthfulness</h4><p>A community without false witness resists empire’s propaganda.</p></div></div>` },
+      { id: 'badge', title: 'Field Notes (Badge)', content: `<div class="badge-box"><h4>Formation Cues</h4><ul><li><strong>Rule of life:</strong> law as architecture of freedom.</li><li><strong>Table practices:</strong> meals that teach trust and equity.</li><li><strong>Witness & prayer:</strong> lamp and incense as daily stance.</li></ul></div>` },
+      { id: 'timeline', title: 'Formation Timeline', content: `<div class="battle-timeline"><div class="timeline-item"><div class="timeline-dot">W</div><div class="timeline-content"><div class="timeline-date">Worship</div><h4>Song of the Sea</h4><p>Identity sung into being.</p></div></div><div class="timeline-item"><div class="timeline-dot">H</div><div class="timeline-content"><div class="timeline-date">Habits</div><h4>Practices of Freedom</h4><p>Sabbath, bread, truth.</p></div></div></div>` }
+    ]
+  },
+  'topic-arrival-at-sinai': {
+    title: 'Arrival at Sinai',
+    subtitle: 'Grace remembered, vocation offered: a people carried on eagles’ wings into covenant identity.',
+    nav: [
+      { id: 'eagles-wings-identity', text: 'Eagles’ Wings & Identity' },
+      { id: 'priestly-holy-treasured', text: 'Priestly · Holy · Treasured' },
+      { id: 'badge', text: 'Field Notes' },
+      { id: 'timeline', text: 'Sinai Timeline' }
+    ],
+    sections: [
+      { id: 'eagles-wings-identity', title: 'Eagles’ Wings & Identity', content: `<h4>The End of the Beginning</h4><p>Deliverance was never the destination—it was the road to a meeting. At Sinai, God frames the story before any commands: “I bore you on eagles’ wings and brought you to myself.” Grace first, then guidance.</p><h4>From Rescue to Relationship</h4><p>Israel is invited into a covenant that defines who they are before it tells them what to do. Their new name is given prior to their new tasks.</p>` },
+      { id: 'priestly-holy-treasured', title: 'Priestly/Holy/Treasured', content: `<h3>A Threefold Vocation</h3><div class="impact-grid"><div class="impact-card"><h4>Treasured Possession</h4><p>Chosen by love, not merit; kept for purpose, not for privilege.</p></div><div class="impact-card"><h4>Kingdom of Priests</h4><p>Mediators of presence—a public vocation for the sake of the nations.</p></div><div class="impact-card"><h4>Holy Nation</h4><p>Set apart so others may see a different way to be human.</p></div></div>` },
+      { id: 'badge', title: 'Field Notes (Badge)', content: `<div class="badge-box"><h4>Key Covenant Cues</h4><ul><li><strong>Grace then Law:</strong> identity is gift, obedience is response.</li><li><strong>Boundaries:</strong> reverence structures encounter with holiness.</li><li><strong>Mediation:</strong> God’s word descends; a people ascends in worship.</li></ul></div>` },
+      { id: 'timeline', title: 'Sinai Timeline', content: `<div class="battle-timeline"><div class="timeline-item"><div class="timeline-dot">P</div><div class="timeline-content"><div class="timeline-date">Month Three</div><h4>Preparation</h4><p>Consecrate; get ready to hear.</p></div></div><div class="timeline-item"><div class="timeline-dot">V</div><div class="timeline-content"><div class="timeline-date">Theophany</div><h4>Voice & Fire</h4><p>Law given; people assembled.</p></div></div></div>` }
+    ]
+  },
+  'topic-law-as-architecture-of-freedom': {
+    title: 'Law as Architecture of Freedom',
+    subtitle: 'Torah as gift after grace—habits that keep a liberated people free.',
+    nav: [
+      { id: 'grace-then-guidance', text: 'Grace → Guidance' },
+      { id: 'justice-for-the-vulnerable', text: 'Justice for the Vulnerable' },
+      { id: 'badge', text: 'Field Notes' },
+      { id: 'timeline', text: 'Covenant Timeline' }
+    ],
+    sections: [
+      { id: 'grace-then-guidance', title: 'Grace Then Guidance', content: `<h4>Not a Ladder, a Layout</h4><p>God does not say “Obey to be saved,” but “Because I saved you, walk this way.” The commandments sketch a livable world where worship, truth, rest, and fidelity are protected.</p>` },
+      { id: 'justice-for-the-vulnerable', title: 'Justice for the Vulnerable', content: `<h3>Anti-Pharaoh Society</h3><div class="impact-grid"><div class="impact-card"><h4>Sabbath</h4><p>Weekly liberty for family, stranger, and livestock—time liberated from quotas.</p></div><div class="impact-card"><h4>Economic Mercy</h4><p>Gleaning, debt relief, fair weights—structures that resist exploitation.</p></div><div class="impact-card"><h4>Courtroom Truth</h4><p>No false witness; power checked by honesty.</p></div></div>` },
+      { id: 'badge', title: 'Field Notes (Badge)', content: `<div class="badge-box"><h4>Design Principles</h4><ul><li><strong>Memory drives ethics:</strong> slaves freed must not become new masters.</li><li><strong>Limits guard love:</strong> boundaries make neighbor-love sustainable.</li><li><strong>Public good:</strong> the law forms a people whose life advertises the true King.</li></ul></div>` },
+      { id: 'timeline', title: 'Covenant Timeline', content: `<div class="battle-timeline"><div class="timeline-item"><div class="timeline-dot">G</div><div class="timeline-content"><div class="timeline-date">Gift</div><h4>Ten Words</h4><p>Freedom summarized.</p></div></div><div class="timeline-item"><div class="timeline-dot">A</div><div class="timeline-content"><div class="timeline-date">Application</div><h4>Book of the Covenant</h4><p>Principles fitted to cases.</p></div></div></div>` }
+    ]
+  },
+  'topic-weeks-pentecost-service-begins': {
+    title: 'Weeks/Pentecost — Service Begins',
+    subtitle: 'From harvest to holiness: Sinai’s law and Pentecost’s Spirit as one commissioning arc.',
+    nav: [
+      { id: 'from-wheat-to-word', text: 'From Wheat to Word' },
+      { id: 'parallels-law-heart-assembly-fire-commission', text: 'Parallels: Law · Heart · Fire · Commission' },
+      { id: 'festival-arc-diagram', text: 'Festival Arc Diagram' },
+      { id: 'pentecost-spirit-empowerment', text: 'Pentecost & Empowerment' },
+      { id: 'badge', text: 'Field Notes' },
+      { id: 'timeline', text: 'Spring Arc Timeline' }
+    ],
+    sections: [
+      { id: 'from-wheat-to-word', title: 'From Wheat to Word', content: `<h4>Shavuot Reframed</h4><p>Fifty days from Passover, firstfruits become first-words: the God who feeds also forms. Sinai is the true harvest of the Exodus.</p>` },
+      { id: 'parallels-law-heart-assembly-fire-commission', title: 'Parallels: Law/Heart, Assembly/Fire, Commission', content: `<h3>Sinai → Upper Room</h3><div class="impact-grid"><div class="impact-card"><h4>Stone → Heart</h4><p>Law external becomes law internal—desire trained from within.</p></div><div class="impact-card"><h4>Mountain Fire → Tongues of Fire</h4><p>The same holy presence now rests on people, not just peaks.</p></div><div class="impact-card"><h4>Commission</h4><p>From “kingdom of priests” to witnesses to the ends of the earth.</p></div></div>` },
+      { id: 'festival-arc-diagram', title: 'Festival Arc Diagram', content: `<h3>Passover → Firstfruits → Weeks</h3><div class="figure-grid"><div class="figure-card"><h4>Passover (Altar)</h4><p>Redemption by blood—beginning of freedom.</p></div><div class="figure-card"><h4>Firstfruits</h4><p>Resurrection pledge—life breaks the ground.</p></div><div class="figure-card"><h4>Weeks/Pentecost</h4><p>Word and Spirit equip a people for service.</p></div></div>` },
+      { id: 'pentecost-spirit-empowerment', title: 'Pentecost & Spirit Empowerment', content: `<h4>From Potential to Mission</h4><p>The Spirit turns a delivered crowd into a deployed community—courage kindled, languages bridged, mercy organized.</p>` },
+      { id: 'badge', title: 'Field Notes (Badge)', content: `<div class="badge-box"><h4>Key Feast Markers</h4><ul><li><strong>Firstfruits:</strong> the church as the early yield of new creation.</li><li><strong>Two loaves:</strong> a people of difference made one.</li><li><strong>Spring rain:</strong> outpoured presence for ripening witness.</li></ul></div>` },
+      { id: 'timeline', title: 'Spring Arc Timeline', content: `<div class="battle-timeline"><div class="timeline-item"><div class="timeline-dot">P</div><div class="timeline-content"><div class="timeline-date">Passover</div><h4>Altar</h4><p>Rescue remembered.</p></div></div><div class="timeline-item"><div class="timeline-dot">W</div><div class="timeline-content"><div class="timeline-date">Weeks</div><h4>Commission</h4><p>People empowered.</p></div></div></div>` }
+    ]
+  },
+  'topic-temple-sea-lavers': {
+    title: 'Temple, Sea & Lavers',
+    subtitle: 'Solomon’s architecture as a memorial of chaos-taming and a map for priestly service.',
+    nav: [
+      { id: 'ark-at-rest-kingship-stabilized', text: 'Ark at Rest · Kingship Stabilized' },
+      { id: 'bronze-sea-ten-lavers-kiyyor', text: 'Bronze Sea · Ten Lavers' },
+      { id: 'court-cutaway', text: 'Court Cutaway' },
+      { id: 'badge', text: 'Field Notes' },
+      { id: 'timeline', text: 'Temple Timeline' }
+    ],
+    sections: []
+  },
+  'topic-jesus-exodus-at-passover': {
+    title: 'Jesus’ Exodus at Passover',
+    subtitle: 'The passion-resurrection as the climactic Passover→Sea→Sinai arc, with a Wrightian exile→return frame.',
+    nav: [
+      { id: 'his-exodus-luke-9-31', text: '“His Exodus” at Passover' },
+      { id: 'jonah-sign-sea-mastery', text: 'Jonah Sign & Sea Mastery' },
+      { id: 'passover-cross-third-day', text: 'Passover → Cross → Third Day' },
+      { id: 'new-sinai-sermon-on-the-mount', text: 'New Sinai: Sermon on the Mount' },
+      { id: 'wright-exile-to-new-exodus', text: 'Wright: Exile → New Exodus' },
+      { id: 'badge', text: 'Field Notes' },
+      { id: 'timeline', text: 'Paschal Timeline' }
+    ],
+    sections: [
+      { id: 'his-exodus-luke-9-31', title: '“His Exodus” at Passover', content: `<h4>Named in Advance</h4><p>On the mountain, Moses and Elijah discuss with Jesus “his exodus” to be accomplished at Jerusalem. The term is programmatic: the Passover Lamb, the sea-like tomb, and the Sinai-like commissioning converge in the paschal events.</p>` },
+      { id: 'jonah-sign-sea-mastery', title: 'Jonah Sign & Sea Mastery', content: `<h3>Down into the Deep, Up to the Shore</h3><div class="impact-grid"><div class="impact-card"><h4>Sign of Jonah</h4><p>Descent into the heart of the earth; third-day return—death’s sea is crossed.</p></div><div class="impact-card"><h4>Lord of the Waters</h4><p>Storm stilled, waves walked, legion sunk—Jesus enacts creation’s King before the final crossing.</p></div><div class="impact-card"><h4>From Fear to Faith</h4><p>Boat-panicked disciples are trained for paschal courage.</p></div></div>` },
+      { id: 'passover-cross-third-day', title: 'Passover → Cross → Third Day', content: `<h3>Altar then Laver</h3><div class="figure-grid"><div class="figure-card"><h4>The Lamb</h4><p>Crucified at Passover—blood vindicates, delivers, and defines the people.</p></div><div class="figure-card"><h4>The Third Day</h4><p>Resurrection is the sea-opening in the cemetery; the shore is new creation morning.</p></div></div>` },
+      { id: 'new-sinai-sermon-on-the-mount', title: 'New Sinai (Sermon on the Mount)', content: `<h4>Law for the Liberated</h4><p>As Sinai followed the sea, so teaching follows Easter: the kingdom ethic (meekness, mercy, fidelity) forms a people whose life witnesses to the true King.</p>` },
+      { id: 'wright-exile-to-new-exodus', title: 'Wright: Exile → New Exodus', content: `<h4>Kingdom as Return-from-Exile</h4><p>A Wrightian lens sees Israel’s lingering “exile” resolved in Jesus: forgiveness, return of presence, and restoration of vocation. The cross ends covenant exile; the resurrection inaugurates the long-awaited New Exodus; the church carries the royal-priestly mission outward.</p>` },
+      { id: 'badge', title: 'Field Notes (Badge)', content: `<div class="badge-box"><h4>Paschal Keys</h4><ul><li><strong>Altar → Laver → Word:</strong> cross, resurrection, commission.</li><li><strong>Third day:</strong> new-creation timestamp.</li><li><strong>Return from exile:</strong> kingdom launched, vocation restored.</li></ul></div>` },
+      { id: 'timeline', title: 'Paschal Timeline', content: `<div class="battle-timeline"><div class="timeline-item"><div class="timeline-dot">P</div><div class="timeline-content"><div class="timeline-date">Passover</div><h4>Altar</h4><p>Lamb slain; people marked.</p></div></div><div class="timeline-item"><div class="timeline-dot">3</div><div class="timeline-content"><div class="timeline-date">Third Day</div><h4>Laver</h4><p>Tomb parted; path opened.</p></div></div><div class="timeline-item"><div class="timeline-dot">S</div><div class="timeline-content"><div class="timeline-date">Sending</div><h4>Word</h4><p>New Sinai ethic; global witness.</p></div></div></div>` }
+    ]
+  },
+  'topic-church-baptism-mission': {
+    title: 'Church Baptism & Mission',
+    subtitle: 'Baptism as allegiance shift, new identity, and priestly vocation—Exodus reenacted personally and communally.',
+    nav: [
+      { id: 'allegiance-shift-out-of-egypt', text: 'Allegiance Shift: Out of Egypt' },
+      { id: 'identity-community-vocation', text: 'Identity · Community · Vocation' },
+      { id: 'badge', text: 'Field Notes' },
+      { id: 'timeline', text: 'Initiation Timeline' }
+    ],
+    sections: [
+      { id: 'allegiance-shift-out-of-egypt', title: 'Allegiance Shift: Out of Egypt', content: `<h4>Public Passage</h4><p>Baptism announces a new Lord. The believer passes through waters that mark the end of Pharaoh’s claims and the beginning of a kingdom life under Christ.</p>` },
+      { id: 'identity-community-vocation', title: 'Identity / Community / Vocation', content: `<h3>What the Water Gives</h3><div class="impact-grid"><div class="impact-card"><h4>Identity</h4><p>Crucified and raised with Christ—self re-authored by grace.</p></div><div class="impact-card"><h4>Community</h4><p>Joined to a body—no longer solitary but a people.</p></div><div class="impact-card"><h4>Vocation</h4><p>Royal-priestly service—mercy, witness, and table fellowship for the world.</p></div></div><p><em>Wright note:</em> this is the people-of-God renewed after exile, launched to carry the kingdom project into the nations.</p>` },
+      { id: 'badge', title: 'Field Notes (Badge)', content: `<div class="badge-box"><h4>Baptismal Markers</h4><ul><li><strong>Renunciations:</strong> saying no to the powers before saying yes to the King.</li><li><strong>Creed & Table:</strong> confessed faith and shared meal sustain the new life.</li><li><strong>Witness:</strong> baptism flows into mission, not mere membership.</li></ul></div>` },
+      { id: 'timeline', title: 'Initiation Timeline', content: `<div class="battle-timeline"><div class="timeline-item"><div class="timeline-dot">C</div><div class="timeline-content"><div class="timeline-date">Catechesis</div><h4>Learning the Story</h4><p>Exodus grammar becomes your grammar.</p></div></div><div class="timeline-item"><div class="timeline-dot">B</div><div class="timeline-content"><div class="timeline-date">Baptism</div><h4>Allegiance Declared</h4><p>Buried and raised.</p></div></div><div class="timeline-item"><div class="timeline-dot">T</div><div class="timeline-content"><div class="timeline-date">Table</div><h4>Belonging & Mission</h4><p>Nourished for priestly work.</p></div></div></div>` }
+    ]
+  },
+  'topic-sea-of-glass-the-end-of-the-sea': {
+    title: 'Sea of Glass & the End of the Sea',
+    subtitle: 'Apocalypse as the final taming of chaos: worship on crystal seas and a world with “sea no more.”',
+    nav: [
+      { id: 'transparent-deep-underfoot', text: 'Transparent Deep Underfoot' },
+      { id: 'song-of-moses-the-lamb-sea-no-more', text: 'Song of Moses & the Lamb / “Sea no more”' },
+      { id: 'badge', text: 'Field Notes' },
+      { id: 'timeline', text: 'Final Arc Timeline' }
+    ],
+    sections: [
+      { id: 'transparent-deep-underfoot', title: 'Transparent Deep Underfoot', content: `<h4>Chaos Pacified</h4><p>The redeemed stand by a “sea of glass, mingled with fire”—the deep made stable, bright, and liturgical. What once threatened now serves praise.</p>` },
+      { id: 'song-of-moses-the-lamb-sea-no-more', title: 'Song of Moses & the Lamb / “Sea no more”', content: `<h3>First Song, Final Chorus</h3><div class="impact-grid"><div class="impact-card"><h4>Moses & the Lamb</h4><p>Exodus anthem fuses with paschal victory—one deliverance sung across covenants.</p></div><div class="impact-card"><h4>“Sea no more”</h4><p>Symbolic end of rebellion and imperial churn; new creation rests under God’s face.</p></div></div>` },
+      { id: 'badge', title: 'Field Notes (Badge)', content: `<div class="badge-box"><h4>Apocalyptic Cues</h4><ul><li><strong>Crystal sea:</strong> tamed chaos underfoot of worship.</li><li><strong>Un-creation of Babylon:</strong> drying powers lose their waters.</li><li><strong>Final Sabbath:</strong> world stabilized for eternal communion.</li></ul></div>` },
+      { id: 'timeline', title: 'Final Arc Timeline', content: `<div class="battle-timeline"><div class="timeline-item"><div class="timeline-dot">V</div><div class="timeline-content"><div class="timeline-date">Victory Hymn</div><h4>Song on the Sea</h4><p>Worship crowns warfare.</p></div></div><div class="timeline-item"><div class="timeline-dot">N</div><div class="timeline-content"><div class="timeline-date">New Creation</div><h4>Sea Stilled</h4><p>Chaos gone; God with us.</p></div></div></div>` }
+    ]
+  },
+'topic-wright-king-jesus-new-exodus': {
+  title: 'Wright: King Jesus & the New Exodus',
+  subtitle: 'Jesus ends Israel’s long exile and launches the kingdom—Passover, resurrection, and commission as a single New-Exodus arc.',
+  nav: [
+    { id: 'exile-return-frame', text: 'Exile → Return Frame' },
+    { id: 'kingdom-inauguration', text: 'Kingdom Inauguration' },
+    { id: 'passover-to-eucharist', text: 'Passover → Eucharist' },
+    { id: 'resurrection-new-exodus', text: 'Resurrection as New Exodus' },
+    { id: 'badge', text: 'Field Notes' },
+    { id: 'timeline', text: 'New-Exodus Timeline' }
+  ],
+  sections: [
+    {
+      id: 'exile-return-frame',
+      title: 'Exile → Return Frame',
+      content: `<h4>Lingering Exile, Promised Return</h4>
+      <p>Second-Temple hopes read Israel’s story as unfinished exile—foreign rule, compromised temple, sins unforgiven in a national sense. Jesus proclaims that the long-awaited return is happening in and through him: forgiveness, presence restored, vocation renewed.</p>
+      <h4>Story Completed in a Person</h4>
+      <p>The kingdom is not an abstraction but God’s reign arriving in King Jesus—Israel’s story, retold and resolved by Israel’s Messiah.</p>`
+    },
+    {
+      id: 'kingdom-inauguration',
+      title: 'Kingdom Inauguration',
+      content: `<h3>How the King Takes His Throne</h3>
+      <div class="impact-grid">
+        <div class="impact-card"><h4>Royal Announcement</h4><p>“Gospel” is royal news: God’s reign is dawning here and now in Jesus’ words and works.</p></div>
+        <div class="impact-card"><h4>Temple Action</h4><p>Jesus enacts judgment and renewal of the temple—signaling an end to corrupt stewardship and the dawn of a new order.</p></div>
+        <div class="impact-card"><h4>Cruciform Coronation</h4><p>The titulus “King of the Jews” ironically tells the truth: the cross is the throne where the King disarms the powers.</p></div>
+      </div>`
+    },
+    {
+      id: 'passover-to-eucharist',
+      title: 'Passover → Eucharist',
+      content: `<h3>New Exodus Meal</h3>
+      <div class="figure-grid">
+        <div class="figure-card"><h4>Reframed Passover</h4><p>At table, Jesus identifies his death with the lamb: forgiveness and liberation concentrated in his body and blood.</p></div>
+        <div class="figure-card"><h4>Covenant in Cup</h4><p>The cup signals renewed covenant—exile’s debt remitted, people refounded.</p></div>
+        <div class="figure-card"><h4>Ongoing Anamnesis</h4><p>The church keeps the meal as a lived memory of the New Exodus and a foretaste of the kingdom feast.</p></div>
+      </div>`
+    },
+    {
+      id: 'resurrection-new-exodus',
+      title: 'Resurrection as New Exodus',
+      content: `<h4>Third-Day Crossing</h4>
+      <p>The empty tomb is the dry ground of the new creation. Jesus leads his people out through death’s sea and onto resurrection shore.</p>
+      <h4>From Sinai to Sending</h4>
+      <p>As Sinai followed the sea, so the Great Commission follows Easter: the King forms a priestly people for a worldwide vocation.</p>`
+    },
+    {
+      id: 'badge',
+      title: 'Field Notes',
+      content: `<div class="badge-box"><h4>Wrightian Keys</h4>
+      <ul>
+        <li><strong>Gospel = Royal News:</strong> proclamation that King Jesus reigns.</li>
+        <li><strong>Forgiveness = End of Exile:</strong> not mere sentiment but covenant restoration.</li>
+        <li><strong>Temple Recentered:</strong> presence now around Messiah and his people.</li>
+      </ul></div>`
+    },
+    {
+      id: 'timeline',
+      title: 'New-Exodus Timeline',
+      content: `<div class="battle-timeline">
+        <div class="timeline-item"><div class="timeline-dot">K</div><div class="timeline-content">
+          <div class="timeline-date">Proclamation</div><h4>Kingdom Announced</h4><p>Royal gospel breaks in.</p></div></div>
+        <div class="timeline-item"><div class="timeline-dot">P</div><div class="timeline-content">
+          <div class="timeline-date">Passover</div><h4>Cross as Altar</h4><p>Lamb given; covenant renewed.</p></div></div>
+        <div class="timeline-item"><div class="timeline-dot">3</div><div class="timeline-content">
+          <div class="timeline-date">Third Day</div><h4>Sea Crossed</h4><p>Resurrection inaugurates new creation.</p></div></div>
+      </div>`
+    }
+  ]
+},
+
+'topic-wright-paul-new-exodus': {
+  title: 'Wright: Paul’s New-Exodus',
+  subtitle: 'Paul reads the Messiah’s work as a liberation from Sin and Death, Spirit-led into a renewed covenant vocation.',
+  nav: [
+    { id: 'romans-new-exodus-arc', text: 'Romans: New-Exodus Arc' },
+    { id: 'baptized-into-messiah', text: 'Baptized into Messiah' },
+    { id: 'spirit-pillar-led', text: 'Spirit: Pillar & Presence' },
+    { id: 'ecclesia-royal-priesthood', text: 'Ekklesia: Royal Priesthood' },
+    { id: 'badge', text: 'Field Notes' },
+    { id: 'timeline', text: 'Pauline Timeline' }
+  ],
+  sections: [
+    {
+      id: 'romans-new-exodus-arc',
+      title: 'Romans: New-Exodus Arc',
+      content: `<h4>From Slavery to Service</h4>
+      <p>Paul maps Israel’s story onto the human plight: enslaved to Sin and Death, redeemed by the Messiah’s Passover, led through baptismic waters, and indwelt by the Spirit toward new-creation life.</p>
+      <h4>Justification & Belonging</h4>
+      <p>Justification declares who’s in the renewed covenant family—Jews and Gentiles united in the Messiah’s faithfulness—then trains them for a priestly vocation in the world.</p>`
+    },
+    {
+      id: 'baptized-into-messiah',
+      title: 'Baptized into Messiah',
+      content: `<h3>Crossing with Christ</h3>
+      <div class="impact-grid">
+        <div class="impact-card"><h4>Death/Resurrection Participation</h4><p>In baptism we are buried and raised with the Messiah—Egypt left behind; new life begun.</p></div>
+        <div class="impact-card"><h4>Allegiance Shift</h4><p>“Jesus is Lord” replaces every rival claim; lordship transfers from Sin to the Son.</p></div>
+        <div class="impact-card"><h4>Corporate Dimension</h4><p>Baptism forms one body—an Exodus people reconstituted in the Messiah.</p></div>
+      </div>`
+    },
+    {
+      id: 'spirit-pillar-led',
+      title: 'Spirit: Pillar & Presence',
+      content: `<h4>Adoption and Guidance</h4>
+      <p>The Spirit leads as pillar-presence: crying “Abba,” freeing from fear, and firstfruits of the world to come. Guidance is relational, not merely legal—life in step with the Spirit.</p>`
+    },
+    {
+      id: 'ecclesia-royal-priesthood',
+      title: 'Ekklesia: Royal Priesthood',
+      content: `<h3>Temple People</h3>
+      <div class="figure-grid">
+        <div class="figure-card"><h4>Living Sacrifices</h4><p>Worship spills into bodies and neighborhoods—embodied holiness as public witness.</p></div>
+        <div class="figure-card"><h4>One New Humanity</h4><p>Jew+Gentile unity signals exile’s end and the world’s true Lord.</p></div>
+        <div class="figure-card"><h4>Mission to Nations</h4><p>Paul’s vocation to the Gentiles is Exodus extended—freed people liberating others by the gospel.</p></div>
+      </div>`
+    },
+    {
+      id: 'badge',
+      title: 'Field Notes',
+      content: `<div class="badge-box"><h4>Wrightian Markers</h4>
+      <ul>
+        <li><strong>Christ our Passover:</strong> liberation and forgiveness concentrated in the Messiah.</li>
+        <li><strong>Justification-as-membership:</strong> declared in the present, embodied in Spirit-shaped life.</li>
+        <li><strong>Spirit as New-Exodus guide:</strong> presence that leads into vocation and unity.</li>
+      </ul></div>`
+    },
+    {
+      id: 'timeline',
+      title: 'Pauline Timeline',
+      content: `<div class="battle-timeline">
+        <div class="timeline-item"><div class="timeline-dot">P</div><div class="timeline-content">
+          <div class="timeline-date">Passover</div><h4>Messiah’s Cross</h4><p>Slaves ransomed, sins forgiven.</p></div></div>
+        <div class="timeline-item"><div class="timeline-dot">B</div><div class="timeline-content">
+          <div class="timeline-date">Baptism</div><h4>Into the Messiah</h4><p>Old dominion ended; new life begun.</p></div></div>
+        <div class="timeline-item"><div class="timeline-dot">S</div><div class="timeline-content">
+          <div class="timeline-date">Spirit</div><h4>Led & Adopted</h4><p>Firstfruits, freedom, guidance.</p></div></div>
+      </div>`
+    }
+  ]
+}
+
+};
+
+
+    /*
+    ==================================================================
+    ==                   END: PASTE YOUR DATA HERE                  ==
+    ==                                                              ==
+    ==     DO NOT MODIFY THE APPLICATION LOGIC BELOW THIS LINE      ==
+    ==================================================================
+    */
+
+
+    /* ========== RENDERING LOGIC ========== */
+
+    function renderMegaMenu(data) {
+      const container = document.getElementById('mega-menu-container');
+      if (!container) return;
+      container.innerHTML = data.map(column => `
+        <div class="mega-menu-column">
+          <h3 class="theater-heading">${column.heading}</h3>
+          ${column.topics.map(topic => `
+            <a href="#" class="topic-link" onclick="switchTopic(event, '${topic.id}', this)">${topic.text}</a>
+          `).join('')}
+        </div>
+      `).join('');
+    }
+
+    function renderTopic(id){
+      const data = masterDataObject[id];
+      if (!data) {
+        // console.error(`No data found for topic ID: ${id}`);
+        // Fallback for empty data: clear the container
+        const master = document.getElementById('topic-master-container');
+        master.innerHTML = '';
+        master.classList.remove('active');
+        return;
+      }
+      const master = document.getElementById('topic-master-container');
+      master.innerHTML = `
+        <div class="container">
+          <header class="header"><h1>${data.title}</h1><p>${data.subtitle}</p></header>
+          ${data.nav && data.nav.length ? `
+            <nav class="nav"><div class="nav-container">
+              ${data.nav.map((n,i)=>`<button class="nav-btn${i===0?' active':''}"
+                onclick="showSection('${n.id}',this)">${n.text}</button>`).join('')}
+            </div></nav>`:''}
+          <main class="content">
+            ${data.sections.map((s,i)=>`<section id="${s.id}" class="section${i===0?' active':''}">
+              <h2>${s.title}</h2>${s.content}</section>`).join('')}
+          </main>
+          <footer class="footer"><p>© 2025 Exodus Experience Chronicle</p></footer>
+        </div>`;
+      master.classList.add('active');
+    }
+
+
+    /* ========== NAVIGATION HANDLERS ========== */
+
+    function switchTopic(event, id, link){
+      event.preventDefault();
+      document.querySelectorAll('.topic-link').forEach(a => a.classList.remove('active-topic'));
+      if (link) link.classList.add('active-topic');
+      renderTopic(id);
+
+      const panel = document.getElementById('mega-menu-panel');
+      const toggle = document.getElementById('mega-menu-toggle');
+      if (panel.classList.contains('open')) {
+        panel.classList.remove('open');
+        toggle.classList.remove('active');
+        toggle.textContent = 'Menu';
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showSection(secId, btn){
+      const master = document.getElementById('topic-master-container');
+      master.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      master.querySelector(`#${secId}`).classList.add('active');
+      master.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+
+    /* ========== APP INITIALIZATION ========== */
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize the mega menu
+      renderMegaMenu(menuData);
+
+      // Setup menu open/close toggle
+      const toggle = document.getElementById('mega-menu-toggle');
+      const panel = document.getElementById('mega-menu-panel');
+      toggle.addEventListener('click', () => {
+        panel.classList.toggle('open');
+        toggle.classList.toggle('active');
+        toggle.textContent = panel.classList.contains('open') ? 'Close Menu ▲' : 'Menu';
+      });
+
+      // Close menu when clicking outside of it
+      document.addEventListener('click', e => {
+        if (!panel.contains(e.target) && !toggle.contains(e.target) && panel.classList.contains('open')) {
+          panel.classList.remove('open');
+          toggle.classList.remove('active');
+          toggle.textContent = 'Menu';
+        }
+      });
+
+      // Render the first topic by default, only if data exists
+      if (menuData.length > 0 && menuData[0].topics.length > 0) {
+        const firstTopicId = menuData[0].topics[0].id;
+        if (masterDataObject[firstTopicId]) {
+            renderTopic(firstTopicId);
+            // Must wait a tick for the links to be rendered by renderMegaMenu
+            setTimeout(() => {
+                const firstLink = document.querySelector(`.topic-link[onclick*="${firstTopicId}"]`);
+                if (firstLink) {
+                    firstLink.classList.add('active-topic');
+                }
+            }, 0);
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>
+    
