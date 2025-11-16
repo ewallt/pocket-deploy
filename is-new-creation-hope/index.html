@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>New Creation and Resurrection Hope</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111833;
+      --ink:#e6ecff;
+      --muted:#a7b0cc;
+      --brand:#8bb9ff;
+      --accent:#c0ffe1;
+      --border:#26325b;
+      --chip:#1a2347;
+      --bad:#ff6b6b;
+      --shadow:0 8px 28px rgba(0,0,0,.35);
+      --radius:12px;
+      --radius-sm:8px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+      line-height:1.6;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
+        radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+      padding-bottom:2rem;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .container{max-width:860px;margin:0 auto;padding:1rem}
+
+    .back-nav{
+      margin-bottom:1rem;
+    }
+    .back-nav a{
+      display:inline-flex;
+      align-items:center;
+      gap:.5rem;
+      color:var(--brand);
+      text-decoration:none;
+      font-size:.95rem;
+      padding:.5rem .75rem;
+      border-radius:999px;
+      transition:background .2s ease;
+    }
+    .back-nav a:hover{
+      background:color-mix(in oklab,var(--chip) 50%, transparent);
+    }
+
+    header{
+      background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:2rem 1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+    }
+
+    h1{
+      color:var(--ink);
+      font-size:1.75rem;
+      margin-bottom:.5rem;
+      letter-spacing:-.015em;
+    }
+
+    .subtitle{
+      color:var(--muted);
+      font-size:.95rem;
+      font-style:italic;
+    }
+
+    .main-answer{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+      border-left:4px solid var(--brand);
+    }
+
+    .main-answer h2{
+      color:var(--brand);
+      font-size:1.3rem;
+      margin-bottom:1rem;
+      letter-spacing:.01em;
+    }
+
+    .main-answer p{font-size:1.05rem;line-height:1.7}
+
+    .section{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      margin-bottom:1rem;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .section-header{
+      padding:1.1rem 1.25rem;
+      background:linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%);
+      color:var(--ink);
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      border-bottom:1px solid var(--border);
+    }
+
+    .section-header:active{opacity:.95}
+
+    .section-header h2{
+      font-size:1.15rem;
+      font-weight:700;
+      letter-spacing:.01em;
+    }
+
+    .section-icon{font-size:1.35rem;transition:transform .3s ease}
+    .section.active .section-icon{transform:rotate(180deg)}
+
+    .section-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+    .section.active .section-content{max-height:5000px}
+
+    .section-inner{padding:1.25rem}
+
+    h3{
+      color:var(--brand);
+      font-size:1.08rem;
+      margin:1.3rem 0 .65rem 0;
+      letter-spacing:.01em;
+    }
+    h3:first-child{margin-top:0}
+
+    .concept-list,.scripture-list{list-style:none}
+
+    .concept-item,.scripture-item{
+      background:color-mix(in oklab,var(--chip) 75%, transparent);
+      border-left:3px solid var(--brand);
+      padding:1rem;
+      margin-bottom:.75rem;
+      border-radius:var(--radius-sm);
+      border:1px solid var(--border);
+    }
+
+    .concept-item strong,.scripture-item strong{
+      color:var(--brand);
+      display:block;
+      margin-bottom:.25rem;
+    }
+
+    .timeline{
+      border-left:3px solid var(--brand);
+      padding-left:1.25rem;
+      margin-left:.5rem;
+    }
+
+    .timeline-item{
+      margin-bottom:1.25rem;
+      position:relative;
+    }
+
+    .timeline-item::before{
+      content:'';
+      position:absolute;left:-1.65rem;top:.25rem;
+      width:12px;height:12px;border-radius:50%;
+      background:var(--brand);border:3px solid var(--panel);
+      box-shadow:0 0 0 2px var(--brand);
+    }
+
+    .timeline-item strong{color:var(--brand);display:block;margin-bottom:.25rem}
+
+    .glossary-grid{display:grid;gap:1rem}
+    .glossary-term{
+      background:color-mix(in oklab,var(--chip) 75%, transparent);
+      padding:1rem;border-radius:6px;
+      border-left:3px solid var(--brand);
+      border:1px solid var(--border);
+    }
+    .glossary-term strong{color:var(--brand);display:block;margin-bottom:.25rem;font-size:1.05rem}
+
+    .critique-item{
+      background:color-mix(in oklab, var(--bad) 12%, var(--panel));
+      border-left:3px solid var(--bad);
+      padding:1rem;margin-bottom:.75rem;border-radius:4px;
+      border:1px solid var(--border);
+    }
+
+    .source{
+      background:color-mix(in oklab,var(--chip) 65%, transparent);
+      border-radius:8px;padding:1rem;margin-top:1.2rem;
+      font-size:.95rem;color:var(--muted);
+      border:1px solid var(--border);
+    }
+    .source strong{color:var(--ink)}
+
+    .back-to-top{
+      position:fixed;bottom:1.5rem;right:1rem;
+      background:var(--brand);color:#001;
+      width:50px;height:50px;border-radius:50%;
+      border:none;font-size:1.5rem;cursor:pointer;
+      box-shadow:var(--shadow);opacity:0;transition:opacity .3s ease;
+      z-index:1000;display:flex;align-items:center;justify-content:center;
+      font-weight:900;
+    }
+    .back-to-top.visible{opacity:1}
+    .back-to-top:active{transform:scale(.96)}
+
+    a{color:var(--brand)}
+
+
+    /* Influential Voice teaser section */
+    .section.influential-section{
+      overflow:visible;
+    }
+
+    .iv-section-header{
+      cursor:default;
+      gap:.75rem;
+    }
+
+    .iv-section-header h2{
+      font-size:1.1rem;
+    }
+
+    .iv-pill{
+      display:inline-flex;
+      align-items:center;
+      gap:.4rem;
+      padding:.35rem .8rem;
+      border-radius:999px;
+      border:1px solid color-mix(in oklab,var(--border) 70%, transparent);
+      background:color-mix(in oklab,var(--chip) 70%, transparent);
+      font-size:.8rem;
+      text-transform:uppercase;
+      letter-spacing:.09em;
+      color:var(--muted);
+    }
+
+    .iv-open{
+      margin-left:auto;
+      padding:.5rem .9rem;
+      border-radius:999px;
+      border:1px solid color-mix(in oklab,var(--brand) 55%, transparent);
+      background:color-mix(in oklab,var(--chip) 80%, transparent);
+      color:var(--brand);
+      font-size:.9rem;
+      font-weight:500;
+      display:inline-flex;
+      align-items:center;
+      gap:.35rem;
+      cursor:pointer;
+      transition:background .18s ease, transform .08s ease, box-shadow .18s ease;
+      box-shadow:0 0 0 1px rgba(0,0,0,.12);
+    }
+
+    .iv-open span{
+      font-size:1.1rem;
+      line-height:1;
+    }
+
+    .iv-open:hover{
+      background:color-mix(in oklab,var(--brand) 18%, var(--chip));
+      box-shadow:0 8px 22px rgba(0,0,0,.45);
+    }
+
+    .iv-open:active{
+      transform:scale(.97);
+      box-shadow:0 4px 14px rgba(0,0,0,.4);
+    }
+
+    .iv-teaser{
+      font-size:.95rem;
+      color:var(--muted);
+    }
+
+    .iv-highlight{
+      color:var(--accent);
+      font-weight:500;
+    }
+
+    /* Influential Voice overlay */
+    .iv-overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(5,10,30,.92);
+      backdrop-filter:blur(16px);
+      -webkit-backdrop-filter:blur(16px);
+      display:none;
+      align-items:flex-start;
+      justify-content:center;
+      overflow-y:auto;
+      padding:3rem 1rem 2.5rem;
+      z-index:1100;
+    }
+
+    .iv-overlay.visible{
+      display:flex;
+    }
+
+    .iv-dialog{
+      max-width:780px;
+      width:100%;
+      background:radial-gradient(800px 400px at 0% 0%, rgba(139,185,255,.18), transparent 55%), var(--panel);
+      border-radius:var(--radius);
+      border:1px solid var(--border);
+      box-shadow:var(--shadow);
+      padding:1.8rem 1.6rem 2.2rem;
+      position:relative;
+    }
+
+    .iv-close{
+      position:absolute;
+      top:.9rem;
+      right:.9rem;
+      width:34px;
+      height:34px;
+      border-radius:50%;
+      border:1px solid color-mix(in oklab,var(--border) 70%, transparent);
+      background:color-mix(in oklab,var(--chip) 85%, transparent);
+      color:var(--muted);
+      font-size:1.1rem;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      transition:background .18s ease, transform .08s ease;
+    }
+
+    .iv-close:hover{
+      background:color-mix(in oklab,var(--bad) 10%, var(--chip));
+      color:var(--ink);
+    }
+
+    .iv-close:active{
+      transform:scale(.95);
+    }
+
+    .iv-kicker{
+      font-size:.8rem;
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      color:var(--muted);
+      margin-bottom:.4rem;
+    }
+
+    .iv-title{
+      font-size:1.4rem;
+      letter-spacing:-.01em;
+      margin-bottom:.5rem;
+    }
+
+    .iv-subtitle{
+      font-size:.95rem;
+      color:var(--muted);
+      margin-bottom:1.2rem;
+    }
+
+    .iv-grid{
+      display:grid;
+      gap:1.2rem;
+    }
+
+    .iv-meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap:.5rem;
+      margin-bottom:1.1rem;
+      font-size:.8rem;
+      color:var(--muted);
+    }
+
+    .iv-meta-badge{
+      padding:.25rem .7rem;
+      border-radius:999px;
+      background:color-mix(in oklab,var(--chip) 78%, transparent);
+      border:1px solid color-mix(in oklab,var(--border) 70%, transparent);
+    }
+
+    .iv-body p{
+      margin-bottom:.9rem;
+      font-size:.98rem;
+    }
+
+    .iv-body p:last-child{
+      margin-bottom:0;
+    }
+
+    .iv-body em{
+      font-style:italic;
+    }
+
+    .iv-body-2col{
+      display:grid;
+      grid-template-columns:minmax(0,2.4fr) minmax(0,1.6fr);
+      gap:1.4rem;
+      margin-top:1.4rem;
+    }
+
+    .iv-aside{
+      background:color-mix(in oklab,var(--chip) 75%, transparent);
+      border-radius:var(--radius-sm);
+      border:1px solid var(--border);
+      padding:.95rem 1rem;
+      font-size:.9rem;
+      color:var(--muted);
+    }
+
+    .iv-aside strong{
+      color:var(--ink);
+    }
+
+    .iv-aside ul{
+      margin:.5rem 0 0 1rem;
+      padding:0;
+    }
+
+    .iv-aside li{
+      margin-bottom:.2rem;
+    }
+
+    .iv-section-heading{
+      margin:1.1rem 0 .35rem;
+      font-size:1.02rem;
+      color:var(--brand);
+    }
+
+    .iv-tagline{
+      margin-top:1.1rem;
+      font-size:.95rem;
+      color:var(--accent);
+    }
+
+    @media (max-width:720px){
+      .iv-body-2col{
+        grid-template-columns:minmax(0,1fr);
+      }
+      .iv-dialog{
+        padding:1.4rem 1.2rem 1.7rem;
+      }
+      .iv-title{
+        font-size:1.25rem;
+      }
+    }
+
+    @media (max-width:480px){
+      h1{font-size:1.5rem}
+      .section-header h2{font-size:1.05rem}
+      .container{padding:.75rem}
+      header{padding:1.5rem 1rem}
+      .iv-overlay{
+        padding:2.6rem .6rem 2rem;
+      }
+    }
+  </style>
+
+  <!-- Blue Letter Bible ScriptTagger -->
+  <script src="https://www.blueletterbible.org/assets/scripts/blbToolTip/BLB_ScriptTagger-min.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    BLB.Tagger.Translation = 'KJV';
+    BLB.Tagger.HyperLinks = 'all';
+    BLB.Tagger.HideTanslationAbbrev = false;
+    BLB.Tagger.TargetNewWindow = true;
+    BLB.Tagger.Style = 'par';
+    BLB.Tagger.NoSearchTagNames = 'code,pre,script,style';
+    BLB.Tagger.NoSearchClassNames = 'noTag';
+  </script>
+</head>
+<body>
+  <div class="container">
+    <nav class="back-nav">
+      <a href="../is-gospel-hub/index.html">← Back to Gospel Hub</a>
+    </nav>
+    <header>
+      <h1>New Creation and Resurrection Hope</h1>
+      <p class="subtitle">The Kingdom Inaugurated and the Future Breaking Into the Present</p>
+    </header>
+
+    <div class="main-answer">
+      <h2>Core Thesis</h2>
+      <p>The gospel announces that in Jesus' resurrection, God's promised new creation has begun—not as an escape from the material world but as its renewal and restoration (Romans 8:18-25; Revelation 21:1-5). Jesus' bodily resurrection inaugurates the kingdom of God, an "already and not yet" reality where God's reign breaks into history, conquering sin, death, and the powers of darkness while awaiting final consummation (1 Corinthians 15:20-28; Colossians 1:13-20). This means that Christian hope is not merely "going to heaven when we die," but rather the resurrection of the body and the healing of creation itself, beginning now through the Spirit's work in forming a people who embody the future kingdom (Ephesians 1:13-14; 2 Corinthians 5:17). Salvation thus encompasses the whole story of Israel fulfilled in the Messiah: God's faithfulness to His covenant promises to restore all things through Christ.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📖 Key Scriptures</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <h3>Overview</h3>
+          <p>Scripture presents resurrection and new creation as the central narrative arc: God's promise to renew all things, begun in Jesus and awaiting completion when heaven and earth are fully united.</p>
+
+          <h3>Primary Texts</h3>
+          <ul class="scripture-list">
+            <li class="scripture-item">
+              <strong>1 Corinthians 15:20-28</strong>
+              Christ's resurrection as the firstfruits of a new creation; the kingdom progressively defeats all enemies including death itself.
+            </li>
+            <li class="scripture-item">
+              <strong>Romans 8:18-25</strong>
+              All creation groans, awaiting liberation when God's children are revealed; hope grounded in future resurrection and renewal.
+            </li>
+            <li class="scripture-item">
+              <strong>Revelation 21:1-5</strong>
+              The new heaven and new earth; God dwelling with humanity in the renewed creation, not in an immaterial heaven.
+            </li>
+            <li class="scripture-item">
+              <strong>Colossians 1:13-20</strong>
+              Christ's supremacy and reconciliation of all things—things in heaven and on earth—through the cross and resurrection.
+            </li>
+            <li class="scripture-item">
+              <strong>2 Corinthians 5:17</strong>
+              In Christ, a new creation has already begun; the old has passed, the new has come.
+            </li>
+            <li class="scripture-item">
+              <strong>Ephesians 1:13-14</strong>
+              The Spirit as a down payment (arrabon) guaranteeing the future inheritance—new creation life begun now.
+            </li>
+            <li class="scripture-item">
+              <strong>Matthew 6:10</strong>
+              Jesus teaches us to pray for God's kingdom to come and will to be done "on earth as in heaven"—integration, not escape.
+            </li>
+            <li class="scripture-item">
+              <strong>Acts 3:21</strong>
+              Heaven must receive Jesus until the time of the "restoration of all things" spoken by the prophets.
+            </li>
+            <li class="scripture-item">
+              <strong>Isaiah 65:17-25</strong>
+              Prophetic vision of new heavens and new earth: a renewed, physical creation marked by justice, peace, and flourishing.
+            </li>
+            <li class="scripture-item">
+              <strong>Luke 24:36-43</strong>
+              The risen Jesus has a physical body; he eats fish, proving resurrection is bodily, not merely spiritual or ghostly.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>💡 Core Concepts</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <ul class="concept-list">
+            <li class="concept-item">
+              <strong>Resurrection as Foundation</strong>
+              Jesus' bodily resurrection is not just proof of life after death, but the inauguration of God's new creation breaking into the old world.
+            </li>
+            <li class="concept-item">
+              <strong>Already and Not Yet</strong>
+              The kingdom of God is already present through Jesus and the Spirit, yet awaits full consummation at Christ's return.
+            </li>
+            <li class="concept-item">
+              <strong>Israel's Story Fulfilled</strong>
+              Jesus is the climax of Israel's covenant narrative; through Him, God's promises to Abraham and the prophets reach their goal.
+            </li>
+            <li class="concept-item">
+              <strong>New Creation, Not Escape</strong>
+              Christian hope is the renewal and transformation of this world, not abandonment of it for a purely spiritual realm.
+            </li>
+            <li class="concept-item">
+              <strong>Justification as Covenant Membership</strong>
+              Being justified means being declared part of God's renewed covenant people, the family promised to Abraham now redefined in Christ.
+            </li>
+            <li class="concept-item">
+              <strong>Victory Over the Powers</strong>
+              The cross and resurrection defeat sin, death, and spiritual powers, inaugurating God's just rule over creation.
+            </li>
+            <li class="concept-item">
+              <strong>Bodily Resurrection for All</strong>
+              The future hope is not disembodied heaven but bodily resurrection into the renewed creation, echoing Jesus' own resurrection.
+            </li>
+            <li class="concept-item">
+              <strong>Mission as Embodying the Future</strong>
+              The church's task is to live now as citizens of the future kingdom, embodying justice, peace, and reconciliation as signs of what is to come.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📜 Timeline</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="timeline">
+            <div class="timeline-item">
+              <strong>Creation and Covenant</strong>
+              God creates a good world and calls Abraham's family to be the vehicle through which creation is renewed (Genesis 1–2, 12:1-3).
+            </div>
+            <div class="timeline-item">
+              <strong>Exile and Promise</strong>
+              Israel's failure leads to exile, but the prophets promise a new covenant and the renewal of all things (Jeremiah 31; Isaiah 65–66).
+            </div>
+            <div class="timeline-item">
+              <strong>Jesus' Life and Ministry</strong>
+              Jesus announces the kingdom of God arriving in his person; he embodies Israel's vocation and God's faithfulness (Mark 1:14-15; Luke 4:16-21).
+            </div>
+            <div class="timeline-item">
+              <strong>Cross and Resurrection</strong>
+              Jesus defeats the powers through self-giving love and is raised bodily, inaugurating new creation (1 Corinthians 15:20; Colossians 2:15).
+            </div>
+            <div class="timeline-item">
+              <strong>The Spirit and the Church</strong>
+              The Spirit is poured out as the firstfruits of the age to come, empowering the church to embody the kingdom now (Acts 2; Romans 8:23).
+            </div>
+            <div class="timeline-item">
+              <strong>The Present Mission</strong>
+              Believers live between resurrection and return, working for justice, healing, and reconciliation as signs of the coming kingdom (Colossians 3:1-4).
+            </div>
+            <div class="timeline-item">
+              <strong>The Final Restoration</strong>
+              Christ returns to consummate the new creation; heaven and earth are united, and God dwells with humanity forever (Revelation 21–22).
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>⚠️ Common Misreadings</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="critique-item">
+            <strong>Going to Heaven When You Die:</strong> Reducing Christian hope to souls escaping to a non-physical heaven ignores Scripture's emphasis on bodily resurrection and cosmic renewal.
+          </div>
+          <div class="critique-item">
+            <strong>Kingdom Fully Future:</strong> Postponing the kingdom entirely to the afterlife misses Jesus' announcement that it has already begun in his ministry, death, and resurrection.
+          </div>
+          <div class="critique-item">
+            <strong>Spiritual vs. Material Dualism:</strong> Viewing salvation as purely spiritual liberation from the material world contradicts the biblical narrative of God renewing and redeeming creation itself.
+          </div>
+          <div class="critique-item">
+            <strong>Ahistorical Gospel:</strong> Detaching the gospel from the story of Israel and treating it as timeless principles flattens the narrative arc central to Scripture.
+          </div>
+          <div class="critique-item">
+            <strong>Justification as Legal Fiction:</strong> Treating justification only as individual pardon misses its corporate dimension as membership in the renewed covenant people.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📚 Glossary</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="glossary-grid">
+            <div class="glossary-term">
+              <strong>New Creation</strong>
+              The renewal and transformation of all things—heaven and earth united—begun in Jesus' resurrection and awaiting final consummation.
+            </div>
+            <div class="glossary-term">
+              <strong>Already and Not Yet</strong>
+              The kingdom inaugurated in Jesus' resurrection and present through the Spirit, yet awaiting full realization at his return.
+            </div>
+            <div class="glossary-term">
+              <strong>Resurrection</strong>
+              Not merely survival after death, but bodily transformation into imperishable life within God's renewed creation (1 Corinthians 15).
+            </div>
+            <div class="glossary-term">
+              <strong>Kingdom of God</strong>
+              God's sovereign rule breaking into history through Jesus, defeating evil and restoring justice, peace, and flourishing.
+            </div>
+            <div class="glossary-term">
+              <strong>Covenant</strong>
+              God's binding promises to Israel and, through the Messiah, to all nations—promises of presence, land, blessing, and restored relationship.
+            </div>
+            <div class="glossary-term">
+              <strong>Justification</strong>
+              Being declared righteous and part of God's covenant family through faith in Jesus, the faithful Israelite who fulfills God's purposes.
+            </div>
+            <div class="glossary-term">
+              <strong>The Powers</strong>
+              Spiritual and structural forces opposing God's kingdom—sin, death, and systemic evil—defeated through the cross and resurrection.
+            </div>
+            <div class="glossary-term">
+              <strong>Firstfruits</strong>
+              The beginning of the harvest guaranteeing the whole; Jesus' resurrection and the Spirit's presence are firstfruits of the age to come.
+            </div>
+          </div>
+
+          <div class="source">
+            <strong>Source:</strong> A synthesis of biblical themes emphasizing resurrection, new creation, and the kingdom of God inaugurated in Jesus (e.g., 1 Corinthians 15; Romans 8:18-25; Colossians 1:13-20; Revelation 21–22). This framework draws on the narrative arc from Israel's story to its fulfillment in the Messiah.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Influential Voice teaser (non-accordion) -->
+    <div class="section influential-section">
+      <div class="section-header iv-section-header">
+        <div class="iv-pill">Influential Voice</div>
+        <h2>N. T. Wright & This Page</h2>
+        <button class="iv-open" type="button">
+          <span>✦</span>
+          Read the story
+        </button>
+      </div>
+      <div class="section-inner">
+        <p class="iv-teaser">
+          This page's vision of <span class="iv-highlight">bodily resurrection and new creation</span>, of the kingdom as <span class="iv-highlight">"already and not yet,"</span> and of <span class="iv-highlight">Israel's story fulfilled in the Messiah</span> is profoundly shaped by N. T. Wright—a scholar whose robust defense of the resurrection and earthy hope for creation's renewal has reshaped how millions of Christians understand the gospel.
+        </p>
+      </div>
+    </div>
+
+    <!-- Influential Voice overlay -->
+    <div class="iv-overlay" id="ivOverlay" aria-hidden="true">
+      <div class="iv-dialog" role="dialog" aria-modal="true" aria-labelledby="ivTitle">
+        <button class="iv-close" type="button" aria-label="Close Influential Voice">×</button>
+        <div class="iv-kicker">Influential Voice</div>
+        <h2 class="iv-title" id="ivTitle">N. T. Wright: Surprised by Resurrection</h2>
+        <p class="iv-subtitle">How a British scholar's patient exegesis and historical rigor restored bodily resurrection and new creation to the center of the Christian hope.</p>
+
+        <div class="iv-meta">
+          <div class="iv-meta-badge">British New Testament scholar (b. 1948)</div>
+          <div class="iv-meta-badge">Author of <em>The Resurrection of the Son of God</em> & <em>Surprised by Hope</em></div>
+          <div class="iv-meta-badge">Themes: bodily resurrection, new creation, Israel's story, kingdom of God</div>
+        </div>
+
+        <div class="iv-grid">
+          <div class="iv-body">
+            <p>
+              Nicholas Thomas Wright was born in 1948 in Northumberland, England. He grew up in the Church of England, studied classics and theology at Oxford, and was ordained as an Anglican priest. From the beginning, Wright was drawn to the big questions: What did the first Christians actually believe? How did Judaism shape the New Testament? What did Jesus and Paul mean by "the kingdom of God"? And why did the early church stake everything on the claim that Jesus had been bodily raised from the dead?
+            </p>
+
+            <p>
+              As a young scholar, Wright was troubled by the gap between what the New Testament seemed to say and what many modern Christians believed. In popular Christianity, "salvation" often meant "going to heaven when you die"—an escape from the material world into a purely spiritual realm. But when Wright read the New Testament carefully, he found something different: a robust hope for the resurrection of the body and the renewal of all creation. The early Christians did not long to leave earth behind; they believed that heaven and earth would one day be united, that God would make all things new, and that the risen Jesus was the firstfruits of that new creation.
+            </p>
+
+            <p>
+              This discovery led Wright to write <em>The Resurrection of the Son of God</em>, a massive historical and theological defense of the bodily resurrection. He argued that the resurrection was not a metaphor, not a spiritual vision, not a myth, but an actual historical event that launched the Christian movement and redefined what "hope" means. The resurrection, Wright insisted, is the beginning of God's new creation breaking into the old world—the "already and not yet" of the kingdom inaugurated but awaiting consummation.
+            </p>
+
+            <div class="iv-body-2col">
+              <div>
+                <h3 class="iv-section-heading">Israel's Story and the Renewal of All Things</h3>
+                <p>
+                  Wright's work is deeply rooted in the story of Israel. He teaches that Jesus is the climax of the covenant narrative—the one in whom God's promises to Abraham, the prophets' visions of return from exile, and the hope for a Messiah all converge. Justification, in Wright's reading, is not primarily a legal transaction but a declaration that someone belongs to God's renewed covenant people. The cross defeats the powers, reveals God's justice, and liberates creation from bondage. And the resurrection announces that the age to come has begun.
+                </p>
+
+                <p>
+                  This vision has practical implications. If God's plan is to renew creation, not abandon it, then our work for justice, beauty, and healing in this world matters eternally. The mission of the church is not to rescue souls out of a doomed world but to be a sign and foretaste of the kingdom—living now as citizens of the future, embodying the resurrection life that will one day fill all creation. Wright's robust, earthy hope has inspired countless Christians to rediscover the Bible's own vision of new creation.
+                </p>
+              </div>
+              <aside class="iv-aside">
+                <strong>How this page reflects Wright's influence</strong>
+                <ul>
+                  <li>The emphasis on <em>bodily resurrection</em> as the foundation of Christian hope is Wright's signature theme.</li>
+                  <li>The framework of <em>"already and not yet"</em> kingdom theology comes directly from his work.</li>
+                  <li>The insistence that <em>new creation renews this world</em> rather than escaping it mirrors his critique of "heaven when you die" theology.</li>
+                  <li>The focus on <em>Israel's story fulfilled in Jesus</em> reflects his narrative reading of Scripture.</li>
+                </ul>
+              </aside>
+            </div>
+
+            <p class="iv-tagline">
+              To speak of resurrection as the beginning of new creation, of the kingdom as both present and future, and of Christian mission as embodying the coming renewal is to stand on the foundation N. T. Wright has patiently excavated and restored to the church.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <button class="back-to-top" onclick="scrollToTop()" id="backToTop" aria-label="Back to top">↑</button>
+
+  <script>
+    function toggleSection(header){
+      const section = header.parentElement;
+      const all = document.querySelectorAll('.section');
+      all.forEach(s => { if(s !== section && s.classList.contains('active')) s.classList.remove('active'); });
+      section.classList.toggle('active');
+      // Trigger BLB ScriptTagger to re-scan newly visible content
+      if (window.BLB && BLB.Tagger && BLB.Tagger.pageInit) {
+        setTimeout(() => BLB.Tagger.pageInit(), 0);
+      }
+    }
+
+    window.addEventListener('scroll', () => {
+      const btn = document.getElementById('backToTop');
+      if(window.pageYOffset > 300){ btn.classList.add('visible'); }
+      else { btn.classList.remove('visible'); }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const first = document.querySelector('.section');
+      if(first) first.classList.add('active');
+      // Trigger BLB ScriptTagger to re-scan newly visible content
+      if (window.BLB && BLB.Tagger && BLB.Tagger.pageInit) {
+        BLB.Tagger.pageInit();
+      }
+
+
+      const ivOverlay = document.getElementById('ivOverlay');
+      const ivOpen = document.querySelector('.iv-open');
+      const ivClose = ivOverlay ? ivOverlay.querySelector('.iv-close') : null;
+
+      function openInfluentialVoice(){
+        if(!ivOverlay) return;
+        ivOverlay.classList.add('visible');
+        ivOverlay.setAttribute('aria-hidden','false');
+      }
+
+      function closeInfluentialVoice(){
+        if(!ivOverlay) return;
+        ivOverlay.classList.remove('visible');
+        ivOverlay.setAttribute('aria-hidden','true');
+      }
+
+      if(ivOpen){
+        ivOpen.addEventListener('click', openInfluentialVoice);
+      }
+      if(ivClose){
+        ivClose.addEventListener('click', closeInfluentialVoice);
+      }
+      if(ivOverlay){
+        ivOverlay.addEventListener('click', (e) => {
+          if(e.target === ivOverlay){
+            closeInfluentialVoice();
+          }
+        });
+      }
+
+      document.addEventListener('keydown', (e) => {
+        if(e.key === 'Escape'){
+          closeInfluentialVoice();
+        }
+      });
+
+    });
+
+    function scrollToTop(){
+      window.scrollTo({ top:0, behavior:'smooth' });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>The Larger View: God’s Character and the Great Controversy</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111833;
+      --ink:#e6ecff;
+      --muted:#a7b0cc;
+      --brand:#8bb9ff;
+      --accent:#c0ffe1;
+      --border:#26325b;
+      --chip:#1a2347;
+      --bad:#ff6b6b;
+      --shadow:0 8px 28px rgba(0,0,0,.35);
+      --radius:12px;
+      --radius-sm:8px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+      line-height:1.6;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
+        radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+      padding-bottom:2rem;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .container{max-width:860px;margin:0 auto;padding:1rem}
+
+    .back-nav{
+      margin-bottom:1rem;
+    }
+    .back-nav a{
+      display:inline-flex;
+      align-items:center;
+      gap:.5rem;
+      color:var(--brand);
+      text-decoration:none;
+      font-size:.95rem;
+      padding:.5rem .75rem;
+      border-radius:999px;
+      transition:background .2s ease;
+    }
+    .back-nav a:hover{
+      background:color-mix(in oklab,var(--chip) 50%, transparent);
+    }
+
+    header{
+      background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:2rem 1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+    }
+
+    h1{
+      color:var(--ink);
+      font-size:1.75rem;
+      margin-bottom:.5rem;
+      letter-spacing:-.015em;
+    }
+
+    .subtitle{
+      color:var(--muted);
+      font-size:.95rem;
+      font-style:italic;
+    }
+
+    .main-answer{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+      border-left:4px solid var(--brand);
+    }
+
+    .main-answer h2{
+      color:var(--brand);
+      font-size:1.3rem;
+      margin-bottom:1rem;
+      letter-spacing:.01em;
+    }
+
+    .main-answer p{font-size:1.05rem;line-height:1.7}
+
+    .section{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      margin-bottom:1rem;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .section-header{
+      padding:1.1rem 1.25rem;
+      background:linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%);
+      color:var(--ink);
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      border-bottom:1px solid var(--border);
+    }
+
+    .section-header:active{opacity:.95}
+
+    .section-header h2{
+      font-size:1.15rem;
+      font-weight:700;
+      letter-spacing:.01em;
+    }
+
+    .section-icon{font-size:1.35rem;transition:transform .3s ease}
+    .section.active .section-icon{transform:rotate(180deg)}
+
+    .section-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+    .section.active .section-content{max-height:5000px}
+
+    .section-inner{padding:1.25rem}
+
+    h3{
+      color:var(--brand);
+      font-size:1.08rem;
+      margin:1.3rem 0 .65rem 0;
+      letter-spacing:.01em;
+    }
+    h3:first-child{margin-top:0}
+
+    .concept-list,.scripture-list{list-style:none}
+
+    .concept-item,.scripture-item{
+      background:color-mix(in oklab,var(--chip) 75%, transparent);
+      border-left:3px solid var(--brand);
+      padding:1rem;
+      margin-bottom:.75rem;
+      border-radius:var(--radius-sm);
+      border:1px solid var(--border);
+    }
+
+    .concept-item strong,.scripture-item strong{
+      color:var(--brand);
+      display:block;
+      margin-bottom:.25rem;
+    }
+
+    .timeline{
+      border-left:3px solid var(--brand);
+      padding-left:1.25rem;
+      margin-left:.5rem;
+    }
+
+    .timeline-item{
+      margin-bottom:1.25rem;
+      position:relative;
+    }
+
+    .timeline-item::before{
+      content:'';
+      position:absolute;left:-1.65rem;top:.25rem;
+      width:12px;height:12px;border-radius:50%;
+      background:var(--brand);border:3px solid var(--panel);
+      box-shadow:0 0 0 2px var(--brand);
+    }
+
+    .timeline-item strong{color:var(--brand);display:block;margin-bottom:.25rem}
+
+    .glossary-grid{display:grid;gap:1rem}
+    .glossary-term{
+      background:color-mix(in oklab,var(--chip) 75%, transparent);
+      padding:1rem;border-radius:6px;
+      border-left:3px solid var(--brand);
+      border:1px solid var(--border);
+    }
+    .glossary-term strong{color:var(--brand);display:block;margin-bottom:.25rem;font-size:1.05rem}
+
+    .critique-item{
+      background:color-mix(in oklab, var(--bad) 12%, var(--panel));
+      border-left:3px solid var(--bad);
+      padding:1rem;margin-bottom:.75rem;border-radius:4px;
+      border:1px solid var(--border);
+    }
+
+    .source{
+      background:color-mix(in oklab,var(--chip) 65%, transparent);
+      border-radius:8px;padding:1rem;margin-top:1.2rem;
+      font-size:.95rem;color:var(--muted);
+      border:1px solid var(--border);
+    }
+    .source strong{color:var(--ink)}
+
+    .back-to-top{
+      position:fixed;bottom:1.5rem;right:1rem;
+      background:var(--brand);color:#001;
+      width:50px;height:50px;border-radius:50%;
+      border:none;font-size:1.5rem;cursor:pointer;
+      box-shadow:var(--shadow);opacity:0;transition:opacity .3s ease;
+      z-index:1000;display:flex;align-items:center;justify-content:center;
+      font-weight:900;
+    }
+    .back-to-top.visible{opacity:1}
+    .back-to-top:active{transform:scale(.96)}
+
+    a{color:var(--brand)}
+
+
+    /* Influential Voice teaser section */
+    .section.influential-section{
+      overflow:visible;
+    }
+
+    .iv-section-header{
+      cursor:default;
+      gap:.75rem;
+    }
+
+    .iv-section-header h2{
+      font-size:1.1rem;
+    }
+
+    .iv-pill{
+      display:inline-flex;
+      align-items:center;
+      gap:.4rem;
+      padding:.35rem .8rem;
+      border-radius:999px;
+      border:1px solid color-mix(in oklab,var(--border) 70%, transparent);
+      background:color-mix(in oklab,var(--chip) 70%, transparent);
+      font-size:.8rem;
+      text-transform:uppercase;
+      letter-spacing:.09em;
+      color:var(--muted);
+    }
+
+    .iv-open{
+      margin-left:auto;
+      padding:.5rem .9rem;
+      border-radius:999px;
+      border:1px solid color-mix(in oklab,var(--brand) 55%, transparent);
+      background:color-mix(in oklab,var(--chip) 80%, transparent);
+      color:var(--brand);
+      font-size:.9rem;
+      font-weight:500;
+      display:inline-flex;
+      align-items:center;
+      gap:.35rem;
+      cursor:pointer;
+      transition:background .18s ease, transform .08s ease, box-shadow .18s ease;
+      box-shadow:0 0 0 1px rgba(0,0,0,.12);
+    }
+
+    .iv-open span{
+      font-size:1.1rem;
+      line-height:1;
+    }
+
+    .iv-open:hover{
+      background:color-mix(in oklab,var(--brand) 18%, var(--chip));
+      box-shadow:0 8px 22px rgba(0,0,0,.45);
+    }
+
+    .iv-open:active{
+      transform:scale(.97);
+      box-shadow:0 4px 14px rgba(0,0,0,.4);
+    }
+
+    .iv-teaser{
+      font-size:.95rem;
+      color:var(--muted);
+    }
+
+    .iv-highlight{
+      color:var(--accent);
+      font-weight:500;
+    }
+
+    /* Influential Voice overlay */
+    .iv-overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(5,10,30,.92);
+      backdrop-filter:blur(16px);
+      -webkit-backdrop-filter:blur(16px);
+      display:none;
+      align-items:flex-start;
+      justify-content:center;
+      overflow-y:auto;
+      padding:3rem 1rem 2.5rem;
+      z-index:1100;
+    }
+
+    .iv-overlay.visible{
+      display:flex;
+    }
+
+    .iv-dialog{
+      max-width:780px;
+      width:100%;
+      background:radial-gradient(800px 400px at 0% 0%, rgba(139,185,255,.18), transparent 55%), var(--panel);
+      border-radius:var(--radius);
+      border:1px solid var(--border);
+      box-shadow:var(--shadow);
+      padding:1.8rem 1.6rem 2.2rem;
+      position:relative;
+    }
+
+    .iv-close{
+      position:absolute;
+      top:.9rem;
+      right:.9rem;
+      width:34px;
+      height:34px;
+      border-radius:50%;
+      border:1px solid color-mix(in oklab,var(--border) 70%, transparent);
+      background:color-mix(in oklab,var(--chip) 85%, transparent);
+      color:var(--muted);
+      font-size:1.1rem;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      transition:background .18s ease, transform .08s ease;
+    }
+
+    .iv-close:hover{
+      background:color-mix(in oklab,var(--bad) 10%, var(--chip));
+      color:var(--ink);
+    }
+
+    .iv-close:active{
+      transform:scale(.95);
+    }
+
+    .iv-kicker{
+      font-size:.8rem;
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      color:var(--muted);
+      margin-bottom:.4rem;
+    }
+
+    .iv-title{
+      font-size:1.4rem;
+      letter-spacing:-.01em;
+      margin-bottom:.5rem;
+    }
+
+    .iv-subtitle{
+      font-size:.95rem;
+      color:var(--muted);
+      margin-bottom:1.2rem;
+    }
+
+    .iv-grid{
+      display:grid;
+      gap:1.2rem;
+    }
+
+    .iv-meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap:.5rem;
+      margin-bottom:1.1rem;
+      font-size:.8rem;
+      color:var(--muted);
+    }
+
+    .iv-meta-badge{
+      padding:.25rem .7rem;
+      border-radius:999px;
+      background:color-mix(in oklab,var(--chip) 78%, transparent);
+      border:1px solid color-mix(in oklab,var(--border) 70%, transparent);
+    }
+
+    .iv-body p{
+      margin-bottom:.9rem;
+      font-size:.98rem;
+    }
+
+    .iv-body p:last-child{
+      margin-bottom:0;
+    }
+
+    .iv-body em{
+      font-style:italic;
+    }
+
+    .iv-body-2col{
+      display:grid;
+      grid-template-columns:minmax(0,2.4fr) minmax(0,1.6fr);
+      gap:1.4rem;
+      margin-top:1.4rem;
+    }
+
+    .iv-aside{
+      background:color-mix(in oklab,var(--chip) 75%, transparent);
+      border-radius:var(--radius-sm);
+      border:1px solid var(--border);
+      padding:.95rem 1rem;
+      font-size:.9rem;
+      color:var(--muted);
+    }
+
+    .iv-aside strong{
+      color:var(--ink);
+    }
+
+    .iv-aside ul{
+      margin:.5rem 0 0 1rem;
+      padding:0;
+    }
+
+    .iv-aside li{
+      margin-bottom:.2rem;
+    }
+
+    .iv-section-heading{
+      margin:1.1rem 0 .35rem;
+      font-size:1.02rem;
+      color:var(--brand);
+    }
+
+    .iv-tagline{
+      margin-top:1.1rem;
+      font-size:.95rem;
+      color:var(--accent);
+    }
+
+    @media (max-width:720px){
+      .iv-body-2col{
+        grid-template-columns:minmax(0,1fr);
+      }
+      .iv-dialog{
+        padding:1.4rem 1.2rem 1.7rem;
+      }
+      .iv-title{
+        font-size:1.25rem;
+      }
+    }
+
+    @media (max-width:480px){
+      h1{font-size:1.5rem}
+      .section-header h2{font-size:1.05rem}
+      .container{padding:.75rem}
+      header{padding:1.5rem 1rem}
+      .iv-overlay{
+        padding:2.6rem .6rem 2rem;
+      }
+    }
+  </style>
+
+  <!-- Blue Letter Bible ScriptTagger -->
+  <script src="https://www.blueletterbible.org/assets/scripts/blbToolTip/BLB_ScriptTagger-min.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    BLB.Tagger.Translation = 'KJV';
+    BLB.Tagger.HyperLinks = 'all';
+    BLB.Tagger.HideTanslationAbbrev = false;
+    BLB.Tagger.TargetNewWindow = true;
+    BLB.Tagger.Style = 'par';
+    BLB.Tagger.NoSearchTagNames = 'code,pre,script,style';
+    BLB.Tagger.NoSearchClassNames = 'noTag';
+  </script>
+</head>
+<body>
+  <div class="container">
+    <nav class="back-nav">
+      <a href="../is-gospel-hub/index.html">← Back to Gospel Hub</a>
+    </nav>
+    <header>
+      <h1>The Larger View: God’s Character and the Great Controversy</h1>
+      <p class="subtitle">How God Wins the Trust of the Universe</p>
+    </header>
+
+    <div class="main-answer">
+      <h2>Core Thesis</h2>
+      <p>The “larger view” holds that the central issue in salvation history is God’s <em>character</em> and government under accusation. Evil spread through lies about God (John 8:44); the cross publicly reveals who God truly is (John 14:9; Romans 3:25-26), winning the trust of a watching universe (1 Corinthians 4:9) without coercion. God’s government rests on truth, love, and freedom; therefore He persuades rather than forces, heals rather than merely penalizes (Exodus 34:6-7; 2 Corinthians 5:19). Salvation is the restoration of trusting relationship—God setting things right by revealing Himself faithful and drawing all to Himself (John 12:32; Colossians 1:19-20).</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📖 Key Scriptures</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <h3>Overview</h3>
+          <p>Scripture frames a cosmic conflict in which God’s character is misrepresented and then vindicated through Christ. Judgment, in this light, is revelatory—truth coming to light—so that every knee bows freely to a God worthy of trust.</p>
+
+          <h3>Primary Texts</h3>
+          <ul class="scripture-list">
+            <li class="scripture-item">
+              <strong>Exodus 34:6-7</strong>
+              God’s self-revelation: compassionate, gracious, slow to anger, abounding in steadfast love and faithfulness.
+            </li>
+            <li class="scripture-item">
+              <strong>Job 1–2</strong>
+              The adversary accuses; the conflict centers on God’s character and the integrity of trust.
+            </li>
+            <li class="scripture-item">
+              <strong>1 Corinthians 4:9</strong>
+              “A spectacle to the world, to angels, and to men”—a cosmic audience watches the controversy unfold.
+            </li>
+            <li class="scripture-item">
+              <strong>John 14:9</strong>
+              “Whoever has seen Me has seen the Father”—Jesus perfectly reveals God.
+            </li>
+            <li class="scripture-item">
+              <strong>John 12:31-33</strong>
+              The cross is the world’s judgment and the means by which all are drawn to Christ.
+            </li>
+            <li class="scripture-item">
+              <strong>Romans 3:25-26</strong>
+              God “demonstrates” His righteousness—He is just and the justifier of the one who trusts in Jesus.
+            </li>
+            <li class="scripture-item">
+              <strong>2 Corinthians 5:19-21</strong>
+              God was in Christ reconciling the world, not counting trespasses—restorative atonement.
+            </li>
+            <li class="scripture-item">
+              <strong>Colossians 1:19-20</strong>
+              God makes peace through the blood of the cross, reconciling all things.
+            </li>
+            <li class="scripture-item">
+              <strong>Hebrews 2:14-15</strong>
+              Through death Jesus destroys the one who has the power of death and frees us from fear.
+            </li>
+            <li class="scripture-item">
+              <strong>Revelation 12:7-12</strong>
+              Cosmic war; the accuser is cast down by the Lamb and faithful witness.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>💡 Core Concepts</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <ul class="concept-list">
+            <li class="concept-item">
+              <strong>Truth, Love, and Freedom</strong>
+              God governs by candid truth and self-giving love; authentic trust requires real freedom (Deuteronomy 30:19).
+            </li>
+            <li class="concept-item">
+              <strong>The Issue Is God’s Character</strong>
+              The enemy’s strategy is to defame God; the gospel reveals God is exactly as Jesus showed—trustworthy and kind (John 14:9).
+            </li>
+            <li class="concept-item">
+              <strong>Revelatory Judgment</strong>
+              Divine judgment brings truth to light, exposing lies and inviting intelligent, voluntary allegiance (Romans 3:25-26).
+            </li>
+            <li class="concept-item">
+              <strong>The Cross as Public Demonstration</strong>
+              At Calvary God answers the controversy, defeating accusation by revealing faithful love (John 12:31-33; Colossians 2:15).
+            </li>
+            <li class="concept-item">
+              <strong>Faith as Trust Restored</strong>
+              Salvation is relational reconciliation—hearts persuaded by who God is (2 Corinthians 5:19).
+            </li>
+            <li class="concept-item">
+              <strong>Obedience from Love, Not Fear</strong>
+              Mature obedience flows from knowing God’s character; fear cannot sustain loyalty (1 John 4:18-19; Romans 2:4).
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📜 Timeline</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="timeline">
+            <div class="timeline-item">
+              <strong>Accusation Arises</strong>
+              A heavenly rebel sows distrust about God’s character and government (Revelation 12; John 8:44).
+            </div>
+            <div class="timeline-item">
+              <strong>Trust Fractures on Earth</strong>
+              Humanity believes a false picture of God, leading to fear and alienation (Genesis 3).
+            </div>
+            <div class="timeline-item">
+              <strong>God’s Self-Revelation</strong>
+              Through Israel and the prophets, God declares His steadfast love and faithfulness (Exodus 34:6-7).
+            </div>
+            <div class="timeline-item">
+              <strong>Christ Reveals the Father</strong>
+              Jesus embodies the truth about God; His words and works unveil divine character (John 14:9).
+            </div>
+            <div class="timeline-item">
+              <strong>The Cross & Resurrection</strong>
+              Accusation is unmasked; the powers are disarmed; God’s righteousness is demonstrated (John 12:31-33; Colossians 2:15; Romans 3:25-26).
+            </div>
+            <div class="timeline-item">
+              <strong>Witness of the Church</strong>
+              A Spirit-formed people bear truthful witness to God’s character by love (John 13:34-35).
+            </div>
+            <div class="timeline-item">
+              <strong>Consummation</strong>
+              All creation sees and confesses God’s goodness; peace is restored (Philippians 2:10-11; Revelation 21–22).
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>⚠️ Common Misreadings</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="critique-item">
+            <strong>Power Over Truth:</strong> Assuming God settles the controversy by sheer force ignores that trust cannot be compelled.
+          </div>
+          <div class="critique-item">
+            <strong>Penalty as the Goal:</strong> Reducing salvation to penalty-payment eclipses God’s purpose to heal relationships and reveal His faithfulness.
+          </div>
+          <div class="critique-item">
+            <strong>Suspicion of God:</strong> Viewing God as arbitrary or harsh sustains the original lie; the gospel dismantles this by showing the Father’s heart in Jesus.
+          </div>
+          <div class="critique-item">
+            <strong>Fear-Based Obedience:</strong> Fear may produce conformity but never love; love alone secures intelligent, durable loyalty.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📚 Glossary</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="glossary-grid">
+            <div class="glossary-term">
+              <strong>Great Controversy</strong>
+              The cosmic conflict involving accusations against God’s character and government (Revelation 12).
+            </div>
+            <div class="glossary-term">
+              <strong>Vindication</strong>
+              God’s righteousness made manifest; truth about God publicly demonstrated (Romans 3:25-26).
+            </div>
+            <div class="glossary-term">
+              <strong>Revelatory Judgment</strong>
+              Judgment as truth-telling and exposure of lies, leading to informed allegiance.
+            </div>
+            <div class="glossary-term">
+              <strong>Reconciliation</strong>
+              Restoration of trusting relationship between God and creation (2 Corinthians 5:19-20).
+            </div>
+            <div class="glossary-term">
+              <strong>Freedom</strong>
+              The condition for genuine love and trust; God persuades rather than coerces (Deuteronomy 30:19).
+            </div>
+            <div class="glossary-term">
+              <strong>Witness</strong>
+              The church’s role in embodying and declaring the truth of God’s character in love (John 13:34-35).
+            </div>
+          </div>
+
+          <div class="source">
+            <strong>Source:</strong> A synthesis of biblical themes emphasizing God’s self-revelation in Christ, the cosmic audience of salvation history, and reconciliation grounded in truth and love (e.g., Exodus 34:6-7; John 14:9; Romans 3:25-26; 2 Corinthians 5:19; 1 Corinthians 4:9; Revelation 12).
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Influential Voice teaser (non-accordion) -->
+    <div class="section influential-section">
+      <div class="section-header iv-section-header">
+        <div class="iv-pill">Influential Voice</div>
+        <h2>Graham Maxwell & This Page</h2>
+        <button class="iv-open" type="button">
+          <span>✦</span>
+          Read the story
+        </button>
+      </div>
+      <div class="section-inner">
+        <p class="iv-teaser">
+          This page's conviction that <span class="iv-highlight">the central issue is God's character under accusation</span> and that <span class="iv-highlight">God wins trust by persuasion, not force</span> is deeply indebted to Graham Maxwell—a beloved Adventist teacher whose conversational clarity and pastoral warmth made "the larger view" accessible to generations of students and church members.
+        </p>
+      </div>
+    </div>
+
+    <!-- Influential Voice overlay -->
+    <div class="iv-overlay" id="ivOverlay" aria-hidden="true">
+      <div class="iv-dialog" role="dialog" aria-modal="true" aria-labelledby="ivTitle">
+        <button class="iv-close" type="button" aria-label="Close Influential Voice">×</button>
+        <div class="iv-kicker">Influential Voice</div>
+        <h2 class="iv-title" id="ivTitle">Graham Maxwell: Can God Be Trusted?</h2>
+        <p class="iv-subtitle">How a professor's question-and-answer style and relentless focus on God's trustworthiness reshaped Adventist theology for a generation.</p>
+
+        <div class="iv-meta">
+          <div class="iv-meta-badge">Seventh-day Adventist theologian & teacher (1921–2010)</div>
+          <div class="iv-meta-badge">Author of <em>Can God Be Trusted?</em> & <em>Servants or Friends?</em></div>
+          <div class="iv-meta-badge">Key themes: God's character, great controversy as trust issue, government by persuasion</div>
+        </div>
+
+        <div class="iv-grid">
+          <div class="iv-body">
+            <p>
+              Graham Maxwell was born in 1921 and grew up in a Seventh-day Adventist home in England. From an early age he was drawn to Scripture and to the great questions of theology: Who is God? How does He govern? Why is there evil? As a young man he moved to the United States, completed advanced degrees in New Testament and theology, and eventually joined the faculty at Loma Linda University, where he taught for decades. But Maxwell was never content with the academic guild alone. He loved the church, loved teaching Sabbath School, and loved sitting in living rooms fielding questions from laypeople who wanted to understand their Bibles better.
+            </p>
+
+            <p>
+              What made Maxwell distinctive was his relentless focus on a single question: Can God be trusted? For him, this was not an abstract theological puzzle but the heart of the great controversy between Christ and Satan. He taught that Lucifer's rebellion began with accusations against God's character—that God was arbitrary, selfish, and ruling by fear. These lies fractured heaven and then infected humanity in Eden. Ever since, the central drama of history has been God's patient, non-coercive effort to win back the trust of His creatures by revealing the truth about Himself.
+            </p>
+
+            <p>
+              Maxwell insisted that the cross is not a legal transaction to satisfy wrath but a revelation of who God is. At Calvary, the universe sees that God is exactly as He claimed: self-giving, faithful, and non-arbitrary. The Father does not vent anger on the Son; rather, God in Christ absorbs the consequences of our rebellion and invites us back into friendship. Atonement, for Maxwell, is reconciliation—God setting things right by demonstrating His trustworthiness so compellingly that hearts are won and accusations are silenced.
+            </p>
+
+            <div class="iv-body-2col">
+              <div>
+                <h3 class="iv-section-heading">The Larger View of Everything</h3>
+                <p>
+                  Maxwell's teaching method was conversational and cumulative. He would begin with a simple question—Why does God allow suffering? What is the purpose of the law? What does judgment mean?—and then unfold a "larger view" that reframed the question entirely. The law, he explained, is not a test to see if we can obey but a revelation of God's character meant to inspire trust. Judgment is not God looking for reasons to condemn but God transparently demonstrating that He has been fair and patient, so the universe can see the truth. Final punishment is not eternal torture but the tragic self-destruction of those who refuse to trust, allowed by a God who will not coerce.
+                </p>
+
+                <p>
+                  Throughout his life, Maxwell emphasized that God seeks friends, not slaves. Obedience rooted in fear is worthless; only love-born trust produces genuine loyalty. This vision transformed how many Adventists understood their faith. Instead of a religion centered on keeping rules to avoid wrath, they discovered a gospel centered on knowing and trusting a God whose character is revealed supremely in the cross. Maxwell's warmth, humility, and clarity made this "larger view" feel like coming home.
+                </p>
+              </div>
+              <aside class="iv-aside">
+                <strong>How this page reflects Maxwell's influence</strong>
+                <ul>
+                  <li>The framing of the great controversy as a <em>trust issue</em> rather than a power struggle comes directly from Maxwell.</li>
+                  <li>The emphasis on <em>God governing by persuasion, not force</em> echoes his teaching on divine government.</li>
+                  <li>The insistence that the cross is <em>revelation, not transaction</em> mirrors his atonement theology.</li>
+                  <li>The call to reinterpret law, judgment, and punishment through the lens of <em>God's trustworthiness</em> reflects his "larger view" method.</li>
+                </ul>
+              </aside>
+            </div>
+
+            <p class="iv-tagline">
+              To ask "Can God be trusted?" and to answer with the cross, to see judgment as disclosure rather than condemnation, and to understand God's government as persuasion rather than force is to stand in the tradition Graham Maxwell spent his life cultivating with patience, clarity, and love.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <button class="back-to-top" onclick="scrollToTop()" id="backToTop" aria-label="Back to top">↑</button>
+
+  <script>
+    function toggleSection(header){
+      const section = header.parentElement;
+      const all = document.querySelectorAll('.section');
+      all.forEach(s => { if(s !== section && s.classList.contains('active')) s.classList.remove('active'); });
+      section.classList.toggle('active');
+      // Trigger BLB ScriptTagger to re-scan newly visible content
+      if (window.BLB && BLB.Tagger && BLB.Tagger.pageInit) {
+        setTimeout(() => BLB.Tagger.pageInit(), 0);
+      }
+    }
+
+    window.addEventListener('scroll', () => {
+      const btn = document.getElementById('backToTop');
+      if(window.pageYOffset > 300){ btn.classList.add('visible'); }
+      else { btn.classList.remove('visible'); }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const first = document.querySelector('.section');
+      if(first) first.classList.add('active');
+      // Trigger BLB ScriptTagger to re-scan newly visible content
+      if (window.BLB && BLB.Tagger && BLB.Tagger.pageInit) {
+        BLB.Tagger.pageInit();
+      }
+
+
+      const ivOverlay = document.getElementById('ivOverlay');
+      const ivOpen = document.querySelector('.iv-open');
+      const ivClose = ivOverlay ? ivOverlay.querySelector('.iv-close') : null;
+
+      function openInfluentialVoice(){
+        if(!ivOverlay) return;
+        ivOverlay.classList.add('visible');
+        ivOverlay.setAttribute('aria-hidden','false');
+      }
+
+      function closeInfluentialVoice(){
+        if(!ivOverlay) return;
+        ivOverlay.classList.remove('visible');
+        ivOverlay.setAttribute('aria-hidden','true');
+      }
+
+      if(ivOpen){
+        ivOpen.addEventListener('click', openInfluentialVoice);
+      }
+      if(ivClose){
+        ivClose.addEventListener('click', closeInfluentialVoice);
+      }
+      if(ivOverlay){
+        ivOverlay.addEventListener('click', (e) => {
+          if(e.target === ivOverlay){
+            closeInfluentialVoice();
+          }
+        });
+      }
+
+      document.addEventListener('keydown', (e) => {
+        if(e.key === 'Escape'){
+          closeInfluentialVoice();
+        }
+      });
+
+    });
+
+    function scrollToTop(){
+      window.scrollTo({ top:0, behavior:'smooth' });
+    }
+  </script>
+</body>
+</html>

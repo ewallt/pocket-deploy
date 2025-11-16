@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Biblical Faith: What It Encompasses</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111833;
+      --ink:#e6ecff;
+      --muted:#a7b0cc;
+      --brand:#8bb9ff;
+      --accent:#c0ffe1;
+      --border:#26325b;
+      --chip:#1a2347;
+      --bad:#ff6b6b;
+      --shadow:0 8px 28px rgba(0,0,0,.35);
+      --radius:12px;
+      --radius-sm:8px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+      line-height:1.6;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
+        radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+      padding-bottom:2rem;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .container{max-width:860px;margin:0 auto;padding:1rem}
+
+    .back-nav{
+      margin-bottom:1rem;
+    }
+    .back-nav a{
+      display:inline-flex;
+      align-items:center;
+      gap:.5rem;
+      color:var(--brand);
+      text-decoration:none;
+      font-size:.95rem;
+      padding:.5rem .75rem;
+      border-radius:999px;
+      transition:background .2s ease;
+    }
+    .back-nav a:hover{
+      background:color-mix(in oklab,var(--chip) 50%, transparent);
+    }
+
+    header{
+      background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:2rem 1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+    }
+
+    h1{
+      color:var(--ink);
+      font-size:1.75rem;
+      margin-bottom:.5rem;
+      letter-spacing:-.015em;
+    }
+
+    .subtitle{
+      color:var(--muted);
+      font-size:.95rem;
+      font-style:italic;
+    }
+
+    .main-answer{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+      border-left:4px solid var(--brand);
+    }
+
+    .main-answer h2{
+      color:var(--brand);
+      font-size:1.3rem;
+      margin-bottom:1rem;
+      letter-spacing:.01em;
+    }
+
+    .main-answer p{font-size:1.05rem;line-height:1.7}
+
+    .section{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      margin-bottom:1rem;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .section-header{
+      padding:1.1rem 1.25rem;
+      background:linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%);
+      color:var(--ink);
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      border-bottom:1px solid var(--border);
+    }
+
+    .section-header:active{opacity:.95}
+
+    .section-header h2{
+      font-size:1.15rem;
+      font-weight:700;
+      letter-spacing:.01em;
+    }
+
+    .section-icon{font-size:1.35rem;transition:transform .3s ease}
+    .section.active .section-icon{transform:rotate(180deg)}
+
+    .section-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+    .section.active .section-content{max-height:5000px}
+
+    .section-inner{padding:1.25rem}
+
+    h3{
+      color:var(--brand);
+      font-size:1.08rem;
+      margin:1.3rem 0 .65rem 0;
+      letter-spacing:.01em;
+    }
+    h3:first-child{margin-top:0}
+
+    .concept-list,.scripture-list{list-style:none}
+
+    .concept-item,.scripture-item{
+      background:color-mix(in oklab,var(--chip) 75%, transparent);
+      border-left:3px solid var(--brand);
+      padding:1rem;
+      margin-bottom:.75rem;
+      border-radius:var(--radius-sm);
+      border:1px solid var(--border);
+    }
+
+    .concept-item strong,.scripture-item strong{
+      color:var(--brand);
+      display:block;
+      margin-bottom:.25rem;
+    }
+
+    .timeline{
+      border-left:3px solid var(--brand);
+      padding-left:1.25rem;
+      margin-left:.5rem;
+    }
+
+    .timeline-item{
+      margin-bottom:1.25rem;
+      position:relative;
+    }
+
+    .timeline-item::before{
+      content:'';
+      position:absolute;left:-1.65rem;top:.25rem;
+      width:12px;height:12px;border-radius:50%;
+      background:var(--brand);border:3px solid var(--panel);
+      box-shadow:0 0 0 2px var(--brand);
+    }
+
+    .timeline-item strong{color:var(--brand);display:block;margin-bottom:.25rem}
+
+    .glossary-grid{display:grid;gap:1rem}
+    .glossary-term{
+      background:color-mix(in oklab,var(--chip) 75%, transparent);
+      padding:1rem;border-radius:6px;
+      border-left:3px solid var(--brand);
+      border:1px solid var(--border);
+    }
+    .glossary-term strong{color:var(--brand);display:block;margin-bottom:.25rem;font-size:1.05rem}
+
+    .critique-item{
+      background:color-mix(in oklab, var(--bad) 12%, var(--panel));
+      border-left:3px solid var(--bad);
+      padding:1rem;margin-bottom:.75rem;border-radius:4px;
+      border:1px solid var(--border);
+    }
+
+    .source{
+      background:color-mix(in oklab,var(--chip) 65%, transparent);
+      border-radius:8px;padding:1rem;margin-top:1.2rem;
+      font-size:.95rem;color:var(--muted);
+      border:1px solid var(--border);
+    }
+    .source strong{color:var(--ink)}
+
+    .back-to-top{
+      position:fixed;bottom:1.5rem;right:1rem;
+      background:var(--brand);color:#001;
+      width:50px;height:50px;border-radius:50%;
+      border:none;font-size:1.5rem;cursor:pointer;
+      box-shadow:var(--shadow);opacity:0;transition:opacity .3s ease;
+      z-index:1000;display:flex;align-items:center;justify-content:center;
+      font-weight:900;
+    }
+    .back-to-top.visible{opacity:1}
+    .back-to-top:active{transform:scale(.96)}
+
+    a{color:var(--brand)}
+
+
+    /* Influential Voice teaser section */
+    .section.influential-section{
+      overflow:visible;
+    }
+
+    .iv-section-header{
+      cursor:default;
+      gap:.75rem;
+    }
+
+    .iv-section-header h2{
+      font-size:1.1rem;
+    }
+
+    .iv-pill{
+      display:inline-flex;
+      align-items:center;
+      gap:.4rem;
+      padding:.35rem .8rem;
+      border-radius:999px;
+      border:1px solid color-mix(in oklab,var(--border) 70%, transparent);
+      background:color-mix(in oklab,var(--chip) 70%, transparent);
+      font-size:.8rem;
+      text-transform:uppercase;
+      letter-spacing:.09em;
+      color:var(--muted);
+    }
+
+    .iv-open{
+      margin-left:auto;
+      padding:.5rem .9rem;
+      border-radius:999px;
+      border:1px solid color-mix(in oklab,var(--brand) 55%, transparent);
+      background:color-mix(in oklab,var(--chip) 80%, transparent);
+      color:var(--brand);
+      font-size:.9rem;
+      font-weight:500;
+      display:inline-flex;
+      align-items:center;
+      gap:.35rem;
+      cursor:pointer;
+      transition:background .18s ease, transform .08s ease, box-shadow .18s ease;
+      box-shadow:0 0 0 1px rgba(0,0,0,.12);
+    }
+
+    .iv-open span{
+      font-size:1.1rem;
+      line-height:1;
+    }
+
+    .iv-open:hover{
+      background:color-mix(in oklab,var(--brand) 18%, var(--chip));
+      box-shadow:0 8px 22px rgba(0,0,0,.45);
+    }
+
+    .iv-open:active{
+      transform:scale(.97);
+      box-shadow:0 4px 14px rgba(0,0,0,.4);
+    }
+
+    .iv-teaser{
+      font-size:.95rem;
+      color:var(--muted);
+    }
+
+    .iv-highlight{
+      color:var(--accent);
+      font-weight:500;
+    }
+
+    /* Influential Voice overlay */
+    .iv-overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(5,10,30,.92);
+      backdrop-filter:blur(16px);
+      -webkit-backdrop-filter:blur(16px);
+      display:none;
+      align-items:flex-start;
+      justify-content:center;
+      overflow-y:auto;
+      padding:3rem 1rem 2.5rem;
+      z-index:1100;
+    }
+
+    .iv-overlay.visible{
+      display:flex;
+    }
+
+    .iv-dialog{
+      max-width:780px;
+      width:100%;
+      background:radial-gradient(800px 400px at 0% 0%, rgba(139,185,255,.18), transparent 55%), var(--panel);
+      border-radius:var(--radius);
+      border:1px solid var(--border);
+      box-shadow:var(--shadow);
+      padding:1.8rem 1.6rem 2.2rem;
+      position:relative;
+    }
+
+    .iv-close{
+      position:absolute;
+      top:.9rem;
+      right:.9rem;
+      width:34px;
+      height:34px;
+      border-radius:50%;
+      border:1px solid color-mix(in oklab,var(--border) 70%, transparent);
+      background:color-mix(in oklab,var(--chip) 85%, transparent);
+      color:var(--muted);
+      font-size:1.1rem;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      transition:background .18s ease, transform .08s ease;
+    }
+
+    .iv-close:hover{
+      background:color-mix(in oklab,var(--bad) 10%, var(--chip));
+      color:var(--ink);
+    }
+
+    .iv-close:active{
+      transform:scale(.95);
+    }
+
+    .iv-kicker{
+      font-size:.8rem;
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      color:var(--muted);
+      margin-bottom:.4rem;
+    }
+
+    .iv-title{
+      font-size:1.4rem;
+      letter-spacing:-.01em;
+      margin-bottom:.5rem;
+    }
+
+    .iv-subtitle{
+      font-size:.95rem;
+      color:var(--muted);
+      margin-bottom:1.2rem;
+    }
+
+    .iv-grid{
+      display:grid;
+      gap:1.2rem;
+    }
+
+    .iv-meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap:.5rem;
+      margin-bottom:1.1rem;
+      font-size:.8rem;
+      color:var(--muted);
+    }
+
+    .iv-meta-badge{
+      padding:.25rem .7rem;
+      border-radius:999px;
+      background:color-mix(in oklab,var(--chip) 78%, transparent);
+      border:1px solid color-mix(in oklab,var(--border) 70%, transparent);
+    }
+
+    .iv-body p{
+      margin-bottom:.9rem;
+      font-size:.98rem;
+    }
+
+    .iv-body p:last-child{
+      margin-bottom:0;
+    }
+
+    .iv-body em{
+      font-style:italic;
+    }
+
+    .iv-body-2col{
+      display:grid;
+      grid-template-columns:minmax(0,2.4fr) minmax(0,1.6fr);
+      gap:1.4rem;
+      margin-top:1.4rem;
+    }
+
+    .iv-aside{
+      background:color-mix(in oklab,var(--chip) 75%, transparent);
+      border-radius:var(--radius-sm);
+      border:1px solid var(--border);
+      padding:.95rem 1rem;
+      font-size:.9rem;
+      color:var(--muted);
+    }
+
+    .iv-aside strong{
+      color:var(--ink);
+    }
+
+    .iv-aside ul{
+      margin:.5rem 0 0 1rem;
+      padding:0;
+    }
+
+    .iv-aside li{
+      margin-bottom:.2rem;
+    }
+
+    .iv-section-heading{
+      margin:1.1rem 0 .35rem;
+      font-size:1.02rem;
+      color:var(--brand);
+    }
+
+    .iv-tagline{
+      margin-top:1.1rem;
+      font-size:.95rem;
+      color:var(--accent);
+    }
+
+    @media (max-width:720px){
+      .iv-body-2col{
+        grid-template-columns:minmax(0,1fr);
+      }
+      .iv-dialog{
+        padding:1.4rem 1.2rem 1.7rem;
+      }
+      .iv-title{
+        font-size:1.25rem;
+      }
+    }
+
+    @media (max-width:480px){
+      h1{font-size:1.5rem}
+      .section-header h2{font-size:1.05rem}
+      .container{padding:.75rem}
+      header{padding:1.5rem 1rem}
+      .iv-overlay{
+        padding:2.6rem .6rem 2rem;
+      }
+    }
+  </style>
+
+  <!-- Blue Letter Bible ScriptTagger -->
+  <script src="https://www.blueletterbible.org/assets/scripts/blbToolTip/BLB_ScriptTagger-min.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    BLB.Tagger.Translation = 'KJV';
+    BLB.Tagger.HyperLinks = 'all';
+    BLB.Tagger.HideTanslationAbbrev = false;
+    BLB.Tagger.TargetNewWindow = true;
+    BLB.Tagger.Style = 'par';
+    BLB.Tagger.NoSearchTagNames = 'code,pre,script,style';
+    BLB.Tagger.NoSearchClassNames = 'noTag';
+  </script>
+</head>
+<body>
+  <div class="container">
+    <nav class="back-nav">
+      <a href="../is-gospel-hub/index.html">← Back to Gospel Hub</a>
+    </nav>
+    <header>
+      <h1>Biblical Faith: What It Encompasses</h1>
+      <p class="subtitle">Heart-Trust Awakened by God’s Love</p>
+    </header>
+
+    <div class="main-answer">
+      <h2>Core Thesis</h2>
+      <p>Biblical faith is not a human achievement but the heart’s response to God’s prior love revealed in Jesus Christ. It arises from <em>beholding</em> God’s goodness—especially the cross—so that trust, repentance, and obedience spring from love rather than fear (Romans 2:4; 1 John 4:18-19; John 12:32). True faith is relational and transformative: it receives grace, works through love, and bears the fruit of a new life aligned with the Father’s character (Ephesians 2:8-10; Galatians 5:6). Thus faith is the Spirit-created persuasion of the heart that God is as good as Jesus reveals, and it moves us to do His words.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📖 Key Scriptures</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <h3>Overview</h3>
+          <p>Scripture presents faith as trust that comes from hearing and seeing the gospel, centered on Christ’s revelation of the Father. It reshapes motives, liberates from fear, and produces a life of love.</p>
+
+          <h3>Primary Texts</h3>
+          <ul class="scripture-list">
+            <li class="scripture-item">
+              <strong>Romans 10:17</strong>
+              Faith comes by hearing the word of Christ—gospel proclamation creates trust.
+            </li>
+            <li class="scripture-item">
+              <strong>John 3:14-17</strong>
+              God’s love revealed in the lifting up of the Son evokes believing, not perishing.
+            </li>
+            <li class="scripture-item">
+              <strong>John 12:32</strong>
+              “I, if I be lifted up… will draw all.” Faith springs from the attraction of divine love.
+            </li>
+            <li class="scripture-item">
+              <strong>1 John 4:18-19</strong>
+              Perfect love casts out fear; we love because He first loved us.
+            </li>
+            <li class="scripture-item">
+              <strong>Romans 2:4</strong>
+              God’s kindness leads to repentance—change of heart is awakened by goodness.
+            </li>
+            <li class="scripture-item">
+              <strong>Galatians 5:6</strong>
+              What counts is “faith working through love,” not external badges.
+            </li>
+            <li class="scripture-item">
+              <strong>Ephesians 2:8-10</strong>
+              Salvation is by grace through faith—God’s gift—resulting in good works prepared by Him.
+            </li>
+            <li class="scripture-item">
+              <strong>Hebrews 12:2</strong>
+              Jesus, pioneer and perfecter of faith—our eyes fixed on Him form faith within us.
+            </li>
+            <li class="scripture-item">
+              <strong>Hebrews 11:1,6</strong>
+              Faith is confident trust in the unseen God and seeks Him because He is good and rewarding.
+            </li>
+            <li class="scripture-item">
+              <strong>2 Corinthians 5:14-15</strong>
+              “The love of Christ constrains us”—love changes motives and directs life.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>💡 Core Concepts</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <ul class="concept-list">
+            <li class="concept-item">
+              <strong>Faith as Heart-Appreciation</strong>
+              Trust awakens when the heart perceives God’s goodness in Christ; it’s responsive, not self-generated.
+            </li>
+            <li class="concept-item">
+              <strong>Gift, Not Achievement</strong>
+              Faith and repentance are grace-gifts produced by the Spirit through the gospel, not prerequisites we supply.
+            </li>
+            <li class="concept-item">
+              <strong>From Fear to Love</strong>
+              The gospel displaces fear with love; obedience motivated by fear is superficial, but love transforms the will.
+            </li>
+            <li class="concept-item">
+              <strong>Works as Fruit</strong>
+              Good works flow from faith’s new motive; they are evidence, not currency.
+            </li>
+            <li class="concept-item">
+              <strong>Christ-Centered Gaze</strong>
+              Faith grows by looking away from self to Jesus—the pioneer and perfecter of faith.
+            </li>
+            <li class="concept-item">
+              <strong>Eschatological Maturity</strong>
+              God seeks a people whose trusting obedience reflects His character under pressure—love steadfast to the end.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📜 Timeline</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="timeline">
+            <div class="timeline-item">
+              <strong>Promise & Trust</strong>
+              God speaks and calls—faith begins by hearing and trusting His promise (Genesis 12; Romans 4).
+            </div>
+            <div class="timeline-item">
+              <strong>Prophetic Hope</strong>
+              Israel learns that the righteous live by faith and not by sight (Habakkuk 2:4).
+            </div>
+            <div class="timeline-item">
+              <strong>Christ Revealed</strong>
+              In Jesus, the Father’s love is unveiled, creating faith in those who behold Him (John 1; John 12).
+            </div>
+            <div class="timeline-item">
+              <strong>The Cross & Resurrection</strong>
+              Love’s self-giving triumph evokes repentance and trust, launching a Spirit-filled people (Acts 2).
+            </div>
+            <div class="timeline-item">
+              <strong>Life in the Spirit</strong>
+              Faith expresses itself through love, producing a community of integrity, hope, and service (Galatians 5).
+            </div>
+            <div class="timeline-item">
+              <strong>Endurance & Hope</strong>
+              Trials refine faith toward mature love that reflects God’s heart (James 1; 1 Peter 1).
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>⚠️ Common Misreadings</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="critique-item">
+            <strong>Faith as Willpower:</strong> Treating faith as self-produced determination shifts focus from Christ’s revelation to our effort.
+          </div>
+          <div class="critique-item">
+            <strong>Legalistic Exchange:</strong> Making faith a payment God requires undermines grace and breeds fear-based religion.
+          </div>
+          <div class="critique-item">
+            <strong>Belief Without Trust:</strong> Reducing faith to mental assent ignores the relational transformation Scripture describes.
+          </div>
+          <div class="critique-item">
+            <strong>Fruit as Root:</strong> Confusing obedience with the basis of acceptance reverses the gospel’s order and erodes joy.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📚 Glossary</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="glossary-grid">
+            <div class="glossary-term">
+              <strong>Faith</strong>
+              Spirit-awakened heart-trust in God’s goodness revealed in Christ; responsive and transformative.
+            </div>
+            <div class="glossary-term">
+              <strong>Repentance</strong>
+              Gifted change of mind and direction evoked by God’s kindness, turning from fear to love.
+            </div>
+            <div class="glossary-term">
+              <strong>Grace</strong>
+              God’s unmerited favor and empowering presence that creates faith and enables obedience.
+            </div>
+            <div class="glossary-term">
+              <strong>Love (Agape)</strong>
+              Self-giving, steadfast goodness that casts out fear and energizes true obedience.
+            </div>
+            <div class="glossary-term">
+              <strong>Obedience</strong>
+              The fruit of faith’s new motive—doing God’s will because His love has won the heart.
+            </div>
+            <div class="glossary-term">
+              <strong>Perseverance</strong>
+              Trustful endurance that matures faith through trial into resilient love.
+            </div>
+          </div>
+
+          <div class="source">
+            <strong>Source:</strong> A synthesis of biblical themes emphasizing faith as heart-trust awakened by the revelation of God’s love in Christ (e.g., Romans 10:17; John 12:32; 1 John 4:18-19; Galatians 5:6; Ephesians 2:8-10).
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Influential Voice teaser (non-accordion) -->
+    <div class="section influential-section">
+      <div class="section-header iv-section-header">
+        <div class="iv-pill">Influential Voice</div>
+        <h2>Robert J. Wieland & This Page</h2>
+        <button class="iv-open" type="button">
+          <span>✦</span>
+          Read the story
+        </button>
+      </div>
+      <div class="section-inner">
+        <p class="iv-teaser">
+          This page's focus on <span class="iv-highlight">heart-trust awakened by beholding God's love</span> and on <span class="iv-highlight">faith as God's gift rather than human achievement</span> echoes the lifelong conviction of Robert J. Wieland—a missionary who believed the Adventist church had never fully received the most precious message of righteousness by faith delivered in 1888.
+        </p>
+      </div>
+    </div>
+
+    <!-- Influential Voice overlay -->
+    <div class="iv-overlay" id="ivOverlay" aria-hidden="true">
+      <div class="iv-dialog" role="dialog" aria-modal="true" aria-labelledby="ivTitle">
+        <button class="iv-close" type="button" aria-label="Close Influential Voice">×</button>
+        <div class="iv-kicker">Influential Voice</div>
+        <h2 class="iv-title" id="ivTitle">Robert J. Wieland: A Voice Calling the Church Back to 1888</h2>
+        <p class="iv-subtitle">How a missionary's encounter with God's relentless grace led him to spend his life calling for corporate repentance and a return to the gospel of the cross.</p>
+
+        <div class="iv-meta">
+          <div class="iv-meta-badge">Seventh-day Adventist missionary & evangelist (1916–2011)</div>
+          <div class="iv-meta-badge">Co-author of <em>1888 Re-Examined</em></div>
+          <div class="iv-meta-badge">Key themes: righteousness by faith, corporate repentance, Christ's faithfulness</div>
+        </div>
+
+        <div class="iv-grid">
+          <div class="iv-body">
+            <p>
+              Robert Wieland was born in 1916 and grew up in a devout Seventh-day Adventist home. As a young man he felt called to missionary service and spent years in Africa, where he experienced both the rigors of evangelism and the deep joy of seeing people encounter Christ. But it was not on the mission field that Wieland's theology took its defining turn—it was in his study of Adventist history, especially the story of what happened at the 1888 General Conference session in Minneapolis.
+            </p>
+
+            <p>
+              In 1888, two young Adventist preachers, Ellet J. Waggoner and Alonzo T. Jones, brought a message to the church that emphasized justification by faith in Christ alone, the centrality of the cross, and the love of God as the motive for obedience. Ellen White endorsed the message as "most precious," declaring it to be heaven-sent light. Yet the church's leadership largely resisted, and the message was effectively shelved. Wieland became convinced that this rejection had shaped Adventism for generations, leaving it with a gospel weakened by legalism and fear.
+            </p>
+
+            <p>
+              In the 1950s, Wieland and his colleague Donald K. Short wrote <em>1888 Re-Examined</em>, a book that argued the Adventist church had corporately rejected a divine revelation and that it needed to corporately repent. The book was controversial—some saw it as a prophetic call to renewal, others as divisive criticism. Wieland endured decades of tension with church leadership, but he never backed down from his central conviction: that the gospel is God's initiative in Christ, not human performance, and that faith is trusting reception of already-given grace.
+            </p>
+
+            <div class="iv-body-2col">
+              <div>
+                <h3 class="iv-section-heading">Faith as Beholding, Not Striving</h3>
+                <p>
+                  Wieland's writings return again and again to the idea that biblical faith is not willpower or determination but heart-appreciation kindled by beholding the love of God. He taught that the cross reveals the Father's character, and that when the heart truly sees that revelation, repentance and obedience flow naturally. Fear-based religion, he insisted, produces only superficial conformity; love awakens genuine transformation. For Wieland, the issue was never whether God was pleased with us, but whether we had seen how pleased God already is to give us His Son.
+                </p>
+
+                <p>
+                  This led him to reframe traditional Adventist teachings on the investigative judgment and the law. He argued that judgment is not God looking for reasons to condemn but God publicly vindicating His grace and the transformed character of His people. The law's purpose is not to terrify but to reveal the beauty of God's character and invite us into relationship. And at the center of everything stands Christ's faithfulness—not ours—as the anchor of assurance. Wieland loved to emphasize Galatians 2:16 and the phrase "the faith of Jesus," insisting that it is Christ's own faithful obedience that saves us, and our faith is simply receiving that gift.
+                </p>
+              </div>
+              <aside class="iv-aside">
+                <strong>How this page reflects Wieland's influence</strong>
+                <ul>
+                  <li>The emphasis on <em>faith as heart-appreciation</em> awakened by beholding God's goodness mirrors Wieland's lifelong teaching.</li>
+                  <li>The refusal to treat faith as <em>human achievement</em> or willpower echoes his critique of legalistic religion.</li>
+                  <li>The focus on <em>Christ's faithfulness</em> as the anchor, not our own performance, reflects his reading of Galatians 2:16.</li>
+                  <li>The call for <em>love rather than fear</em> as the motive for obedience is central to his vision of the 1888 message.</li>
+                </ul>
+              </aside>
+            </div>
+
+            <p class="iv-tagline">
+              To speak here of heart-trust awakened by God's love, of faith as gift rather than achievement, and of Christ's faithfulness as our anchor is to walk the path Wieland marked out: a return to the most precious message of righteousness by faith that he believed the church still needed to fully receive.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <button class="back-to-top" onclick="scrollToTop()" id="backToTop" aria-label="Back to top">↑</button>
+
+  <script>
+    function toggleSection(header){
+      const section = header.parentElement;
+      const all = document.querySelectorAll('.section');
+      all.forEach(s => { if(s !== section && s.classList.contains('active')) s.classList.remove('active'); });
+      section.classList.toggle('active');
+      // Trigger BLB ScriptTagger to re-scan newly visible content
+      if (window.BLB && BLB.Tagger && BLB.Tagger.pageInit) {
+        setTimeout(() => BLB.Tagger.pageInit(), 0);
+      }
+    }
+
+    window.addEventListener('scroll', () => {
+      const btn = document.getElementById('backToTop');
+      if(window.pageYOffset > 300){ btn.classList.add('visible'); }
+      else { btn.classList.remove('visible'); }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const first = document.querySelector('.section');
+      if(first) first.classList.add('active');
+      // Trigger BLB ScriptTagger to re-scan newly visible content
+      if (window.BLB && BLB.Tagger && BLB.Tagger.pageInit) {
+        BLB.Tagger.pageInit();
+      }
+
+
+      const ivOverlay = document.getElementById('ivOverlay');
+      const ivOpen = document.querySelector('.iv-open');
+      const ivClose = ivOverlay ? ivOverlay.querySelector('.iv-close') : null;
+
+      function openInfluentialVoice(){
+        if(!ivOverlay) return;
+        ivOverlay.classList.add('visible');
+        ivOverlay.setAttribute('aria-hidden','false');
+      }
+
+      function closeInfluentialVoice(){
+        if(!ivOverlay) return;
+        ivOverlay.classList.remove('visible');
+        ivOverlay.setAttribute('aria-hidden','true');
+      }
+
+      if(ivOpen){
+        ivOpen.addEventListener('click', openInfluentialVoice);
+      }
+      if(ivClose){
+        ivClose.addEventListener('click', closeInfluentialVoice);
+      }
+      if(ivOverlay){
+        ivOverlay.addEventListener('click', (e) => {
+          if(e.target === ivOverlay){
+            closeInfluentialVoice();
+          }
+        });
+      }
+
+      document.addEventListener('keydown', (e) => {
+        if(e.key === 'Escape'){
+          closeInfluentialVoice();
+        }
+      });
+
+    });
+
+    function scrollToTop(){
+      window.scrollTo({ top:0, behavior:'smooth' });
+    }
+  </script>
+</body>
+</html>
