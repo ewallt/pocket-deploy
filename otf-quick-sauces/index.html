@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Quick Sauces — Pomodoro · Alla Vodka · Mushroom Marsala</title>
+<style>
+  :root{
+    --bg:#0b0c10; --panel:#121318; --ink:#e9eef3; --muted:#b3bdc7; --brand:#6ee7ff;
+    --accent:#ffd166; --ok:#9cffb3; --warn:#ffadad; --card:#161922; --chip:#1f2430;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif;
+    background:linear-gradient(180deg,#0a0b10, #0d1117 35%, #0a0b10 100%);
+    color:var(--ink);
+  }
+  header{
+    position:sticky; top:0; z-index:5;
+    backdrop-filter:saturate(1.2) blur(10px);
+    background:linear-gradient(180deg,rgba(10,12,16,.85),rgba(10,12,16,.55));
+    border-bottom:1px solid #1e2230;
+  }
+  .wrap{max-width:1000px;margin:0 auto;padding:20px}
+  .title{
+    display:flex; gap:14px; align-items:center; justify-content:space-between;
+  }
+  h1{font-weight:700; font-size:clamp(20px,2.6vw,28px); margin:4px 0 2px}
+  p.sub{margin:0;color:var(--muted)}
+  .tabs{display:flex; gap:8px; flex-wrap:wrap; margin:14px 0 6px}
+  .tab{
+    padding:10px 14px; border-radius:999px; border:1px solid #2a3142;
+    background:var(--chip); color:var(--ink); cursor:pointer; user-select:none;
+    transition:transform .05s ease, background .2s ease, border-color .2s ease;
+    font-weight:600; letter-spacing:.2px; font-size:14px;
+  }
+  .tab:hover{transform:translateY(-1px); border-color:#3a435a}
+  .tab.active{background:linear-gradient(180deg,#1f2634,#22293a); border-color:#4a90e2; box-shadow:0 0 0 2px rgba(110,231,255,.15) inset}
+  main{padding:20px}
+  .grid{display:grid; gap:16px; grid-template-columns:1fr; }
+  @media (min-width:860px){ .grid{grid-template-columns:1.1fr .9fr;} }
+  .card{
+    background:linear-gradient(180deg,#121521,#0f1420);
+    border:1px solid #1f2635; border-radius:18px; padding:18px;
+    box-shadow:0 10px 30px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.02);
+  }
+  h2{margin:.2rem 0 1rem; font-size:clamp(18px,2.2vw,24px)}
+  h3{margin:1rem 0 .5rem; font-size:clamp(15px,2vw,18px); color:#dfe7ff}
+  ul,ol{margin:.4rem 0 .6rem 1.1rem}
+  li{margin:.35rem 0; line-height:1.55}
+  .chips{display:flex; gap:8px; flex-wrap:wrap; margin:.5rem 0 0}
+  .chip{background:#1b2030;border:1px solid #2a3142;border-radius:999px;padding:6px 10px;color:var(--muted);font-size:12px}
+  .note{font-size:13px; color:var(--muted); margin-top:8px}
+  .btns{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
+  button, .ghost{
+    padding:10px 12px; border-radius:12px; border:1px solid #2a3142;
+    background:#1a2030; color:var(--ink); cursor:pointer; font-weight:600;
+  }
+  button:hover{filter:brightness(1.05)}
+  .ghost{background:transparent}
+  .callout{
+    background:linear-gradient(180deg,#0f1a20,#101a22); border:1px dashed #2d3a48;
+    border-radius:14px; padding:12px 14px; color:#d3e6f6; font-size:14px
+  }
+  .kbd{font-family:ui-monospace,Menlo,Consolas,monospace; background:#0f1420; padding:2px 6px; border-radius:6px; border:1px solid #2a3142; color:#cfe9ff}
+  footer{opacity:.8; color:var(--muted); font-size:12.5px; padding:8px 20px 30px}
+  .hidden{display:none}
+  .tip{color:#9bd1ff}
+</style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="title">
+        <div>
+          <h1>Quick Sauces</h1>
+          <p class="sub">Pomodoro (Chef Jean-Pierre) · Alla Vodka · Mushroom Marsala (Brian Lagerstrom)</p>
+        </div>
+        <div class="btns">
+          <button id="printBtn" title="Print this sauce">🖨️ Print</button>
+          <button id="modeBtn" class="ghost" title="Compact / Detailed">▤ View</button>
+        </div>
+      </div>
+      <div class="tabs" role="tablist" aria-label="Sauces">
+        <div class="tab active" data-target="pomodoro" role="tab" aria-selected="true">🍅 Pomodoro</div>
+        <div class="tab" data-target="vodka" role="tab" aria-selected="false">🥃 Alla Vodka</div>
+        <div class="tab" data-target="marsala" role="tab" aria-selected="false">🍄 Marsala</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- Pomodoro -->
+    <section id="pomodoro" class="grid sauce">
+      <article class="card">
+        <h2>Pomodoro (Chef Jean-Pierre)</h2>
+        <div class="chips">
+          <span class="chip">Time: ~15–25 min</span>
+          <span class="chip">Heat: medium→low</span>
+          <span class="chip">Yield: ~4 cups</span>
+        </div>
+        <h3>Ingredientes</h3>
+        <ul>
+          <li>3–4 Tbsp extra-virgin olive oil</li>
+          <li>1 small onion, finely diced</li>
+          <li>2–3 cloves garlic, finely chopped</li>
+          <li>1–1½ lb cherry or Campari tomatoes, halved (or good canned whole)</li>
+          <li>1 big handful fresh basil (stems optional), plus extra to finish</li>
+          <li>Salt & black pepper</li>
+          <li>Optional: grated Parmigiano-Reggiano to serve</li>
+        </ul>
+        <h3>Método</h3>
+        <ol>
+          <li>Heat oil over <strong>medium</strong>. Cook onion with a pinch of salt until <em>light golden</em>.</li>
+          <li>Add garlic; cook ~30–45 sec until fragrant (no browning).</li>
+          <li>Add tomatoes + most basil. Reduce to <strong>medium-low</strong>; simmer 10–15 min until tomatoes slump.</li>
+          <li>Lightly crush with a masher for a rustic texture. Season to taste.</li>
+          <li>Finish with torn basil; a knob of butter or splash of pasta water if you want extra gloss.</li>
+        </ol>
+        <div class="callout">
+          <strong>Notes:</strong> Keep it gently bubbling (not a rolling boil). If acidity is sharp, add a tiny pinch of sugar or a pat of butter.
+        </div>
+      </article>
+      <aside class="card">
+        <h3>Pairs & Variations</h3>
+        <ul>
+          <li>Finishing oil: peppery EVOO drizzle.</li>
+          <li>Chili: a pinch of red flakes for heat.</li>
+          <li>Use on: spaghetti, gnocchi, polenta, chicken, white beans.</li>
+        </ul>
+        <p class="note">Source style: Chef Jean-Pierre’s pomodoro from his “5 pasta sauces” masterclass.</p>
+      </aside>
+    </section>
+
+    <!-- Alla Vodka -->
+    <section id="vodka" class="grid sauce hidden">
+      <article class="card">
+        <h2>Pasta Alla Vodka (Brian Lagerstrom)</h2>
+        <div class="chips">
+          <span class="chip">Time: ~15 min</span>
+          <span class="chip">Heat: medium</span>
+          <span class="chip">Yield: ~4 cups</span>
+        </div>
+        <h3>Ingredients</h3>
+        <ul>
+          <li>3 Tbsp olive oil</li>
+          <li>1 small shallot (or ½ onion), minced</li>
+          <li>2–3 cloves garlic, minced</li>
+          <li>2–3 Tbsp chopped Calabrian chiles + pinch red flakes (optional)</li>
+          <li><strong>170 g</strong> tomato paste (≈ 6 oz)</li>
+          <li><strong>100 g</strong> vodka (≈ ½ cup minus a splash)</li>
+          <li><strong>350 g</strong> heavy cream (≈ 1½ cups)</li>
+          <li>2–3 Tbsp butter to finish</li>
+          <li>½–¾ cup finely grated Parmigiano-Reggiano</li>
+          <li>Kosher salt & black pepper</li>
+        </ul>
+        <h3>Method</h3>
+        <ol>
+          <li>Sweat shallot + garlic in oil with a pinch of salt (~3–5 min).</li>
+          <li>Stir in chiles/flakes (1–2 min). Add tomato paste; cook until it darkens slightly (2 min).</li>
+          <li>Deglaze with vodka and <strong>reduce hard</strong> 30–60 sec to cook off alcohol.</li>
+          <li>Add cream; simmer gently 3–5 min until glossy. Season.</li>
+          <li>Off heat: whisk in butter and Parm. Adjust thickness with a splash of pasta water or stock.</li>
+        </ol>
+        <div class="callout">
+          <strong>Media Crema option:</strong> temper first and keep heat low; enrich with a knob of butter for stability.
+        </div>
+      </article>
+      <aside class="card">
+        <h3>Serve With</h3>
+        <ul>
+          <li>Gnocchi, rigatoni, chicken cutlets, roasted cauliflower.</li>
+          <li>Finishes: extra Parm, chiffonade basil, black pepper.</li>
+        </ul>
+        <p class="note">Source style: Brian Lagerstrom’s “5 restaurant quality sauces” & his Alla Vodka write-ups.</p>
+      </aside>
+    </section>
+
+    <!-- Mushroom Marsala -->
+    <section id="marsala" class="grid sauce hidden">
+      <article class="card">
+        <h2>Mushroom Marsala (Brian Lagerstrom)</h2>
+        <div class="chips">
+          <span class="chip">Time: ~20 min</span>
+          <span class="chip">Heat: medium→medium-high</span>
+          <span class="chip">Yield: ~3–4 cups</span>
+        </div>
+        <h3>Ingredients</h3>
+        <ul>
+          <li>2–3 Tbsp olive oil</li>
+          <li>1 small onion or 1–2 shallots, finely diced</li>
+          <li>2 cloves garlic, minced</li>
+          <li>10–12 oz mushrooms (cremini + shiitake/oyster mix), sliced</li>
+          <li>Few sprigs fresh thyme</li>
+          <li><strong>½ cup</strong> Marsala wine</li>
+          <li><strong>¾–1 cup</strong> heavy cream (or stock + a splash of cream)</li>
+          <li>Kosher salt & black pepper</li>
+          <li>Parmigiano to finish (optional)</li>
+        </ul>
+        <h3>Method</h3>
+        <ol>
+          <li>Sweat onion in oil with a pinch of salt (3–4 min). Add garlic (30 sec).</li>
+          <li>Add mushrooms + pinch salt; cook until they release liquid and begin to brown (6–8 min). Add thyme.</li>
+          <li>Deglaze with Marsala; reduce nearly syrupy.</li>
+          <li>Add cream; simmer 3–5 min until it coats a spoon. Season.</li>
+          <li>Finish with Parm (optional). Thin with stock/water if needed.</li>
+        </ol>
+        <div class="callout">
+          <strong>Mushroom tips:</strong> don’t crowd the pan; let them brown. Mix cremini + shiitake for depth.
+        </div>
+      </article>
+      <aside class="card">
+        <h3>Serve With</h3>
+        <ul>
+          <li>Gnocchi, risotto, chicken, polenta, toasted baguette.</li>
+          <li>Finishes: parsley, black pepper, a drizzle of good EVOO.</li>
+        </ul>
+        <p class="note">Source style: Brian Lagerstrom’s Marsala cream approach from his sauce videos/posts.</p>
+      </aside>
+    </section>
+  </main>
+
+  <footer class="wrap">
+    Tip: Many sauces love a splash of <span class="tip">starchy pasta water</span> to balance salt and create a glossy emulsion.
+  </footer>
+
+<script>
+  // Tab behavior
+  const tabs = document.querySelectorAll('.tab');
+  const sections = document.querySelectorAll('.sauce');
+  tabs.forEach(tab=>{
+    tab.addEventListener('click', ()=>{
+      tabs.forEach(t=>{t.classList.remove('active'); t.setAttribute('aria-selected','false');});
+      sections.forEach(s=>s.classList.add('hidden'));
+      tab.classList.add('active'); tab.setAttribute('aria-selected','true');
+      const target = document.getElementById(tab.dataset.target);
+      if(target){ target.classList.remove('hidden'); window.scrollTo({top:0,behavior:'smooth'}); }
+    });
+  });
+
+  // Print current sauce
+  document.getElementById('printBtn').addEventListener('click', ()=>{
+    window.print();
+  });
+
+  // Toggle compact/detailed (collapse side panel on mobile)
+  const modeBtn = document.getElementById('modeBtn');
+  let compact = false;
+  modeBtn.addEventListener('click', ()=>{
+    compact = !compact;
+    document.querySelectorAll('.grid').forEach(g=>{
+      g.style.gridTemplateColumns = compact ? '1fr' : (window.innerWidth>=860?'1.1fr .9fr':'1fr');
+    });
+    modeBtn.textContent = compact ? '▦ Detailed' : '▤ View';
+  });
+
+  // Respect prefers-reduced-motion
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    window.scrollTo = function(opts){ window.scroll(0,0); };
+  }
+</script>
+</body>
+</html>
