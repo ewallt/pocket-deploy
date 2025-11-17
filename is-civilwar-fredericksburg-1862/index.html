@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fredericksburg (1862)</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111833;
+      --ink:#e6ecff;
+      --muted:#a7b0cc;
+      --brand:#8bb9ff;
+      --accent:#c0ffe1;
+      --border:#26325b;
+      --chip:#1a2347;
+      --bad:#ff6b6b;
+      --shadow:0 8px 28px rgba(0,0,0,.35);
+      --radius:12px;
+      --radius-sm:8px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+      line-height:1.6;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
+        radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+      padding-bottom:2rem;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .container{max-width:860px;margin:0 auto;padding:1rem}
+
+    header{
+      background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:2rem 1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+    }
+
+    h1{
+      color:var(--ink);
+      font-size:1.75rem;
+      margin-bottom:.5rem;
+      letter-spacing:-.015em;
+    }
+
+    .subtitle{
+      color:var(--muted);
+      font-size:.95rem;
+      font-style:italic;
+    }
+
+    .breadcrumb{
+      margin-bottom:1rem;
+      font-size:.9rem;
+    }
+    .breadcrumb a{color:var(--brand);text-decoration:none}
+    .breadcrumb span{color:var(--muted)}
+
+    .main-answer{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+      border-left:4px solid var(--brand);
+    }
+
+    .main-answer h2{
+      color:var(--brand);
+      font-size:1.3rem;
+      margin-bottom:1rem;
+      letter-spacing:.01em;
+    }
+
+    .main-answer p{font-size:1.05rem;line-height:1.7}
+
+    .section{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      margin-bottom:1rem;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .section-header{
+      padding:1.1rem 1.25rem;
+      background:linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%);
+      color:var(--ink);
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      border-bottom:1px solid var(--border);
+    }
+
+    .section-header h2{
+      font-size:1.15rem;
+      font-weight:700;
+      letter-spacing:.01em;
+    }
+
+    .section-icon{font-size:1.35rem;transition:transform .3s ease}
+    .section.active .section-icon{transform:rotate(180deg)}
+
+    .section-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+    .section.active .section-content{max-height:5000px}
+
+    .section-inner{padding:1.25rem}
+
+    h3{
+      color:var(--brand);
+      font-size:1.08rem;
+      margin:1.3rem 0 .65rem 0;
+      letter-spacing:.01em;
+    }
+    h3:first-child{margin-top:0}
+
+    .list-item{
+      background:color-mix(in oklab,var(--chip) 75%, transparent);
+      border-left:3px solid var(--brand);
+      padding:1rem;
+      margin-bottom:.75rem;
+      border-radius:var(--radius-sm);
+      border:1px solid var(--border);
+    }
+
+    .timeline{
+      border-left:3px solid var(--brand);
+      padding-left:1.25rem;
+      margin-left:.5rem;
+    }
+
+    .timeline-item{
+      margin-bottom:1.25rem;
+      position:relative;
+    }
+
+    .timeline-item::before{
+      content:'';
+      position:absolute;left:-1.65rem;top:.25rem;
+      width:12px;height:12px;border-radius:50%;
+      background:var(--brand);border:3px solid var(--panel);
+      box-shadow:0 0 0 2px var(--brand);
+    }
+
+    .timeline-item:last-child{
+      margin-bottom:0;
+    }
+
+    .timeline-item:last-child::before{
+      width:16px;
+      height:16px;
+      left:-1.75rem;
+      background:var(--accent);
+      box-shadow:0 0 0 2px var(--accent);
+    }
+
+    .timeline-item strong{color:var(--brand);display:block;margin-bottom:.25rem}
+
+    .source{
+      background:color-mix(in oklab,var(--chip) 65%, transparent);
+      border-radius:8px;padding:1rem;margin-top:1.2rem;
+      font-size:.95rem;color:var(--muted);
+      border:1px solid var(--border);
+    }
+    .source strong{color:var(--ink)}
+
+    .back-to-top{
+      position:fixed;bottom:1.5rem;right:1rem;
+      background:var(--brand);color:#001;
+      width:50px;height:50px;border-radius:50%;
+      border:none;font-size:1.5rem;cursor:pointer;
+      box-shadow:var(--shadow);opacity:0;transition:opacity .3s ease;
+      z-index:1000;display:flex;align-items:center;justify-content:center;
+      font-weight:900;
+    }
+    .back-to-top.visible{opacity:1}
+    .back-to-top:active{transform:scale(.96)}
+
+    a{color:var(--brand)}
+
+    @media (max-width:480px){
+      h1{font-size:1.5rem}
+      .section-header h2{font-size:1.05rem}
+      .container{padding:.75rem}
+      header{padding:1.5rem 1rem}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="https://ewallt.github.io/pocket-deploy/is-civilwar-hub/index.html">Civil War Hub</a> <span>›</span> Fredericksburg
+    </div>
+
+    <header>
+      <h1>Fredericksburg (1862)</h1>
+      <p class="subtitle">Futile Courage Against Stone Wall</p>
+    </header>
+
+    <div class="main-answer">
+      <h2>Core Summary</h2>
+      <p>On December 13, 1862, General Ambrose Burnside ordered the Army of the Potomac to assault Lee's fortified positions on the heights behind Fredericksburg, Virginia. Wave after wave of Union infantry charged across open ground toward Confederate troops protected by a stone wall and sunken road. Longstreet's artillery and rifle fire slaughtered attackers with mechanical efficiency. Burnside launched 14 separate assaults; all failed. Over 12,000 Union casualties bought no tactical gain. Lee, watching the carnage, reportedly said: 'It is well that war is so terrible, otherwise we should grow too fond of it.' The disaster destroyed Burnside's credibility and Northern morale plummeted to its lowest point.</p>
+    </div>
+
+        <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🎯 Strategic Context</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Lincoln's Impatience:</strong> After Antietam, McClellan refused to pursue Lee. Lincoln relieved him and appointed Burnside, who protested he was unqualified. Lincoln insisted the Army of the Potomac must move before winter.
+          </div>
+          <div class="list-item">
+            <strong>Race to Fredericksburg:</strong> Burnside marched swiftly toward Fredericksburg, planning to cross the Rappahannock River before Lee could concentrate. Pontoon bridges arrived late. The delay gave Lee time to fortify the heights.
+          </div>
+          <div class="list-item">
+            <strong>Burnside's Dilemma:</strong> With Lee dug in on commanding terrain, Burnside should have withdrawn or flanked. Political pressure and personal pride drove him to attack the strongest position in Virginia.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🪖 Forces & Commanders</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Union:</strong> Burnside commanded 114,000 troops organized in three Grand Divisions. Sumner and Franklin commanded the assault forces. Burnside's coordination was poor; attacks were piecemeal and poorly supported.
+          </div>
+          <div class="list-item">
+            <strong>Confederate:</strong> Lee commanded 72,500 troops perfectly positioned. Longstreet held Marye's Heights and the stone wall. Jackson anchored the right. Confederate artillery dominated the battlefield.
+          </div>
+          <div class="list-item">
+            <strong>Casualties:</strong> Union: 1,284 killed, 9,600 wounded, 1,769 missing. Confederate: 595 killed, 4,061 wounded, 653 missing. Total: approximately 17,962 casualties, the vast majority Union.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📅 Timeline</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="timeline">
+          <div class="list-item">
+            <strong>December 11:</strong> Union engineers lay pontoon bridges under Confederate sniper fire. Federal artillery bombards Fredericksburg. Union troops cross and occupy the town.
+          </div>
+          <div class="list-item">
+            <strong>December 12:</strong> Lee completes defensive preparations. Confederate troops hold nearly impregnable positions on Marye's Heights with clear fields of fire. Lee invites attack.
+          </div>
+          <div class="list-item">
+            <strong>December 13, morning:</strong> Franklin's Left Grand Division attacks Jackson's position. Initial success collapses when Confederate counterattacks drive Union forces back.
+          </div>
+          <div class="list-item">
+            <strong>December 13, afternoon:</strong> Sumner's Right Grand Division assaults Marye's Heights. Brigade after brigade charges across open ground toward the stone wall. All are repulsed with terrible loss.
+          </div>
+          <div class="list-item">
+            <strong>December 13, evening:</strong> Burnside orders continued attacks despite obvious futility. Officers beg him to stop. Finally, darkness ends the slaughter. Wounded freeze on the battlefield overnight.
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>⚡ Turning Points</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>The Stone Wall:</strong> Confederate infantry lined four-deep behind a stone wall at the base of Marye's Heights fired devastating volleys. Union troops who reached within 100 yards were mowed down. The position was impregnable to frontal assault.
+          </div>
+          <div class="list-item">
+            <strong>Meade's Breakthrough:</strong> George Meade's division briefly penetrated Jackson's line, creating an opportunity. Franklin failed to support or exploit the breakthrough. Confederate reserves sealed the gap.
+          </div>
+          <div class="list-item">
+            <strong>Burnside's Obsession:</strong> Despite catastrophic losses, Burnside planned to personally lead his old IX Corps in a final assault. Subordinates convinced him to cancel. One more attack would have annihilated the corps.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📊 Outcomes</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Complete Confederate Victory:</strong> Lee inflicted 3:1 casualties without tactical risk. Burnside's army was thoroughly beaten. The Army of Northern Virginia's morale soared; Fredericksburg seemed proof of Confederate invincibility.
+          </div>
+          <div class="list-item">
+            <strong>Northern Despair:</strong> News of the disaster crushed Northern morale. Lincoln reportedly said: 'If there is a worse place than Hell, I am in it.' Calls for negotiated peace intensified.
+          </div>
+          <div class="list-item">
+            <strong>Burnside's Removal:</strong> Burnside attempted one more offensive—the infamous 'Mud March' in January 1863—which bogged down in winter storms. Lincoln relieved him, appointing Joseph Hooker to command.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🔍 Historical Significance</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <p style="margin-bottom:1rem">Fredericksburg stands as one of history's most one-sided battles. Historian Shelby Foote called it 'the most lopsided Confederate victory of the war.' The battle demonstrated the futility of frontal assaults against entrenched defenders—a lesson too often forgotten in later battles. Lee's perfect defensive victory strengthened his reputation for invincibility and emboldened him to launch the Gettysburg campaign. For the Union, Fredericksburg represented the Army of the Potomac's nadir. Soldiers' faith in their commanders evaporated. Yet the army's courage under impossible conditions proved its fighting spirit. Within months, many of these same regiments would fight desperately at Chancellorsville and Gettysburg. The battle's images—Union dead stacked before the stone wall, wounded freezing through the night—haunted both nations.</p>
+          <div class="source">
+            <strong>Primary Sources:</strong> Burnside's tortured official reports, soldiers' letters describing the carnage, Joshua Chamberlain's vivid account.
+          </div>
+          <div class="source">
+            <strong>Key Works:</strong> George C. Rable, Fredericksburg! Fredericksburg! (2002); Francis A. O'Reilly, The Fredericksburg Campaign (2003).
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+  <button class="back-to-top" onclick="scrollToTop()">↑</button>
+
+  <script>
+    function toggleSection(header){
+      const section = header.parentElement;
+      const allSections = document.querySelectorAll('.section');
+      allSections.forEach(s=>{
+        if(s !== section) s.classList.remove('active');
+      });
+      section.classList.toggle('active');
+    }
+
+    function scrollToTop(){
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    window.addEventListener('scroll', ()=>{
+      const btn = document.querySelector('.back-to-top');
+      if(window.scrollY > 300){
+        btn.classList.add('visible');
+      } else {
+        btn.classList.remove('visible');
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shiloh (1862)</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111833;
+      --ink:#e6ecff;
+      --muted:#a7b0cc;
+      --brand:#8bb9ff;
+      --accent:#c0ffe1;
+      --border:#26325b;
+      --chip:#1a2347;
+      --bad:#ff6b6b;
+      --shadow:0 8px 28px rgba(0,0,0,.35);
+      --radius:12px;
+      --radius-sm:8px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+      line-height:1.6;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
+        radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+      padding-bottom:2rem;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .container{max-width:860px;margin:0 auto;padding:1rem}
+
+    header{
+      background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:2rem 1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+    }
+
+    h1{
+      color:var(--ink);
+      font-size:1.75rem;
+      margin-bottom:.5rem;
+      letter-spacing:-.015em;
+    }
+
+    .subtitle{
+      color:var(--muted);
+      font-size:.95rem;
+      font-style:italic;
+    }
+
+    .breadcrumb{
+      margin-bottom:1rem;
+      font-size:.9rem;
+    }
+    .breadcrumb a{color:var(--brand);text-decoration:none}
+    .breadcrumb span{color:var(--muted)}
+
+    .main-answer{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+      border-left:4px solid var(--brand);
+    }
+
+    .main-answer h2{
+      color:var(--brand);
+      font-size:1.3rem;
+      margin-bottom:1rem;
+      letter-spacing:.01em;
+    }
+
+    .main-answer p{font-size:1.05rem;line-height:1.7}
+
+    .section{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      margin-bottom:1rem;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .section-header{
+      padding:1.1rem 1.25rem;
+      background:linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%);
+      color:var(--ink);
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      border-bottom:1px solid var(--border);
+    }
+
+    .section-header h2{
+      font-size:1.15rem;
+      font-weight:700;
+      letter-spacing:.01em;
+    }
+
+    .section-icon{font-size:1.35rem;transition:transform .3s ease}
+    .section.active .section-icon{transform:rotate(180deg)}
+
+    .section-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+    .section.active .section-content{max-height:5000px}
+
+    .section-inner{padding:1.25rem}
+
+    h3{
+      color:var(--brand);
+      font-size:1.08rem;
+      margin:1.3rem 0 .65rem 0;
+      letter-spacing:.01em;
+    }
+    h3:first-child{margin-top:0}
+
+    .list-item{
+      background:color-mix(in oklab,var(--chip) 75%, transparent);
+      border-left:3px solid var(--brand);
+      padding:1rem;
+      margin-bottom:.75rem;
+      border-radius:var(--radius-sm);
+      border:1px solid var(--border);
+    }
+
+    .timeline{
+      border-left:3px solid var(--brand);
+      padding-left:1.25rem;
+      margin-left:.5rem;
+    }
+
+    .timeline-item{
+      margin-bottom:1.25rem;
+      position:relative;
+    }
+
+    .timeline-item::before{
+      content:'';
+      position:absolute;left:-1.65rem;top:.25rem;
+      width:12px;height:12px;border-radius:50%;
+      background:var(--brand);border:3px solid var(--panel);
+      box-shadow:0 0 0 2px var(--brand);
+    }
+
+    .timeline-item:last-child{
+      margin-bottom:0;
+    }
+
+    .timeline-item:last-child::before{
+      width:16px;
+      height:16px;
+      left:-1.75rem;
+      background:var(--accent);
+      box-shadow:0 0 0 2px var(--accent);
+    }
+
+    .timeline-item strong{color:var(--brand);display:block;margin-bottom:.25rem}
+
+    .source{
+      background:color-mix(in oklab,var(--chip) 65%, transparent);
+      border-radius:8px;padding:1rem;margin-top:1.2rem;
+      font-size:.95rem;color:var(--muted);
+      border:1px solid var(--border);
+    }
+    .source strong{color:var(--ink)}
+
+    .back-to-top{
+      position:fixed;bottom:1.5rem;right:1rem;
+      background:var(--brand);color:#001;
+      width:50px;height:50px;border-radius:50%;
+      border:none;font-size:1.5rem;cursor:pointer;
+      box-shadow:var(--shadow);opacity:0;transition:opacity .3s ease;
+      z-index:1000;display:flex;align-items:center;justify-content:center;
+      font-weight:900;
+    }
+    .back-to-top.visible{opacity:1}
+    .back-to-top:active{transform:scale(.96)}
+
+    a{color:var(--brand)}
+
+    @media (max-width:480px){
+      h1{font-size:1.5rem}
+      .section-header h2{font-size:1.05rem}
+      .container{padding:.75rem}
+      header{padding:1.5rem 1rem}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="https://ewallt.github.io/pocket-deploy/is-civilwar-hub/index.html">Civil War Hub</a> <span>›</span> Shiloh
+    </div>
+
+    <header>
+      <h1>Shiloh (1862)</h1>
+      <p class="subtitle">The Bloodiest Battle in American History—Until It Wasn't</p>
+    </header>
+
+    <div class="main-answer">
+      <h2>Core Summary</h2>
+      <p>On April 6-7, 1862, Confederate General Albert Sidney Johnston attacked General Ulysses S. Grant's army encamped near Pittsburg Landing on the Tennessee River. The Confederates achieved complete surprise, driving Union forces back to the river's edge. Johnston's death on the first day blunted Confederate momentum. Overnight, Union reinforcements arrived. Grant counterattacked on April 7, recapturing lost ground and forcing General P.G.T. Beauregard to retreat. Over 23,000 combined casualties shocked both nations and revealed the war's scale. Grant's victory secured Union control of the Tennessee River and opened the path to Vicksburg.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🎯 Strategic Context</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Western Theater:</strong> After capturing Forts Henry and Donelson, Grant's army controlled the Tennessee River. Confederate defenses in Kentucky and Tennessee had collapsed. Grant waited at Pittsburg Landing for Buell's Army of the Ohio to join him for an advance on Corinth, Mississippi.
+          </div>
+          <div class="list-item">
+            <strong>Confederate Concentration:</strong> Johnston gathered Confederate forces at Corinth, planning to attack Grant before Buell arrived. He marched 40,000 troops through rain and mud, hoping surprise would compensate for Union numbers.
+          </div>
+          <div class="list-item">
+            <strong>Grant's Overconfidence:</strong> Grant dismissed reports of Confederate concentration. His army camped with its back to the river, conducting drill and training. Minimal pickets were posted. Grant expected to attack, not defend.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🪖 Forces & Commanders</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Union (Day 1):</strong> Grant commanded approximately 42,000 troops. William T. Sherman's division bore the brunt of the initial attack. Don Carlos Buell's 25,000-man Army of the Ohio arrived the evening of April 6.
+          </div>
+          <div class="list-item">
+            <strong>Confederate:</strong> Johnston led 40,000 troops in the assault. General P.G.T. Beauregard served as second-in-command. When Johnston bled to death from a leg wound, Beauregard took command but lacked Johnston's aggressive drive.
+          </div>
+          <div class="list-item">
+            <strong>Casualties:</strong> Union: 1,754 killed, 8,408 wounded, 2,885 captured/missing. Confederate: 1,728 killed, 8,012 wounded, 959 missing. Total: approximately 23,746 casualties—more than all previous American wars combined.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📅 Timeline</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="timeline">
+            <div class="timeline-item">
+              <strong>April 6, dawn:</strong> Confederate attack achieves complete surprise. Sherman's camps are overrun. Union troops, many eating breakfast, flee in confusion. Sherman rallies resistance but is driven back.
+            </div>
+            <div class="timeline-item">
+              <strong>April 6, morning-afternoon:</strong> Confederate assaults push Union forces toward the river. Pockets of resistance slow the advance. The "Hornets' Nest"—a sunken road held by Benjamin Prentiss—withstands repeated attacks for hours.
+            </div>
+            <div class="timeline-item">
+              <strong>April 6, late afternoon:</strong> Johnston is killed directing an attack. Prentiss finally surrenders after 11 Confederate assaults. Union line stabilizes near Pittsburg Landing with artillery support from gunboats. Beauregard halts attacks at nightfall.
+            </div>
+            <div class="timeline-item">
+              <strong>April 6-7, overnight:</strong> Buell's army crosses the river. Lew Wallace's division arrives. Grant now commands 55,000 men versus Beauregard's exhausted 30,000. Torrential rain drenches both armies.
+            </div>
+            <div class="timeline-item">
+              <strong>April 7:</strong> Grant counterattacks at dawn. Fresh Union troops recapture lost ground. By afternoon, Confederates retreat toward Corinth. Grant, content with tactical victory, does not pursue aggressively.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>⚡ Turning Points</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Johnston's Death:</strong> The Confederate commander bled to death from a leg wound—possibly survivable if a tourniquet had been applied. His death at the moment of victory shifted Confederate command to the more cautious Beauregard.
+          </div>
+          <div class="list-item">
+            <strong>The Hornets' Nest:</strong> Prentiss's defense of the sunken road consumed hours and thousands of Confederate lives. The delay allowed Grant to organize a final defensive line and gave Buell time to arrive.
+          </div>
+          <div class="list-item">
+            <strong>Buell's Arrival:</strong> The Army of the Ohio's timely reinforcement transformed near-disaster into counterattack. Fresh troops on April 7 overwhelmed exhausted Confederates who had fought all day April 6.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📊 Outcomes</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Strategic Victory:</strong> Grant retained control of the Tennessee River and advanced toward Corinth, which fell a month later. The Union offensive in the West continued despite the battle's cost.
+          </div>
+          <div class="list-item">
+            <strong>Casualties Shock the Nation:</strong> Shiloh's 23,000+ casualties exceeded all previous battles combined. Newspapers North and South reeled at the carnage. Calls for Grant's removal intensified, but Lincoln replied: "I can't spare this man; he fights."
+          </div>
+          <div class="list-item">
+            <strong>End of Illusions:</strong> After Shiloh, no one expected a short war. The battle's ferocity—desperate hand-to-hand combat, charges across corpse-strewn fields—previewed four more years of industrial-scale slaughter.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🔍 Historical Significance</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <p style="margin-bottom:1rem">Shiloh marked the war's transition from limited conflict to total war. Historian James McPherson notes that "Shiloh changed the character of the war from limited conflict to total war." Grant later wrote: "I gave up all idea of saving the Union except by complete conquest." The battle's staggering casualties—once inconceivable—became routine within months. Johnston's death deprived the Confederacy of its most aggressive Western commander. Beauregard, Braxton Bragg, and later commanders never matched his offensive spirit. Grant survived political attacks and went on to Vicksburg, Chattanooga, and ultimate command of Union armies. Shiloh revealed both his resilience under pressure and his determination to fight through setbacks.</p>
+          <div class="source">
+            <strong>Primary Sources:</strong> Grant's <em>Personal Memoirs</em>, Sherman's memoirs, official reports, soldiers' letters describing the battle's horror.
+          </div>
+          <div class="source">
+            <strong>Key Works:</strong> Larry J. Daniel, <em>Shiloh: The Battle That Changed the Civil War</em> (1997); Wiley Sword, <em>Shiloh: Bloody April</em> (1974).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="back-to-top" onclick="scrollToTop()">↑</button>
+
+  <script>
+    function toggleSection(header){
+      const section = header.parentElement;
+      const allSections = document.querySelectorAll('.section');
+      allSections.forEach(s=>{
+        if(s !== section) s.classList.remove('active');
+      });
+      section.classList.toggle('active');
+    }
+
+    function scrollToTop(){
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    window.addEventListener('scroll', ()=>{
+      const btn = document.querySelector('.back-to-top');
+      if(window.scrollY > 300){
+        btn.classList.add('visible');
+      } else {
+        btn.classList.remove('visible');
+      }
+    });
+  </script>
+</body>
+</html>
