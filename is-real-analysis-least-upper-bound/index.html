@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Least Upper Bound Property</title>
+  <style>
+    :root{--bg:#0b1020;--panel:#111833;--ink:#e6ecff;--muted:#a7b0cc;--brand:#8bb9ff;--accent:#c0ffe1;--border:#26325b;--chip:#1a2347;--bad:#ff6b6b;--shadow:0 8px 28px rgba(0,0,0,.35);--radius:12px;--radius-sm:8px}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;color:var(--ink);background:radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),var(--bg);line-height:1.6;min-height:100vh;padding-bottom:2rem;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+    .container{max-width:860px;margin:0 auto;padding:1rem}
+    .breadcrumb{margin-bottom:1rem;font-size:.92rem}
+    .breadcrumb a{color:var(--brand);text-decoration:none}
+    .breadcrumb span{color:var(--muted);margin:0 .5rem}
+    header{background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));border:1px solid var(--border);border-radius:var(--radius);padding:2rem 1.5rem;margin-bottom:1.25rem;box-shadow:var(--shadow)}
+    h1{font-size:1.75rem;color:var(--ink);margin-bottom:.4rem;letter-spacing:-.015em}
+    .subtitle{color:var(--muted);font-size:.95rem;font-style:italic}
+    .main-answer{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.25rem;box-shadow:var(--shadow);border-left:4px solid var(--brand)}
+    .main-answer h2{color:var(--brand);font-size:1.25rem;margin-bottom:.8rem}
+    .main-answer p{font-size:1.03rem;line-height:1.7;color:var(--muted)}
+    .section{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:1rem;box-shadow:var(--shadow);overflow:hidden}
+    .section-header{padding:1.05rem 1.25rem;background:linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%);color:var(--ink);cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;border-bottom:1px solid var(--border)}
+    .section-header h2{font-size:1.12rem;font-weight:700;letter-spacing:.01em}
+    .section-icon{font-size:1.35rem;transition:transform .3s ease}
+    .section.active .section-icon{transform:rotate(180deg)}
+    .section-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+    .section.active .section-content{max-height:5000px}
+    .section-inner{padding:1.25rem}
+    h3{color:var(--brand);font-size:1.06rem;margin:1.1rem 0 .6rem 0;letter-spacing:.01em}
+    h3:first-child{margin-top:0}
+    .list-item{background:color-mix(in oklab,var(--chip) 75%, transparent);border-left:3px solid var(--brand);padding:1rem;margin-bottom:.75rem;border-radius:var(--radius-sm);border:1px solid var(--border);color:var(--muted)}
+    .list-item strong{color:var(--brand);display:block;margin-bottom:.25rem}
+    .example-block{background:color-mix(in oklab,var(--chip) 65%, transparent);border-radius:var(--radius-sm);border:1px solid var(--border);padding:1rem;margin-bottom:.75rem;color:var(--muted)}
+    .example-block strong{color:var(--accent);display:block;margin-bottom:.25rem}
+    .source{background:color-mix(in oklab,var(--chip) 65%, transparent);border-radius:8px;padding:1rem;margin-top:1rem;font-size:.95rem;color:var(--muted);border:1px solid var(--border)}
+    .source strong{color:var(--ink)}
+    .back-to-top{position:fixed;bottom:1.5rem;right:1rem;background:var(--brand);color:#001;width:50px;height:50px;border-radius:50%;border:none;font-size:1.5rem;cursor:pointer;box-shadow:var(--shadow);opacity:0;transition:opacity .3s ease;z-index:1000;display:flex;align-items:center;justify-content:center;font-weight:900}
+    .back-to-top.visible{opacity:1}
+    .back-to-top:active{transform:scale(.96)}
+    a{color:var(--brand)}
+    @media (max-width:480px){h1{font-size:1.5rem}.section-header h2{font-size:1.05rem}.container{padding:.75rem}header{padding:1.5rem 1rem}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="https://ewallt.github.io/pocket-deploy/is-real-analysis-hub/index.html">Real Analysis Hub</a>
+      <span>›</span>
+      Least Upper Bound Property
+    </div>
+
+    <header>
+      <h1>Least Upper Bound Property</h1>
+      <p class="subtitle">Every nonempty bounded-above set has a supremum in ℝ</p>
+    </header>
+
+    <section class="main-answer">
+      <h2>Concept Snapshot</h2>
+      <p>
+        The Least Upper Bound Property (also called the Completeness Axiom or Supremum Property) states that every nonempty
+        subset of ℝ that is bounded above has a least upper bound (supremum) in ℝ. This fundamental axiom distinguishes
+        the real numbers from the rationals and underpins all of real analysis. It is equivalent to the Monotone Convergence
+        Theorem, the Cauchy Criterion, the Heine-Borel Theorem, and the nested interval property. Without this axiom, many
+        core theorems of calculus would fail.
+      </p>
+    </section>
+
+    <section class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🧩 Concept Overview</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Statement.</strong>
+            Let S ⊆ ℝ be nonempty and bounded above (i.e., ∃M ∈ ℝ with s ≤ M for all s ∈ S). Then S has a least upper bound sup S ∈ ℝ. That is, sup S is the smallest number M such that s ≤ M for all s ∈ S.
+          </div>
+          <div class="list-item">
+            <strong>Intuitive Meaning.</strong>
+            Every set that doesn't go off to infinity upward has a "ceiling" that is the best (smallest) possible upper bound, and this ceiling is a real number—not missing from the number line.
+          </div>
+          <div class="list-item">
+            <strong>Role in Analysis.</strong>
+            The LUB Property is the defining completeness axiom of ℝ. It ensures no "gaps" in the real line, allowing limits, integrals, and continuous functions to behave as expected. It is equivalent to other notions of completeness.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📚 Assumptions & Definitions</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Upper Bound.</strong>
+            M is an upper bound for S if s ≤ M for all s ∈ S. A set S is bounded above if at least one upper bound exists.
+          </div>
+          <div class="list-item">
+            <strong>Supremum (Least Upper Bound).</strong>
+            α = sup S is the least upper bound if: (1) α is an upper bound for S, and (2) if M is any upper bound, then α ≤ M. Equivalently: for every ε > 0, ∃s ∈ S with s > α − ε (otherwise α − ε would be a smaller upper bound).
+          </div>
+          <div class="list-item">
+            <strong>Infimum (Greatest Lower Bound).</strong>
+            Similarly, every nonempty set bounded below has an infimum inf S ∈ ℝ, the greatest lower bound. The LUB Property and GLB Property are equivalent.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🧮 Proof Outline</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <h3>Axiom vs. Theorem</h3>
+          <div class="list-item">
+            <strong>As Axiom.</strong>
+            In most modern treatments, the LUB Property is taken as an axiom defining ℝ (along with the field axioms and order axioms). It cannot be proved from the field and order properties alone—ℚ satisfies those but not LUB.
+          </div>
+          <div class="list-item">
+            <strong>Constructive Proof (Dedekind Cuts).</strong>
+            One can construct ℝ from ℚ via Dedekind cuts: define ℝ as the set of all cuts (partitions of ℚ into lower and upper parts). The LUB Property then becomes a theorem: the union of lower parts of cuts corresponding to elements of S is itself a cut, which is sup S.
+          </div>
+          <div class="list-item">
+            <strong>Constructive Proof (Cauchy Sequences).</strong>
+            Alternatively, construct ℝ as equivalence classes of Cauchy sequences of rationals. The LUB Property follows from showing that a bounded increasing sequence of rationals is Cauchy and defines a real number equal to sup S.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>💡 Key Insights & Intuition</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>ℝ has no gaps, ℚ does.</strong>
+            In ℚ, the set S = {x ∈ ℚ : x² < 2} is nonempty and bounded above but has no supremum in ℚ (since √2 ∉ ℚ). ℝ "fills in" all such gaps.
+          </div>
+          <div class="list-item">
+            <strong>Supremum vs. Maximum.</strong>
+            sup S may or may not be in S. If sup S ∈ S, we call it max S. Example: sup(0,1) = 1 but max does not exist; sup[0,1] = max[0,1] = 1.
+          </div>
+          <div class="list-item">
+            <strong>Characterization of Supremum.</strong>
+            α = sup S ⇔ (1) s ≤ α for all s ∈ S, and (2) for every ε > 0, ∃s ∈ S with s > α − ε. The second condition ensures α is the *least* upper bound.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>⚙️ Applications & Examples</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="example-block">
+            <strong>Defining Irrational Numbers.</strong>
+            √2 = sup{x ∈ ℚ : x² < 2}. The LUB Property guarantees √2 exists as a real number. Similarly for π, e, and all other irrationals.
+          </div>
+          <div class="example-block">
+            <strong>Monotone Convergence Theorem.</strong>
+            If (xₙ) is increasing and bounded above, then xₙ → sup{xₙ}. Proof uses LUB Property to assert that sup exists.
+          </div>
+          <div class="example-block">
+            <strong>Intermediate Value Theorem.</strong>
+            Proof: if f is continuous on [a,b] with f(a) < k < f(b), let S = {x ∈ [a,b] : f(x) < k}. Then c = sup S exists by LUB. Continuity and LUB together imply f(c) = k.
+          </div>
+          <div class="example-block">
+            <strong>Example: sup{1 − 1/n : n ∈ ℕ} = 1.</strong>
+            The sequence 0, 1/2, 2/3, 3/4, ... approaches 1 from below. sup = 1 (not in the set), and inf = 0 (in the set).
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🔁 Connections & Extensions</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Equivalent Formulations of Completeness.</strong>
+            The following are equivalent for ℝ: (1) LUB Property, (2) Monotone Convergence Theorem, (3) Cauchy Criterion, (4) Nested Interval Property, (5) Bolzano-Weierstrass Theorem, (6) Heine-Borel Theorem. Each can be derived from any other.
+          </div>
+          <div class="list-item">
+            <strong>Ordered Field.</strong>
+            ℚ is an ordered field but not complete. ℝ is the unique (up to isomorphism) complete ordered field. This uniqueness is a deep result.
+          </div>
+          <div class="list-item">
+            <strong>Generalization to Lattices.</strong>
+            In lattice theory, the LUB Property generalizes to: every bounded subset of a complete lattice has a supremum and infimum.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🧠 Historical Note</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Origins.</strong>
+            The need for completeness emerged in the 19th century. Richard Dedekind (1872) rigorously constructed ℝ via cuts, proving the LUB Property. Georg Cantor (1872) independently constructed ℝ via Cauchy sequences.
+          </div>
+          <div class="list-item">
+            <strong>Foundational Role.</strong>
+            The LUB Property resolved paradoxes and pathologies in early calculus (e.g., functions with no maximum, series with unclear limits). It became the cornerstone of Weierstrass's epsilon-delta rigorization of analysis.
+          </div>
+          <div class="source">
+            <strong>Further Reading:</strong> Walter Rudin, <em>Principles of Mathematical Analysis</em>, ch. 1; Kenneth Ross, <em>Elementary Analysis</em>; Edmund Landau, <em>Foundations of Analysis</em>.
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <button class="back-to-top" id="backToTop" onclick="scrollToTop()" aria-label="Back to top">↑</button>
+
+  <script>
+    function toggleSection(header){const section = header.parentElement;const all = document.querySelectorAll('.section');all.forEach(s => {if(s !== section && s.classList.contains('active')) s.classList.remove('active')});section.classList.toggle('active')}
+    window.addEventListener('scroll', () => {const btn = document.getElementById('backToTop');if(window.pageYOffset > 300){ btn.classList.add('visible'); }else { btn.classList.remove('visible'); }});
+    document.addEventListener('DOMContentLoaded', () => {const first = document.querySelector('.section');if(first) first.classList.add('active')});
+    function scrollToTop(){window.scrollTo({ top:0, behavior:'smooth' })}
+  </script>
+</body>
+</html>

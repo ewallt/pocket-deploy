@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Adaptive Reader</title>
+
+  <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+  <script>tailwind.config = { darkMode: 'class' }</script>
+
+  <script src="https://www.blueletterbible.org/scripts/blbToolTip/BLB_ScriptTagger-min.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+
+  <style>
+    /* Typography */
+    .font-newspaper{font-family:'Lora',serif}
+    .font-dark-theme{font-family:'Lora',serif}
+    body{transition:background .3s,color .3s}
+    .prose h1{min-height:7.5rem}
+
+    /* --- Classic Themes (Original) --- */
+    .newspaper-theme{background:#fdfdfd;color:#1a1a1a}
+    .newspaper-theme .nav-button{background:#f8f9fa;border:1px solid #dee2e6;color:#212529}
+    .newspaper-theme .nav-button:hover{background:#e9ecef}
+    .newspaper-theme .nav-button.active{background:#1a1a1a;color:#fdfdfd}
+
+    .dark-theme{background:#2d2d30;color:#fff}
+    .dark-theme .nav-button{background:#3c3c3c;border:1px solid #4a4a4a;color:#ccc}
+    .dark-theme .nav-button:hover{background:#4a4a4a}
+    .dark-theme .nav-button.active{background:#fff;color:#2d2d30}
+    
+    /* --- New Variable-Based Theme Engine --- */
+    :root {
+        --bg-gradient: #fdfdfd;
+        --text: #1a1a1a;
+        --accent-text: #1a1a1a;
+        --nav-bg: #f8f9fa;
+        --nav-border: #dee2e6;
+        --nav-text: #212529;
+        --nav-hover-bg: #e9ecef;
+        --nav-active-bg: #1a1a1a;
+        --nav-active-text: #fdfdfd;
+    }
+    
+    .variable-theme {
+        background: var(--bg-gradient);
+        color: var(--text);
+        font-family: 'Lora', serif;
+    }
+    .variable-theme .prose h1,
+    .variable-theme .prose h2,
+    .variable-theme .prose h3 {
+        color: var(--accent-text);
+    }
+    .variable-theme .nav-button {
+        background-color: var(--nav-bg);
+        border: 1px solid var(--nav-border);
+        color: var(--nav-text);
+    }
+    .variable-theme .nav-button:hover {
+        background-color: var(--nav-hover-bg);
+    }
+    .variable-theme .nav-button.active {
+        background-color: var(--nav-active-bg);
+        color: var(--nav-active-text);
+    }
+    .variable-theme .nav-button.btn-dark-text.active,
+    .variable-theme .nav-button.btn-dark-text:hover {
+        color: var(--nav-active-text);
+    }
+    .variable-theme .nav-button.btn-light-text.active,
+    .variable-theme .nav-button.btn-light-text:hover {
+        color: var(--nav-active-text);
+    }
+
+    /* --- Shared & Modal Styles --- */
+    .nav-container{margin-bottom:2rem}
+    .nav-button{padding:.5rem 1rem;margin:.5rem .5rem .5rem 0;border-radius:.375rem;transition:all .2s;cursor:pointer}
+    #library-switcher,#topic-switcher{padding:.5rem;border-radius:.375rem;margin-bottom:1rem;width:100%;border:1px solid #ccc}
+    .nav-buttons-wrapper{display:flex;flex-wrap:wrap;align-items:center;width:100%}
+    .flex-break{flex-basis:100%;height:0}
+
+    .modal-overlay {
+        display: none; position: fixed; z-index: 1000; left: 0; top: 0;
+        width: 100%; height: 100%;
+        background-color: rgba(0,0,0,0.6);
+        justify-content: center; align-items: center;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal-content {
+        background: #fff; color: #2d2d30; padding: 2rem; border-radius: 8px;
+        text-align: center; position: relative; width: 90%; max-width: 400px;
+    }
+    .dark .modal-content { background: #2d2d30; color: #fff; }
+    .modal-content h3 { font-size: 1.5rem; margin-bottom: 1.5rem; }
+    .modal-content label { font-size: 1.1rem; margin-right: 10px; }
+    #theme-select {
+        background-color: #f0f0f0; color: #2d2d30;
+        border: 1px solid #ccc; border-radius: 5px; padding: 8px; font-size: 1rem;
+    }
+    .dark #theme-select {
+        background-color: #3c3c3c; color: #fff; border-color: #4a4a4a;
+    }
+    .close-btn {
+        position: absolute; top: 10px; right: 15px; color: #aaa;
+        font-size: 28px; font-weight: bold; background: none;
+        border: none; cursor: pointer;
+    }
+  </style>
+</head>
+<body class="font-newspaper newspaper-theme">
+
+  <script id="embedded-content" type="application/json">
+  {
+    "agape-love-heart-of-gospel": {
+      "display_order": 10,
+      "title": "Wieland - Agape Love: The Heart of the Gospel",
+      "description": "This topic distinguishes between agape (God's self-sacrificial love) and eros (human self-centered love). It shows how the gospel begins with God's love revealed at the cross rather than human need for security, creating motivation through beauty rather than fear.",
+      "categories": {
+        "agape-versus-eros": {
+          "display_order": 10,
+          "name": "Agape Versus Eros",
+          "display_name": "Agape vs Eros",
+          "introduction": "This section establishes the fundamental distinction between God's other-centered love (agape) and human self-centered love (eros), showing how this affects our approach to the gospel.",
+          "paragraphs": [
+            {
+              "heading": "God's Love Willing to Risk Everything",
+              "content": "<br/>The cross reveals agape love in its purest form—God's willingness to risk His own security for the sake of the beloved. Unlike human love that seeks its own advantage, divine love demonstrates complete other-centeredness. When Christ hung on Calvary, He was not primarily concerned about His own safety or comfort but about winning back rebellious hearts through costly demonstration. This is the fundamental difference between agape and eros: agape gives without calculation of return, while eros gives in order to receive. The Father's love was willing to let His Son suffer rather than abandon humanity to the consequences of sin. Such love cannot be understood through human categories of self-interest.<br/><br/><i>See The 1888 Message, p. 23</i>"
+            },
+            {
+              "heading": "Human Security-Seeking Versus Divine Self-Sacrifice",
+              "content": "<br/>Eros-motivated religion begins with human insecurity and never rises above the question \"what's in it for me?\" It appeals to fear of punishment or hope of reward, keeping the focus on personal advantage. But the gospel begins with the revelation of God's character at Calvary—love so secure in itself that it can afford to appear weak, love so confident that it risks everything on the freedom of the beloved. When we start with human need for security, we remain trapped in egocentric thinking. When we start with God's self-sacrificial love revealed at the cross, we are invited into a completely different way of being—other-centered rather than self-centered, grateful rather than calculating."
+            },
+            {
+              "heading": "The Secret Benefactor Principle",
+              "content": "<br/>Understanding God's agape love is like discovering that someone has been your secret benefactor, paying for your education at great personal cost while you remained unaware. The natural human response to such revelation is overwhelming gratitude and desire to honor the one who sacrificed so much. This illustrates why agape-based gospel presentation is so powerful—it reveals the costliness of God's love in a way that naturally evokes appreciation rather than requiring pressure or manipulation. Only a hard heart could remain unmoved when it truly sees what Calvary cost the Father and Son. This is why the pure gospel needs no gimmicks or fear tactics—the beauty of self-sacrificial love is its own compelling power."
+            }
+          ]
+        },
+        "motivation-through-beauty": {
+          "display_order": 20,
+          "name": "Motivation Through Beauty",
+          "display_name": "Beauty Not Fear",
+          "introduction": "This category explores how God's agape love motivates through the beauty of self-sacrifice rather than through fear, creating lasting transformation instead of temporary compliance.",
+          "paragraphs": [
+            {
+              "heading": "Fear-Based Appeals Have Limited Power",
+              "content": "<br/>Fear of hell or punishment produces only temporary compliance—like a criminal who obeys traffic laws only when police are visible but speeds when he thinks he won't be caught. Such motivation is fundamentally selfish, seeking to avoid consequences rather than appreciating the wisdom behind the law. Fear-based religion keeps people focused on themselves and their own safety, never transcending the egocentric perspective that is the root of sin itself. While fear may restrain outward behavior temporarily, it cannot transform the heart or create genuine love for God. The moment the fear is removed or seems distant, the old self-serving patterns reassert themselves."
+            },
+            {
+              "heading": "The Compelling Power of Self-Sacrificial Love",
+              "content": "<br/>When someone jumps on a grenade to save your life, your response isn't calculated self-interest but spontaneous gratitude. The beauty of such love compels a response that fear never could—not reluctant compliance but eager reciprocation. This is how God's agape love works on the human heart. When we truly see that Christ threw Himself between us and the consequences of our rebellion, absorbing in His own body what should have destroyed us, the natural response is overwhelming appreciation. Such love doesn't need to threaten or bribe—its own beauty draws the heart irresistibly toward the one who loved us that much."
+            },
+            {
+              "heading": "Gratitude Produces Lasting Change",
+              "content": "<br/>The person who discovers their secret benefactor doesn't visit them in the hospital out of duty but out of genuine desire to honor the one who sacrificed so much. This illustrates why agape-motivated obedience is so different from fear-motivated compliance. Gratitude creates a heart that wants to please the beloved, not from calculation but from appreciation. When we understand that every breath we take is sustained by Christ's blood, that every bite of food is nourished by His sacrifice, that our very existence depends on His willingness to die for us, obedience becomes the natural overflow of a grateful heart rather than grudging submission to superior force."
+            }
+          ]
+        },
+        "beyond-self-centered-appeals": {
+          "display_order": 30,
+          "name": "Beyond Self-Centered Appeals",
+          "display_name": "Beyond Self-Interest",
+          "introduction": "This section shows how the true gospel transcends self-centered motivations, calling us to higher ground where Christ's honor becomes more important than our own security.",
+          "paragraphs": [
+            {
+              "heading": "The Problem with 'What's In It For Me' Religion",
+              "content": "<br/>Most gospel presentations appeal to human self-interest: \"Accept Christ so you won't go to hell,\" or \"Follow Jesus and He'll bless your life.\" While not entirely wrong, these appeals keep us trapped in eros-thinking—still fundamentally concerned with our own advantage. Such religion never truly converts the heart from self-centeredness to other-centeredness. It simply baptizes selfishness with religious language. The person motivated primarily by personal security will serve God only as long as it seems profitable and will abandon Him when the cost appears too high. This is why so many professing Christians remain lukewarm—their religion is still fundamentally about themselves."
+            },
+            {
+              "heading": "Christ's Honor Above Our Security",
+              "content": "<br/>True agape-motivated faith reaches the point where Christ's vindication becomes more important than our own salvation. Like a bride who longs for her husband's success more than her own comfort, mature believers yearn for Christ to receive His reward and for His character to be vindicated before the universe. This represents a fundamental shift from eros to agape—from self-seeking to other-seeking. When our primary concern becomes God's honor rather than our own security, we have entered the realm of the new covenant. Such believers will serve God faithfully even if it costs them everything, because their motivation transcends personal advantage."
+            },
+            {
+              "heading": "The Joy of Other-Centered Living",
+              "content": "<br/>Paradoxically, those who stop seeking their own security and start seeking God's glory find the deepest satisfaction. This is because humans were created for agape—we find our true fulfillment not in getting but in giving, not in being served but in serving. When the heart is converted from eros to agape, obedience becomes a joy rather than a burden because we are finally living according to our true design. The cross reveals that this other-centered way of living is the very nature of God Himself, and when we reflect His character, we discover the happiness that self-seeking never could provide."
+            }
+          ]
+        }
+      }
+    },
+    "faith-as-heart-appreciation": {
+      "display_order": 20,
+      "title": "Wieland - Faith as Heart Appreciation",
+      "description": "This topic redefines faith not as mere intellectual assent or trust for personal security, but as heart-appreciation of God's sacrificial love. This appreciation overcomes egocentricity and lukewarmness, producing joyful obedience.",
+      "categories": {
+        "beyond-mental-assent": {
+          "display_order": 10,
+          "name": "Beyond Mental Assent",
+          "display_name": "Beyond Mental Assent",
+          "introduction": "This section distinguishes between mere intellectual belief and true heart-appreciation, showing why mental assent alone cannot transform the character.",
+          "paragraphs": [
+            {
+              "heading": "Trust as Intellectual Agreement",
+              "content": "<br/>Many understand faith as simple intellectual assent—believing that certain facts are true, like accepting that a bridge is safe to cross or a building secure to enter. Such \"trust\" requires no heart engagement, no personal transformation, no change of character. A person can mentally agree that Christ died for sinners while remaining completely self-centered in motivation and lukewarm in devotion. This kind of faith is what devils possess—they believe theological facts and tremble, but their hearts remain unchanged. Mental assent may produce temporary behavioral modifications but cannot create the heart transformation that the gospel requires."
+            },
+            {
+              "heading": "The Bankruptcy of Mere Belief",
+              "content": "<br/>Intellectual faith can coexist with continued selfishness because it never touches the heart's core motivations. A person may believe all the right doctrines while still being fundamentally concerned with personal advantage, security, and comfort. This explains why so many church members remain lukewarm despite \"believing\" the truth. Their faith operates only at the mental level, never penetrating to the heart where motivation is determined. Such believers may maintain outward religious forms while their hearts remain unchanged, still operating from eros rather than agape, still seeking their own rather than God's glory."
+            },
+            {
+              "heading": "Heart Appreciation Transforms Everything",
+              "content": "<br/>True faith is heart-appreciation—the overwhelming gratitude that fills the soul when it realizes what God's love cost at Calvary. This is not mere intellectual agreement but personal, emotional, spiritual recognition of the price paid for our redemption. When the heart truly grasps that Christ threw Himself between us and eternal death, that every blessing we enjoy is purchased by His blood, that He loved us enough to endure the cross rather than live without us, such appreciation naturally transforms every motivation. We no longer serve from duty but from delight, no longer obey from fear but from love."
+            }
+          ]
+        },
+        "gratitude-versus-calculation": {
+          "display_order": 20,
+          "name": "Gratitude Versus Calculation",
+          "display_name": "Gratitude vs Calculation",
+          "introduction": "This category explores how heart-appreciation produces spontaneous gratitude that is fundamentally different from calculated self-interest in religious devotion.",
+          "paragraphs": [
+            {
+              "heading": "The Spontaneous Response of Gratitude",
+              "content": "<br/>When someone saves your life at great personal cost, visiting them in the hospital isn't a calculated decision but a spontaneous overflow of appreciation. You don't debate whether it's \"worth your time\" or what you might gain from the visit—gratitude naturally seeks to honor the one who sacrificed for you. This illustrates how heart-appreciation works in spiritual life. When we truly understand what Christ's death accomplished for us, obedience becomes the natural expression of thankfulness rather than grudging compliance with divine demands. The heart that has been touched by Calvary's love cannot help but respond with devoted service."
+            },
+            {
+              "heading": "Calculated Religion Breeds Lukewarmness",
+              "content": "<br/>Religion based on \"what's in it for me\" constantly weighs costs against benefits, leading to lukewarm commitment when the price seems high. Such believers are like employees who work only hard enough to avoid being fired—they do the minimum required to maintain their \"salvation insurance\" but never give their hearts fully to God. This calculated approach to faith can never produce the transformation God seeks because it keeps the self at the center. Even when such religion produces outward compliance, the heart remains unconverted, still fundamentally selfish in its motivations."
+            },
+            {
+              "heading": "Appreciation Overcomes Self-Centeredness",
+              "content": "<br/>Heart-appreciation naturally shifts focus from self to the beloved. The person overwhelmed by gratitude for God's sacrifice stops asking \"what will I get out of this?\" and starts asking \"how can I honor the One who loved me so much?\" This represents the fundamental conversion from eros to agape, from self-seeking to God-seeking. Such appreciation makes impossible the lukewarm attitude that characterizes so much professing Christianity. When the heart is filled with genuine gratitude for Calvary's love, serving God becomes a joy rather than a burden, obedience becomes a privilege rather than a duty."
+            }
+          ]
+        },
+        "faith-that-works-by-love": {
+          "display_order": 30,
+          "name": "Faith That Works by Love",
+          "display_name": "Faith Working by Love",
+          "introduction": "This section shows how true heart-appreciation naturally produces obedience through love rather than fear, creating the righteousness that comes by faith.",
+          "paragraphs": [
+            {
+              "heading": "Love Makes Obedience Natural",
+              "content": "<br/>When faith operates as heart-appreciation, obedience flows naturally from love rather than being forced by fear or duty. The person who truly appreciates what Christ's death accomplished finds God's commandments delightful rather than burdensome because they express the character of the One who loved us enough to die for us. This is why Paul says faith works by love—not that love is added to faith, but that true faith is love, appreciation for what God has done. Such faith automatically produces the righteousness that law-keeping by human effort could never achieve."
+            },
+            {
+              "heading": "The End of Spiritual Struggle",
+              "content": "<br/>Heart-appreciation eliminates the typical struggle between flesh and spirit because it changes the heart's fundamental desires. The person overwhelmed by gratitude for God's love no longer has to fight against selfish impulses—the appreciation itself transforms those impulses into desire to please the beloved. This doesn't mean temptation ceases, but that the heart's orientation is fundamentally changed. Where once we served God grudgingly against our natural inclinations, appreciation makes service a joy that aligns with our deepest longings."
+            },
+            {
+              "heading": "Righteousness by Faith Realized",
+              "content": "<br/>When God's law is written on the heart through appreciation of His love, righteousness becomes a natural expression rather than an impossible demand. The person whose heart has been captured by Calvary's demonstration of love finds themselves naturally reflecting God's character—not by grinding effort but by joyful participation in the divine nature. This is the righteousness that comes by faith—not our futile attempts to keep law, but God Himself living out His character through hearts transformed by appreciation of His sacrificial love."
+            }
+          ]
+        }
+      }
+    },
+    "gods-initiative-in-salvation": {
+      "display_order": 30,
+      "title": "Wieland - God's Initiative in Salvation",
+      "description": "This topic reveals how God has taken the loving initiative in salvation through Christ's sacrifice that accomplished something for every person. The gospel is good news of what God has already done, making salvation God's gift already placed in our hands.",
+      "categories": {
+        "universal-justification": {
+          "display_order": 10,
+          "name": "Universal Justification",
+          "display_name": "Universal Justification",
+          "introduction": "This section explains how Christ's sacrifice accomplished something concrete for every human being, sustaining life and making relationship with God possible for all.",
+          "paragraphs": [
+            {
+              "heading": "Every Life Sustained by Christ's Blood",
+              "content": "<br/>Ellen White's profound insight reveals the scope of Christ's accomplishment: \"To the death of Christ, we owe even our earthly lives. Never one, saint or sinner, partakes of his daily bread but is nourished by the blood of Christ.\" This means Christ's sacrifice was not merely a potential provision but an actual accomplishment affecting every human being. Every breath we take, every heartbeat, every bite of food is sustained by what Christ achieved at Calvary. His blood doesn't just make salvation available—it actively maintains the life of every person on earth, giving them opportunity to respond to His love. This is universal justification: Christ's death legally justified all humanity, keeping rebels alive who should be dead."
+            },
+            {
+              "heading": "Humanity's Death Vote Overruled",
+              "content": "<br/>Both in Eden and at Calvary, humanity voted for death—first by choosing rebellion, then by crucifying the Life-giver Himself. According to justice, the human race should have perished immediately. But God said \"no\" to humanity's death sentence and intervened to sustain life through Christ's sacrifice. This wasn't just postponing judgment but actively providing life where death was deserved. Every moment of continued existence is evidence of God's gracious initiative, His refusal to let sin have its complete destructive effect immediately. Universal justification means God has already acted to preserve human life, making possible the opportunity for informed decision about His love."
+            },
+            {
+              "heading": "The Gift Already in Our Hands",
+              "content": "<br/>Through Christ's sacrifice and the Spirit's work, God has already placed the gift of salvation in every person's hands. Being lost requires active resistance and rejection of what God is already doing, not mere passive neglect. This flips the typical understanding that people are automatically headed for destruction unless they take action to be saved. Instead, God is actively pursuing every person through His Spirit and through human witnesses sharing the gospel. The default trajectory is toward life, not death. Condemnation comes only to those who deliberately reject the light God provides, who resist the love He demonstrates, who refuse the gift He has already given."
+            }
+          ]
+        },
+        "gods-active-pursuit": {
+          "display_order": 20,
+          "name": "God's Active Pursuit",
+          "display_name": "Divine Pursuit",
+          "introduction": "This category shows how God actively pursues every person through His Spirit and human agents, making salvation His initiative rather than human achievement.",
+          "paragraphs": [
+            {
+              "heading": "The Spirit's Constant Drawing",
+              "content": "<br/>\"I have drawn you with lovingkindness,\" God declares through Jeremiah, and Jesus confirms that He draws all people to Himself through the cross. This drawing is not occasional or selective but constant and universal. The Holy Spirit is actively working in every human heart, creating conviction of sin, revealing God's love, and making possible the response of faith. No one is left without witness, without opportunity, without the Spirit's influence toward truth and righteousness. This divine initiative means that every person who has ever lived has experienced God's active pursuit of their heart, even if they never understood the gospel clearly."
+            },
+            {
+              "heading": "Human Agents of Divine Love",
+              "content": "<br/>God works through willing human hearts to share the gospel, multiplying His loving initiative toward the lost. Every Christian testimony, every act of Christlike kindness, every faithful witness becomes part of God's active pursuit of rebellious hearts. This means God doesn't wait passively for people to find Him but actively sends messengers to reveal His character and love. The gospel spreads not primarily through human effort but through divine initiative working through surrendered human agents. When we share God's love, we become part of His active program to win back every heart to trust and appreciation."
+            },
+            {
+              "heading": "Lostness Requires Active Rejection",
+              "content": "<br/>Given God's universal justification, the Spirit's constant drawing, and human witnesses sharing the gospel, being finally lost requires deliberate, persistent rejection of light and love. It's not that people slip into hell through carelessness, but that they must actively resist God's pursuing love to be finally condemned. This makes the gospel truly good news—we're not desperately trying to get God's attention or earn His favor, but rather deciding whether to accept the love He's already demonstrating and the life He's already providing. The tragedy of lostness is not that God failed to reach someone, but that someone persistently rejected the love God was offering."
+            }
+          ]
+        },
+        "personal-justification-by-faith": {
+          "display_order": 30,
+          "name": "Personal Justification by Faith",
+          "display_name": "Personal Justification",
+          "introduction": "This section explains how universal justification becomes personal transformation when received with heart-appreciation, producing actual character change.",
+          "paragraphs": [
+            {
+              "heading": "From Universal to Personal",
+              "content": "<br/>While Christ's sacrifice accomplished universal justification—legally justifying all humanity and sustaining life for all—personal justification by faith occurs when individuals receive this accomplished fact with heart-appreciation. Universal justification makes the gospel possible; personal justification makes it transformative. When someone truly grasps what Christ has already done for them, when they appreciate the cost of their sustained life, when they understand that every blessing flows from Calvary's love, faith awakens in the heart as grateful response to demonstrated love."
+            },
+            {
+              "heading": "Heart Transformation Through Appreciation",
+              "content": "<br/>Personal justification by faith involves real heart change, not just legal declaration. When God \"declares\" someone righteous, He cannot lie—the declaration must correspond to reality. As Waggoner taught, justification by faith goes beyond forensic accounting to actual character transformation. The person who truly appreciates what Christ accomplished finds their heart naturally conforming to God's law, not through legal compliance but through love's transformation. The same faith that receives justification also receives power for sanctification because both flow from heart-appreciation of God's demonstrated love."
+            },
+            {
+              "heading": "The Law Written in the Heart",
+              "content": "<br/>True justification by faith results in God's law being written in the heart and mind, fulfilling the new covenant promise. This isn't external legal observance but internal harmony with God's character. When the heart is filled with appreciation for God's sacrificial love, obedience becomes natural expression rather than forced compliance. The person whose heart has been transformed by understanding God's love finds themselves naturally reflecting His character—patience, kindness, forgiveness, self-sacrifice—not as achievement but as the fruit of heart appreciation for the love demonstrated at Calvary."
+            }
+          ]
+        }
+      }
+    },
+    "what-christ-endured-for-us": {
+      "display_order": 40,
+      "title": "Wieland - What Christ Endured for Us",
+      "description": "This topic explores Christ's identification with humanity through taking fallen human nature. Because He assumed our condition and endured our temptations, He can sympathize with our struggles and enter into our suffering.",
+      "categories": {
+        "christs-identification-with-humanity": {
+          "display_order": 10,
+          "name": "Christ's Identification with Humanity",
+          "display_name": "Divine Identification",
+          "introduction": "This section explains how Christ's taking of fallen human nature demonstrates His complete identification with our condition and struggles.",
+          "paragraphs": [
+            {
+              "heading": "He Knows What It's Like to Be Us",
+              "content": "<br/>By assuming fallen human nature, Christ entered fully into the human experience of weakness, temptation, and struggle. He didn't observe our condition from a safe distance but made Himself subject to every limitation, every weakness, every tendency that affects fallen humanity. This means that when we struggle with temptation, when we feel overwhelmed by life's pressures, when we battle with sinful inclinations, we can know that our Savior understands from personal experience what we're going through. He has walked in our shoes, felt what we feel, faced what we face. This identification is complete and sympathetic, never condescending or distant."
+            },
+            {
+              "heading": "Tempted in All Points As We Are",
+              "content": "<br/>Scripture declares that Christ \"was in all points tempted like as we are, yet without sin.\" This wasn't playacting or mere appearance—Christ faced real temptation from the same sources we do, including internal as well as external pressures. Unlike sinless Adam who was tempted only from without, Christ experienced temptation from within fallen human nature while never yielding to sin. This makes His victory all the more meaningful for us because He conquered sin not from a position of advantage but from the same disadvantaged position we occupy. His righteousness was achieved by faith in exactly the same way ours must be."
+            },
+            {
+              "heading": "Our Sympathetic High Priest",
+              "content": "<br/>Because Christ shared our nature and our struggles, He serves as a High Priest who can \"be touched with the feeling of our infirmities.\" This isn't mere theological theory but practical reality—Christ's heart aches with genuine sympathy for every human struggle because He has experienced it personally. When we come to Him in prayer, we come to One who understands our weaknesses not through observation but through participation. His comfort comes not from superior wisdom looking down on our struggles but from fellow-feeling that enters into our pain and offers hope based on His own victory achieved in the same flesh we wear."
+            }
+          ]
+        },
+        "victory-in-fallen-flesh": {
+          "display_order": 20,
+          "name": "Victory in Fallen Flesh",
+          "display_name": "Victory in Our Flesh",
+          "introduction": "This category shows how Christ's victory over sin while wearing fallen human nature demonstrates that sin is unnecessary and that victory is possible for us.",
+          "paragraphs": [
+            {
+              "heading": "Sin Condemned in the Flesh",
+              "content": "<br/>By living a perfectly righteous life in fallen human nature, Christ \"condemned sin in the flesh\"—He proved that sin is not necessary even for fallen human beings. His victory demonstrates that the excuses we often make (\"I'm only human,\" \"nobody's perfect,\" \"the devil made me do it\") are invalid in light of what He accomplished. Christ faced every temptation we face, felt every weakness we feel, yet never yielded to sin. This condemns sin by showing it to be a choice rather than an inevitability, a preference rather than a compulsion."
+            },
+            {
+              "heading": "Our Example and Substitute",
+              "content": "<br/>Christ serves as both our Substitute (dying for our sins) and our Example (showing us how to live). His life in fallen flesh provides the pattern for our own victory over sin. Because He conquered temptation in the same nature we possess, His victory becomes the guarantee that we too can overcome. We don't have to resign ourselves to continued defeat because Christ has shown what's possible when divine power works through human weakness submitted to God. His example isn't discouraging (\"look how perfect He was\") but encouraging (\"look what God can do through surrendered humanity\")."
+            },
+            {
+              "heading": "Hope for Complete Victory",
+              "content": "<br/>Christ's sinless life in fallen flesh gives hope that complete victory over sin is possible for believers who trust in His strength. The same divine power that enabled Christ to live righteously in fallen flesh is available to every believer through faith. This doesn't make victory automatic or easy, but it makes it possible and offers real hope for transformation. When we appreciate what Christ accomplished in our flesh, faith is strengthened to believe that He can accomplish the same victory in us through the power of His indwelling Spirit."
+            }
+          ]
+        },
+        "bearing-our-guilt-actually": {
+          "display_order": 30,
+          "name": "Bearing Our Guilt Actually",
+          "display_name": "Actually Bearing Guilt",
+          "introduction": "This section explains how Christ actually bore our guilt, not just vicariously, truly identifying with our condition and experiencing the consequences of sin.",
+          "paragraphs": [
+            {
+              "heading": "True Identification with Sinners",
+              "content": "<br/>Christ didn't just represent us legally while remaining personally unaffected by our condition. He actually took our guilt upon Himself, experiencing the real separation from the Father that sin produces. His cry \"My God, My God, why have You forsaken Me?\" reveals genuine anguish as He felt the weight of human guilt and the awful consequence of separation from God. This wasn't pretense or theater but actual experience of what sin does to the relationship between God and humanity. He truly became what we are so that we might become what He is."
+            },
+            {
+              "heading": "Experiencing Sin's Consequences",
+              "content": "<br/>By actually bearing our guilt, Christ experienced firsthand the devastating effects of sin—not just physical death but spiritual separation, emotional anguish, and the weight of the world's evil. He didn't observe these consequences from a safe distance but felt them crushing down upon His own soul. This makes His compassion for sinners completely authentic because He knows from personal experience what sin costs, what separation from God feels like, what burden guilt places on the human heart."
+            },
+            {
+              "heading": "The Depths of Divine Love",
+              "content": "<br/>That Christ was willing to actually bear our guilt rather than just represent us legally reveals the incredible depths of divine love. He could have remained safely separate from our condition while still providing legal coverage for our sins. Instead, He chose to enter fully into our experience, to feel what we feel, to bear what we have deserved. This actual bearing of guilt makes His love far more costly and meaningful than any merely legal transaction could be. It demonstrates love willing to suffer genuinely rather than love that offers help from a comfortable distance."
+            }
+          ]
+        }
+      }
+    },
+    "the-two-covenants": {
+      "display_order": 50,
+      "title": "Wieland - The Two Covenants",
+      "description": "This topic distinguishes between the old covenant (human promise to obey based on egocentric motivation) and the new covenant (God's promise to write His law in our hearts through agape love and the Spirit's power).",
+      "categories": {
+        "not-matter-of-time": {
+          "display_order": 10,
+          "name": "Not a Matter of Time",
+          "display_name": "Not About Time",
+          "introduction": "This section establishes that the two covenants are not chronological periods but represent different attitudes and motivations in relating to God.",
+          "paragraphs": [
+            {
+              "heading": "Attitudes, Not Time Periods",
+              "content": "<br/>The popular understanding that the old covenant represents the Old Testament era and the new covenant the New Testament era misses the point entirely. The covenants are not matters of time but of human attitudes toward God and His requirements. People living after the cross can still operate under old covenant principles, while people living before the cross could experience new covenant realities. Abraham, for example, lived in new covenant relationship with God because he believed God's promise rather than trusting in his own performance. The covenants represent two fundamentally different approaches to relating to God that have always existed side by side."
+            },
+            {
+              "heading": "Two Ways of Relating to God",
+              "content": "<br/>Throughout history, there have always been two approaches to religion: trusting in human promises and performance (old covenant) or trusting in God's promises and power (new covenant). The same choice confronted Adam and Eve, Cain and Abel, the Israelites at Sinai, the Pharisees and tax collectors in Jesus' day, and Christians today. The covenant we live under is determined not by when we live but by our fundamental approach to righteousness—do we depend on what we can do for God or on what God does for us? This choice shapes everything about our religious experience."
+            },
+            {
+              "heading": "The Timeless Choice",
+              "content": "<br/>Every generation faces the same fundamental choice between self-dependence and God-dependence, between eros-motivated religion and agape-motivated faith. The names and forms may change, but the essential issue remains constant: will we trust in our promises to God or in God's promises to us? This makes the covenant message urgently relevant for every age, including our own. Understanding the covenants helps us recognize whether our current religious experience is based on old covenant self-effort or new covenant faith in God's accomplishing power."
+            }
+          ]
+        },
+        "old-covenant-human-promise": {
+          "display_order": 20,
+          "name": "Old Covenant: Human Promise",
+          "display_name": "Human Promise",
+          "introduction": "This category examines the old covenant as humanity's faithless promise to obey God based on self-confidence and egocentric motivation.",
+          "paragraphs": [
+            {
+              "heading": "We Will Do All That God Commands",
+              "content": "<br/>The old covenant is epitomized by Israel's confident declaration at Sinai: \"All that the Lord has said we will do.\" This sounds noble and devoted, but it reveals the fundamental flaw of self-confidence. Before they had even heard all of God's requirements, they promised to fulfill them perfectly. This wasn't faith in God but faith in themselves, confidence in their own ability to perform rather than trust in God's ability to enable. Such self-confidence always leads to failure because it underestimates both the perfection God requires and the corruption sin has worked in human nature."
+            },
+            {
+              "heading": "Egocentric Motivation Breeds Bondage",
+              "content": "<br/>Old covenant religion is fundamentally egocentric—motivated by what we can gain (rewards) or avoid (punishment) through our performance. This self-centered approach \"genders to bondage\" because it keeps us focused on ourselves rather than God. Even when old covenant religion produces outward compliance, the heart remains selfish and unconverted. Such religion becomes a burden because we're constantly trying to maintain our standing with God through our own efforts, constantly worried about whether we've done enough, constantly measuring our performance against divine requirements we can never perfectly meet."
+            },
+            {
+              "heading": "The Knowledge of Broken Promises",
+              "content": "<br/>Old covenant experience inevitably leads to \"the knowledge of broken promises\" as we discover our inability to keep the commitments we've made to God. Every failure reminds us of our inadequacy, every sin reveals the gap between our promises and our performance. Instead of drawing us closer to God, old covenant religion often produces guilt, discouragement, and distance from God because it constantly reminds us of our failures. The law becomes a burden rather than a delight because we experience it as condemnation of our broken promises rather than revelation of God's character. This is why old covenant religion breeds lukewarmness—it produces religious duty without heart transformation."
+            }
+          ]
+        },
+        "new-covenant-gods-promise": {
+          "display_order": 30,
+          "name": "New Covenant: God's Promise",
+          "display_name": "God's Promise",
+          "introduction": "This category explores the new covenant as God's promise to write His law in our hearts through the Spirit's power, motivated by agape appreciation.",
+          "paragraphs": [
+            {
+              "heading": "I Will Write My Law in Their Hearts",
+              "content": "<br/>The new covenant is based on God's promise: \"I will put My law in their inward parts, and write it in their hearts.\" This isn't human effort to obey but divine power to transform. God doesn't wait for us to prove our ability but takes the initiative to change our hearts so that obedience becomes natural rather than forced. The law written in the heart isn't external compliance but internal harmony with God's character. When God writes His law within us, we don't obey because we have to but because we want to—our desires have been transformed to align with His will."
+            },
+            {
+              "heading": "Faith in God's Accomplishing Power",
+              "content": "<br/>New covenant faith trusts not in our ability to perform but in God's ability to accomplish what He has promised. Instead of saying \"we will do,\" new covenant believers say \"God will do through us what we could never do ourselves.\" This faith looks away from self to Christ, away from human promises to divine promises, away from what we can accomplish to what God has already accomplished and is accomplishing through His Spirit. Such faith produces rest rather than anxiety because the responsibility for success rests on God's faithfulness rather than our performance."
+            },
+            {
+              "heading": "Agape Motivation Produces Transformation",
+              "content": "<br/>New covenant experience is motivated by appreciation for God's demonstrated love rather than concern for personal security. When the heart grasps what God has done at Calvary, when it appreciates the cost of our redemption, gratitude naturally produces the obedience that law-keeping by human effort could never achieve. This agape motivation overcomes the egocentricity that characterizes old covenant religion. The heart filled with appreciation for God's love finds His commandments delightful rather than burdensome because they express the character of the One who loved us enough to die for us."
+            }
+          ]
+        },
+        "practical-differences": {
+          "display_order": 40,
+          "name": "Practical Differences",
+          "display_name": "Practical Differences",
+          "introduction": "This final category examines the practical differences between old and new covenant living in daily Christian experience.",
+          "paragraphs": [
+            {
+              "heading": "Law as Burden Versus Law as Delight",
+              "content": "<br/>In old covenant experience, God's law feels like a burden because it constantly reminds us of our failures and inadequacies. Every commandment becomes an accusation, every requirement a source of anxiety about our performance. But in new covenant experience, the same law becomes a delight because it reveals the character of the God we love. When the heart is filled with appreciation for God's sacrificial love, His commandments express the very qualities we long to reflect. Obedience flows naturally from love rather than being forced by duty or fear."
+            },
+            {
+              "heading": "Self-Effort Versus Spirit-Empowered Living",
+              "content": "<br/>Old covenant religion depends on human effort—willpower, determination, self-discipline—to produce righteousness. This approach always fails because fallen human nature cannot generate the righteousness God requires. New covenant living depends on the Spirit's power working through hearts transformed by appreciation of God's love. The same person who failed repeatedly under old covenant principles finds victory possible when operating under new covenant faith. The difference isn't in trying harder but in trusting differently—looking to God's power rather than human effort."
+            },
+            {
+              "heading": "Fear and Guilt Versus Joy and Gratitude",
+              "content": "<br/>Old covenant motivation produces fear (of punishment) and guilt (over failure), creating a religious experience characterized by anxiety and distance from God. Believers constantly worry about their standing with God, never quite sure if they've done enough to maintain His favor. New covenant motivation produces joy (in God's love) and gratitude (for His grace), creating intimacy and confidence in relationship with God. Such believers serve from appreciation rather than apprehension, knowing their acceptance is based on God's faithfulness rather than their performance. This transforms the entire quality of Christian experience from burden to blessing."
+            }
+          ]
+        }
+      }
+    }
+  }
+  </script>
+
+  <div class="fixed top-4 right-4 z-50">
+    <button id="settings-btn" class="p-2 rounded-full" aria-label="toggle settings">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.096 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+    </button>
+  </div>
+
+  <div id="settings-modal" class="modal-overlay">
+    <div class="modal-content">
+        <button id="close-modal-btn" class="close-btn">×</button>
+        <h3>Display Settings</h3>
+        <label for="theme-select">Theme:</label>
+        <select id="theme-select"></select>
+    </div>
+  </div>
+
+  <main id="app-container" class="prose dark:prose-invert mx-auto max-w-prose p-8"></main>
+
+  <script>
+    /* ---------- state ---------- */
+    let masterLibrary=null,sortedLibraryIds=null,currentLibraryId=null
+    let libraryData=null,sortedTopicIds=null,currentTopicId=null,currentArticleId=null
+    const app=document.getElementById('app-container')
+
+    /* ---------- helpers ---------- */
+    const looksLikeTopic=o=>o&&typeof o==='object'&&('categories'in o||'title'in o)
+
+    /* ---------- rendering ---------- */
+    const buildLibrarySwitch=()=>!sortedLibraryIds||sortedLibraryIds.length<2?'':`
+      <div class="nav-container">
+        <select id="library-switcher" class="nav-button">
+          ${sortedLibraryIds.map(id=>{
+            const label=id.replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase())
+            return `<option value="${id}" ${id===currentLibraryId?'selected':''}>${label}</option>`
+          }).join('')}
+        </select>
+      </div>`
+
+    const buildTopicSwitch=()=>`
+      <div class="nav-container">
+        <select id="topic-switcher" class="nav-button">
+          ${sortedTopicIds.map(tid=>{
+            const t=libraryData[tid];return `<option value="${tid}" ${tid===currentTopicId?'selected':''}>${t.title}</option>`
+          }).join('')}
+        </select>
+      </div>`
+
+    const buildNav=(cats,keys)=>{
+      let html='<div class="nav-container"><h3>Select Article:</h3><div class="nav-buttons-wrapper">'
+      keys.forEach(k=>{
+        const a=cats[k]
+        html+=`<button class="nav-button article-btn ${k===currentArticleId?'active':''}" data-article-id="${k}">${a.display_name}</button>`
+        if(a.breakAfter)html+='<div class="flex-break"></div>'
+      })
+      return html+'</div></div>'
+    }
+
+    function render(){
+      if(!libraryData)return
+      sortedTopicIds=Object.keys(libraryData).sort((a,b)=>(libraryData[a].display_order||0)-(libraryData[b].display_order||0))
+      if(!currentTopicId||!libraryData[currentTopicId])currentTopicId=sortedTopicIds[0]
+      const topic=libraryData[currentTopicId]
+      const artKeys=Object.keys(topic.categories||{}).sort((a,b)=>(topic.categories[a].display_order||0)-(topic.categories[b].display_order||0))
+      if(!currentArticleId||!topic.categories[currentArticleId])currentArticleId=artKeys[0]
+      const art=topic.categories[currentArticleId]
+
+      app.innerHTML=buildLibrarySwitch()+`<h1>${topic.title}</h1>`+buildTopicSwitch()+buildNav(topic.categories,artKeys)+
+        `<h2>${art.name||art.display_name||''}</h2>${art.introduction?`<p>${art.introduction}</p>`:''}`+
+        (art.paragraphs||[]).map(p=>`<h3>${p.heading}</h3><p>${p.content}</p>`).join('')
+      document.title=topic.title||'Adaptive Reader'
+
+      document.querySelectorAll('.article-btn').forEach(btn=>btn.onclick=e=>{
+        currentArticleId=e.target.dataset.articleId;render()
+      })
+      const ts=document.getElementById('topic-switcher')
+      if(ts)ts.onchange=e=>{currentTopicId=e.target.value;currentArticleId=null;render()}
+      const ls=document.getElementById('library-switcher')
+      if(ls)ls.onchange=e=>{
+        currentLibraryId=e.target.value
+        localStorage.setItem('readerLibraryId',currentLibraryId)
+        libraryData=masterLibrary[currentLibraryId];currentTopicId=currentArticleId=null;render()
+      }
+      
+      const themeName = localStorage.getItem('theme') || 'newspaper';
+      applyThemeClasses(themeName);
+    }
+
+    /* ---------- data load ---------- */
+    async function init(){
+      let raw=null
+      try{
+        const res=await fetch('./data/content.json',{cache:'no-store'})
+        if(!res.ok)throw new Error('not ok');raw=await res.json()
+      }catch{
+        const embedded=document.getElementById('embedded-content').textContent.trim()
+        if(!embedded)throw new Error('no data');raw=JSON.parse(embedded)
+      }
+
+      const keys=Object.keys(raw)
+      if(!keys.length)throw new Error('empty data')
+      if(looksLikeTopic(raw[keys[0]])){
+        masterLibrary=null;sortedLibraryIds=null;currentLibraryId=null
+        libraryData=raw
+      }else{
+        masterLibrary=raw
+        sortedLibraryIds=keys.sort()
+        currentLibraryId=localStorage.getItem('readerLibraryId')
+        if(!currentLibraryId||!masterLibrary[currentLibraryId])currentLibraryId=sortedLibraryIds[0]
+        libraryData=masterLibrary[currentLibraryId]
+      }
+      currentTopicId=currentArticleId=null
+      render()
+    }
+
+
+    /* ---------- FINAL THEME ENGINE --- */
+    const THEMES = {
+      'newspaper': { name: 'Newspaper', type: 'classic', isDark: false },
+      'dark': { name: 'Dark', type: 'classic', isDark: true },
+      'cyber-blue': {
+        name: 'Cyber Blue', type: 'variable', isDark: true,
+        vars: {
+          '--bg-gradient': 'linear-gradient(135deg,#0a0a23 0%,#1a1a3a 50%,#2e2e5e 100%)',
+          '--text': '#ecf0f1', '--accent-text': '#a8b8d0',
+          '--nav-bg': '#34495e', '--nav-border': '#4a4a4a', '--nav-text': '#ecf0f1',
+          '--nav-hover-bg': '#4a6078', '--nav-active-bg': '#2e2e5e', '--nav-active-text': '#ecf0f1'
+        },
+        hover_style: 'btn-light-text'
+      },
+      'teal-matrix': {
+        name: 'Teal Matrix', type: 'variable', isDark: true,
+        vars: {
+          '--bg-gradient': 'linear-gradient(135deg,#0a231c 0%,#1a3a31 50%,#2e5e50 100%)',
+          '--text': '#ecf0f1', '--accent-text': '#ace0d5',
+          '--nav-bg': '#345e55', '--nav-border': '#92b3a9', '--nav-text': '#ecf0f1',
+          '--nav-hover-bg': '#427569', '--nav-active-bg': '#0a231c', '--nav-active-text': '#ecf0f1'
+        },
+        hover_style: 'btn-light-text'
+      },
+      'scorched-gold': {
+        name: 'Scorched Gold', type: 'variable', isDark: false,
+        vars: {
+          '--bg-gradient': '#fdfbf5', '--text': '#2a1d15', '--accent-text': '#d4a24c',
+          '--nav-bg': '#f8f4e8', '--nav-border': '#d4a24c', '--nav-text': '#2a1d15',
+          '--nav-hover-bg': '#f0c475', '--nav-active-bg': '#f0c475', '--nav-active-text': '#2a1d15'
+        },
+        hover_style: 'btn-dark-text'
+      }
+    };
+    
+    function applyThemeClasses(themeName) {
+        const theme = THEMES[themeName];
+        if (!theme) return;
+
+        document.body.classList.remove('newspaper-theme', 'dark-theme', 'variable-theme', 'font-newspaper', 'font-dark-theme');
+        document.querySelectorAll('.nav-button').forEach(b => b.classList.remove('btn-light-text', 'btn-dark-text'));
+
+        if (theme.type === 'classic') {
+            document.body.classList.add(theme.isDark ? 'dark-theme' : 'newspaper-theme');
+            document.body.classList.add(theme.isDark ? 'font-dark-theme' : 'font-newspaper');
+        } else {
+            document.body.classList.add('variable-theme');
+            if (theme.hover_style) {
+                document.querySelectorAll('.nav-button').forEach(button => button.classList.add(theme.hover_style));
+            }
+        }
+    }
+
+    function applyThemeVariables(name) {
+      const theme = THEMES[name] || THEMES['newspaper'];
+      
+      document.documentElement.classList.toggle('dark', theme.isDark);
+
+      if (theme.type === 'variable') {
+        for (const [key, value] of Object.entries(theme.vars)) {
+          document.documentElement.style.setProperty(key, value);
+        }
+      } else { 
+        const sampleVars = THEMES['cyber-blue'].vars;
+        Object.keys(sampleVars).forEach(varName => {
+            document.documentElement.style.removeProperty(varName);
+        });
+      }
+    }
+
+    function setTheme(name) {
+      if (THEMES[name]) {
+        localStorage.setItem('theme', name);
+        applyThemeVariables(name);
+        applyThemeClasses(name);
+      }
+    }
+
+    function initializeModal() {
+        const modal = document.getElementById('settings-modal');
+        const openBtn = document.getElementById('settings-btn');
+        const closeBtn = document.getElementById('close-modal-btn');
+        const themeSelect = document.getElementById('theme-select');
+        
+        const currentTheme = localStorage.getItem('theme') || 'newspaper';
+        themeSelect.innerHTML = Object.keys(THEMES).map(key => {
+            const theme = THEMES[key];
+            return `<option value="${key}" ${key === currentTheme ? 'selected' : ''}>${theme.name}</option>`
+        }).join('');
+
+        openBtn.onclick = () => modal.classList.add('show');
+        closeBtn.onclick = () => modal.classList.remove('show');
+        modal.onclick = (event) => { if (event.target === modal) modal.classList.remove('show'); };
+        themeSelect.onchange = (e) => setTheme(e.target.value);
+    }
+
+    /* ---------- boot ---------- */
+    document.addEventListener('DOMContentLoaded',()=>{
+      const currentTheme = localStorage.getItem('theme') || 'newspaper';
+      applyThemeVariables(currentTheme);
+      applyThemeClasses(currentTheme);
+      
+      initializeModal();
+      init().catch(err=>{console.error(err);app.innerHTML='<h1>Error</h1><p>Could not load content.</p>'})
+    })
+  </script>
+</body>
+</html>

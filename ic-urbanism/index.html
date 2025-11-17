@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Battle for the City</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-button {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #2c3e50;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-button:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .tab-button.active {
+            background: #3498db;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .content-section {
+            display: none;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .person-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border-left: 5px solid #3498db;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .person-card h2 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+
+        .person-card .bio {
+            color: #7f8c8d;
+            font-style: italic;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin: 2rem 0 1rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #3498db;
+        }
+
+        .subsection {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: rgba(52, 152, 219, 0.05);
+            border-radius: 8px;
+            border-left: 3px solid #3498db;
+        }
+
+        .subsection h4 {
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .key-works {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .work-item {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 3px solid #e74c3c;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .work-item strong {
+            color: #2c3e50;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .quote-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: #2c3e50;
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 2rem 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .quote-container {
+            display: grid;
+            gap: 1.5rem;
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 1rem;
+        }
+
+        .quote-item {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
+            backdrop-filter: blur(5px);
+            transition: transform 0.3s ease;
+        }
+
+        .quote-item:hover {
+            transform: translateX(5px);
+            background: rgba(255, 255, 255, 1);
+        }
+
+        .quote-text {
+            font-style: italic;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #2c3e50;
+        }
+
+        .quote-source {
+            font-size: 0.9rem;
+            color: #3498db;
+            font-weight: 600;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .comparison-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .comparison-card h3 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-size: 1.4rem;
+        }
+
+        @media (max-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .nav-tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .tab-button {
+                width: 200px;
+                text-align: center;
+            }
+        }
+
+        .scrollbar-custom::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .scrollbar-custom::-webkit-scrollbar-track {
+            background: rgba(52, 152, 219, 0.1);
+            border-radius: 4px;
+        }
+
+        .scrollbar-custom::-webkit-scrollbar-thumb {
+            background: rgba(52, 152, 219, 0.5);
+            border-radius: 4px;
+        }
+
+        .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+            background: rgba(52, 152, 219, 0.7);
+        }
+    </style>
+</head>
+<body>
+
+    <script id="embedded-content" type="application/json">
+    {
+      "title": "The Battle for the City's Soul",
+      "subtitle": "A Comparison of Le Corbusier's and Jane Jacobs's Visions for Urban Life",
+      "sections": {
+        "overview": {
+          "tabName": "Overview",
+          "type": "overview",
+          "title": "Visions of the Modern City",
+          "introduction": "In the mid-20th century, cities faced a crisis of identity, grappling with industrial decay and post-war reconstruction. The dominant response was Modernist Urban Renewal, which proposed a radical, clean-slate redesign. This guide explores the foundational conflict between this top-down, rationalist vision and a more organic, human-centric approach to urbanism.",
+          "subsections": [
+            {
+              "title": "The Modernist Proposal",
+              "content": "Led by architects like Le Corbusier, this movement saw the traditional city as chaotic and unsanitary. It proposed replacing dense neighborhoods with high-rise towers in park-like settings, strictly separating the functions of living, work, and leisure."
+            },
+            {
+              "title": "The Humanist Critique",
+              "content": "Championed by writers and activists like Jane Jacobs, this perspective argued that the complexity and 'messiness' of cities were the very source of their vitality, safety, and economic health. It advocated for preserving and nurturing the intricate social fabric of existing communities."
+            }
+          ]
+        },
+        "le-corbusier": {
+          "tabName": "Le Corbusier",
+          "type": "person",
+          "name": "Le Corbusier (1887-1965)",
+          "bio": "A titan of Modernist architecture, Charles-Édouard Jeanneret, known as Le Corbusier, was a profoundly influential and controversial theorist. He believed the city was an outdated relic that needed to be demolished and replaced with an efficient, ordered 'machine for living'.",
+          "concepts": [
+            {
+              "title": "The Radiant City (Ville Radieuse)",
+              "content": "His master-plan concept featuring uniform, high-rise apartment blocks set in vast, park-like green spaces. It was designed for efficiency, with transportation dominated by the automobile and strict functional zoning."
+            },
+            {
+              "title": "Top-Down Rationalism",
+              "content": "Le Corbusier believed that urban problems could be solved through logic, geometry, and grand, unified plans imposed by expert architects. The existing city was a problem to be erased, not a foundation to build upon."
+            },
+            {
+              "title": "The Death of the Street",
+              "content": "He saw the traditional street as a dark, dangerous, and inefficient remnant of the past. His plans eliminated it in favor of superhighways and vast, open plazas that separated buildings."
+            }
+          ],
+          "keyWorks": [
+            {
+              "title": "Towards a New Architecture (1923)",
+              "description": "His hugely influential manifesto declaring that 'a house is a machine for living in' and outlining his core principles."
+            },
+            {
+              "title": "Plan Voisin (1925)",
+              "description": "An infamous (and unrealized) proposal to demolish a huge swath of central Paris and replace it with sixty-story glass towers."
+            },
+            {
+              "title": "Unité d'Habitation, Marseille",
+              "description": "A real-world application of his 'vertical city' concept, a massive concrete apartment block housing over 1,600 people."
+            }
+          ]
+        },
+        "jane-jacobs": {
+          "tabName": "Jane Jacobs",
+          "type": "person",
+          "name": "Jane Jacobs (1916-2006)",
+          "bio": "An American-Canadian journalist, author, and activist who became the most formidable critic of Modernist urban planning. With no formal training in architecture, she used direct observation and a community-based perspective to analyze how cities actually work.",
+          "concepts": [
+            {
+              "title": "Eyes on the Street",
+              "content": "Her most famous concept: that a steady flow of people on vibrant, mixed-use streets provides a constant, natural layer of surveillance that keeps neighborhoods safe, far more effectively than isolated, empty green spaces."
+            },
+            {
+              "title": "Bottom-Up Organicism",
+              "content": "Jacobs argued that healthy cities are like ecosystems—they are complex, resilient, and cannot be created by a single master plan. They must evolve organically over time, guided by the people who live and work there."
+            },
+            {
+              "title": "The Sidewalk Ballet",
+              "content": "Her poetic term for the intricate, un-choreographed, and constant series of interactions and connections that happen on a lively city street, forming the basis of public trust and community."
+            }
+          ],
+          "keyWorks": [
+            {
+              "title": "The Death and Life of Great American Cities (1961)",
+              "description": "Her seminal book that launched a powerful critique against urban renewal and championed a new way of seeing urban vitality."
+            },
+            {
+              "title": "Activism Against Robert Moses",
+              "description": "She successfully led grassroots campaigns to stop the construction of the Lower Manhattan Expressway, which would have destroyed Greenwich Village and SoHo."
+            }
+          ]
+        },
+        "comparison": {
+          "tabName": "Comparison",
+          "type": "comparison",
+          "title": "Order vs. Complexity",
+          "grid": [
+            {
+              "title": "Le Corbusier",
+              "items": [
+                { "label": "Planning Method", "content": "Top-down, master-planned, rationalist" },
+                { "label": "Ideal City Form", "content": "Towers in a park, separated by function" },
+                { "label": "View of the Street", "content": "An obsolete corridor for cars; a source of chaos" },
+                { "label": "Core Value", "content": "Order & Efficiency" }
+              ]
+            },
+            {
+              "title": "Jane Jacobs",
+              "items": [
+                { "label": "Planning Method", "content": "Bottom-up, observational, organic" },
+                { "label": "Ideal City Form", "content": "Dense, mixed-use, low-rise neighborhoods" },
+                { "label": "View of the Street", "content": "The essential organ of public and economic life" },
+                { "label": "Core Value", "content": "Vibrancy & Complexity" }
+              ]
+            }
+          ],
+          "commonGround": {
+            "title": "Shared Ground",
+            "items": [
+              "Both were responding to the perceived failures of the 19th-century industrial city.",
+              "Both believed that the design of a city had a profound impact on human happiness and well-being.",
+              "Both were uncompromising and powerful advocates for their respective visions.",
+              "Both had a massive and lasting influence on how cities are designed and discussed today."
+            ]
+          }
+        },
+        "quotes": {
+          "tabName": "Quotes",
+          "type": "quotes",
+          "title": "In Their Own Words",
+          "quotes": [
+            {
+              "text": "A house is a machine for living in.",
+              "source": "Le Corbusier"
+            },
+            {
+              "text": "Cities have the capability of providing something for everybody, only because, and only when, they are created by everybody.",
+              "source": "Jane Jacobs"
+            },
+            {
+              "text": "We must kill the street! We shall truly enter into modern town planning only after we have accepted this determination.",
+              "source": "Le Corbusier"
+            },
+            {
+              "text": "Under the seeming disorder of the old city, wherever the old city is working successfully, is a marvelous order for maintaining the safety of the streets and the freedom of the city. It is a complex order.",
+              "source": "Jane Jacobs"
+            },
+            {
+              "text": "The city of today is a dying thing because its planning is not in the geometric order.",
+              "source": "Le Corbusier"
+            },
+            {
+              "text": "This is the ballet of the good city sidewalk, a complex order that is always unfolding. The ballet of the street never repeats itself from place to place, and in any one place is always replete with new improvisations.",
+              "source": "Jane Jacobs"
+            }
+          ]
+        }
+      }
+    }
+    </script>
+
+    <div class="container">
+        <div class="header">
+            <h1 id="app-title">Loading...</h1>
+            <p id="app-subtitle">Please wait</p>
+        </div>
+
+        <div class="nav-tabs" id="nav-tabs">
+            </div>
+
+        <div id="content-container">
+            </div>
+    </div>
+
+    <script>
+        let studyData = null;
+        let currentTab = null;
+
+        // Load and parse JSON data
+        async function loadData() {
+            try {
+                // First, try to fetch from an external file (for easy editing in dev)
+                const res = await fetch('./content.json', {cache: 'no-store'});
+                if (!res.ok) throw new Error('External file not found or invalid.');
+                studyData = await res.json();
+            } catch (e) {
+                // If fetch fails, fall back to embedded JSON
+                const embedded = document.getElementById('embedded-content').textContent.trim();
+                if (!embedded) {
+                    throw new Error('No embedded content found!');
+                }
+                studyData = JSON.parse(embedded);
+            }
+        }
+
+        function renderApp() {
+            if (!studyData) return;
+
+            // Set title and subtitle
+            document.title = studyData.title || 'Idea Comparator';
+            document.getElementById('app-title').textContent = studyData.title || 'Idea Comparator';
+            document.getElementById('app-subtitle').textContent = studyData.subtitle || '';
+
+            // Generate tabs
+            const tabsContainer = document.getElementById('nav-tabs');
+            const contentContainer = document.getElementById('content-container');
+            
+            tabsContainer.innerHTML = '';
+            contentContainer.innerHTML = '';
+
+            const tabKeys = Object.keys(studyData.sections || {});
+            if (!tabKeys.length) return;
+
+            // Set first tab as current if none set
+            if (!currentTab) currentTab = tabKeys[0];
+
+            // Create tab buttons and content sections
+            tabKeys.forEach(tabKey => {
+                const section = studyData.sections[tabKey];
+                const button = document.createElement('button');
+                button.className = 'tab-button';
+                button.textContent = section.tabName || tabKey;
+                button.dataset.tabKey = tabKey; 
+                button.onclick = () => showTab(tabKey);
+                tabsContainer.appendChild(button);
+
+                const contentDiv = document.createElement('div');
+                contentDiv.id = tabKey;
+                contentDiv.className = 'content-section';
+                contentDiv.innerHTML = generateSectionContent(section);
+                contentContainer.appendChild(contentDiv);
+            });
+            
+            // Activate the initial tab
+            showTab(currentTab);
+        }
+
+        function generateSectionContent(section) {
+            let html = '';
+
+            if (section.type === 'overview') {
+                html += `<h2 class="section-title">${section.title}</h2>`;
+                if (section.introduction) {
+                    html += `<p>${section.introduction}</p>`;
+                }
+                section.subsections?.forEach(sub => {
+                    html += `
+                        <div class="subsection">
+                            <h4>${sub.title}</h4>
+                            <p>${sub.content}</p>
+                        </div>
+                    `;
+                });
+            } 
+            else if (section.type === 'person') {
+                html += `
+                    <div class="person-card">
+                        <h2>${section.name}</h2>
+                        <div class="bio">${section.bio}</div>
+                    </div>
+                `;
+                if(section.concepts && section.concepts.length > 0){
+                    html += `<div class="section-title">Core Concepts</div>`;
+                    section.concepts.forEach(concept => {
+                        html += `
+                            <div class="subsection">
+                                <h4>${concept.title}</h4>
+                                <p>${concept.content}</p>
+                            </div>
+                        `;
+                    });
+                }
+                
+                if (section.keyWorks && section.keyWorks.length > 0) {
+                    html += `<div class="section-title">Key Works & Achievements</div><div class="key-works">`;
+                    section.keyWorks.forEach(work => {
+                        html += `
+                            <div class="work-item">
+                                <strong>${work.title}</strong>
+                                ${work.description}
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                }
+            }
+            else if (section.type === 'comparison') {
+                html += `<h2 class="section-title">${section.title}</h2>`;
+                if (section.grid && section.grid.length > 0) {
+                    html += '<div class="comparison-grid">';
+                    section.grid.forEach(card => {
+                        html += `<div class="comparison-card"><h3>${card.title}</h3>`;
+                        card.items?.forEach(item => {
+                            html += `
+                                <div class="subsection">
+                                    <h4>${item.label}</h4>
+                                    <p>${item.content}</p>
+                                </div>
+                            `;
+                        });
+                        html += '</div>';
+                    });
+                    html += '</div>';
+                }
+                
+                if (section.commonGround && section.commonGround.items && section.commonGround.items.length > 0) {
+                    html += `<h2 class="section-title">${section.commonGround.title || 'Common Ground'}</h2>`;
+                    html += '<ul style="padding: 1.5rem 1.5rem 1.5rem 3rem; background: rgba(52, 152, 219, 0.05); border-radius: 8px;">';
+                    section.commonGround.items.forEach(item => {
+                        html += `<li style="margin-bottom: 0.5rem;">${item}</li>`;
+                    });
+                    html += '</ul>';
+                }
+            }
+            else if (section.type === 'quotes') {
+                html += `
+                    <h2 class="section-title">${section.title}</h2>
+                    <div class="quote-section">
+                        <div class="quote-container scrollbar-custom" id="quoteContainer">
+                            </div>
+                    </div>
+                `;
+            }
+
+            return html;
+        }
+
+        function showTab(tabName) {
+            currentTab = tabName;
+            
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.tabKey === tabName);
+            });
+            
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.toggle('active', section.id === tabName);
+            });
+
+            if (tabName === 'quotes') {
+                populateQuotes();
+            }
+        }
+
+        function populateQuotes() {
+            const container = document.getElementById('quoteContainer');
+            const quotesData = studyData.sections.quotes?.quotes;
+            if (!container || !quotesData) return;
+            
+            container.innerHTML = ''; // Clear previous quotes
+            quotesData.forEach(quote => {
+                const quoteDiv = document.createElement('div');
+                quoteDiv.className = 'quote-item';
+                quoteDiv.innerHTML = `
+                    <p class="quote-text">"${quote.text}"</p>
+                    <p class="quote-source">— ${quote.source}</p>
+                `;
+                container.appendChild(quoteDiv);
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                await loadData();
+                renderApp();
+            } catch (error) {
+                console.error("Failed to initialize the application:", error);
+                document.getElementById('app-title').textContent = 'Error';
+                document.getElementById('app-subtitle').textContent = 'Could not load content. Please check the console for details.';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Cognitive Bias Codex</title>
+  <style>
+    /* Global Reset & Base Styles */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: "Georgia", serif;
+      line-height: 1.6;
+      background-color: #EAEAEA;
+      color: #333333;
+    }
+
+    /* Top Bar & Mega-Menu Toggle */
+    #master-top-bar {
+      background-color: #2F4F4F;
+      padding: 0.75rem 1rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      display: flex; justify-content: space-between; align-items: center;
+      position: sticky; top: 0; z-index: 250;
+    }
+    #master-top-bar .site-title {
+      font-family:'Rockwell', 'Georgia', serif;
+      color:#E5E5E5;
+      font-size:1.5rem;
+      text-transform:uppercase;
+      letter-spacing:1px;
+      text-shadow:1px 1px 2px rgba(0,0,0,0.4);
+    }
+    #mega-menu-toggle {
+      background:#D3D3D3;color:#2F4F4F;border:2px solid #A9A9A9;border-radius:5px;
+      padding:0.6rem 1.2rem;cursor:pointer;font-family:"Impact",Haettenschweiler,"Arial Narrow Bold",sans-serif;
+      font-size:0.9rem;text-transform:uppercase;letter-spacing:1px;transition:.3s;
+    }
+    #mega-menu-toggle:hover{background:#A9A9A9;color:#fff}
+    #mega-menu-toggle.active{background:#B22222;color:#fff;border-color:#8B0000}
+
+    /* Mega-menu panel */
+    #mega-menu-panel{
+      display:none;position:fixed;top:60px;left:0;width:100%;height:calc(100vh - 60px);
+      background:rgba(47,79,79,.98);z-index:300;padding:2rem;overflow-y:auto;
+      box-shadow:0 5px 15px rgba(0,0,0,.3);animation:fadeInMega .3s ease-out;
+    }
+    @keyframes fadeInMega{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+    #mega-menu-panel.open{display:block}
+    .mega-menu-columns{display:flex;flex-wrap:wrap;gap:2rem;justify-content:space-around}
+    .mega-menu-column{flex:1;min-width:200px;margin-bottom:1rem}
+    .mega-menu-column .theater-heading{
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: #EAEAEA;
+      font-weight: bold;
+      font-size: 1.2rem;
+      margin-bottom: .75rem;
+      padding-bottom: .5rem;
+      border-bottom: 1px solid #778899;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .mega-menu-column .topic-link{
+      display:block;color:#EAEAEA;text-decoration:none;padding:.5rem .25rem;border-radius:2px;
+      transition:.2s;font-size:.95rem;
+    }
+    .mega-menu-column .topic-link:hover{background:#778899;color:#fff}
+    .mega-menu-column .topic-link.active-topic{background:#B22222;color:#fff;font-weight:bold}
+    #page-content{padding-top:60px}
+
+    /* Topic container */
+    .topic-container{
+      display:none;font-family:"Georgia",serif;line-height:1.6;color:#2c3e50;
+      background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+      animation:fadeInTopic .5s ease-in-out;padding:1px 0;min-height:calc(100vh - 60px);
+    }
+    .topic-container.active{display:block}
+    @keyframes fadeInTopic{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+    .topic-container .container{
+      max-width:1200px;margin:20px auto;background:rgba(255,255,255,.95);
+      backdrop-filter:blur(10px);border-radius:20px;box-shadow:0 20px 40px rgba(0,0,0,.1);overflow:hidden;
+    }
+    .topic-container .header{
+      background:linear-gradient(45deg,#1a237e,#3949ab);color:white;padding:3rem 2rem;text-align:center;
+      position:relative;overflow:hidden;
+    }
+    .topic-container .header::before{
+      content:"";position:absolute;top:-50%;left:-50%;width:200%;height:200%;
+      background:url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><circle cx=\"20\" cy=\"20\" r=\"2\" fill=\"rgba(255,255,255,0.05)\"/><circle cx=\"80\" cy=\"40\" r=\"1.5\" fill=\"rgba(255,255,255,0.05)\"/><circle cx=\"40\" cy=\"70\" r=\"1\" fill=\"rgba(255,255,255,0.05)\"/></svg>');
+      animation:float 20s infinite linear;opacity:.7;
+    }
+    @keyframes float{0%{transform:translate(-50px,-50px)}100%{transform:translate(50px,50px)}}
+    .topic-container .header h1{font-size:2.8rem;margin-bottom:.8rem;text-shadow:1px 1px 3px rgba(0,0,0,.4)}
+    .topic-container .header p{font-size:1.1rem;opacity:.85}
+
+    .topic-container .nav{background:#495057;padding:.9rem 0;position:sticky;top:60px;z-index:100}
+    .topic-container .nav-container{max-width:1200px;margin:0 auto;display:flex;justify-content:center;
+      flex-wrap:wrap;gap:.8rem;padding:0 1.5rem}
+    .topic-container .nav-btn{
+      background:linear-gradient(45deg,#5a7a99,#435c74);color:white;border:none;padding:.7rem 1.3rem;
+      border-radius:20px;cursor:pointer;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+      font-size:.85rem;font-weight:bold;transition:.3s;box-shadow:0 3px 12px rgba(0,0,0,.2);
+    }
+    .topic-container .nav-btn:hover{
+      transform:translateY(-2px);box-shadow:0 5px 18px rgba(0,0,0,.3);
+      background:linear-gradient(45deg,#435c74,#304252);
+    }
+    .topic-container .nav-btn.active{
+      background:linear-gradient(45deg,#c0392b,#a93226);box-shadow:0 3px 12px rgba(192,57,43,.4);
+    }
+
+    .topic-container .content{padding:2.5rem 2rem}
+    .topic-container .section{display:none;padding-bottom:1.5rem;margin-bottom:1.5rem;animation:fadeInSection .6s}
+    .topic-container .section.active{display:block}
+    @keyframes fadeInSection{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+
+    .topic-container .section h2{
+      font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;color:#23272a;font-size:2.3rem;
+      margin-bottom:1.8rem;text-align:center;position:relative;padding-bottom:8px;
+    }
+    .topic-container .section h2::after{
+      content:"";position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);
+      width:90px;height:3px;background:linear-gradient(45deg,#5a7a99,#c0392b);border-radius:1.5px;
+    }
+    .topic-container .section h3{
+      font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;color:#343a40;font-size:1.7rem;
+      border-left:3px solid #5a7a99;margin:1.8rem 0 .9rem;padding-left:.9rem;
+    }
+    .topic-container .section h4{
+      font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size: 1.3rem; margin-bottom: 0.9rem; color: #2c3e50;
+    }
+    .topic-container .section p{
+      font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;margin-bottom:1.3rem;font-size:1.05rem;
+      text-align:justify;line-height:1.7;color:#333;
+    }
+
+    /* Figure & impact cards */
+    .figure-grid,.impact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+      gap:1.8rem;margin:1.8rem 0;}
+    .figure-card,.impact-card{
+      background:linear-gradient(135deg,#fdfdfe,#f1f3f5);border-radius:12px;padding:1.8rem;
+      box-shadow:0 7px 20px rgba(0,0,0,.08);transition:.3s;border:1px solid rgba(0,0,0,.08);
+    }
+    .figure-card:hover,.impact-card:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(0,0,0,.12)}
+    .figure-card h4,.impact-card h4{
+      font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;color:#23272a;font-size:1.3rem;
+      margin-bottom:.9rem;padding-bottom:.4rem;border-bottom:2px solid #5a7a99;
+    }
+    .impact-card{text-align:center;border-top:3px solid}
+    .impact-card:nth-child(1){border-top-color:#007bff}.impact-card:nth-child(2){border-top-color:#6c757d}
+    .impact-card:nth-child(3){border-top-color:#ffc107}.impact-card:nth-child(4){border-top-color:#28a745}
+
+    /* Timeline */
+    .battle-timeline{position:relative;margin:2.5rem 0;padding-left:0}
+    .timeline-item{display:flex;margin-bottom:1.8rem;position:relative}
+    .timeline-item::before{
+      content:"";position:absolute;left:18px;top:0;bottom:-1.8rem;width:2px;
+      background:linear-gradient(to bottom,#5a7a99,#435c74);
+    }
+    .timeline-item:last-child::before{height:36px;bottom:auto}
+    .timeline-dot{
+      width:36px;height:36px;background:linear-gradient(45deg,#6c757d,#495057);border-radius:50%;
+      display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:.9em;
+      margin-right:1.8rem;box-shadow:0 3px 8px rgba(0,0,0,.25);flex-shrink:0;z-index:1;
+    }
+    .timeline-content{
+      background:white;padding:1.3rem;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.08);flex:1;
+      border-left:3px solid #5a7a99;
+    }
+    .timeline-content h4{color:#23272a;margin-bottom:.4rem;font-size:1.2rem}
+    .timeline-date{color:#6c757d;font-size:.85rem;font-weight:bold;margin-bottom:.4rem}
+
+    /* Badge Box Styles */
+    .badge-box {
+        background: linear-gradient(135deg,#3a3f44,#495057);
+        color: white;
+        padding: 1.8rem;
+        border-radius: 12px;
+        margin: 1.8rem 0;
+        box-shadow: 0 8px 25px rgba(0,0,0,.25);
+    }
+    .badge-box h4 {
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        color: #ffffff;
+        margin-bottom: .9rem;
+        font-size: 1.3rem;
+    }
+    .topic-container .section .badge-box h4 {
+        color: white;
+    }
+    .badge-box ul {
+        list-style: none;
+        padding-left: 0;
+    }
+    .badge-box li {
+        margin-bottom: .7rem;
+        padding-left: 1.3rem;
+        position: relative;
+    }
+    .badge-box li::before {
+        content: "»";
+        position: absolute;
+        left: 0;
+        color: #ffc107;
+        font-weight: bold;
+    }
+    .badge-box em {
+        color: #17a2b8;
+        font-style: italic;
+    }
+
+    /* Footer */
+    .footer{background:#23272a;color:white;text-align:center;padding:1.8rem;margin-top:2rem}
+
+    /* Responsive tweaks */
+    @media(max-width:768px){
+      #master-top-bar .site-title{font-size:1.2rem}
+      #mega-menu-toggle{font-size:.8rem;padding:.5rem .8rem}
+      #mega-menu-panel{padding:1rem;top:50px;height:calc(100vh - 50px)}
+      #page-content{padding-top:50px}
+      .topic-container .header h1{font-size:2rem}
+      .topic-container .nav{top:50px}
+      .topic-container .nav-container{flex-direction:column;align-items:center}
+      .topic-container .content{padding:1.5rem 1rem}
+      .topic-container .section h2{font-size:1.8rem}
+      .figure-grid{grid-template-columns:1fr}
+      .timeline-item{flex-direction:column}
+      .timeline-dot{margin-right:0;margin-bottom:.9rem;align-self:flex-start}
+    }
+  </style>
+</head>
+<body>
+
+  <header id="master-top-bar">
+    <span class="site-title">The Cognitive Bias Codex</span>
+    <button id="mega-menu-toggle">Menu</button>
+  </header>
+
+  <nav id="mega-menu-panel">
+    <div id="mega-menu-container" class="mega-menu-columns">
+      <!-- This content is generated by the script -->
+    </div>
+  </nav>
+
+  <div id="page-content">
+    <div id="topic-master-container" class="topic-container">
+      <!-- This content is generated by the script -->
+    </div>
+  </div>
+
+  <script>
+    /*
+    ==================================================================
+    ==                  START: PASTE YOUR DATA HERE                 ==
+    ==================================================================
+    */
+
+    const menuData = [
+      {
+        heading: 'Memory & Story Construction',
+        topics: [
+          { id: 'topic-the-revisionist-brain', text: 'The Revisionist Brain' },
+          { id: 'topic-hindsights-perfect-vision', text: 'Hindsight’s Perfect Vision' },
+          { id: 'topic-availability-and-vividness', text: 'Availability and Vividness' },
+          { id: 'topic-the-narrative-fallacy', text: 'The Narrative Fallacy' }
+        ]
+      },
+      {
+        heading: 'Social Perception & Belonging',
+        topics: [
+          { id: 'topic-the-attribution-circus', text: 'The Attribution Circus' },
+          { id: 'topic-tribal-thinking', text: 'Tribal Thinking' },
+          { id: 'topic-the-halo-effect', text: 'The Halo Effect' },
+          { id: 'topic-conformity-and-social-proof', text: 'Conformity and Social Proof' }
+        ]
+      },
+      {
+        heading: 'Decision Architecture',
+        topics: [
+          { id: 'topic-anchoring-and-adjustment', text: 'Anchoring and Adjustment' },
+          { id: 'topic-loss-aversion-and-framing', text: 'Loss Aversion and Framing' },
+          { id: 'topic-the-sunk-cost-trap', text: 'The Sunk Cost Trap' },
+          { id: 'topic-choice-overload', text: 'Choice Overload' }
+        ]
+      },
+      {
+        heading: 'Pattern Recognition Gone Wrong',
+        topics: [
+          { id: 'topic-confirmation-bias-the-mother-of-all-biases', text: 'Confirmation Bias - The Mother of All Biases' },
+          { id: 'topic-seeing-patterns-in-noise', text: 'Seeing Patterns in Noise' },
+          { id: 'topic-survivorship-bias', text: 'Survivorship Bias' },
+          { id: 'topic-the-gamblers-fallacy', text: 'The Gambler’s Fallacy' }
+        ]
+      }
+    ];
+
+    const masterDataObject = {
+      'topic-the-revisionist-brain': {
+        title: 'The Revisionist Brain',
+        subtitle: 'Exploring the paradox that our memories feel like faithful records but are actually reconstructions built anew each time we remember.',
+        nav: [
+          { id: 'the-illusion-of-accurate-memory', text: 'The Illusion of Accurate Memory' },
+          { id: 'famous-memory-failures', text: 'Famous Memory Failures' },
+          { id: 'memory-distortion-impacts', text: 'Memory Distortion Impacts' },
+          { id: 'memory-debiasing-techniques', text: 'Memory Debiasing Techniques' },
+          { id: 'memory-research-timeline', text: 'Memory Research Timeline' }
+        ],
+        sections: [
+          {
+            id: 'the-illusion-of-accurate-memory',
+            title: 'The Illusion of Accurate Memory',
+            content: `<h4>Memory as Reconstruction, Not Recording</h4><p>On January 28, 1986, millions watched the Space Shuttle Challenger lift off into a bright Florida sky. Seventy-three seconds later, it exploded. Psychologists found that witnesses’ recollections shifted dramatically over time, with individuals giving entirely different, yet confidently told, accounts years later. This is the paradox at the heart of memory: we feel our recollections are faithful records, but they are actually reconstructions, built anew each time we remember. In the process of remembering, we edit, omit, and invent details to make the story feel coherent, a phenomenon known as the misinformation effect. Our confidence in a memory, especially a vivid "flashbulb" memory, has little to no correlation with its accuracy.</p>`
+          },
+          {
+            id: 'famous-memory-failures',
+            title: 'Famous Memory Failures',
+            content: `<div class="figure-grid">
+              <div class="figure-card"><h4>Challenger Disaster Study</h4><p>Neisser’s research on the Challenger explosion revealed a stunning disconnect between people's confidence in their "flashbulb" memories and their actual accuracy.</p></div>
+              <div class="figure-card"><h4>Ronald Cotton Case</h4><p>An infamous case of eyewitness misidentification where confident but incorrect testimony led to Ronald Cotton's wrongful imprisonment for 11 years.</p></div>
+              <div class="figure-card"><h4>Brian Williams</h4><p>The newscaster's memory of being in a helicopter hit by an RPG evolved over time from a truthful account of being nearby to a false memory of being in the targeted aircraft.</p></div>
+              <div class="figure-card"><h4>Hillary Clinton</h4><p>Misremembered landing under sniper fire in Bosnia in 1996, a dramatic story that was contradicted by video evidence of a calm airport reception.</p></div>
+              <div class="figure-card"><h4>Mandela Effect</h4><p>A phenomenon of collective false memories, where large groups of people misremember the same fact or event, such as the death of Nelson Mandela in the 1980s.</p></div>
+            </div>`
+          },
+          {
+            id: 'memory-distortion-impacts',
+            title: 'Memory Distortion Impacts',
+            content: `<div class="impact-grid">
+              <div class="impact-card"><h4>Legal System</h4><p>Wrongful convictions from faulty but highly confident eyewitness testimony remain a significant problem in criminal justice.</p></div>
+              <div class="impact-card"><h4>Personal Relationships</h4><p>Conflicts often escalate over differing recollections of "what really happened," with each person convinced their own reconstructed memory is the truth.</p></div>
+              <div class="impact-card"><h4>Historical Records</h4><p>Oral histories and memoirs, while valuable, can drift significantly from factual events as memories are reconstructed and reshaped over time.</p></div>
+              <div class="impact-card"><h4>Medical Diagnosis</h4><p>The unreliability of a patient's self-reported history of symptoms can pose a significant challenge to accurate medical diagnosis.</p></div>
+              <div class="impact-card"><h4>Business Decisions</h4><p>Teams may misremember the reasons for a past strategy's success or failure, leading them to repeat mistakes or abandon sound principles.</p></div>
+            </div>`
+          },
+          {
+            id: 'memory-debiasing-techniques',
+            title: 'Memory Debiasing Techniques',
+            content: `<div class="badge-box"><h4>Tools for More Accurate Recall:</h4><ul>
+              <li>Document events immediately in a journal or log while the memory is fresh.</li>
+              <li>When recalling an important event, seek out contemporary evidence like photos, emails, or news reports.</li>
+              <li>Actively seek out the perspectives of others who were present to get a more complete picture.</li>
+              <li>Be skeptical of your own confidence; treat highly confident memories with the same critical eye as uncertain ones.</li>
+              <li>In formal settings like interviews, use structured, non-leading questions to avoid the misinformation effect.</li>
+            </ul></div>`
+          },
+          {
+            id: 'memory-research-timeline',
+            title: 'Memory Research Timeline',
+            content: `<div class="battle-timeline">
+              <div class="timeline-item"><div class="timeline-dot">1</div><div class="timeline-content"><div class="timeline-date">1932</div><h4>Bartlett’s “War of the Ghosts” study</h4><p>Demonstrated that memory is reconstructive and shaped by cultural schemas.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">2</div><div class="timeline-content"><div class="timeline-date">1974</div><h4>Loftus car crash experiments</h4><p>Showed that memory could be altered by post-event information (the misinformation effect).</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">3</div><div class="timeline-content"><div class="timeline-date">1986</div><h4>Challenger study begins</h4><p>Ulric Neisser begins his landmark study on the unreliability of "flashbulb" memories.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">4</div><div class="timeline-content"><div class="timeline-date">1995</div><h4>False memory syndrome debate</h4><p>The debate over recovered and implanted memories in therapy reaches its peak.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">5</div><div class="timeline-content"><div class="timeline-date">2010</div><h4>fMRI reveals memory reconstruction</h4><p>Neuroimaging studies show how the brain actively reconstructs memories from scattered traces during recall.</p></div></div>
+            </div>`
+          }
+        ]
+      },
+      'topic-hindsights-perfect-vision': {
+        title: 'Hindsight’s Perfect Vision',
+        subtitle: 'The "knew-it-all-along" effect where we see past events as having been predictable, distorting our ability to learn from experience.',
+        nav: [
+          { id: 'the-knew-it-all-along-effect', text: 'The Knew-It-All-Along Effect' },
+          { id: 'hindsight-in-different-domains', text: 'Hindsight in Different Domains' },
+          { id: 'hindsight-prevention-tools', text: 'Hindsight Prevention Tools' },
+          { id: 'hindsight-bias-evolution', text: 'Hindsight Bias Evolution' }
+        ],
+        sections: [
+          {
+            id: 'the-knew-it-all-along-effect',
+            title: 'The Knew-It-All-Along Effect',
+            content: `<h4>Inevitable in Retrospect</h4><p>Once we know the outcome of an event, we find it nearly impossible to imagine a state of not knowing. This hindsight bias, or the "knew-it-all-along" effect, causes us to automatically update our memory of our own past predictions. This leads to a sense of "creeping determinism," where historical events feel like they followed an obvious and inevitable path. A key related bias is outcome bias, where we judge the quality of a past decision not by the process, but by its lucky or unlucky outcome. These biases make surprises feel predictable in retrospect and prevent us from learning accurately from the past.</p>`
+          },
+          {
+            id: 'hindsight-in-different-domains',
+            title: 'Hindsight in Different Domains',
+            content: `<div class="impact-grid">
+              <div class="impact-card"><h4>Financial Markets</h4><p>After a market crash, the "obvious" warning signs are highlighted, while the thousands of contradictory signals present before the crash are conveniently forgotten.</p></div>
+              <div class="impact-card"><h4>Medical Malpractice</h4><p>A doctor's decision is often judged by its outcome. If a rare side effect occurs, it can seem in hindsight that the doctor should have known, even if the decision was sound based on the information available at the time.</p></div>
+              <div class="impact-card"><h4>Political Analysis</h4><p>The winner of an election often seems like the inevitable choice in retrospect, with analysts overstating the predictability of the outcome and ignoring the uncertainty that existed before the votes were cast.</p></div>
+              <div class="impact-card"><h4>Technology</h4><p>Successful innovations like the iPhone often seem "inevitable," but this narrative ignores the immense uncertainty and the high probability of failure that existed during their development.</p></div>
+              <div class="impact-card"><h4>Military Strategy</h4><p>"Armchair generals" are quick to point out the "obvious" mistakes made in past battles, a luxury afforded by knowing the outcome of those decisions.</p></div>
+            </div>`
+          },
+          {
+            id: 'hindsight-prevention-tools',
+            title: 'Hindsight Prevention Tools',
+            content: `<div class="badge-box"><h4>Techniques for Clearer Retrospection:</h4><ul>
+              <li>Keep a decision journal to document predictions and reasoning before an outcome is known.</li>
+              <li>Establish outcome-independent criteria for evaluating decisions based on the quality of the process.</li>
+              <li>Assign a "devil's advocate" to argue for alternative outcomes and challenge the sense of inevitability.</li>
+              <li>Conduct "premortems" to imagine failure scenarios before a decision is made, which reveals true uncertainty.</li>
+              <li>Regularly track and review past predictions to get an honest assessment of forecasting ability.</li>
+            </ul></div>`
+          },
+          {
+            id: 'hindsight-bias-evolution',
+            title: 'Hindsight Bias Evolution',
+            content: `<div class="battle-timeline">
+              <div class="timeline-item"><div class="timeline-dot">1</div><div class="timeline-content"><div class="timeline-date">1975</div><h4>Fischhoff identifies phenomenon</h4><p>Psychologist Baruch Fischhoff's seminal paper first describes and names the "knew-it-all-along" effect.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">2</div><div class="timeline-content"><div class="timeline-date">1991</div><h4>Berlin Wall fall predictions studied</h4><p>Research shows that after the fall of the Berlin Wall, people dramatically overestimated their prior predictions of its likelihood.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">3</div><div class="timeline-content"><div class="timeline-date">2001</div><h4>9/11 “failure of imagination”</h4><p>The 9/11 Commission Report debates whether the attacks were predictable, a discussion heavily influenced by hindsight.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">4</div><div class="timeline-content"><div class="timeline-date">2008</div><h4>Financial crisis blame</h4><p>The post-mortem of the financial crisis was dominated by claims that regulators and banks "should have seen" the obvious risks.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">5</div><div class="timeline-content"><div class="timeline-date">2020</div><h4>Pandemic preparedness hindsight</h4><p>Following the COVID-19 outbreak, past warnings from experts were seen as "obvious" predictions of the inevitable, despite prior public indifference.</p></div></div>
+            </div>`
+          }
+        ]
+      },
+      'topic-availability-and-vividness': {
+        title: 'Availability and Vividness',
+        subtitle: 'The mental shortcut where we judge the likelihood of an event by how easily vivid or recent examples come to mind.',
+        nav: [
+          { id: 'when-recent-equals-probable', text: 'When Recent Equals Probable' },
+          { id: 'availability-cascade-examples', text: 'Availability Cascade Examples' },
+          { id: 'availability-heuristic-consequences', text: 'Availability Heuristic Consequences' },
+          { id: 'availability-correction-methods', text: 'Availability Correction Methods' },
+          { id: 'availability-research-timeline', text: 'Availability Research Timeline' }
+        ],
+        sections: [
+          {
+            id: 'when-recent-equals-probable',
+            title: 'When Recent Equals Probable',
+            content: `<h4>Mental Availability vs. Statistical Frequency</h4><p>The availability heuristic is a mental shortcut where our judgment of an event's frequency is skewed by how easily we can recall examples of it. Vivid, emotional, or recent memories are more "available" and thus make the events they represent seem more probable than they are. We substitute the easy question, "Can I think of an example?" for the harder question, "What is the statistical likelihood?" This is compounded by the simulation heuristic, where our ability to easily imagine an event (like winning the lottery) inflates its perceived probability.</p>`
+          },
+          {
+            id: 'availability-cascade-examples',
+            title: 'Availability Cascade Examples',
+            content: `<div class="figure-grid">
+              <div class="figure-card"><h4>Shark Attacks</h4><p>The movie "Jaws" created such a vivid and available image of shark attacks that beach attendance dropped, despite the infinitesimal statistical risk.</p></div>
+              <div class="figure-card"><h4>Plane Crashes</h4><p>After 9/11, many Americans chose to drive instead of fly. The increased road traffic led to a statistically significant increase in traffic fatalities, far more than the number of people who died in the attacks.</p></div>
+              <div class="figure-card"><h4>Child Abduction</h4><p>Media focus on "stranger danger" creates high availability for this rare event, while the far more common risk of harm from known individuals gets less mental attention.</p></div>
+              <div class="figure-card"><h4>Nuclear Power</h4><p>Disasters like Three Mile Island and Chernobyl created a powerful and lasting availability cascade, shaping public perception of nuclear risk for decades, regardless of safety improvements.</p></div>
+              <div class="figure-card"><h4>Lottery Winners</h4><p>The massive media visibility of lottery winners makes the prospect of winning highly available, causing people to overestimate the probability of a win and underestimate the certainty of a loss.</p></div>
+            </div>`
+          },
+          {
+            id: 'availability-heuristic-consequences',
+            title: 'Availability Heuristic Consequences',
+            content: `<div class="impact-grid">
+              <div class="impact-card"><h4>Insurance Purchasing</h4><p>People are most likely to buy earthquake or flood insurance immediately after a natural disaster, when the risk is most available, rather than based on a rational assessment of long-term risk.</p></div>
+              <div class="impact-card"><h4>Medical Self-Diagnosis</h4><p>Reading about the symptoms of a rare disease online can make those symptoms highly available, leading to "WebMD syndrome" where people convince themselves they have the condition.</p></div>
+              <div class="impact-card"><h4>Investment Behavior</h4><p>Investors chase recent performance, pouring money into stocks or funds that have recently done well because their success is highly available, often just before a market correction.</p></div>
+              <div class="impact-card"><h4>Policy Making</h4><p>Governments often pass reactive legislation in response to a single, vivid, and widely publicized event, even if the policy is an inefficient way to address a much broader, less visible problem.</p></div>
+              <div class="impact-card"><h4>Personal Safety</h4><p>We may fear the wrong threats, like terrorism or plane crashes, and neglect to take precautions against far more likely dangers like car accidents or heart disease.</p></div>
+            </div>`
+          },
+          {
+            id: 'availability-correction-methods',
+            title: 'Availability Correction Methods',
+            content: `<div class="badge-box"><h4>Techniques for Clearer Probability Judgment:</h4><ul>
+              <li>Actively seek out the base rate information or statistical frequency of an event before making a judgment.</li>
+              <li>Consciously consider the events and risks that are not being reported in the media.</li>
+              <li>Use a structured risk assessment matrix that evaluates both probability and impact, rather than relying on intuition.</li>
+              <li>Institute a "cooling-off period" before making a major decision in the wake of a vivid, emotional event.</li>
+              <li>Improve statistical literacy to build a better intuitive understanding of probability and risk.</li>
+            </ul></div>`
+          },
+          {
+            id: 'availability-research-timeline',
+            title: 'Availability Research Timeline',
+            content: `<div class="battle-timeline">
+              <div class="timeline-item"><div class="timeline-dot">1</div><div class="timeline-content"><div class="timeline-date">1973</div><h4>Kahneman & Tversky initial work</h4><p>The psychologists first describe the availability heuristic in their influential paper "Availability: A Heuristic for Judging Frequency and Probability."</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">2</div><div class="timeline-content"><div class="timeline-date">1982</div><h4>Slovic on risk perception</h4><p>Paul Slovic's work shows how the availability heuristic, along with the "dread risk" factor, shapes public perception of technological and environmental risks.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">3</div><div class="timeline-content"><div class="timeline-date">1989</div><h4>Exxon Valdez spill</h4><p>The vivid images from the oil spill create a powerful availability cascade that changes environmental policy and corporate liability for decades.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">4</div><div class="timeline-content"><div class="timeline-date">2001</div><h4>Terrorism availability post-9/11</h4><p>The attacks create a permanent shift in the public's perception of terrorism risk, influencing everything from airport security to foreign policy.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">5</div><div class="timeline-content"><div class="timeline-date">2020</div><h4>COVID risk perception studies</h4><p>Researchers study how media coverage and personal experience with the virus dramatically alter individuals' risk assessments and behaviors.</p></div></div>
+            </div>`
+          }
+        ]
+      },
+      'topic-the-narrative-fallacy': {
+        title: 'The Narrative Fallacy',
+        subtitle: 'Our tendency to prefer simple, coherent stories over complex, messy data, leading us to see the past as more explainable than it really was.',
+        nav: [
+          { id: 'stories-over-statistics', text: 'Stories Over Statistics' },
+          { id: 'narrative-construction-process', text: 'Narrative Construction Process' },
+          { id: 'narrative-fallacy-defenses', text: 'Narrative Fallacy Defenses' },
+          { id: 'narrative-fallacy-timeline', text: 'Narrative Fallacy Timeline' }
+        ],
+        sections: [
+          {
+            id: 'stories-over-statistics',
+            title: 'Stories Over Statistics',
+            content: `<h4>The Brain's Preference for Causal Narratives</h4><p>The Narrative Fallacy, a term coined by Nassim Nicholas Taleb, describes our vulnerability to oversimplified explanations of the past. Our minds are wired to seek out and create stories, imposing a clean cause-and-effect logic on events that are often complex and random. We prefer a coherent story to a set of disconnected facts, even if that story is a complete fabrication. This post-hoc explanation feels so right that we believe it was a pre-hoc prediction. The pull of a simple explanation often leads us to sacrifice completeness and accuracy for the sake of a good, memorable story.</p>`
+          },
+          {
+            id: 'narrative-construction-process',
+            title: 'Narrative Construction Process',
+            content: `<div class="impact-grid">
+              <div class="impact-card"><h4>Selection</h4><p>We cherry-pick the details that fit the story we want to tell, ignoring the vast amount of contradictory or irrelevant information.</p></div>
+              <div class="impact-card"><h4>Simplification</h4><p>We remove the nuance, complexity, and randomness from events to make the narrative cleaner and more impactful.</p></div>
+              <div class="impact-card"><h4>Causation</h4><p>We impose a cause-and-effect relationship between events, even when there is only correlation or pure coincidence.</p></div>
+              <div class="impact-card"><h4>Protagonist</h4><p>We often structure stories around heroes and villains, attributing complex outcomes to the intentional actions of individuals.</p></div>
+              <div class="impact-card"><h4>Arc</h4><p>We shape events into a satisfying structure with a clear beginning, middle, and end, giving a false sense of closure and meaning.</p></div>
+            </div>`
+          },
+          {
+            id: 'narrative-fallacy-defenses',
+            title: 'Narrative Fallacy Defenses',
+            content: `<div class="badge-box"><h4>Tools for Resisting False Stories:</h4><ul>
+              <li>Embrace the role of uncertainty and randomness in outcomes; not every event has a clear cause.</li>
+              <li>Actively look for disconfirming evidence and facts that don't fit the popular narrative.</li>
+              <li>For any given event, generate multiple possible explanations rather than settling on the first one that comes to mind.</li>
+              <li>When possible, rely on quantifiable data and statistical analysis rather than compelling but anecdotal stories.</li>
+              <li>Make a clear distinction between a description of what happened and an explanation of why it happened.</li>
+            </ul></div>`
+          },
+          {
+            id: 'narrative-fallacy-timeline',
+            title: 'Narrative Fallacy Timeline',
+            content: `<div class="battle-timeline">
+              <div class="timeline-item"><div class="timeline-dot">1</div><div class="timeline-content"><div class="timeline-date">Ancient</div><h4>Just-so stories and myths</h4><p>Early cultures create narratives to explain natural phenomena, from the rising of the sun to the changing of the seasons.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">2</div><div class="timeline-content"><div class="timeline-date">1960s</div><h4>Attribution theory research</h4><p>Social psychologists begin to systematically study how people generate causal explanations for events.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">3</div><div class="timeline-content"><div class="timeline-date">2007</div><h4>Taleb coins “narrative fallacy”</h4><p>In his book "The Black Swan," Nassim Nicholas Taleb names and describes the fallacy as a key source of our blindness to randomness.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">4</div><div class="timeline-content"><div class="timeline-date">2011</div><h4>Kahneman’s “Thinking, Fast and Slow”</h4><p>Daniel Kahneman popularizes the idea of the mind's two systems, with the fast, intuitive System 1 being the primary author of our narrative explanations.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">5</div><div class="timeline-content"><div class="timeline-date">Present</div><h4>Algorithmic content and filter bubbles</h4><p>Social media algorithms amplify the narrative fallacy by feeding users a constant stream of content that confirms and simplifies their existing worldview into a coherent story.</p></div></div>
+            </div>`
+          }
+        ]
+      },
+      'topic-the-attribution-circus': {
+        title: 'The Attribution Circus',
+        subtitle: 'The tendency to overemphasize personality to explain others’ behavior while underestimating the power of the situation.',
+        nav: [
+          { id: 'fundamental-attribution-error', text: 'Fundamental Attribution Error' },
+          { id: 'attribution-errors-in-action', text: 'Attribution Errors in Action' },
+          { id: 'attribution-consequences', text: 'Attribution Consequences' },
+          { id: 'attribution-correction-tools', text: 'Attribution Correction Tools' },
+          { id: 'attribution-research-timeline', text: 'Attribution Research Timeline' }
+        ],
+        sections: [
+          {
+            id: 'fundamental-attribution-error',
+            title: 'Fundamental Attribution Error',
+            content: `<h4>Personality over Situation</h4><p>The Fundamental Attribution Error (or correspondence bias) is our default tendency to explain other people's behavior by pointing to their internal character traits, while downplaying the influence of external, situational factors. This actor-observer asymmetry means we see others as driven by personality, but ourselves as responding to context. This bias is more pronounced in individualistic Western cultures than in collectivist Eastern cultures, but it represents a universal cognitive shortcut that makes us blind to the true power of our environment in shaping behavior.</p>`
+          },
+          {
+            id: 'attribution-errors-in-action',
+            title: 'Attribution Errors in Action',
+            content: `<div class="figure-grid">
+              <div class="figure-card"><h4>Stanford Prison Experiment</h4><p>Demonstrated how a powerful situation could cause average students assigned as "guards" to behave cruelly, a result of the situation, not innate personality.</p></div>
+              <div class="figure-card"><h4>Good Samaritan Study</h4><p>The biggest predictor of whether a seminary student would stop to help a person in distress was not their personality, but simply whether they were in a hurry.</p></div>
+              <div class="figure-card"><h4>Milgram Obedience Study</h4><p>Showed that ordinary people could be induced to administer what they thought were lethal electrical shocks, not due to evil character but to the immense pressure of an authority figure.</p></div>
+              <div class="figure-card"><h4>Rosa Parks</h4><p>The popular narrative frames her as a lone, tired individual, a character-based explanation. The reality was she was a trained activist in a highly organized social movement, a situational explanation.</p></div>
+              <div class="figure-card"><h4>Road Rage</h4><p>We attribute another driver's mistake to them being a "jerk" (character) rather than considering they might be in a medical emergency or lost (situation).</p></div>
+            </div>`
+          },
+          {
+            id: 'attribution-consequences',
+            title: 'Attribution Consequences',
+            content: `<div class="impact-grid">
+              <div class="impact-card"><h4>Criminal Justice</h4><p>Can lead to an overemphasis on punishment and a failure to address the systemic, situational root causes of crime.</p></div>
+              <div class="impact-card"><h4>Performance Reviews</h4><p>Managers may attribute an employee's poor performance to laziness (character) while ignoring systemic issues like poor training or unrealistic goals (situation).</p></div>
+              <div class="impact-card"><h4>International Relations</h4><p>Leads to the demonization of other nations as inherently "evil" or "aggressive," rather than understanding their actions as responses to geopolitical pressures.</p></div>
+              <div class="impact-card"><h4>Poverty Explanations</h4><p>Drives the debate between seeing poverty as a result of individual choices (character) versus a result of structural economic barriers (situation).</p></div>
+              <div class="impact-card"><h4>Mental Health Stigma</h4><p>Contributes to the view of mental illness as a sign of personal weakness (character) rather than a complex medical condition influenced by genetics and environment (situation).</p></div>
+            </div>`
+          },
+          {
+            id: 'attribution-correction-tools',
+            title: 'Attribution Correction Tools',
+            content: `<div class="badge-box"><h4>Methods for Fairer Judgment:</h4><ul>
+              <li>When analyzing another's behavior, force yourself to consider situational factors first before jumping to character judgments.</li>
+              <li>Look for systemic patterns; if many people are behaving the same way in a situation, the cause is likely the system, not the individuals.</li>
+              <li>Practice active perspective-taking by asking, "How would I behave if I were in their exact situation?"</li>
+              <li>Observe people's behavior across multiple different contexts to get a more reliable read of their true disposition.</li>
+              <li>Be highly skeptical of simplistic character-based explanations for complex social outcomes.</li>
+            </ul></div>`
+          },
+          {
+            id: 'attribution-research-timeline',
+            title: 'Attribution Research Timeline',
+            content: `<div class="battle-timeline">
+              <div class="timeline-item"><div class="timeline-dot">1</div><div class="timeline-content"><div class="timeline-date">1967</div><h4>Jones & Harris Castro essay study</h4><p>The first major experiment showing that people would attribute pro-Castro essays to the writer's true beliefs, even when they knew the writer had no choice in the topic.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">2</div><div class="timeline-content"><div class="timeline-date">1971</div><h4>Stanford Prison Experiment</h4><p>Philip Zimbardo's controversial experiment becomes a powerful, if ethically questionable, demonstration of situational power.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">3</div><div class="timeline-content"><div class="timeline-date">1973</div><h4>Ross coins FAE</h4><p>Psychologist Lee Ross coins the term "fundamental attribution error" to describe the pervasive bias.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">4</div><div class="timeline-content"><div class="timeline-date">1984</div><h4>Cultural differences discovered</h4><p>Researchers begin to discover that the FAE is more pronounced in individualistic (Western) cultures than in collectivistic (Eastern) cultures.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">5</div><div class="timeline-content"><div class="timeline-date">2001</div><h4>9/11 attribution patterns studied</h4><p>Analysis shows how Americans tended to attribute the attacks to the inherent evil of the terrorists (character), while some outside observers focused more on the role of US foreign policy (situation).</p></div></div>
+            </div>`
+          }
+        ]
+      },
+      'topic-tribal-thinking': {
+        title: 'Tribal Thinking',
+        subtitle: 'The powerful in-group/out-group dynamics that shape our perceptions, trust, and empathy.',
+        nav: [
+          { id: 'in-group-out-group-dynamics', text: 'In-group/Out-group Dynamics' },
+          { id: 'tribal-bias-mechanisms', text: 'Tribal Bias Mechanisms' },
+          { id: 'historic-tribal-conflicts', text: 'Historic Tribal Conflicts' },
+          { id: 'reducing-tribal-bias', text: 'Reducing Tribal Bias' },
+          { id: 'tribal-thinking-timeline', text: 'Tribal Thinking Timeline' }
+        ],
+        sections: [
+          {
+            id: 'in-group-out-group-dynamics',
+            title: 'In-group/Out-group Dynamics',
+            content: `<h4>Us vs. Them</h4><p>Humans are fundamentally group-oriented creatures. Our sense of self is deeply tied to the groups we belong to, a concept known as social identity theory. The "minimal group paradigm" shows that we will form tribal loyalties based on the most trivial of distinctions. This isn't necessarily driven by a hatred of the out-group, but by a powerful, automatic favoritism for our in-group. This favoritism is deeply rooted in our evolutionary past, where group cohesion was essential for survival. Modern neuroscience suggests that hormones like oxytocin, while promoting bonding with the in-group, can simultaneously increase defensiveness against the out-group.</p>`
+          },
+          {
+            id: 'tribal-bias-mechanisms',
+            title: 'Tribal Bias Mechanisms',
+            content: `<div class="impact-grid">
+              <div class="impact-card"><h4>Perception</h4><p>We tend to see our own in-group as a collection of diverse individuals, while perceiving out-groups as a monolithic, homogeneous block ("they are all alike").</p></div>
+              <div class="impact-card"><h4>Memory</h4><p>We have better and more detailed recall for positive actions by in-group members and negative actions by out-group members.</p></div>
+              <div class="impact-card"><h4>Attribution</h4><p>We use different explanations for the same behavior: when an in-group member does something good, it's due to their character; when an out-group member does, it's due to luck or circumstance.</p></div>
+              <div class="impact-card"><h4>Empathy</h4><p>Neuroimaging studies show that our brains exhibit a stronger empathetic response (e.g., to seeing someone in pain) when the person is a member of our in-group.</p></div>
+              <div class="impact-card"><h4>Trust</h4><p>We automatically grant a higher level of trust and credibility to information coming from in-group members compared to the exact same information from an outsider.</p></div>
+            </div>`
+          },
+          {
+            id: 'historic-tribal-conflicts',
+            title: 'Historic Tribal Conflicts',
+            content: `<div class="figure-grid">
+              <div class="figure-card"><h4>Robbers Cave Experiment</h4><p>A classic 1954 study where researchers created two arbitrary groups of boys at a summer camp and watched intense hostility and prejudice emerge spontaneously.</p></div>
+              <div class="figure-card"><h4>Rwanda</h4><p>The Hutu/Tutsi division, which was largely a manufactured and arbitrary colonial classification, was weaponized to fuel the 1994 genocide.</p></div>
+              <div class="figure-card"><h4>Sports Rivalries</h4><p>The intense emotional loyalty to teams like the Yankees or Red Sox demonstrates how tribal identity can be formed around completely non-essential affiliations.</p></div>
+              <div class="figure-card"><h4>Political Polarization</h4><p>The sorting of populations into "Red" and "Blue" America has deepened tribal identities, making cross-party cooperation increasingly difficult.</p></div>
+              <div class="figure-card"><h4>Religious Wars</h4><p>Throughout history, devastating wars have been fought over relatively minor differences in religious doctrine that served to define "us" versus "them."</p></div>
+            </div>`
+          },
+          {
+            id: 'reducing-tribal-bias',
+            title: 'Reducing Tribal Bias',
+            content: `<div class="badge-box"><h4>Strategies for Bridging Divides:</h4><ul>
+              <li>Create superordinate goals that require warring groups to cooperate to achieve a common objective.</li>
+              <li>Facilitate intergroup contact under conditions of equal status and shared purpose.</li>
+              <li>Engage in perspective-taking exercises where members of one group are asked to articulate the other's point of view.</li>
+              <li>Find and emphasize a larger, more inclusive common identity that transcends the smaller tribal divisions.</li>
+              <li>Highlight cross-cutting categories, showing how members of opposing groups share other identities in common (e.g., as parents, sports fans, etc.).</li>
+            </ul></div>`
+          },
+          {
+            id: 'tribal-thinking-timeline',
+            title: 'Tribal Thinking Timeline',
+            content: `<div class="battle-timeline">
+              <div class="timeline-item"><div class="timeline-dot">1</div><div class="timeline-content"><div class="timeline-date">1954</div><h4>Robbers Cave Experiment</h4><p>Muzafer Sherif's study demonstrates how easily intergroup hostility can be created and, crucially, how it can be resolved through shared goals.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">2</div><div class="timeline-content"><div class="timeline-date">1971</div><h4>Tajfel’s minimal groups</h4><p>Henri Tajfel's experiments prove that meaningful group identity and bias can be triggered by the most trivial and arbitrary criteria.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">3</div><div class="timeline-content"><div class="timeline-date">1994</div><h4>Rwanda genocide</h4><p>A horrific real-world example of how manufactured tribal identities can be exploited to incite mass violence.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">4</div><div class="timeline-content"><div class="timeline-date">2000s</div><h4>Political sorting accelerates</h4><p>Political scientists note an increase in "affective polarization," where people increasingly dislike members of the other party, even if their policy differences are small.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">5</div><div class="timeline-content"><div class="timeline-date">2020s</div><h4>Social media echo chambers</h4><p>The role of algorithmic amplification in strengthening tribal identities and reducing exposure to out-group perspectives becomes a major area of study.</p></div></div>
+            </div>`
+          }
+        ]
+      },
+      'topic-the-halo-effect': {
+        title: 'The Halo Effect',
+        subtitle: 'The cognitive bias where one positive trait of a person or brand casts a "halo" over all their other unrelated traits.',
+        nav: [
+          { id: 'when-one-trait-colors-all', text: 'When One Trait Colors All' },
+          { id: 'halo-effects-across-domains', text: 'Halo Effects Across Domains' },
+          { id: 'famous-halo-examples', text: 'Famous Halo Examples' },
+          { id: 'halo-effect-countermeasures', text: 'Halo Effect Countermeasures' },
+          { id: 'halo-effect-research-timeline', text: 'Halo Effect Research Timeline' }
+        ],
+        sections: [
+          {
+            id: 'when-one-trait-colors-all',
+            title: 'When One Trait Colors All',
+            content: `<h4>First Impressions Last</h4><p>The Halo Effect is our brain's shortcut for creating a consistent, coherent picture of people and things. When we see one positive trait, like physical attractiveness, our mind tends to assume other positive traits, like intelligence or kindness, are also present. This happens unconsciously and rapidly. The opposite, the "devil effect" or "horns effect," also occurs, where one negative trait leads us to assume other negative traits. This bias blurs our ability to evaluate specific qualities independently, as our general first impression casts a powerful, lingering glow.</p>`
+          },
+          {
+            id: 'halo-effects-across-domains',
+            title: 'Halo Effects Across Domains',
+            content: `<div class="impact-grid">
+              <div class="impact-card"><h4>Job Interviews</h4><p>Research consistently shows that a positive first impression within the first 30 seconds, often based on appearance and charisma, heavily predicts hiring decisions, regardless of qualifications.</p></div>
+              <div class="impact-card"><h4>Education</h4><p>Teachers who perceive a student as well-behaved or "bright" may unintentionally grade their subjective work more favorably than the identical work of a student they perceive as disruptive.</p></div>
+              <div class="impact-card"><h4>Brand Marketing</h4><p>The positive experience with a flagship product like the iPhone creates a powerful halo effect that boosts sales and perceptions of all other Apple products, from watches to laptops.</p></div>
+              <div class="impact-card"><h4>Political Candidates</h4><p>Studies have shown that physical traits like height and a conventionally "presidential look" can correlate with vote share, as these traits create a halo of perceived competence and leadership.</p></div>
+              <div class="impact-card"><h4>Criminal Justice</h4><p>Research indicates that physically attractive defendants are more likely to receive lighter sentences or be acquitted than less attractive defendants for the same crime.</p></div>
+            </div>`
+          },
+          {
+            id: 'famous-halo-examples',
+            title: 'Famous Halo Examples',
+            content: `<div class="figure-grid">
+              <div class="figure-card"><h4>Warren Harding</h4><p>His successful 1920 presidential campaign was largely attributed to the fact that he was handsome and "looked presidential," creating a halo of competence that masked a lackluster political record.</p></div>
+              <div class="figure-card"><h4>Enron</h4><p>Before its spectacular collapse, Enron was consistently named Fortune's "Most Innovative Company," creating a powerful halo that caused investors and analysts to overlook glaring financial irregularities.</p></div>
+              <div class="figure-card"><h4>Steve Jobs</h4><p>The powerful narrative of Jobs as a design genius created a halo that often obscured his well-documented harsh management style and other personal flaws.</p></div>
+              <div class="figure-card"><h4>TED Talks</h4><p>The slick presentation style and confident delivery of a TED talk can create a halo effect, making the content seem more profound and scientifically valid than it may actually be.</p></div>
+              <div class="figure-card"><h4>Celebrity Endorsements</h4><p>The entire industry is built on the halo effect: the assumption that a person's expertise in acting or sports translates to credible judgment about cars, watches, or political causes.</p></div>
+            </div>`
+          },
+          {
+            id: 'halo-effect-countermeasures',
+            title: 'Halo Effect Countermeasures',
+            content: `<div class="badge-box"><h4>Techniques for Clearer Judgment:</h4><ul>
+              <li>Use structured evaluation criteria and scorecards to assess specific traits independently before forming a general impression.</li>
+              <li>When possible, use blind evaluations (like orchestras auditioning musicians behind a screen) to remove the source of the halo.</li>
+              <li>Slow down the decision-making process and consciously question first impressions.</li>
+              <li>Rely on statistical data and objective performance metrics over subjective or intuitive judgments.</li>
+              <li>Assign a devil's advocate to challenge the prevailing positive or negative impression of a candidate or proposal.</li>
+            </ul></div>`
+          },
+          {
+            id: 'halo-effect-research-timeline',
+            title: 'Halo Effect Research Timeline',
+            content: `<div class="battle-timeline">
+              <div class="timeline-item"><div class="timeline-dot">1</div><div class="timeline-content"><div class="timeline-date">1920</div><h4>Thorndike identifies effect</h4><p>Psychologist Edward Thorndike first identifies the halo effect in a study of military officers' ratings of their subordinates.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">2</div><div class="timeline-content"><div class="timeline-date">1946</div><h4>Asch’s impression formation</h4><p>Solomon Asch's research shows how central traits (like "warm" vs. "cold") dramatically alter our overall impression of a person.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">3</div><div class="timeline-content"><div class="timeline-date">1977</div><h4>Nisbett & Wilson studies</h4><p>Research demonstrates that people are completely unaware of the halo effect's influence on their own judgments.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">4</div><div class="timeline-content"><div class="timeline-date">2007</div><h4>Rosenzweig’s corporate halos</h4><p>Phil Rosenzweig's book "The Halo Effect" exposes how the bias distorts our understanding of business success and failure.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">5</div><div class="timeline-content"><div class="timeline-date">2013</div><h4>Orchestra blind auditions</h4><p>A famous study by Goldin and Rouse provides powerful real-world evidence that blind auditions significantly increase the hiring of female musicians, counteracting halo effects.</p></div></div>
+            </div>`
+          }
+        ]
+      },
+      'topic-conformity-and-social-proof': {
+        title: 'Conformity and Social Proof',
+        subtitle: 'The immense pressure to fit in, which can cause us to doubt our own senses and follow the crowd, even when it’s wrong.',
+        nav: [
+          { id: 'the-pressure-to-fit-in', text: 'The Pressure to Fit In' },
+          { id: 'conformity-across-contexts', text: 'Conformity Across Contexts' },
+          { id: 'conformity-impacts', text: 'Conformity Impacts' },
+          { id: 'resisting-conformity', text: 'Resisting Conformity' },
+          { id: 'conformity-research-timeline', text: 'Conformity Research Timeline' }
+        ],
+        sections: [
+          {
+            id: 'the-pressure-to-fit-in',
+            title: 'The Pressure to Fit In',
+            content: `<h4>Following the Herd</h4><p>Conformity is the act of matching attitudes, beliefs, and behaviors to group norms. This pressure can be driven by two forces: informational influence (believing the group knows better) and normative influence (the desire to be liked and accepted). In ambiguous situations, we rely on "social proof"—we assume the actions of others are the correct behavior. This can lead to the bystander effect, where inaction spreads through a crowd, and pluralistic ignorance, where a majority of group members privately reject a norm but go along with it because they incorrectly assume that most other members accept it.</p>`
+          },
+          {
+            id: 'conformity-across-contexts',
+            title: 'Conformity Across Contexts',
+            content: `<div class="figure-grid">
+              <div class="figure-card"><h4>Jonestown</h4><p>The mass murder-suicide of over 900 members of the Peoples Temple is an extreme example of how an isolated, high-pressure group can lead to ultimate conformity.</p></div>
+              <div class="figure-card"><h4>Fashion Trends</h4><p>The sudden, seemingly universal adoption of a particular style of clothing is a clear example of normative conformity and social proof in action.</p></div>
+              <div class="figure-card"><h4>Stock Bubbles</h4><p>Financial bubbles are often driven by social proof, where investors buy an asset not because of its fundamentals, but simply because "everyone else is buying" and they fear missing out.</p></div>
+              <div class="figure-card"><h4>Kitty Genovese</h4><p>The infamous case where 38 witnesses reportedly failed to intervene in a murder became the symbol of the bystander effect and the diffusion of responsibility.</p></div>
+              <div class="figure-card"><h4>Standing Ovations</h4><p>A standing ovation often happens as a cascade; a few people stand, and social pressure and proof cause others to follow until the entire audience is standing.</p></div>
+            </div>`
+          },
+          {
+            id: 'conformity-impacts',
+            title: 'Conformity Impacts',
+            content: `<div class="impact-grid">
+              <div class="impact-card"><h4>Corporate Culture</h4><p>Conformity pressure is a primary driver of groupthink, leading to disastrous business decisions like the launch of the Space Shuttle Challenger.</p></div>
+              <div class="impact-card"><h4>Online Reviews</h4><p>The first few positive or negative reviews for a product can create a herding effect, where subsequent reviewers conform to the initial trend, distorting the product's true average rating.</p></div>
+              <div class="impact-card"><h4>Political Movements</h4><p>People may publicly support a political regime or idea they privately despise due to "preference falsification," the act of conforming to avoid social or physical punishment.</p></div>
+              <div class="impact-card"><h4>Academic Publishing</h4><p>Citation cascades can occur where scholars cite papers that have already been cited many times, regardless of the paper's quality, simply because they are seen as important.</p></div>
+              <div class="impact-card"><h4>Social Media</h4><p>The architecture of "likes" and "shares" creates powerful conformity pressures, enabling viral misinformation to spread rapidly as users follow the social proof of the crowd.</p></div>
+            </div>`
+          },
+          {
+            id: 'resisting-conformity',
+            title: 'Resisting Conformity',
+            content: `<div class="badge-box"><h4>Strategies for Independent Judgment:</h4><ul>
+              <li>Create systems that cultivate and reward authentic dissent, such as appointing a devil's advocate.</li>
+              <li>Actively seek out information sources that are independent of your immediate social group.</li>
+              <li>Practice stating mild disagreements in low-stakes situations to build your "courage muscle."</li>
+              <li>Before speaking up in a group, try to find at least one other person who shares your view; an ally dramatically reduces conformity pressure.</li>
+              <li>Leaders must foster psychological safety, where team members feel safe to challenge the consensus without fear of reprisal.</li>
+            </ul></div>`
+          },
+          {
+            id: 'conformity-research-timeline',
+            title: 'Conformity Research Timeline',
+            content: `<div class="battle-timeline">
+              <div class="timeline-item"><div class="timeline-dot">1</div><div class="timeline-content"><div class="timeline-date">1935</div><h4>Sherif’s autokinetic studies</h4><p>Showed that in ambiguous situations, people's judgments will converge to a group norm (informational influence).</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">2</div><div class="timeline-content"><div class="timeline-date">1951</div><h4>Asch line experiments</h4><p>Solomon Asch's landmark studies demonstrate that people will conform to a clearly wrong majority even when it contradicts their own senses (normative influence).</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">3</div><div class="timeline-content"><div class="timeline-date">1963</div><h4>Milgram’s obedience research</h4><p>While technically about obedience to authority, the experiments also highlighted the powerful pressure to conform to the experimental situation.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">4</div><div class="timeline-content"><div class="timeline-date">1968</div><h4>Kitty Genovese case</h4><p>The murder of Kitty Genovese prompts Latané and Darley to research the bystander effect and diffusion of responsibility.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">5</div><div class="timeline-content"><div class="timeline-date">2020</div><h4>Mask-wearing conformity studies</h4><p>The COVID-19 pandemic becomes a global, real-world experiment on conformity, social proof, and political identity in public health behaviors.</p></div></div>
+            </div>`
+          }
+        ]
+      },
+      'topic-anchoring-and-adjustment': {
+        title: 'Anchoring and Adjustment',
+        subtitle: 'The powerful cognitive bias where we rely too heavily on the first piece of information offered when making decisions.',
+        nav: [
+          { id: 'the-stickiness-of-first-numbers', text: 'The Stickiness of First Numbers' },
+          { id: 'anchoring-experiments', text: 'Anchoring Experiments' },
+          { id: 'anchoring-in-markets', text: 'Anchoring in Markets' },
+          { id: 'anchoring-mitigation', text: 'Anchoring Mitigation' },
+          { id: 'anchoring-research-timeline', text: 'Anchoring Research Timeline' }
+        ],
+        sections: [
+          {
+            id: 'the-stickiness-of-first-numbers',
+            title: 'The Stickiness of First Numbers',
+            content: `<h4>The First Number Frames Everything</h4><p>Anchoring is a bias where our decisions are disproportionately influenced by the first piece of information we receive. This initial "anchor," even if it's completely arbitrary, becomes the starting point for all subsequent judgments. We then make insufficient adjustments away from this anchor. This is why the "original price" listed on a sale tag is so powerful; it anchors our perception of the item's value, making the sale price seem like a bargain. Critically, even experts who are aware of the bias are not immune to its effects.</p>`
+          },
+          {
+            id: 'anchoring-experiments',
+            title: 'Anchoring Experiments',
+            content: `<div class="figure-grid">
+              <div class="figure-card"><h4>Wheel of Fortune Study</h4><p>Kahneman and Tversky's classic study where spinning a wheel of fortune with random numbers influenced participants' estimates of the number of African nations in the UN.</p></div>
+              <div class="figure-card"><h4>Real Estate Studies</h4><p>Showed that professional real estate agents were heavily anchored by the listing price when appraising a house, even when they claimed to ignore it.</p></div>
+              <div class="figure-card"><h4>Salary Negotiations</h4><p>Consistent findings show a massive advantage to the party that makes the first offer, as that number anchors the entire negotiation range.</p></div>
+              <div class="figure-card"><h4>Sentencing Studies</h4><p>Demonstrated that experienced judges' sentencing recommendations could be anchored by a prosecutor's demand, and even by rolling a pair of dice before the decision.</p></div>
+              <div class="figure-card"><h4>Art Auctions</h4><p>The auctioneer's reserve price or initial estimate powerfully anchors bidding behavior and is a strong predictor of the final sale price.</p></div>
+            </div>`
+          },
+          {
+            id: 'anchoring-in-markets',
+            title: 'Anchoring in Markets',
+            content: `<div class="impact-grid">
+              <div class="impact-card"><h4>Retail Pricing</h4><p>The use of Manufacturer's Suggested Retail Price (MSRP) or showing a crossed-out "original" price are pure anchoring tactics.</p></div>
+              <div class="impact-card"><h4>Salary Setting</h4><p>The common practice of asking for a candidate's previous salary anchors the new offer to their past, not their future value.</p></div>
+              <div class="impact-card"><h4>Stock Valuations</h4><p>Investors often anchor on arbitrary numbers like the 52-week high or their initial purchase price, influencing their decisions to buy or sell.</p></div>
+              <div class="impact-card"><h4>Insurance Claims</h4><p>The initial demand made by a claimant can powerfully anchor the final settlement amount in a negotiation.</p></div>
+              <div class="impact-card"><h4>Budget Planning</h4><p>Corporate budgets are almost always anchored to the previous year's budget, making significant reallocation of resources difficult.</p></div>
+            </div>`
+          },
+          {
+            id: 'anchoring-mitigation',
+            title: 'Anchoring Mitigation',
+            content: `<div class="badge-box"><h4>Techniques to Avoid Being Anchored:</h4><ul>
+              <li>When presented with an anchor, force yourself to generate and consider multiple alternative starting points.</li>
+              <li>Delay your judgment; give yourself time to gather more information before making an estimate.</li>
+              <li>Rely on objective criteria and your own independent research rather than the provided anchor.</li>
+              <li>In a negotiation, if the other party sets an extreme anchor, don't just adjust from it; explicitly call it out and introduce a new, more reasonable anchor.</li>
+              <li>Always question the relevance and source of any reference point you are given.</li>
+            </ul></div>`
+          },
+          {
+            id: 'anchoring-research-timeline',
+            title: 'Anchoring Research Timeline',
+            content: `<div class="battle-timeline">
+              <div class="timeline-item"><div class="timeline-dot">1</div><div class="timeline-content"><div class="timeline-date">1974</div><h4>Tversky & Kahneman discovery</h4><p>The psychologists first describe the anchoring and adjustment heuristic in their foundational paper in "Science."</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">2</div><div class="timeline-content"><div class="timeline-date">1987</div><h4>Northcraft & Neale real estate study</h4><p>A powerful field experiment shows that anchoring affects both amateur and expert real estate agents.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">3</div><div class="timeline-content"><div class="timeline-date">1990s</div><h4>Anchoring in legal settings</h4><p>A wave of research demonstrates the powerful effect of anchors on damage awards, settlement negotiations, and criminal sentencing.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">4</div><div class="timeline-content"><div class="timeline-date">2002</div><h4>Ariely’s social security number studies</h4><p>Dan Ariely's work on "coherent arbitrariness" shows that even completely arbitrary anchors (like the last digits of a social security number) can shape valuations.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">5</div><div class="timeline-content"><div class="timeline-date">2010s</div><h4>Algorithmic pricing anchors</h4><p>Researchers begin to study how algorithmic pricing on platforms like Uber and Amazon can create new and powerful anchors that shape consumer behavior.</p></div></div>
+            </div>`
+          }
+        ]
+      },
+      'topic-loss-aversion-and-framing': {
+        title: 'Loss Aversion and Framing',
+        subtitle: 'The powerful effects of our tendency to feel losses more than gains, and how the presentation of a choice changes our decision.',
+        nav: [
+          { id: 'losses-loom-larger', text: 'Losses Loom Larger' },
+          { id: 'framing-effects-gallery', text: 'Framing Effects Gallery' },
+          { id: 'loss-aversion-applications', text: 'Loss Aversion Applications' },
+          { id: 'framing-awareness-tools', text: 'Framing Awareness Tools' },
+          { id: 'loss-aversion-timeline', text: 'Loss Aversion Timeline' }
+        ],
+        sections: [
+          {
+            id: 'losses-loom-larger',
+            title: 'Losses Loom Larger',
+            content: `<h4>The 2:1 Ratio of Pain to Pleasure</h4><p>Loss Aversion is the principle that the psychological pain of losing something is about twice as powerful as the pleasure of gaining the same thing. This asymmetry is a cornerstone of Prospect Theory. It gives rise to the endowment effect (we value things more once we own them) and the status quo bias (a preference for keeping things as they are), because any change involves a potential loss that looms larger than the potential gain. Our decisions are not based on absolute outcomes, but on changes from a reference point, with losses being felt much more acutely.</p>`
+          },
+          {
+            id: 'framing-effects-gallery',
+            title: 'Framing Effects Gallery',
+            content: `<div class="impact-grid">
+              <div class="impact-card"><h4>Medical Decisions</h4><p>A treatment with a "90% survival rate" is perceived much more favorably than one with a "10% mortality rate," even though they are identical. The gain frame promotes risk aversion, the loss frame promotes risk-seeking.</p></div>
+              <div class="impact-card"><h4>Investment Choices</h4><p>People are more likely to take a risk to avoid a "guaranteed loss" than they are to achieve a "guaranteed gain," demonstrating how loss frames encourage gambling.</p></div>
+              <div class="impact-card"><h4>Political Messaging</h4><p>A "tax relief" is framed as a gain for taxpayers, making it more popular than a "tax cut for the wealthy," which can be framed as a loss for social programs.</p></div>
+              <div class="impact-card"><h4>Product Marketing</h4><p>Ground beef advertised as "95% fat-free" sells better than beef advertised as "5% fat," a classic example of positive framing.</p></div>
+              <div class="impact-card"><h4>Climate Policy</h4><p>Messaging focused on "lives saved" and "green jobs created" (gain frame) is often more effective than messaging focused on "deaths prevented" and "economic losses averted" (loss frame).</p></div>
+            </div>`
+          },
+          {
+            id: 'loss-aversion-applications',
+            title: 'Loss Aversion Applications',
+            content: `<div class="figure-grid">
+              <div class="figure-card"><h4>Insurance Industry</h4><p>The entire industry is built on selling protection against potential future losses, a powerful motivator due to loss aversion.</p></div>
+              <div class="figure-card"><h4>Loyalty Programs</h4><p>Airlines and hotels create status levels (Gold, Platinum) that feel like an endowment, making customers work harder to avoid the "loss" of their status.</p></div>
+              <div class="figure-card"><h4>Gym Memberships</h4><p>The pain of "losing" the money paid for a membership can be a motivator to attend, even if the desire to exercise is low.</p></div>
+              <div class="figure-card"><h4>Software Trials</h4><p>Free trials that give users access to all premium features are effective because at the end of the trial, the prospect of "losing" those features makes people more likely to pay.</p></div>
+              <div class="figure-card"><h4>Political Campaigns</h4><p>Negative advertising is often more effective than positive advertising because the fear of "losing" rights, security, or prosperity is a more powerful motivator than the promise of gaining them.</p></div>
+            </div>`
+          },
+          {
+            id: 'framing-awareness-tools',
+            title: 'Framing Awareness Tools',
+            content: `<div class="badge-box"><h4>Techniques for Consistent Decision-Making:</h4><ul>
+              <li>Actively reframe a choice in multiple ways (gains vs. losses) to see if your preference changes.</li>
+              <li>Focus on the final outcome or your overall wealth, not on the short-term gains and losses from a reference point.</li>
+              <li>Explicitly consider the opportunity costs of inaction to counteract the status quo bias.</li>
+              <li>Use pre-commitment strategies (like automatic investment plans) to make decisions before emotions and framing can take hold.</li>
+              <li>When possible, think in terms of frequencies (e.g., "10 out of 100 people") rather than abstract percentages, as this can reduce the emotional impact of the frame.</li>
+            </ul></div>`
+          },
+          {
+            id: 'loss-aversion-timeline',
+            title: 'Loss Aversion Timeline',
+            content: `<div class="battle-timeline">
+              <div class="timeline-item"><div class="timeline-dot">1</div><div class="timeline-content"><div class="timeline-date">1979</div><h4>Prospect theory published</h4><p>Daniel Kahneman and Amos Tversky publish their seminal paper outlining prospect theory, with loss aversion as a central concept.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">2</div><div class="timeline-content"><div class="timeline-date">1980</div><h4>Endowment effect identified</h4><p>Richard Thaler first describes the endowment effect, explaining it as a manifestation of loss aversion.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">3</div><div class="timeline-content"><div class="timeline-date">1981</div><h4>Asian disease problem</h4><p>Kahneman and Tversky publish their famous experiment demonstrating how framing a choice in terms of gains vs. losses reverses people's preferences.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">4</div><div class="timeline-content"><div class="timeline-date">1990</div><h4>Behavioral economics emerges</h4><p>The concepts of loss aversion and framing become foundational to the new field of behavioral economics, challenging traditional rational choice models.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">5</div><div class="timeline-content"><div class="timeline-date">2017</div><h4>Thaler wins Nobel Prize</h4><p>Richard Thaler is awarded the Nobel Prize in Economic Sciences for his contributions to behavioral economics, including his work on loss aversion.</p></div></div>
+            </div>`
+          }
+        ]
+      },
+      'topic-the-sunk-cost-trap': {
+        title: 'The Sunk Cost Trap',
+        subtitle: 'The irrational tendency to continue an endeavor once an investment in money, effort, or time has been made, just to avoid "wasting" it.',
+        nav: [
+          { id: 'throwing-good-after-bad', text: 'Throwing Good After Bad' },
+          { id: 'sunk-cost-disasters', text: 'Sunk Cost Disasters' },
+          { id: 'sunk-cost-domains', text: 'Sunk Cost Domains' },
+          { id: 'sunk-cost-escape-routes', text: 'Sunk Cost Escape Routes' },
+          { id: 'sunk-cost-research-timeline', text: 'Sunk Cost Research Timeline' }
+        ],
+        sections: [
+          {
+            id: 'throwing-good-after-bad',
+            title: 'Throwing Good After Bad',
+            content: `<h4>Honoring the Irrecoverable</h4><p>The Sunk Cost Fallacy is our deep-seated reluctance to abandon a course of action because we have already invested heavily in it—whether that investment is money, time, or effort. These past, irrecoverable costs are "sunk." Rationally, they should have no bearing on future decisions. However, psychologically, they feel like a heavy weight, pushing us toward an "escalation of commitment." This is driven by our desire to not appear wasteful and the need for self-justification—to prove that our initial decision was correct, even in the face of overwhelming evidence to the contrary.</p>`
+          },
+          {
+            id: 'sunk-cost-disasters',
+            title: 'Sunk Cost Disasters',
+            content: `<div class="figure-grid">
+              <div class="figure-card"><h4>Concorde Fallacy</h4><p>The British and French governments continued to fund the supersonic jet long after it was clear it would never be commercially viable, simply because they had already spent so much.</p></div>
+              <div class="figure-card"><h4>Vietnam War</h4><p>A common argument for continuing the war was that to withdraw would be to dishonor the soldiers who had already died, a classic example of escalating commitment to justify past sacrifices.</p></div>
+              <div class="figure-card"><h4>Theranos</h4><p>High-profile investors continued to pour money into the fraudulent blood-testing company, partly because they were unwilling to admit their initial investment was a catastrophic mistake.</p></div>
+              <div class="figure-card"><h4>New Coke</h4><p>Coca-Cola spent millions on developing and marketing New Coke in 1985. Even when public reaction was overwhelmingly negative, the company was initially reluctant to pull the product due to the huge sunk costs.</p></div>
+              <div class="figure-card"><h4>Personal Relationships</h4><p>One of the most common sunk cost traps is staying in a clearly unhappy or unhealthy relationship simply because of the amount of time and emotional energy already invested.</p></div>
+            </div>`
+          },
+          {
+            id: 'sunk-cost-domains',
+            title: 'Sunk Cost Domains',
+            content: `<div class="impact-grid">
+              <div class="impact-card"><h4>Project Management</h4><p>The number one reason for the failure of large IT and infrastructure projects is the unwillingness to cancel them once they have gone over budget and behind schedule.</p></div>
+              <div class="impact-card"><h4>Investment</h4><p>Investors often refuse to sell a losing stock, holding on in the hope it will "come back to what I paid for it," a price that is completely irrelevant to its future prospects.</p></div>
+              <div class="impact-card"><h4>Education</h4><p>A student may realize they are in the wrong field of study but feel compelled to finish the degree because of the time and tuition money already spent.</p></div>
+              <div class="impact-card"><h4>Entertainment</h4><p>Forcing yourself to finish a bad movie or a boring book simply because you have already started it is a common, low-stakes version of the fallacy.</p></div>
+              <div class="impact-card"><h4>Politics</h4><p>Governments often continue to fund failing social programs or policies because they are politically invested and admitting failure is seen as a greater cost than continuing to waste resources.</p></div>
+            </div>`
+          },
+          {
+            id: 'sunk-cost-escape-routes',
+            title: 'Sunk Cost Escape Routes',
+            content: `<div class="badge-box"><h4>Strategies for Rational Decision-Making:</h4><ul>
+              <li>When making a decision, rigorously focus only on future costs and benefits. Past costs are irrelevant.</li>
+              <li>Set clear "stopping rules" or criteria for abandoning a project *before* you begin.</li>
+              <li>Bring in outside perspectives from people who are not invested in the original decision.</li>
+              <li>Explicitly calculate the opportunity cost: what else could you be doing with this time, money, and effort?</li>
+              <li>Create a culture that celebrates "intelligent failures"—the courageous decision to stop a failing project—as a form of learning.</li>
+            </ul></div>`
+          },
+          {
+            id: 'sunk-cost-research-timeline',
+            title: 'Sunk Cost Research Timeline',
+            content: `<div class="battle-timeline">
+              <div class="timeline-item"><div class="timeline-dot">1</div><div class="timeline-content"><div class="timeline-date">1985</div><h4>Arkes & Blumer initial studies</h4><p>Hal Arkes and Catherine Blumer's paper "The Psychology of Sunk Cost" provides the first clear experimental evidence for the fallacy.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">2</div><div class="timeline-content"><div class="timeline-date">1990s</div><h4>Organizational escalation research</h4><p>Business school researchers begin to heavily study the "escalation of commitment" in corporate and government projects.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">3</div><div class="timeline-content"><div class="timeline-date">2000s</div><h4>NBA playing time studies</h4><p>Studies show that NBA players who were high draft picks (a large sunk cost) are given more playing time, regardless of their actual performance on the court.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">4</div><div class="timeline-content"><div class="timeline-date">2011</div><h4>Brain imaging of sunk cost</h4><p>Neuroeconomic studies begin to identify the brain regions associated with the emotional pain that drives sunk cost decision-making.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">5</div><div class="timeline-content"><div class="timeline-date">2020</div><h4>Pandemic sunk cost decisions</h4><p>Governments and organizations face numerous sunk cost decisions regarding lockdowns, vaccine development, and economic support programs.</p></div></div>
+            </div>`
+          }
+        ]
+      },
+      'topic-choice-overload': {
+        title: 'Choice Overload',
+        subtitle: 'The paradox that having too many options can lead to decision paralysis, anxiety, and reduced satisfaction.',
+        nav: [
+          { id: 'the-paradox-of-choice', text: 'The Paradox of Choice' },
+          { id: 'choice-overload-evidence', text: 'Choice Overload Evidence' },
+          { id: 'choice-architecture-solutions', text: 'Choice Architecture Solutions' },
+          { id: 'managing-choice-overload', text: 'Managing Choice Overload' },
+          { id: 'choice-research-timeline', text: 'Choice Research Timeline' }
+        ],
+        sections: [
+          {
+            id: 'the-paradox-of-choice',
+            title: 'The Paradox of Choice',
+            content: `<h4>When More is Less</h4><p>While modern life celebrates freedom of choice, the "paradox of choice" reveals a dark side. An overabundance of options can lead to decision fatigue, anxiety, and a higher likelihood of anticipating regret. This leads to two outcomes: paralysis (making no decision at all) or reduced satisfaction with the final choice. The bias distinguishes between "maximizers," who exhaustively seek the best possible option and are often less happy, and "satisficers," who choose the first option that meets their criteria and are generally more content. The fear of missing out (FOMO) is a modern manifestation of this paradox.</p>`
+          },
+          {
+            id: 'choice-overload-evidence',
+            title: 'Choice Overload Evidence',
+            content: `<div class="figure-grid">
+              <div class="figure-card"><h4>The Jam Study</h4><p>The foundational experiment where a display of 6 jam varieties led to far more purchases than a display of 24, which caused "analysis paralysis."</p></div>
+              <div class="figure-card"><h4>401(k) Participation</h4><p>Studies show that for every 10 additional mutual fund options a company adds to its retirement plan, the employee participation rate drops by 2%.</p></div>
+              <div class="figure-card"><h4>Speed Dating</h4><p>Research on speed dating shows that participants make worse (less compatible) matches when they have a larger pool of potential partners to choose from.</p></div>
+              <div class="figure-card"><h4>Netflix Paralysis</h4><p>The common experience of spending an hour scrolling through hundreds of movie and TV show options on a streaming service, only to end up watching nothing.</p></div>
+              <div class="figure-card"><h4>Restaurant Menus</h4><p>Restaurants with shorter, more curated menus often receive higher customer satisfaction ratings than those with massive, multi-page menus.</p></div>
+            </div>`
+          },
+          {
+            id: 'choice-architecture-solutions',
+            title: 'Choice Architecture Solutions',
+            content: `<div class="impact-grid">
+              <div class="impact-card"><h4>Defaults</h4><p>Setting a smart, beneficial default option (e.g., automatic enrollment in a savings plan) dramatically increases participation by making the easiest choice the best one.</p></div>
+              <div class="impact-card"><h4>Categorization</h4><p>Grouping a large number of options into a few clear categories (like on a well-designed website) reduces the cognitive load and makes the choice feel more manageable.</p></div>
+              <div class="impact-card"><h4>Curation</h4><p>Presenting a "most popular" or "expert-recommended" selection helps users navigate a large choice set and provides a trusted starting point.</p></div>
+              <div class="impact-card"><h4>Personalization</h4><p>Using algorithms to filter and rank options based on a user's past preferences (like on Amazon or Spotify) is a powerful way to combat overload.</p></div>
+              <div class="impact-card"><h4>Staged Decisions</h4><p>Breaking a complex choice (like building a computer) into a sequence of simpler, staged decisions makes the overall process feel less overwhelming.</p></div>
+            </div>`
+          },
+          {
+            id: 'managing-choice-overload',
+            title: 'Managing Choice Overload',
+            content: `<div class="badge-box"><h4>Personal Strategies for Better Choosing:</h4><ul>
+              <li>Adopt a "satisficing" mindset: define your criteria and choose the first option that is "good enough."</li>
+              <li>Artificially constrain your options; decide to only research the top 3 rated products instead of all 30.</li>
+              <li>Use decision rules or heuristics for low-stakes choices to save your mental energy for what matters.</li>
+              <li>Embrace constraints as liberating, recognizing that having fewer options can often lead to more creativity and satisfaction.</li>
+              <li>After making a choice, practice gratitude for the option you selected rather than ruminating on the ones you rejected.</li>
+            </ul></div>`
+          },
+          {
+            id: 'choice-research-timeline',
+            title: 'Choice Research Timeline',
+            content: `<div class="battle-timeline">
+              <div class="timeline-item"><div class="timeline-dot">1</div><div class="timeline-content"><div class="timeline-date">2000</div><h4>Jam study published</h4><p>Sheena Iyengar and Mark Lepper's famous study provides the first compelling experimental evidence for choice overload.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">2</div><div class="timeline-content"><div class="timeline-date">2004</div><h4>Schwartz’s “Paradox of Choice”</h4><p>Psychologist Barry Schwartz's bestselling book popularizes the concept for a mass audience, linking it to rising rates of anxiety and depression.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">3</div><div class="timeline-content"><div class="timeline-date">2008</div><h4>Obama’s daily decision reduction</h4><p>President Barack Obama famously speaks about reducing his daily choices (e.g., wearing only gray or blue suits) to conserve mental energy for important decisions.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">4</div><div class="timeline-content"><div class="timeline-date">2015</div><h4>Dating app choice overload</h4><p>Studies begin to emerge on how the seemingly infinite choice on dating apps can lead to user burnout and dissatisfaction with partners.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">5</div><div class="timeline-content"><div class="timeline-date">2020</div><h4>Streaming service paralysis</h4><p>The "Netflix effect" becomes a widely discussed cultural phenomenon, illustrating the paradox of choice in the digital entertainment age.</p></div></div>
+            </div>`
+          }
+        ]
+      },
+      'topic-confirmation-bias-the-mother-of-all-biases': {
+        title: 'Confirmation Bias - The Mother of All Biases',
+        subtitle: 'The pervasive tendency to seek, interpret, and recall information that confirms our pre-existing beliefs, while ignoring contradictory evidence.',
+        nav: [
+          { id: 'seeking-what-we-want-to-find', text: 'Seeking What We Want to Find' },
+          { id: 'confirmation-bias-mechanisms', text: 'Confirmation Bias Mechanisms' },
+          { id: 'historical-confirmation-disasters', text: 'Historical Confirmation Disasters' },
+          { id: 'confirmation-bias-defenses', text: 'Confirmation Bias Defenses' },
+          { id: 'confirmation-bias-timeline', text: 'Confirmation Bias Timeline' }
+        ],
+        sections: [
+          {
+            id: 'seeking-what-we-want-to-find',
+            title: 'Seeking What We Want to Find',
+            content: `<h4>The Lawyer, Not the Scientist</h4><p>Confirmation Bias is our default mode of thinking. We approach information not as an impartial scientist seeking truth, but as a lawyer building a case for a conclusion we already hold. This bias manifests in three ways: selective exposure (we seek out agreeable sources), biased interpretation (we interpret ambiguous evidence to support our view), and selective recall (we remember supporting facts more easily). This is driven by motivated reasoning—the desire to protect our identity and social standing. Crucially, higher intelligence does not protect against confirmation bias; it can actually make it worse, as smart people are better at rationalizing and defending their pre-existing beliefs.</p>`
+          },
+          {
+            id: 'confirmation-bias-mechanisms',
+            title: 'Confirmation Bias Mechanisms',
+            content: `<div class="impact-grid">
+              <div class="impact-card"><h4>Information Search</h4><p>The way we phrase a search query on Google ("reasons why X is good" vs. "pros and cons of X") is often a subconscious effort to find confirming evidence.</p></div>
+              <div class="impact-card"><h4>Source Selection</h4><p>We choose to get our news and information from channels, websites, and authors who we know will reinforce our existing political and social worldview.</p></div>
+              <div class="impact-card"><h4>Memory</h4><p>After a debate, we are far more likely to remember the strong points made by our side and the weak points made by the opposition.</p></div>
+              <div class="impact-card"><h4>Interpretation</h4><p>An ambiguous economic report will be interpreted by supporters of the current government as evidence of success, and by opponents as evidence of failure.</p></div>
+              <div class="impact-card"><h4>Belief Updating</h4><p>We tend to be highly critical of evidence that contradicts our beliefs but uncritical of evidence that supports them, leading to asymmetric belief revision.</p></div>
+            </div>`
+          },
+          {
+            id: 'historical-confirmation-disasters',
+            title: 'Historical Confirmation Disasters',
+            content: `<div class="figure-grid">
+              <div class="figure-card"><h4>WMDs in Iraq</h4><p>The intelligence community, operating under a strong prior belief that Saddam Hussein had WMDs, interpreted ambiguous evidence as confirmation while dismissing contradictory reports.</p></div>
+              <div class="figure-card"><h4>Challenger Disaster</h4><p>NASA managers, committed to a launch schedule, focused on the successful launches in cold weather and dismissed engineers' warnings about the O-rings as inconclusive.</p></div>
+              <div class="figure-card"><h4>2008 Housing Bubble</h4><p>Many financial experts, invested in the belief that housing prices could not fall, selectively focused on data that supported the boom and ignored the clear warning signs of a bubble.</p></div>
+              <div class="figure-card"><h4>Theranos Board</h4><p>The company's star-studded board was so captivated by the charismatic story of Elizabeth Holmes that they failed to seek disconfirming evidence about the technology's actual capabilities.</p></div>
+              <div class="figure-card"><h4>Anti-Vax Movement</h4><p>Adherents often rely on a single, retracted study or anecdotal evidence that confirms their beliefs, while dismissing the overwhelming global scientific consensus to the contrary.</p></div>
+            </div>`
+          },
+          {
+            id: 'confirmation-bias-defenses',
+            title: 'Confirmation Bias Defenses',
+            content: `<div class="badge-box"><h4>Tools for More Objective Thinking:</h4><ul>
+              <li>Practice active disconfirmation by deliberately searching for evidence that would prove your belief wrong.</li>
+              <li>"Steel-man" the opposing argument by trying to construct the strongest possible version of it.</li>
+              <li>Use structured analytical techniques (like a "pros and cons" list) that force equal consideration of both sides.</li>
+              <li>Employ "red team" exercises where a separate team is assigned the task of trying to tear down a proposed plan or idea.</li>
+              <li>Create systems that incentivize accuracy over agreement, rewarding people for being right, not for conforming.</li>
+            </ul></div>`
+          },
+          {
+            id: 'confirmation-bias-timeline',
+            title: 'Confirmation Bias Timeline',
+            content: `<div class="battle-timeline">
+              <div class="timeline-item"><div class="timeline-dot">1</div><div class="timeline-content"><div class="timeline-date">1960</div><h4>Wason’s 2-4-6 task</h4><p>Peter Wason's classic experiment provides the first clear evidence of our tendency to test hypotheses by seeking confirmation rather than falsification.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">2</div><div class="timeline-content"><div class="timeline-date">1979</div><h4>Lord’s death penalty study</h4><p>A landmark study shows that presenting people with a balanced set of evidence on a contentious issue actually makes them more polarized, as they embrace the confirming evidence and dismiss the rest.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">3</div><div class="timeline-content"><div class="timeline-date">1990s</div><h4>Internet echo chambers begin</h4><p>The rise of online forums and newsgroups allows people to selectively expose themselves to confirming information on a massive scale for the first time.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">4</div><div class="timeline-content"><div class="timeline-date">2016</div><h4>Fake news and confirmation bias</h4><p>The 2016 US election highlights the power of confirmation bias in the spread of viral misinformation and "fake news."</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">5</div><div class="timeline-content"><div class="timeline-date">2020s</div><h4>Algorithm-amplified bubbles</h4><p>Social media algorithms become highly sophisticated at creating personalized "filter bubbles" that supercharge confirmation bias, deepening social and political divides.</p></div></div>
+            </div>`
+          }
+        ]
+      },
+      'topic-seeing-patterns-in-noise': {
+        title: 'Seeing Patterns in Noise',
+        subtitle: 'The hyperactive tendency of our brains to detect meaningful patterns and streaks in random data where none exist.',
+        nav: [
+          { id: 'the-hyperactive-pattern-detector', text: 'The Hyperactive Pattern Detector' },
+          { id: 'false-pattern-examples', text: 'False Pattern Examples' },
+          { id: 'pattern-over-detection-costs', text: 'Pattern Over-Detection Costs' },
+          { id: 'pattern-detection-calibration', text: 'Pattern Detection Calibration' },
+          { id: 'pattern-detection-timeline', text: 'Pattern Detection Timeline' }
+        ],
+        sections: [
+          {
+            id: 'the-hyperactive-pattern-detector',
+            title: 'The Hyperactive Pattern Detector',
+            content: `<h4>Mistaking a Vine for a Snake</h4><p>Our brains evolved to find patterns; it was a crucial survival skill. The cost of a false positive (seeing a pattern that isn't there, like mistaking a vine for a snake) was low, while the cost of a false negative (missing a real pattern, like not seeing the snake) was catastrophic. This has left us with a hyperactive pattern detection system. We are prone to Pareidolia (seeing faces in random objects), the Clustering Illusion (seeing streaks in random data), and the Hot Hand Fallacy (believing a random streak will continue). We are also often blind to Regression to the Mean, failing to recognize that extreme events are usually followed by more normal ones due to random chance.</p>`
+          },
+          {
+            id: 'false-pattern-examples',
+            title: 'False Pattern Examples',
+            content: `<div class="figure-grid">
+              <div class="figure-card"><h4>The "Face on Mars"</h4><p>The 1976 Viking 1 orbiter captured a photo of a mesa on Mars that, due to light and shadow, strongly resembled a human face, fueling decades of speculation before higher-resolution images revealed it to be a natural landform.</p></div>
+              <div class="figure-card"><h4>The Bible Code</h4><p>The belief that hidden messages about future events can be found by looking for "equidistant letter sequences" in the Hebrew Bible, a phenomenon that can be replicated in any sufficiently large text, including "Moby Dick."</p></div>
+              <div class="figure-card"><h4>Stock Chart Patterns</h4><p>Much of technical analysis in stock trading is based on identifying visual patterns like "head and shoulders" or "death crosses," which many financial academics argue have no more predictive power than random chance.</p></div>
+              <div class="figure-card"><h4>The "Hot Hand" in Sports</h4><p>The pervasive belief that a player who has made several successful shots is more likely to make the next one. Rigorous statistical analysis has repeatedly shown this to be a cognitive illusion caused by our misperception of random sequences.</p></div>
+              <div class="figure-card"><h4>Cancer Clusters</h4><p>Communities often become alarmed by a perceived "cluster" of cancer cases in a neighborhood. While sometimes indicating an environmental cause, these clusters are very often within the bounds of what is expected from random statistical variation.</p></div>
+            </div>`
+          },
+          {
+            id: 'pattern-over-detection-costs',
+            title: 'Pattern Over-Detection Costs',
+            content: `<div class="impact-grid">
+              <div class="impact-card"><h4>Medical Overdiagnosis</h4><p>The search for patterns in medical tests can lead to the "treatment" of harmless statistical variations, causing patient anxiety and unnecessary costs.</p></div>
+              <div class="impact-card"><h4>Investment Losses</h4><p>Traders who act on perceived patterns in random market noise ("charting") are more likely to lose money than those who follow a disciplined, long-term strategy.</p></div>
+              <div class="impact-card"><h4>Conspiracy Theories</h4><p>The tendency to connect unrelated dots is the engine of all conspiracy theories, leading to social distrust and a detachment from reality.</p></div>
+              <div class="impact-card"><h4>Superstitious Behavior</h4><p>Athletes performing elaborate rituals or people avoiding black cats are acting on false causal patterns derived from coincidence.</p></div>
+              <div class="impact-card"><h4>Discrimination</h4><p>Stereotypes are a harmful form of pattern-matching, where the actions of a few individuals are used to create a false pattern that is then applied to an entire group.</p></div>
+            </div>`
+          },
+          {
+            id: 'pattern-detection-calibration',
+            title: 'Pattern Detection Calibration',
+            content: `<div class="badge-box"><h4>Tools for Seeing Reality More Clearly:</h4><ul>
+              <li>Learn and internalize statistical baselines to have a better sense of what is normal variation versus a true signal.</li>
+              <li>When you think you've found a pattern, try to test it on a new, "out-of-sample" set of data to see if it holds up.</li>
+              <li>Always consider the null hypothesis: could this pattern have occurred through random chance alone?</li>
+              <li>Actively look for cases that disconfirm or break the perceived pattern.</li>
+              <li>Embrace the reality of randomness; not every event needs a specific cause or to be part of a larger story.</li>
+            </ul></div>`
+          },
+          {
+            id: 'pattern-detection-timeline',
+            title: 'Pattern Detection Timeline',
+            content: `<div class="battle-timeline">
+              <div class="timeline-item"><div class="timeline-dot">1</div><div class="timeline-content"><div class="timeline-date">1920s</div><h4>Rorschach tests developed</h4><p>The famous inkblot tests are designed to exploit our tendency to project meaningful patterns onto ambiguous stimuli.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">2</div><div class="timeline-content"><div class="timeline-date">1960s</div><h4>Random walk hypothesis</h4><p>The theory gains traction in finance, arguing that stock market price changes are random and unpredictable, challenging pattern-based trading.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">3</div><div class="timeline-content"><div class="timeline-date">1976</div><h4>Viking Mars face</h4><p>The "Face on Mars" becomes a global phenomenon and a classic example of pareidolia.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">4</div><div class="timeline-content"><div class="timeline-date">1985</div><h4>Hot hand fallacy identified</h4><p>Gilovich, Vallone, and Tversky publish their paper debunking the "hot hand" in basketball, a landmark study in the clustering illusion.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">5</div><div class="timeline-content"><div class="timeline-date">2010s</div><h4>AI pattern recognition errors</h4><p>As AI image classifiers become widespread, researchers discover they are also prone to apophenia, finding patterns (like "barbells" in images of people brushing their teeth) that are statistical artifacts, not meaningful connections.</p></div></div>
+            </div>`
+          }
+        ]
+      },
+      'topic-survivorship-bias': {
+        title: 'Survivorship Bias',
+        subtitle: 'The error of focusing on the people or things that "survived" a process while overlooking the silent failures, leading to a distorted view of reality.',
+        nav: [
+          { id: 'the-invisible-graveyard', text: 'The Invisible Graveyard' },
+          { id: 'survivorship-bias-domains', text: 'Survivorship Bias Domains' },
+          { id: 'famous-survivorship-examples', text: 'Famous Survivorship Examples' },
+          { id: 'accounting-for-the-invisible', text: 'Accounting for the Invisible' },
+          { id: 'survivorship-bias-timeline', text: 'Survivorship Bias Timeline' }
+        ],
+        sections: [
+          {
+            id: 'the-invisible-graveyard',
+            title: 'The Invisible Graveyard',
+            content: `<h4>Learning from the Wrong Data</h4><p>Survivorship Bias is a selection bias where we draw conclusions from an incomplete dataset because the "failures" have been filtered out. We see the successful entrepreneurs, the enduring ancient buildings, and the winning investment strategies, but the much larger group of failed entrepreneurs, collapsed buildings, and defunct funds are invisible to us. This creates a "silent evidence" problem, leading to overly optimistic and misleading narratives about what it takes to succeed. The classic advice to "just do what they did" often fails because it's based on studying a biased sample of survivors.</p>`
+          },
+          {
+            id: 'survivorship-bias-domains',
+            title: 'Survivorship Bias Domains',
+            content: `<div class="impact-grid">
+              <div class="impact-card"><h4>Business Books</h4><p>Many popular business books are based on studying only highly successful companies, ignoring the many failed companies that may have had the exact same strategies.</p></div>
+              <div class="impact-card"><h4>Investment Funds</h4><p>The reported average performance of mutual funds is often inflated because funds that perform poorly are closed down and disappear from the statistics.</p></div>
+              <div class="impact-card"><h4>Career Advice</h4><p>We celebrate the stories of billionaire college dropouts, ignoring the millions of dropouts who did not succeed, leading to a skewed perception of the risks and rewards of that path.</p></div>
+              <div class="impact-card"><h4>Historical Analysis</h4><p>Our understanding of ancient civilizations is based on the texts and artifacts that happened to survive, which may not be representative of the culture as a whole.</p></div>
+              <div class="impact-card"><h4>Medical Studies</h4><p>A study on the health habits of the elderly might be biased because it only includes people who survived to be old; it misses those whose unhealthy habits led to an early death.</p></div>
+            </div>`
+          },
+          {
+            id: 'famous-survivorship-examples',
+            title: 'Famous Survivorship Examples',
+            content: `<div class="figure-grid">
+              <div class="figure-card"><h4>WWII Bomber Armor</h4><p>The crucial insight by statistician Abraham Wald that the military should reinforce the areas on returning planes where there were no bullet holes, as those were the planes that didn't make it back.</p></div>
+              <div class="figure-card"><h4>Mutual Fund Performance</h4><p>The "disappearing losers" effect, where the reported average return of a fund category is artificially high because underperforming funds are merged or closed, removing them from the sample.</p></div>
+              <div class="figure-card"><h4>Silicon Valley Narratives</h4><p>The media focus on a handful of "unicorn" startups creates a wildly distorted picture of the tech industry, ignoring the fact that the vast majority of startups fail.</p></div>
+              <div class="figure-card"><h4>Ancient Texts</h4><p>Our view of ancient philosophy may be skewed because the works of certain schools of thought (like the Stoics) survived, while the works of others (like the Skeptics) were largely lost.</p></div>
+              <div class="figure-card"><h4>Restaurant Success</h4><p>A tourist visiting a city sees only the successful, long-running restaurants and might conclude that opening a restaurant is a good business, ignoring the industry's 80% failure rate in the first five years.</p></div>
+            </div>`
+          },
+          {
+            id: 'accounting-for-the-invisible',
+            title: 'Accounting for the Invisible',
+            content: `<div class="badge-box"><h4>Techniques for a More Complete View:</h4><ul>
+              <li>Actively seek out data on failures, closures, and dropouts, not just successes.</li>
+              <li>Calculate the true base rates of success and failure in a given domain before evaluating a specific case.</li>
+              <li>Study "near-misses"—companies or projects that had all the ingredients for success but still failed—to understand the role of luck.</li>
+              <li>Keep a "failure journal" to track and learn from your own unsuccessful endeavors.</li>
+              <li>Be deeply skeptical of simple "how to succeed" narratives and look for the silent evidence they ignore.</li>
+            </ul></div>`
+          },
+          {
+            id: 'survivorship-bias-timeline',
+            title: 'Survivorship Bias Timeline',
+            content: `<div class="battle-timeline">
+              <div class="timeline-item"><div class="timeline-dot">1</div><div class="timeline-content"><div class="timeline-date">1943</div><h4>Wald’s bomber analysis</h4><p>Abraham Wald's work during WWII remains the most famous and compelling example of identifying and correcting for survivorship bias.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">2</div><div class="timeline-content"><div class="timeline-date">1990</div><h4>Mutual fund survivorship identified</h4><p>Financial economists begin to rigorously document the effect of survivorship bias on inflating mutual fund performance data.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">3</div><div class="timeline-content"><div class="timeline-date">1997</div><h4>“Good to Great” methodology critiqued</h4><p>Critics later point out that Jim Collins's bestselling book, which studied only successful companies, is a classic example of survivorship bias, and that many of the "great" companies later underperformed.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">4</div><div class="timeline-content"><div class="timeline-date">2008</div><h4>Financial crisis survivor stories</h4><p>After the crisis, the narratives of the few investors who predicted the crash are widely publicized, ignoring the many others who made similar predictions and were wrong.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">5</div><div class="timeline-content"><div class="timeline-date">2020</div><h4>Pandemic business survival</h4><p>Analysis of the economic impact of the pandemic is complicated by survivorship bias, as data often only reflects the businesses that survived, not the ones that closed permanently.</p></div></div>
+            </div>`
+          }
+        ]
+      },
+      'topic-the-gamblers-fallacy': {
+        title: 'The Gambler’s Fallacy',
+        subtitle: 'The mistaken belief that past random events influence future outcomes, leading to a belief that a streak is "due" to end.',
+        nav: [
+          { id: 'misunderstanding-independence', text: 'Misunderstanding Independence' },
+          { id: 'gambling-fallacy-manifestations', text: 'Gambling Fallacy Manifestations' },
+          { id: 'probability-misconceptions', text: 'Probability Misconceptions' },
+          { id: 'probability-calibration-tools', text: 'Probability Calibration Tools' },
+          { id: 'gamblers-fallacy-timeline', text: 'Gambler’s Fallacy Timeline' }
+        ],
+        sections: [
+          {
+            id: 'misunderstanding-independence',
+            title: 'Misunderstanding Independence',
+            content: `<h4>The Myth of the Self-Correcting Coin</h4><p>The Gambler's Fallacy is a deep-seated misunderstanding of probability. It's the belief that for independent random events, a streak of one outcome makes the opposite outcome more likely to "balance things out." This stems from the "law of small numbers"—our incorrect expectation that a small sample of random events should reflect the long-term average. We believe in the "maturity of chances," thinking that a run of bad luck must be followed by good luck. But a coin, a die, or a roulette wheel has no memory; each event is entirely independent of the last.</p>`
+          },
+          {
+            id: 'gambling-fallacy-manifestations',
+            title: 'Gambling Fallacy Manifestations',
+            content: `<div class="impact-grid">
+              <div class="impact-card"><h4>Casino Gaming</h4><p>The most classic example: a roulette player sees a streak of five reds and bets heavily on black, believing it is "due."</p></div>
+              <div class="impact-card"><h4>Stock Trading</h4><p>Traders may believe a stock that has gone down for several days is "due for a bounce" and buy, assuming a mean reversion that isn't guaranteed.</p></div>
+              <div class="impact-card"><h4>Sports</h4><p>A batter who has struck out three times may be seen as "due for a hit," or a team on a losing streak is seen as "due for a win."</p></div>
+              <div class="impact-card"><h4>Birth Sequencing</h4><p>A couple with three daughters may feel that they are "due" to have a son, even though the probability of gender for each birth is independent.</p></div>
+              <div class="impact-card"><h4>Lottery</h4><p>Some lottery players will avoid picking numbers that were drawn recently, believing they are less likely to come up again soon.</p></div>
+            </div>`
+          },
+          {
+            id: 'probability-misconceptions',
+            title: 'Probability Misconceptions',
+            content: `<div class="figure-grid">
+              <div class="figure-card"><h4>Monte Carlo, 1913</h4><p>The most famous real-world example, where the ball at a roulette table landed on black 26 times in a row. Gamblers lost millions betting against the streak, convinced that red was "due."</p></div>
+              <div class="figure-card"><h4>Lottery Clusters</h4><p>In 2009, the Bulgarian lottery drew the exact same six numbers on two consecutive weeks, a staggeringly improbable but not impossible event that demonstrates the lumpiness of randomness.</p></div>
+              <div class="figure-card"><h4>Hospital Gender Runs</h4><p>Daniel Kahneman uses the example of a hospital where one day 60% of births are boys and another day 60% are girls. We feel the first is more likely, but they are equally probable, illustrating our poor intuition for statistics.</p></div>
+              <div class="figure-card"><h4>Coin Flip Runs</h4><p>Most people will judge the sequence H-T-H-T-H-T as more probable than H-H-H-T-T-T, even though both are equally likely. The first one just "looks" more random.</p></div>
+              <div class="figure-card"><h4>"Hot" Dice Mythology</h4><p>In games like craps, players often believe dice can become "hot" (the Hot Hand Fallacy) or "cold" and "due for a seven" (the Gambler's Fallacy), attributing memory to inanimate objects.</p></div>
+            </div>`
+          },
+          {
+            id: 'probability-calibration-tools',
+            title: 'Probability Calibration Tools',
+            content: `<div class="badge-box"><h4>Techniques for Thinking Statistically:</h4><ul>
+              <li>Deeply internalize the concept of independent events: for random processes, the past has no predictive power.</li>
+              <li>Calculate the actual probabilities involved rather than relying on gut feelings about what seems "due."</li>
+              <li>Track long-term frequencies to understand the true baseline probabilities of events.</li>
+              <li>Use a computer to simulate random sequences to develop a better intuition for how "streaky" and "lumpy" randomness can be.</li>
+              <li>Formally study basic probability theory to replace flawed intuitions with accurate mental models.</li>
+            </ul></div>`
+          },
+          {
+            id: 'gamblers-fallacy-timeline',
+            title: 'Gambler’s Fallacy Timeline',
+            content: `<div class="battle-timeline">
+              <div class="timeline-item"><div class="timeline-dot">1</div><div class="timeline-content"><div class="timeline-date">1796</div><h4>Laplace describes the fallacy</h4><p>In his "Philosophical Essay on Probabilities," Pierre-Simon Laplace describes the common error of people believing they are more likely to have a son after a long sequence of boy births.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">2</div><div class="timeline-content"><div class="timeline-date">1913</div><h4>Monte Carlo incident</h4><p>The famous roulette wheel incident at the Monte Carlo Casino provides the fallacy with its most enduring real-world example and a common nickname.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">3</div><div class="timeline-content"><div class="timeline-date">1971</div><h4>Kahneman & Tversky research</h4><p>The psychologists identify the "belief in the law of small numbers" as a key cognitive mechanism underlying the Gambler's Fallacy.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">4</div><div class="timeline-content"><div class="timeline-date">1985</div><h4>Lottery fever studies</h4><p>Sociologists and psychologists begin to study the decision-making of lottery players, finding the Gambler's Fallacy to be a pervasive influence on their number choices.</p></div></div>
+              <div class="timeline-item"><div class="timeline-dot">5</div><div class="timeline-content"><div class="timeline-date">2008</div><h4>Financial crisis "due for a correction"</h4><p>Analysis of investor behavior during the housing bubble shows many believed the market was "due for a correction," yet this belief was often based on the Gambler's Fallacy rather than on fundamental analysis.</p></div></div>
+            </div>`
+          }
+        ]
+      }
+    };
+
+    /*
+    ==================================================================
+    ==                   END: PASTE YOUR DATA HERE                  ==
+    ==                                                              ==
+    ==     DO NOT MODIFY THE APPLICATION LOGIC BELOW THIS LINE      ==
+    ==================================================================
+    */
+
+
+    /* ========== RENDERING LOGIC ========== */
+
+    function renderMegaMenu(data) {
+      const container = document.getElementById('mega-menu-container');
+      if (!container) return;
+      container.innerHTML = data.map(column => `
+        <div class="mega-menu-column">
+          <h3 class="theater-heading">${column.heading}</h3>
+          ${column.topics.map(topic => `
+            <a href="#" class="topic-link" onclick="switchTopic(event, '${topic.id}', this)">${topic.text}</a>
+          `).join('')}
+        </div>
+      `).join('');
+    }
+
+    function renderTopic(id){
+      const data = masterDataObject[id];
+      if (!data) {
+        const master = document.getElementById('topic-master-container');
+        master.innerHTML = '';
+        master.classList.remove('active');
+        return;
+      }
+      const master = document.getElementById('topic-master-container');
+      master.innerHTML = `
+        <div class="container">
+          <header class="header"><h1>${data.title}</h1><p>${data.subtitle}</p></header>
+          ${data.nav && data.nav.length ? `
+            <nav class="nav"><div class="nav-container">
+              ${data.nav.map((n,i)=>`<button class="nav-btn${i===0?' active':''}"
+                onclick="showSection('${n.id}',this)">${n.text}</button>`).join('')}
+            </div></nav>`:''}
+          <main class="content">
+            ${data.sections.map((s,i)=>`<section id="${s.id}" class="section${i===0?' active':''}">
+              <h2>${s.title}</h2>${s.content}</section>`).join('')}
+          </main>
+          <footer class="footer"><p>© 2025 The Cognitive Bias Codex</p></footer>
+        </div>`;
+      master.classList.add('active');
+    }
+
+
+    /* ========== NAVIGATION HANDLERS ========== */
+
+    function switchTopic(event, id, link){
+      event.preventDefault();
+      document.querySelectorAll('.topic-link').forEach(a => a.classList.remove('active-topic'));
+      if (link) link.classList.add('active-topic');
+      renderTopic(id);
+
+      const panel = document.getElementById('mega-menu-panel');
+      const toggle = document.getElementById('mega-menu-toggle');
+      if (panel.classList.contains('open')) {
+        panel.classList.remove('open');
+        toggle.classList.remove('active');
+        toggle.textContent = 'Menu';
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showSection(secId, btn){
+      const master = document.getElementById('topic-master-container');
+      master.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      master.querySelector(`#${secId}`).classList.add('active');
+      master.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+
+    /* ========== APP INITIALIZATION ========== */
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderMegaMenu(menuData);
+
+      const toggle = document.getElementById('mega-menu-toggle');
+      const panel = document.getElementById('mega-menu-panel');
+      toggle.addEventListener('click', () => {
+        panel.classList.toggle('open');
+        toggle.classList.toggle('active');
+        toggle.textContent = panel.classList.contains('open') ? 'Close Menu ▲' : 'Menu';
+      });
+
+      document.addEventListener('click', e => {
+        if (!panel.contains(e.target) && !toggle.contains(e.target) && panel.classList.contains('open')) {
+          panel.classList.remove('open');
+          toggle.classList.remove('active');
+          toggle.textContent = 'Menu';
+        }
+      });
+
+      if (menuData.length > 0 && menuData[0].topics.length > 0) {
+        const firstTopicId = menuData[0].topics[0].id;
+        if (masterDataObject[firstTopicId]) {
+            renderTopic(firstTopicId);
+            setTimeout(() => {
+                const firstLink = document.querySelector(`.topic-link[onclick*="${firstTopicId}"]`);
+                if (firstLink) {
+                    firstLink.classList.add('active-topic');
+                }
+            }, 0);
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>

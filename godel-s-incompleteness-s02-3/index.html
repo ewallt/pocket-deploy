@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Gödel's Incompleteness: Proof Sketch — Part 3</title>
+<style>
+:root{--bg:#0f172a;--panel:#1f2937;--ink:#e5e7eb;--muted:#94a3b8;--brand:#60a5fa;--border:#1f2937}
+@media(prefers-color-scheme:light){:root{--bg:#f8fafc;--panel:#ffffff;--ink:#1e293b;--muted:#64748b;--brand:#3b82f6;--border:#e2e8f0}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,Apple Color Emoji,Segoe UI Emoji}
+.wrapper{max-width:760px;margin:0 auto;padding:48px 20px}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:28px;box-shadow:0 0 0 1px rgba(0,0,0,.12) inset}
+h1{margin:0 0 8px;font-size:2rem;line-height:1.2}
+.lead{color:var(--muted);margin:0 0 24px}
+a{color:var(--brand);text-decoration:none}
+a:hover{text-decoration:underline}
+article p{margin:0 0 16px}
+hr{border:0;border-top:1px solid var(--border);margin:24px 0}
+.nav{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+.nav a{padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:rgba(96,165,250,.08);color:var(--ink)}
+small.muted{color:var(--muted);display:block;margin-top:24px}
+</style>
+</head>
+<body>
+<div class="wrapper"><div class="panel">
+<div class="nav"><a href="/pocket-deploy/dashboard-godel-s-incompleteness-s02/">Dashboard</a><a href="/pocket-deploy/godel-s-incompleteness-s02-2/">Prev</a><a href="/pocket-deploy/godel-s-incompleteness-s02-4/">Next</a></div>
+<h1>Gödel's Incompleteness: Proof Sketch</h1>
+<p class="lead">Part 3 · Sketching the Proof of the First Theorem: How It Works</p>
+<article>
+<p>The proof of the First Incompleteness Theorem proceeds in several stages. First, Gödel establishes that key meta-mathematical concepts—formulas, proofs, provability—can be encoded as arithmetic predicates via Gödel numbering. Second, he constructs a self-referential formula G that asserts its own unprovability. Third, he proves that if the formal system F is consistent, then G is neither provable nor disprovable in F. Finally, he argues that G is nonetheless true in the standard model of arithmetic. Each step involves careful technical work, but the logical flow is straightforward: self-reference plus consistency implies incompleteness. The proof is a masterpiece of mathematical logic, combining coding theory, diagonalization, and meta-mathematical reasoning.</p>
+
+<p>Step 1: Arithmetization of syntax. Gödel shows that syntactic properties and relations can be expressed as arithmetic formulas. For example, "x is the Gödel number of an axiom" becomes an arithmetic predicate Axiom(x), checking whether x factors in a way corresponding to an axiom's structure. "y is the Gödel number of a proof of the formula with Gödel number x" becomes a predicate Proof(y, x), verifying that y encodes a valid sequence of formulas ending in the formula numbered x, with each formula either an axiom or derived from earlier ones by rules of inference. The predicate Prov(x) := ∃y Proof(y, x) means "there exists a proof of x," i.e., "x is provable." These predicates are primitive recursive—computable by simple algorithms—hence expressible in PA using bounded quantifiers and arithmetic operations.</p>
+
+<p>Step 2: Diagonalization and constructing G. Gödel defines a substitution operation sub(n, m) that takes Gödel numbers and produces the Gödel number of a new formula. He then constructs a formula ψ(y) asserting ¬Prov(sub(y, y)): "the formula obtained by substituting y into itself is not provable." Let k be ψ's Gödel number. The critical statement G is ψ(k), which says ¬Prov(sub(k, k)). But sub(k, k) is the Gödel number of ψ(k) itself, i.e., g, the Gödel number of G. Thus, G asserts ¬Prov(g): "the formula with Gödel number g is not provable," or simply "G is not provable." G is a well-formed formula of PA, constructed entirely within the system's language using valid arithmetic operations.</p>
+
+<p>Step 3: If F is consistent, then F does not prove G. Suppose, for contradiction, that F proves G. Then there exists a proof of G, so Prov(g) is true (a proof exists). But G asserts ¬Prov(g), meaning no proof of G exists. If F proves G, then G is false (since its assertion of unprovability would be incorrect). This means F proves a false statement. For reasonable systems like PA, consistency implies soundness relative to the standard model: provable statements are true about natural numbers. Thus, if F is consistent, it cannot prove G, as doing so would prove a falsehood. Therefore, G is not provable in F.</p>
+
+<p>Step 4: If F is consistent, then F does not prove ¬G. Suppose F proves ¬G. Then F proves Prov(g), asserting that G is provable. But we just established that if F is consistent, G is not provable, so Prov(g) is false. Thus, F would prove a false statement, contradicting consistency. Therefore, F does not prove ¬G either. Conclusion: neither G nor ¬G is provable in F. F is incomplete.</p>
+
+<p>Step 5: G is true in the standard model. Since we have shown (under the assumption of consistency) that G is not provable in F, G's assertion "G is not provable" is correct. G is true about the natural numbers, even though F cannot prove it. This separates truth from provability: G is a true arithmetic statement lying beyond F's reach. Note that "G is true" refers to truth in the standard model of arithmetic (the natural numbers we intuitively understand), not truth in some arbitrary model. Gödel's theorem is a statement about standard mathematical truth, not just formal provability.</p>
+
+<p>The proof hinges on consistency. If F is inconsistent, it proves every statement, including both G and ¬G, rendering the theorem vacuous. Consistency is assumed, not proven within F—such a proof is impossible by the Second Incompleteness Theorem. Thus, the First Theorem states: if F is consistent, then F is incomplete. This conditional structure is crucial. Mathematicians believe PA is consistent based on intuition and the fact that no contradiction has been derived, but Gödel's work shows this belief cannot be formalized within PA itself.</p>
+
+<p>Gödel's proof is constructive: it explicitly builds the undecidable statement G, not merely proving existence abstractly. This constructiveness has philosophical significance—it shows that incompleteness is not a vague limitation but a concrete phenomenon, embodied in specific formulas. Moreover, the proof generalizes: any consistent, recursively axiomatizable extension of PA is also incomplete. Even adding G as a new axiom yields a system F' that has its own undecidable statement G', and so on infinitely. Incompleteness is not a fixable bug but an inherent feature of sufficiently expressive formal systems. Gödel's proof, elegant and devastating, redefined the boundaries of formal mathematics, demonstrating that formalization, while powerful, can never fully capture arithmetic truth. The theorem stands as a monument to the limits of mechanization and the inexhaustibility of mathematical knowledge.</p>
+</article>
+<hr />
+<div class="nav"><a href="/pocket-deploy/dashboard-godel-s-incompleteness-s02/">Dashboard</a><a href="/pocket-deploy/godel-s-incompleteness-s02-2/">Prev</a><a href="/pocket-deploy/godel-s-incompleteness-s02-4/">Next</a></div>
+<small class="muted">Gödel's Incompleteness · Series 2 of 3</small>
+</div></div>
+</body>
+</html>

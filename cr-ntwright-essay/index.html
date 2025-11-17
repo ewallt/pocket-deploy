@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Course Template</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com/3.4.1?plugins=typography"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Default Theme: Newspaper */
+        :root {
+            --bg-gradient: #fdfdf8;
+            --text: #1c1c1c;
+            --accent-text: #8c1c13;
+            --nav-bg: #f1f1eb;
+            --nav-border: #dcdcd3;
+            --nav-text: #1c1c1c;
+            --nav-hover-bg: #e5e5dd;
+            --nav-active-bg: #dcdcd3;
+            --nav-active-text: #1c1c1c;
+            --prose-text: var(--text);
+            --prose-headings: var(--accent-text);
+            --prose-links: var(--accent-text);
+            --prose-bold: var(--text);
+            font-family: 'Merriweather', serif;
+        }
+
+        .theme-emerald-paper, .theme-cyber-blue, .theme-emerald-gold {
+            font-family: 'Lato', sans-serif;
+        }
+        
+        body {
+            background: var(--bg-gradient);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .ui-bg { background-color: var(--nav-bg); }
+        .ui-border { border-color: var(--nav-border); }
+        .text-primary { color: var(--text); }
+        .text-accent { color: var(--accent-text); }
+
+        .tab-button {
+            background-color: var(--nav-bg);
+            color: var(--nav-text);
+            border-bottom: 3px solid transparent;
+        }
+        .tab-button:hover, .tab-button:focus-visible {
+            background-color: var(--nav-hover-bg);
+        }
+        .tab-button.tab-active {
+            background-color: var(--nav-active-bg);
+            color: var(--nav-active-text);
+            border-bottom-color: var(--accent-text);
+        }
+
+        .settings-button { background-color: var(--nav-hover-bg); }
+        .settings-button:hover { opacity: 0.8; }
+        *:focus-visible { outline: 3px solid var(--accent-text); outline-offset: 2px; }
+
+        .prose { color: var(--prose-text); }
+        .prose h2, .prose h3, .prose a, .prose strong { color: var(--prose-headings); }
+        .prose p.lead { color: var(--prose-text); }
+    </style>
+</head>
+<body class="transition-colors duration-300">
+    <div class="container mx-auto px-4 py-6 max-w-7xl">
+        <header id="app-header" class="ui-bg border ui-border rounded-lg shadow-lg p-6 mb-6"></header>
+        <nav id="app-tabs" class="ui-bg border ui-border rounded-lg shadow-lg mb-6" role="tablist" aria-label="Main navigation"></nav>
+        <main id="app-panels" class="ui-bg border ui-border rounded-lg shadow-lg p-6 md:p-8"></main>
+        
+        <div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+            <div class="ui-bg border ui-border rounded-lg p-6 max-w-md w-full shadow-2xl">
+                <h2 id="settings-title" class="text-xl font-bold text-accent mb-4">Display Settings</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label for="themeSelect" class="block text-primary font-semibold mb-2">Theme</label>
+                        <select id="themeSelect" class="w-full px-3 py-2 rounded ui-bg border ui-border text-primary">
+                        </select>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button id="closeSettings" class="px-4 py-2 rounded text-primary hover:opacity-80">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 
+    ============================================================
+    vvvvvvvvvvvvvv PASTE YOUR JSON CONTENT BELOW vvvvvvvvvvvvvv
+    ============================================================
+    -->
+    <script type="application/json" id="app-data">
+{
+  "nt-wright-system": {
+    "title": "Scripture as Drama, History as Narrative: N. T. Wright’s System Explained",
+    "description": "N. T. Wright’s biblical theology operates as a coherent system where methodological commitments generate interpretive frameworks that yield specific practices. This analysis demonstrates how rigorous historical method applied to Israel’s narrative necessarily transforms both theological understanding and church life.",
+    "categories": {
+      "unit-1-method-framework": {
+        "display_order": 10,
+        "name": "Method & Framework",
+        "display_name": "Method",
+        "paragraphs": [
+          {
+            "heading": "The Problem of Misreading",
+            "content": "Western Christianity suffers from three interconnected misreadings that distort both Scripture and practice. First, de-Judaized interpretations sever Jesus and Paul from their Second Temple context, treating them as abstract religious innovators rather than Jewish actors within Israel’s ongoing story. Second, a false heaven/earth dichotomy replaces biblical hope for renewed creation with escapist spirituality, fundamentally misunderstanding resurrection and kingdom. Third, proof-texting methodology extracts isolated verses from their narrative context, destroying Scripture’s coherent authority and reducing ethics to citation warfare."
+          },
+          {
+            "heading": "The Need for Critical Realism",
+            "content": "These distortions stem from inadequate historical method and epistemological naivety. Wright diagnoses the need for “critical realism” as an epistemological framework that “recognizes that all knowledge is theory-based and socio-historical” while maintaining that “objective reality” exists and can be known through “appropriate dialogue or conversation between the knower and the thing known.” This avoids both positivism’s false objectivity and phenomenalism’s despair about knowledge."
+          },
+          {
+            "heading": "Narrative-Historical Reading",
+            "content": "Equally crucial is narrative-historical reading within Second Temple Judaism. Wright contends that “texts articulate worldviews, which are best understood as stories that order one’s view of reality.” These worldviews manifest through stories (providing the fullest expression), symbols (shorthand statements of stories), and praxis (community’s way of being), answering fundamental questions: “Who are we?”, “Where are we?”, “What is wrong?”, “What is the solution?”, and “What time is it?”."
+          },
+          {
+            "heading": "The Goal: A Coherent Reading",
+            "content": "Without this methodological foundation, readers impose foreign interpretive frameworks, missing how Jesus understood his mission as Israel’s climactic moment and how Paul reconfigured Jewish theology around Messiah and Spirit. The result is Christianity divorced from its Jewish roots, unable to articulate why its Scriptures cohere or how ancient texts address contemporary challenges."
+          },
+          {
+            "heading": "Critical Realism in Practice",
+            "content": "Wright’s method begins with critical realism’s recognition that while reality exists independently, all knowledge comes through interpretive grids. Like a scientist whose instruments and theories shape but don’t create what they observe, biblical interpreters access historical reality through “a spiralling path of appropriate dialogue” rather than direct apprehension. Knowledge remains “provisional and subject to revision,” yet achieves validity through hypothesis-testing against data."
+          },
+          {
+            "heading": "Archaeology as an Analogy",
+            "content": "Consider how archaeologists reconstruct ancient cities: pottery shards and foundation stones exist objectively, but understanding their significance requires theoretical frameworks about trade routes, social structures, and religious practices. Similarly, Gospel texts are historical artifacts requiring interpretive frameworks, yet these frameworks must submit to textual evidence rather than imposing predetermined meanings."
+          },
+          {
+            "heading": "Worldview Analysis: Stories, Symbols, Praxis",
+            "content": "Worldview analysis provides Wright’s primary interpretive tool. Stories shape communities by providing narrative frameworks for identity and action—Israel’s exodus story, for instance, structured Jewish self-understanding for millennia. Symbols encode these stories in concentrated form: “Sabbath, Food, Nation, Land, Torah, and supremely, Temple” functioned as “shorthand statements” of Israel’s worldview. Praxis tests truth-claims through lived reality—a community’s “worship, festivals, and living according to its foundational texts” reveals its actual worldview more than stated beliefs."
+          },
+          {
+            "heading": "Criteria for Historical Judgment",
+            "content": "Historical judgment employs specific criteria. Wright’s “double similarity and dissimilarity” test considers “a saying or action of Jesus” likely authentic when it is “both similar to and dissimilar from first-century Judaism and the early church.” This prevents both severing Jesus from Judaism and collapsing him into either background or later development. Wright treats Gospels as “interpreted history”—neither raw facts nor fiction but theologically-shaped narratives of real events."
+          },
+          {
+            "heading": "Scripture as a Five-Act Drama",
+            "content": "Scripture’s authority functions through Wright’s “five-act drama” model. Imagine Shakespeare’s company discovering a five-act play with Act Five mostly missing. The actors must “immerse themselves in the earlier stages” then “act out for themselves the final act.” Similarly, Scripture provides four complete acts (Creation, Fall, Israel, Jesus) with Act Five (Church) begun but incomplete. Authority operates not through mechanical repetition but faithful improvisation: proposed actions must demonstrate “consistency with the existing story” while “Shakespeare’s words” judge “the cast’s words.”"
+          }
+        ]
+      },
+      "unit-2-jesus-kingdom": {
+        "display_order": 20,
+        "name": "Jesus, Kingdom & New Creation",
+        "display_name": "Jesus",
+        "paragraphs": [
+          {
+            "heading": "Jesus and the Return from Exile",
+            "content": "Wright’s Jesus emerges from methodological commitment to Second Temple context, revealing him as enacting Israel’s return from exile and inaugurating God’s kingdom. The exile meant more than geographical displacement—it signified “political servitude, cultural domination, and above all theological unredeemedness” since prophecies of restoration and YHWH’s return to Zion remained unfulfilled. Jesus understood his mission as inaugurating the “real ‘return from exile’” through his death as the means to deliver Israel from “true exile”—spiritual estrangement—initiating a “new exodus.”"
+          },
+          {
+            "heading": "Case Study: The Galilean Ministry",
+            "content": "Isaiah 9:1-7 → Galilean Ministry: Isaiah prophesied light shining upon Galilee’s darkness, where Zebulun and Naphtali experienced exile’s disgrace, promising messianic restoration. Jesus initiates his ministry precisely in Galilee, “proclaiming ‘the gospel of God’ and that ‘the time is fulfilled, and the kingdom of God is at hand.’” Wright argues Jesus thereby declares “the completion of the exilic period mentioned in Isaiah 9:1 and the dawning of the Messianic kingdom.” The geographical specificity isn’t coincidental but programmatic—Jesus embodies Isaiah’s restoration promise."
+          },
+          {
+            "heading": "Case Study: The Crucifixion",
+            "content": "Isaiah 51-53 → Last Supper/Crucifixion: These chapters describe Israel’s exile and introduce a figure whose “redemptive ministry” provides “climactic resolution” through suffering. At the Last Supper, Jesus explicitly applies Isaiah 53:12 about being “numbered with transgressors” to himself, speaking of “new covenant” and “kingdom of God.” Wright sees Jesus’s death as fulfilling the Suffering Servant role, the “salvific personage who ultimately/fully restores God’s people from their exile” through “redemptive, messianic death” effecting “new exodus.”"
+          },
+          {
+            "heading": "The Meaning of the Kingdom",
+            "content": "The kingdom therefore isn’t “a place one goes to after death” but “Israel’s God becoming king” on earth, acting to “put the whole world to rights.” This kingship has both eternal and temporal dimensions—“like a seed being planted or a tablecloth slowly revealing a table”—an “eschatological reality” established through Jesus (“already”) but awaiting “full realization” (“not-yet”)."
+          },
+          {
+            "heading": "The Bodily Resurrection",
+            "content": "Wright’s historical investigation yields the conclusion that resurrection happened bodily, with “high historical probability” for both “empty tomb” and “meetings” as “historical events.” This isn’t merely apologetic assertion but follows from his method: the term “resurrection” consistently means “bodily life after ‘life after death’”—not spiritual survival but “renewed, re-embodied existence following the state of death.” The Greek anastasis universally denotes bodily resurrection; any other interpretation pushes meaning “well beyond breaking point.”"
+          },
+          {
+            "heading": "Cultural Contrast: Why Resurrection Was Unprecedented",
+            "content": "The cultural contrast sharpens resurrection’s distinctiveness. Greco-Roman thought “generally denied bodily resurrection”—physical revival seemed undesirable, even repugnant. While Pharisaic Judaism affirmed bodily resurrection, they expected “general resurrection of all the dead at the last day” as collective eschatological event. Crucially, “no one believed in the resurrection of one individual in the middle of history.” This unprecedented concept couldn’t be “made up” since it violated both pagan and Jewish expectations."
+          },
+          {
+            "heading": "The Hope of New Creation",
+            "content": "New creation theology emerges necessarily from bodily resurrection. If God raised Jesus physically, then creation itself awaits transformation rather than abandonment. The world will “thrill and throb with the life of God” rather than face destruction. This transforms Christian hope from escapist spirituality to creation’s renewal, where God transforms the physical world starting with humanity."
+          },
+          {
+            "heading": "Mission and Worship in a New Creation",
+            "content": "Mission flows from new creation reality. The church exists as “Citizens of the New Creation,” called to “engage with the world, reflecting and participating in God’s ongoing work of transforming it.” Israel’s role as “kingdom of priests” taking “knowledge of God to the nations” now belongs to the renewed people. Worship involves sacramental transformation where God uses creation (bread, wine) to transform believers, enabling them to “see a new creation emerging and to embody God’s love in the world.”"
+          }
+        ]
+      },
+      "unit-3-paul-atonement": {
+        "display_order": 30,
+        "name": "Paul & Atonement",
+        "display_name": "Paul",
+        "paragraphs": [
+          {
+            "heading": "Reconfiguring Paul's Theology",
+            "content": "Wright’s Paul emerges from reading him within Second Temple Judaism’s fundamental triad: monotheism, election, eschatology. Each element undergoes radical reconfiguration through Messiah and Spirit."
+          },
+          {
+            "heading": "The Righteousness of God",
+            "content": "“Righteousness of God” means primarily “God’s covenant faithfulness”—not an asset transferred but God’s own faithfulness to Abrahamic promises. Wright states definitively: “Romans [is] Paul’s exposition of God’s faithfulness to his covenant (in technical language, his righteousness).” For Septuagint readers, dikaiosuvnh qeoù clearly meant “God’s own faithfulness to his promises, to the covenant.”"
+          },
+          {
+            "heading": "Justification as Membership Verdict",
+            "content": "“Justification” denotes not how someone “establishes a relationship with God” but God’s “eschatological definition, both future and present, of who was a member of His people.” It concerns “how you could tell who was in” rather than “getting in.” Those responding to gospel in faith are “declared by God to be his people,” receiving status as “righteous” or “within the covenant.” Wright insists: “justification is not how someone becomes a Christian. It is the declaration that they have become a Christian.”"
+          },
+          {
+            "heading": "Works of the Law as Boundary Markers",
+            "content": "“Works of the law” refer to “ethnic badges” marking Jewish identity—“circumcision, Sabbath-keeping, and dietary regulations”—not general moral obedience. These functioned as “boundary markers” demonstrating covenant membership but were “misused to exclude Gentiles.” Paul’s critique targets not legalistic salvation-earning but ethnic exclusivism."
+          },
+          {
+            "heading": "Practical Implications: Unity, Holiness, and Justice",
+            "content": "This reconfiguration yields concrete implications. Unity (Jew/Gentile): Since faith replaces ethnic markers, “all who share faith in Christ belong at the same table, no matter what their racial differences.” Holiness: The Spirit enables believers to fulfill the “righteous requirement of the law” by “putting to death the deeds of the body.” This “Spirit-wrought obedience” provides evidence for final justification. Justice/Mission: The gospel as “power of God for salvation breaking into structures of malice and injustice” mandates confronting social evil, while the church’s identity as “new Israel” requires “economic generosity” anticipating God’s restoration."
+          },
+          {
+            "heading": "Atonement within the Narrative",
+            "content": "Wright integrates atonement motifs within Israel’s covenant narrative rather than isolating them as competing theories. Victory appears as Christ overcoming evil to establish “a new world in which justice and peace would reign supreme.” Representation/substitution operates through Christ “bearing the curse on Israel’s behalf,” taking humanity’s place “in order to put them in his place.” Wright affirms penal substitution: God “punished sins as they deserved” in Christ’s flesh. New exodus coheres these themes as Jesus’s death inaugurates “true exodus” from spiritual exile, fulfilling covenant promises."
+          },
+          {
+            "heading": "Scripture's Authority Through Drama",
+            "content": "Scripture’s authority functions through the five-act model where the church lives in Act Five, improvising faithfully based on prior acts. Like jazz musicians who internalize standards before improvising, Christians immerse themselves in Scripture’s completed acts (Creation, Fall, Israel, Jesus) to perform appropriately in the present. Authority derives ultimately from God himself, with theological statements gaining authority only as they derive from Scripture “much like harmonic overtones are derived from a fundamental note.”"
+          }
+        ]
+      },
+      "unit-4-practice-critique": {
+        "display_order": 40,
+        "name": "Practice & Critique",
+        "display_name": "Practice",
+        "paragraphs": [
+          {
+            "heading": "Worship Shaped by New Creation",
+            "content": "Wright’s system generates specific ecclesial practices flowing necessarily from theological commitments. Understanding sacraments as God transforming creation to transform believers enables worshippers to “see a new creation emerging and to embody God’s love in the world.” Worship becomes participation in cosmic renewal rather than escape from materiality."
+          },
+          {
+            "heading": "Boundary-Crossing Unity",
+            "content": "Since “faith in Jesus Christ is the sole boundary marker for the new covenant community,” churches must embody unity across ethnic and social divisions. Table fellowship demonstrates justification’s reality."
+          },
+          {
+            "heading": "Public Theology Addressing Injustice",
+            "content": "The gospel as “power of God for salvation breaking into structures of malice and injustice” requires confronting systemic evil. Churches engage politically and economically as kingdom witnesses."
+          },
+          {
+            "heading": "Holiness through the Spirit",
+            "content": "Communities cultivate “Spirit-wrought obedience” as evidence of covenant membership, understanding holiness as transformation rather than legalism."
+          },
+          {
+            "heading": "Mission as Kingdom Proclamation",
+            "content": "The church’s fundamental identity includes “launching of the world mission,” proclaiming Jesus’s lordship as good news for all nations."
+          },
+          {
+            "heading": "Objection: Historiography",
+            "content": "Critics raise substantive challenges Wright addresses systematically. Critics argue Wright’s “critical realism” oversimplifies historical reconstruction’s complexity. Wright responds that critical realism acknowledges mediation while maintaining that “initial observation is challenged by critical reflection but can survive the challenge and speak truly of reality.”"
+          },
+          {
+            "heading": "Objection: Justification and Imputation",
+            "content": "Critics see Wright as redefining justification from forensic individual declaration to ecclesiological membership. Wright maintains he preserves the “substance” of Reformed theology—Christ’s accomplishment “reckoned to all those who are ‘in him’”—while correcting Augustinian distortions of Paul’s meaning."
+          },
+          {
+            "heading": "Objection: 'Still-in-Exile' Thesis",
+            "content": "Critics argue Temple presence contradicts exile consciousness. Wright clarifies “exile” means “sociological and theological” condition of spiritual bondage, not geographical displacement, citing texts anticipating YHWH’s return to Zion."
+          },
+          {
+            "heading": "Objection: Over-Systematization",
+            "content": "Critics worry Wright forces texts into predetermined frameworks. Wright argues for “consistent hermeneutic” integrating worldview analysis with historical and literary dimensions, where legitimate readings “‘fit’ within the worldview of the text.”"
+          },
+          {
+            "heading": "Conclusion",
+            "content": "N. T. Wright’s theological system demonstrates rigorous coherence: critical realism and narrative-historical method applied to Second Temple Judaism yield specific readings of Jesus as exile-ender and kingdom-bringer, which reconfigure Pauline theology around covenant faithfulness and membership, generating concrete ecclesial practices of unity, justice, and mission. Each element follows necessarily from prior commitments—method determines framework, framework mandates practice. The system’s ordering matters because starting elsewhere produces the fragmentary proof-texting and de-Judaized abstractions plaguing Western Christianity. Wright contributes to contemporary theology a methodologically grounded integration of history and theology that reconnects Christianity to its Jewish roots while addressing modern challenges through ancient narrative made newly comprehensible."
+          }
+        ]
+      }
+    }
+  }
+}
+    </script>
+    <!-- 
+    ============================================================
+    ^^^^^^^^^^^^^^ PASTE YOUR JSON CONTENT ABOVE ^^^^^^^^^^^^^^
+    ============================================================
+    -->
+
+    <script defer>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        const THEMES = {
+          'newspaper': { 
+            name: 'Newspaper', 
+            type: 'classic', 
+            isDark: false 
+          },
+          'emerald-paper': {
+            name: 'Emerald Paper', 
+            type: 'variable', 
+            isDark: false,
+            vars: {
+              '--bg-gradient': '#f7fbf9', '--text': '#1e2b28', '--accent-text': '#0f7f6d', '--nav-bg': '#e7f3ef',
+              '--nav-border': '#86c8ba', '--nav-text': '#1e2b28', '--nav-hover-bg': '#d7ece6', '--nav-active-bg': '#bfe3d9',
+              '--nav-active-text': '#1e2b28', '--prose-text': '#1e2b28', '--prose-headings': '#0f7f6d'
+            }
+          },
+          'cyber-blue': {
+            name: 'Cyber Night', 
+            type: 'variable', 
+            isDark: true,
+            vars: {
+              '--bg-gradient': 'rgb(2, 6, 23)',
+              '--text': 'rgb(203, 213, 225)',
+              '--accent-text': 'rgb(203, 213, 225)',
+              '--nav-bg': 'rgb(30, 41, 59)',
+              '--nav-border': 'rgb(51, 65, 85)',
+              '--nav-text': 'rgb(203, 213, 225)',
+              '--nav-hover-bg': 'rgb(15, 23, 42)',
+              '--nav-active-bg': 'rgb(51, 65, 85)',
+              '--nav-active-text': '#FFFFFF',
+              '--prose-text': 'rgb(203, 213, 225)',
+              '--prose-headings': '#FFFFFF'
+            }
+          },
+          'emerald-gold': {
+            name: 'Emerald/Gold', 
+            type: 'variable', 
+            isDark: true,
+            vars: {
+              '--bg-gradient': 'linear-gradient(135deg,#022c22 0%,#064e3b 60%,#065f46 100%)', '--text': '#ecfdf5',
+              '--accent-text': '#f0c475', '--nav-bg': '#064e3b', '--nav-border': '#d4a24c', '--nav-text': '#ecfdf5',
+              '--nav-hover-bg': '#065f46', '--nav-active-bg': '#0b3d31', '--nav-active-text': '#f0c475',
+              '--prose-text': '#a7f3d0', '--prose-headings': '#f0c475'
+            }
+          }
+        };
+
+        const app = {
+            root: document.documentElement,
+            header: document.getElementById('app-header'),
+            tabs: document.getElementById('app-tabs'),
+            panels: document.getElementById('app-panels'),
+            settings: {
+                modal: document.getElementById('settingsModal'),
+                closeBtn: document.getElementById('closeSettings'),
+                themeSelect: document.getElementById('themeSelect')
+            }
+        };
+
+        const state = { activeTab: null, theme: 'newspaper' };
+
+        const loadState = () => {
+            state.theme = localStorage.getItem('appTheme') || 'newspaper';
+            state.activeTab = localStorage.getItem('activeTab');
+        };
+
+        const saveState = () => {
+            localStorage.setItem('appTheme', state.theme);
+            localStorage.setItem('activeTab', state.activeTab);
+        };
+
+        const applyTheme = (themeKey) => {
+            const theme = THEMES[themeKey];
+            if (!theme) return;
+
+            app.root.className = '';
+            app.root.style.cssText = '';
+
+            if (theme.type === 'variable' && theme.vars) {
+                for (const [key, value] of Object.entries(theme.vars)) {
+                    app.root.style.setProperty(key, value);
+                }
+                app.root.classList.add(`theme-${themeKey}`);
+            }
+
+            state.theme = themeKey;
+            if (app.settings.themeSelect.value !== themeKey) {
+                app.settings.themeSelect.value = themeKey;
+            }
+            saveState();
+        };
+
+        const populateThemeSelector = () => {
+            app.settings.themeSelect.innerHTML = Object.entries(THEMES).map(([key, theme]) => 
+                `<option value="${key}">${theme.name}</option>`
+            ).join('');
+        };
+
+        const loadAndTransformData = () => {
+            try {
+                const dataNode = document.getElementById('app-data');
+                if (!dataNode.textContent.trim()) {
+                    console.error("JSON data is empty.");
+                    return null;
+                }
+                const rawData = JSON.parse(dataNode.textContent);
+                
+                const topLevelKey = Object.keys(rawData)[0];
+                if (!topLevelKey) {
+                    console.error("JSON data is missing a top-level key.");
+                    return null;
+                }
+                const course = rawData[topLevelKey];
+                
+                const units = Object.entries(course.categories).map(([id, unitData]) => ({ id, ...unitData }))
+                    .sort((a, b) => a.display_order - b.display_order);
+                return { meta: { title: course.title, description: course.description }, units };
+            } catch (e) {
+                console.error("Failed to load or transform app data:", e);
+                app.panels.innerHTML = `<div class="p-4 text-red-500 bg-red-100 rounded"><strong>Error:</strong> Could not load content. Please ensure the JSON is correctly formatted and pasted into the data island.</div>`;
+                return null;
+            }
+        };
+        
+        const data = loadAndTransformData();
+        
+        if (!data) return;
+
+        const renderHeader = () => {
+            document.title = data.meta.title || "Interactive Course";
+            
+            app.header.innerHTML = `
+                <div class="flex justify-between items-start gap-4">
+                    <div>
+                        <h1 class="text-3xl font-bold text-accent">${data.meta.title}</h1>
+                        <p class="mt-2 text-primary/80">${data.meta.description}</p>
+                    </div>
+                    <button id="settingsBtn" class="flex-shrink-0 p-3 rounded-lg settings-button transition-opacity" aria-label="Display Settings">
+                        <span class="text-2xl text-accent">⚙️</span>
+                    </button>
+                </div>`;
+        };
+        
+        const renderTabs = () => {
+            app.tabs.innerHTML = `<div class="flex flex-wrap">${
+                data.units.map(unit => `
+                    <button role="tab" aria-selected="false" aria-controls="${unit.id}-panel" id="${unit.id}-tab"
+                            class="px-5 py-3 font-semibold transition-colors tab-button">
+                        ${unit.display_name}
+                    </button>`
+                ).join('')
+            }</div>`;
+        };
+
+        const renderPanels = () => {
+            app.panels.innerHTML = data.units.map(unit => {
+                const introHTML = unit.introduction ? `<p class="lead">${unit.introduction}</p>` : '';
+                const paragraphsHTML = (unit.paragraphs || []).map(p => `
+                    <h3>${p.heading}</h3>
+                    <p>${p.content}</p>
+                `).join('');
+                const proseClasses = THEMES[state.theme].isDark ? 'prose prose-lg max-w-none prose-invert' : 'prose prose-lg max-w-none';
+                return `
+                    <div role="tabpanel" id="${unit.id}-panel" aria-labelledby="${unit.id}-tab" hidden>
+                        <div class="${proseClasses}">
+                            <h2>${unit.name}</h2>
+                            ${introHTML}
+                            ${paragraphsHTML}
+                        </div>
+                    </div>`;
+            }).join('');
+        };
+
+        const switchTab = (tabId) => {
+            if (!data.units.some(u => u.id === tabId)) {
+                tabId = data.units[0]?.id;
+            }
+            if (!tabId) return;
+
+            app.tabs.querySelectorAll('[role="tab"]').forEach(tab => {
+                const isActive = tab.id === `${tabId}-tab`;
+                tab.setAttribute('aria-selected', isActive);
+                tab.classList.toggle('tab-active', isActive);
+            });
+
+            app.panels.querySelectorAll('[role="tabpanel"]').forEach(panel => {
+                panel.hidden = panel.id !== `${tabId}-panel`;
+            });
+            
+            state.activeTab = tabId;
+            saveState();
+        };
+
+        const setupEventListeners = () => {
+            app.tabs.addEventListener('click', e => {
+                const tab = e.target.closest('[role="tab"]');
+                if (tab) switchTab(tab.id.replace('-tab', ''));
+            });
+
+            app.header.addEventListener('click', e => {
+                if (e.target.closest('#settingsBtn')) {
+                    app.settings.modal.classList.remove('hidden');
+                    app.settings.themeSelect.focus();
+                }
+            });
+            
+            const closeModal = () => {
+                app.settings.modal.classList.add('hidden');
+                document.getElementById('settingsBtn')?.focus();
+            };
+            app.settings.closeBtn.addEventListener('click', closeModal);
+            app.settings.modal.addEventListener('keydown', e => {
+                if (e.key === 'Escape') closeModal();
+            });
+
+            app.settings.themeSelect.addEventListener('change', (e) => {
+                applyTheme(e.target.value);
+                renderPanels();
+                const activePanel = document.getElementById(`${state.activeTab}-panel`);
+                if(activePanel) activePanel.hidden = false;
+            });
+        };
+
+        const init = () => {
+            loadState();
+            populateThemeSelector();
+            applyTheme(state.theme);
+            renderHeader();
+            renderTabs();
+            renderPanels();
+            setupEventListeners();
+            switchTab(state.activeTab || data.units[0]?.id);
+        };
+
+        init();
+    });
+    </script>
+</body>
+</html>
+

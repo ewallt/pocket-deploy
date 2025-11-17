@@ -1,0 +1,40 @@
+<!-- /pocket-deploy/ai-s04-5/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>AI s04 — Part 5: Systems & Cost Curves</title>
+<style>
+:root{--bg:#0b1020;--panel:#0f172a;--ink:#e5e7eb;--muted:#94a3b8;--brand:#60a5fa;--border:#1f2940}
+@media(prefers-color-scheme:light){:root{--bg:#f5f7fb;--panel:#fff;--ink:#1b2a41;--muted:#34495e;--brand:#2563eb;--border:#e3e9f3}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,Segoe UI,Inter,Arial;padding:2rem}
+.c{max-width:880px;margin:0 auto;background:var(--panel);border:1px solid var(--border);border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+.nav{display:flex;gap:.5rem;flex-wrap:wrap;padding:.75rem;border-bottom:1px solid var(--border)}.nav a{padding:.45rem .7rem;border:1px solid var(--border);border-radius:999px;text-decoration:none;color:var(--ink)}.nav a:hover{border-color:var(--brand);color:var(--brand)}
+.h{padding:1.25rem 1.5rem}.intro{color:var(--muted);font-style:italic;margin:.25rem 0 1rem}
+.p{padding:0 1.5rem 1.4rem}.p p{margin:1.05rem 0}
+.f{padding:1rem 1.5rem;border-top:1px solid var(--border);color:var(--muted);font-size:.95rem}
+table{width:100%;border-collapse:collapse;margin-top:.4rem}th,td{border:1px solid var(--border);padding:.4rem;text-align:left}th{color:var(--brand)}
+</style></head>
+<body><article class="c">
+<nav class="nav">
+  <a href="/pocket-deploy/dashboard-ai-s04/">← Dashboard</a>
+  <a href="/pocket-deploy/ai-s04-4/">Previous</a>
+</nav>
+<header class="h"><h1>Systems & Cost Curves — Part 5</h1><p class="intro">No, reasoning models were not purely conceptual advances; they were system-level engineering feats balancing cost, latency, and scale.</p></header>
+<section class="p">
+<p><strong>Context setup.</strong> The shift from pretraining to deployment reframed research around efficiency. Each deliberate or long-context step multiplied compute demands. Industry responded with architecture–infrastructure co-design: mixture-of-experts (MoE), activation sparsity, caching, and asynchronous batching. The frontier moved from “Can it reason?” to “Can it reason at market cost?”</p>
+<p><strong>Sequential explanation.</strong> Sparse activation led the wave—only subsets of model weights fire per token, preserving parameter count but lowering active FLOPs. Next came memory caches that reused attention keys across turns, amortizing context costs. Finally, orchestration layers balanced load across thousands of GPUs, using adaptive batching to merge user requests with similar token histories. Together these innovations turned million-token windows from theoretical luxuries into practical services.</p>
+<p><strong>Parallel comparisons.</strong> Traditional web servers scale by request concurrency; reasoning models scale by token concurrency. System bottlenecks shifted from network IO to GPU memory bandwidth. Quantization, compilation, and kernel fusion compressed latency budgets, while dynamic routing balanced throughput and accuracy. The outcome resembled a new kind of operating system—one scheduling thoughts rather than threads.</p>
+<section>
+<h3>Sectional Synthesis — Efficiency Techniques</h3>
+<table>
+<tr><th>Technique</th><th>Purpose</th><th>Effect</th></tr>
+<tr><td>MoE routing</td><td>Sparse activation</td><td>10× scale at similar cost</td></tr>
+<tr><td>Caching</td><td>Reuse attention states</td><td>Lower latency</td></tr>
+<tr><td>Quantization</td><td>Compress model weights</td><td>Cheaper inference</td></tr>
+<tr><td>Batch orchestration</td><td>Parallelize sessions</td><td>Higher throughput</td></tr>
+</table>
+</section>
+<p><strong>Conclusion.</strong> Reasoning’s promise survived only through systems innovation. The 2024–2025 era showed that intelligence at scale depends as much on scheduling and sparsity as on ideas—a reminder that every insight must ride a cost curve to reach the world.</p>
+</section>
+<footer class="f">Sources note: sparse MoE, activation routing, caching, quantization, and inference-orchestration research circa 2024–2025.</footer>
+</article></body></html>

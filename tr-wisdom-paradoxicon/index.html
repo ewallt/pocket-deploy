@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Paradoxicon: Puzzles of Group Behavior</title>
+
+  <!-- Prepaint bootstrap: set dark + theme class before paint to avoid flicker -->
+  <script>
+  (function () {
+    const root = document.documentElement;
+    try {
+      const savedTheme = localStorage.getItem('theme');       // 'light' | 'dark' | null
+      const savedColor = localStorage.getItem('colorScheme'); // 'slate' | 'emerald' | future
+      const isDark = savedTheme !== 'light';                  // default to dark if unset
+      root.classList.toggle('dark', isDark);
+      // Apply colored theme classes ONLY in dark mode; light is always neutral slate
+      root.classList.toggle('theme-emerald', isDark && savedColor === 'emerald');
+    } catch (_) {}
+  })();
+  </script>
+
+  <!-- Tailwind (with Typography) -->
+  <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' };
+  </script>
+
+  <!-- Google Font (optional) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+
+  <style>
+  :root { color-scheme: light dark; }
+  html { scroll-behavior: smooth; }
+  .font-newspaper { font-family: 'Lora', serif; }
+  :where(h2,h3,h4){ scroll-margin-top: 84px; }
+  mark { background: #fde68a; padding: .1em .2em; border-radius: .2rem; }
+  @media (max-width: 380px){ .prose { font-size: .96rem; } }
+
+  /* ---------- Semantic surfaces (read from CSS variables) ---------- */
+.hero {
+  /* give the header an explicit base fill so gradient blends to the right hue */
+  background-color: var(--hero-base);
+  background:
+    radial-gradient(50% 120% at 10% 10%, var(--hero-r1), transparent 60%),
+    radial-gradient(80% 140% at 90% 10%, var(--hero-r2), transparent 70%),
+    linear-gradient(180deg, var(--hero-wash), transparent 35%);
+}
+.border-var { border-color: var(--border) !important; }
+.surface { border-width: 1px; border-style: solid; border-color: var(--border); }
+.hr-var { border-color: var(--border); }
+.subtitle { color: var(--subtitle-fg); }
+.timeline-fg { color: var(--timeline-fg); }
+.footer-note { color: var(--footer-fg); }
+.active-link { color: var(--active); font-weight: 700; }
+
+.input-surface {
+  border: 1px solid var(--input-border);
+  background-color: var(--input-bg);
+}
+.btn-surface { border: 1px solid var(--btn-border); }
+.btn-surface:hover { background: var(--btn-hover-bg); }
+.toc-link:hover { background: var(--hover-bg); }
+
+/* ---------- Slate (default) variables ---------- */
+:root{
+  /* accents / inks */
+  --active: rgb(59,130,246);                      /* sky-500 */
+  --subtitle-fg: rgb(71,85,105);                  /* slate-600 */
+  --timeline-fg: rgb(100,116,139);                /* slate-500 */
+  --footer-fg: rgb(100,116,139);                  /* slate-500 */
+
+  /* surfaces */
+  --border: rgb(226,232,240);                     /* slate-200 */
+  --hover-bg: rgb(248,250,252);                   /* slate-50 */
+  --btn-border: rgb(203,213,225);                 /* slate-300 */
+  --btn-hover-bg: rgb(248,250,252);               /* slate-50 */
+  --input-border: rgba(203,213,225,0.7);          /* slate-300/70 */
+  --input-bg: rgba(255,255,255,0.7);              /* white/70 */
+
+  /* hero base & gradient (light) */
+  --hero-base: transparent;                       /* keep light header airy */
+  --hero-r1: rgba(49,46,129,.12);                 /* indigo-700 */
+  --hero-r2: rgba(234,88,12,.12);                 /* orange-600 hint */
+  --hero-wash: rgba(14,165,233,.08);              /* sky-500 wash */
+}
+.dark{
+  --subtitle-fg: rgb(203,213,225);                /* slate-300 */
+  --timeline-fg: rgb(148,163,184);                /* slate-400 */
+  --footer-fg: rgb(148,163,184);                  /* slate-400 */
+
+  --border: rgb(30,41,59);                        /* slate-800 */
+  --hover-bg: rgb(15,23,42);                      /* slate-900 */
+  --btn-border: rgb(51,65,85);                    /* slate-700 */
+  --btn-hover-bg: rgb(15,23,42);                  /* slate-900 */
+  --input-border: rgba(51,65,85,0.7);             /* slate-700/70 */
+  --input-bg: rgba(2,6,23,0.6);                   /* slate-950/60 */
+
+  /* hero base & gradient (dark) */
+  --hero-base: rgb(2,6,23);                       /* slate-950 */
+  --hero-r1: rgba(49,46,129,.12);
+  --hero-r2: rgba(234,88,12,.12);
+  --hero-wash: rgba(14,165,233,.08);
+}
+
+/* ---------- Emerald theme overrides (light & dark) ---------- */
+.theme-emerald{
+  --active: #10b981;                              /* emerald-500 */
+
+  --border: rgb(187,247,208);                     /* emerald-200 */
+  --hover-bg: rgb(240,253,244);                   /* emerald-50 */
+  --btn-border: rgb(187,247,208);                 /* emerald-200 */
+  --btn-hover-bg: rgb(240,253,244);               /* emerald-50 */
+  --input-border: rgba(110,231,183,0.7);          /* emerald-300/70 */
+  --input-bg: rgba(255,255,255,0.7);              /* white/70 */
+
+  /* keep subtitles/timeline neutral for readability over hero */
+  --subtitle-fg: rgb(71,85,105);                  /* slate-600 */
+  --timeline-fg: rgb(71,85,105);                  /* slate-600 */
+  --footer-fg: rgb(16,185,129);                   /* emerald-500 */
+
+  /* hero base & gradient (emerald light) */
+  --hero-base: transparent;
+  --hero-r1: rgba(16,185,129,.14);                /* emerald-500 */
+  --hero-r2: rgba(163,230,53,.12);                /* lime-400 */
+  --hero-wash: rgba(5,150,105,.10);               /* emerald-600 wash */
+}
+.dark.theme-emerald{
+  /* ↑ Give borders enough contrast on dark emerald surfaces */
+  --border: rgba(110,231,183,0.55);                /* emerald-300 @ 55% */
+  --hover-bg: rgb(6,78,59);                        /* emerald-900 */
+  --btn-border: rgba(110,231,183,0.45);            /* slightly softer than borders */
+  --btn-hover-bg: rgb(6,78,59);                    /* emerald-900 */
+  --input-border: rgba(110,231,183,0.55);          /* match border contrast */
+  --input-bg: rgba(6,95,70,0.60);                  /* emerald-900/60 */
+
+  /* text accents for readability */
+  --footer-fg: rgb(110,231,183);                   /* emerald-300/400 */
+  --subtitle-fg: rgb(226,252,236);                 /* emerald-100 */
+  --timeline-fg: rgb(187,247,208);                 /* emerald-200 */
+
+  /* hero base & gradient (unchanged, stays emerald) */
+  --hero-base: rgb(2,44,34);                       /* emerald-950 (#022c22) */
+  --hero-r1: rgba(16,185,129,.14);
+  --hero-r2: rgba(163,230,53,.12);
+  --hero-wash: rgba(5,150,105,.10);
+}
+
+/* ===== Mobile FAB quick settings ===== */
+#fabPanel.show { display:block; animation: fadeUp .14s ease-out; }
+@keyframes fadeUp { from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:translateY(0)} }
+  </style>
+
+</head>
+
+<body class="bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 pb-[env(safe-area-inset-bottom)]">
+
+  <!-- Header -->
+  <header id="top" class="hero border-b border-var">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-between gap-4">
+      <div>
+        <h1 id="docTitle" class="text-2xl sm:text-3xl font-bold font-newspaper tracking-tight">Loading...</h1>
+        <p id="docSubtitle" class="subtitle text-sm sm:text-base"></p>
+      </div>
+      <div class="flex items-center gap-2">
+        <label for="search" class="sr-only">Search</label>
+        <input id="search" type="search" placeholder="Search…" class="hidden md:block w-56 rounded-xl input-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400" />
+        <button id="clearSearch" type="button" class="hidden md:inline-flex text-xs px-2 py-2 rounded-lg btn-surface">Clear</button>
+
+        <!-- Header controls: hidden on small screens -->
+        <button id="colorSchemeToggle" type="button" class="hidden sm:inline-flex items-center justify-center rounded-xl btn-surface px-3 py-2 text-sm" title="Change color scheme">
+          <span class="inline md:hidden">Colors</span>
+          <svg aria-hidden="true" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/>
+            <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/>
+            <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/>
+            <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/>
+            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 7.012 17.461 2 12 2z"/>
+          </svg>
+        </button>
+        <button id="themeToggle" type="button" class="hidden sm:inline-flex items-center justify-center rounded-xl btn-surface px-3 py-2 text-sm" title="Toggle dark mode" aria-pressed="false">
+          <span class="inline md:hidden">Theme</span>
+          <svg aria-hidden="true" class="w-5 h-5 hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg aria-hidden="true" class="w-5 h-5 dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6" id="timelineWrap" hidden>
+      <nav aria-label="Journey timeline" id="timelineNav" class="timeline-fg">
+        <ol id="timeline" class="grid grid-cols-3 sm:grid-cols-6 items-center gap-x-2 gap-y-1 text-[11px] sm:text-sm"></ol>
+        <div id="timelineCoda" class="mt-2 text-[11px] sm:text-xs"></div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)] gap-8">
+    <!-- Sidebar -->
+    <aside class="lg:sticky lg:top-4 h-max">
+      <nav aria-label="On this page" class="rounded-2xl surface p-4">
+        <h2 class="text-sm font-semibold mb-2">Sections</h2>
+        <ol id="toc" class="space-y-1 text-sm"></ol>
+        <hr class="my-4 hr-var" />
+        <button id="expandAll" type="button" class="w-full text-xs px-3 py-2 rounded-lg btn-surface">Expand All</button>
+        <button id="collapseAll" type="button" class="mt-2 w-full text-xs px-3 py-2 rounded-lg btn-surface">Collapse All</button>
+      </nav>
+    </aside>
+
+    <section id="content" class="prose prose-slate dark:prose-invert max-w-none">
+      <!-- Content is generated by script from JSON -->
+    </section>
+  </main>
+
+  <footer class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 text-xs footer-note">
+    Threaded Reader — a single-file template
+  </footer>
+
+  <!-- Mobile quick settings FAB + Panel -->
+  <button id="fab" class="fixed z-40 top-4 right-4 sm:hidden rounded-full shadow-lg px-4 py-3 text-sm btn-surface backdrop-blur">
+    ⚙️
+  </button>
+  <div id="fabPanel" class="bg-white dark:bg-slate-800 sm:hidden fixed z-40 top-20 right-4 w-56 rounded-xl surface p-3 hidden">
+    <div class="text-xs mb-2 opacity-80">Quick settings</div>
+    <button id="fabTheme" class="w-full text-sm px-3 py-2 rounded-lg btn-surface mb-2">Toggle Theme</button>
+    <button id="fabColor" class="w-full text-sm px-3 py-2 rounded-lg btn-surface">Cycle Colors</button>
+  </div>
+
+  <script id="embedded-json" type="application/json">
+    {
+      "title": "The Paradoxicon",
+      "description": "An exploration of the most fascinating and counter-intuitive puzzles of group behavior, revealing the edge cases where collective intelligence can go strangely wrong.",
+      "articles": [
+        {
+          "title": "The Abilene Paradox",
+          "introduction": "The Abilene Paradox describes a bizarre situation where a group of people collectively agree to a course of action that no single individual in the group actually wants to do. It's not a case of compromise or groupthink; it's a profound failure of group communication driven by each member's incorrect assumption about the group's desires.",
+          "threads": [
+            {
+              "title": "The Parable of the Hot Drive",
+              "content": "<p>The paradox gets its name from a story told by management expert Jerry B. Harvey. One hot afternoon in Coleman, Texas, a family is sitting comfortably on a porch. The father-in-law suggests, 'Let's get in the car and go to Abilene for dinner.' The wife, despite having reservations, agrees because she thinks the others want to go. The husband, who would rather stay home, also agrees, not wanting to rock the boat. The mother-in-law, who is also reluctant, agrees as well. They endure a long, hot, dusty drive to a terrible cafeteria, only to admit on the way home that <mark>none of them had ever wanted to go in the first place</mark>. They had done the opposite of what they all wanted, simply because no one was willing to voice their true feelings.</p>"
+            },
+            {
+              "title": "The Psychology of False Agreement",
+              "content": "<p>The paradox is driven by several psychological forces. The first is <mark>Action Anxiety</mark>—the fear of the negative consequences of speaking up or acting on what we truly believe. Second is <mark>Negative Fantasies</mark>—the imagined, often catastrophic, results of telling the truth ('They'll think I'm not a team player'). This leads to a collective 'mismanagement of agreement' where everyone goes along with a perceived consensus that doesn't actually exist.</p>"
+            },
+            {
+              "title": "Abilene vs. Groupthink",
+              "content": "<p>It's crucial to distinguish this from groupthink. In groupthink, people actively suppress dissent to maintain group cohesion, often because they genuinely come to believe in the group's flawed decision. In the Abilene Paradox, individuals <mark>do not change their private beliefs</mark>. They know they are doing something they don't want to do, but they are too afraid of the social consequences of speaking out to stop it. The core problem is a failure to manage agreement, not a failure to manage disagreement.</p>"
+            },
+            {
+              "title": "How to Avoid the Trip",
+              "content": "<p>Avoiding the trip to Abilene requires creating an environment of psychological safety where people feel comfortable voicing their true opinions. Leaders can model this by <mark>owning their own uncertainty and inviting challenges</mark>. Simple techniques like taking a secret ballot or asking, 'What are the potential downsides of this idea?' can break the spell of false consensus and ensure the group is acting on its true, collective wisdom.</p>"
+            }
+          ]
+        },
+        {
+          "title": "Information Cascades",
+          "introduction": "An information cascade occurs when people, acting rationally, ignore their own private information and instead base their decisions on the observable actions of others. This can lead to entire groups making a correct choice, or, more perilously, adopting a wrong idea or behavior on a massive scale.",
+          "threads": [
+            {
+              "title": "The Two-Restaurant Problem",
+              "content": "<p>Imagine you're choosing between two new, equally appealing restaurants, A and B. You have private information that B is slightly better. As you approach, you see a small crowd has already entered A, while B is empty. What do you do? The rational choice is often to ignore your own information and follow the crowd into restaurant A. You reason that the people ahead of you also had their own information, and their collective choice to enter A is a <mark>stronger signal than your own single data point</mark>. You follow them, and the person behind you, now seeing an even larger crowd at A, does the same. A cascade has begun.</p>"
+            },
+            {
+              "title": "The Logic of Rational Imitation",
+              "content": "<p>The paradox here is that cascades are driven by rational individuals. Each person is making a logical calculation: 'The accumulated information of the group is probably better than my own limited information.' The problem is that once the cascade starts, the public information stops growing. Later individuals are not learning from the crowd's diverse private signals, but only from the <mark>accumulated effect of early, potentially random, choices</mark>. If the first two people chose restaurant A by mistake, the entire crowd could end up at the inferior restaurant.</p>"
+            },
+            {
+              "title": "Fragility of Cascades",
+              "content": "<p>Because cascades are built on relatively little real information, they are notoriously fragile. All it takes is one new piece of powerful, public information—like a food critic's glowing review of restaurant B, or a person visibly storming out of A in disgust—to <mark>shatter the cascade</mark>. Similarly, a few well-respected, influential individuals who are willing to publicly defy the trend can also reverse a cascade, as their actions provide a strong new signal to others.</p>"
+            },
+            {
+              "title": "From Markets to Medicine",
+              "content": "<p>Information cascades happen everywhere. In financial markets, they can lead to speculative bubbles and crashes as investors follow buying or selling trends rather than fundamentals. In medicine, doctors may adopt a new surgical technique because they see their colleagues doing it, even if the evidence is weak. In corporate culture, business fads can spread rapidly through an industry. Understanding cascades is key to recognizing the difference between a trend based on genuine wisdom and one based on mere imitation.</p>"
+            }
+          ]
+        },
+        {
+          "title": "Group Polarization",
+          "introduction": "Contrary to the intuitive belief that group discussion leads to compromise and moderation, a vast body of research shows the opposite is often true. Group polarization is the tendency for a group to make decisions that are more extreme than the initial inclination of its members. Deliberation among like-minded people often pushes them further toward the poles.",
+          "threads": [
+            {
+              "title": "From Caution to Risk (and Vice Versa)",
+              "content": "<p>The phenomenon was first noted in studies in the 1960s. Researchers found that if individuals were inclined to take a risk on a particular problem, they would recommend an even riskier course of action after discussing it as a group. Conversely, if individuals were initially cautious, the group discussion would make them even more cautious. The group's deliberation didn't average their views; it <mark>amplified their initial, dominant tendency</mark>.</p>"
+            },
+            {
+              "title": "Mechanism 1: The Persuasive Arguments Theory",
+              "content": "<p>The primary driver of polarization is the information pool. In a group of like-minded people, the discussion will naturally be dominated by arguments that favor their initial position. An individual who was leaning in that direction will hear <mark>new and more persuasive arguments</mark> for their belief that they hadn't considered before. This informational influence reinforces and strengthens their original stance, pushing them further toward the extreme.</p>"
+            },
+            {
+              "title": "Mechanism 2: The Social Comparison Theory",
+              "content": "<p>A second mechanism is social. People want to be perceived favorably by their group. They observe the group's general opinion and, seeking to be seen as a 'good' and committed member, they may adjust their own opinion to be <mark>slightly more extreme in the direction of the group's norm</mark>. They want to be seen not just as agreeing, but as a strong proponent of the group's identity and beliefs. This social competition can create an 'extremity shift' for the entire group.</p>"
+            },
+            {
+              "title": "The Echo Chamber Effect",
+              "content": "<p>Group polarization is the engine behind the 'echo chambers' and 'filter bubbles' of modern social media. When algorithms connect us primarily with people who share our political or social views, the resulting online 'groups' are perfectly designed to polarize. We are exposed to a constant stream of persuasive arguments for our side and social rewards for adopting more extreme positions. The result is not a wise crowd, but a collection of <mark>fragmented, confident, and increasingly extreme factions</mark>.</p>"
+            }
+          ]
+        },
+        {
+          "title": "The Common Knowledge Effect",
+          "introduction": "The Common Knowledge Effect is the tendency for groups to spend too much time and energy discussing information that all members are already familiar with (shared information) and not enough time on information that only a few members are aware of (unshared information). This leads to a failure to aggregate the group's full intellectual capital, often resulting in poor decisions.",
+          "threads": [
+            {
+              "title": "The 'Candidate A' Experiment",
+              "content": "<p>The classic experiment demonstrating this effect involves giving group members information about hypothetical political candidates. Each member receives a partial set of information. The information is distributed such that the 'common knowledge'—the facts everyone has—paints Candidate A in a positive light. However, the unique, 'unshared' pieces of information, when pooled, would reveal that Candidate A has serious flaws and another candidate is superior. In study after study, groups fail to pool this hidden information. They focus their discussion on the facts everyone already knows, feel good about their consensus, and <mark>confidently choose the inferior candidate</mark>.</p>"
+            },
+            {
+              "title": "Why We Focus on Shared Information",
+              "content": "<p>There are two primary reasons for this bias. First is <mark>social validation</mark>. Discussing common knowledge is rewarding. When you mention a fact that everyone else also knows, you receive nods of agreement and are seen as competent and a 'team player.' Introducing unique, unshared information is riskier. It might be seen as irrelevant or be challenged, making the speaker seem less competent. Second is simple probability: information that everyone holds is just more likely to be mentioned during a discussion.</p>"
+            },
+            {
+              "title": "The Hidden Profile Problem",
+              "content": "<p>This leads to the 'hidden profile' problem, where the group's collective information would lead to the best decision, but that decision remains hidden because the critical unshared information is never brought to light. This is a catastrophic failure of information aggregation. The group feels like it is having a thorough, data-driven discussion, but it is actually just reinforcing its initial biases and operating on an incomplete dataset.</p>"
+            },
+            {
+              "title": "Techniques for Surfacing Hidden Knowledge",
+              "content": "<p>Overcoming this bias requires specific structural interventions. One effective method is to <mark>formally assign expert roles</mark> before a discussion (e.g., 'You are the expert on financial risks,' 'You are the expert on marketing'). This gives individuals the authority and responsibility to share their unique knowledge. Another is to ensure that the group doesn't rush to a decision and explicitly asks, 'Is there any information we haven't yet considered?' before coming to a conclusion.</p>"
+            }
+          ]
+        },
+        {
+          "title": "The Ellsberg Paradox",
+          "introduction": "The Ellsberg Paradox, developed by analyst Daniel Ellsberg in 1961, is a famous puzzle in decision theory that reveals a fundamental quirk in human (and group) psychology: a profound aversion to ambiguity. People would rather choose a risk with known probabilities than one with unknown probabilities, even if the unknown option is potentially more rewarding.",
+          "threads": [
+            {
+              "title": "The Urn Experiment",
+              "content": "<p>Imagine two urns, each containing 100 balls. Urn A contains exactly 50 red balls and 50 black balls. Urn B contains 100 balls that are a mix of red and black, but the exact proportion is completely unknown. You are offered a bet: you win $100 if you draw a red ball. Which urn do you choose to draw from? Most people choose Urn A. Now, you are offered a new bet: you win $100 if you draw a *black* ball. Which urn do you choose? Again, most people choose Urn A. This is the paradox. In choosing A in both cases, you are acting as if you believe there are simultaneously <mark>more red balls and more black balls in Urn A than Urn B</mark>, which is a logical contradiction.</p>"
+            },
+            {
+              "title": "The Puzzle of Ambiguity Aversion",
+              "content": "<p>This behavior violates standard utility theory. Logically, you should assume the unknown urn has a 50/50 distribution and be indifferent between the two. The fact that people consistently prefer the known risk of Urn A reveals a deep-seated psychological bias called <mark>Ambiguity Aversion</mark>. We dislike situations where we cannot assign probabilities to outcomes. We prefer a 'known devil' to an 'unknown angel.' The uncertainty of the unknown feels like a greater risk, even when it isn't mathematically.</p>"
+            },
+            {
+              "title": "Impact on Group Decisions",
+              "content": "<p>This paradox has huge implications for group decision-making in areas like business and policy. A team considering two investment strategies—one in a well-understood market with predictable returns (a known risk), and one in a novel, emerging technology market with highly uncertain but potentially massive returns (an ambiguous risk)—will have a strong psychological bias toward the 'safer,' more predictable option. This can lead groups to be <mark>systematically over-cautious</mark> and to miss out on breakthrough innovations.</p>"
+            },
+            {
+              "title": "Managing Ambiguity",
+              "content": "<p>For groups making high-stakes decisions, it is crucial to recognize and consciously address ambiguity aversion. Instead of trying to assign a single probability to an uncertain future, a better strategy is <mark>scenario planning</mark>. This involves exploring a range of plausible future outcomes without assigning specific probabilities to them. By developing strategies that are robust across multiple potential futures, a group can make more resilient decisions in the face of true ambiguity, turning the fear of the unknown into a strategic advantage.</p>"
+            }
+          ]
+        }
+      ]
+    }
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // ===== Utilities =====
+      const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+      const slug = s => s.toLowerCase().replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-');
+
+      // ===== Read Metadata from JSON =====
+      let jsonData = {};
+      try {
+        jsonData = JSON.parse(document.getElementById('embedded-json').textContent);
+      } catch (e) {
+        console.error("Error parsing embedded JSON:", e);
+        document.getElementById('docTitle').textContent = 'Error Loading Content';
+        return;
+      }
+      const docTitle = jsonData.title || 'Untitled Document';
+      const docSubtitle = jsonData.description || '';
+      const timelineStepsData = jsonData.timeline_steps;
+      const timelineLabelsData = jsonData.timeline_labels;
+      
+      // ===== Populate Header from Metadata =====
+      document.getElementById('docTitle').textContent = docTitle;
+      document.getElementById('docSubtitle').textContent = docSubtitle;
+      document.title = docTitle;
+
+      // ===== Build Content from JSON =====
+      const contentSection = document.getElementById('content');
+      let contentHtml = '';
+      if (jsonData.articles) {
+        jsonData.articles.forEach(article => {
+          contentHtml += `<article id="${slug(article.title)}">`;
+          contentHtml += `<h2>${article.title}</h2>`;
+          if (article.introduction) {
+            contentHtml += `<p class="lead">${article.introduction}</p>`;
+          }
+          if (article.threads) {
+            article.threads.forEach(thread => {
+              contentHtml += `<details open>`;
+              contentHtml += `<summary><h3>${thread.title}</h3></summary>`;
+              if (thread.content) {
+                contentHtml += `<div class="pl-4 border-l-2 border-var">${thread.content}</div>`;
+              }
+              contentHtml += `</details>`;
+            });
+          }
+          contentHtml += `</article>`;
+        });
+      }
+      contentSection.innerHTML = contentHtml;
+
+      // ===== Theme packs =====
+      const THEME_PACKS = {
+        slate: {
+          proseClass: 'prose-slate',
+          bodyClass: 'bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 pb-[env(safe-area-inset-bottom)]'
+        },
+        emerald: {
+          proseClass: 'prose-emerald',
+          bodyClass: 'bg-white text-emerald-900 dark:bg-emerald-950 dark:text-emerald-100 pb-[env(safe-area-inset-bottom)]'
+        }
+      };
+      const availableThemes = Object.keys(THEME_PACKS);
+
+      function applyTheme(themeKey){
+        const root = document.documentElement;
+        const isDark = root.classList.contains('dark');
+        const pack = THEME_PACKS[themeKey] || THEME_PACKS.slate;
+        root.classList.toggle('theme-emerald', isDark && themeKey === 'emerald');
+        document.body.className = isDark ? pack.bodyClass : THEME_PACKS.slate.bodyClass;
+        contentSection.className = `prose ${pack.proseClass} dark:prose-invert max-w-none`;
+        try { localStorage.setItem('colorScheme', themeKey); } catch(_){}
+      }
+
+      let currentThemeIndex = 0;
+      try {
+        const saved = localStorage.getItem('colorScheme');
+        if (saved && THEME_PACKS[saved]) currentThemeIndex = availableThemes.indexOf(saved);
+      } catch(_) {}
+      
+      const colorBtn = document.getElementById('colorSchemeToggle');
+      colorBtn?.addEventListener('click', () => {
+        const root = document.documentElement;
+        if (!root.classList.contains('dark')) {
+          root.classList.add('dark');
+          try { localStorage.setItem('theme','dark'); } catch(_){}
+          document.getElementById('themeToggle')?.setAttribute('aria-pressed','true');
+          applyTheme(availableThemes[currentThemeIndex]); // apply color when switching to dark
+          return;
+        }
+        currentThemeIndex = (currentThemeIndex + 1) % availableThemes.length;
+        const newTheme = availableThemes[currentThemeIndex];
+        applyTheme(newTheme);
+        buildTOC();
+      });
+
+      const themeBtn = document.getElementById('themeToggle');
+      if (themeBtn) {
+        themeBtn.setAttribute('aria-pressed', String(document.documentElement.classList.contains('dark')));
+      }
+      themeBtn?.addEventListener('click', () => {
+        const root = document.documentElement;
+        const isDark = root.classList.toggle('dark');
+        try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch(_){}
+        themeBtn.setAttribute('aria-pressed', String(isDark));
+
+        if (!isDark) {
+          root.classList.remove('theme-emerald');
+          applyTheme('slate');
+        } else {
+          let saved = 'slate';
+          try { const s = localStorage.getItem('colorScheme'); if (s) saved = s; } catch(_){}
+          applyTheme(saved);
+        }
+        buildTOC();
+      });
+
+      // ===== Expand/Collapse, TOC, Timeline, Search =====
+      const getDetails = () => document.querySelectorAll('#content details');
+      const expandBtn = document.getElementById('expandAll');
+      const collapseBtn = document.getElementById('collapseAll');
+
+      if (getDetails().length === 0) {
+        if(expandBtn) expandBtn.hidden = true;
+        if(collapseBtn) collapseBtn.hidden = true;
+      } else {
+        expandBtn?.addEventListener('click', () => { getDetails().forEach(d => d.open = true); });
+        collapseBtn?.addEventListener('click', () => { getDetails().forEach(d => d.open = false); });
+      }
+
+      (function addBackToTopLinks(){
+        $$('#content > article').forEach((article, index, arr) => {
+          if (index === arr.length - 1) return;
+          const wrapper = document.createElement('div');
+          wrapper.className = 'mt-6 flex justify-end';
+          wrapper.innerHTML = `<a href="#top" class="text-sm underline decoration-dotted">Back to top</a>`;
+          article.appendChild(wrapper);
+        });
+      })();
+
+      function buildTOC(){
+        const toc = document.getElementById('toc');
+        if (!toc) return;
+        const headings = $$('#content h2, #content h3');
+        const items = headings.map(h => {
+          const parentArticle = h.closest('article');
+          const parentSlug = parentArticle ? parentArticle.id : '';
+          if (!h.id) h.id = parentSlug + '-' + slug(h.textContent);
+          return { id: h.id, text: h.textContent.trim(), level: h.tagName.toLowerCase() };
+        });
+
+        toc.innerHTML = items.map(({id, text, level}) => {
+          const pad = level === 'h3' ? ' pl-4' : '';
+          return `<li><a href="#${id}" class="toc-link block px-2 py-1.5 rounded${pad}">${text}</a></li>`;
+        }).join('');
+
+        const links = $$('#toc a');
+        const sections = items.map(i => document.getElementById(i.id));
+        const obs = new IntersectionObserver(entries => {
+          entries.forEach(e => {
+            if (e.isIntersecting) {
+              links.forEach(a => a.classList.remove('active-link'));
+              const id = '#' + e.target.id;
+              const active = links.find(a => a.getAttribute('href') === id);
+              active?.classList.add('active-link');
+            }
+          });
+        }, { rootMargin: '-40% 0px -55% 0px', threshold: 0.01 });
+        sections.forEach(sec => sec && obs.observe(sec));
+      }
+      
+      (function buildTimeline(){
+        const wrap = document.getElementById('timelineWrap');
+        const list = document.getElementById('timeline');
+        const coda = document.getElementById('timelineCoda');
+
+        if (!timelineStepsData || !wrap || !list) { if(wrap) wrap.hidden = true; return; }
+        const steps = timelineStepsData.split(',').map(s => s.trim());
+        const labels = timelineLabelsData ? timelineLabelsData.split(',').map(s => s.trim()) : [];
+        if (!steps.length) { wrap.hidden = true; return; }
+        wrap.hidden = false;
+
+        const mkStep = (id, label) => (
+          `<li class="flex items-center gap-2"><span class="inline-block w-[14px] h-[14px] rounded-full border-2 border-current bg-current"></span><a href="#${id}" class="hover:underline">${label}</a></li>`
+        );
+        const segments = [];
+        steps.forEach((id, idx) => {
+          const el = $$('#content h2, #content h3').find(h => slug(h.textContent) === id);
+          if (el && !el.id) el.id = id;
+          const label = labels[idx] || (el?.textContent || id.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()));
+          segments.push(mkStep(id, label));
+          if (idx !== steps.length - 1) segments.push('<li class="h-[2px] bg-current opacity-35"></li>');
+        });
+        list.innerHTML = segments.join('');
+      })();
+
+      (function searchHL(){
+        const input = document.getElementById('search');
+        const clearBtn = document.getElementById('clearSearch');
+        if (!input || !contentSection) return;
+        let originalHTML = '';
+        function restore(){ 
+          if (originalHTML) {
+            contentSection.innerHTML = originalHTML; 
+            buildTOC(); // Rebuild TOC to reattach observers
+          }
+        }
+        function highlight(term){
+          if (!originalHTML) originalHTML = contentSection.innerHTML;
+          restore();
+          if (!term) return;
+          const esc = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+          const re = new RegExp(`(${esc})(?![^<]*>)`, 'gi');
+          contentSection.innerHTML = contentSection.innerHTML.replace(re, '<mark>$1</mark>');
+          buildTOC();
+        }
+        let t; 
+        input.addEventListener('input', (e) => { 
+          clearTimeout(t); 
+          t = setTimeout(() => highlight(e.target.value.trim()), 120); 
+        });
+        clearBtn?.addEventListener('click', () => { 
+          if (input) input.value=''; 
+          restore(); 
+        });
+      })();
+
+      buildTOC();
+      try {
+        const saved = localStorage.getItem('colorScheme');
+        applyTheme(saved && THEME_PACKS[saved] ? saved : 'slate');
+      } catch(_){
+        applyTheme('slate');
+      }
+
+      // ===== Mobile FAB wiring =====
+      const fab = document.getElementById('fab');
+      const fabPanel = document.getElementById('fabPanel');
+      const fabTheme = document.getElementById('fabTheme');
+      const fabColor = document.getElementById('fabColor');
+
+      fab?.addEventListener('click', () => fabPanel.classList.toggle('show'));
+      document.addEventListener('click', (e)=>{
+        if (fabPanel && !fabPanel.contains(e.target) && fab && !fab.contains(e.target)) fabPanel.classList.remove('show');
+      });
+      fabTheme?.addEventListener('click', () => document.getElementById('themeToggle')?.click());
+      fabColor?.addEventListener('click', () => document.getElementById('colorSchemeToggle')?.click());
+    });
+  </script>
+</body>
+</html>

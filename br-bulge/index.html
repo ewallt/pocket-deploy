@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Battle of the Bulge Knowledge Base</title>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg,#2c3e50 0%,#34495e 100%);
+            --accent-1: #3498db;
+            --accent-2: #2980b9;
+            --btn-gradient: linear-gradient(45deg,#3498db,#2980b9);
+            --accent-1-rgb: 52, 152, 219;
+            --accent-warning: #f1c40f;
+            --accent-warning-rgb: 241, 196, 15;
+            --text-primary: #ecf0f1;
+            --text-secondary: #bdc3c7;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(0,0,0,0.3);
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 3px solid var(--accent-1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-top: 0;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, var(--accent-1), var(--accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            filter: drop-shadow(0 0 15px rgba(var(--accent-1-rgb), 0.3));
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0,0,0,0.2);
+            padding: 1rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-button, #settings-btn {
+            padding: 12px 24px;
+            background: #34495e;
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        #settings-btn {
+            font-size: 1.2rem;
+            padding: 10px 15px;
+        }
+
+        .tab-button:hover, #settings-btn:hover {
+            background: var(--btn-gradient);
+            transform: translateY(-2px);
+        }
+
+        .tab-button.active {
+            background: var(--btn-gradient);
+            border-color: var(--accent-2);
+            transform: translateY(-2px);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .section-title {
+            color: var(--accent-1);
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent-1);
+        }
+        
+        /* Modal Styles */
+        .modal-overlay {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #2c3e50;
+            padding: 2rem;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            text-align: center;
+            position: relative;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .modal-content h3 {
+            color: var(--accent-1);
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+        
+        .modal-content label {
+            font-size: 1.1rem;
+            margin-right: 10px;
+        }
+
+        #theme-select {
+            background-color: #34495e;
+            color: var(--text-primary);
+            border: 1px solid var(--accent-2);
+            border-radius: 5px;
+            padding: 8px;
+            font-size: 1rem;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+
+        .subsection {
+            margin: 1.5rem 0;
+        }
+
+        .subsection h3 {
+            color: var(--accent-1);
+            font-size: 1.3rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .subsection h4 {
+            color: var(--accent-2);
+            font-size: 1.1rem;
+            margin: 1rem 0 0.5rem 0;
+        }
+
+        .engagement-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .engagement-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 1.5rem;
+            border-left: 4px solid var(--accent-1);
+            transition: transform 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .engagement-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.1);
+        }
+
+        .engagement-name {
+            color: var(--accent-1);
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .casualties-highlight {
+            background: rgba(var(--accent-warning-rgb), 0.15);
+            padding: 1rem;
+            border-radius: 5px;
+            border-left: 4px solid var(--accent-warning);
+            margin: 1rem 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .stat-card {
+            background: rgba(52, 73, 94, 0.8);
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--accent-1);
+            display: block;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--accent-1);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2rem;
+            padding-left: 2rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -1.5rem;
+            top: 0;
+            width: 12px;
+            height: 12px;
+            background: var(--accent-1);
+            border-radius: 50%;
+        }
+
+        .timeline-time {
+            color: var(--accent-1);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255,255,255,0.1);
+            color: var(--text-primary);
+            margin-bottom: 2rem;
+        }
+
+        .search-box::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .highlight {
+            background: rgba(var(--accent-1-rgb), 0.3);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .interactive-map {
+            background: rgba(0,0,0,0.3);
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .sector-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .sector-button {
+            padding: 10px 20px;
+            background: #34495e;
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .sector-button:hover {
+            background: var(--btn-gradient);
+        }
+
+        .sector-detail {
+            display: none;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        .sector-detail.show {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            .nav-tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+            .container {
+                padding: 1rem;
+            }
+            .engagement-grid {
+                grid-template-columns: 1fr;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <script>
+    // Self-executing function to manage all theme logic.
+    (function() {
+        // CONFIGURATION: Set the default theme name.
+        const DEFAULT_THEME_NAME = 'ardennes-winter';
+    
+        // Data object for all theme definitions.
+        const THEMES = {
+            'ardennes-winter': { 
+                '--bg-gradient': 'linear-gradient(135deg,#2c3e50 0%,#34495e 100%)', 
+                '--accent-1': '#3498db', '--accent-1-rgb': '52, 152, 219',
+                '--accent-2': '#2980b9', '--btn-gradient': 'linear-gradient(45deg,#3498db,#2980b9)',
+                '--accent-warning': '#f1c40f', '--accent-warning-rgb': '241, 196, 15'
+            },
+            'cyber-night':   {  
+                '--bg-gradient': 'linear-gradient(135deg,#0a0a23 0%,#1a1a3a 50%,#2e2e5e 100%)',  
+                '--accent-1': '#a8b8d0', '--accent-1-rgb': '168, 184, 208',  
+                '--accent-2': '#6a7a94', '--btn-gradient': 'linear-gradient(45deg,#1a1a3a,#2e2e5e)',
+                '--accent-warning': '#ffc107', '--accent-warning-rgb': '255, 193, 7'
+            },
+            'steel-ghost':     {  
+                '--bg-gradient': 'linear-gradient(135deg,#1c1c1c 0%,#3a3a3a 50%,#5e5e5e 100%)',  
+                '--accent-1': '#ecf0f1', '--accent-1-rgb': '236, 240, 241',  
+                '--accent-2': '#bdc3c7', '--btn-gradient': 'linear-gradient(45deg,#3a3a3a,#5e5e5e)',
+                '--accent-warning': '#c0392b', '--accent-warning-rgb': '192, 57, 43'  
+            },
+            'olive-drab':    {  
+                '--bg-gradient': 'linear-gradient(135deg,#2a2a1a 0%,#41412a 50%,#525234 100%)',  
+                '--accent-1': '#bab89d', '--accent-1-rgb': '186, 184, 157',  
+                '--accent-2': '#6b6b47', '--btn-gradient': 'linear-gradient(45deg,#41412a,#525234)',
+                '--accent-warning': '#b74141', '--accent-warning-rgb': '183, 65, 65'
+            },
+            'maroon-honor':  {  
+                '--bg-gradient': 'linear-gradient(135deg,#301a20 0%,#542a38 50%,#6d3849 100%)',  
+                '--accent-1': '#d4b2bd', '--accent-1-rgb': '212, 178, 189',  
+                '--accent-2': '#8a4b5f', '--btn-gradient': 'linear-gradient(45deg,#542a38,#6d3849)',
+                '--accent-warning': '#e6b800', '--accent-warning-rgb': '230, 184, 0'
+            },
+            'archive-dust':  {  
+                '--bg-gradient': 'linear-gradient(135deg,#2a2724 0%,#4a413a 50%,#5b5147 100%)',  
+                '--accent-1': '#e0d8c7', '--accent-1-rgb': '224, 216, 199',  
+                '--accent-2': '#a6987d', '--btn-gradient': 'linear-gradient(45deg,#4a413a,#5b5147)',
+                '--accent-warning': '#8c3838', '--accent-warning-rgb': '140, 56, 56'
+            }
+        };
+    
+        function applyTheme(name) {
+            const theme = THEMES[name];
+            if (theme) {
+                const root = document.documentElement;
+                for (const [key, value] of Object.entries(theme)) {
+                    root.style.setProperty(key, value);
+                }
+            }
+        }
+    
+        window.setTheme = function(name) {
+            applyTheme(name);
+            localStorage.setItem('bulge-theme', name);
+        }
+    
+        const availableThemeNames = Object.keys(THEMES);
+        const savedTheme = localStorage.getItem('bulge-theme');
+        let themeToLoad = DEFAULT_THEME_NAME;
+
+        if (savedTheme && availableThemeNames.includes(savedTheme)) {
+            themeToLoad = savedTheme;
+        }
+        
+        applyTheme(themeToLoad);
+    
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeSelect = document.getElementById('theme-select');
+            if (themeSelect) {
+                availableThemeNames.forEach(name => {
+                    const option = document.createElement('option');
+                    option.value = name;
+                    option.textContent = name.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                    themeSelect.appendChild(option);
+                });
+                themeSelect.value = themeToLoad;
+            }
+        });
+    })();
+    </script>
+</head>
+<body>
+    <div id="settings-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button id="close-modal-btn" class="close-btn">&times;</button>
+            <h3>Display Settings</h3>
+            <label for="theme-select">Theme:</label>
+            <select id="theme-select" onchange="setTheme(this.value)"></select>
+        </div>
+    </div>
+
+    <div class="header">
+        <h1>Battle of the Bulge: Ardennes Offensive</h1>
+        <p>Dec 16, 1944 – Jan 25, 1945 • Germany's Last Major Offensive • Knowledge Base</p>
+    </div>
+
+    <div class="nav-tabs">
+        <button class="tab-button active" data-tab="overview">Overview</button>
+        <button class="tab-button" data-tab="offensive">German Offensive</button>
+        <button class="tab-button" data-tab="engagements">Key Engagements</button>
+        <button class="tab-button" data-tab="response">Allied Response</button>
+        <button class="tab-button" data-tab="aftermath">Casualties & Aftermath</button>
+        <button class="tab-button" data-tab="search">Search Knowledge</button>
+        <button id="settings-btn" title="Settings">⚙️</button>
+    </div>
+
+    <div class="container">
+        <div id="overview" class="tab-content active">
+            <div class="section-card">
+                <h2 class="section-title">The Ardennes Counteroffensive</h2>
+                <p style="font-size: 1.2rem; line-height: 1.8; margin-bottom: 2rem;">
+                    The Battle of the Bulge was the last major German offensive campaign on the Western Front during World War II. Launched through the densely forested Ardennes region of Wallonia in eastern Belgium, northeast France, and Luxembourg, the surprise attack caught the Allied forces completely off guard. The German objective was to split the Allied armies by means of a surprise blitzkrieg thrust through the Ardennes to Antwerp.
+                </p>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-number">>400,000</span>
+                        <div class="stat-label">German Troops</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">>600,000</span>
+                        <div class="stat-label">Allied Troops</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">~6 Weeks</span>
+                        <div class="stat-label">Battle Duration</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">>180,000</span>
+                        <div class="stat-label">Total Casualties</div>
+                    </div>
+                </div>
+
+                <div class="interactive-map">
+                    <h3 style="color: var(--accent-1); margin-bottom: 1rem;">The Main Battle Sectors</h3>
+                    <p>Click on a sector to see key details of the fighting:</p>
+                    <div class="sector-buttons">
+                        <button class="sector-button" data-sector="northern">Northern Shoulder</button>
+                        <button class="sector-button" data-sector="central">Central Sector</button>
+                        <button class="sector-button" data-sector="southern">Southern Shoulder</button>
+                    </div>
+
+                    <div id="northern-detail" class="sector-detail">
+                        <h4 style="color: var(--accent-1);">Northern Shoulder (Elsenborn Ridge)</h4>
+                        <p><strong>Forces:</strong> German 6th Panzer Army vs. U.S. V Corps.</p>
+                        <p><strong>Objective:</strong> Sepp Dietrich's 6th Panzer Army was to spearhead the attack, cross the Meuse River, and seize Antwerp.</p>
+                        <p><strong>Outcome:</strong> Staunch American defense at Elsenborn Ridge blocked the 6th Panzer Army's most direct route. This defensive stand was critical, forcing the Germans to commit reserves and reroute forces, disrupting their timetable and ultimately dooming the offensive's main goal.</p>
+                    </div>
+
+                    <div id="central-detail" class="sector-detail">
+                        <h4 style="color: var(--accent-1);">Central Sector (St. Vith)</h4>
+                        <p><strong>Forces:</strong> German 5th Panzer Army vs. U.S. VIII Corps.</p>
+                        <p><strong>Objective:</strong> Hasso von Manteuffel's 5th Panzer Army was tasked with capturing vital road junctions at St. Vith and Bastogne to support the advance.</p>
+                        <p><strong>Outcome:</strong> U.S. forces, notably the 7th Armored Division, mounted a determined defense of St. Vith. Though eventually forced to withdraw, they delayed the German advance for nearly a week, buying crucial time for Allied reinforcements to arrive and fortify other positions.</p>
+                    </div>
+
+                    <div id="southern-detail" class="sector-detail">
+                        <h4 style="color: var(--accent-1);">Southern Shoulder (Bastogne)</h4>
+                        <p><strong>Forces:</strong> German 7th Army & elements of 5th Panzer Army vs. U.S. 101st Airborne Division.</p>
+                        <p><strong>Objective:</strong> The German 7th Army was to protect the southern flank of the offensive.</p>
+                        <p><strong>Outcome:</strong> The key crossroads town of Bastogne was famously besieged and defended by the 101st Airborne. Their refusal to surrender ("Nuts!") became a symbol of American resolve. The siege was eventually broken by elements of General Patton's Third Army, marking a major turning point in the battle.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="offensive" class="tab-content">
+            <div class="section-card">
+                <h2 class="section-title">German Offensive: Operation Wacht am Rhein</h2>
+                
+                <div class="subsection">
+                    <h3>Strategic Objectives</h3>
+                    <h4>Primary Goal</h4>
+                    <p>Codenamed *Unternehmen Wacht am Rhein* ("Operation Watch on the Rhine"), the plan was to achieve a decisive victory that would split the British and American forces, recapture the vital port of Antwerp, and potentially force the Western Allies to negotiate a peace treaty in the Axis Powers' favor.</p>
+                </div>
+
+                <div class="subsection">
+                    <h3>Command and Forces</h3>
+                    <div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 8px; margin: 1rem 0;">
+                        <h4>Oberbefehlshaber West (OB West)</h4>
+                        <p><strong>Overall Commander:</strong> Field Marshal Gerd von Rundstedt</p>
+                        <p><strong>Army Group B Commander:</strong> Field Marshal Walter Model</p>
+                        <p><strong>6th Panzer Army (North):</strong> SS-Oberst-Gruppenführer Sepp Dietrich</p>
+                        <p><strong>5th Panzer Army (Center):</strong> General Hasso von Manteuffel</p>
+                        <p><strong>7th Army (South):</strong> General Erich Brandenberger</p>
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <h3>Deception and Surprise</h3>
+                    <h4>Key Factors</h4>
+                    <p>The Germans achieved near-total surprise by launching the attack in a lightly defended sector of the Allied line. This was accomplished through strict radio silence, moving troops under the cover of darkness, and launching the attack during a period of very poor weather, which grounded the superior Allied air forces.</p>
+                    
+                    <h4>Operation Greif</h4>
+                    <p>A notable deception was Operation Greif, commanded by Otto Skorzeny, in which English-speaking German soldiers in American uniforms and vehicles were to infiltrate Allied lines to cause confusion, misdirect traffic, and seize key bridges.</p>
+                </div>
+
+                <div class="subsection">
+                    <h3>The Initial Assault</h3>
+                    <div class="casualties-highlight">
+                        <h4>December 16, 1944</h4>
+                        <p>At 05:30 on December 16, a massive artillery barrage opened the offensive against the U.S. First Army's front. The attack punched through the thin American lines, creating the "bulge" that gave the battle its name. Overextended and surprised American units fought desperately, often in isolated pockets, to slow the German advance.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="engagements" class="tab-content">
+            <div class="section-card">
+                <h2 class="section-title">Key Engagements of the Battle</h2>
+                
+                <div class="engagement-grid">
+                    <div class="engagement-card">
+                        <div class="engagement-name">Siege of Bastogne</div>
+                        <p><strong>Forces:</strong> U.S. 101st Airborne vs. German 5th Panzer Army.</p>
+                        <p><strong>Significance:</strong> A critical road junction, the defense of Bastogne by the surrounded 101st became a symbol of Allied determination. When asked to surrender, acting commander Brig. Gen. Anthony McAuliffe famously replied "Nuts!". The siege was broken by Patton's Third Army on Dec 26.</p>
+                    </div>
+
+                    <div class="engagement-card">
+                        <div class="engagement-name">Battle for St. Vith</div>
+                        <p><strong>Forces:</strong> U.S. 7th Armored Div. vs. German 5th Panzer Army.</p>
+                        <p><strong>Significance:</strong> Another vital crossroads, the defense of St. Vith severely disrupted the German timetable. While U.S. forces were eventually forced to withdraw, their stubborn defense for nearly a week bought invaluable time for the Allies to rush reinforcements to the front.</p>
+                    </div>
+
+                    <div class="engagement-card">
+                        <div class="engagement-name">Defense of Elsenborn Ridge</div>
+                        <p><strong>Forces:</strong> U.S. 2nd & 99th Inf. Divs. vs. German 6th Panzer Army.</p>
+                        <p><strong>Significance:</strong> The northernmost point of the German attack. The staunch U.S. defense on this high ground completely blocked the 6th Panzer Army's direct route to Antwerp. This failure was a major factor in the overall failure of the German offensive.</p>
+                    </div>
+
+                    <div class="engagement-card">
+                        <div class="engagement-name">Malmedy Massacre</div>
+                        <p><strong>Date:</strong> December 17, 1944</p>
+                        <p><strong>Event:</strong> Near Malmedy, Belgium, troops of Kampfgruppe Peiper (part of the 1st SS Panzer Division) murdered approximately 84 unarmed American prisoners of war. News of the war crime spread rapidly among Allied troops, strengthening their resolve to fight.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="response" class="tab-content">
+            <div class="section-card">
+                <h2 class="section-title">The Allied Response</h2>
+                
+                <div class="subsection">
+                    <h3>Eisenhower's Decisive Actions</h3>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-time">December 17</div>
+                            <h4>Recognizing the Threat</h4>
+                            <p>Supreme Commander Dwight D. Eisenhower realized the gravity of the German penetration and ordered all available reserves to the Ardennes sector.</p>
+                        </div>
+
+                        <div class="timeline-item">
+                            <div class="timeline-time">December 19</div>
+                            <h4>Command Shift</h4>
+                            <p>To improve command and control, Eisenhower placed all American forces north of the "bulge" under the command of British Field Marshal Bernard Montgomery, and all forces to the south under General Omar Bradley.</p>
+                        </div>
+
+                        <div class="timeline-item">
+                            <div class="timeline-time">December 19</div>
+                            <h4>Patton's Pledge</h4>
+                            <p>In a famous meeting at Verdun, General George S. Patton promised he could disengage his Third Army from its eastward offensive, turn it 90 degrees north, and attack the German southern flank to relieve Bastogne within 48 hours—a stunning logistical feat.</p>
+                        </div>
+
+                        <div class="timeline-item">
+                            <div class="timeline-time">December 22</div>
+                            <h4>Patton's Attack Begins</h4>
+                            <p>Making good on his promise, elements of the Third Army began their advance toward Bastogne, fighting through fierce German resistance and harsh winter conditions.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <h3>The Tide Turns: Air Power Unleashed</h3>
+                    <div class="casualties-highlight">
+                        <h4>December 23, 1944</h4>
+                        <p><strong>The Weather Clears:</strong> After a week of snow and fog, the skies finally cleared. The Allied air forces, grounded for the first critical week, were unleashed. Thousands of bombers and fighter-bombers relentlessly attacked German supply lines, armor concentrations, and troop movements, crippling the offensive and sealing its fate.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="aftermath" class="tab-content">
+            <div class="section-card">
+                <h2 class="section-title">Casualties & Aftermath</h2>
+                <p>The Battle of the Bulge was the largest and bloodiest single battle fought by the United States in World War II and the third-most lethal American battle by estimated number of Americans killed.</p>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-number">~89,500</span>
+                        <div class="stat-label">U.S. Casualties</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">~80,000-100,000</span>
+                        <div class="stat-label">German Casualties</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">~1,400</span>
+                        <div class="stat-label">British Casualties</div>
+                    </div>
+                     <div class="stat-card">
+                        <span class="stat-number">~3,000</span>
+                        <div class="stat-label">Civilian Deaths</div>
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <h3>Equipment Losses</h3>
+                    <div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 5px; margin: 1rem 0;">
+                        <p><strong>Allied Losses:</strong> Approximately 800 tanks and 900 aircraft.</p>
+                        <p><strong>German Losses:</strong> Approximately 600-1,000 tanks and assault guns, and over 1,000 aircraft.</p>
+                    </div>
+                </div>
+                
+                <div class="subsection">
+                    <h3>Strategic Outcome</h3>
+                    <div class="casualties-highlight">
+                        <h4>A Decisive Allied Victory</h4>
+                        <p>While a tactical surprise, the offensive was a strategic failure for Germany. The German army's losses were critical and largely irreplaceable. The battle depleted Germany's armored reserves, and the Luftwaffe was shattered. The failure of the offensive shortened the war, paving the way for the final Allied invasion of Germany.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="search" class="tab-content">
+            <div class="section-card">
+                <h2 class="section-title">Search the Knowledge Base</h2>
+                <input type="text" id="searchInput" class="search-box" placeholder="Search for people, places, units, or topics...">
+                
+                <div id="searchResults">
+                    <p style="text-align: center; color: var(--text-secondary); font-style: italic; margin: 2rem 0;">
+                        Enter a search term above to explore the knowledge base.<br>
+                        Try searching for: "Bastogne", "Patton", "101st Airborne", "Malmedy", "Wacht am Rhein", etc.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Knowledge base for searching
+        const knowledgeBase = {
+            "Bastogne": "A key crossroads town in Belgium, famously defended by the surrounded U.S. 101st Airborne Division. Their refusal to surrender was a major morale boost for the Allies.",
+            "Patton": "General George S. Patton commanded the U.S. Third Army. In a remarkable feat, he disengaged his army, turned it 90 degrees north, and relieved the besieged forces at Bastogne.",
+            "Eisenhower": "Supreme Allied Commander Dwight D. Eisenhower quickly recognized the German offensive as a major threat and skillfully managed Allied reserves and command to contain and defeat it.",
+            "Montgomery": "British Field Marshal Bernard Montgomery was given temporary command of all Allied forces north of the German penetration to simplify command and control during the crisis.",
+            "McAuliffe": "Brigadier General Anthony McAuliffe was the acting commander of the 101st Airborne at Bastogne. His famous one-word reply to a German demand for surrender was 'Nuts!'.",
+            "101st Airborne": "The 'Screaming Eagles' were rushed to Bastogne just ahead of the German advance. They were surrounded and besieged but held the vital town until relieved.",
+            "St. Vith": "A vital road junction that was stubbornly defended by the U.S. 7th Armored Division. The defense of St. Vith critically delayed the German timetable.",
+            "Elsenborn Ridge": "A defensive line on the northern shoulder of the battle. U.S. forces on the ridge decisively stopped the German 6th Panzer Army, preventing their advance towards Antwerp.",
+            "Wacht am Rhein": "The German codename for the offensive, meaning 'Watch on the Rhine'. It was a deception to make the Allies believe Germany was preparing for a defensive operation.",
+            "Operation Greif": "A German special operation commanded by Otto Skorzeny, where English-speaking commandos in U.S. uniforms attempted to cause chaos behind Allied lines.",
+            "Malmedy Massacre": "A war crime committed on December 17, 1944, where troops from Kampfgruppe Peiper murdered approximately 84 unarmed American prisoners of war.",
+            "casualties": "The Battle of the Bulge was the bloodiest battle for U.S. forces in WWII, with about 89,500 casualties (19,000 killed). German casualties were estimated between 80,000 and 100,000.",
+            "air power": "Initially grounded by bad weather, Allied air power was a decisive factor once the skies cleared around December 23. It devastated German supply lines and armored columns.",
+            "tanks": "The Germans lost between 600 and 1,000 irreplaceable tanks and assault guns. Allied losses were around 800 tanks, but they were quickly replaced.",
+            "Kampfgruppe Peiper": "The lead SS armored unit of the 6th Panzer Army, commanded by Joachim Peiper. It made the deepest penetration but was ultimately cut off and destroyed. It was also responsible for the Malmedy Massacre."
+        };
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTabs();
+            initializeSectorButtons();
+            initializeSearch();
+            initializeModal();
+        });
+        
+        function initializeModal() {
+            const modal = document.getElementById('settings-modal');
+            const openBtn = document.getElementById('settings-btn');
+            const closeBtn = document.getElementById('close-modal-btn');
+
+            if (modal && openBtn && closeBtn) {
+                openBtn.addEventListener('click', () => {
+                    modal.classList.add('show');
+                });
+
+                closeBtn.addEventListener('click', () => {
+                    modal.classList.remove('show');
+                });
+
+                // Close modal if user clicks on the overlay
+                modal.addEventListener('click', (event) => {
+                    if (event.target === modal) {
+                        modal.classList.remove('show');
+                    }
+                });
+            }
+        }
+
+        function initializeTabs() {
+            const tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const tabName = this.getAttribute('data-tab');
+                    showTab(tabName);
+                });
+            });
+        }
+
+        function showTab(tabName) {
+            try {
+                // Hide all tab contents
+                const tabContents = document.querySelectorAll('.tab-content');
+                tabContents.forEach(content => {
+                    if (content && content.classList) {
+                        content.classList.remove('active');
+                    }
+                });
+
+                // Remove active class from all buttons
+                const tabButtons = document.querySelectorAll('.tab-button');
+                tabButtons.forEach(button => {
+                    if (button && button.classList) {
+                        button.classList.remove('active');
+                    }
+                });
+
+                // Show selected tab content
+                const targetTab = document.getElementById(tabName);
+                if (targetTab && targetTab.classList) {
+                    targetTab.classList.add('active');
+                }
+
+                // Add active class to the correct button
+                const activeButton = document.querySelector(`[data-tab="${tabName}"]`);
+                if (activeButton && activeButton.classList) {
+                    activeButton.classList.add('active');
+                }
+            } catch (error) {
+                console.error('Error in showTab:', error);
+            }
+        }
+
+        function initializeSectorButtons() {
+            const sectorButtons = document.querySelectorAll('.sector-button');
+            sectorButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const sectorName = this.getAttribute('data-sector');
+                    showSectorDetail(sectorName);
+                });
+            });
+        }
+
+        function showSectorDetail(sector) {
+            try {
+                // Hide all sector details
+                const details = document.querySelectorAll('.sector-detail');
+                details.forEach(detail => {
+                    if (detail && detail.classList) {
+                        detail.classList.remove('show');
+                    }
+                });
+
+                // Show selected sector detail
+                const targetDetail = document.getElementById(sector + '-detail');
+                if (targetDetail && targetDetail.classList) {
+                    targetDetail.classList.add('show');
+                }
+            } catch (error) {
+                console.error('Error in showSectorDetail:', error);
+            }
+        }
+
+        function initializeSearch() {
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('keyup', searchContent);
+            }
+        }
+
+        function searchContent() {
+            try {
+                const searchInput = document.getElementById('searchInput');
+                const resultsDiv = document.getElementById('searchResults');
+                
+                if (!searchInput || !resultsDiv) return;
+                
+                const searchTerm = searchInput.value.toLowerCase();
+
+                if (searchTerm.length < 2) {
+                    resultsDiv.innerHTML = '<p style="text-align: center; color: var(--text-secondary); font-style: italic; margin: 2rem 0;">Enter a search term above to explore the knowledge base.<br>Try searching for: "Bastogne", "Patton", "101st Airborne", "Malmedy", "Wacht am Rhein", etc.</p>';
+                    return;
+                }
+
+                let results = [];
+                
+                for (const key in knowledgeBase) {
+                    if (knowledgeBase.hasOwnProperty(key)) {
+                        const value = knowledgeBase[key];
+                        if (key.toLowerCase().includes(searchTerm) || value.toLowerCase().includes(searchTerm)) {
+                            results.push({
+                                title: key,
+                                content: value,
+                                relevance: key.toLowerCase().startsWith(searchTerm) ? 2 : 1
+                            });
+                        }
+                    }
+                }
+
+                results.sort((a, b) => b.relevance - a.relevance);
+
+                if (results.length === 0) {
+                    resultsDiv.innerHTML = `<div class="section-card"><h3 style="color: var(--accent-1);">No results found for "${searchInput.value}"</h3><p>Try searching for commander names, battle locations, operations, or key terms.</p></div>`;
+                    return;
+                }
+
+                let resultHTML = `<h3 style="color: var(--accent-1); margin-bottom: 1.5rem;">Search Results for "${searchInput.value}"</h3>`;
+                
+                for (let i = 0; i < results.length; i++) {
+                    const result = results[i];
+                    const highlightedContent = result.content.replace(new RegExp(searchTerm, 'gi'), '<span class="highlight">$&</span>');
+                    
+                    resultHTML += `<div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid var(--accent-1);"><h4 style="color: var(--accent-1); margin-bottom: 0.8rem;">${result.title}</h4><p style="line-height: 1.6;">${highlightedContent}</p></div>`;
+                }
+
+                resultsDiv.innerHTML = resultHTML;
+            } catch (error) {
+                console.error('Error in searchContent:', error);
+            }
+        }
+    </script>
+</body>
+</html>

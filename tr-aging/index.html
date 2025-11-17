@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Threaded Reader</title>
+
+  <!-- Prepaint bootstrap: set dark + theme class before paint to avoid flicker -->
+  <script>
+  (function () {
+    const root = document.documentElement;
+    try {
+      const savedTheme = localStorage.getItem('theme');       // 'light' | 'dark' | null
+      const savedColor = localStorage.getItem('colorScheme'); // 'slate' | 'emerald' | future
+      const isDark = savedTheme !== 'light';                  // default to dark if unset
+      root.classList.toggle('dark', isDark);
+      // Apply colored theme classes ONLY in dark mode; light is always neutral slate
+      root.classList.toggle('theme-emerald', isDark && savedColor === 'emerald');
+    } catch (_) {}
+  })();
+  </script>
+
+  <!-- Tailwind (with Typography) -->
+  <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' };
+  </script>
+
+  <!-- Google Font (optional) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+
+  <style>
+  :root { color-scheme: light dark; }
+  html { scroll-behavior: smooth; }
+  .font-newspaper { font-family: 'Lora', serif; }
+  :where(h2,h3,h4){ scroll-margin-top: 84px; }
+  mark { background: #fde68a; padding: .1em .2em; border-radius: .2rem; }
+  @media (max-width: 380px){ .prose { font-size: .96rem; } }
+
+  /* ---------- Semantic surfaces (read from CSS variables) ---------- */
+.hero {
+  /* give the header an explicit base fill so gradient blends to the right hue */
+  background-color: var(--hero-base);
+  background:
+    radial-gradient(50% 120% at 10% 10%, var(--hero-r1), transparent 60%),
+    radial-gradient(80% 140% at 90% 10%, var(--hero-r2), transparent 70%),
+    linear-gradient(180deg, var(--hero-wash), transparent 35%);
+}
+.border-var { border-color: var(--border) !important; }
+.surface { border-width: 1px; border-style: solid; border-color: var(--border); }
+.hr-var { border-color: var(--border); }
+.subtitle { color: var(--subtitle-fg); }
+.timeline-fg { color: var(--timeline-fg); }
+.footer-note { color: var(--footer-fg); }
+.active-link { color: var(--active); font-weight: 700; }
+
+.input-surface {
+  border: 1px solid var(--input-border);
+  background-color: var(--input-bg);
+}
+.btn-surface { border: 1px solid var(--btn-border); }
+.btn-surface:hover { background: var(--btn-hover-bg); }
+.toc-link:hover { background: var(--hover-bg); }
+
+/* ---------- Slate (default) variables ---------- */
+:root{
+  /* accents / inks */
+  --active: rgb(59,130,246);                      /* sky-500 */
+  --subtitle-fg: rgb(71,85,105);                  /* slate-600 */
+  --timeline-fg: rgb(100,116,139);                /* slate-500 */
+  --footer-fg: rgb(100,116,139);                  /* slate-500 */
+
+  /* surfaces */
+  --border: rgb(226,232,240);                     /* slate-200 */
+  --hover-bg: rgb(248,250,252);                   /* slate-50 */
+  --btn-border: rgb(203,213,225);                 /* slate-300 */
+  --btn-hover-bg: rgb(248,250,252);               /* slate-50 */
+  --input-border: rgba(203,213,225,0.7);          /* slate-300/70 */
+  --input-bg: rgba(255,255,255,0.7);              /* white/70 */
+
+  /* hero base & gradient (light) */
+  --hero-base: transparent;                       /* keep light header airy */
+  --hero-r1: rgba(49,46,129,.12);                 /* indigo-700 */
+  --hero-r2: rgba(234,88,12,.12);                 /* orange-600 hint */
+  --hero-wash: rgba(14,165,233,.08);              /* sky-500 wash */
+}
+.dark{
+  --subtitle-fg: rgb(203,213,225);                /* slate-300 */
+  --timeline-fg: rgb(148,163,184);                /* slate-400 */
+  --footer-fg: rgb(148,163,184);                  /* slate-400 */
+
+  --border: rgb(30,41,59);                        /* slate-800 */
+  --hover-bg: rgb(15,23,42);                      /* slate-900 */
+  --btn-border: rgb(51,65,85);                    /* slate-700 */
+  --btn-hover-bg: rgb(15,23,42);                  /* slate-900 */
+  --input-border: rgba(51,65,85,0.7);             /* slate-700/70 */
+  --input-bg: rgba(2,6,23,0.6);                   /* slate-950/60 */
+
+  /* hero base & gradient (dark) */
+  --hero-base: rgb(2,6,23);                       /* slate-950 */
+  --hero-r1: rgba(49,46,129,.12);
+  --hero-r2: rgba(234,88,12,.12);
+  --hero-wash: rgba(14,165,233,.08);
+}
+
+/* ---------- Emerald theme overrides (light & dark) ---------- */
+.theme-emerald{
+  --active: #10b981;                              /* emerald-500 */
+
+  --border: rgb(187,247,208);                     /* emerald-200 */
+  --hover-bg: rgb(240,253,244);                   /* emerald-50 */
+  --btn-border: rgb(187,247,208);                 /* emerald-200 */
+  --btn-hover-bg: rgb(240,253,244);               /* emerald-50 */
+  --input-border: rgba(110,231,183,0.7);          /* emerald-300/70 */
+  --input-bg: rgba(255,255,255,0.7);              /* white/70 */
+
+  /* keep subtitles/timeline neutral for readability over hero */
+  --subtitle-fg: rgb(71,85,105);                  /* slate-600 */
+  --timeline-fg: rgb(71,85,105);                  /* slate-600 */
+  --footer-fg: rgb(16,185,129);                   /* emerald-500 */
+
+  /* hero base & gradient (emerald light) */
+  --hero-base: transparent;
+  --hero-r1: rgba(16,185,129,.14);                /* emerald-500 */
+  --hero-r2: rgba(163,230,53,.12);                /* lime-400 */
+  --hero-wash: rgba(5,150,105,.10);               /* emerald-600 wash */
+}
+.dark.theme-emerald{
+  /* ↑ Give borders enough contrast on dark emerald surfaces */
+  --border: rgba(110,231,183,0.55);                /* emerald-300 @ 55% */
+  --hover-bg: rgb(6,78,59);                        /* emerald-900 */
+  --btn-border: rgba(110,231,183,0.45);            /* slightly softer than borders */
+  --btn-hover-bg: rgb(6,78,59);                    /* emerald-900 */
+  --input-border: rgba(110,231,183,0.55);          /* match border contrast */
+  --input-bg: rgba(6,95,70,0.60);                  /* emerald-900/60 */
+
+  /* text accents for readability */
+  --footer-fg: rgb(110,231,183);                   /* emerald-300/400 */
+  --subtitle-fg: rgb(226,252,236);                 /* emerald-100 */
+  --timeline-fg: rgb(187,247,208);                 /* emerald-200 */
+
+  /* hero base & gradient (unchanged, stays emerald) */
+  --hero-base: rgb(2,44,34);                       /* emerald-950 (#022c22) */
+  --hero-r1: rgba(16,185,129,.14);
+  --hero-r2: rgba(163,230,53,.12);
+  --hero-wash: rgba(5,150,105,.10);
+}
+
+</style>
+
+</head>
+
+<body class="bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 pb-[env(safe-area-inset-bottom)]">
+
+
+
+  <!-- Header -->
+  <header id="top" class="hero border-b border-var">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-between gap-4">
+      <div>
+        <h1 id="docTitle" class="text-2xl sm:text-3xl font-bold font-newspaper tracking-tight">Loading...</h1>
+        <p id="docSubtitle" class="subtitle text-sm sm:text-base"></p>
+      </div>
+      <div class="flex items-center gap-2">
+        <label for="search" class="sr-only">Search</label>
+        <input id="search" type="search" placeholder="Search…" class="hidden md:block w-56 rounded-xl input-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400" />
+        <button id="clearSearch" type="button" class="hidden md:inline-flex text-xs px-2 py-2 rounded-lg btn-surface">Clear</button>
+        <button id="colorSchemeToggle" type="button" class="inline-flex items-center justify-center rounded-xl btn-surface px-3 py-2 text-sm" title="Change color scheme">
+          <span class="inline md:hidden">Colors</span>
+          <svg aria-hidden="true" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/>
+            <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/>
+            <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/>
+            <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/>
+            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 7.012 17.461 2 12 2z"/>
+          </svg>
+        </button>
+        <button id="themeToggle" type="button" class="inline-flex items-center justify-center rounded-xl btn-surface px-3 py-2 text-sm" title="Toggle dark mode" aria-pressed="false">
+          <span class="inline md:hidden">Theme</span>
+          <svg aria-hidden="true" class="w-5 h-5 hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg aria-hidden="true" class="w-5 h-5 dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6" id="timelineWrap" hidden>
+      <nav aria-label="Journey timeline" id="timelineNav" class="timeline-fg">
+        <ol id="timeline" class="grid grid-cols-3 sm:grid-cols-6 items-center gap-x-2 gap-y-1 text-[11px] sm:text-sm"></ol>
+        <div id="timelineCoda" class="mt-2 text-[11px] sm:text-xs"></div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)] gap-8">
+    <!-- Sidebar -->
+    <aside class="lg:sticky lg:top-4 h-max">
+      <nav aria-label="On this page" class="rounded-2xl surface p-4">
+        <h2 class="text-sm font-semibold mb-2">Sections</h2>
+        <ol id="toc" class="space-y-1 text-sm"></ol>
+        <hr class="my-4 hr-var" />
+        <button id="expandAll" type="button" class="w-full text-xs px-3 py-2 rounded-lg btn-surface">Expand All</button>
+        <button id="collapseAll" type="button" class="mt-2 w-full text-xs px-3 py-2 rounded-lg btn-surface">Collapse All</button>
+      </nav>
+    </aside>
+
+    <section id="content" class="prose prose-slate dark:prose-invert max-w-none">
+      <!-- DROP ARTICLE HERE -->
+
+
+
+    <!-- ============ CONTENT DROP ZONE ============ -->
+    <section id="content" class="prose prose-slate dark:prose-invert max-w-none">
+      <!-- DROP ARTICLE HERE -->
+
+<article class="rounded-2xl surface p-6">
+<meta name="doc-title" content="The Modern Guide to Eating for Healthy Aging">
+<meta name="doc-subtitle" content="An evidence-based look at what to eat and what to avoid, from the dangers of ultra-processed foods to the proven benefits of the Mediterranean diet.">
+<meta name="timeline-steps" content="ultra-processed-foods-the-modern-dietary-threat,additives-essentials-sugar-salt,macronutrients-carbs-protein-and-fat,lifestyle-habits-caffeine-alcohol,food-choices-meat-vs-plants,the-gold-standard-the-mediterranean-diet,eating-patterns-supplements">
+<meta name="timeline-labels" content="UPFs,Additives,Macros,Habits,Choices,Med Diet,Patterns">
+
+<h2>Ultra-Processed Foods: The Modern Dietary Threat</h2>
+<p>The saying “You are what you eat” has been around since 1826, and for good reason. A massive assessment across 195 countries concluded that a <strong>poor diet is linked to 22 percent of all deaths worldwide</strong>. That’s more than tobacco, cancer, or any other single health risk. What is clear is that the global epidemic of diabetes and obesity has been fueled, at least in part, by what we're eating, often under the heavy influence of "Big Food"—an oligopoly of multinational corporations.</p>
+<p>Big Food makes a lot of these. <strong>Ultra-processed foods (UPFs)</strong> are like UFOs; they're alien, industrially produced substances that barely qualify as food. They're damaged by industrial processing in two main ways: chemically and physically.</p>
+<p>First, they're loaded with chemical additives. Second, the physical manufacturing process—molding, extrusion, and pre-frying—is designed to make these foods hyper-digestible. This causes sharp spikes in your blood glucose and insulin, which is the exact opposite of what dietary fiber does.</p>
+<details class="mt-4">
+<summary class="font-semibold cursor-pointer">Common UPF Additives & Ingredients to Avoid</summary>
+<div class="pt-2">
+<p>This is a partial list of common industrial ingredients found in UPFs: coloring agents, sweeteners such as maltodextrin, high-fructose corn syrup, fruit juice concentrates, dextrose, lactose, artificial sweeteners, hydrogenated oils, palm oil, calcium propionate, soy protein isolate, modified starches such as maltitol, calcium caseinate, hydrolyzed beef gelatin, and emulsifiers such as soy lecithin, xanthan gum, guar gum, and diacetyl tartaric acid esters of mono- and diglycerides.</p>
+</div>
+</details>
+<details class="mt-4">
+<summary class="font-semibold cursor-pointer">Understanding the NOVA Food Classification</summary>
+<div class="pt-2">
+<p>The NOVA food classification system is a helpful guide. It categorizes food into four groups:</p>
+<ul>
+<li><strong>Group 1:</strong> Unprocessed or minimally processed foods.</li>
+<li><strong>Group 2:</strong> Processed culinary ingredients (like oils and salt).</li>
+<li><strong>Group 3:</strong> Processed foods (canned fish, simple breads).</li>
+<li><strong>Group 4:</strong> Ultra-processed foods.</li>
+</ul>
+</div>
+</details>
+<p class="mt-4">In a well-known randomized trial from the NIH, researchers let two groups eat as much as they wanted for two weeks. The UPF group ate an <strong>extra 500 calories a day</strong> and gained a significant amount of weight, likely because UPFs disrupt the gut-brain signals that tell you when you're full.</p>
+<p>Eating a diet rich in these foods is linked to a shocking list of problems: an 80% higher risk of metabolic syndrome, a 40% higher risk of type 2 diabetes, and a 66% higher risk of death from cardiovascular disease. For healthy aging, you have to restrict UPFs as much as possible. It’s likely that in the future, UPFs will be viewed much like cigarettes are today.</p>
+</article>
+
+<article class="rounded-2xl surface p-6">
+<h2>Additives & Essentials: Sugar & Salt</h2>
+<p>Sugar activates our brain's reward circuits, but too much is clearly bad. The biggest culprit is <strong>sugar-sweetened beverages</strong>. One large study found that high consumption of sugary drinks, including fruit juices, was associated with a 24% increased risk of death from any cause. 🍭</p>
+<p>The story for <strong>artificial sweeteners</strong> is a bit more complicated. While some reviews find no compelling evidence of risk, other research shows some can impair how your body handles glucose, partly by altering your gut microbiome. Overall, the data on artificial sweeteners is unfavorable, though not as worrying as for high sugar.</p>
+<p>The link between high <strong>sodium (salt)</strong> intake and hypertension is clear. 🧂 The average American eats about 3.5 grams of sodium per day, but studies suggest that cardiovascular risk increases significantly above 5 grams. An interesting alternative for those without kidney disease is a potassium chloride salt substitute, which one trial found reduced the incidence of hypertension by 40%.</p>
+</article>
+
+<article class="rounded-2xl surface p-6">
+<h2>Macronutrients: Carbs, Protein, and Fat</h2>
+<p>The term <strong>carbotoxicity</strong> highlights the risks of eating too many carbohydrates. Both very low-carb and very high-carb diets are linked with increased mortality. The <strong>type of carb</strong> is what really matters. Good carbs come from dietary fiber, while bad carbs are fast-digesting sugars and refined grains.</p>
+<h3>Protein</h3>
+<p>When it comes to <strong>protein</strong>, the current recommended daily allowance (RDA) is likely too low, especially for older adults trying to prevent age-related muscle loss (sarcopenia). While higher intake is needed, high-protein diets, especially from leucine-rich animal sources, have been linked to promoting atherosclerosis. A reasonable goal might be up to 1.2 grams per kilogram of body weight.</p>
+<h3>Fat</h3>
+<p>For <strong>fat</strong>, the old advice to choose low-fat dairy is outdated. Recent studies found that people who ate more whole-fat dairy, especially yogurt and cheese, had a <em>lower</em> risk of cardiovascular disease. Like with other macronutrients, the <strong>quality of the fat</strong> matters more than the quantity. Shifting from saturated fats to plant-based unsaturated fats (found in olive oil and avocados) is key.</p>
+</article>
+
+<article class="rounded-2xl surface p-6">
+<h2>Lifestyle Habits: Caffeine & Alcohol</h2>
+<p>Good news for coffee lovers. ☕ Many large studies link coffee consumption—typically around four cups a day—with up to a <strong>30% reduced mortality</strong> and a lower risk of many diseases. While this is a correlation, not proven causation, the data is compelling. For decades, doctors warned patients to avoid coffee for fear of heart rhythm disturbances, but recent studies show this fear is largely unfounded. The totality of the data suggests coffee is not hazardous and may even offer health benefits.</p>
+<p>The evidence on <strong>alcohol</strong> is less blurry: both moderate and heavy drinking do you no good. 🍷 The old myth about the health benefits of red wine has been largely refuted. Alcohol is classified as a carcinogen. Most studies show a J-curve relationship—a potential tiny benefit at very light intake (like two drinks per week), but the risk of high blood pressure and cardiovascular disease rises quickly beyond that.</p>
+</article>
+
+<article class="rounded-2xl surface p-6">
+<h2>Food Choices: Meat vs. Plants</h2>
+<p>These two are at opposite ends of the health spectrum. <strong>Processed meats</strong> like hot dogs and bacon are classified as carcinogenic by the World Health Organization. <strong>Unprocessed red meats</strong> like beef and pork are labeled "probably carcinogenic." While some reviews argue the risk is small, the data consistently points in the wrong direction.</p>
+<p>In contrast, <strong>plant-based foods</strong> are plainly healthier. They're linked to a 23% lower risk of type 2 diabetes and substantial protection from all-cause and cardiovascular mortality. In one fascinating randomized trial of identical twins, a plant-based diet was shown to slow the pace of epigenetic aging compared to an omnivore diet. The bottom line: the more red meat you eat, especially processed kinds, the less healthy you are likely to be.</p>
+</article>
+
+<article class="rounded-2xl surface p-6">
+<h2>The Gold Standard: The Mediterranean Diet</h2>
+<p>So what does "healthy eating" actually mean? We know it includes fruits, vegetables, legumes, whole grains, nuts, seeds, healthy fats like olive oil, and fatty fish like salmon. The whole package of all these goodies is known as the <strong>Mediterranean diet</strong>. This is one of the few diets that has been rigorously tested in multiple randomized trials.</p>
+<p>The data provides robust support for its benefits in reducing death from nearly every major cause. One of the largest nutrition trials in history found that the Mediterranean diet led to a <strong>30% lower risk of heart attack, stroke, or cardiovascular death</strong> compared to a low-fat diet. It also promotes a healthy gut microbiome in older adults, which is linked to less frailty and better cognitive function. While there may be healthier diets out there, the Mediterranean diet is the best we've validated so far.</p>
+<details class="mt-4">
+<summary class="font-semibold cursor-pointer">Intriguing (But Unproven) Nutrients: Taurine & Choline</summary>
+<div class="pt-2">
+<p>A couple of other nutrients deserve more attention. <strong>Taurine</strong> is an amino acid that decreases as we age. Supplementing it in aged monkeys led to notable health improvements. <strong>Choline</strong> is an essential nutrient important for brain function, found in eggs, beef, and fish. While both show promise, we need human randomized trials to confirm their benefits for healthy aging.</p>
+</div>
+</details>
+</article>
+
+<article class="rounded-2xl surface p-6">
+<h2>Eating Patterns & Supplements</h2>
+<p>There's been a lot of interest in whether eating less (<strong>caloric restriction</strong>) or eating within a specific time window (<strong>time-restricted eating</strong>) can promote longevity. While these approaches work in some animal models, the results in humans are contradictory. Some trials show benefits, while others show no difference. No fasting diet has been definitively proven to provide anti-aging properties in humans. A sensible piece of advice is simply to eat an early dinner and maintain a regular eating schedule from day to day.</p>
+<p>Finally, a word on <strong>supplements</strong>. Despite heavy marketing, there's little to no hard evidence that taking most vitamins or supplements is beneficial, especially if you're already eating a healthy diet. In fact, some evidence suggests potential harm from certain supplements.</p>
+<details class="mt-4">
+<summary class="font-semibold cursor-pointer">A Look at the Evidence on Common Supplements</summary>
+<div class="pt-2">
+<p>Large, high-quality trials of Vitamin D and omega-3 fatty acids failed to show any benefit for preventing cardiovascular disease or cancer. The evidence for multivitamins slowing cognitive decline is weak and contested. Some evidence suggests an increased stroke risk from calcium plus vitamin D. For now, it's best to get your nutrients from real food and take any claims about "longevity vitamins" with a grain of salt.</p>
+</div>
+</details>
+</article>
+
+  
+
+      <!-- DO NOT PASTE ANYTHING AFTER THIS POINT -->
+    </section>
+  </main>
+
+  <footer class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 text-xs footer-note">
+    Threaded Reader — a single-file template
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // ===== Utilities =====
+      const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+      const slug = s => s.toLowerCase().replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-');
+
+      // ===== Read Metadata from Content =====
+      const firstArticle = document.querySelector('#content article');
+      const docTitle = firstArticle?.querySelector('meta[name="doc-title"]')?.content || 'Untitled Document';
+      const docSubtitle = firstArticle?.querySelector('meta[name="doc-subtitle"]')?.content || '';
+      const timelineStepsData = firstArticle?.querySelector('meta[name="timeline-steps"]')?.content;
+      const timelineLabelsData = firstArticle?.querySelector('meta[name="timeline-labels"]')?.content;
+
+      // ===== Populate Header from Metadata =====
+      document.getElementById('docTitle').textContent = docTitle;
+      document.getElementById('docSubtitle').textContent = docSubtitle;
+      document.title = docTitle; // Also update browser tab title
+
+      // ===== Theme packs: only control article "prose-*" family
+      // ===== Theme packs: control article prose family AND base <body> ink/background
+const THEME_PACKS = {
+  slate: {
+    proseClass: 'prose-slate',
+    bodyClass: 'bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 pb-[env(safe-area-inset-bottom)]'
+  },
+  emerald: {
+    proseClass: 'prose-emerald',
+    bodyClass: 'bg-white text-emerald-900 dark:bg-emerald-950 dark:text-emerald-100 pb-[env(safe-area-inset-bottom)]'
+  }
+};
+const availableThemes = Object.keys(THEME_PACKS);
+
+
+function applyTheme(themeKey){
+  const root = document.documentElement;
+  const isDark = root.classList.contains('dark');
+
+  const THEME_PACKS = {
+    slate: {
+      proseClass: 'prose-slate',
+      bodyClass: 'bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 pb-[env(safe-area-inset-bottom)]'
+    },
+    emerald: {
+      proseClass: 'prose-emerald',
+      bodyClass: 'bg-white text-emerald-900 dark:bg-emerald-950 dark:text-emerald-100 pb-[env(safe-area-inset-bottom)]'
+    }
+  };
+
+  const pack = THEME_PACKS[themeKey] || THEME_PACKS.slate;
+
+  // Color theme classes only attach in DARK; LIGHT is always neutral slate
+  root.classList.toggle('theme-emerald', isDark && themeKey === 'emerald');
+
+  // Body ink/background:
+  document.body.className = isDark ? pack.bodyClass : THEME_PACKS.slate.bodyClass;
+
+  // Article prose color family (ok to vary by theme in both modes; change if you want neutral):
+  const content = document.getElementById('content');
+  content.className = `prose ${pack.proseClass} dark:prose-invert max-w-none`;
+
+  // Persist choice (used when you return to dark)
+  try { localStorage.setItem('colorScheme', themeKey); } catch(_){}
+}
+
+
+
+      // Initialize from localStorage
+      let currentThemeIndex = 0;
+      try {
+        const saved = localStorage.getItem('colorScheme');
+        if (saved && THEME_PACKS[saved]) currentThemeIndex = availableThemes.indexOf(saved);
+      } catch(_) {}
+
+      // ===== Color Scheme Toggle =====
+const colorBtn = document.getElementById('colorSchemeToggle');
+colorBtn?.addEventListener('click', () => {
+  const root = document.documentElement;
+
+  // If we're in LIGHT mode, switch to DARK and stop here (do NOT cycle color yet)
+  if (!root.classList.contains('dark')) {
+    root.classList.add('dark');
+    try { localStorage.setItem('theme','dark'); } catch(_){}
+    document.getElementById('themeToggle')?.setAttribute('aria-pressed','true');
+    return; // first click behaves like the theme toggle only
+  }
+
+  // Already DARK: now cycle to the next color scheme
+  currentThemeIndex = (currentThemeIndex + 1) % availableThemes.length;
+  const newTheme = availableThemes[currentThemeIndex];
+  applyTheme(newTheme);
+
+  // Rebuild TOC (keeps hover styles consistent with the new scheme)
+  buildTOC();
+});
+
+
+      // ===== Theme (dark/light) Handling =====
+const themeBtn = document.getElementById('themeToggle');
+if (themeBtn) {
+  themeBtn.setAttribute('aria-pressed', String(document.documentElement.classList.contains('dark')));
+}
+themeBtn?.addEventListener('click', () => {
+  const root = document.documentElement;
+  const isDark = root.classList.toggle('dark');
+  try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch(_){}
+  themeBtn.setAttribute('aria-pressed', String(isDark));
+
+  if (!isDark) {
+    // Going to LIGHT → always neutralize to slate
+    root.classList.remove('theme-emerald');
+    try { localStorage.setItem('colorScheme','slate'); } catch(_){}
+    applyTheme('slate');
+  } else {
+    // Back to DARK → reapply saved (or default) color
+    let saved = 'slate';
+    try { const s = localStorage.getItem('colorScheme'); if (s) saved = s; } catch(_){}
+    applyTheme(saved);
+  }
+  buildTOC();
+});
+
+try {
+  const mq = matchMedia('(prefers-color-scheme: dark)');
+  const onChange = (e) => {
+    if (!localStorage.getItem('theme')) { // only if user hasn't forced a theme
+      const isDark = e.matches;
+      const root = document.documentElement;
+      root.classList.toggle('dark', isDark);
+      themeBtn?.setAttribute('aria-pressed', String(isDark));
+
+      if (!isDark) {
+        root.classList.remove('theme-emerald');
+        try { localStorage.setItem('colorScheme','slate'); } catch(_){}
+        applyTheme('slate');
+      } else {
+        let saved = 'slate';
+        try { const s = localStorage.getItem('colorScheme'); if (s) saved = s; } catch(_){}
+        applyTheme(saved);
+      }
+      buildTOC();
+    }
+  };
+  if (mq.addEventListener) mq.addEventListener('change', onChange);
+  else if (mq.addListener) mq.addListener(onChange); // Safari <14
+} catch (_) {}
+
+      // ===== Expand/Collapse Functionality =====
+      const getDetails = () => document.querySelectorAll('#content details');
+      const expandBtn = document.getElementById('expandAll');
+      const collapseBtn = document.getElementById('collapseAll');
+
+      if (getDetails().length === 0) {
+        if(expandBtn) expandBtn.hidden = true;
+        if(collapseBtn) collapseBtn.hidden = true;
+      } else {
+        expandBtn?.addEventListener('click', () => { getDetails().forEach(d => d.open = true); });
+        collapseBtn?.addEventListener('click', () => { getDetails().forEach(d => d.open = false); });
+      }
+
+      // ===== Add Back to Top Links =====
+      (function addBackToTopLinks(){
+        $$('#content > article').forEach((article, index, arr) => {
+          if (index === arr.length - 1) return;
+          const wrapper = document.createElement('div');
+          wrapper.className = 'mt-6 flex justify-end';
+          wrapper.innerHTML = `<a href="#top" class="text-sm underline decoration-dotted">Back to top</a>`;
+          article.appendChild(wrapper);
+        });
+      })();
+
+      // ===== Build Table of Contents =====
+      function buildTOC(){
+        const toc = document.getElementById('toc');
+        if (!toc) return;
+        const headings = $$('#content h2, #content h3');
+        const items = headings.map(h => {
+          if (!h.id) h.id = slug(h.textContent);
+          return { id: h.id, text: h.textContent.trim(), level: h.tagName.toLowerCase() };
+        });
+
+        toc.innerHTML = items.map(({id, text, level}) => {
+          const pad = level === 'h3' ? ' pl-4' : '';
+          return `<li><a href="#${id}" class="toc-link block px-2 py-1.5 rounded${pad}">${text}</a></li>`;
+        }).join('');
+
+        const links = $$('#toc a');
+        const sections = items.map(i => document.getElementById(i.id));
+        const obs = new IntersectionObserver(entries => {
+          entries.forEach(e => {
+            if (e.isIntersecting) {
+              links.forEach(a => a.classList.remove('active-link'));
+              const id = '#' + e.target.id;
+              const active = links.find(a => a.getAttribute('href') === id);
+              active?.classList.add('active-link');
+            }
+          });
+        }, { rootMargin: '-40% 0px -55% 0px', threshold: 0.01 });
+        sections.forEach(sec => sec && obs.observe(sec));
+      }
+      buildTOC();
+
+      // ===== Build Timeline from Metadata =====
+      (function buildTimeline(){
+        const wrap = document.getElementById('timelineWrap');
+        const list = document.getElementById('timeline');
+        const coda = document.getElementById('timelineCoda');
+
+        if (!timelineStepsData || !wrap || !list) { if(wrap) wrap.hidden = true; return; }
+
+        const steps = timelineStepsData.split(',').map(s => s.trim());
+        const labels = timelineLabelsData ? timelineLabelsData.split(',').map(s => s.trim()) : [];
+
+        if (!steps.length) { wrap.hidden = true; return; }
+        wrap.hidden = false;
+
+        const mkStep = (id, label) => (
+          `<li class="flex items-center gap-2"><span class="inline-block w-[14px] h-[14px] rounded-full border-2 border-current bg-current"></span><a href="#${id}" class="hover:underline">${label}</a></li>`
+        );
+
+        const segments = [];
+        steps.forEach((id, idx) => {
+          const el = $$('#content h2, #content h3').find(h => slug(h.textContent) === id);
+          if (el && !el.id) el.id = id;
+          const label = labels[idx] || (el?.textContent || id.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()));
+          segments.push(mkStep(id, label));
+          if (idx !== steps.length - 1) segments.push('<li class="h-[2px] bg-current opacity-35"></li>');
+        });
+        list.innerHTML = segments.join('');
+      })();
+
+      // ===== Search Highlighter =====
+      (function searchHL(){
+        const input = document.getElementById('search');
+        const clearBtn = document.getElementById('clearSearch');
+        const content = document.getElementById('content');
+        if (!input || !content) return;
+        let originalHTML = '';
+        function restore(){ 
+          if (originalHTML) {
+            content.innerHTML = originalHTML; 
+            buildTOC(); 
+          }
+        }
+        function highlight(term){
+          if (!originalHTML) originalHTML = content.innerHTML;
+          restore();
+          if (!term) return;
+          const esc = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+          const re = new RegExp(`(${esc})(?![^<]*>)`, 'gi');
+          content.innerHTML = content.innerHTML.replace(re, '<mark>$1</mark>');
+          buildTOC();
+        }
+        let t; 
+        input.addEventListener('input', (e) => { 
+          clearTimeout(t); 
+          t = setTimeout(() => highlight(e.target.value.trim()), 120); 
+        });
+        clearBtn?.addEventListener('click', () => { 
+          if (input) input.value=''; 
+          restore(); 
+        });
+      })();
+
+      // ===== Apply initial theme pack to prose =====
+      try {
+        const saved = localStorage.getItem('colorScheme');
+        applyTheme(saved && THEME_PACKS[saved] ? saved : 'slate');
+      } catch(_){
+        applyTheme('slate');
+      }
+    });
+  </script>
+</body>
+</html>
+

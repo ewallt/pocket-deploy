@@ -1,0 +1,39 @@
+<!-- /pocket-deploy/ai-s02-4/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>AI s02 — Part 4: RLHF & Instruction Learning</title>
+<style>
+:root{--bg:#0b1020;--panel:#0f172a;--ink:#e5e7eb;--muted:#94a3b8;--brand:#60a5fa;--border:#1f2940}
+@media(prefers-color-scheme:light){:root{--bg:#f5f7fb;--panel:#fff;--ink:#1b2a41;--muted:#34495e;--brand:#2563eb;--border:#e3e9f3}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,Segoe UI,Inter,Arial;padding:2rem}
+.c{max-width:880px;margin:0 auto;background:var(--panel);border:1px solid var(--border);border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+.nav{display:flex;gap:.5rem;flex-wrap:wrap;padding:.75rem;border-bottom:1px solid var(--border)}.nav a{padding:.45rem .7rem;border:1px solid var(--border);border-radius:999px;text-decoration:none;color:var(--ink)}.nav a:hover{border-color:var(--brand);color:var(--brand)}
+.h{padding:1.25rem 1.5rem}.intro{color:var(--muted);font-style:italic;margin:.25rem 0 1rem}
+.p{padding:0 1.5rem 1.4rem}.p p{margin:1.05rem 0}.f{padding:1rem 1.5rem;border-top:1px solid var(--border);color:var(--muted);font-size:.95rem}
+</style></head>
+<body><article class="c">
+<nav class="nav">
+  <a href="/pocket-deploy/dashboard-ai-s02/">← Dashboard</a>
+  <a href="/pocket-deploy/ai-s02-3/">Previous</a>
+  <a href="/pocket-deploy/ai-s02-5/">Next →</a>
+</nav>
+<header class="h"><h1>RLHF & Instruction Learning — Part 4</h1><p class="intro">Between 2019 and 2021, the pursuit of alignment shifted from objective functions to human feedback, birthing reinforcement learning from human feedback (RLHF) and instruction following.</p></header>
+<section class="p">
+<p>Initially, fine-tuned models mirrored their datasets; they lacked social sense. OpenAI’s InstructGPT reframed the problem: instead of optimizing likelihood, train models to prefer outputs judged helpful, honest, and harmless. Human annotators compared pairs of completions, producing preference datasets. A reward model learned these preferences, and the base model underwent reinforcement learning to maximize them. The sequence formalized a new loop: data → reward → policy → critique.</p>
+<p>Historically, this paralleled human curriculum shaping. Just as teachers grade essays to refine student style, RLHF used evaluators to define acceptable language. The technique traced to reinforcement learning traditions—policy gradients and proximal optimization—yet its cultural goal was alignment. Researchers reinterpreted “optimization” as negotiation between model and human intent. The process blurred engineering and ethics, turning training into dialogue.</p>
+<p>Sequentially, RLHF preceded broader instruction-tuning movements. Models like FLAN and T0 skipped reinforcement entirely, fine-tuning directly on reformatted instruction datasets—tasks posed as textual commands with example answers. These models demonstrated that consistent prompting could teach general compliance even without rewards. Together, RLHF and instruction tuning converged on a principle: make models interpreters of intent, not mere predictors of tokens.</p>
+<p>Parallel comparisons illustrate scope and cost. RLHF produced high-fidelity alignment but demanded human labor and multiple model passes; instruction-tuning scaled cheaply by reusing labeled datasets. RLHF emphasized safety and value adherence; instruction tuning emphasized versatility and usability. Eventually, hybrid systems combined both—large instruction datasets for breadth, RLHF for refinement—forming the recipe later seen in ChatGPT-like systems.</p>
+<section>
+<h3>Alignment Pipeline Summary</h3>
+<table>
+<tr><th>Stage</th><th>Input</th><th>Outcome</th></tr>
+<tr><td>Supervised fine-tune</td><td>Human-written completions</td><td>Base model learns format</td></tr>
+<tr><td>Reward modeling</td><td>Pairwise human preference</td><td>Reward function approximation</td></tr>
+<tr><td>RL optimization</td><td>Policy model vs. reward model</td><td>Aligned conversational agent</td></tr>
+</table>
+</section>
+<p>RLHF marked a conceptual pivot: language models began learning social constraints as part of training, not post-hoc filtering. It blurred the line between data and dialogue, algorithm and ethics, and established human feedback as the frontier variable in AI progress.</p>
+</section>
+<footer class="f">Sources: InstructGPT (2022), FLAN, T0, RLHF literature on preference modeling and policy optimization.</footer>
+</article></body></html>

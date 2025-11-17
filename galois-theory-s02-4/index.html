@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Galois Theory: Structure and Examples — Part 4</title>
+<style>
+:root{--bg:#0f172a;--panel:#1f2937;--ink:#e5e7eb;--muted:#94a3b8;--brand:#60a5fa;--border:#1f2937}
+@media(prefers-color-scheme:light){:root{--bg:#f8fafc;--panel:#ffffff;--ink:#1e293b;--muted:#64748b;--brand:#3b82f6;--border:#e2e8f0}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,Apple Color Emoji,Segoe UI Emoji}
+.wrapper{max-width:760px;margin:0 auto;padding:48px 20px}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:28px;box-shadow:0 0 0 1px rgba(0,0,0,.12) inset}
+h1{margin:0 0 8px;font-size:2rem;line-height:1.2}
+.lead{color:var(--muted);margin:0 0 24px}
+a{color:var(--brand);text-decoration:none}
+a:hover{text-decoration:underline}
+article p{margin:0 0 16px}
+hr{border:0;border-top:1px solid var(--border);margin:24px 0}
+.nav{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+.nav a{padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:rgba(96,165,250,.08);color:var(--ink)}
+small.muted{color:var(--muted);display:block;margin-top:24px}
+</style>
+</head>
+<body>
+<div class="wrapper"><div class="panel">
+<div class="nav"><a href="/pocket-deploy/dashboard-galois-theory-s02/">Dashboard</a><a href="/pocket-deploy/galois-theory-s02-3/">Prev</a><a href="/pocket-deploy/galois-theory-s02-5/">Next</a></div>
+<h1>Galois Theory: Structure and Examples</h1>
+<p class="lead">Part 4 · Geometric Constructions and Impossibility</p>
+<article>
+<p>The ancient Greek geometers posed three famous construction problems: trisecting an arbitrary angle, doubling the cube (constructing a cube with twice the volume of a given cube), and squaring the circle (constructing a square with the same area as a given circle). Using only compass and straightedge—tools that allow drawing circles and lines but nothing more—can these tasks be accomplished? For over two millennia, mathematicians attempted solutions, but all failed. Galois theory, developed in the 19th century, finally explained why: the first two problems require constructing numbers that lie in field extensions of non-power-of-two degree, which is impossible using compass and straightedge. The third problem's impossibility follows from the transcendence of π, established later. These impossibility results demonstrate Galois theory's power to settle geometric questions via algebraic criteria.</p>
+<p>A number α ∈ ℂ is constructible if it can be obtained from 0 and 1 via a finite sequence of field operations (addition, subtraction, multiplication, division) and square root extractions. Equivalently, α is constructible if it lies in a field extension ℚ(α₁, ..., αₙ) where each αᵢ satisfies a quadratic equation over ℚ(α₁, ..., αᵢ₋₁). By the tower law, [ℚ(α):ℚ] is a power of 2: each square root adjunction at most doubles the degree, so the total degree is 2^k for some k ≥ 0. Conversely, if [ℚ(α):ℚ] = 2^k, one can construct α by a sequence of k quadratic extensions, each corresponding to extracting a square root. This characterization translates geometric constructibility into an algebraic condition on field degrees, making Galois theory applicable.</p>
+<p>Doubling the cube requires constructing ∛2, since a cube of side length ∛2 has volume 2. The minimal polynomial of ∛2 over ℚ is x³ − 2, which is irreducible (by Eisenstein's criterion with p = 2). Thus, [ℚ(∛2):ℚ] = 3. Since 3 is not a power of 2, ∛2 is not constructible, and doubling the cube is impossible with compass and straightedge. This impossibility was first rigorously proven by Pierre Wantzel in 1837, using the degree criterion. The Greek geometers' failure was not due to lack of ingenuity but to an inherent algebraic obstruction: no sequence of compass-and-straightedge steps can produce a length whose minimal polynomial has degree 3.</p>
+<p>Trisecting an arbitrary angle reduces to a similar algebraic problem. Given an angle θ, constructing θ/3 is equivalent to constructing cos(θ/3) from cos(θ). Using the triple-angle formula cos(3φ) = 4cos³(φ) − 3cos(φ), setting φ = θ/3 and letting x = cos(θ/3), we get 4x³ − 3x = cos(θ). For θ = 60°, cos(θ) = 1/2, so x satisfies 4x³ − 3x − 1/2 = 0, or equivalently 8x³ − 6x − 1 = 0. This cubic is irreducible over ℚ (checking mod 2 or using rational root theorem), so its roots generate degree-3 extensions of ℚ. Since 3 is not a power of 2, trisecting a 60° angle is impossible. While specific angles (such as 90°) can be trisected, no general compass-and-straightedge method works for all angles, as some yield irreducible cubics. Galois theory thus explains both the occasional success and the general impossibility.</p>
+<p>Constructible regular polygons provide a positive application of these ideas. A regular n-gon is constructible if and only if the angle 2π/n is constructible, which is equivalent to ζₙ = e^{2πi/n} being constructible (since cos(2π/n) and sin(2π/n) are real and imaginary parts of ζₙ). The minimal polynomial of ζₙ over ℚ is the cyclotomic polynomial Φₙ(x), with degree φ(n). The extension ℚ(ζₙ)/ℚ is Galois with group (ℤ/nℤ)*, and ζₙ is constructible if and only if φ(n) is a power of 2. Gauss proved in his Disquisitiones Arithmeticae (1801) that φ(n) is a power of 2 precisely when n = 2^k · p₁ · ··· · pᵣ where each pᵢ is a distinct Fermat prime (primes of the form 2^{2^m} + 1). Known Fermat primes are 3, 5, 17, 257, and 65537, corresponding to constructible polygons with 3, 5, 17, 257, and 65537 sides. The regular heptagon (7 sides) is not constructible, since φ(7) = 6, which is not a power of 2.</p>
+<p>Gauss's result on the 17-gon was particularly striking, as Greeks had not known whether it was constructible. Galois theory explains this: ℚ(ζ₁₇) has degree φ(17) = 16 = 2⁴ over ℚ, and the Galois group is cyclic of order 16, hence solvable via a tower of degree-2 extensions. Explicitly constructing the 17-gon requires solving a quartic and nested quadratics, which can be done with compass and straightedge (though the construction is intricate). This demonstrates that Galois theory not only proves impossibility but also identifies precisely which problems are solvable and provides pathways to solutions. The interplay between group structure (cyclic groups of 2-power order) and geometric constructibility showcases Galois theory's unifying power.</p>
+<p>Squaring the circle is a different kind of problem. It requires constructing √π, assuming a circle of radius 1 (area π). Since π is transcendental over ℚ (proven by Lindemann in 1882), it does not satisfy any polynomial equation with rational coefficients, let alone one of degree a power of 2. No field extension of ℚ containing π can have finite degree, so π and √π are not constructible. This impossibility is deeper than that of doubling the cube or trisecting angles: it relies on transcendence rather than Galois theory per se. Nonetheless, the framework of field extensions and degrees, central to Galois theory, provides the language for stating and understanding the result. Together, these impossibility proofs illustrate how abstract algebra resolves classical geometric problems, transforming vague intuitions of difficulty into rigorous theorems about field degrees, Galois groups, and algebraic structure.</p>
+</article>
+<hr />
+<div class="nav"><a href="/pocket-deploy/dashboard-galois-theory-s02/">Dashboard</a><a href="/pocket-deploy/galois-theory-s02-3/">Prev</a><a href="/pocket-deploy/galois-theory-s02-5/">Next</a></div>
+<small class="muted">Galois Theory · Series 2 of 3</small>
+</div></div>
+</body>
+</html>
