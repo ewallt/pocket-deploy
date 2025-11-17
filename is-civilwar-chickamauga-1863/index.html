@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chickamauga (1863)</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111833;
+      --ink:#e6ecff;
+      --muted:#a7b0cc;
+      --brand:#8bb9ff;
+      --accent:#c0ffe1;
+      --border:#26325b;
+      --chip:#1a2347;
+      --bad:#ff6b6b;
+      --shadow:0 8px 28px rgba(0,0,0,.35);
+      --radius:12px;
+      --radius-sm:8px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+      line-height:1.6;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
+        radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+      padding-bottom:2rem;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .container{max-width:860px;margin:0 auto;padding:1rem}
+
+    header{
+      background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:2rem 1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+    }
+
+    h1{
+      color:var(--ink);
+      font-size:1.75rem;
+      margin-bottom:.5rem;
+      letter-spacing:-.015em;
+    }
+
+    .subtitle{
+      color:var(--muted);
+      font-size:.95rem;
+      font-style:italic;
+    }
+
+    .breadcrumb{
+      margin-bottom:1rem;
+      font-size:.9rem;
+    }
+    .breadcrumb a{color:var(--brand);text-decoration:none}
+    .breadcrumb span{color:var(--muted)}
+
+    .main-answer{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+      border-left:4px solid var(--brand);
+    }
+
+    .main-answer h2{
+      color:var(--brand);
+      font-size:1.3rem;
+      margin-bottom:1rem;
+      letter-spacing:.01em;
+    }
+
+    .main-answer p{font-size:1.05rem;line-height:1.7}
+
+    .section{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      margin-bottom:1rem;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .section-header{
+      padding:1.1rem 1.25rem;
+      background:linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%);
+      color:var(--ink);
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      border-bottom:1px solid var(--border);
+    }
+
+    .section-header h2{
+      font-size:1.15rem;
+      font-weight:700;
+      letter-spacing:.01em;
+    }
+
+    .section-icon{font-size:1.35rem;transition:transform .3s ease}
+    .section.active .section-icon{transform:rotate(180deg)}
+
+    .section-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+    .section.active .section-content{max-height:5000px}
+
+    .section-inner{padding:1.25rem}
+
+    h3{
+      color:var(--brand);
+      font-size:1.08rem;
+      margin:1.3rem 0 .65rem 0;
+      letter-spacing:.01em;
+    }
+    h3:first-child{margin-top:0}
+
+    .list-item{
+      background:color-mix(in oklab,var(--chip) 75%, transparent);
+      border-left:3px solid var(--brand);
+      padding:1rem;
+      margin-bottom:.75rem;
+      border-radius:var(--radius-sm);
+      border:1px solid var(--border);
+    }
+
+    .timeline{
+      border-left:3px solid var(--brand);
+      padding-left:1.25rem;
+      margin-left:.5rem;
+    }
+
+    .timeline-item{
+      margin-bottom:1.25rem;
+      position:relative;
+    }
+
+    .timeline-item::before{
+      content:'';
+      position:absolute;left:-1.65rem;top:.25rem;
+      width:12px;height:12px;border-radius:50%;
+      background:var(--brand);border:3px solid var(--panel);
+      box-shadow:0 0 0 2px var(--brand);
+    }
+
+    .timeline-item:last-child{
+      margin-bottom:0;
+    }
+
+    .timeline-item:last-child::before{
+      width:16px;
+      height:16px;
+      left:-1.75rem;
+      background:var(--accent);
+      box-shadow:0 0 0 2px var(--accent);
+    }
+
+    .timeline-item strong{color:var(--brand);display:block;margin-bottom:.25rem}
+
+    .source{
+      background:color-mix(in oklab,var(--chip) 65%, transparent);
+      border-radius:8px;padding:1rem;margin-top:1.2rem;
+      font-size:.95rem;color:var(--muted);
+      border:1px solid var(--border);
+    }
+    .source strong{color:var(--ink)}
+
+    .back-to-top{
+      position:fixed;bottom:1.5rem;right:1rem;
+      background:var(--brand);color:#001;
+      width:50px;height:50px;border-radius:50%;
+      border:none;font-size:1.5rem;cursor:pointer;
+      box-shadow:var(--shadow);opacity:0;transition:opacity .3s ease;
+      z-index:1000;display:flex;align-items:center;justify-content:center;
+      font-weight:900;
+    }
+    .back-to-top.visible{opacity:1}
+    .back-to-top:active{transform:scale(.96)}
+
+    a{color:var(--brand)}
+
+    @media (max-width:480px){
+      h1{font-size:1.5rem}
+      .section-header h2{font-size:1.05rem}
+      .container{padding:.75rem}
+      header{padding:1.5rem 1rem}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="https://ewallt.github.io/pocket-deploy/is-civilwar-hub/index.html">Civil War Hub</a> <span>›</span> Chickamauga
+    </div>
+
+    <header>
+      <h1>Chickamauga (1863)</h1>
+      <p class="subtitle">Bragg's Bloody Victory, Thomas's Rock</p>
+    </header>
+
+    <div class="main-answer">
+      <h2>Core Summary</h2>
+      <p>In September 1863, Confederate General Braxton Bragg attacked William Rosecrans's Army of the Cumberland near Chickamauga Creek in northern Georgia. On September 20, an accidental gap in Union lines allowed James Longstreet's corps to smash through the center, routing half the Union army including Rosecrans himself, who fled to Chattanooga. General George H. Thomas organized desperate resistance on Snodgrass Hill and Horseshoe Ridge, holding against repeated Confederate assaults. His stand earned him the immortal nickname "Rock of Chickamauga" and saved the army from destruction, allowing orderly retreat to Chattanooga. Though tactically victorious—inflicting 16,000 Union casualties—Bragg failed to pursue aggressively. Grant arrived in October, broke Bragg's siege of Chattanooga in November, and drove Confederate forces into Georgia.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🎯 Strategic Context</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Tullahoma Campaign:</strong> Through June-July 1863, Rosecrans maneuvered Bragg out of middle Tennessee through skillful flanking movements that avoided major battle. Bragg retreated to Chattanooga, the vital rail junction linking the Western Confederacy.
+          </div>
+          <div class="list-item">
+            <strong>Crossing the Tennessee:</strong> In late August, Rosecrans crossed the Tennessee River south of Chattanooga, threatening Bragg's supply lines and forcing evacuation of the city. Rosecrans pursued what he believed was a beaten, retreating army.
+          </div>
+          <div class="list-item">
+            <strong>Confederate Concentration:</strong> Bragg received massive reinforcements including Longstreet's corps transferred by rail from Virginia. He concentrated 65,000 troops to strike Rosecrans's separated columns before they could reunite. The trap was set.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🪖 Forces & Commanders</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Union:</strong> Rosecrans commanded approximately 58,000 troops organized in three corps. George H. Thomas commanded XIV Corps. Alexander McCook and Thomas Crittenden commanded the other corps. Rosecrans lost his nerve after Longstreet's breakthrough and fled to Chattanooga, leaving Thomas to save the army.
+          </div>
+          <div class="list-item">
+            <strong>Confederate:</strong> Bragg commanded 65,000 troops—his largest army and the Confederacy's last chance for major offensive victory in the West. Longstreet's corps arrived by rail from Virginia. Nathan Bedford Forrest and Joseph Wheeler led cavalry. Bragg's generals despised him personally but obeyed his orders.
+          </div>
+          <div class="list-item">
+            <strong>Casualties:</strong> Union: 1,657 killed, 9,756 wounded, 4,757 captured/missing. Confederate: 2,312 killed, 14,674 wounded, 1,468 missing. Total: approximately 34,624 casualties—second only to Gettysburg in the war's bloodiest battles.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📅 Timeline</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="timeline">
+            <div class="timeline-item">
+              <strong>September 18-19:</strong> Bragg attempts to get between Rosecrans and Chattanooga. Confused fighting in dense woods along Chickamauga Creek produces indecisive results. Both armies strengthen positions overnight. Rosecrans concentrates his scattered corps.
+            </div>
+            <div class="timeline-item">
+              <strong>September 20, morning:</strong> Bragg attacks Union left under Thomas. Fierce fighting in thick forest continues for hours. Thomas holds against repeated Confederate assaults but requests reinforcements.
+            </div>
+            <div class="timeline-item">
+              <strong>September 20, 11 AM:</strong> Rosecrans receives false report of gap in his line. Moving divisions to fill the nonexistent gap creates a real gap. Longstreet's entire corps—15,000 men in tight formation—smashes through the hole, splitting the Union army and routing its right wing.
+            </div>
+            <div class="timeline-item">
+              <strong>September 20, afternoon:</strong> Half the Union army, including Rosecrans, Crittenden, and McCook, flees to Chattanooga in panic. Thomas rallies remaining troops on Snodgrass Hill and Horseshoe Ridge. For six hours, Thomas's outnumbered forces repulse wave after wave of Confederate assaults. He holds until after 5 PM, then withdraws in good order under cover of darkness.
+            </div>
+            <div class="timeline-item">
+              <strong>September 21:</strong> Thomas's corps completes withdrawal to Chattanooga. Bragg pursues halfheartedly. Rather than assault Chattanooga, Bragg besieges it, occupying Missionary Ridge and Lookout Mountain. Confederate tactical victory turns strategically hollow.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>⚡ Turning Points</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Longstreet's Breakthrough:</strong> The accidental gap in Union lines allowed Longstreet to mass his entire corps and drive through like a wedge. Proper Confederate exploitation of this breakthrough might have destroyed the Army of the Cumberland entirely. Bragg's lack of reserves prevented full exploitation.
+          </div>
+          <div class="list-item">
+            <strong>Thomas's Stand:</strong> Refusing initial orders to retreat, Thomas held Snodgrass Hill against overwhelming odds for six critical hours. His defense saved half the Union army and prevented complete disaster. Officers and men called him "the Rock" ever after.
+          </div>
+          <div class="list-item">
+            <strong>Bragg's Hesitation:</strong> Bragg's failure to pursue vigorously after his greatest victory squandered Confederate success. Laying siege to Chattanooga rather than assaulting the demoralized Union army gave Grant time to arrive, break the siege, and reverse Confederate gains.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📊 Outcomes</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Tactical Victory, Strategic Defeat:</strong> Bragg won the field and inflicted 16,000 Union casualties versus 18,000 Confederate losses. But he failed to destroy Rosecrans's trapped army in Chattanooga. Within two months, Grant reversed all Confederate gains.
+          </div>
+          <div class="list-item">
+            <strong>Chattanooga Campaign:</strong> Lincoln sent Grant to take overall command in the West. In November, Grant broke Bragg's siege with dramatic victories at Lookout Mountain and Missionary Ridge, driving Confederate forces deep into Georgia and opening the route to Atlanta.
+          </div>
+          <div class="list-item">
+            <strong>Command Changes:</strong> Lincoln relieved Rosecrans and gave Thomas permanent command of the Army of the Cumberland. Confederate generals petitioned Jefferson Davis for Bragg's removal after the siege failure. Davis eventually replaced him with Joseph Johnston.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🔍 Historical Significance</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <p style="margin-bottom:1rem">Chickamauga represents the Confederacy's last major offensive victory in the Western Theater. Historian Peter Cozzens calls it "the most significant Union defeat west of the Appalachians." The battle proved Bragg could win tactically but lacked the killer instinct for strategic exploitation. Longstreet's devastating attack demonstrated what properly coordinated Confederate assaults could accomplish—his breakthrough rivaled Stonewall Jackson's flank attack at Chancellorsville. But Bragg's post-battle passivity squandered victory as completely as Lee's at Antietam. The battle's horrible casualties—nearly 35,000—rivaled anything in the Eastern Theater. Fighting in dense woods at point-blank range produced unprecedented carnage. Soldiers fought blind, firing at sounds in the forest. Thomas's stand became legendary in American military history, ranking with other desperate last stands. His promotion to army command proved well-deserved. Chickamauga demonstrated that the war would be won in the West, not Virginia. Control of rail junctions, rivers, and agricultural resources mattered more than winning tactical victories near Washington and Richmond.</p>
+          <div class="source">
+            <strong>Primary Sources:</strong> Thomas's official reports, Longstreet's memoirs describing his breakthrough, soldiers' accounts of fighting in dense woods, Bragg's bitter recriminations.
+          </div>
+          <div class="source">
+            <strong>Key Works:</strong> Peter Cozzens, <em>This Terrible Sound: The Battle of Chickamauga</em> (1992); Glenn Tucker, <em>Chickamauga: Bloody Battle in the West</em> (1961); Steven E. Woodworth, <em>Six Armies in Tennessee</em> (1998).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="back-to-top" onclick="scrollToTop()">↑</button>
+
+  <script>
+    function toggleSection(header){
+      const section = header.parentElement;
+      const allSections = document.querySelectorAll('.section');
+      allSections.forEach(s=>{
+        if(s !== section) s.classList.remove('active');
+      });
+      section.classList.toggle('active');
+    }
+
+    function scrollToTop(){
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    window.addEventListener('scroll', ()=>{
+      const btn = document.querySelector('.back-to-top');
+      if(window.scrollY > 300){
+        btn.classList.add('visible');
+      } else {
+        btn.classList.remove('visible');
+      }
+    });
+  </script>
+</body>
+</html>

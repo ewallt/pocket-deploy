@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fort Sumter (1861)</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111833;
+      --ink:#e6ecff;
+      --muted:#a7b0cc;
+      --brand:#8bb9ff;
+      --accent:#c0ffe1;
+      --border:#26325b;
+      --chip:#1a2347;
+      --bad:#ff6b6b;
+      --shadow:0 8px 28px rgba(0,0,0,.35);
+      --radius:12px;
+      --radius-sm:8px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+      line-height:1.6;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
+        radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+      padding-bottom:2rem;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .container{max-width:860px;margin:0 auto;padding:1rem}
+
+    header{
+      background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:2rem 1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+    }
+
+    h1{
+      color:var(--ink);
+      font-size:1.75rem;
+      margin-bottom:.5rem;
+      letter-spacing:-.015em;
+    }
+
+    .subtitle{
+      color:var(--muted);
+      font-size:.95rem;
+      font-style:italic;
+    }
+
+    .breadcrumb{
+      margin-bottom:1rem;
+      font-size:.9rem;
+    }
+    .breadcrumb a{color:var(--brand);text-decoration:none}
+    .breadcrumb span{color:var(--muted)}
+
+    .main-answer{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+      border-left:4px solid var(--brand);
+    }
+
+    .main-answer h2{
+      color:var(--brand);
+      font-size:1.3rem;
+      margin-bottom:1rem;
+      letter-spacing:.01em;
+    }
+
+    .main-answer p{font-size:1.05rem;line-height:1.7}
+
+    .section{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      margin-bottom:1rem;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .section-header{
+      padding:1.1rem 1.25rem;
+      background:linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%);
+      color:var(--ink);
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      border-bottom:1px solid var(--border);
+    }
+
+    .section-header h2{
+      font-size:1.15rem;
+      font-weight:700;
+      letter-spacing:.01em;
+    }
+
+    .section-icon{font-size:1.35rem;transition:transform .3s ease}
+    .section.active .section-icon{transform:rotate(180deg)}
+
+    .section-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+    .section.active .section-content{max-height:5000px}
+
+    .section-inner{padding:1.25rem}
+
+    h3{
+      color:var(--brand);
+      font-size:1.08rem;
+      margin:1.3rem 0 .65rem 0;
+      letter-spacing:.01em;
+    }
+    h3:first-child{margin-top:0}
+
+    .list-item{
+      background:color-mix(in oklab,var(--chip) 75%, transparent);
+      border-left:3px solid var(--brand);
+      padding:1rem;
+      margin-bottom:.75rem;
+      border-radius:var(--radius-sm);
+      border:1px solid var(--border);
+    }
+
+    .timeline{
+      border-left:3px solid var(--brand);
+      padding-left:1.25rem;
+      margin-left:.5rem;
+    }
+
+    .timeline-item{
+      margin-bottom:1.25rem;
+      position:relative;
+    }
+
+    .timeline-item::before{
+      content:'';
+      position:absolute;left:-1.65rem;top:.25rem;
+      width:12px;height:12px;border-radius:50%;
+      background:var(--brand);border:3px solid var(--panel);
+      box-shadow:0 0 0 2px var(--brand);
+    }
+
+    .timeline-item:last-child{
+      margin-bottom:0;
+    }
+
+    .timeline-item:last-child::before{
+      width:16px;
+      height:16px;
+      left:-1.75rem;
+      background:var(--accent);
+      box-shadow:0 0 0 2px var(--accent);
+    }
+
+    .timeline-item strong{color:var(--brand);display:block;margin-bottom:.25rem}
+
+    .source{
+      background:color-mix(in oklab,var(--chip) 65%, transparent);
+      border-radius:8px;padding:1rem;margin-top:1.2rem;
+      font-size:.95rem;color:var(--muted);
+      border:1px solid var(--border);
+    }
+    .source strong{color:var(--ink)}
+
+    .back-to-top{
+      position:fixed;bottom:1.5rem;right:1rem;
+      background:var(--brand);color:#001;
+      width:50px;height:50px;border-radius:50%;
+      border:none;font-size:1.5rem;cursor:pointer;
+      box-shadow:var(--shadow);opacity:0;transition:opacity .3s ease;
+      z-index:1000;display:flex;align-items:center;justify-content:center;
+      font-weight:900;
+    }
+    .back-to-top.visible{opacity:1}
+    .back-to-top:active{transform:scale(.96)}
+
+    a{color:var(--brand)}
+
+    @media (max-width:480px){
+      h1{font-size:1.5rem}
+      .section-header h2{font-size:1.05rem}
+      .container{padding:.75rem}
+      header{padding:1.5rem 1rem}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="https://ewallt.github.io/pocket-deploy/is-civilwar-hub/index.html">Civil War Hub</a> <span>›</span> Fort Sumter
+    </div>
+
+    <header>
+      <h1>Fort Sumter (1861)</h1>
+      <p class="subtitle">The Opening Shots of the Civil War</p>
+    </header>
+
+    <div class="main-answer">
+      <h2>Core Summary</h2>
+      <p>On April 12, 1861, Confederate artillery batteries surrounding Charleston Harbor opened fire on Fort Sumter, a federal fort held by Major Robert Anderson and 85 Union soldiers. After 34 hours of bombardment, with the fort's walls crumbling and supplies exhausted, Anderson surrendered. Though no one was killed in combat, the attack galvanized both North and South. Lincoln called for 75,000 volunteers to suppress the rebellion; four more Southern states seceded in response. The shots fired at Fort Sumter transformed months of political crisis into four years of bloody civil war.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🎯 Strategic Context</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Secession Crisis:</strong> Seven Southern states seceded after Lincoln's election in November 1860. By February 1861, they formed the Confederate States of America with Jefferson Davis as president.
+          </div>
+          <div class="list-item">
+            <strong>Federal Forts:</strong> The Confederacy demanded federal installations on Southern soil. Most commanders surrendered peacefully. Major Anderson withdrew his garrison from indefensible Fort Moultrie to Fort Sumter in Charleston Harbor.
+          </div>
+          <div class="list-item">
+            <strong>Lincoln's Dilemma:</strong> The new president faced an impossible choice: resupply Sumter and risk war, or abandon it and legitimize secession. Lincoln chose to send unarmed supply ships and force Davis to fire first.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🪖 Forces & Commanders</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Union:</strong> Major Robert Anderson commanded 85 soldiers and officers inside Fort Sumter. They had limited ammunition and dwindling food supplies. No relief arrived before the attack.
+          </div>
+          <div class="list-item">
+            <strong>Confederate:</strong> General P.G.T. Beauregard commanded thousands of troops manning batteries around Charleston Harbor. Over 40 guns targeted the fort from multiple directions.
+          </div>
+          <div class="list-item">
+            <strong>Casualties:</strong> Remarkably, no one was killed in the bombardment. Two Union soldiers died in an accidental explosion during the evacuation ceremony. The bloodless beginning belied the carnage to come.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📅 Timeline</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="timeline">
+            <div class="timeline-item">
+              <strong>April 11, 1861:</strong> Confederate officers demand Anderson's surrender. He refuses but mentions his supplies will run out in days.
+            </div>
+            <div class="timeline-item">
+              <strong>April 12, 4:30 AM:</strong> Confederate batteries open fire. The first shell is fired by Edmund Ruffin, a Virginia secessionist. Fort Sumter returns fire but is hopelessly outgunned.
+            </div>
+            <div class="timeline-item">
+              <strong>April 12–13:</strong> Confederate shells pound the fort continuously. Barracks catch fire. The flagstaff is shot away and raised again. Anderson's men shelter in casemates.
+            </div>
+            <div class="timeline-item">
+              <strong>April 13, afternoon:</strong> With walls breached, ammunition nearly gone, and fires raging, Anderson agrees to surrender terms.
+            </div>
+            <div class="timeline-item">
+              <strong>April 14:</strong> Anderson evacuates. During a 100-gun salute to the U.S. flag, a cannon explodes, killing two soldiers—the only deaths of the battle.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>⚡ Turning Points</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>The Decision to Fire:</strong> Confederate leaders knew attacking federal property meant war. Davis and his cabinet debated for hours. Beauregard received orders to demand surrender and, if refused, reduce the fort. The decision made war inevitable.
+          </div>
+          <div class="list-item">
+            <strong>Anderson's Defense:</strong> Though Anderson could not win, his refusal to surrender without a fight preserved Union honor and gave Lincoln moral high ground. The North rallied behind a garrison that fought against overwhelming odds.
+          </div>
+          <div class="list-item">
+            <strong>Lincoln's Response:</strong> On April 15, Lincoln called for 75,000 militia to suppress the rebellion. This forced border states to choose sides. Virginia, Arkansas, Tennessee, and North Carolina seceded, transforming a regional crisis into total war.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📊 Outcomes</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>War Begins:</strong> The attack on Fort Sumter ended all hope of peaceful resolution. Both sides mobilized for war, expecting it would be short and glorious.
+          </div>
+          <div class="list-item">
+            <strong>Northern Unity:</strong> The attack unified Northern opinion. Even Democrats who had opposed coercing the South now supported suppressing armed rebellion. Volunteers flooded recruitment offices.
+          </div>
+          <div class="list-item">
+            <strong>Expanded Confederacy:</strong> Four more states joined the Confederacy after Lincoln's call for troops. Virginia's secession was particularly significant, bringing Robert E. Lee and other talented officers into Confederate service.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🔍 Historical Significance</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <p style="margin-bottom:1rem">Fort Sumter transformed political crisis into armed conflict. Historian James McPherson notes that "the drama of Fort Sumter focused Northern attention on the reality of disunion and the necessity to preserve the Union by force if necessary." The bloodless bombardment ironically proved that war could no longer be avoided through compromise. Lincoln's careful handling forced the Confederacy to fire first, ensuring border state neutrality would eventually break in the Union's favor. The fort itself remained in Confederate hands until February 1865, when Sherman's march through South Carolina finally forced its evacuation. Anderson returned to raise the same flag he had lowered four years earlier.</p>
+          <div class="source">
+            <strong>Primary Sources:</strong> Major Anderson's official report, Confederate war department records, numerous eyewitness accounts from Charleston.
+          </div>
+          <div class="source">
+            <strong>Key Works:</strong> James M. McPherson, <em>Battle Cry of Freedom</em> (1988); Maury Klein, <em>Days of Defiance: Sumter, Secession, and the Coming of the Civil War</em> (1997).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="back-to-top" onclick="scrollToTop()">↑</button>
+
+  <script>
+    function toggleSection(header){
+      const section = header.parentElement;
+      const allSections = document.querySelectorAll('.section');
+      allSections.forEach(s=>{
+        if(s !== section) s.classList.remove('active');
+      });
+      section.classList.toggle('active');
+    }
+
+    function scrollToTop(){
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    window.addEventListener('scroll', ()=>{
+      const btn = document.querySelector('.back-to-top');
+      if(window.scrollY > 300){
+        btn.classList.add('visible');
+      } else {
+        btn.classList.remove('visible');
+      }
+    });
+  </script>
+</body>
+</html>

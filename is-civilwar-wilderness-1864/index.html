@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>The Wilderness (1864)</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111833;
+      --ink:#e6ecff;
+      --muted:#a7b0cc;
+      --brand:#8bb9ff;
+      --accent:#c0ffe1;
+      --border:#26325b;
+      --chip:#1a2347;
+      --bad:#ff6b6b;
+      --shadow:0 8px 28px rgba(0,0,0,.35);
+      --radius:12px;
+      --radius-sm:8px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+      line-height:1.6;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
+        radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+      padding-bottom:2rem;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .container{max-width:860px;margin:0 auto;padding:1rem}
+
+    header{
+      background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:2rem 1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+    }
+
+    h1{
+      color:var(--ink);
+      font-size:1.75rem;
+      margin-bottom:.5rem;
+      letter-spacing:-.015em;
+    }
+
+    .subtitle{
+      color:var(--muted);
+      font-size:.95rem;
+      font-style:italic;
+    }
+
+    .breadcrumb{
+      margin-bottom:1rem;
+      font-size:.9rem;
+    }
+    .breadcrumb a{color:var(--brand);text-decoration:none}
+    .breadcrumb span{color:var(--muted)}
+
+    .main-answer{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+      border-left:4px solid var(--brand);
+    }
+
+    .main-answer h2{
+      color:var(--brand);
+      font-size:1.3rem;
+      margin-bottom:1rem;
+      letter-spacing:.01em;
+    }
+
+    .main-answer p{font-size:1.05rem;line-height:1.7}
+
+    .section{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      margin-bottom:1rem;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .section-header{
+      padding:1.1rem 1.25rem;
+      background:linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%);
+      color:var(--ink);
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      border-bottom:1px solid var(--border);
+    }
+
+    .section-header h2{
+      font-size:1.15rem;
+      font-weight:700;
+      letter-spacing:.01em;
+    }
+
+    .section-icon{font-size:1.35rem;transition:transform .3s ease}
+    .section.active .section-icon{transform:rotate(180deg)}
+
+    .section-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+    .section.active .section-content{max-height:5000px}
+
+    .section-inner{padding:1.25rem}
+
+    h3{
+      color:var(--brand);
+      font-size:1.08rem;
+      margin:1.3rem 0 .65rem 0;
+      letter-spacing:.01em;
+    }
+    h3:first-child{margin-top:0}
+
+    .list-item{
+      background:color-mix(in oklab,var(--chip) 75%, transparent);
+      border-left:3px solid var(--brand);
+      padding:1rem;
+      margin-bottom:.75rem;
+      border-radius:var(--radius-sm);
+      border:1px solid var(--border);
+    }
+
+    .timeline{
+      border-left:3px solid var(--brand);
+      padding-left:1.25rem;
+      margin-left:.5rem;
+    }
+
+    .timeline-item{
+      margin-bottom:1.25rem;
+      position:relative;
+    }
+
+    .timeline-item::before{
+      content:'';
+      position:absolute;left:-1.65rem;top:.25rem;
+      width:12px;height:12px;border-radius:50%;
+      background:var(--brand);border:3px solid var(--panel);
+      box-shadow:0 0 0 2px var(--brand);
+    }
+
+    .timeline-item:last-child{
+      margin-bottom:0;
+    }
+
+    .timeline-item:last-child::before{
+      width:16px;
+      height:16px;
+      left:-1.75rem;
+      background:var(--accent);
+      box-shadow:0 0 0 2px var(--accent);
+    }
+
+    .timeline-item strong{color:var(--brand);display:block;margin-bottom:.25rem}
+
+    .source{
+      background:color-mix(in oklab,var(--chip) 65%, transparent);
+      border-radius:8px;padding:1rem;margin-top:1.2rem;
+      font-size:.95rem;color:var(--muted);
+      border:1px solid var(--border);
+    }
+    .source strong{color:var(--ink)}
+
+    .back-to-top{
+      position:fixed;bottom:1.5rem;right:1rem;
+      background:var(--brand);color:#001;
+      width:50px;height:50px;border-radius:50%;
+      border:none;font-size:1.5rem;cursor:pointer;
+      box-shadow:var(--shadow);opacity:0;transition:opacity .3s ease;
+      z-index:1000;display:flex;align-items:center;justify-content:center;
+      font-weight:900;
+    }
+    .back-to-top.visible{opacity:1}
+    .back-to-top:active{transform:scale(.96)}
+
+    a{color:var(--brand)}
+
+    @media (max-width:480px){
+      h1{font-size:1.5rem}
+      .section-header h2{font-size:1.05rem}
+      .container{padding:.75rem}
+      header{padding:1.5rem 1rem}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="https://ewallt.github.io/pocket-deploy/is-civilwar-hub/index.html">Civil War Hub</a> <span>›</span> The Wilderness
+    </div>
+
+    <header>
+      <h1>The Wilderness (1864)</h1>
+      <p class="subtitle">Grant Refuses to Retreat</p>
+    </header>
+
+    <div class="main-answer">
+      <h2>Core Summary</h2>
+      <p>On May 5-7, 1864, Ulysses S. Grant and Robert E. Lee clashed for the first time in the tangled Virginia forest called the Wilderness. Grant's Overland Campaign began with brutal fighting in near-zero visibility through dense second-growth woods and tangled undergrowth. Muzzle flashes ignited brush fires that burned wounded soldiers alive—their screams haunted survivors. Two days of savage combat produced over 29,000 casualties with neither side gaining decisive advantage. Every previous Union commander—McClellan, Burnside, Hooker, Meade—had retreated after such bloodbaths. On May 7, Grant turned his army south toward Spotsylvania Court House instead, beginning six weeks of relentless offensive operations. His refusal to retreat despite horrible losses signaled a fundamental change in Union strategy: continuous pressure until Confederate armies were destroyed. Lee would never regain the strategic initiative.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🎯 Strategic Context</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Grant Takes Command:</strong> In March 1864, Lincoln promoted Grant to lieutenant general and gave him command of all Union armies. Grant chose to direct operations against Lee personally, making his headquarters with the Army of the Potomac while Meade retained tactical command.
+          </div>
+          <div class="list-item">
+            <strong>Overland Campaign Begins:</strong> Grant planned to cross the Rapidan River and move south, forcing Lee to fight in open country where Union numerical superiority would tell. The Wilderness—70 square miles of dense, tangled forest—was the last place Grant wanted to fight. Visibility was measured in yards, not miles.
+          </div>
+          <div class="list-item">
+            <strong>Lee's Response:</strong> Rather than let Grant reach open ground, Lee attacked in the Wilderness. Fighting in the tangled woods would negate Union numerical advantage and prevent Grant from deploying artillery effectively. Lee knew the terrain intimately from Chancellorsville the previous year.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🪖 Forces & Commanders</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Union:</strong> Grant commanded 118,000 troops in the Army of the Potomac (nominally under Meade). Winfield Scott Hancock, John Sedgwick, Gouverneur K. Warren, and Ambrose Burnside led corps. Grant accompanied the army, directing overall strategy while Meade handled tactical deployments.
+          </div>
+          <div class="list-item">
+            <strong>Confederate:</strong> Lee commanded 61,000 troops—half Grant's strength. James Longstreet and Richard Ewell led corps. A.P. Hill commanded the III Corps despite being seriously ill. Lee's outnumbered army exploited every terrain advantage the Wilderness provided.
+          </div>
+          <div class="list-item">
+            <strong>Casualties:</strong> Union: 2,246 killed, 12,037 wounded, 3,383 missing. Confederate: approximately 1,495 killed, 7,928 wounded, 1,702 missing (Confederate records incomplete). Total: approximately 29,000 casualties in 48 hours of fighting. An unknown number burned to death in forest fires.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📅 Timeline</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="timeline">
+            <div class="timeline-item">
+              <strong>May 4, 1864:</strong> Grant's army crosses the Rapidan River at Germanna and Ely's fords, entering the Wilderness. Grant hopes to pass through quickly. Lee advances to intercept, forcing battle in the dense forest.
+            </div>
+            <div class="timeline-item">
+              <strong>May 5, noon:</strong> Fighting erupts along the Orange Turnpike and Orange Plank Road. Visibility in the dense forest is almost zero. Units become disoriented. Soldiers fire at sounds and muzzle flashes. Friend fires on friend as often as foe. Indecisive, confused combat continues all day.
+            </div>
+            <div class="timeline-item">
+              <strong>May 6, dawn:</strong> Grant attacks along the entire line before Lee can concentrate his forces. Hancock's II Corps nearly breaks through A.P. Hill's battered division. Confederate collapse seems imminent. Lee personally tries to lead a Texas brigade forward but his troops refuse to advance until he withdraws to safety.
+            </div>
+            <div class="timeline-item">
+              <strong>May 6, morning:</strong> Longstreet's I Corps arrives after forced march and counterattacks Hancock's exposed flank. Union advance collapses. Longstreet prepares devastating follow-up attack but is seriously wounded by his own men—shot in the throat and shoulder while scouting. The wounding occurs less than four miles from where Stonewall Jackson fell exactly one year earlier. Confederate attacks stall without Longstreet's direction.
+            </div>
+            <div class="timeline-item">
+              <strong>May 6, afternoon:</strong> Brush fires ignited by muzzle flashes spread through the tinder-dry forest. Wounded soldiers unable to crawl to safety burn alive. Their screams echo through the woods. Both armies pause to rescue wounded when possible. The horror haunts survivors for life.
+            </div>
+            <div class="timeline-item">
+              <strong>May 7:</strong> Armies rest and tend wounded. Grant decides: rather than retreat as previous commanders had done, he will slide south toward Spotsylvania Court House. When soldiers realize they're advancing not retreating, they cheer wildly. For the first time, the Army of the Potomac has a commander who won't quit after a setback.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>⚡ Turning Points</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Terrain Neutralizes Numbers:</strong> The Wilderness's dense forest and tangled undergrowth prevented Grant from deploying his 2-to-1 numerical advantage. Artillery couldn't be positioned effectively. Cavalry was useless. Soldiers fought blind, firing at sounds and muzzle flashes. Lee's gamble to fight there paid off tactically.
+          </div>
+          <div class="list-item">
+            <strong>Longstreet's Arrival and Wounding:</strong> Longstreet's timely flank attack on May 6 saved Lee's right wing and nearly routed Hancock's corps. His wounding—shot by the 12th Virginia Regiment in friendly fire—robbed Lee of critical leadership at the moment of potential breakthrough. Longstreet would be out of action for five months.
+          </div>
+          <div class="list-item">
+            <strong>Grant's Decision:</strong> Every previous Union commander in Virginia—McClellan, Burnside, Hooker, Meade—had retreated after battles like the Wilderness. Grant advanced. This single decision transformed the Eastern Theater. Continuous operations gave Lee no time to rest, refit, or maneuver. From May 1864 until April 1865, Lee fought defensively.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📊 Outcomes</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>No Tactical Victor:</strong> Neither side won the Wilderness decisively. Both armies held positions at battle's end. Casualties were horrific—17% Union losses, 18% Confederate—for marginal gain. Lee had stopped Grant's initial advance but failed to destroy Union forces.
+          </div>
+          <div class="list-item">
+            <strong>Strategic Transformation:</strong> Grant's refusal to retreat initiated a new kind of warfare in Virginia. He abandoned the pattern of battle-retreat-rest-advance that had characterized previous campaigns. Continuous operations exhausted Confederate resources faster than Union could replace them.
+          </div>
+          <div class="list-item">
+            <strong>Overland Campaign Continues:</strong> Grant slid southeast toward Spotsylvania, beginning six weeks of marching and fighting: the Wilderness, Spotsylvania, North Anna, Cold Harbor, crossing the James River, then Petersburg. Each battle pushed Lee closer to Richmond and eventual defeat.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🔍 Historical Significance</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <p style="margin-bottom:1rem">The Wilderness marked the beginning of modern warfare's relentless grind. Historian Gordon Rhea notes that "Grant's decision to continue advancing after the Wilderness changed the war's character fundamentally." Previous commanders had fought a battle, counted casualties, then rested or retreated. Grant fought continuously for six weeks, giving Lee no respite. The strategy was brutal: Grant lost 55,000 casualties during the Overland Campaign—nearly as many troops as Lee commanded in total. But Union resources could sustain such losses; Confederate could not. The Wilderness's horror—wounded burning alive, bodies so thick survivors walked on corpses, fighting blind in tangled woods—previewed World War I's Western Front. Yet Grant understood modern industrial war: victory required breaking enemy will through continuous pressure, not brilliant maneuver. Lee's tactical genius still shone—his defensive fighting at the Wilderness, Spotsylvania, and Cold Harbor inflicted 2-to-1 casualties. But he could not escape Grant's remorseless advance. Northern newspapers screamed "butcher" after 55,000 casualties in six weeks. Grant grimly continued. Lincoln finally had the general he needed to win.</p>
+          <div class="source">
+            <strong>Primary Sources:</strong> Grant's Personal Memoirs, Horace Porter's Campaigning with Grant, soldiers' letters describing the horror of wounded burning alive.
+          </div>
+          <div class="source">
+            <strong>Key Works:</strong> Gordon C. Rhea, <em>The Battle of the Wilderness, May 5-6, 1864</em> (1994); Edward Steere, <em>The Wilderness Campaign</em> (1960); Shelby Foote, <em>The Civil War: Red River to Appomattox</em> (1974).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="back-to-top" onclick="scrollToTop()">↑</button>
+
+  <script>
+    function toggleSection(header){
+      const section = header.parentElement;
+      const allSections = document.querySelectorAll('.section');
+      allSections.forEach(s=>{
+        if(s !== section) s.classList.remove('active');
+      });
+      section.classList.toggle('active');
+    }
+
+    function scrollToTop(){
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    window.addEventListener('scroll', ()=>{
+      const btn = document.querySelector('.back-to-top');
+      if(window.scrollY > 300){
+        btn.classList.add('visible');
+      } else {
+        btn.classList.remove('visible');
+      }
+    });
+  </script>
+</body>
+</html>

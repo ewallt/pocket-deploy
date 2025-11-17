@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Antietam (1862)</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111833;
+      --ink:#e6ecff;
+      --muted:#a7b0cc;
+      --brand:#8bb9ff;
+      --accent:#c0ffe1;
+      --border:#26325b;
+      --chip:#1a2347;
+      --bad:#ff6b6b;
+      --shadow:0 8px 28px rgba(0,0,0,.35);
+      --radius:12px;
+      --radius-sm:8px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+      line-height:1.6;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
+        radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+      padding-bottom:2rem;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .container{max-width:860px;margin:0 auto;padding:1rem}
+
+    header{
+      background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:2rem 1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+    }
+
+    h1{
+      color:var(--ink);
+      font-size:1.75rem;
+      margin-bottom:.5rem;
+      letter-spacing:-.015em;
+    }
+
+    .subtitle{
+      color:var(--muted);
+      font-size:.95rem;
+      font-style:italic;
+    }
+
+    .breadcrumb{
+      margin-bottom:1rem;
+      font-size:.9rem;
+    }
+    .breadcrumb a{color:var(--brand);text-decoration:none}
+    .breadcrumb span{color:var(--muted)}
+
+    .main-answer{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+      border-left:4px solid var(--brand);
+    }
+
+    .main-answer h2{
+      color:var(--brand);
+      font-size:1.3rem;
+      margin-bottom:1rem;
+      letter-spacing:.01em;
+    }
+
+    .main-answer p{font-size:1.05rem;line-height:1.7}
+
+    .section{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      margin-bottom:1rem;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .section-header{
+      padding:1.1rem 1.25rem;
+      background:linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%);
+      color:var(--ink);
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      border-bottom:1px solid var(--border);
+    }
+
+    .section-header h2{
+      font-size:1.15rem;
+      font-weight:700;
+      letter-spacing:.01em;
+    }
+
+    .section-icon{font-size:1.35rem;transition:transform .3s ease}
+    .section.active .section-icon{transform:rotate(180deg)}
+
+    .section-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+    .section.active .section-content{max-height:5000px}
+
+    .section-inner{padding:1.25rem}
+
+    h3{
+      color:var(--brand);
+      font-size:1.08rem;
+      margin:1.3rem 0 .65rem 0;
+      letter-spacing:.01em;
+    }
+    h3:first-child{margin-top:0}
+
+    .list-item{
+      background:color-mix(in oklab,var(--chip) 75%, transparent);
+      border-left:3px solid var(--brand);
+      padding:1rem;
+      margin-bottom:.75rem;
+      border-radius:var(--radius-sm);
+      border:1px solid var(--border);
+    }
+
+    .timeline{
+      border-left:3px solid var(--brand);
+      padding-left:1.25rem;
+      margin-left:.5rem;
+    }
+
+    .timeline-item{
+      margin-bottom:1.25rem;
+      position:relative;
+    }
+
+    .timeline-item::before{
+      content:'';
+      position:absolute;left:-1.65rem;top:.25rem;
+      width:12px;height:12px;border-radius:50%;
+      background:var(--brand);border:3px solid var(--panel);
+      box-shadow:0 0 0 2px var(--brand);
+    }
+
+    .timeline-item:last-child{
+      margin-bottom:0;
+    }
+
+    .timeline-item:last-child::before{
+      width:16px;
+      height:16px;
+      left:-1.75rem;
+      background:var(--accent);
+      box-shadow:0 0 0 2px var(--accent);
+    }
+
+    .timeline-item strong{color:var(--brand);display:block;margin-bottom:.25rem}
+
+    .source{
+      background:color-mix(in oklab,var(--chip) 65%, transparent);
+      border-radius:8px;padding:1rem;margin-top:1.2rem;
+      font-size:.95rem;color:var(--muted);
+      border:1px solid var(--border);
+    }
+    .source strong{color:var(--ink)}
+
+    .back-to-top{
+      position:fixed;bottom:1.5rem;right:1rem;
+      background:var(--brand);color:#001;
+      width:50px;height:50px;border-radius:50%;
+      border:none;font-size:1.5rem;cursor:pointer;
+      box-shadow:var(--shadow);opacity:0;transition:opacity .3s ease;
+      z-index:1000;display:flex;align-items:center;justify-content:center;
+      font-weight:900;
+    }
+    .back-to-top.visible{opacity:1}
+    .back-to-top:active{transform:scale(.96)}
+
+    a{color:var(--brand)}
+
+    @media (max-width:480px){
+      h1{font-size:1.5rem}
+      .section-header h2{font-size:1.05rem}
+      .container{padding:.75rem}
+      header{padding:1.5rem 1rem}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="https://ewallt.github.io/pocket-deploy/is-civilwar-hub/index.html">Civil War Hub</a> <span>›</span> Antietam
+    </div>
+
+    <header>
+      <h1>Antietam (1862)</h1>
+      <p class="subtitle">America's Bloodiest Single Day</p>
+    </header>
+
+    <div class="main-answer">
+      <h2>Core Summary</h2>
+      <p>On September 17, 1862, General George B. McClellan's Army of the Potomac attacked Robert E. Lee's Army of Northern Virginia near Sharpsburg, Maryland. Despite possessing Lee's battle plans, McClellan launched piecemeal attacks that Lee parried with desperate counterstrokes. Savage fighting at the Cornfield, Bloody Lane, and Burnside's Bridge produced over 22,000 casualties in a single day—more than any other day in American military history. Though tactically a draw, Lee's retreat ended his Maryland campaign. The battle gave Lincoln the victory he needed to issue the Emancipation Proclamation, transforming the war's purpose from Union preservation to ending slavery.</p>
+    </div>
+
+        <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🎯 Strategic Context</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Lee's Invasion:</strong> After victories at Second Bull Run, Lee invaded Maryland hoping to win European recognition, influence Northern elections, and threaten Washington. He expected Maryland to rise for the Confederacy.
+          </div>
+          <div class="list-item">
+            <strong>Special Order 191:</strong> A Union soldier discovered Lee's wrapped cigars containing Lee's entire campaign plan. McClellan knew Lee had divided his army but moved cautiously, squandering the advantage.
+          </div>
+          <div class="list-item">
+            <strong>Converging Armies:</strong> Lee concentrated his scattered forces near Sharpsburg with the Potomac River at his back—a desperate position. McClellan had 75,000 troops versus Lee's 38,000. Victory seemed certain.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🪖 Forces & Commanders</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Union:</strong> McClellan commanded approximately 75,000 troops. His corps commanders—Burnside, Sumner, Hooker—attacked piecemeal rather than coordinating. McClellan held 20,000 reserves he never committed.
+          </div>
+          <div class="list-item">
+            <strong>Confederate:</strong> Lee commanded 38,000 troops stretched thin across a three-mile line. Jackson held the left, Longstreet the center and right. Every regiment was committed; Lee had no reserves.
+          </div>
+          <div class="list-item">
+            <strong>Casualties:</strong> Union: 2,108 killed, 9,540 wounded, 753 missing. Confederate: 1,546 killed, 7,752 wounded, 1,018 missing. Total: approximately 22,717 casualties in 12 hours of fighting.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📅 Timeline</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="timeline">
+          <div class="list-item">
+            <strong>September 17, dawn:</strong> Hooker's corps attacks through the Cornfield. Savage fighting surges back and forth. Every stalk of corn in a 30-acre field is cut down by bullets. Thousands fall in minutes.
+          </div>
+          <div class="list-item">
+            <strong>September 17, mid-morning:</strong> Sumner's corps attacks the Confederate center at the Sunken Road (Bloody Lane). Union troops pour fire into the trapped Confederates. Bodies pile four deep.
+          </div>
+          <div class="list-item">
+            <strong>September 17, afternoon:</strong> Burnside finally crosses Antietam Creek after hours of delay. His corps threatens Lee's right flank and route of retreat. Confederate collapse seems imminent.
+          </div>
+          <div class="list-item">
+            <strong>September 17, late afternoon:</strong> A.P. Hill's division arrives from Harpers Ferry after a forced march. They slam into Burnside's exposed flank, driving Union forces back to the bridge.
+          </div>
+          <div class="list-item">
+            <strong>September 18:</strong> Both armies stand bloodied but intact. Lee dares McClellan to attack again. McClellan refuses. That night, Lee retreats across the Potomac. The invasion has failed.
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>⚡ Turning Points</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>The Cornfield:</strong> Six hours of fighting for a single cornfield produced 13,000 casualties. Neither side gained advantage, but Confederate losses proportionally hurt Lee more. His army was bled white.
+          </div>
+          <div class="list-item">
+            <strong>Bloody Lane Breakthrough:</strong> When Union troops flanked the Sunken Road, Confederate defenders fled in panic. A gap opened in Lee's center. McClellan had 20,000 fresh reserves but refused to commit them.
+          </div>
+          <div class="list-item">
+            <strong>Hill's Last-Minute Arrival:</strong> A.P. Hill's men, wearing captured Union blue overcoats, approached Burnside's flank unrecognized. Their surprise attack saved Lee's army from destruction and retreat route from capture.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📊 Outcomes</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Tactical Draw, Strategic Victory:</strong> Neither side achieved tactical breakthrough. But Lee's retreat into Virginia ended the Maryland Campaign and destroyed Southern hopes of European intervention.
+          </div>
+          <div class="list-item">
+            <strong>Emancipation Proclamation:</strong> Lincoln had waited for a victory to issue the proclamation. Antietam, though hardly decisive, gave him political cover. On September 22, he announced enslaved persons in rebel states would be free on January 1, 1863.
+          </div>
+          <div class="list-item">
+            <strong>McClellan's Failure:</strong> Despite superior numbers and Lee's desperate position, McClellan failed to destroy the Confederate army. Lincoln's frustration grew. In November, he relieved McClellan of command.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🔍 Historical Significance</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <p style="margin-bottom:1rem">Antietam stands as the Civil War's pivotal moment. Historian James McPherson calls it 'the most important single day of the war.' Lee's retreat preserved the Union by preventing European recognition of the Confederacy. The Emancipation Proclamation transformed the war from a limited conflict to a revolutionary struggle. Britain and France, both having abolished slavery, could not support the South after Lincoln redefined the war's purpose. The battle's terrible casualties—22,000 in one day—foreshadowed the war's industrial-scale killing. Photographer Alexander Gardner's images of corpses strewn across the battlefield brought war's horror to the Northern public. The battle proved Lee could be stopped and his army was not invincible. Yet McClellan's failure to pursue showed the Army of the Potomac still lacked killer instinct.</p>
+          <div class="source">
+            <strong>Primary Sources:</strong> McClellan's reports, Lee's dispatches, soldiers' letters describing the Cornfield's horror, Gardner's photographs.
+          </div>
+          <div class="source">
+            <strong>Key Works:</strong> James M. McPherson, Crossroads of Freedom: Antietam (2002); Stephen W. Sears, Landscape Turned Red (1983).
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+  <button class="back-to-top" onclick="scrollToTop()">↑</button>
+
+  <script>
+    function toggleSection(header){
+      const section = header.parentElement;
+      const allSections = document.querySelectorAll('.section');
+      allSections.forEach(s=>{
+        if(s !== section) s.classList.remove('active');
+      });
+      section.classList.toggle('active');
+    }
+
+    function scrollToTop(){
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    window.addEventListener('scroll', ()=>{
+      const btn = document.querySelector('.back-to-top');
+      if(window.scrollY > 300){
+        btn.classList.add('visible');
+      } else {
+        btn.classList.remove('visible');
+      }
+    });
+  </script>
+</body>
+</html>
