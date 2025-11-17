@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Santiago de Cuba (1898)</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111833;
+      --ink:#e6ecff;
+      --muted:#a7b0cc;
+      --brand:#8bb9ff;
+      --accent:#c0ffe1;
+      --border:#26325b;
+      --chip:#1a2347;
+      --shadow:0 8px 28px rgba(0,0,0,.35);
+      --radius:12px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+      line-height:1.6;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
+        radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+      padding-bottom:2rem;
+    }
+
+    .container{max-width:860px;margin:0 auto;padding:1rem}
+
+    .breadcrumb{margin-bottom:1rem;font-size:.9rem}
+    .breadcrumb a{color:var(--brand);text-decoration:none}
+    .breadcrumb span{color:var(--muted)}
+
+    header{
+      background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:2rem 1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+    }
+
+    h1{color:var(--ink);font-size:1.75rem;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;font-style:italic}
+
+    .main-answer{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+      border-left:4px solid var(--brand);
+    }
+    .main-answer h2{color:var(--brand);font-size:1.3rem;margin-bottom:1rem}
+    .main-answer p{font-size:1.05rem;line-height:1.7}
+
+    .section{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      margin-bottom:1rem;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .section-header{
+      padding:1.1rem 1.25rem;
+      background:linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%);
+      color:var(--ink);
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      user-select:none;
+    }
+
+    .section-header h2{font-size:1.15rem;font-weight:700}
+    .section-icon{font-size:1.35rem;transition:transform .3s ease}
+    .section.active .section-icon{transform:rotate(180deg)}
+
+    .section-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+    .section.active .section-content{max-height:5000px}
+
+    .section-inner{padding:1.25rem}
+
+    h3{color:var(--brand);font-size:1.08rem;margin:1.3rem 0 .65rem 0}
+    h3:first-child{margin-top:0}
+
+    .timeline{
+      border-left:3px solid var(--brand);
+      padding-left:1.25rem;
+      margin-left:.5rem;
+    }
+
+    .timeline-item{margin-bottom:1.25rem;position:relative}
+    .timeline-item::before{
+      content:'';
+      position:absolute;left:-1.65rem;top:.25rem;
+      width:12px;height:12px;border-radius:50%;
+      background:var(--brand);border:3px solid var(--panel);
+      box-shadow:0 0 0 2px var(--brand);
+    }
+
+    .timeline-item strong{color:var(--brand);display:block;margin-bottom:.25rem}
+
+    .source{
+      background:color-mix(in oklab,var(--chip) 65%, transparent);
+      border-radius:8px;padding:1rem;margin-top:1.2rem;
+      font-size:.95rem;color:var(--muted);
+      border:1px solid var(--border);
+    }
+
+    .back-to-top{
+      position:fixed;bottom:1.5rem;right:1rem;
+      background:var(--brand);color:#001;
+      width:50px;height:50px;border-radius:50%;
+      border:none;font-size:1.5rem;cursor:pointer;
+      box-shadow:var(--shadow);opacity:0;transition:opacity .3s ease;
+      z-index:1000;display:flex;align-items:center;justify-content:center;
+    }
+    .back-to-top.visible{opacity:1}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="https://ewallt.github.io/pocket-deploy/is-spanish-american-war-hub/">← Spanish-American War</a>
+    </div>
+
+    <header>
+      <h1>Santiago de Cuba (1898)</h1>
+      <p class="subtitle">Naval battle seals Spanish defeat in the Caribbean</p>
+    </header>
+
+    <div class="main-answer">
+      <h2>Core Summary</h2>
+      <p>On July 3, 1898, the Spanish Caribbean fleet under Admiral Cervera attempted to break out of Santiago harbor where they had been trapped by the American blockade. In a running battle lasting four hours, every Spanish ship was destroyed or driven ashore. The destruction of Cervera's squadron removed Spain's last hope of contesting American control of Cuban waters and made Spanish defeat inevitable. The overwhelming American victory demonstrated the decisive advantage of superior firepower and seamanship.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>Strategic Context</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <h3>The Trap at Santiago</h3>
+          <p>Admiral Cervera had brought his squadron to Santiago in late May, seeking a secure harbor. American Admiral William Sampson immediately established a tight blockade with superior forces. Cervera's ships were trapped—unable to break out, but also protected from direct assault by shore batteries and mines. As American ground forces closed in on Santiago from land, Spanish authorities ordered Cervera to attempt an escape, even though success seemed impossible.</p>
+
+          <h3>Desperate Gamble</h3>
+          <p>Spanish governor-general Ramón Blanco ordered the breakout to prevent the fleet from being captured in harbor when Santiago fell. Cervera knew his obsolete vessels couldn't match American firepower, but military honor demanded he try. He chose a Sunday morning, hoping some American ships might be coaling or understrength. It was a suicide mission executed with courage but no realistic hope of success.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>Forces & Commanders</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <h3>American Blockading Squadron</h3>
+          <p><strong>Admiral William T. Sampson</strong> commanded the blockade with four battleships and two armored cruisers, among other vessels. His forces possessed overwhelming firepower and speed. Acting commander <strong>Commodore Winfield Scott Schley</strong> was present when the battle began (Sampson's flagship was temporarily absent), and he directed the pursuit that destroyed the Spanish fleet.</p>
+
+          <h3>Spanish Squadron</h3>
+          <p><strong>Admiral Pascual Cervera</strong> led six ships: four cruisers and two destroyers. His vessels were older, slower, and had inferior guns and armor. Worse, they were low on coal and ammunition after weeks trapped in harbor. Cervera understood he was leading his men to certain death but obeyed orders to sortie.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>Timeline of Battle</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="timeline">
+            <div class="timeline-item">
+              <strong>9:31 AM, July 3</strong>
+              <p>Spanish flagship Infanta Maria Teresa emerges from Santiago harbor, followed by the rest of Cervera's squadron in single file. American lookouts signal alarm.</p>
+            </div>
+            <div class="timeline-item">
+              <strong>9:35 AM</strong>
+              <p>American battleships open fire. Spanish ships attempt to scatter westward along the coast at maximum speed. The chase begins.</p>
+            </div>
+            <div class="timeline-item">
+              <strong>10:15 AM</strong>
+              <p>Infanta Maria Teresa, heavily damaged and on fire, runs aground. Cervera and survivors escape to shore.</p>
+            </div>
+            <div class="timeline-item">
+              <strong>10:50 AM</strong>
+              <p>Almirante Oquendo, second Spanish cruiser, is destroyed and driven ashore in flames.</p>
+            </div>
+            <div class="timeline-item">
+              <strong>11:15 AM</strong>
+              <p>Spanish destroyers Pluton and Furor are sunk by concentrated fire.</p>
+            </div>
+            <div class="timeline-item">
+              <strong>1:15 PM</strong>
+              <p>Vizcaya, the fastest Spanish cruiser, is caught and destroyed after a 50-mile chase. Ship runs aground burning.</p>
+            </div>
+            <div class="timeline-item">
+              <strong>1:30 PM</strong>
+              <p>Cristobal Colon, last surviving Spanish ship, runs out of good coal and slows. Surrounded by American vessels, she surrenders and is scuttled. The battle is over.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>Turning Points</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <h3>Overwhelming American Firepower</h3>
+          <p>The battle was decided by material superiority. American battleships could fire heavier shells faster and more accurately than Spanish cruisers could respond. Spanish armor couldn't withstand American shells, while American armor resisted Spanish fire. Every Spanish ship was progressively battered into submission while inflicting minimal damage in return.</p>
+
+          <h3>The Long Chase</h3>
+          <p>Spanish ships attempted to scatter and run westward along the Cuban coast. But American vessels were faster with better coal, and they ran down the Spanish ships one by one. Vizcaya was caught after a 50-mile chase. Cristobal Colon ran out of quality coal and slowed just when escape seemed possible. Superior logistics and engineering defeated Spanish seamanship.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>Outcomes</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <h3>Casualties</h3>
+          <p><strong>American:</strong> 1 killed, 1 wounded, no ships damaged</p>
+          <p><strong>Spanish:</strong> 323 killed, 151 wounded, entire fleet destroyed (6 ships sunk or scuttled)</p>
+
+          <h3>Immediate Impact</h3>
+          <p>The destruction of Cervera's squadron ended Spanish naval resistance in Cuba. American forces controlled the seas completely. Santiago surrendered two weeks later. With both the Pacific and Caribbean fleets destroyed, Spain had no military options remaining and would soon sue for peace. The war was effectively over.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>Historical Significance</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <h3>Naval Supremacy Confirmed</h3>
+          <p>Santiago demonstrated American naval dominance in the Western Hemisphere. Combined with Manila Bay, it proved the U.S. Navy could defeat European powers in open battle. American steel battleships, professional training, and superior logistics had created a world-class fleet. No European power would seriously challenge American interests in the Caribbean again.</p>
+
+          <h3>The End of Spanish Empire</h3>
+          <p>The battle destroyed Spain's last substantial naval force and with it, any hope of retaining Cuba or contesting American demands. Within weeks Spain would seek peace terms, surrendering Cuba, Puerto Rico, and the Philippines. Four centuries of Spanish power in the Americas ended at Santiago—a humiliation that traumatized Spanish national consciousness for generations.</p>
+
+          <h3>Birth of American Naval Tradition</h3>
+          <p>The captains and commanders at Santiago—Schley, Sampson, and others—became legendary figures. Their aggressive tactics and decisive victory established patterns the U.S. Navy would follow for decades. The battle validated American naval doctrine emphasizing firepower, speed, and offensive action. These principles would shape American naval strategy through both world wars and beyond.</p>
+
+          <div class="source">
+            <strong>Key Historical Works:</strong> "The Spanish-American War" by David Trask, "Empire by Default" by Ivan Musicant, "Admiral of the New Empire" by Ronald Spector
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑</button>
+  </div>
+
+  <script>
+    function toggleSection(header) {
+      const section = header.parentElement;
+      const allSections = document.querySelectorAll('.section');
+      allSections.forEach(s => {
+        if (s !== section) s.classList.remove('active');
+      });
+      section.classList.toggle('active');
+    }
+
+    window.addEventListener('scroll', () => {
+      const btn = document.querySelector('.back-to-top');
+      if (window.scrollY > 300) {
+        btn.classList.add('visible');
+      } else {
+        btn.classList.remove('visible');
+      }
+    });
+  </script>
+</body>
+</html>

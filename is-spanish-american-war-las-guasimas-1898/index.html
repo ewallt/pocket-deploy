@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Las Guasimas (1898)</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111833;
+      --ink:#e6ecff;
+      --muted:#a7b0cc;
+      --brand:#8bb9ff;
+      --accent:#c0ffe1;
+      --border:#26325b;
+      --chip:#1a2347;
+      --shadow:0 8px 28px rgba(0,0,0,.35);
+      --radius:12px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+      line-height:1.6;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
+        radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+      padding-bottom:2rem;
+    }
+
+    .container{max-width:860px;margin:0 auto;padding:1rem}
+
+    .breadcrumb{margin-bottom:1rem;font-size:.9rem}
+    .breadcrumb a{color:var(--brand);text-decoration:none}
+    .breadcrumb span{color:var(--muted)}
+
+    header{
+      background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:2rem 1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+    }
+
+    h1{color:var(--ink);font-size:1.75rem;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;font-style:italic}
+
+    .main-answer{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+      border-left:4px solid var(--brand);
+    }
+    .main-answer h2{color:var(--brand);font-size:1.3rem;margin-bottom:1rem}
+    .main-answer p{font-size:1.05rem;line-height:1.7}
+
+    .section{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      margin-bottom:1rem;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .section-header{
+      padding:1.1rem 1.25rem;
+      background:linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%);
+      color:var(--ink);
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      user-select:none;
+    }
+
+    .section-header h2{font-size:1.15rem;font-weight:700}
+    .section-icon{font-size:1.35rem;transition:transform .3s ease}
+    .section.active .section-icon{transform:rotate(180deg)}
+
+    .section-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+    .section.active .section-content{max-height:5000px}
+
+    .section-inner{padding:1.25rem}
+
+    h3{color:var(--brand);font-size:1.08rem;margin:1.3rem 0 .65rem 0}
+    h3:first-child{margin-top:0}
+
+    .timeline{
+      border-left:3px solid var(--brand);
+      padding-left:1.25rem;
+      margin-left:.5rem;
+    }
+
+    .timeline-item{margin-bottom:1.25rem;position:relative}
+    .timeline-item::before{
+      content:'';
+      position:absolute;left:-1.65rem;top:.25rem;
+      width:12px;height:12px;border-radius:50%;
+      background:var(--brand);border:3px solid var(--panel);
+      box-shadow:0 0 0 2px var(--brand);
+    }
+
+    .timeline-item strong{color:var(--brand);display:block;margin-bottom:.25rem}
+
+    .source{
+      background:color-mix(in oklab,var(--chip) 65%, transparent);
+      border-radius:8px;padding:1rem;margin-top:1.2rem;
+      font-size:.95rem;color:var(--muted);
+      border:1px solid var(--border);
+    }
+
+    .back-to-top{
+      position:fixed;bottom:1.5rem;right:1rem;
+      background:var(--brand);color:#001;
+      width:50px;height:50px;border-radius:50%;
+      border:none;font-size:1.5rem;cursor:pointer;
+      box-shadow:var(--shadow);opacity:0;transition:opacity .3s ease;
+      z-index:1000;display:flex;align-items:center;justify-content:center;
+    }
+    .back-to-top.visible{opacity:1}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="https://ewallt.github.io/pocket-deploy/is-spanish-american-war-hub/">← Spanish-American War</a>
+    </div>
+
+    <header>
+      <h1>Las Guasimas (1898)</h1>
+      <p class="subtitle">First major land engagement in Cuba</p>
+    </header>
+
+    <div class="main-answer">
+      <h2>Core Summary</h2>
+      <p>On June 24, 1898, American forces advancing toward Santiago encountered Spanish defenders in dense jungle at Las Guasimas. In a sharp skirmish lasting two hours, the Americans—including Theodore Roosevelt's Rough Riders and regular cavalry—drove the Spanish from their positions despite initial confusion and casualties. Though tactically small, Las Guasimas was the first significant land combat of the war and provided hard lessons about fighting in Cuban terrain. It also made Roosevelt a battlefield hero and set the stage for the larger battles to come.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>Strategic Context</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <h3>The Advance on Santiago</h3>
+          <p>After landing at Daiquiri and Siboney, American forces under General William Shafter began moving inland toward Santiago. The coastal path led through difficult jungle terrain. Spanish forces had established defensive positions along the route at Las Guasimas ridge. These positions had to be cleared before the Americans could advance on the city's outer defenses.</p>
+
+          <h3>Two Columns, One Enemy</h3>
+          <p>The advance involved two parallel columns: regular cavalry under General Samuel Young and the 1st U.S. Volunteer Cavalry (Rough Riders) under Colonel Leonard Wood, with Theodore Roosevelt as second-in-command. The plan called for converging on the Spanish position, but poor reconnaissance and dense jungle meant neither column knew exactly where the enemy waited.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>Forces & Commanders</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <h3>American Forces</h3>
+          <p><strong>General Samuel Young</strong> commanded regular cavalry units, while <strong>Colonel Leonard Wood</strong> led the Rough Riders with <strong>Lieutenant Colonel Theodore Roosevelt</strong> as his energetic deputy. Total strength was roughly 1,000 men. Most were inexperienced in combat and unprepared for jungle fighting. Roosevelt's Rough Riders were a colorful mix of cowboys, college athletes, and adventurers—enthusiastic but green.</p>
+
+          <h3>Spanish Defenders</h3>
+          <p>Spanish forces numbered about 1,500 under General Antero Rubin. They held prepared positions on high ground with good fields of fire. Spanish regulars were experienced soldiers using smokeless powder Mauser rifles—modern weapons that made them nearly invisible in the jungle while American troops with black-powder rifles gave away their positions with every shot.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>Timeline of Battle</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="timeline">
+            <div class="timeline-item">
+              <strong>8:00 AM, June 24</strong>
+              <p>American columns advance through dense jungle. Cuban scouts warning of Spanish positions ahead.</p>
+            </div>
+            <div class="timeline-item">
+              <strong>8:15 AM</strong>
+              <p>Spanish forces open fire from concealed positions. Americans caught by surprise. Heavy firing erupts across the jungle.</p>
+            </div>
+            <div class="timeline-item">
+              <strong>8:30 AM</strong>
+              <p>Rough Riders deploy and begin returning fire. Roosevelt moves forward to rally men. Regular cavalry engages on the left flank.</p>
+            </div>
+            <div class="timeline-item">
+              <strong>9:00 AM</strong>
+              <p>Americans begin flanking movements. Spanish smokeless rifles inflict casualties while remaining nearly invisible in the jungle.</p>
+            </div>
+            <div class="timeline-item">
+              <strong>10:00 AM</strong>
+              <p>American pressure forces Spanish to begin withdrawing. Roosevelt's Rough Riders press forward aggressively.</p>
+            </div>
+            <div class="timeline-item">
+              <strong>10:30 AM</strong>
+              <p>Spanish forces abandon their positions and retreat toward Santiago. Americans secure the ridge. The skirmish ends.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>Turning Points</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <h3>Roosevelt's Aggressive Leadership</h3>
+          <p>When Spanish fire created initial confusion, Roosevelt moved to the front, rallying the Rough Riders and pushing them forward. His conspicuous bravery (and recklessness) steadied inexperienced troops and maintained momentum. Roosevelt's performance at Las Guasimas established his reputation as a combat leader and made him the most famous soldier in Cuba.</p>
+
+          <h3>Spanish Withdrawal</h3>
+          <p>Spanish commanders viewed Las Guasimas as a delaying action, not a last stand. Once American forces began flanking their positions and their mission of slowing the advance was accomplished, they withdrew in good order toward Santiago's main defenses. Spanish casualties were light, and they fell back to stronger positions. The Americans won the field but learned that Spanish troops were skilled, well-armed, and dangerous.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>Outcomes</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <h3>Casualties</h3>
+          <p><strong>American:</strong> 16 killed, 52 wounded</p>
+          <p><strong>Spanish:</strong> 10 killed, 25 wounded</p>
+
+          <h3>Immediate Impact</h3>
+          <p>Americans secured the road to Santiago and gained confidence from driving Spanish forces from the field. However, the battle exposed serious problems: poor reconnaissance, inadequate maps, obsolete black-powder rifles that revealed American positions, and the difficulty of coordinating attacks in jungle terrain. These lessons would shape tactics in the larger battles ahead.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>Historical Significance</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <h3>Baptism of Fire</h3>
+          <p>Las Guasimas was America's first real taste of combat in Cuba. Most participants had never been under fire. The battle transformed abstract military planning into deadly reality. Units that performed well (like the Rough Riders) gained confidence and cohesion. Those that struggled learned hard lessons. The engagement hardened American forces for the tougher fights at San Juan Hill and El Caney.</p>
+
+          <h3>Making of a Myth</h3>
+          <p>Theodore Roosevelt's conspicuous bravery at Las Guasimas launched him to national fame. Newspaper correspondents made him the hero of the battle. His reputation, combined with his own energetic self-promotion, created the Roosevelt legend that would carry him to the governorship of New York and eventually the presidency. Las Guasimas was the first chapter in one of America's great political careers.</p>
+
+          <h3>Spanish Effectiveness</h3>
+          <p>The battle revealed that Spanish troops were formidable opponents. Their modern Mauser rifles and skillful use of terrain inflicted disproportionate casualties. American overconfidence evaporated. The respect earned by Spanish defenders at Las Guasimas persisted throughout the campaign—Americans learned they faced a skilled, brave enemy who would not break easily.</p>
+
+          <div class="source">
+            <strong>Key Historical Works:</strong> "The Rough Riders" by Theodore Roosevelt, "The War Lovers" by Evan Thomas, "The Spanish-American War" by David Trask
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑</button>
+  </div>
+
+  <script>
+    function toggleSection(header) {
+      const section = header.parentElement;
+      const allSections = document.querySelectorAll('.section');
+      allSections.forEach(s => {
+        if (s !== section) s.classList.remove('active');
+      });
+      section.classList.toggle('active');
+    }
+
+    window.addEventListener('scroll', () => {
+      const btn = document.querySelector('.back-to-top');
+      if (window.scrollY > 300) {
+        btn.classList.add('visible');
+      } else {
+        btn.classList.remove('visible');
+      }
+    });
+  </script>
+</body>
+</html>
