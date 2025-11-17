@@ -1,93 +1,106 @@
-# Debates Static Library – Architecture Notes (for Assistant, new session)
+# **Debates Static Library — AI-Facing Architecture Guide**
 
-## 1. Purpose
+## **1. Purpose of This Document**
 
-This project is a **static web app** (served locally with `python -m http.server` or hosted on GitHub Pages) that presents structured **debate-style content**.
-Each **subject** (e.g., *The Big Bang*) contains a list of **debate motions**, each with a **Pro** and **Con** side rendered in parallel or tabbed view.
+This document is written *for an AI system* responsible for generating or updating parts of the **Debates Static Library**, a fully static, JSON-driven mini-site inside `pocket-deploy`.
+It explains:
 
-Design and navigation mimic the **Open Theism Library**:
+* The architecture
+* The moving parts
+* The rules that must never be violated
+* The workflow for adding new debates
+* How navigation and images are dynamically generated
+* Where AI should write files and what format to follow
 
-* Left sidebar = 2-level navigation (top-level "Debates," expandable subjects, and child debate motions).
-* Right panel = dynamic content (subject page → list of debates; debate page → side-by-side Pro/Con arguments).
-* All pages read from a **shared JSON navigation file** to keep the sidebar consistent.
-
-The current subject is **The Big Bang**, containing the **Inflation Debate** as the first motion.
-
----
-
-## 2. Root layout (local)
-
-The project resides in:
-
-```
-C:\Users\tomew\Documents\pocket-deploy
-```
-
-Served locally from one level above:
-
-```bash
-cd "C:\Users\tomew\Documents"
-python -m http.server 8000
-```
-
-Base URL for testing:
-
-```
-http://localhost:8000/pocket-deploy/
-```
+If an AI reads this, it should be capable of maintaining or extending the project with no missing context.
 
 ---
 
-## 3. Folder structure
+# **2. High-Level Overview**
 
-```text
-pocket-deploy/
-  debates/                          ← All debates live here
-    index.html                      ← Top-level Debates page
-    inflation/                      ← One folder per debate motion
-      index.html
-  the-big-bang/                     ← Subject landing page (child of Debates)
-    index.html
-  data/
-    site-nav.json                   ← Shared sidebar navigation
-  img/
-    big-bang-01.png                 ← Subject-level thumbnail
-    inflation.gif                   ← Optional animation for debate
+The **Debates Static Library** is a static web app built inside:
+
+```
+/pocket-deploy/debates/
 ```
 
-### Key folder rules
+It mirrors the architecture of your Open Theism Static Library:
 
-* The server root is one level above `pocket-deploy`, so all browser paths begin with `/pocket-deploy/...`.
-* Each **debate motion** is its own folder under `/debates/`.
-* Each **subject** (like *The Big Bang*) lives directly under `/pocket-deploy/`.
-* The shared sidebar navigation and image resources are global (not per-folder).
+* **Left side:** hierarchical sidebar (Debates → Subjects → Debate Items)
+* **Right side:** either
+
+  * Debates index (full list of subjects)
+  * Subject page (full list of debates under that subject)
+  * Debate detail page (Pro/Con content)
+
+All navigation is generated **client-side from a single registry file**:
+
+```
+/pocket-deploy/data/debates-site-nav.json
+```
+
+Images are also mapped through a separate registry:
+
+```
+/pocket-deploy/data/debate-images.json
+```
+
+**Everything is data-driven.**
+No navigation, images, or slugs are hardcoded in the HTML files.
 
 ---
 
-## 4. Shared navigation JSON
+# **3. Files an AI Must Know Exist**
 
-**File:** `pocket-deploy/data/site-nav.json`
-**Role:** Central source of truth for sidebar structure.
+## **Core Pages**
 
-**Fetch URL:** `/pocket-deploy/data/site-nav.json`
+| Path                                         | Purpose                       |
+| -------------------------------------------- | ----------------------------- |
+| `/pocket-deploy/debates/index.html`          | Main Debates index            |
+| `/pocket-deploy/the-big-bang/index.html`     | Subject page listing debates  |
+| `/pocket-deploy/debates/<debate>/index.html` | Debate detail pages (Pro/Con) |
 
-**Example structure:**
+## **Data Files**
+
+| Path                                        | Purpose                                                  |
+| ------------------------------------------- | -------------------------------------------------------- |
+| `/pocket-deploy/data/debates-site-nav.json` | Source of truth for sidebar and subject/debate structure |
+| `/pocket-deploy/data/debate-images.json`    | Maps debate slugs → image paths                          |
+
+## **Image Folder**
+
+```
+/pocket-deploy/img/
+```
+
+Images used in subject listings.
+
+---
+
+# **4. Canonical Registries**
+
+## **4.1 debates-site-nav.json (Navigation Registry)**
+
+This file defines:
+
+* Subjects
+* Debate titles
+* Debate slugs
+* Summaries
+
+It looks like:
 
 ```json
 {
-  "sections": [
-    {
-      "id": "debates",
-      "title": "Debates"
-    },
+  "subjects": [
     {
       "id": "the-big-bang",
       "title": "The Big Bang",
       "debates": [
         {
-          "title": "Inflation: Necessary or Ad Hoc?",
+          "title": "Inflation: necessary or ad hoc?",
           "slug": "/pocket-deploy/debates/inflation/",
-          "summary": "Does inflation solve early-universe problems or patch them?"
+          "summary": "Does an early period of accelerated expansion uniquely explain the universe we observe, or is it a flexible patch?"
         }
       ]
     }
@@ -95,237 +108,189 @@ pocket-deploy/
 }
 ```
 
-**Notes:**
+### **Rules**
 
-* Top-level `"debates"` serves as the root category.
-* Each subject (e.g., `"the-big-bang"`) holds a `"debates"` array instead of `"articles"`.
-* Use **absolute slugs** with `/pocket-deploy/.../` prefix.
-* Add new subjects or debates directly to this file; all pages will automatically reflect changes.
-
----
-
-## 5. Page types
-
-### 5.1 Debates index page
-
-**File:** `pocket-deploy/debates/index.html`
-**Purpose:** Root listing page showing all subjects (e.g., "The Big Bang").
-
-**Behavior:**
-
-* Left sidebar: "Debates" selected.
-* Right: Title "Debates," description, and a list of subjects.
-* Each subject is a clickable title leading to `/pocket-deploy/the-big-bang/`.
-
----
-
-### 5.2 Subject page (e.g., *The Big Bang*)
-
-**File:** `pocket-deploy/the-big-bang/index.html`
-**Purpose:** Lists all debates within this subject.
-
-**Behavior:**
-
-* Sidebar: "Debates" expanded, "The Big Bang" highlighted.
-
-* Right panel:
-
-  * Title "The Big Bang"
-  * Subheading: "Articles in this subject" (or customized description).
-  * Rows for each debate:
-
-    * Left: Thumbnail (`big-bang-01.png`)
-    * Right: Debate title (link), short summary.
-
-* Image path pattern:
-
-  ```
-  /pocket-deploy/img/big-bang-01.png
-  ```
-
-* Clicking a title goes to the debate folder (e.g., `/pocket-deploy/debates/inflation/`).
-
----
-
-### 5.3 Debate page (e.g., *Inflation: Necessary or Ad Hoc?*)
-
-**File:** `pocket-deploy/debates/inflation/index.html`
-**Purpose:** Displays one full debate with Pro and Con columns (or tabs on mobile).
-
-**Behavior:**
-
-* Top title: "Inflation: Necessary or Ad Hoc?"
-
-* Subtitle: "Does an early period of accelerated expansion uniquely explain the universe we observe, or is it a flexible patch?"
-
-* Motion line:
-
-  ```
-  The Motion: Inflation is an ad-hoc rescue device.
-  ```
-
-* **Pro side:** Argues *for* the motion (i.e., that inflation is ad hoc).
-
-* **Con side:** Argues *against* the motion (that inflation is necessary).
-
-* Desktop view: side-by-side columns.
-
-* Mobile: tabbed interface (Pro/Con toggle).
-
-* Footer:
-
-  ```
-  ← Back to Debates
-  ```
-
-  linking to `/pocket-deploy/the-big-bang/`.
-
-* Optionally includes animation at top or beside title (`inflation.gif`).
-
----
-
-## 6. Styling system
-
-* Design derived from the Open Theism template but with distinct color coding for Pro/Con.
-* Key CSS variables:
-
-```css
---accent-pro: #2563eb; /* Blue for Pro (arguing for the motion) */
---accent-con: #f59e0b; /* Amber for Con (arguing against the motion) */
-```
-
-* Consistent look across light/dark modes using `prefers-color-scheme`.
-
-* Pro and Con panels each have:
-
-  * Colored border
-  * Indicator dot (`.position-indicator`)
-  * Matching header text
-
-* Font: system-ui stack.
-
-* Layout:
-
-  * `.view-sidebyside` for desktop
-  * `.view-tabbed` for mobile (<768px)
-
-* Panels styled with drop shadows and rounded corners.
-
----
-
-## 7. Images and animation
-
-**Location:** `/pocket-deploy/img/`
-**Examples:**
-
-```
-big-bang-01.png        ← subject card
-inflation.gif           ← optional debate animation
-```
-
-**Display rule:**
-Images referenced using absolute paths (e.g., `/pocket-deploy/img/big-bang-01.png`).
-
-Animated `.gif` files can be embedded inline in debate pages using `<img>` or `<video autoplay loop muted>` for smoother playback.
-
----
-
-## 8. Local development workflow
-
-1. Launch from **one directory above** `pocket-deploy`:
-
-   ```bash
-   cd ~/Documents
-   python -m http.server 8000
-   ```
-2. Visit:
+1. Slugs must always be absolute paths beginning with `/pocket-deploy/…`
+2. Each debate must live in:
 
    ```
-   http://localhost:8000/pocket-deploy/debates/
+   /pocket-deploy/debates/<slug-name>/
    ```
-3. Hard-refresh after JSON edits (`Ctrl+F5`), or append `?ts=${Date.now()}` when fetching JSON.
-4. Verify image paths via direct access, e.g.:
+3. Each debate must contain:
 
    ```
-   http://localhost:8000/pocket-deploy/img/big-bang-01.png
+   index.html
    ```
+
+   (AI generates this when requested.)
 
 ---
 
-## 9. Typical issues (and fixes)
+## **4.2 debate-images.json (Image Registry)**
 
-| Problem                              | Cause                                      | Fix                                                 |
-| ------------------------------------ | ------------------------------------------ | --------------------------------------------------- |
-| 404 errors for JSON                  | Fetch path missing `/pocket-deploy` prefix | Ensure `fetch('/pocket-deploy/data/site-nav.json')` |
-| Image not showing                    | File misnamed or wrong folder              | Check `/pocket-deploy/img/`                         |
-| Sidebar empty                        | JSON invalid or not yet fetched            | Validate JSON syntax                                |
-| Links point to `/debates-deploy/...` | Leftover from older template               | Replace with `/pocket-deploy/...`                   |
+This maps debate slugs to image paths:
 
----
-
-## 10. Design consistency rules
-
-* Sidebar always built from `site-nav.json`.
-* Subject and debate pages must **not** duplicate "Debates" in the sidebar (one "Debates" heading only).
-* Motion text defines logical polarity:
-
-  * **Pro = supports motion**
-  * **Con = opposes motion**
-* Page titles follow `"<Motion Title> — Debates"`.
-* Paths always absolute (`/pocket-deploy/...`) so they work both locally and on GitHub Pages.
-
----
-
-## 11. Expansion plan
-
-Future subjects (each with their own debates):
-
-* **Cosmology**
-
-  * The Big Bang (current)
-  * Steady State
-  * Fine-Tuning
-* **Theology**
-
-  * Problem of Evil
-  * Divine Hiddenness
-* **Philosophy of Mind**
-
-  * Free Will vs Determinism
-
-Each new subject should follow the same structure:
-
-```
-pocket-deploy/<subject>/index.html
+```json
+{
+  "/pocket-deploy/debates/inflation/": "/pocket-deploy/img/the-big-bang-01.gif",
+  "/pocket-deploy/debates/missing-antimatter/": "/pocket-deploy/img/the-big-bang-02.png",
+  "/pocket-deploy/debates/mature-galaxies/": "/pocket-deploy/img/the-big-bang-03.png"
+}
 ```
 
-and be added to `site-nav.json`.
+### **Rules**
+
+1. Key = absolute slug (`/pocket-deploy/debates/.../`)
+2. Value = absolute image path in `/pocket-deploy/img/`
+3. Debates without entries fall back to a default image.
 
 ---
 
-## 12. Future enhancements
+# **5. How the Sidebar Works (AI Summary)**
 
-* **Tooltips system** (borrowed from Open Theism Library) could later be added for cross-linking glossary or reference pages.
-* **Light animation embedding** for humor (like *Runaway Inflation*) can be displayed inline.
-* **Reusable HTML template** to reduce redundancy across debate pages.
-* **Auto-index generation script** to populate `site-nav.json` dynamically.
+The sidebar is dynamically assembled in the browser:
 
----
+1. Load `debates-site-nav.json`
+2. Render:
 
-## 13. Quick QA checklist
+   * The "Debates" root node
+   * Each subject beneath it
+   * Each debate beneath its subject
+3. Highlight the correct subject/debate based on `window.location.pathname`
+4. Expand only the subject associated with the current page
 
-✅ Debates sidebar loads correctly
-✅ "The Big Bang" expands when on debate pages
-✅ "Inflation" link works and opens debate
-✅ Motion wording matches debate logic (Pro = supports motion)
-✅ Back link leads to subject page
-✅ Image/animation loads from `/pocket-deploy/img/`
-✅ Mobile tabs switch properly
-✅ All paths begin with `/pocket-deploy/`
+### **No subject or debate is ever hardcoded in any HTML file.**
+
+**All sidebar items come exclusively from the registry.**
 
 ---
 
-## 14. Guiding principle
+# **6. How the Subject Page Works**
 
-> **Everything is data-driven from `site-nav.json`.**
-> Pages contain no hardcoded sidebar items — only data lookups and links.
+A subject page:
+
+* Loads `debates-site-nav.json`
+* Locates the subject block whose `"id"` matches the page's folder name (e.g., `"the-big-bang"`)
+* Renders an "article card" for each debate
+* Loads images from `debate-images.json`
+* Falls back to default image if missing
+
+The subject page **never** contains a hardcoded list of debates.
+
+---
+
+# **7. How a Debate Page Works**
+
+A debate page contains **only:**
+
+* The motion title
+* Subtitle
+* Motion line
+* Pro column content
+* Con column content
+* Back link
+
+It does **not**:
+
+* Contain navigation
+* Load sidebars
+* Load registries
+* Read JSON
+
+Only the subject and index pages load the registries.
+
+---
+
+# **8. Required Workflow for Adding a New Debate**
+
+This is crucial — an AI must follow this exactly.
+
+### **Step 1 — Create the debate folder**
+
+Example for new slug `/pocket-deploy/debates/dark-energy-tension/`:
+
+```
+/pocket-deploy/debates/dark-energy-tension/index.html
+```
+
+AI writes the debate content here.
+
+---
+
+### **Step 2 — Add entry to debates-site-nav.json**
+
+Add:
+
+```json
+{
+  "title": "Dark Energy Tension",
+  "slug": "/pocket-deploy/debates/dark-energy-tension/",
+  "summary": "Is the observed acceleration of the universe evidence for dark energy or a sign of model failure?"
+}
+```
+
+To the appropriate subject.
+
+---
+
+### **Step 3 — Add image mapping (optional)**
+
+Add to:
+
+```
+/pocket-deploy/data/debate-images.json
+```
+
+Example:
+
+```json
+"/pocket-deploy/debates/dark-energy-tension/": "/pocket-deploy/img/the-big-bang-05.png"
+```
+
+---
+
+### **Step 4 — Test**
+
+Local test:
+
+```
+cd ~/Documents
+python -m http.server 8000
+```
+
+Verify:
+
+* Sidebar shows the new debate
+* Subject page shows the image
+* Debate page loads
+
+---
+
+# **9. Rules AI Must Never Break**
+
+1. **Never hardcode navigation or image paths inside HTML files.**
+2. **Always write absolute slugs beginning with `/pocket-deploy/`.**
+3. **Each debate must live in its own folder named exactly after the slug.**
+4. **Registry files must remain valid JSON.**
+5. **When generating new debates, follow the Pro/Con layout and semantics:**
+
+   * **Pro** supports the motion
+   * **Con** opposes the motion
+6. **Never introduce additional global JSON files.**
+7. **Never write code unless explicitly asked.**
+
+---
+
+# **10. How an AI Should Think When Extending This Project**
+
+When the user requests:
+
+> "Let's add a new debate about XYZ."
+
+The AI must:
+
+1. Ask for the slug name (if unclear)
+2. Generate **only** what is requested (e.g., debate page when asked)
+3. Update registry files only when explicitly asked
+4. Follow static-site constraints (no frameworks, no bundlers)
+5. Keep all HTML plain, self-contained, inline CSS + JS
