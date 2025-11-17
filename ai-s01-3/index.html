@@ -1,0 +1,31 @@
+<!-- /pocket-deploy/ai-s01-3/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>AI s01 — Part 3: Data, Compute, and Serving</title>
+<style>
+:root{--bg:#0b1020;--panel:#0f172a;--ink:#e5e7eb;--muted:#94a3b8;--brand:#60a5fa;--border:#1f2940}
+@media(prefers-color-scheme:light){:root{--bg:#f5f7fb;--panel:#fff;--ink:#1b2a41;--muted:#34495e;--brand:#2563eb;--border:#e3e9f3}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,Segoe UI,Inter,Arial;padding:2rem}
+.c{max-width:880px;margin:0 auto;background:var(--panel);border:1px solid var(--border);border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+.nav{display:flex;gap:.5rem;flex-wrap:wrap;padding:.75rem;border-bottom:1px solid var(--border)}.nav a{padding:.45rem .7rem;border:1px solid var(--border);border-radius:999px;text-decoration:none;color:var(--ink)}.nav a:hover{border-color:var(--brand);color:var(--brand)}
+.h{padding:1.25rem 1.5rem}.intro{color:var(--muted);font-style:italic;margin:.25rem 0 1rem}
+.p{padding:0 1.5rem 1.4rem}.p p{margin:1.05rem 0}.f{padding:1rem 1.5rem;border-top:1px solid var(--border);color:var(--muted);font-size:.95rem}
+</style></head>
+<body><article class="c">
+<nav class="nav">
+  <a href="/pocket-deploy/dashboard-ai-s01/">← Dashboard</a>
+  <a href="/pocket-deploy/ai-s01-2/">Previous</a>
+  <a href="/pocket-deploy/ai-s01-4/">Next →</a>
+</nav>
+<header class="h"><h1>Data, Compute, and Serving — Part 3</h1><p class="intro">As models grew, the pipeline from data gathering to inference deployment became a discipline of its own—revealing new ceilings and creative workarounds.</p></header>
+<section class="p">
+<p>Before transformers, scaling datasets was already underway. Teams built web-scale crawlers, filtered duplicates, and managed multilingual sources. The goal was coverage, but uncontrolled data led to instability and ethical hazards. Domain drift, spam, and unverified content forced heavy preprocessing. Quality assurance meant deduplication, heuristic filters, and alignment with downstream evaluation sets, yet cost and heterogeneity limited reproducibility. The notion of “dataset as infrastructure” emerged: the raw material shaping both capabilities and biases.</p>
+<p>Compute bottlenecks dictated research tempo. GPU memory ceilings constrained model depth, while gradient accumulation and checkpointing slowed iteration. Multi-GPU synchronization added overhead, and every architectural tweak risked destabilizing distributed training. Academic labs without industrial-scale clusters faced months-long runs. Optimization breakthroughs—Adam, mixed precision, gradient clipping—softened edges but could not erase the serial dependency that wasted parallel capacity. Efficiency, not just accuracy, became a frontier.</p>
+<p>Hardware trends provided limited relief. NVIDIA’s Pascal and Volta architectures improved throughput per watt, but deep networks devoured resources faster than Moore’s law replenished them. TPU-like accelerators hinted at specialized futures, though software stacks lagged adoption. Frameworks such as TensorFlow and PyTorch competed to simplify data–model coupling, yet the cost curve remained steep. The hardware-software co-design mindset was nascent, and few foresaw how central it would become to scaling laws later.</p>
+<p>Serving models in production presented its own friction. Sequence models produced variable-length outputs, making latency and cost unpredictable. Batch inference conflicted with real-time streaming; caching was complex due to context sensitivity. Enterprises wrapped models with API throttles, retries, and ensemble fallbacks. Debugging failure cases—hallucinated translations or erratic speech timings—required new observability tools. Reliability, not novelty, determined deployment success.</p>
+<p>Training–serving skew amplified headaches. Models tuned on fixed corpora performed differently when user data diverged in domain or register. Fine-tuning could correct bias but introduced maintenance debt. Rolling updates broke compatibility across pipelines, as preprocessing conventions shifted midstream. Each fix revealed the lack of standardized evaluation beyond BLEU or accuracy: the field lacked benchmarks that captured real-world robustness.</p>
+<p>The culmination of these bottlenecks made one lesson plain: scaling demanded architectural alignment with hardware, data curation as engineering, and end-to-end lifecycle management. The innovation energy once spent on layer design began migrating toward tooling, orchestration, and infrastructure—laying the groundwork for the industrial AI pipelines that transformers would later exploit to full effect.</p>
+</section>
+<footer class="f">Sources: historical ML systems papers on distributed training, data pipelines, and model serving prior to 2017.</footer>
+</article></body></html>

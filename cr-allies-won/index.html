@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Course Template</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com/3.4.1?plugins=typography"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Default Theme: Newspaper */
+        :root {
+            --bg-gradient: #fdfdf8;
+            --text: #1c1c1c;
+            --accent-text: #8c1c13;
+            --nav-bg: #f1f1eb;
+            --nav-border: #dcdcd3;
+            --nav-text: #1c1c1c;
+            --nav-hover-bg: #e5e5dd;
+            --nav-active-bg: #dcdcd3;
+            --nav-active-text: #1c1c1c;
+            --prose-text: var(--text);
+            --prose-headings: var(--accent-text);
+            --prose-links: var(--accent-text);
+            --prose-bold: var(--text);
+            font-family: 'Merriweather', serif;
+        }
+
+        .theme-emerald-paper, .theme-cyber-blue, .theme-emerald-gold {
+            font-family: 'Lato', sans-serif;
+        }
+        
+        body {
+            background: var(--bg-gradient);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .ui-bg { background-color: var(--nav-bg); }
+        .ui-border { border-color: var(--nav-border); }
+        .text-primary { color: var(--text); }
+        .text-accent { color: var(--accent-text); }
+
+        .tab-button {
+            background-color: var(--nav-bg);
+            color: var(--nav-text);
+            border-bottom: 3px solid transparent;
+        }
+        .tab-button:hover, .tab-button:focus-visible {
+            background-color: var(--nav-hover-bg);
+        }
+        .tab-button.tab-active {
+            background-color: var(--nav-active-bg);
+            color: var(--nav-active-text);
+            border-bottom-color: var(--accent-text);
+        }
+
+        .settings-button { background-color: var(--nav-hover-bg); }
+        .settings-button:hover { opacity: 0.8; }
+        *:focus-visible { outline: 3px solid var(--accent-text); outline-offset: 2px; }
+
+        .prose { color: var(--prose-text); }
+        .prose h2, .prose h3, .prose a, .prose strong { color: var(--prose-headings); }
+        .prose p.lead { color: var(--prose-text); }
+    </style>
+</head>
+<body class="transition-colors duration-300">
+    <div class="container mx-auto px-4 py-6 max-w-7xl">
+        <header id="app-header" class="ui-bg border ui-border rounded-lg shadow-lg p-6 mb-6"></header>
+        <nav id="app-tabs" class="ui-bg border ui-border rounded-lg shadow-lg mb-6" role="tablist" aria-label="Main navigation"></nav>
+        <main id="app-panels" class="ui-bg border ui-border rounded-lg shadow-lg p-6 md:p-8"></main>
+        
+        <div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+            <div class="ui-bg border ui-border rounded-lg p-6 max-w-md w-full shadow-2xl">
+                <h2 id="settings-title" class="text-xl font-bold text-accent mb-4">Display Settings</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label for="themeSelect" class="block text-primary font-semibold mb-2">Theme</label>
+                        <select id="themeSelect" class="w-full px-3 py-2 rounded ui-bg border ui-border text-primary">
+                        </select>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button id="closeSettings" class="px-4 py-2 rounded text-primary hover:opacity-80">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 
+    ============================================================
+    vvvvvvvvvvvvvv PASTE YOUR JSON CONTENT BELOW vvvvvvvvvvvvvv
+    ============================================================
+    -->
+    <script type="application/json" id="app-data">
+{
+  "ww2-analysis": {
+    "title": "Why the Allies Won",
+    "description": "An 8-unit analysis of the key factors that led to Allied victory in the Second World War, from economic mobilization to strategic leadership.",
+    "categories": {
+      "unit-1-why-allies-won": {
+        "display_order": 10,
+        "name": "Unit 1: Why the Allies Won",
+        "display_name": "Unit 1",
+        "paragraphs": [
+          {
+            "heading": "The Balance of Resources",
+            "content": "The Second World War was, at its core, a conflict of endurance. Victory depended not only on battlefield brilliance or tactical improvisation, but on the ability to marshal the material strength of nations and sustain the fight over years of destruction. From the start, the Allies possessed greater potential resources than the Axis powers, but in 1940 that potential had not yet been realized. Germany and Japan, operating with smaller economic bases, launched aggressive campaigns to seize resources quickly, hoping to win before their opponents could bring their latent strength to bear. The true story of why the Allies won begins with how this potential advantage in resources was transformed into overwhelming, realized superiority."
+          },
+          {
+            "heading": "Industrial Mobilization in the United States",
+            "content": "Nowhere was this clearer than in the United States, whose economy was both vast and secure. American factories, emerging from the Great Depression, were rapidly retooled for war. Automobile plants that once produced sedans and trucks were reconfigured to turn out tanks, jeeps, and bombers in staggering numbers. Shipyards built Liberty ships at such a pace that hulls slid into the water only days after construction began. By 1944, American factories were producing nearly 100,000 aircraft in a single year, a figure greater than the combined output of Germany and Japan. This industrial might ensured that the Allies not only had the equipment they needed, but also the flexibility to replace losses and expand operations on multiple fronts simultaneously."
+          },
+          {
+            "heading": "Britain’s Wartime Economy",
+            "content": "Britain’s economic contribution was smaller but vital. After surviving the Blitz and the threat of invasion, Britain relied heavily on imports from its global empire. Wheat from Canada, oil from the Middle East, and troops from India and Africa all flowed into the war effort. Rationing ensured equitable distribution of food and fuel, keeping civilian morale intact despite shortages. The government orchestrated a total war economy in which nearly every aspect of life was directed toward the survival of the nation. Factories worked around the clock to produce aircraft, warships, and munitions, while scientists advanced radar, jet technology, and code-breaking methods. Britain’s survival in 1940–41 gave the Allies a secure base in Europe, preventing German domination of the continent and allowing time for American industry and Soviet manpower to mobilize."
+          },
+          {
+            "heading": "The Soviet Industrial Miracle",
+            "content": "The Soviet Union’s industrial story was one of sheer resilience. When Hitler launched Operation Barbarossa in June 1941, much of Soviet industry was concentrated in Ukraine and western Russia, directly in the path of advancing German armies. In a colossal feat of logistics, entire factories were dismantled, loaded onto trains, and relocated eastward beyond the Ural Mountains. Within months, these plants were back in operation, producing tanks, artillery, and aircraft under brutal conditions. Workers endured long hours in freezing environments, often with minimal food or shelter, yet they turned out the T-34 tank and Katyusha rocket launchers in enormous quantities. By 1943, Soviet factories were producing more armored vehicles than Germany, a remarkable reversal given the catastrophic losses of 1941."
+          },
+          {
+            "heading": "Axis Resource Constraints",
+            "content": "The Axis powers, by contrast, were hampered from the beginning by structural shortages. Germany lacked adequate supplies of oil, forcing dependence on synthetic fuels and Romanian imports. Japan, though it conquered resource-rich territories in Southeast Asia, could not transport oil and rubber effectively once Allied submarines began to devastate its merchant fleet. Italy entered the war with an economy ill-prepared for modern conflict, relying heavily on German assistance. German industry, though efficient in certain areas, remained fragmented and poorly coordinated until Albert Speer’s reorganization in 1943, by which time it was too late to catch up. The Axis also invested in expensive, complex projects like the Tiger tank and V-2 rocket, technologically impressive but impractical for mass production."
+          },
+          {
+            "heading": "The Importance of Logistics",
+            "content": "Logistics turned resources into battlefield power, and here too the Allies dominated. The American shipbuilding program not only built combat vessels but also fleets of transport ships to carry men and supplies across oceans. Convoys sustained Britain under constant U-boat threat, while Allied control of sea lanes allowed the steady buildup of forces in North Africa, Italy, and eventually Normandy. Soviet offensives relied heavily on U.S.-supplied trucks through Lend-Lease, which gave the Red Army operational mobility that the Germans, reliant on horses, could not match. The capacity to deliver tanks, food, fuel, and ammunition where they were needed, in staggering quantities, was as decisive as the weapons themselves."
+          },
+          {
+            "heading": "The Interplay of Manpower and Industry",
+            "content": "Manpower further amplified these advantages. The Soviet Union mobilized tens of millions of soldiers despite horrific casualties, while the United States raised massive armies without collapsing its civilian economy. Britain tapped its empire, bringing soldiers from Canada, Australia, India, and Africa to fight in every theater. The Axis powers, facing smaller populations, turned increasingly to forced labor, which created resentment and resistance rather than sustainable manpower. German and Japanese soldiers were highly skilled and motivated, but they could not replace losses at the rate their enemies could. Allied manpower and industrial power combined to create a machine of war that the Axis could not match in the long run."
+          },
+          {
+            "heading": "Resources as Foundation, Not Guarantee",
+            "content": "Yet resources alone do not explain victory. In 1940–41, the Allies already possessed greater potential strength, but the Axis achieved dramatic successes across Europe and Asia. The lesson is that resources must be mobilized and coordinated effectively to matter. The Allies gradually learned how to harness their collective strength, while the Axis squandered theirs through poor strategic choices and overreach. By 1943, the Allied advantage in resources was no longer potential but fully realized, transforming the war into a contest the Axis could not hope to win. In the end, the Allied victory was built on a foundation of overwhelming resources—industrial, human, and logistical. The United States ensured a steady flow of matériel, Britain provided resilience and a European base, and the Soviet Union turned human sacrifice into industrial miracles. The Axis powers, despite initial successes, could not overcome their shortages of oil, shipping, and manpower. Once the Allies fully mobilized, the weight of their resources made victory only a matter of time."
+          }
+        ]
+      },
+      "unit-2-air-power": {
+        "display_order": 20,
+        "name": "Unit 2: Air Power and Strategic Bombing",
+        "display_name": "Unit 2",
+        "paragraphs": [
+          {
+            "heading": "The Rise of Air Power",
+            "content": "Air power emerged as one of the most decisive elements of the Second World War. The interwar period had seen debates over whether aircraft could ever replace battleships or armies in their strategic significance, but the conflict quickly demonstrated that control of the skies could determine the outcome of campaigns. The Battle of Britain in 1940 marked the first major test: Germany’s Luftwaffe sought to crush the Royal Air Force and open the way for invasion, but British radar, fighter command, and pilot resilience turned the tide. The survival of Britain showed that air superiority could be the difference between conquest and resistance. From that point onward, both Axis and Allies recognized that air power was no longer auxiliary, but central to modern war."
+          },
+          {
+            "heading": "Strategic Bombing Campaigns",
+            "content": "Strategic bombing became a hallmark of the Allied approach. From bases in Britain, the Royal Air Force and later the United States Army Air Forces mounted massive bombing raids on German cities and industrial targets. The aim was to cripple production, disrupt transportation, and sap civilian morale. The scale was unprecedented, with thousand-bomber raids reducing city centers to rubble. Factories producing aircraft, tanks, and synthetic fuel became priority targets. Although the German economy adapted with dispersal and underground facilities, constant bombing forced Hitler to divert vast resources to air defense, including anti-aircraft guns, radar, and fighter aircraft. By 1944, bombing campaigns had sharply curtailed German industrial output and strained the war economy beyond recovery."
+          },
+          {
+            "heading": "Technological Innovations",
+            "content": "Allied success in the air was not only a matter of numbers, but of innovation. Radar gave Britain early warning of Luftwaffe raids, allowing fighter squadrons to be deployed efficiently. Long-range escort fighters like the P-51 Mustang revolutionized bombing campaigns by protecting heavy bombers deep into German territory, turning once-costly raids into sustainable offensives. Improvements in aircraft design—faster, more maneuverable fighters and larger, more capable bombers—ensured that the Allies stayed ahead in the technological race. Jet engines were pioneered by both sides, but only the Allies had the industrial base to integrate such advances into their overall strategy effectively. These innovations gave the Allies a decisive edge and ensured that their superior resources translated into operational dominance."
+          },
+          {
+            "heading": "The Luftwaffe Overstretched",
+            "content": "Germany’s Luftwaffe began the war as a formidable force, highly effective in blitzkrieg campaigns across Poland, France, and the early stages of Barbarossa. However, the Luftwaffe was designed primarily for tactical support rather than long-term strategic bombing or prolonged defensive campaigns. As the war expanded, German air power was stretched thin across multiple fronts: North Africa, the Mediterranean, the Eastern Front, and defense of the Reich itself. Losses mounted faster than they could be replaced, especially as Allied aircraft production dwarfed Germany’s capacity. The Luftwaffe’s inability to achieve air superiority after 1940 meant that German armies increasingly fought under skies dominated by Allied planes, a crippling disadvantage."
+          },
+          {
+            "heading": "The Pacific Theater",
+            "content": "In the Pacific, air power played a similarly decisive role. The Battle of Midway in 1942 demonstrated that aircraft carriers had eclipsed battleships as the dominant capital ships of naval warfare. Japanese carriers, once the spearhead of offensive expansion, were destroyed in a single battle, shifting the balance of power. From then on, American air superiority grew steadily, supported by industrial might that Japan could not match. Long-range bombing campaigns from island bases brought destruction to Japanese cities, culminating in the firebombing of Tokyo in March 1945. These attacks crippled Japan’s ability to sustain its war economy, even before the atomic bombs delivered the final blows. In both Europe and Asia, air power proved decisive in shaping the strategic environment."
+          },
+          {
+            "heading": "Debates Over Effectiveness",
+            "content": "Strategic bombing has always been controversial. Some historians argue that it failed to decisively break civilian morale, noting that both German and Japanese societies endured years of devastating raids without collapsing. Others contend that the bombing campaigns severely undermined Axis capacity by destroying infrastructure, diverting resources, and reducing industrial output. Whatever the precise measure of effectiveness, it is clear that the sustained bombing campaigns forced the Axis into costly defensive strategies and eroded their ability to fight effectively. While air power alone did not win the war, it dramatically hastened the Axis decline and shaped the conditions for ground offensives to succeed."
+          },
+          {
+            "heading": "Allied Air Superiority by 1944",
+            "content": "By 1944, the balance in the skies had tilted overwhelmingly in the Allies’ favor. Allied fighters patrolled the skies over France in the run-up to D-Day, ensuring that German aircraft could not interfere with the landings. Bombing raids systematically targeted railways, bridges, and supply lines, paralyzing German efforts to reinforce Normandy. In Italy and the Balkans, air superiority enabled amphibious landings and disrupted Axis communications. In the Pacific, American bombers operated with near impunity as Japanese air defenses collapsed. The cumulative effect of years of investment, production, and innovation was total dominance of the air, which made Allied offensives possible and Axis resistance increasingly futile."
+          },
+          {
+            "heading": "Air Power and the Shape of Victory",
+            "content": "Ultimately, air power was both a tool and a symbol of Allied superiority. It exemplified the way industrial capacity, technological innovation, and coordinated strategy could be transformed into overwhelming operational dominance. Air campaigns forced the Axis into defensive postures, eroded their war economies, and paved the way for ground and naval victories. Though debates continue over the moral and strategic costs of bombing campaigns, their role in securing Allied victory cannot be denied. Air power did not operate in isolation—it relied on the same resource base that underpinned every other element of the war effort—but it was uniquely visible, raining destruction from the skies and signaling to both soldiers and civilians that the tide had irreversibly turned. In this sense, control of the skies was not just a means of winning battles, but a measure of who would ultimately win the war."
+          }
+        ]
+      },
+      "unit-3-technology-intelligence": {
+        "display_order": 30,
+        "name": "Unit 3: Technology and Intelligence",
+        "display_name": "Unit 3",
+        "paragraphs": [
+          {
+            "heading": "The Technological Edge",
+            "content": "The Second World War was not merely a contest of armies and nations but also a race of science and engineering. The Allies succeeded in harnessing their scientific communities in ways that the Axis could not match. Technologies like radar, sonar, and improved aircraft engines gave them critical advantages on land, sea, and in the air. Radar, in particular, revolutionized defense by allowing early detection of incoming aircraft and guiding fighter interceptions with unprecedented accuracy. The ability to integrate technological innovations into operational planning distinguished the Allied approach. This technological edge was not absolute in every field—Germany led in rocketry and jet aircraft—but the Allies succeeded in scaling and applying their breakthroughs systematically across the war effort."
+          },
+          {
+            "heading": "The Role of Radar",
+            "content": "Radar was among the most decisive innovations of the war. In Britain, the Chain Home radar network provided early warning of Luftwaffe attacks during the Battle of Britain, giving Fighter Command time to position squadrons effectively. Radar was also instrumental in naval warfare, helping the Allies to detect German U-boats and reducing the toll of the Battle of the Atlantic. In the Pacific, radar-equipped ships and aircraft improved night fighting and interception of Japanese raids. Radar extended the reach and effectiveness of Allied air power while undermining the ability of the Axis to achieve surprise. Its development and deployment showed how technology, when coupled with organization and training, could decisively shift the balance in combat."
+          },
+          {
+            "heading": "Intelligence Breakthroughs",
+            "content": "Intelligence played an equally vital role in Allied success. The most famous breakthrough was the cracking of the German Enigma code at Bletchley Park in Britain. Using a combination of mathematics, engineering, and sheer human ingenuity, Allied cryptanalysts gained access to German military communications, allowing convoys to avoid U-boats and commanders to anticipate enemy operations. In the Pacific, the breaking of Japanese naval codes led to the decisive victory at Midway, where American forces ambushed the Japanese fleet. Intelligence did not guarantee victory in every battle, but it repeatedly tipped the scales, saving lives and turning the momentum of campaigns. The Axis, by contrast, never achieved comparable breakthroughs against Allied codes."
+          },
+          {
+            "heading": "Scientific Mobilization",
+            "content": "The Allied war effort was distinguished by its integration of scientists into strategic planning. In the United States, the Office of Scientific Research and Development coordinated projects ranging from proximity fuses to medical advances like penicillin. Britain’s scientists worked hand-in-hand with military planners on radar, jet propulsion, and cryptography. This mobilization of intellectual capital created a culture in which innovation could move swiftly from laboratory to battlefield. By contrast, German science was constrained by political interference, infighting, and racial ideology, which excluded Jewish scientists who had contributed so much before 1933. The failure to mobilize science as effectively as the Allies left the Axis at a disadvantage in the long run."
+          },
+          {
+            "heading": "The German Technological Gamble",
+            "content": "Germany’s technological achievements were significant but often misdirected. The V-2 rocket represented a leap in missile technology, but its high cost and limited accuracy made it strategically wasteful. Jet aircraft like the Me 262 appeared too late and in too few numbers to alter the air war. German tanks, though formidable, were increasingly over-engineered, making them expensive and slow to produce compared to Soviet T-34s or American Shermans. The focus on prestige projects rather than scalable, practical innovations reflected a misallocation of resources. These technological marvels inspired fear but failed to shift the outcome of the war, especially when weighed against the Allies’ ability to mass-produce reliable and effective equipment."
+          },
+          {
+            "heading": "Allied Adaptability",
+            "content": "One of the Allies’ greatest strengths was their adaptability in applying new technology and intelligence. Convoy systems, informed by codebreaking and radar, gradually reduced U-boat effectiveness. Proximity fuses dramatically increased the lethality of anti-aircraft fire. Airborne radar allowed bombers to navigate and target effectively at night. Medical innovations, such as sulfa drugs and blood transfusion techniques, saved thousands of lives and preserved fighting strength. Intelligence allowed commanders to minimize risks and maximize the impact of their forces. The synergy of science, technology, and operational flexibility became a defining feature of the Allied war machine."
+          },
+          {
+            "heading": "The Intelligence Gap of the Axis",
+            "content": "The Axis powers, despite their military prowess, never closed the intelligence gap. German signals remained vulnerable to Allied cryptanalysis, and Japanese communications security was often lax. Efforts at counterintelligence were piecemeal and ineffective. The centralized and authoritarian nature of Axis governments also stifled the flow of accurate information within their own systems, with commanders frequently reluctant to report failures or weaknesses. This contrasted with the Allied willingness to share intelligence across nations and commands, which created a global network of information exchange. By war’s end, the Allies were not only stronger on the battlefield but also better informed, an advantage that amplified every other element of their superiority."
+          },
+          {
+            "heading": "Technology and Intelligence as Multipliers",
+            "content": "The true importance of technology and intelligence lies in how they multiplied the effect of Allied resources and manpower. Superior production numbers alone would not have guaranteed victory without the ability to apply them effectively. Radar allowed planes and ships to be in the right place at the right time; codebreaking ensured that convoys arrived safely and ambushes were avoided; scientific advances improved the survivability and effectiveness of soldiers. These were not merely auxiliary contributions but central to the war’s outcome. Technology and intelligence made Allied resources decisive and turned potential advantages into concrete victories on the battlefield."
+          }
+        ]
+      },
+      "unit-4-eastern-front": {
+        "display_order": 40,
+        "name": "Unit 4: The Eastern Front",
+        "display_name": "Unit 4",
+        "paragraphs": [
+          {
+            "heading": "The Scale of the Eastern Front",
+            "content": "The Eastern Front was the largest and bloodiest theater of the Second World War, and it was here that the war’s outcome was ultimately decided. Stretching from the Baltic to the Black Sea, the front spanned thousands of miles and consumed the majority of German and Soviet military resources. More soldiers fought and died in this theater than in all other parts of the war combined. The sheer scale of operations dwarfed Western campaigns, with battles involving millions of men, tens of thousands of tanks, and entire air forces. The titanic struggle between Nazi Germany and the Soviet Union became the crucible in which the Wehrmacht was broken and the path to Berlin was forged."
+          },
+          {
+            "heading": "Operation Barbarossa",
+            "content": "Germany’s invasion of the Soviet Union in June 1941, Operation Barbarossa, was the largest land invasion in history. Initially, it achieved spectacular successes: Soviet armies were encircled, millions of prisoners taken, and vast territories captured. Yet the operation failed to achieve its strategic objectives. The German plan underestimated Soviet resilience and overextended supply lines. As autumn rains turned roads to mud and winter set in, the Wehrmacht’s advance stalled outside Moscow. Soviet counterattacks pushed the Germans back, demonstrating that the war in the East would not be won quickly. The failure of Barbarossa marked the beginning of a war of attrition that Germany could not hope to win."
+          },
+          {
+            "heading": "The Siege of Leningrad",
+            "content": "One of the most harrowing episodes of the Eastern Front was the Siege of Leningrad, which lasted from September 1941 to January 1944. The city endured almost 900 days of blockade, with food supplies cut off and civilians reduced to starvation rations. Over a million people died, yet the city never surrendered. The survival of Leningrad became a symbol of Soviet resilience and defiance. Despite horrific suffering, factories continued to produce munitions, and the population contributed to the war effort. The siege tied down large numbers of German forces and demonstrated that even under extreme conditions, Soviet resistance could not be broken."
+          },
+          {
+            "heading": "The Battle of Stalingrad",
+            "content": "The Battle of Stalingrad, fought from August 1942 to February 1943, was the turning point of the war in the East. German forces advanced into the city, sparking months of brutal urban combat. Soviet defenders clung to every building and street, refusing to yield. As winter approached, the Red Army launched a massive encirclement operation, trapping the German Sixth Army inside the city. Starved and exhausted, the Germans surrendered in February 1943, suffering over 800,000 casualties. Stalingrad shattered the myth of German invincibility, shifted the momentum of the war, and marked the beginning of a relentless Soviet advance westward."
+          },
+          {
+            "heading": "The Battle of Kursk",
+            "content": "The summer of 1943 saw the Battle of Kursk, the largest tank battle in history. Anticipating a German offensive, the Soviets built deep defensive belts, laying thousands of mines and positioning anti-tank guns in depth. When German panzers attacked, they were met with devastating resistance. The battle culminated in massive armored clashes at Prokhorovka, where Soviet and German tanks fought at close quarters. Though the Germans inflicted heavy losses, they could not achieve a breakthrough. Kursk exhausted German offensive capacity on the Eastern Front, while the Soviets seized the initiative permanently. From this point on, the Red Army advanced inexorably toward Germany."
+          },
+          {
+            "heading": "The Soviet Counteroffensives",
+            "content": "After Kursk, the Soviet Union launched a series of counteroffensives that steadily pushed the Germans back. Operations in Ukraine liberated vast territories, while advances in the Baltic and Belarus severed German Army Group Center. Soviet forces benefited from overwhelming numerical superiority, improved tactics, and growing logistical support from Lend-Lease. The ability to sustain large-scale offensives year after year reflected both the resilience of the Soviet state and the strategic overreach of Germany. Each offensive inflicted catastrophic losses on the Wehrmacht, eroding its ability to resist effectively."
+          },
+          {
+            "heading": "The Human Cost",
+            "content": "The Eastern Front was defined not only by its scale but also by its brutality. Civilian populations were caught in the crossfire, suffering massacres, deportations, and famine. The German war of annihilation sought to destroy Soviet society as well as its armies, leading to atrocities on an unprecedented scale. The Soviet Union, for its part, endured unimaginable casualties, with estimates of over 20 million dead. This staggering human cost shaped the Soviet determination to fight to the end and fueled a desire for retribution as the Red Army advanced into Germany. The suffering of the Eastern Front underscores the immense price paid for Allied victory."
+          },
+          {
+            "heading": "The Decisive Theater",
+            "content": "Ultimately, the Eastern Front was the decisive theater of the Second World War. It was here that Germany committed the bulk of its forces and suffered the majority of its losses. The destruction of the Wehrmacht on the Eastern Front made possible the liberation of Western Europe and the eventual fall of Berlin. While Allied contributions in North Africa, Italy, and Normandy were vital, the Soviet Union’s role in bearing the brunt of the fighting cannot be overstated. The Eastern Front was the anvil upon which Hitler’s empire was shattered, ensuring that the war would end not in German victory but in total defeat."
+          }
+        ]
+      },
+      "unit-5-war-production": {
+        "display_order": 50,
+        "name": "Unit 5: War Production and Economic Mobilization",
+        "display_name": "Unit 5",
+        "paragraphs": [
+          {
+            "heading": "The Total War Economy",
+            "content": "The Second World War was a test not only of armies but also of economic endurance. Victory required the transformation of civilian industries into engines of war production, mobilizing millions of workers and vast resources to sustain the fight. For the Allies, this mobilization was carried out on a scale and with a coordination that far surpassed the Axis. Factories were retooled, consumer goods were rationed, and entire economies were redirected toward supplying the front lines. This shift to a total war economy was not only about quantity, but also about the efficiency and speed with which production could be maintained under constant pressure."
+          },
+          {
+            "heading": "The Arsenal of Democracy",
+            "content": "Nowhere was economic mobilization more dramatic than in the United States. Entering the war in 1941, America’s industrial potential was still largely untapped. President Roosevelt famously called the nation the 'arsenal of democracy,' and within months automobile factories were producing tanks, jeeps, and planes. Shipyards produced Liberty and Victory ships with astonishing rapidity, ensuring a steady flow of supplies to Europe and the Pacific. By 1944, U.S. factories were producing more weapons than all the Axis powers combined, including over 96,000 aircraft in a single year. American industrial output provided the backbone of Allied logistics, enabling campaigns on multiple continents simultaneously."
+          },
+          {
+            "heading": "Britain’s Managed Economy",
+            "content": "Britain, though smaller in resources, demonstrated remarkable resilience and organization. Rationing was imposed to ensure fair distribution of food and fuel, while government ministries directed every aspect of production. Women entered factories in unprecedented numbers, replacing men who had gone to fight. Advances in radar, codebreaking, and jet propulsion demonstrated Britain’s ability to blend science with production. Despite the Blitz and later V-weapon attacks, British industry continued to produce aircraft, ships, and munitions at impressive levels. This capacity, combined with imports from the empire and the United States, ensured that Britain remained a central base of operations throughout the war."
+          },
+          {
+            "heading": "The Soviet War Economy",
+            "content": "The Soviet Union achieved a feat of industrial relocation unparalleled in history. As German armies advanced, factories were dismantled and moved east of the Urals, where they were quickly reassembled. Despite appalling conditions and shortages, Soviet workers produced tanks, artillery, and aircraft in staggering quantities. The T-34 tank became a symbol of Soviet production: simple, reliable, and devastatingly effective. By focusing on functional, mass-producible designs, the Soviet Union ensured that the Red Army was always supplied. Lend-Lease aid, particularly trucks and raw materials from the United States, further enhanced Soviet mobility and endurance. The Soviet war economy exemplified resilience and determination under extreme conditions."
+          },
+          {
+            "heading": "Germany’s Industrial Mismanagement",
+            "content": "Germany’s economic mobilization lagged behind its rivals. Hitler initially resisted placing the economy on a full war footing, fearing it would weaken civilian morale. Factories remained divided among competing agencies, and production was fragmented and inefficient. Only in 1943, under Albert Speer’s reforms, did German war production begin to reach its potential. Even then, Allied bombing and shortages of raw materials hampered results. German reliance on technologically advanced but resource-intensive weapons, such as the Tiger tank and V-2 rocket, further limited the scale of production. In contrast to the Allied emphasis on mass production and simplicity, Germany’s approach often produced quality at the expense of quantity."
+          },
+          {
+            "heading": "Japan’s Struggles with Production",
+            "content": "Japan faced even greater challenges in sustaining its war economy. Lacking key resources like oil, steel, and rubber, it relied heavily on imports from conquered territories in Southeast Asia. Allied naval power and submarine campaigns steadily cut these lifelines, leaving Japanese industry starved of raw materials. Production focused on aircraft and naval vessels, but losses far outpaced replacements. Efforts to mobilize the population more fully came too late to compensate. By 1944, Japan’s industrial base was collapsing under the combined weight of bombing, blockade, and resource shortages. Unlike the Allies, Japan never succeeded in aligning its economy with the demands of prolonged modern warfare."
+          },
+          {
+            "heading": "Mobilization of Labor",
+            "content": "Economic mobilization required human labor on an unprecedented scale. In the United States and Britain, women entered the workforce in massive numbers, symbolized by 'Rosie the Riveter.' The Soviet Union mobilized both men and women under grueling conditions, often in near-starvation environments. The Axis powers, facing labor shortages, increasingly turned to forced labor from occupied territories, which bred resentment and sabotage rather than efficiency. The contrasting approaches to labor reflected deeper differences: the Allies created systems that, while often harsh, motivated populations to endure, while the Axis relied on coercion that undermined long-term effectiveness."
+          },
+          {
+            "heading": "Economic Power as Decisive Factor",
+            "content": "In the end, the war was won not just on battlefields but in factories, shipyards, and laboratories. The Allies’ ability to mobilize resources, coordinate production, and innovate under pressure gave them an insurmountable advantage. German and Japanese forces often fought with great skill and determination, but they were ultimately outproduced, out-supplied, and overwhelmed. War production was the foundation upon which every battlefield victory rested. It ensured that Allied armies and navies could be equipped, reinforced, and sustained year after year until final victory was achieved."
+          }
+        ]
+      },
+      "unit-6-sea-power": {
+        "display_order": 60,
+        "name": "Unit 6: Sea Power and Control of the Oceans",
+        "display_name": "Unit 6",
+        "paragraphs": [
+          {
+            "heading": "The Centrality of Sea Power",
+            "content": "Control of the seas was a prerequisite for Allied victory. Without secure shipping lanes, Britain could not survive, American resources could not reach Europe, and global coordination would collapse. Sea power was not simply about naval battles but about sustaining a global logistics network. Convoys carrying food, fuel, troops, and equipment had to cross oceans under constant threat from Axis forces. The ability to secure these routes and project naval power across multiple theaters became a decisive factor in the war’s outcome."
+          },
+          {
+            "heading": "The Battle of the Atlantic",
+            "content": "The Battle of the Atlantic was the longest continuous campaign of the war. German U-boats sought to sever Britain’s lifeline by sinking merchant ships faster than they could be replaced. At times, losses were so severe that Britain faced the prospect of starvation and collapse. Yet through persistence, innovation, and sheer production, the Allies turned the tide. Convoy systems, long-range patrol aircraft, and improved sonar gradually reduced U-boat effectiveness. By 1943, the balance had shifted decisively, and U-boat losses mounted catastrophically. The survival of Atlantic shipping lanes ensured that the Allied buildup for D-Day and beyond could proceed unhindered."
+          },
+          {
+            "heading": "Naval Innovation",
+            "content": "Naval warfare in the Second World War saw profound innovations. Aircraft carriers replaced battleships as the dominant capital ships, projecting power far beyond the range of guns. Escort carriers and destroyers became vital in protecting convoys. Technological advances such as sonar, radar, and depth charges made anti-submarine warfare increasingly effective. Amphibious warfare also advanced dramatically, with specialized landing craft enabling large-scale invasions such as Normandy and Pacific island campaigns. The adaptability of Allied navies in integrating new technologies ensured continued dominance on the seas."
+          },
+          {
+            "heading": "American Naval Expansion",
+            "content": "The United States embarked on an extraordinary naval expansion after 1941. Shipyards produced carriers, battleships, submarines, and support vessels at a rate unmatched in history. By 1945, the U.S. Navy had become the largest in the world, capable of sustaining operations across both the Atlantic and Pacific. This fleet enabled the island-hopping strategy in the Pacific, supported amphibious landings in Europe, and secured global shipping routes. American naval dominance reflected not only industrial capacity but also effective strategic vision in deploying naval forces where they were most needed."
+          },
+          {
+            "heading": "The Mediterranean Campaigns",
+            "content": "Control of the Mediterranean was another crucial theater of naval warfare. The Axis sought to dominate the region to cut British access to the Suez Canal and Middle Eastern oil. Italian and German forces challenged British supremacy, but naval engagements at Taranto, Matapan, and later the battles around Malta secured Allied control. Convoys through the Mediterranean sustained operations in North Africa, while naval power enabled amphibious invasions of Sicily and Italy. The Mediterranean became a proving ground for the coordination of sea and land power that would later define the Normandy invasion."
+          },
+          {
+            "heading": "The Pacific War at Sea",
+            "content": "The Pacific theater was dominated by naval warfare. Japan entered the war with a powerful navy, but after the decisive defeat at Midway in 1942, its carrier strength was fatally weakened. The U.S. Navy, supported by its vast industrial base, steadily gained control through battles such as the Philippine Sea and Leyte Gulf, the largest naval battle in history. American submarines devastated Japanese merchant shipping, cutting off vital resources. By 1945, Japan was effectively isolated, its navy shattered, and its economy strangled by blockade."
+          },
+          {
+            "heading": "Logistics and Sea Power",
+            "content": "Naval control was not only about battles but about logistics. The ability to move millions of men and millions of tons of supplies across oceans made Allied global operations possible. American Liberty ships and tankers ensured that fuel, food, and matériel reached Europe, Africa, and Asia. Naval bases across the world provided repair and resupply hubs, creating a truly global network of support. This logistical dominance turned naval superiority into strategic freedom, allowing the Allies to choose when and where to strike."
+          },
+          {
+            "heading": "Naval Superiority as Decisive Advantage",
+            "content": "By the final years of the war, the Allies enjoyed overwhelming naval superiority. The Axis powers, despite early successes, could no longer contest control of the oceans. Britain’s survival, America’s global reach, and Japan’s eventual isolation all testify to the decisive role of sea power. The war demonstrated that modern conflict could not be fought or won without secure command of the seas. Naval power ensured that Allied armies were always supplied, that global coordination was possible, and that the Axis was progressively strangled until total victory was achieved."
+          }
+        ]
+      },
+      "unit-7-leadership-strategy": {
+        "display_order": 70,
+        "name": "Unit 7: Leadership and Strategy",
+        "display_name": "Unit 7",
+        "paragraphs": [
+          {
+            "heading": "Strategic Vision and Coordination",
+            "content": "Leadership played a decisive role in shaping the Allied war effort. The challenge for the Allies was not only to mobilize vast resources but to coordinate the efforts of very different nations with divergent interests. Strategic vision required compromise, patience, and the ability to set clear priorities. Meetings at Casablanca, Tehran, and Yalta reflected the centrality of strategy, as Roosevelt, Churchill, and Stalin negotiated the sequence of offensives. The decision to prioritize Europe before Japan, to launch North African campaigns before a cross-Channel invasion, and to commit to unconditional surrender for the Axis powers reflected careful balancing of resources and political realities. This coordination ensured that Allied power was applied systematically and overwhelmingly."
+          },
+          {
+            "heading": "Churchill’s Leadership",
+            "content": "Winston Churchill’s leadership sustained Britain during its darkest hours. His oratory galvanized the British people during the Blitz, and his determination kept the nation fighting even when defeat seemed imminent. Churchill was also a strategist who advocated for peripheral campaigns in North Africa and the Mediterranean, believing they would weaken Germany and avoid premature confrontation in France. While some of his strategic choices were debated, his ability to maintain morale, forge alliances, and secure American support was indispensable. Churchill symbolized defiance and became the voice of resistance to Nazi domination."
+          },
+          {
+            "heading": "Roosevelt’s Leadership",
+            "content": "Franklin Roosevelt provided the political and economic leadership necessary to transform the United States into the arsenal of democracy. He carefully navigated public opinion, gradually preparing Americans for involvement in the war before Pearl Harbor. Once engaged, Roosevelt coordinated military production, built international coalitions, and provided steady support for the Soviet Union and Britain. His leadership style emphasized consensus and delegation, allowing military professionals like Eisenhower and Marshall to execute strategy. Roosevelt’s ability to manage both domestic politics and international diplomacy was critical in sustaining the Allied coalition over four years of war."
+          },
+          {
+            "heading": "Stalin’s Leadership",
+            "content": "Joseph Stalin’s role was complex and controversial. Brutal and paranoid, he had weakened the Soviet military through purges before the war, contributing to early disasters. Yet as the conflict deepened, Stalin adapted. He allowed competent generals like Zhukov greater freedom, accepted massive sacrifices from his people, and inspired Soviet resilience through appeals to patriotism and survival. Stalin’s insistence on a second front in Europe reflected both political pressure and strategic necessity, shaping Allied decisions at every summit. Despite his flaws, Stalin’s leadership ensured that the Soviet Union remained in the fight and ultimately delivered the crushing blows that destroyed the Wehrmacht."
+          },
+          {
+            "heading": "The Role of Generals",
+            "content": "Operational leadership was equally crucial. In Europe, generals like Eisenhower, Montgomery, and Zhukov coordinated massive offensives across thousands of miles. Eisenhower’s skill as Supreme Commander lay not only in military planning but in managing Allied egos and resources. In the Pacific, leaders such as MacArthur and Nimitz balanced differing approaches to island-hopping, converging on Japan from multiple directions. German leadership, though tactically brilliant in commanders like Rommel and Manstein, was hampered by Hitler’s interference, which increasingly substituted ideology for strategy. Japanese leadership, too, often pursued ambitious offensives without adequate resources, leading to catastrophic losses."
+          },
+          {
+            "heading": "Strategic Errors of the Axis",
+            "content": "The Axis powers repeatedly undermined themselves with flawed strategic choices. Germany’s decision to invade the Soviet Union before defeating Britain divided its resources and created a two-front war it could not win. Japan’s attack on Pearl Harbor brought the United States into the conflict, sealing its fate in the long run. Hitler’s insistence on holding territory at all costs bled German armies dry, while Japan’s reliance on offensive expansion overextended its supply lines. These strategic missteps were compounded by rigid command structures and the absence of effective coordination between Germany, Italy, and Japan. By contrast, Allied strategy was increasingly unified and pragmatic."
+          },
+          {
+            "heading": "Alliance Politics",
+            "content": "Managing the Allied coalition was a constant challenge. Britain and the United States often disagreed on timing and strategy, while Stalin pressed relentlessly for a second front. Yet despite tensions, the Allies maintained unity on the central question: unconditional victory. The ability to compromise on operational details while maintaining shared goals contrasted with the Axis, where distrust and rivalry undermined coordination. Effective alliance politics ensured that resources were pooled, theaters prioritized, and disagreements managed without fracturing the coalition. This unity of purpose was a major factor in the ultimate success of the Allied war effort."
+          },
+          {
+            "heading": "Leadership as a Decisive Factor",
+            "content": "Leadership and strategy transformed resources into results. The Allies were not immune to errors or failures, but their ability to adapt, coordinate, and learn from setbacks gave them the strategic momentum. Axis leaders, by contrast, often compounded failures with stubbornness and miscalculation. Leadership did not win battles directly, but it shaped the context in which battles were fought. The vision of leaders, the skill of generals, and the willingness to work across national boundaries ensured that Allied material superiority was turned into total victory."
+          }
+        ]
+      },
+      "unit-8-morale-ideology": {
+        "display_order": 80,
+        "name": "Unit 8: Morale, Ideology, and the Will to Fight",
+        "display_name": "Unit 8",
+        "paragraphs": [
+          {
+            "heading": "The Importance of Morale",
+            "content": "Wars are fought not only with weapons but with the will of populations to endure hardship and continue the struggle. For the Allies, maintaining morale was essential to sustaining prolonged conflict across multiple fronts. Governments used propaganda, rationing systems, and appeals to patriotism to keep populations engaged. The sense of fighting for survival and for a just cause gave civilians and soldiers alike a powerful motivation. By contrast, Axis morale, though initially buoyed by early victories, declined sharply as defeats mounted and hardship increased."
+          },
+          {
+            "heading": "Democracy and Dictatorship",
+            "content": "The political systems of the combatants shaped how morale was sustained. In democratic societies like Britain and the United States, governments had to persuade populations to accept sacrifice, creating a sense of shared purpose. Churchill’s speeches, Roosevelt’s fireside chats, and the visible fairness of rationing systems reinforced trust in leadership. In authoritarian regimes, dissent was suppressed, but coercion could not replace genuine belief. German and Japanese populations endured hardship, but propaganda could not indefinitely conceal defeats or justify catastrophic losses. The contrast between persuasion and coercion reflected deeper differences in legitimacy."
+          },
+          {
+            "heading": "Ideology as a Driving Force",
+            "content": "Ideology shaped the commitment of nations to the war. For the Allies, the conflict was framed as a fight for freedom against tyranny, a struggle that resonated widely even amid internal contradictions such as racial segregation in the United States or imperial rule in Britain. For the Axis, ideology was both a motivator and a weakness. Nazi racial doctrines fueled aggression but also undermined strategy by alienating potential allies in Eastern Europe. Japanese militarism inspired fierce loyalty but encouraged reckless offensives that overextended resources. Ideology could inspire, but it could also blind leaders to strategic reality."
+          },
+          {
+            "heading": "Civilian Endurance",
+            "content": "Civilian populations endured extraordinary hardship. In Britain, the Blitz destroyed cities but steeled determination to fight on. In the Soviet Union, entire communities were uprooted, factories relocated, and civilians conscripted into labor under brutal conditions. In the United States, rationing and war bond drives engaged the population in shared sacrifice without threatening basic survival. Axis civilians also suffered, particularly under Allied bombing campaigns, but morale in Germany and Japan eroded as defeat became inevitable. The ability of civilians to endure hardship without breaking was a key factor in sustaining the war effort."
+          },
+          {
+            "heading": "The Role of Propaganda",
+            "content": "Propaganda played a crucial role in shaping morale. Allied propaganda emphasized unity, sacrifice, and the justice of the cause. Posters, films, and radio broadcasts kept the public engaged and fostered resilience. In the Soviet Union, propaganda blended appeals to patriotism with ideological fervor, portraying the war as the 'Great Patriotic War' for survival. Axis propaganda, though initially effective, increasingly rang hollow as defeats mounted. Exaggerated promises of victory and demonization of enemies could not hide the reality of collapsing fronts. Propaganda worked best when aligned with lived experience, and in this respect the Allies held the advantage."
+          },
+          {
+            "heading": "The Soldiers’ Experience",
+            "content": "Morale on the front lines was shaped by leadership, supply, and purpose. Allied soldiers often believed they were fighting for liberation or survival, which gave them psychological resilience. The provision of adequate food, equipment, and rest further sustained their will to fight. For German and Japanese soldiers, early victories created confidence, but as resources dwindled and casualties mounted, morale weakened. Coercion and indoctrination could enforce obedience, but they could not indefinitely sustain fighting spirit against overwhelming odds. Soldiers fight best when they believe in their cause and when they are adequately supported—conditions increasingly absent for the Axis."
+          },
+          {
+            "heading": "The Collapse of Axis Morale",
+            "content": "By 1944–45, morale in Germany and Japan had eroded significantly. Cities lay in ruins, supply systems had collapsed, and confidence in leadership was fading. In Germany, desertion and defeatism grew, though fear of the Gestapo often forced soldiers and civilians to continue. In Japan, kamikaze tactics reflected desperation rather than confidence, while civilian suffering mounted under blockade and bombing. The will to fight was stretched to its limits, and when the final blows came—Soviet armies in Berlin, atomic bombs in Japan—resistance finally collapsed. The inability of the Axis to maintain morale mirrored their inability to sustain material resources."
+          },
+          {
+            "heading": "Morale as a Strategic Asset",
+            "content": "Ultimately, morale and ideology were as decisive as tanks and planes. The Allies’ ability to sustain belief in the justice of their cause, to maintain public support for sacrifice, and to project hope of victory gave them a psychological edge. The Axis, by contrast, squandered initial enthusiasm with strategic overreach, brutal policies, and catastrophic losses. The war was a contest of endurance as much as firepower, and in the end, the Allies’ superior ability to mobilize both material and moral resources ensured victory. The will to fight, grounded in shared purpose, was a weapon as powerful as any arsenal."
+          }
+        ]
+      }
+    }
+  }
+}
+
+    </script>
+    <!-- 
+    ============================================================
+    ^^^^^^^^^^^^^^ PASTE YOUR JSON CONTENT ABOVE ^^^^^^^^^^^^^^
+    ============================================================
+    -->
+
+    <script defer>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        const THEMES = {
+          'newspaper': { 
+            name: 'Newspaper', 
+            type: 'classic', 
+            isDark: false 
+          },
+          'emerald-paper': {
+            name: 'Emerald Paper', 
+            type: 'variable', 
+            isDark: false,
+            vars: {
+              '--bg-gradient': '#f7fbf9', '--text': '#1e2b28', '--accent-text': '#0f7f6d', '--nav-bg': '#e7f3ef',
+              '--nav-border': '#86c8ba', '--nav-text': '#1e2b28', '--nav-hover-bg': '#d7ece6', '--nav-active-bg': '#bfe3d9',
+              '--nav-active-text': '#1e2b28', '--prose-text': '#1e2b28', '--prose-headings': '#0f7f6d'
+            }
+          },
+          'cyber-blue': {
+            name: 'Cyber Night', 
+            type: 'variable', 
+            isDark: true,
+            vars: {
+              '--bg-gradient': 'rgb(2, 6, 23)',
+              '--text': 'rgb(203, 213, 225)',
+              '--accent-text': 'rgb(203, 213, 225)',
+              '--nav-bg': 'rgb(30, 41, 59)',
+              '--nav-border': 'rgb(51, 65, 85)',
+              '--nav-text': 'rgb(203, 213, 225)',
+              '--nav-hover-bg': 'rgb(15, 23, 42)',
+              '--nav-active-bg': 'rgb(51, 65, 85)',
+              '--nav-active-text': '#FFFFFF',
+              '--prose-text': 'rgb(203, 213, 225)',
+              '--prose-headings': '#FFFFFF'
+            }
+          },
+          'emerald-gold': {
+            name: 'Emerald/Gold', 
+            type: 'variable', 
+            isDark: true,
+            vars: {
+              '--bg-gradient': 'linear-gradient(135deg,#022c22 0%,#064e3b 60%,#065f46 100%)', '--text': '#ecfdf5',
+              '--accent-text': '#f0c475', '--nav-bg': '#064e3b', '--nav-border': '#d4a24c', '--nav-text': '#ecfdf5',
+              '--nav-hover-bg': '#065f46', '--nav-active-bg': '#0b3d31', '--nav-active-text': '#f0c475',
+              '--prose-text': '#a7f3d0', '--prose-headings': '#f0c475'
+            }
+          }
+        };
+
+        const app = {
+            root: document.documentElement,
+            header: document.getElementById('app-header'),
+            tabs: document.getElementById('app-tabs'),
+            panels: document.getElementById('app-panels'),
+            settings: {
+                modal: document.getElementById('settingsModal'),
+                closeBtn: document.getElementById('closeSettings'),
+                themeSelect: document.getElementById('themeSelect')
+            }
+        };
+
+        const state = { activeTab: null, theme: 'newspaper' };
+
+        const loadState = () => {
+            state.theme = localStorage.getItem('appTheme') || 'newspaper';
+            state.activeTab = localStorage.getItem('activeTab');
+        };
+
+        const saveState = () => {
+            localStorage.setItem('appTheme', state.theme);
+            localStorage.setItem('activeTab', state.activeTab);
+        };
+
+        const applyTheme = (themeKey) => {
+            const theme = THEMES[themeKey];
+            if (!theme) return;
+
+            app.root.className = '';
+            app.root.style.cssText = '';
+
+            if (theme.type === 'variable' && theme.vars) {
+                for (const [key, value] of Object.entries(theme.vars)) {
+                    app.root.style.setProperty(key, value);
+                }
+                app.root.classList.add(`theme-${themeKey}`);
+            }
+
+            state.theme = themeKey;
+            if (app.settings.themeSelect.value !== themeKey) {
+                app.settings.themeSelect.value = themeKey;
+            }
+            saveState();
+        };
+
+        const populateThemeSelector = () => {
+            app.settings.themeSelect.innerHTML = Object.entries(THEMES).map(([key, theme]) => 
+                `<option value="${key}">${theme.name}</option>`
+            ).join('');
+        };
+
+        const loadAndTransformData = () => {
+            try {
+                const dataNode = document.getElementById('app-data');
+                if (!dataNode.textContent.trim()) {
+                    console.error("JSON data is empty.");
+                    return null;
+                }
+                const rawData = JSON.parse(dataNode.textContent);
+                
+                // *** IMPROVEMENT: Automatically find the top-level key ***
+                const topLevelKey = Object.keys(rawData)[0];
+                if (!topLevelKey) {
+                    console.error("JSON data is missing a top-level key.");
+                    return null;
+                }
+                const course = rawData[topLevelKey];
+                
+                const units = Object.entries(course.categories).map(([id, unitData]) => ({ id, ...unitData }))
+                    .sort((a, b) => a.display_order - b.display_order);
+                return { meta: { title: course.title, description: course.description }, units };
+            } catch (e) {
+                console.error("Failed to load or transform app data:", e);
+                app.panels.innerHTML = `<div class="p-4 text-red-500 bg-red-100 rounded"><strong>Error:</strong> Could not load content. Please ensure the JSON is correctly formatted and pasted into the data island.</div>`;
+                return null;
+            }
+        };
+        
+        const data = loadAndTransformData();
+        
+        // Stop execution if data failed to load
+        if (!data) return;
+
+        const renderHeader = () => {
+            // Update document title dynamically
+            document.title = data.meta.title || "Interactive Course";
+            
+            app.header.innerHTML = `
+                <div class="flex justify-between items-start gap-4">
+                    <div>
+                        <h1 class="text-3xl font-bold text-accent">${data.meta.title}</h1>
+                        <p class="mt-2 text-primary/80">${data.meta.description}</p>
+                    </div>
+                    <button id="settingsBtn" class="flex-shrink-0 p-3 rounded-lg settings-button transition-opacity" aria-label="Display Settings">
+                        <span class="text-2xl text-accent">⚙️</span>
+                    </button>
+                </div>`;
+        };
+        
+        const renderTabs = () => {
+            app.tabs.innerHTML = `<div class="flex flex-wrap">${
+                data.units.map(unit => `
+                    <button role="tab" aria-selected="false" aria-controls="${unit.id}-panel" id="${unit.id}-tab"
+                            class="px-5 py-3 font-semibold transition-colors tab-button">
+                        ${unit.display_name}
+                    </button>`
+                ).join('')
+            }</div>`;
+        };
+
+        const renderPanels = () => {
+            app.panels.innerHTML = data.units.map(unit => {
+                const introHTML = unit.introduction ? `<p class="lead">${unit.introduction}</p>` : '';
+                const paragraphsHTML = (unit.paragraphs || []).map(p => `
+                    <h3>${p.heading}</h3>
+                    <p>${p.content}</p>
+                `).join('');
+                const proseClasses = THEMES[state.theme].isDark ? 'prose prose-lg max-w-none prose-invert' : 'prose prose-lg max-w-none';
+                return `
+                    <div role="tabpanel" id="${unit.id}-panel" aria-labelledby="${unit.id}-tab" hidden>
+                        <div class="${proseClasses}">
+                            <h2>${unit.name}</h2>
+                            ${introHTML}
+                            ${paragraphsHTML}
+                        </div>
+                    </div>`;
+            }).join('');
+        };
+
+        const switchTab = (tabId) => {
+            if (!data.units.some(u => u.id === tabId)) {
+                tabId = data.units[0]?.id;
+            }
+            if (!tabId) return;
+
+            app.tabs.querySelectorAll('[role="tab"]').forEach(tab => {
+                const isActive = tab.id === `${tabId}-tab`;
+                tab.setAttribute('aria-selected', isActive);
+                tab.classList.toggle('tab-active', isActive);
+            });
+
+            app.panels.querySelectorAll('[role="tabpanel"]').forEach(panel => {
+                panel.hidden = panel.id !== `${tabId}-panel`;
+            });
+            
+            state.activeTab = tabId;
+            saveState();
+        };
+
+        const setupEventListeners = () => {
+            app.tabs.addEventListener('click', e => {
+                const tab = e.target.closest('[role="tab"]');
+                if (tab) switchTab(tab.id.replace('-tab', ''));
+            });
+
+            app.header.addEventListener('click', e => {
+                if (e.target.closest('#settingsBtn')) {
+                    app.settings.modal.classList.remove('hidden');
+                    app.settings.themeSelect.focus();
+                }
+            });
+            
+            const closeModal = () => {
+                app.settings.modal.classList.add('hidden');
+                document.getElementById('settingsBtn')?.focus();
+            };
+            app.settings.closeBtn.addEventListener('click', closeModal);
+            app.settings.modal.addEventListener('keydown', e => {
+                if (e.key === 'Escape') closeModal();
+            });
+
+            app.settings.themeSelect.addEventListener('change', (e) => {
+                applyTheme(e.target.value);
+                renderPanels();
+                const activePanel = document.getElementById(`${state.activeTab}-panel`);
+                if(activePanel) activePanel.hidden = false;
+            });
+        };
+
+        const init = () => {
+            loadState();
+            populateThemeSelector();
+            applyTheme(state.theme);
+            renderHeader();
+            renderTabs();
+            renderPanels();
+            setupEventListeners();
+            switchTab(state.activeTab || data.units[0]?.id);
+        };
+
+        init();
+    });
+    </script>
+</body>
+</html>
+

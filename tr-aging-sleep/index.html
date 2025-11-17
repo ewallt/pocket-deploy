@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Threaded Reader</title>
+
+  <!-- Prepaint bootstrap: set dark + theme class before paint to avoid flicker -->
+  <script>
+  (function () {
+    const root = document.documentElement;
+    try {
+      const savedTheme = localStorage.getItem('theme');       // 'light' | 'dark' | null
+      const savedColor = localStorage.getItem('colorScheme'); // 'slate' | 'emerald' | future
+      const isDark = savedTheme !== 'light';                  // default to dark if unset
+      root.classList.toggle('dark', isDark);
+      // Apply colored theme classes ONLY in dark mode; light is always neutral slate
+      root.classList.toggle('theme-emerald', isDark && savedColor === 'emerald');
+    } catch (_) {}
+  })();
+  </script>
+
+  <!-- Tailwind (with Typography) -->
+  <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' };
+  </script>
+
+  <!-- Google Font (optional) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+
+  <style>
+  :root { color-scheme: light dark; }
+  html { scroll-behavior: smooth; }
+  .font-newspaper { font-family: 'Lora', serif; }
+  :where(h2,h3,h4){ scroll-margin-top: 84px; }
+  mark { background: #fde68a; padding: .1em .2em; border-radius: .2rem; }
+  @media (max-width: 380px){ .prose { font-size: .96rem; } }
+
+  /* ---------- Semantic surfaces (read from CSS variables) ---------- */
+.hero {
+  /* give the header an explicit base fill so gradient blends to the right hue */
+  background-color: var(--hero-base);
+  background:
+    radial-gradient(50% 120% at 10% 10%, var(--hero-r1), transparent 60%),
+    radial-gradient(80% 140% at 90% 10%, var(--hero-r2), transparent 70%),
+    linear-gradient(180deg, var(--hero-wash), transparent 35%);
+}
+.border-var { border-color: var(--border) !important; }
+.surface { border-width: 1px; border-style: solid; border-color: var(--border); }
+.hr-var { border-color: var(--border); }
+.subtitle { color: var(--subtitle-fg); }
+.timeline-fg { color: var(--timeline-fg); }
+.footer-note { color: var(--footer-fg); }
+.active-link { color: var(--active); font-weight: 700; }
+
+.input-surface {
+  border: 1px solid var(--input-border);
+  background-color: var(--input-bg);
+}
+.btn-surface { border: 1px solid var(--btn-border); }
+.btn-surface:hover { background: var(--btn-hover-bg); }
+.toc-link:hover { background: var(--hover-bg); }
+
+/* ---------- Slate (default) variables ---------- */
+:root{
+  /* accents / inks */
+  --active: rgb(59,130,246);                      /* sky-500 */
+  --subtitle-fg: rgb(71,85,105);                  /* slate-600 */
+  --timeline-fg: rgb(100,116,139);                /* slate-500 */
+  --footer-fg: rgb(100,116,139);                  /* slate-500 */
+
+  /* surfaces */
+  --border: rgb(226,232,240);                     /* slate-200 */
+  --hover-bg: rgb(248,250,252);                   /* slate-50 */
+  --btn-border: rgb(203,213,225);                 /* slate-300 */
+  --btn-hover-bg: rgb(248,250,252);               /* slate-50 */
+  --input-border: rgba(203,213,225,0.7);          /* slate-300/70 */
+  --input-bg: rgba(255,255,255,0.7);              /* white/70 */
+
+  /* hero base & gradient (light) */
+  --hero-base: transparent;                       /* keep light header airy */
+  --hero-r1: rgba(49,46,129,.12);                 /* indigo-700 */
+  --hero-r2: rgba(234,88,12,.12);                 /* orange-600 hint */
+  --hero-wash: rgba(14,165,233,.08);              /* sky-500 wash */
+}
+.dark{
+  --subtitle-fg: rgb(203,213,225);                /* slate-300 */
+  --timeline-fg: rgb(148,163,184);                /* slate-400 */
+  --footer-fg: rgb(148,163,184);                  /* slate-400 */
+
+  --border: rgb(30,41,59);                        /* slate-800 */
+  --hover-bg: rgb(15,23,42);                      /* slate-900 */
+  --btn-border: rgb(51,65,85);                    /* slate-700 */
+  --btn-hover-bg: rgb(15,23,42);                  /* slate-900 */
+  --input-border: rgba(51,65,85,0.7);             /* slate-700/70 */
+  --input-bg: rgba(2,6,23,0.6);                   /* slate-950/60 */
+
+  /* hero base & gradient (dark) */
+  --hero-base: rgb(2,6,23);                       /* slate-950 */
+  --hero-r1: rgba(49,46,129,.12);
+  --hero-r2: rgba(234,88,12,.12);
+  --hero-wash: rgba(14,165,233,.08);
+}
+
+/* ---------- Emerald theme overrides (light & dark) ---------- */
+.theme-emerald{
+  --active: #10b981;                              /* emerald-500 */
+
+  --border: rgb(187,247,208);                     /* emerald-200 */
+  --hover-bg: rgb(240,253,244);                   /* emerald-50 */
+  --btn-border: rgb(187,247,208);                 /* emerald-200 */
+  --btn-hover-bg: rgb(240,253,244);               /* emerald-50 */
+  --input-border: rgba(110,231,183,0.7);          /* emerald-300/70 */
+  --input-bg: rgba(255,255,255,0.7);              /* white/70 */
+
+  /* keep subtitles/timeline neutral for readability over hero */
+  --subtitle-fg: rgb(71,85,105);                  /* slate-600 */
+  --timeline-fg: rgb(71,85,105);                  /* slate-600 */
+  --footer-fg: rgb(16,185,129);                   /* emerald-500 */
+
+  /* hero base & gradient (emerald light) */
+  --hero-base: transparent;
+  --hero-r1: rgba(16,185,129,.14);                /* emerald-500 */
+  --hero-r2: rgba(163,230,53,.12);                /* lime-400 */
+  --hero-wash: rgba(5,150,105,.10);               /* emerald-600 wash */
+}
+.dark.theme-emerald{
+  /* ↑ Give borders enough contrast on dark emerald surfaces */
+  --border: rgba(110,231,183,0.55);                /* emerald-300 @ 55% */
+  --hover-bg: rgb(6,78,59);                        /* emerald-900 */
+  --btn-border: rgba(110,231,183,0.45);            /* slightly softer than borders */
+  --btn-hover-bg: rgb(6,78,59);                    /* emerald-900 */
+  --input-border: rgba(110,231,183,0.55);          /* match border contrast */
+  --input-bg: rgba(6,95,70,0.60);                  /* emerald-900/60 */
+
+  /* text accents for readability */
+  --footer-fg: rgb(110,231,183);                   /* emerald-300/400 */
+  --subtitle-fg: rgb(226,252,236);                 /* emerald-100 */
+  --timeline-fg: rgb(187,247,208);                 /* emerald-200 */
+
+  /* hero base & gradient (unchanged, stays emerald) */
+  --hero-base: rgb(2,44,34);                       /* emerald-950 (#022c22) */
+  --hero-r1: rgba(16,185,129,.14);
+  --hero-r2: rgba(163,230,53,.12);
+  --hero-wash: rgba(5,150,105,.10);
+}
+
+</style>
+
+</head>
+
+<body class="bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 pb-[env(safe-area-inset-bottom)]">
+
+
+
+  <!-- Header -->
+  <header id="top" class="hero border-b border-var">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-between gap-4">
+      <div>
+        <h1 id="docTitle" class="text-2xl sm:text-3xl font-bold font-newspaper tracking-tight">Loading...</h1>
+        <p id="docSubtitle" class="subtitle text-sm sm:text-base"></p>
+      </div>
+      <div class="flex items-center gap-2">
+        <label for="search" class="sr-only">Search</label>
+        <input id="search" type="search" placeholder="Search…" class="hidden md:block w-56 rounded-xl input-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400" />
+        <button id="clearSearch" type="button" class="hidden md:inline-flex text-xs px-2 py-2 rounded-lg btn-surface">Clear</button>
+        <button id="colorSchemeToggle" type="button" class="inline-flex items-center justify-center rounded-xl btn-surface px-3 py-2 text-sm" title="Change color scheme">
+          <span class="inline md:hidden">Colors</span>
+          <svg aria-hidden="true" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/>
+            <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/>
+            <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/>
+            <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/>
+            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 7.012 17.461 2 12 2z"/>
+          </svg>
+        </button>
+        <button id="themeToggle" type="button" class="inline-flex items-center justify-center rounded-xl btn-surface px-3 py-2 text-sm" title="Toggle dark mode" aria-pressed="false">
+          <span class="inline md:hidden">Theme</span>
+          <svg aria-hidden="true" class="w-5 h-5 hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg aria-hidden="true" class="w-5 h-5 dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6" id="timelineWrap" hidden>
+      <nav aria-label="Journey timeline" id="timelineNav" class="timeline-fg">
+        <ol id="timeline" class="grid grid-cols-3 sm:grid-cols-6 items-center gap-x-2 gap-y-1 text-[11px] sm:text-sm"></ol>
+        <div id="timelineCoda" class="mt-2 text-[11px] sm:text-xs"></div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)] gap-8">
+    <!-- Sidebar -->
+    <aside class="lg:sticky lg:top-4 h-max">
+      <nav aria-label="On this page" class="rounded-2xl surface p-4">
+        <h2 class="text-sm font-semibold mb-2">Sections</h2>
+        <ol id="toc" class="space-y-1 text-sm"></ol>
+        <hr class="my-4 hr-var" />
+        <button id="expandAll" type="button" class="w-full text-xs px-3 py-2 rounded-lg btn-surface">Expand All</button>
+        <button id="collapseAll" type="button" class="mt-2 w-full text-xs px-3 py-2 rounded-lg btn-surface">Collapse All</button>
+      </nav>
+    </aside>
+
+    <section id="content" class="prose prose-slate dark:prose-invert max-w-none">
+      <!-- DROP ARTICLE HERE -->
+
+<article class="rounded-2xl surface p-6">
+  <meta name="doc-title" content="Sleep & Health: What the Science Says">
+  <meta name="doc-subtitle" content="Why sleep is essential for brain cleanup, longevity, and whole-body health—and what the evidence shows">
+  <meta name="timeline-steps" content="why-sleep-matters-and-brain-cleanup,sleep-regularity-and-mortality,optimal-sleep-duration,how-much-are-we-sleeping-now,aging-and-circadian-changes,how-to-sleep-better,trackers-what-to-know,what-works-and-what-doesnt,sleep-apnea-spot-it-and-treat-it">
+  <meta name="timeline-labels" content="Why Sleep,Regularity,Much? (~7h),Trends,Aging,Craft Habits,Trackers,Therapies,Apnea">
+
+  <h2>Why Sleep Matters—and Brain Cleanup</h2>
+  <p>A restful good night's sleep can provide a magical sense of restoration and wellness. In recent years, we've gleaned a better understanding for what's going on while we sleep, and why it's so essential to our health. During sleep, metabolic waste products are transported out of the brain by cerebrospinal fluid and interstitial fluid. Not to be confused with our lymphatics and lymph nodes in the rest of our body, the brain's glymphatic system is a network of vessels that interacts with and complements the cerebrospinal fluid's capability to clear the waste products.</p>
+  <p>During non-rapid eye movement sleep, there are large waves of cerebrospinal flow. Impaired waste clearance has been documented in young, healthy individuals with a single night of sleep deprivation, as reflected by increases in the beta-amyloid protein seen in brain imaging. Marked accumulation of this protein is considered a precursor to the development of Alzheimer's disease.</p>
+  <p>The dynamics for cerebrospinal and interstitial fluid flow is influenced by neurovascular coupling and our circadian rhythm: during the day, our waste production is high and our vascular tone is increased, whereas slow wave neuronal activity is low. These dynamics are reversed during the night. In the words of Michael Grandner and Fabian-Xose Fernandez, “Sleep is a non-negotiable biological state required for the maintenance of human life ... our needs for sleep parallel those for air, food, and water.” The relationship between sleep and health outcomes is profound, including all-cause mortality, cardiovascular mortality, cancer mortality, risk of cancer, type 2 diabetes and metabolic dysfunction, immune system function, obesity, Alzheimer's disease, hypertension, stroke, female reproductive health, and mental and behavioral health.</p>
+</article>
+
+<article class="mt-6 rounded-2xl surface p-6">
+  <h2>Sleep Regularity and Mortality</h2>
+  <p>A brief review of a few relevant studies provides a sense of the big impact. From the UK Biobank cohort, nearly ninety-nine thousand participants with a mean age of sixty-two years using sleep trackers, sleep regularity index (SRI)—the probability of an individual being in the same state of sleep or awake at any two time points twenty-four hours apart, averaged over seven days—was correlated with all-cause, cardiovascular, and cancer mortality.</p>
+  <p><em>Figure 3.9 (summary): Higher sleep regularity (higher SRI) tracked with lower adjusted hazard ratios for all-cause, cardiovascular, and cancer mortality in UK Biobank.</em></p>
+</article>
+
+<article class="mt-6 rounded-2xl surface p-6">
+  <h2>Optimal Sleep Duration</h2>
+  <p>Among nearly eight thousand participants with twenty-five-year follow-up, a sleep duration at age fifty to sixty for six hours or less, compared with seven hours or more of sleep, was associated with a 30 percent increased risk of dementia. In a randomized trial of people with habitual sleep duration of less than 6.5 hours and a BMI between 25 and 30 kg/m², simply coaching for better sleep led to an extra 1.2 hours of sleep and a significant decrease in daily caloric intake (270 calories). A study in young, healthy men who underwent adipose tissue and muscle biopsies after one night of deprived, as compared to full, sleep showed deleterious pro-inflammatory changes of the transcriptome, proteome, epigenome, and metabolites in the blood. The loss of one hour of sleep from daylight savings time in Germany and the United States was associated with a significant rise in heart attacks in both countries for four days.</p>
+  <p>One of the best studies to tackle “how much sleep” used UK Biobank data from nearly 500,000 participants, 48,000 of whom underwent brain imaging, and 156,000 had a six- to ten-year follow-up. The principal finding was that about seven hours is the optimal duration of sleep.</p>
+  <p><em>Figure 3.10 (summary): The association between sleep duration and cognition/mental health was nonlinear (U-shaped): deviations below or above ~7 hours tracked with worse cognitive and mental health measures and brain-structure changes.</em></p>
+  <p>Also consistent is the relationship of long sleep (more than eight hours) and heightened all-cause mortality (by approximately 30%) that was previously established among nearly 1.4 million people. To sum up all the studies of sleep duration and cardiovascular disease, every one hour a night decrease in sleep below the seven- to eight-hour threshold is associated with 6 percent higher risk of total cardiovascular disease. Every one hour a night increase in sleep duration above that seven- to eight-hour threshold is associated with 12 percent higher risk of total cardiovascular disease.</p>
+</article>
+
+<article class="mt-6 rounded-2xl surface p-6">
+  <h2>How Much Are We Sleeping Now?</h2>
+  <p>In 2017, Matthew Walker, a professor of neuroscience at UC Berkeley, sounded the alarm about the silent sleep loss epidemic as "the greatest public health challenge we face in the twenty-first century.” Even before the COVID-19 pandemic, 35 to 40 percent of Americans were sleeping less than seven hours per night on a regular basis.</p>
+  <p>Intercountry differences for sleep duration were addressed by a study of 1.1 million people with an aggregate of thirty-four studies of participants using sleep trackers in the Netherlands, the UK, and the United States. Americans got the least sleep. That same study zoomed in on insomnia symptoms by age. In people over sixty-five years of age, 15 percent had difficulty in initiating sleep, 20 percent had difficulty in maintaining sleep, and 34 percent had early morning awakenings.</p>
+</article>
+
+<article class="mt-6 rounded-2xl surface p-6">
+  <h2>Aging and Circadian Changes</h2>
+  <p>The problem in older adults with sleep is threefold. There's less deep sleep, the precious non-rapid eye movement sleep substage that promotes health across all systems, along with memory and cognition. By late age forties, it's already lowered more than 60 percent than in a teenager; by age seventy, it's down 80 to 90 percent. There's also more fragmented, disrupted sleep—reduced sleep efficiency—the percent of time asleep while in bed. On top of these disruptions, there is regression of circadian timing that leads to earlier bedtimes and earlier awakenings.</p>
+  <p>The master pacemaker clock for our circadian rhythm is in the suprachiasmatic nucleus, a small region within the hypothalamus, entrained by external cues from light. Exquisite molecular circuitry connects it with our muscle, liver, adrenal gland, kidneys, immune system, heart, and pancreas. Exemplifying the pivotal role of the twenty-four-hour sleep-wake cycle, there's a rare familial condition of short sleep with no adverse consequences due to a mutation in a molecular clock regulator gene. If only we could simulate that clock control, we might be able to promote better quality and efficiency of sleep with less duration (think genome editing someday in the future).</p>
+</article>
+
+<article class="mt-6 rounded-2xl surface p-6">
+  <h2>How to Sleep Better</h2>
+  <p>So we're faced with the challenge of promoting better sleep that is essential for healthy aging, while aging itself is compromising sleep quality. There are some things that help, like maintaining the same sleep pattern every day, including weekends. That includes a regular pattern of exercise and meals, with an adequate separation of multiple hours from bedtime (think early time-restricted eating). A cool and fully dark, quiet bedroom as well as avoidance of the blue light from electronic devices that disrupts circadian rhythm and suppresses melatonin production are simple tips.</p>
+  <p>The benefit or risk of napping during the day has been a source of debate, but a large observational study found that napping one to two times weekly was linked to a significant reduction of cardiovascular events. Most epidemiologic studies that have looked at napping suggest their duration is important, and longer afternoon naps, especially more than one hour, are associated with risk.</p>
+</article>
+
+<article class="mt-6 rounded-2xl surface p-6">
+  <h2>Trackers: What to Know</h2>
+  <p>In recent years, the popularity of sleep trackers has soared, including wearables such as the Oura ring, smartwatches, and fitness bands, and smartphone app "nearables" that can be on or beside the bed. Most of these devices rely on an accelerometer to detect movement during sleep and try to extrapolate the duration of REM, non-rapid eye movement sleep phases, and total sleep duration. You can easily fake out that metric by reading in bed, which I have personally tested.</p>
+  <p>More sophisticated devices, like Oura, integrate heart rate, movement, body temperature, and blood oxygen levels, which provides better alignment with formal sleep lab measurements, yet with the advantage of being in one's own bed. The problem is that there are no standards for the algorithms for their sleep scores and a general lack of validation for accuracy of reporting. Ironically, use of the trackers can induce or exacerbate anxiety, which interferes with sleep quality. On the other hand, self-diagnosis for triggers of poor sleep, such as alcohol, late meals, caffeine, or blue light, can be facilitated with their use.</p>
+</article>
+
+<article class="mt-6 rounded-2xl surface p-6">
+  <h2>What Works—and What Doesn’t</h2>
+  <p>Few rigorously assessed interventions have been shown to improve sleep quality. Professional organizations recommend cognitive behavioral therapy as first-line treatment because of the body of evidence that has borne out its efficacy. That treatment typically requires a trained therapist along with a significant time commitment and expense. However, in-person coaching of relaxation training, avoidance of stimuli, and improvement in sleep hygiene can be simulated with smartphone apps. A randomized trial of digital cognitive behavioral therapy, using a smartphone app, enrolled over seventeen hundred participants with insomnia and showed improvements of insomnia symptoms along with functional health and psychological well-being. This report and others are encouraging nonpharmacologic ways of improving a healthy sleep schedule.</p>
+  <p>Supplements such as melatonin or magnesium have been studied in many small randomized trials and have been shown to have relatively small effects for promoting sleep quality, and the quality of evidence for both was deemed low. The same problem with low-quality data exists for the supplement ashwagandha and the prescription medicine trazodone. Several companies are heavily promoting beds that regulate body temperature to promote sleep quality, but again, evidence that they work is thin at best. Many ongoing drug discovery programs aim to find an effective and safe medication to fulfill the unmet need.</p>
+</article>
+
+<article class="mt-6 rounded-2xl surface p-6">
+  <h2>Sleep Apnea: Spot It and Treat It</h2>
+  <p>Before leaving sleep, I would be remiss not to highlight sleep apnea, a common disruption of sleep that affects 34 percent of men and 17 percent of women in the United States. The most common symptom is excessive daytime sleepiness, but even that is not reported in more than half of people affected. Other symptoms include loud snoring, episodes during sleep when you stop breathing as reported by another person, gasping for air during sleep, and difficulty staying asleep.</p>
+  <p>When suspected, the diagnosis can be made with a home sleep apnea testing with about 80 percent sensitivity and specificity, preempting a formal sleep lab study. In my experience, avoidance of such formal studies is desirable. They are nonphysiologic and expensive, and it is rare to see people get anything but abnormal results. For individuals who are symptomatic, multiple interventions ranging from weight loss and exercise to oral appliances that hold the jaw forward, to positive airway pressure devices, to surgery, have been shown to be effective. Since sleep apnea is associated with a twofold or greater risk of cardiovascular and metabolic diseases, its diagnosis and management in symptomatic individuals is of obvious importance.</p>
+</article>
+
+
+      <!-- DO NOT PASTE ANYTHING AFTER THIS POINT -->
+    </section>
+  </main>
+
+  <footer class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 text-xs footer-note">
+    Threaded Reader — a single-file template
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // ===== Utilities =====
+      const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+      const slug = s => s.toLowerCase().replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-');
+
+      // ===== Read Metadata from Content =====
+      const firstArticle = document.querySelector('#content article');
+      const docTitle = firstArticle?.querySelector('meta[name="doc-title"]')?.content || 'Untitled Document';
+      const docSubtitle = firstArticle?.querySelector('meta[name="doc-subtitle"]')?.content || '';
+      const timelineStepsData = firstArticle?.querySelector('meta[name="timeline-steps"]')?.content;
+      const timelineLabelsData = firstArticle?.querySelector('meta[name="timeline-labels"]')?.content;
+
+      // ===== Populate Header from Metadata =====
+      document.getElementById('docTitle').textContent = docTitle;
+      document.getElementById('docSubtitle').textContent = docSubtitle;
+      document.title = docTitle; // Also update browser tab title
+
+      // ===== Theme packs: only control article "prose-*" family
+      // ===== Theme packs: control article prose family AND base <body> ink/background
+const THEME_PACKS = {
+  slate: {
+    proseClass: 'prose-slate',
+    bodyClass: 'bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 pb-[env(safe-area-inset-bottom)]'
+  },
+  emerald: {
+    proseClass: 'prose-emerald',
+    bodyClass: 'bg-white text-emerald-900 dark:bg-emerald-950 dark:text-emerald-100 pb-[env(safe-area-inset-bottom)]'
+  }
+};
+const availableThemes = Object.keys(THEME_PACKS);
+
+
+function applyTheme(themeKey){
+  const root = document.documentElement;
+  const isDark = root.classList.contains('dark');
+
+  const THEME_PACKS = {
+    slate: {
+      proseClass: 'prose-slate',
+      bodyClass: 'bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 pb-[env(safe-area-inset-bottom)]'
+    },
+    emerald: {
+      proseClass: 'prose-emerald',
+      bodyClass: 'bg-white text-emerald-900 dark:bg-emerald-950 dark:text-emerald-100 pb-[env(safe-area-inset-bottom)]'
+    }
+  };
+
+  const pack = THEME_PACKS[themeKey] || THEME_PACKS.slate;
+
+  // Color theme classes only attach in DARK; LIGHT is always neutral slate
+  root.classList.toggle('theme-emerald', isDark && themeKey === 'emerald');
+
+  // Body ink/background:
+  document.body.className = isDark ? pack.bodyClass : THEME_PACKS.slate.bodyClass;
+
+  // Article prose color family (ok to vary by theme in both modes; change if you want neutral):
+  const content = document.getElementById('content');
+  content.className = `prose ${pack.proseClass} dark:prose-invert max-w-none`;
+
+  // Persist choice (used when you return to dark)
+  try { localStorage.setItem('colorScheme', themeKey); } catch(_){}
+}
+
+
+
+      // Initialize from localStorage
+      let currentThemeIndex = 0;
+      try {
+        const saved = localStorage.getItem('colorScheme');
+        if (saved && THEME_PACKS[saved]) currentThemeIndex = availableThemes.indexOf(saved);
+      } catch(_) {}
+
+      // ===== Color Scheme Toggle =====
+const colorBtn = document.getElementById('colorSchemeToggle');
+colorBtn?.addEventListener('click', () => {
+  const root = document.documentElement;
+
+  // If we're in LIGHT mode, switch to DARK and stop here (do NOT cycle color yet)
+  if (!root.classList.contains('dark')) {
+    root.classList.add('dark');
+    try { localStorage.setItem('theme','dark'); } catch(_){}
+    document.getElementById('themeToggle')?.setAttribute('aria-pressed','true');
+    return; // first click behaves like the theme toggle only
+  }
+
+  // Already DARK: now cycle to the next color scheme
+  currentThemeIndex = (currentThemeIndex + 1) % availableThemes.length;
+  const newTheme = availableThemes[currentThemeIndex];
+  applyTheme(newTheme);
+
+  // Rebuild TOC (keeps hover styles consistent with the new scheme)
+  buildTOC();
+});
+
+
+      // ===== Theme (dark/light) Handling =====
+const themeBtn = document.getElementById('themeToggle');
+if (themeBtn) {
+  themeBtn.setAttribute('aria-pressed', String(document.documentElement.classList.contains('dark')));
+}
+themeBtn?.addEventListener('click', () => {
+  const root = document.documentElement;
+  const isDark = root.classList.toggle('dark');
+  try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch(_){}
+  themeBtn.setAttribute('aria-pressed', String(isDark));
+
+  if (!isDark) {
+    // Going to LIGHT → always neutralize to slate
+    root.classList.remove('theme-emerald');
+    try { localStorage.setItem('colorScheme','slate'); } catch(_){}
+    applyTheme('slate');
+  } else {
+    // Back to DARK → reapply saved (or default) color
+    let saved = 'slate';
+    try { const s = localStorage.getItem('colorScheme'); if (s) saved = s; } catch(_){}
+    applyTheme(saved);
+  }
+  buildTOC();
+});
+
+try {
+  const mq = matchMedia('(prefers-color-scheme: dark)');
+  const onChange = (e) => {
+    if (!localStorage.getItem('theme')) { // only if user hasn't forced a theme
+      const isDark = e.matches;
+      const root = document.documentElement;
+      root.classList.toggle('dark', isDark);
+      themeBtn?.setAttribute('aria-pressed', String(isDark));
+
+      if (!isDark) {
+        root.classList.remove('theme-emerald');
+        try { localStorage.setItem('colorScheme','slate'); } catch(_){}
+        applyTheme('slate');
+      } else {
+        let saved = 'slate';
+        try { const s = localStorage.getItem('colorScheme'); if (s) saved = s; } catch(_){}
+        applyTheme(saved);
+      }
+      buildTOC();
+    }
+  };
+  if (mq.addEventListener) mq.addEventListener('change', onChange);
+  else if (mq.addListener) mq.addListener(onChange); // Safari <14
+} catch (_) {}
+
+      // ===== Expand/Collapse Functionality =====
+      const getDetails = () => document.querySelectorAll('#content details');
+      const expandBtn = document.getElementById('expandAll');
+      const collapseBtn = document.getElementById('collapseAll');
+
+      if (getDetails().length === 0) {
+        if(expandBtn) expandBtn.hidden = true;
+        if(collapseBtn) collapseBtn.hidden = true;
+      } else {
+        expandBtn?.addEventListener('click', () => { getDetails().forEach(d => d.open = true); });
+        collapseBtn?.addEventListener('click', () => { getDetails().forEach(d => d.open = false); });
+      }
+
+      // ===== Add Back to Top Links =====
+      (function addBackToTopLinks(){
+        $$('#content > article').forEach((article, index, arr) => {
+          if (index === arr.length - 1) return;
+          const wrapper = document.createElement('div');
+          wrapper.className = 'mt-6 flex justify-end';
+          wrapper.innerHTML = `<a href="#top" class="text-sm underline decoration-dotted">Back to top</a>`;
+          article.appendChild(wrapper);
+        });
+      })();
+
+      // ===== Build Table of Contents =====
+      function buildTOC(){
+        const toc = document.getElementById('toc');
+        if (!toc) return;
+        const headings = $$('#content h2, #content h3');
+        const items = headings.map(h => {
+          if (!h.id) h.id = slug(h.textContent);
+          return { id: h.id, text: h.textContent.trim(), level: h.tagName.toLowerCase() };
+        });
+
+        toc.innerHTML = items.map(({id, text, level}) => {
+          const pad = level === 'h3' ? ' pl-4' : '';
+          return `<li><a href="#${id}" class="toc-link block px-2 py-1.5 rounded${pad}">${text}</a></li>`;
+        }).join('');
+
+        const links = $$('#toc a');
+        const sections = items.map(i => document.getElementById(i.id));
+        const obs = new IntersectionObserver(entries => {
+          entries.forEach(e => {
+            if (e.isIntersecting) {
+              links.forEach(a => a.classList.remove('active-link'));
+              const id = '#' + e.target.id;
+              const active = links.find(a => a.getAttribute('href') === id);
+              active?.classList.add('active-link');
+            }
+          });
+        }, { rootMargin: '-40% 0px -55% 0px', threshold: 0.01 });
+        sections.forEach(sec => sec && obs.observe(sec));
+      }
+      buildTOC();
+
+      // ===== Build Timeline from Metadata =====
+      (function buildTimeline(){
+        const wrap = document.getElementById('timelineWrap');
+        const list = document.getElementById('timeline');
+        const coda = document.getElementById('timelineCoda');
+
+        if (!timelineStepsData || !wrap || !list) { if(wrap) wrap.hidden = true; return; }
+
+        const steps = timelineStepsData.split(',').map(s => s.trim());
+        const labels = timelineLabelsData ? timelineLabelsData.split(',').map(s => s.trim()) : [];
+
+        if (!steps.length) { wrap.hidden = true; return; }
+        wrap.hidden = false;
+
+        const mkStep = (id, label) => (
+          `<li class="flex items-center gap-2"><span class="inline-block w-[14px] h-[14px] rounded-full border-2 border-current bg-current"></span><a href="#${id}" class="hover:underline">${label}</a></li>`
+        );
+
+        const segments = [];
+        steps.forEach((id, idx) => {
+          const el = $$('#content h2, #content h3').find(h => slug(h.textContent) === id);
+          if (el && !el.id) el.id = id;
+          const label = labels[idx] || (el?.textContent || id.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()));
+          segments.push(mkStep(id, label));
+          if (idx !== steps.length - 1) segments.push('<li class="h-[2px] bg-current opacity-35"></li>');
+        });
+        list.innerHTML = segments.join('');
+      })();
+
+      // ===== Search Highlighter =====
+      (function searchHL(){
+        const input = document.getElementById('search');
+        const clearBtn = document.getElementById('clearSearch');
+        const content = document.getElementById('content');
+        if (!input || !content) return;
+        let originalHTML = '';
+        function restore(){ 
+          if (originalHTML) {
+            content.innerHTML = originalHTML; 
+            buildTOC(); 
+          }
+        }
+        function highlight(term){
+          if (!originalHTML) originalHTML = content.innerHTML;
+          restore();
+          if (!term) return;
+          const esc = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+          const re = new RegExp(`(${esc})(?![^<]*>)`, 'gi');
+          content.innerHTML = content.innerHTML.replace(re, '<mark>$1</mark>');
+          buildTOC();
+        }
+        let t; 
+        input.addEventListener('input', (e) => { 
+          clearTimeout(t); 
+          t = setTimeout(() => highlight(e.target.value.trim()), 120); 
+        });
+        clearBtn?.addEventListener('click', () => { 
+          if (input) input.value=''; 
+          restore(); 
+        });
+      })();
+
+      // ===== Apply initial theme pack to prose =====
+      try {
+        const saved = localStorage.getItem('colorScheme');
+        applyTheme(saved && THEME_PACKS[saved] ? saved : 'slate');
+      } catch(_){
+        applyTheme('slate');
+      }
+    });
+  </script>
+</body>
+</html>
+

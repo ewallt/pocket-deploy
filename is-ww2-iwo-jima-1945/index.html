@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Iwo Jima (1945)</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111833;
+      --ink:#e6ecff;
+      --muted:#a7b0cc;
+      --brand:#8bb9ff;
+      --accent:#c0ffe1;
+      --border:#26325b;
+      --chip:#1a2347;
+      --bad:#ff6b6b;
+      --shadow:0 8px 28px rgba(0,0,0,.35);
+      --radius:12px;
+      --radius-sm:8px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+      line-height:1.6;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
+        radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+      padding-bottom:2rem;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .container{max-width:860px;margin:0 auto;padding:1rem}
+
+    header{
+      background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:2rem 1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+    }
+
+    h1{
+      color:var(--ink);
+      font-size:1.75rem;
+      margin-bottom:.5rem;
+      letter-spacing:-.015em;
+    }
+
+    .subtitle{
+      color:var(--muted);
+      font-size:.95rem;
+      font-style:italic;
+    }
+
+    .breadcrumb{
+      margin-bottom:1rem;
+      font-size:.9rem;
+    }
+    .breadcrumb a{color:var(--brand);text-decoration:none}
+    .breadcrumb span{color:var(--muted)}
+
+    .main-answer{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+      border-left:4px solid var(--brand);
+    }
+
+    .main-answer h2{
+      color:var(--brand);
+      font-size:1.3rem;
+      margin-bottom:1rem;
+      letter-spacing:.01em;
+    }
+
+    .main-answer p{font-size:1.05rem;line-height:1.7}
+
+    .section{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      margin-bottom:1rem;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .section-header{
+      padding:1.1rem 1.25rem;
+      background:linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%);
+      color:var(--ink);
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      border-bottom:1px solid var(--border);
+    }
+
+    .section-header h2{
+      font-size:1.15rem;
+      font-weight:700;
+      letter-spacing:.01em;
+    }
+
+    .section-icon{font-size:1.35rem;transition:transform .3s ease}
+    .section.active .section-icon{transform:rotate(180deg)}
+
+    .section-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+    .section.active .section-content{max-height:5000px}
+
+    .section-inner{padding:1.25rem}
+
+    h3{
+      color:var(--brand);
+      font-size:1.08rem;
+      margin:1.3rem 0 .65rem 0;
+      letter-spacing:.01em;
+    }
+    h3:first-child{margin-top:0}
+
+    .list-item{
+      background:color-mix(in oklab,var(--chip) 75%, transparent);
+      border-left:3px solid var(--brand);
+      padding:1rem;
+      margin-bottom:.75rem;
+      border-radius:var(--radius-sm);
+      border:1px solid var(--border);
+    }
+
+    .timeline{
+      border-left:3px solid var(--brand);
+      padding-left:1.25rem;
+      margin-left:.5rem;
+    }
+
+    .timeline-item{
+      margin-bottom:1.25rem;
+      position:relative;
+    }
+
+    .timeline-item::before{
+      content:'';
+      position:absolute;left:-1.65rem;top:.25rem;
+      width:12px;height:12px;border-radius:50%;
+      background:var(--brand);border:3px solid var(--panel);
+      box-shadow:0 0 0 2px var(--brand);
+    }
+
+    .timeline-item strong{color:var(--brand);display:block;margin-bottom:.25rem}
+
+    .source{
+      background:color-mix(in oklab,var(--chip) 65%, transparent);
+      border-radius:8px;padding:1rem;margin-top:1.2rem;
+      font-size:.95rem;color:var(--muted);
+      border:1px solid var(--border);
+    }
+    .source strong{color:var(--ink)}
+
+    .back-to-top{
+      position:fixed;bottom:1.5rem;right:1rem;
+      background:var(--brand);color:#001;
+      width:50px;height:50px;border-radius:50%;
+      border:none;font-size:1.5rem;cursor:pointer;
+      box-shadow:var(--shadow);opacity:0;transition:opacity .3s ease;
+      z-index:1000;display:flex;align-items:center;justify-content:center;
+      font-weight:900;
+    }
+    .back-to-top.visible{opacity:1}
+    .back-to-top:active{transform:scale(.96)}
+
+    a{color:var(--brand)}
+
+    @media (max-width:480px){
+      h1{font-size:1.5rem}
+      .section-header h2{font-size:1.05rem}
+      .container{padding:.75rem}
+      header{padding:1.5rem 1rem}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="https://ewallt.github.io/pocket-deploy/is-ww2-hub/index.html">WWII Hub</a> <span>›</span> Iwo Jima
+    </div>
+
+    <header>
+      <h1>Iwo Jima (1945)</h1>
+      <p class="subtitle">Securing Airfields and Iconic Sacrifice in the Pacific</p>
+    </header>
+
+    <div class="main-answer">
+      <h2>Core Summary</h2>
+      <p>From February 19 to March 26, 1945, U.S. Marines fought one of the bloodiest battles of the Pacific War to capture the volcanic island of Iwo Jima. The eight square-mile island held strategic airfields needed for B-29 bomber operations against Japan. Fierce Japanese resistance from fortified positions led to over 26,000 American casualties, while nearly all 21,000 Japanese defenders fought to the death. The iconic flag-raising on Mount Suribachi became one of the war's most enduring images.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🎯 Strategic Context</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>U.S. Objectives:</strong> Secure airfields for emergency landings by damaged B-29s returning from Japan and provide bases for P-51 Mustang escorts to accompany strategic bombing raids.
+          </div>
+          <div class="list-item">
+            <strong>Japanese Defense:</strong> Commander Tadamichi Kuribayashi designed an intricate network of tunnels, bunkers, and pillboxes to maximize casualties and delay the American advance.
+          </div>
+          <div class="list-item">
+            <strong>Geographic Importance:</strong> Located halfway between the Mariana Islands and Tokyo, Iwo Jima sat along the main bombing route to Japan's home islands.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🪖 Forces & Commanders</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>United States:</strong> V Amphibious Corps under Lt. Gen. Holland Smith; 3rd, 4th, and 5th Marine Divisions (Maj. Gens. Graves Erskine, Clifton Cates, Keller Rockey); overall commander Vice Admiral Richmond Kelly Turner.
+          </div>
+          <div class="list-item">
+            <strong>Japan:</strong> Lt. Gen. Tadamichi Kuribayashi commanding 109th Division and supporting units; approximately 21,000 troops fortified in depth.
+          </div>
+          <div class="list-item">
+            <strong>Forces Engaged:</strong> Over 70,000 U.S. Marines landed; 880 ships and extensive naval gunfire and air support.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📜 Battle Timeline</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="timeline">
+            <div class="timeline-item">
+              <strong>February 19, 1945:</strong> Marines land on the southeastern beaches; initial progress slow due to volcanic ash and murderous fire from concealed positions.
+            </div>
+            <div class="timeline-item">
+              <strong>February 23:</strong> U.S. forces capture Mount Suribachi; iconic flag-raising photographed by Joe Rosenthal.
+            </div>
+            <div class="timeline-item">
+              <strong>Late February–March:</strong> Grinding advance through fortified terrain; flamethrowers and demolitions clear bunkers and caves.
+            </div>
+            <div class="timeline-item">
+              <strong>March 16:</strong> Island declared secure, though pockets of resistance remain.
+            </div>
+            <div class="timeline-item">
+              <strong>March 26:</strong> Final organized resistance ends; Kuribayashi presumed killed; over 20,000 Japanese dead, fewer than 200 captured.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>⚡ Turning Points</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Capture of Mount Suribachi:</strong> Securing the southern high ground provided observation and morale, but the majority of the fighting still lay ahead.
+          </div>
+          <div class="list-item">
+            <strong>Adaptation to Fortifications:</strong> U.S. forces refined combined-arms tactics—flamethrowers, demolitions, tanks, and close air support—to reduce Japanese strongpoints.
+          </div>
+          <div class="list-item">
+            <strong>Attrition and Determination:</strong> Japanese defenders inflicted maximum casualties but could not prevent the island's capture due to American numerical and material superiority.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🏁 Outcomes & Consequences</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Human Cost:</strong> 6,821 Americans killed, 19,217 wounded; 27 Medals of Honor awarded—more than any other single battle in U.S. history.
+          </div>
+          <div class="list-item">
+            <strong>Strategic Gains:</strong> Iwo Jima's airfields saved an estimated 2,400 B-29 bombers and 27,000 aircrew members during emergency landings.
+          </div>
+          <div class="list-item">
+            <strong>Psychological Impact:</strong> The staggering casualties raised questions about the cost of an invasion of the Japanese home islands.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🏰 Historical Significance</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Symbol of Sacrifice:</strong> The battle—and the flag-raising photograph—became enduring symbols of Marine Corps valor and American resolve.
+          </div>
+          <div class="list-item">
+            <strong>Operational Lessons:</strong> Exposed the costs of attacking heavily fortified positions and reinforced the need for overwhelming firepower and innovative tactics.
+          </div>
+          <div class="list-item">
+            <strong>Legacy:</strong> Admiral Chester Nimitz's words—"uncommon valor was a common virtue"—captured the spirit of the Marines who fought there; the battle foreshadowed the even bloodier struggle at Okinawa.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📚 Sources</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="source">
+            <strong>Primary:</strong> U.S. Marine Corps battle reports; Kuribayashi's letters; Joe Rosenthal's flag-raising photograph; after-action reports.
+          </div>
+          <div class="source">
+            <strong>Secondary:</strong> James Bradley, <em>Flags of Our Fathers</em> (2000); Richard F. Newcomb, <em>Iwo Jima</em> (1965); Derrick Wright, <em>Iwo Jima 1945: The Marines Raise the Flag on Mount Suribachi</em> (2001); Robert Leckie, <em>Strong Men Armed: The United States Marines Against Japan</em> (1962).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="back-to-top" onclick="scrollToTop()" id="backToTop" aria-label="Back to top">↑</button>
+
+  <script>
+    function toggleSection(header){
+      const section = header.parentElement;
+      const all = document.querySelectorAll('.section');
+      all.forEach(s => { if(s !== section && s.classList.contains('active')) s.classList.remove('active'); });
+      section.classList.toggle('active');
+    }
+
+    window.addEventListener('scroll', () => {
+      const btn = document.getElementById('backToTop');
+      if(window.pageYOffset > 300){ btn.classList.add('visible'); }
+      else { btn.classList.remove('visible'); }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const first = document.querySelector('.section');
+      if(first) first.classList.add('active');
+    });
+
+    function scrollToTop(){
+      window.scrollTo({ top:0, behavior:'smooth' });
+    }
+  </script>
+</body>
+</html>

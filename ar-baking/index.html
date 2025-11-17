@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Adaptive Reader</title>
+
+  <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+  <script>tailwind.config = { darkMode: 'class' }</script>
+
+  <script src="https://www.blueletterbible.org/scripts/blbToolTip/BLB_ScriptTagger-min.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+
+  <style>
+    /* Typography */
+    .font-newspaper{font-family:'Lora',serif}
+    .font-dark-theme{font-family:'Lora',serif}
+    body{transition:background-color .3s,color .3s}
+    .prose h1{min-height:7.5rem}
+
+    /* Light */
+    .newspaper-theme{background:#fdfdfd;color:#1a1a1a}
+    .newspaper-theme .nav-button{background:#f8f9fa;border:1px solid #dee2e6;color:#212529}
+    .newspaper-theme .nav-button:hover{background:#e9ecef}
+    .newspaper-theme .nav-button.active{background:#1a1a1a;color:#fdfdfd}
+
+    /* Dark */
+    .dark-theme{background:#2d2d30;color:#fff}
+    .dark-theme .nav-button{background:#3c3c3c;border:1px solid #4a4a4a;color:#ccc}
+    .dark-theme .nav-button:hover{background:#4a4a4a}
+    .dark-theme .nav-button.active{background:#fff;color:#2d2d30}
+
+    /* Shared */
+    .nav-container{margin-bottom:2rem}
+    .nav-button{padding:.5rem 1rem;margin:.5rem .5rem .5rem 0;border-radius:.375rem;transition:all .2s;cursor:pointer}
+    #library-switcher,#topic-switcher{padding:.5rem;border-radius:.375rem;margin-bottom:1rem;width:100%;border:1px solid #ccc}
+    .nav-buttons-wrapper{display:flex;flex-wrap:wrap;align-items:center;width:100%}
+    .flex-break{flex-basis:100%;height:0}
+  </style>
+</head>
+<body class="font-newspaper newspaper-theme">  
+  <script id="embedded-content" type="application/json">
+{
+    "baking-science": {
+        "display_order": 10,
+        "title": "The Baker's Lab: The Science Behind the Art",
+        "description": "An exploration for experienced bakers into the chemical and physical transformations that turn simple ingredients into masterful creations, from the perfect crumb to the flawless crust.",
+        "categories": {
+            "gluten-science": {
+                "display_order": 10,
+                "name": "Gluten: The Architect of Bread and Dough",
+                "display_name": "Gluten Science",
+                "introduction": "Every baker works with gluten, but understanding what's happening at a molecular level is the key to mastering any dough. This is the science of creating structure, chew, and tenderness.",
+                "paragraphs": [
+                    {
+                        "heading": "Gliadin and Glutenin: The Protein Duo",
+                        "content": "Flour's magic comes from two primary proteins: <strong>gliadin</strong> and <strong>glutenin</strong>. When flour is hydrated, these proteins link together to form the gluten network. Glutenin provides the strength and elasticity, allowing the dough to snap back. Gliadin provides the extensibility, allowing the dough to stretch and expand as it fills with gas. The ratio of these proteins is what makes bread flour ideal for chewy loaves and cake flour perfect for tender crumb."
+                    },
+                    {
+                        "heading": "Hydration and Autolyse: Awakening the Network",
+                        "content": "The simple act of adding water begins a cascade of chemical reactions. An <strong>autolyse</strong>—a rest period after mixing just flour and water—is a powerful technique used by many artisan bakers. During this rest, enzymes in the flour begin to break down proteins, making the dough more extensible and easier to work. It also jump-starts the process of gluten formation without any mechanical kneading, leading to better flavor and structure in the final loaf."
+                    },
+                    {
+                        "heading": "Mechanical vs. Biochemical Development",
+                        "content": "Kneading is a form of <strong>mechanical development</strong>, physically forcing the gluten proteins to align into strong sheets. However, experienced bakers also use <strong>biochemical development</strong>. In techniques like the stretch-and-fold method common in sourdough baking, time and fermentation do most of the work. The dough is gently stretched, folded, and allowed to rest, strengthening the gluten network gradually and preserving the delicate gas bubbles created by the yeast."
+                    },
+                    {
+                        "heading": "Controlling Gluten for Tenderness",
+                        "content": "While essential for bread, gluten is the enemy of tender cakes and flaky pastries. Experienced bakers control it in several ways. Using low-protein <strong>cake flour</strong> is the first step. The second is the addition of <strong>fats</strong>, which coat the flour proteins and physically block long gluten strands from forming—a process known as 'shortening.' Finally, minimizing mixing time once liquid is added prevents over-development, ensuring a delicate, tender final product."
+                    }
+                ]
+            },
+            "magic-of-leavening": {
+                "display_order": 20,
+                "name": "The Magic of Leavening: Air, Steam, and Chemistry",
+                "display_name": "Leavening",
+                "introduction": "Creating lightness and air is fundamental to baking. This explores the three distinct ways bakers achieve lift: the biological activity of yeast, the precise reactions of chemical leaveners, and the raw physical power of steam.",
+                "paragraphs": [
+                    {
+                        "heading": "Biological: The Sourdough Symbiosis",
+                        "content": "In a sourdough starter, it's not just yeast at work. It's a complex symbiotic culture of wild yeasts and lactobacilli bacteria. The <strong>yeasts</strong> (primarily *Saccharomyces cerevisiae*) consume sugars and produce carbon dioxide for leavening. The <strong>lactobacilli</strong> also consume sugars but produce lactic and acetic acids. These acids don't just provide the signature sour flavor; they also strengthen the gluten network and help preserve the bread naturally."
+                    },
+                    {
+                        "heading": "Chemical: The Acid-Base Reaction",
+                        "content": "Chemical leaveners provide instant, predictable lift. <strong>Baking soda</strong> (*sodium bicarbonate*) is a base. It requires an acidic ingredient in the recipe (like buttermilk, yogurt, or lemon juice) to react and produce CO2. <strong>Baking powder</strong> is self-contained; it includes both baking soda and a powdered acid. 'Double-acting' baking powder reacts once when it gets wet, and a second time when it's heated, providing a more sustained lift during the baking process."
+                    },
+                    {
+                        "heading": "Physical: The Power of Steam and Air",
+                        "content": "The flakiest pastries, like croissants and puff pastry, rely on <strong>steam leavening</strong>. During lamination, hundreds of paper-thin layers of dough are separated by layers of cold butter. In a hot oven, the water content in the butter flashes into steam. This steam expands dramatically, pushing the dough layers apart and creating the airy, flaky structure. Air itself is also a leavener, incorporated by mechanically whipping egg whites or through the <strong>creaming method</strong>, where sugar crystals create air pockets in solid fat."
+                    }
+                ]
+            },
+            "maillard-and-caramelization": {
+                "display_order": 30,
+                "name": "The Science of Browning: Maillard and Caramelization",
+                "display_name": "Browning Reactions",
+                "introduction": "The golden-brown color of a perfect bake is a sign of incredible flavor development. This color comes from two distinct chemical reactions that every experienced baker manipulates, whether they realize it or not.",
+                "paragraphs": [
+                    {
+                        "heading": "The Maillard Reaction: Architect of Savory Flavor",
+                        "content": "The <strong>Maillard reaction</strong> is one of the most important flavor-producing reactions in cooking. It's a chemical reaction between amino acids (from proteins) and reducing sugars that occurs in the presence of heat. It's responsible for the complex, savory, and roasted flavors in the crust of bread, the skin of a roasted chicken, and the browning of a cookie. It creates hundreds of new aromatic compounds that are far more complex than simple sweetness."
+                    },
+                    {
+                        "heading": "Controlling Maillard for Better Bakes",
+                        "content": "Bakers can encourage the Maillard reaction. An <strong>alkaline environment</strong> dramatically speeds it up. This is why pretzels are dipped in a lye or baking soda solution—it results in that classic deep brown crust and pretzel flavor. Adding ingredients with proteins and sugars, like milk or eggs (in an egg wash), also provides more fuel for the reaction, leading to a shinier, browner crust on breads and pastries."
+                    },
+                    {
+                        "heading": "Caramelization: The Purer Sweetness",
+                        "content": "<strong>Caramelization</strong> is a simpler browning process. It is the pyrolysis, or thermal decomposition, of sugar itself. It doesn't require any proteins. When sugar is heated to high temperatures (typically above 320°F or 160°C), it breaks down and reforms into compounds with nutty, buttery, and sometimes slightly bitter notes. This is the primary reaction responsible for the flavor of caramel sauce, crème brûlée topping, and hard candies."
+                    },
+                    {
+                        "heading": "A Perfect Partnership",
+                        "content": "In most baked goods, like cookies, these two reactions work in tandem. The Maillard reaction is browning the dough itself (which contains proteins from flour and eggs), while the sugars on the surface are caramelizing. Understanding the difference allows a baker to troubleshoot—if a bake is pale and bland, it may need conditions that favor the Maillard reaction."
+                    }
+                ]
+            },
+            "fats-and-emulsifiers": {
+                "display_order": 40,
+                "name": "The Role of Fats and Emulsifiers",
+                "display_name": "Fats & Emulsifiers",
+                "introduction": "Fat is the cornerstone of texture in baking, responsible for everything from flaky croissant layers to tender, melt-in-your-mouth shortbread. Understanding its function is key to controlling the final product.",
+                "paragraphs": [
+                    {
+                        "heading": "The 'Shortening' Power",
+                        "content": "In baking terminology, 'shortening' is not just a product; it's a verb. Fats achieve this by coating the strands of flour and physically getting in the way, preventing long, tough gluten chains from forming. This <strong>shortening effect</strong> is what gives cakes, cookies, and quick breads their characteristic tenderness and crumbly texture. The more fat in a recipe, the more 'short' or tender the final product will be."
+                    },
+                    {
+                        "heading": "Lamination and Flakiness",
+                        "content": "In pastries like croissants, danishes, and puff pastry, solid fat is used to create distinct layers. This process, called <strong>lamination</strong>, involves folding and rolling a block of butter within a lean dough. In the oven, the fat melts, leaving a space between the dough layers. The water in the butter then turns to steam, pushing the layers apart and creating the sought-after flaky, airy texture. The temperature of the butter is critical; if it's too soft, it will merge with the dough, and if it's too hard, it will break through the layers."
+                    },
+                    {
+                        "heading": "The Magic of Emulsification",
+                        "content": "Many batters are an <strong>emulsion</strong>: a mixture of fat and water, which naturally want to separate. The key to a smooth, stable cake batter or a creamy custard lies in an emulsifier. <strong>Lecithin</strong>, found in abundance in egg yolks, is a baker's best friend. Its molecular structure allows it to bond with both water and fat, holding them together in a stable suspension. This results in a finer crumb, better volume, and a longer shelf life."
+                    }
+                ]
+            },
+            "sugar-science": {
+                "display_order": 50,
+                "name": "Sugar Science: More Than Just Sweetness",
+                "display_name": "Sugar Science",
+                "introduction": "To a novice, sugar is just for sweetness. To an expert, it's a multi-talented ingredient that controls moisture, creates texture, aids in leavening, and provides color and flavor.",
+                "paragraphs": [
+                    {
+                        "heading": "Moisture and Tenderness",
+                        "content": "Sugar is <strong>hygroscopic</strong>, meaning it attracts and holds onto water. This property is crucial for keeping baked goods moist and extending their shelf life. By binding with water, sugar also slows down gluten development and the coagulation of egg proteins, which results in a more tender crumb. This is why a low-sugar bread is often much tougher than a high-sugar enriched dough."
+                    },
+                    {
+                        "heading": "Aeration Through Creaming",
+                        "content": "The 'creaming method' is a perfect example of sugar's physical role. When you cream butter and sugar together, the sharp edges of the <strong>sugar crystals</strong> cut into the solid fat, creating thousands of microscopic air cells. These air pockets form the foundation of the cake's structure, which are then expanded by the CO2 from chemical leaveners during baking. This is why using granulated sugar is essential for this method; liquid or powdered sugars won't create the same aeration."
+                    },
+                    {
+                        "heading": "Controlling Crystallization",
+                        "content": "In candy making and icings, controlling crystallization is paramount. The goal is often to create very small sugar crystals for a smooth texture, or prevent them altogether. <strong>Interfering agents</strong>, such as corn syrup, honey (both invert sugars), or an acid like cream of tartar, work by getting in the way and physically blocking sugar molecules from aligning into large, gritty crystals."
+                    },
+                    {
+                        "heading": "Spread and Browning",
+                        "content": "In cookies, sugar's melting point directly affects spread. As sugar melts in the oven, the dough becomes more fluid and spreads out before it sets. A higher ratio of sugar often leads to a thinner, crispier cookie. Finally, as we've seen, sugar is essential for both the Maillard reaction and caramelization, providing the fuel for the browning that gives baked goods their beautiful color and deep, complex flavor."
+                    }
+                ]
+            }
+        }
+    }
+}
+  </script>
+
+  <div class="fixed top-4 right-4 z-50">
+    <button id="theme-switcher-btn" class="p-2 rounded-full" aria-label="toggle theme">
+      <svg id="sun-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M12 12a5 5 0 100-10 5 5 0 000 10z"/></svg>
+      <svg id="moon-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+    </button>
+  </div>
+
+  <main id="app-container" class="prose dark:prose-invert mx-auto max-w-prose p-8"></main>
+
+  <script>
+    /* ---------- state ---------- */
+    let masterLibrary=null,sortedLibraryIds=null,currentLibraryId=null;
+    let libraryData=null,currentTopicId=null;
+    const app=document.getElementById('app-container');
+
+    /* ---------- rendering ---------- */
+    const buildNav = (categories, activeTopicId) => {
+        const sortedKeys = Object.keys(categories).sort((a,b) => (categories[a].display_order || 0) - (categories[b].display_order || 0));
+        let html = '<div class="nav-container"><div class="nav-buttons-wrapper">';
+        sortedKeys.forEach(key => {
+            const topic = categories[key];
+            html += `<button class="nav-button ${key === activeTopicId ? 'active' : ''}" data-topic-id="${key}">${topic.display_name || topic.name}</button>`;
+        });
+        html += '</div></div>';
+        return html;
+    };
+
+    function render(){
+        if (!libraryData) {
+            app.innerHTML = '<h1>Error</h1><p>No library data found.</p>';
+            return;
+        }
+
+        const rootKey = Object.keys(libraryData)[0];
+        const rootData = libraryData[rootKey];
+        if (!rootData || !rootData.categories) {
+            app.innerHTML = '<h1>Error</h1><p>Invalid data structure.</p>';
+            return;
+        }
+        
+        const categories = rootData.categories;
+        const sortedTopicIds = Object.keys(categories).sort((a,b) => (categories[a].display_order || 0) - (categories[b].display_order || 0));
+
+        if (!currentTopicId || !categories[currentTopicId]) {
+            currentTopicId = sortedTopicIds[0];
+        }
+
+        const activeTopic = categories[currentTopicId];
+        if (!activeTopic) {
+            app.innerHTML = '<h1>Error</h1><p>Could not load the selected topic.</p>';
+            return;
+        }
+
+        document.title = rootData.title || 'Adaptive Reader';
+        
+        let contentHtml = `<h1>${rootData.title}</h1>`;
+        contentHtml += buildNav(categories, currentTopicId);
+        contentHtml += `<h2>${activeTopic.name || ''}</h2>`;
+        contentHtml += activeTopic.introduction ? `<p class="lead">${activeTopic.introduction}</p>` : '';
+        contentHtml += (activeTopic.paragraphs || []).map(p => `<h3>${p.heading}</h3><p>${p.content}</p>`).join('');
+        
+        app.innerHTML = contentHtml;
+
+        document.querySelectorAll('.nav-button[data-topic-id]').forEach(btn => {
+            btn.onclick = (e) => {
+                currentTopicId = e.target.dataset.topicId;
+                render();
+            };
+        });
+    }
+
+    /* ---------- data load ---------- */
+    async function init(){
+      let raw = null;
+      try {
+        const embedded = document.getElementById('embedded-content').textContent.trim();
+        if (!embedded) throw new Error('No embedded data found.');
+        raw = JSON.parse(embedded);
+      } catch(err) {
+        console.error("Failed to load or parse data:", err);
+        app.innerHTML = '<h1>Error</h1><p>Could not load content.</p>';
+        return;
+      }
+
+      libraryData = raw;
+      render(); // Initial render
+    }
+
+    /* ---------- theme ---------- */
+    const themeBtn=document.getElementById('theme-switcher-btn');
+    function applyTheme(t){
+      const dark = t === 'dark';
+      document.documentElement.classList.toggle('dark',dark);
+      document.body.classList.toggle('dark-theme',dark);
+      document.body.classList.toggle('font-dark-theme',dark);
+      document.body.classList.toggle('newspaper-theme',!dark);
+      document.body.classList.toggle('font-newspaper',!dark);
+      document.getElementById('sun-icon').classList.toggle('hidden',dark);
+      document.getElementById('moon-icon').classList.toggle('hidden',!dark);
+    }
+    themeBtn.onclick=()=>{const t=document.documentElement.classList.contains('dark')?'light':'dark';localStorage.setItem('theme',t);applyTheme(t)};
+
+    /* ---------- boot ---------- */
+    document.addEventListener('DOMContentLoaded',()=>{
+      applyTheme(localStorage.getItem('theme') || 'light');
+      init().catch(err=>{console.error(err);app.innerHTML='<h1>Error</h1><p>Could not load content due to an initialization error.</p>'});
+    });
+  </script>
+</body>
+</html>

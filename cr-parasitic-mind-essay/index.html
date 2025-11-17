@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Course Template</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com/3.4.1?plugins=typography"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Default Theme: Newspaper */
+        :root {
+            --bg-gradient: #fdfdf8;
+            --text: #1c1c1c;
+            --accent-text: #8c1c13;
+            --nav-bg: #f1f1eb;
+            --nav-border: #dcdcd3;
+            --nav-text: #1c1c1c;
+            --nav-hover-bg: #e5e5dd;
+            --nav-active-bg: #dcdcd3;
+            --nav-active-text: #1c1c1c;
+            --prose-text: var(--text);
+            --prose-headings: var(--accent-text);
+            --prose-links: var(--accent-text);
+            --prose-bold: var(--text);
+            font-family: 'Merriweather', serif;
+        }
+
+        .theme-emerald-paper, .theme-cyber-blue, .theme-emerald-gold {
+            font-family: 'Lato', sans-serif;
+        }
+        
+        body {
+            background: var(--bg-gradient);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .ui-bg { background-color: var(--nav-bg); }
+        .ui-border { border-color: var(--nav-border); }
+        .text-primary { color: var(--text); }
+        .text-accent { color: var(--accent-text); }
+
+        .tab-button {
+            background-color: var(--nav-bg);
+            color: var(--nav-text);
+            border-bottom: 3px solid transparent;
+        }
+        .tab-button:hover, .tab-button:focus-visible {
+            background-color: var(--nav-hover-bg);
+        }
+        .tab-button.tab-active {
+            background-color: var(--nav-active-bg);
+            color: var(--nav-active-text);
+            border-bottom-color: var(--accent-text);
+        }
+
+        .settings-button { background-color: var(--nav-hover-bg); }
+        .settings-button:hover { opacity: 0.8; }
+        *:focus-visible { outline: 3px solid var(--accent-text); outline-offset: 2px; }
+
+        .prose { color: var(--prose-text); }
+        .prose h2, .prose h3, .prose a, .prose strong { color: var(--prose-headings); }
+        .prose p.lead { color: var(--prose-text); }
+    </style>
+</head>
+<body class="transition-colors duration-300">
+    <div class="container mx-auto px-4 py-6 max-w-7xl">
+        <header id="app-header" class="ui-bg border ui-border rounded-lg shadow-lg p-6 mb-6"></header>
+        <nav id="app-tabs" class="ui-bg border ui-border rounded-lg shadow-lg mb-6" role="tablist" aria-label="Main navigation"></nav>
+        <main id="app-panels" class="ui-bg border ui-border rounded-lg shadow-lg p-6 md:p-8"></main>
+        
+        <div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+            <div class="ui-bg border ui-border rounded-lg p-6 max-w-md w-full shadow-2xl">
+                <h2 id="settings-title" class="text-xl font-bold text-accent mb-4">Display Settings</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label for="themeSelect" class="block text-primary font-semibold mb-2">Theme</label>
+                        <select id="themeSelect" class="w-full px-3 py-2 rounded ui-bg border ui-border text-primary">
+                        </select>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button id="closeSettings" class="px-4 py-2 rounded text-primary hover:opacity-80">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 
+    ============================================================
+    vvvvvvvvvvvvvv PASTE YOUR JSON CONTENT BELOW vvvvvvvvvvvvvv
+    ============================================================
+    -->
+    <script type="application/json" id="app-data">
+{
+  "idea-pathogens-essay": {
+    "title": "Idea Pathogens: A System for Cultural Epidemiology",
+    "description": "An essay presenting a systematic framework for understanding how beliefs spread, why institutions develop epistemic pathologies, and what interventions can restore hygiene to knowledge production.",
+    "categories": {
+      "unit-1-diagnosis": {
+        "display_order": 10,
+        "name": "Diagnosis",
+        "display_name": "Diagnosis",
+        "paragraphs": [
+          {
+            "heading": "Introduction",
+            "content": "Ideas spread through populations like organisms through ecosystems. Some enhance our ability to model reality and coordinate action; others replicate by exploiting cognitive vulnerabilities while degrading our capacity to track truth. This essay presents a systematic framework for understanding how beliefs achieve transmission advantage, why certain institutional environments select for epistemic pathologies, and what interventions can restore hygiene to knowledge production. The framework treats cultural evolution not as metaphor but as measurable process, where ideas compete for finite resources—attention, credibility, institutional support—under selection pressures we can map and modify."
+          },
+          {
+            "heading": "Ideas as Replicators in Cultural Ecosystems",
+            "content": "Consider a university department evaluating a new theoretical framework. The framework’s adoption doesn’t depend solely on its predictive accuracy. It depends on whether championing it raises or lowers status, whether critiquing it risks reputational damage, whether funding flows toward or away from its assumptions, and whether the next generation of scholars will be trained to extend or challenge its premises. This is the evolutionary lens: ideas are replicators that succeed or fail based on fitness in specific environments. Their fitness function includes truth-tracking (do they predict accurately?) but also social utility (do they confer status?), cognitive ease (are they simple to remember and transmit?), and institutional compatibility (do they align with existing power structures?). The diagnostic power of this lens lies in separating content from mechanism. A claim about campus safety, economic inequality, or climate change isn’t inherently pathogenic or healthy. What matters is the transmission dynamic: Does the idea spread through evidence and successful prediction, or through social punishment for dissent? Can it survive falsification tests, or does it mutate to avoid them?"
+          },
+          {
+            "heading": "The Mismatch Problem: Stone-Age Minds in Digital Societies",
+            "content": "Human cognitive architecture evolved in small-scale societies where information was local, threats were immediate, and social cohesion directly affected survival. Our intuitions are calibrated for these conditions: we overweight vivid anecdotes (which were once our only data), we defer to group consensus (which once reflected accumulated local knowledge), and we moralize disagreement (because ideological splits once threatened group survival). In modern mass societies with global information flows, these same intuitions systematically misfire. A viral video of a single incident can override base-rate information from millions of cases. A cascade of retweets can create apparent consensus without any underlying evidence evaluation. Moral condemnation can spread faster than the fact-checking that might justify or refute it. An idea pathogen exploits these mismatches. It presents vivid cases without denominators, manufactures consensus through cascade dynamics, and frames empirical questions as moral tests. The pathogen doesn’t need to be designed; it emerges through selection. Ideas that trigger strong emotional responses, that signal group loyalty, and that resist falsification naturally outcompete ideas that demand cognitive effort, acknowledge uncertainty, or threaten social cohesion."
+          },
+          {
+            "heading": "Is/Ought Confusion as Transmission Vector",
+            "content": "The fusion of empirical claims with normative values creates particularly virulent pathogens. When “what is true” becomes inseparable from “what we wish were true,” disagreement on facts gets interpreted as betrayal of values. This fusion provides multiple transmission advantages: Reduced cognitive load: One doesn’t need to separately evaluate empirical accuracy and moral worthiness. Enhanced social signaling: Adopting the belief signals virtue, not just assessment. Immunity to evidence: Disconfirming data can be dismissed as morally motivated. A public health department debating mask mandates illustrates the dynamic. The empirical question (what is the effect size of community masking on transmission?) becomes fused with value questions (do we care about vulnerable populations?). Anyone requesting randomized trial data risks being coded as callous. The resulting policy may align with values but divorce from evidence—or worse, prevent collection of evidence that could improve future interventions."
+          },
+          {
+            "heading": "Mapping Transmission Pathways",
+            "content": "To understand why particular ideas dominate particular institutions, map their transmission pathway. Start with a controversial claim in your organization—perhaps about hiring practices, resource allocation, or strategic priorities. Trace its movement: 1. Origin point: Where did the claim first appear? Academic paper, social media, executive announcement? 2. Amplification nodes: Which actors or institutions increased its reach? Department heads, influential accounts, policy committees? 3. Filtering mechanisms: What evidence standards were applied at each stage? Peer review, fact-checking, or merely social proof? 4. Incentive gradients: Who gains or loses status from supporting or questioning the claim? A technology company’s diversity initiative provides a concrete example. The claim “diverse teams outperform homogeneous ones” originates in academic literature, gets simplified in consulting reports, amplified through HR departments, and embedded in hiring mandates. At each stage, nuance is lost: effect sizes, boundary conditions, and mechanism specifications disappear. By the time it reaches policy, the claim is unfalsifiable—any failure can be attributed to insufficient diversity rather than model error."
+          },
+          {
+            "heading": "Denominators and the Architecture of Neglect",
+            "content": "Pathogenic ideas systematically avoid denominators. They present numerators that trigger emotion while hiding the base rates that would enable calibration. This isn’t necessarily conscious deception; it’s the result of selection pressure. Claims packaged with appropriate denominators travel slowly because they require cognitive processing. Claims that present raw counts or individual cases travel quickly because they bypass analytical thought and trigger immediate response. An educational reform movement claiming “thousands of students failed under the current system” illustrates denominator neglect. The number sounds catastrophic until you ask: Out of how many total students? Compared to what baseline? Over what time period? With what definition of failure? Once denominators are supplied—perhaps the failure rate is 3%, down from 5% last decade, using a newly expanded definition—the crisis narrative collapses. Building denominator discipline requires systematic practice: Never accept a raw count without asking “out of how many?” Always request the comparison period and the relevant baseline. Demand that relative and absolute changes be reported together. Insist on stable definitions across time periods being compared."
+          },
+          {
+            "heading": "Ostrich Parasitic Syndrome: Structured Denial",
+            "content": "Ostrich Parasitic Syndrome (OPS) names a specific cluster of behaviors that protect claims from evidence. It’s not mere disagreement or uncertainty; it’s active avoidance of tests that might disconfirm preferred narratives. The syndrome has recognizable symptoms: Definitional drift: Key terms expand when convenient, contract under pressure. A workplace equity initiative might define “discrimination” broadly when identifying problems but narrowly when measuring progress. Baseline burial: Historical comparisons that might relativize current concerns are deemed irrelevant. A campus safety committee might emphasize recent incidents while refusing to examine ten-year trends. Denominator denial: Requests for population-level rates are moralized as minimizing individual experiences. Asking “what percentage?” becomes coded as lacking empathy. Hypothesis prohibition: Alternative explanations are declared off-limits before examination. Suggesting that an achievement gap might have multiple causes triggers accusations of excuse-making. Organizations can diagnose OPS through a simple checklist: Are terms defined before debate? Are denominators published alongside numerators? Are alternative hypotheses given fair tests? Is dissent framed as contribution or betrayal? The more “no” answers, the stronger the infection."
+          }
+        ]
+      },
+      "unit-2-intervention": {
+        "display_order": 20,
+        "name": "Intervention",
+        "display_name": "Intervention",
+        "paragraphs": [
+          {
+            "heading": "Institutional Filters and Amplifiers",
+            "content": "No idea spreads purely on merit. Institutional structures—peer review boards, hiring committees, editorial policies, funding panels—act as selective filters that determine which ideas achieve fixation and which go extinct. Understanding these filters is crucial for both diagnosis and intervention. A medical journal’s editorial board demonstrates filtering in action. If board members share similar training, social networks, and theoretical commitments, they’ll consistently select papers that confirm their priors while rejecting challenges as “methodologically flawed.” Over time, the literature becomes an echo chamber that mistakes repetition for validation. Interventions must target the filters, not just the ideas: Diversity requirements: Mandate viewpoint diversity on gatekeeping committees. Adversarial collaboration: Fund studies where opposing camps co-design tests. Registered reports: Accept papers based on methods before results are known. Transparent metrics: Publish acceptance rates by topic area and theoretical orientation."
+          },
+          {
+            "heading": "Speech Norms as Selection Pressure",
+            "content": "Campus speech norms don’t just affect what can be said; they determine which ideas achieve institutional fixation. When certain hypotheses become unspeakable, research programs built on alternatives prosper unchallenged. When certain data patterns can’t be acknowledged, theories that assume their absence spread without correction. A sociology department studying inequality illustrates the mechanism. If examining cultural factors risks stigma while examining structural factors earns praise, research will naturally concentrate on structural explanations. This isn’t conscious bias; it’s rational response to incentives. Graduate students learn which questions lead to careers and which lead to isolation. The resulting literature looks consensual but reflects selection, not evidence. Restoring balance requires structural intervention: Protected inquiry zones: Designated forums where all hypotheses can be examined. Anonymous pre-registration: Allow researchers to register controversial studies without immediate reputation risk. Outcome-based evaluation: Judge research by predictive accuracy, not ideological alignment. Reversal rewards: Give career credit for publishing null results and failed replications."
+          },
+          {
+            "heading": "Structured Disagreement Protocols",
+            "content": "Disagreement is inevitable; making it productive requires structure. The SAFE protocol (Scope, Anchor, Frame, Exit) transforms unstructured conflict into testable propositions: Scope: Define exactly what is being disputed. Not “diversity programs” broadly, but “the effect of unconscious bias training on hiring decisions in technical roles.” Anchor: Agree on what evidence would move each party. Pre-specify the study design, sample size, and effect magnitude that would constitute support or refutation. Frame: Set timeline and guardrails. When will evidence be collected? What protections exist for researchers? What happens if results are ambiguous? Exit: Schedule follow-up with commitment to update. Both parties pre-commit to how they’ll revise beliefs based on possible outcomes. A university implementing SAFE for curriculum disputes would require competing camps to specify what student outcome data would support their position, agree on measurement methods, and pre-commit to curricular adjustments based on results. This replaces endless ideological debate with empirical resolution."
+          },
+          {
+            "heading": "Courage as Institutional Design",
+            "content": "Individual courage—willingness to voice dissent despite social costs—doesn’t scale through exhortation. It scales through institutional design that lowers the cost of truth-seeking and raises the cost of conformity signaling. Consider two research institutes studying controversial topics. Institute A relies on individual researchers to brave social opprobrium. Institute B builds structural protections: tenure-like security for contrarian research, anonymous peer review, public pre-registration of hypotheses, and automatic publication of null results. Institute B will generate more courage not because its researchers are braver but because courage is less expensive. Designing for courage means: Explicit protection policies: Written guarantees for academic freedom with enforcement mechanisms. Status rewards for dissent: Promotion credit for published critiques and failed replications. Redundant oversight: Multiple independent review paths so no single gatekeeper can suppress. Public commitments: Institutional statements that bind leadership to protecting uncomfortable inquiry."
+          },
+          {
+            "heading": "Decision Hygiene for Idea Evaluation",
+            "content": "Just as Decision Hygiene reduces noise in professional judgments, epistemic hygiene reduces noise in idea evaluation. The same claim might be accepted or rejected depending on who reviews it, when they review it, and what they reviewed immediately before. This variability isn’t principled disagreement; it’s noise that degrades institutional truth-tracking. A foundation evaluating research proposals can implement epistemic hygiene: Independent assessment: Reviewers score proposals without seeing others’ scores. Structured criteria: Replace vague “impact” with specific predictive metrics. Blinded review: Hide applicant identity and institutional affiliation. Aggregation rules: Combine scores mechanically rather than through discussion. Calibration sessions: Regularly test reviewers on standardized cases. These interventions reduce both bias (systematic favor for certain types of claims) and noise (random variation in evaluation). They make the system more predictable for applicants and more reliable for society."
+          },
+          {
+            "heading": "Measurement Infrastructure",
+            "content": "Organizations serious about epistemic health need measurement infrastructure—systems that continuously monitor the health of their knowledge production: Diversity metrics: Distribution of viewpoints among decision-makers, not just demographics. A hiring committee might be demographically diverse but ideologically uniform. Prediction tournaments: Regular forecasting exercises that reveal which frameworks generate accurate predictions versus compelling narratives. Replication rates: Proportion of findings that survive independent reproduction. Low rates indicate either noise or bias in the original evaluation process. Update velocity: How quickly institutional positions change when evidence shifts. Organizations that never update are rigid; those that update constantly are chaotic. Dissent costs: Anonymous surveys measuring perceived career risk for various types of disagreement. High costs indicate pathogenic environment. A pharmaceutical company might discover through measurement that their drug discovery teams show high viewpoint diversity but low update velocity—they have different perspectives but don’t change views based on evidence. This diagnosis suggests different intervention than if they showed low diversity but high update velocity."
+          }
+        ]
+      },
+      "unit-3-implementation": {
+        "display_order": 30,
+        "name": "Implementation",
+        "display_name": "Implementation",
+        "paragraphs": [
+          {
+            "heading": "The Lifecycle of Idea Pathogens",
+            "content": "Idea pathogens follow predictable lifecycles. Understanding these patterns enables early intervention: Emergence: A claim appears that offers simple explanation for complex phenomena, strong in-group/out-group distinction, and resistance to falsification. Transmission advantage: The claim spreads faster than competing explanations because it requires less cognitive effort, provides more social utility, or triggers stronger emotional response. Institutional capture: Gatekeeping positions become concentrated with believers who modify selection criteria to favor compatible ideas and exclude challenges. Reality collision: Accumulated consequences of false belief become undeniable. Predictions fail, interventions backfire, or competitor institutions with better epistemics outperform. Reformation or collapse: Either the institution develops immunity through structural reform, or it loses legitimacy and resources to competitors. A media organization’s coverage of crime statistics illustrates the lifecycle. Initial reporting emphasizes dramatic incidents without context (emergence). These stories generate more engagement than statistical analyses (transmission advantage). Editorial positions become filled with those who view contextualized reporting as “minimizing victims” (institutional capture). Eventually, audience trust erodes as perceived reality diverges from lived experience (reality collision). The organization either implements statistical standards or loses audience to competitors (reformation or collapse)."
+          },
+          {
+            "heading": "Building Institutional Immunity",
+            "content": "Immunity isn’t an individual trait but an institutional capability. Organizations with strong epistemic immune systems share recognizable features: Structured skepticism: Normal science involves attempting to falsify claims, not just confirm them. Grant funding explicitly rewards attempts to break existing models. Transparent operations: Decisions are logged with rationales. Data and methods are public. Reversal processes are clear. Competitive ecology: Multiple independent units pursue similar questions with different methods. Monopoly breeds pathogens; competition selects for accuracy. Fast feedback loops: Predictions are tracked and scored. Decision-makers see consequences of their judgments. Reality gets frequent votes. Cultural antibodies: Stories, rituals, and heroes that celebrate epistemic virtues. The researcher who admitted error becomes legend, not pariah."
+          },
+          {
+            "heading": "Evolutionary Pressure Toward Truth",
+            "content": "The long-term optimistic case rests on evolutionary logic: institutions that harbor epistemic pathogens eventually lose to those with better reality-tracking. But this selection pressure only operates under specific conditions: Competition must exist: Monopolistic institutions can harbor pathogens indefinitely because there’s no alternative for stakeholders. Consequences must be visible: If prediction failures are hidden or explained away, selection pressure disappears. Time horizons must align: If institutional leaders rotate faster than consequences manifest, individual incentives diverge from institutional fitness. Migration must be possible: Talent and resources must be able to flow from infected to healthy institutions. When these conditions hold, cultural evolution favors truth-tracking even when individual incentives favor conformity. The challenge is maintaining these conditions against forces that prefer stability to accuracy."
+          },
+          {
+            "heading": "Conclusion: From Diagnosis to Design",
+            "content": "The idea pathogen framework succeeds because it transforms vague concerns about “ideological capture” or “epistemic crisis” into specific, measurable phenomena with targeted interventions. Like Decision Hygiene for judgments, it provides tools that reduce error without requiring agreement on which specific ideas are pathogenic. The framework’s components form an integrated system: Evolutionary lens reveals why certain ideas achieve transmission advantage independent of truth value. This explains why intelligent, well-intentioned people can collectively maintain false beliefs. Measurement protocols make invisible dynamics visible. Denominator discipline, transmission mapping, and OPS diagnosis convert intuitions about intellectual dysfunction into actionable data. Intervention toolkit provides specific mechanisms for restoring epistemic health. SAFE protocols, structural protections for dissent, and decision hygiene for idea evaluation are boring processes that produce exciting results. Institutional design sustains improvements over time. Measurement infrastructure, competitive ecology, and cultural antibodies prevent regression to comfortable dysfunction. The test of this framework isn’t whether it validates prior convictions about which ideas are pathogenic. The test is whether it enables institutions to maintain truth-tracking capacity despite social pressure toward conformity. In a world where false beliefs can persist through social enforcement rather than predictive success, the ability to diagnose and treat epistemic infections becomes essential for institutional survival. The ultimate message is neither pessimistic nor moralistic. Ideas evolve according to selection pressures we create through institutional design. By understanding these pressures and modifying them deliberately, we can build cultural ecosystems that select for accuracy over allegiance, for prediction over performance, and for courage over conformity. The tools exist. The question is whether we’ll use them before reality forces correction through crisis."
+          }
+        ]
+      }
+    }
+  }
+}
+    </script>
+    <!-- 
+    ============================================================
+    ^^^^^^^^^^^^^^ PASTE YOUR JSON CONTENT ABOVE ^^^^^^^^^^^^^^
+    ============================================================
+    -->
+
+    <script defer>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        const THEMES = {
+          'newspaper': { 
+            name: 'Newspaper', 
+            type: 'classic', 
+            isDark: false 
+          },
+          'emerald-paper': {
+            name: 'Emerald Paper', 
+            type: 'variable', 
+            isDark: false,
+            vars: {
+              '--bg-gradient': '#f7fbf9', '--text': '#1e2b28', '--accent-text': '#0f7f6d', '--nav-bg': '#e7f3ef',
+              '--nav-border': '#86c8ba', '--nav-text': '#1e2b28', '--nav-hover-bg': '#d7ece6', '--nav-active-bg': '#bfe3d9',
+              '--nav-active-text': '#1e2b28', '--prose-text': '#1e2b28', '--prose-headings': '#0f7f6d'
+            }
+          },
+          'cyber-blue': {
+            name: 'Cyber Night', 
+            type: 'variable', 
+            isDark: true,
+            vars: {
+              '--bg-gradient': 'rgb(2, 6, 23)',
+              '--text': 'rgb(203, 213, 225)',
+              '--accent-text': 'rgb(203, 213, 225)',
+              '--nav-bg': 'rgb(30, 41, 59)',
+              '--nav-border': 'rgb(51, 65, 85)',
+              '--nav-text': 'rgb(203, 213, 225)',
+              '--nav-hover-bg': 'rgb(15, 23, 42)',
+              '--nav-active-bg': 'rgb(51, 65, 85)',
+              '--nav-active-text': '#FFFFFF',
+              '--prose-text': 'rgb(203, 213, 225)',
+              '--prose-headings': '#FFFFFF'
+            }
+          },
+          'emerald-gold': {
+            name: 'Emerald/Gold', 
+            type: 'variable', 
+            isDark: true,
+            vars: {
+              '--bg-gradient': 'linear-gradient(135deg,#022c22 0%,#064e3b 60%,#065f46 100%)', '--text': '#ecfdf5',
+              '--accent-text': '#f0c475', '--nav-bg': '#064e3b', '--nav-border': '#d4a24c', '--nav-text': '#ecfdf5',
+              '--nav-hover-bg': '#065f46', '--nav-active-bg': '#0b3d31', '--nav-active-text': '#f0c475',
+              '--prose-text': '#a7f3d0', '--prose-headings': '#f0c475'
+            }
+          }
+        };
+
+        const app = {
+            root: document.documentElement,
+            header: document.getElementById('app-header'),
+            tabs: document.getElementById('app-tabs'),
+            panels: document.getElementById('app-panels'),
+            settings: {
+                modal: document.getElementById('settingsModal'),
+                closeBtn: document.getElementById('closeSettings'),
+                themeSelect: document.getElementById('themeSelect')
+            }
+        };
+
+        const state = { activeTab: null, theme: 'newspaper' };
+
+        const loadState = () => {
+            state.theme = localStorage.getItem('appTheme') || 'newspaper';
+            state.activeTab = localStorage.getItem('activeTab');
+        };
+
+        const saveState = () => {
+            localStorage.setItem('appTheme', state.theme);
+            localStorage.setItem('activeTab', state.activeTab);
+        };
+
+        const applyTheme = (themeKey) => {
+            const theme = THEMES[themeKey];
+            if (!theme) return;
+
+            app.root.className = '';
+            app.root.style.cssText = '';
+
+            if (theme.type === 'variable' && theme.vars) {
+                for (const [key, value] of Object.entries(theme.vars)) {
+                    app.root.style.setProperty(key, value);
+                }
+                app.root.classList.add(`theme-${themeKey}`);
+            }
+
+            state.theme = themeKey;
+            if (app.settings.themeSelect.value !== themeKey) {
+                app.settings.themeSelect.value = themeKey;
+            }
+            saveState();
+        };
+
+        const populateThemeSelector = () => {
+            app.settings.themeSelect.innerHTML = Object.entries(THEMES).map(([key, theme]) => 
+                `<option value="${key}">${theme.name}</option>`
+            ).join('');
+        };
+
+        const loadAndTransformData = () => {
+            try {
+                const dataNode = document.getElementById('app-data');
+                if (!dataNode.textContent.trim()) {
+                    console.error("JSON data is empty.");
+                    return null;
+                }
+                const rawData = JSON.parse(dataNode.textContent);
+                
+                const topLevelKey = Object.keys(rawData)[0];
+                if (!topLevelKey) {
+                    console.error("JSON data is missing a top-level key.");
+                    return null;
+                }
+                const course = rawData[topLevelKey];
+                
+                const units = Object.entries(course.categories).map(([id, unitData]) => ({ id, ...unitData }))
+                    .sort((a, b) => a.display_order - b.display_order);
+                return { meta: { title: course.title, description: course.description }, units };
+            } catch (e) {
+                console.error("Failed to load or transform app data:", e);
+                app.panels.innerHTML = `<div class="p-4 text-red-500 bg-red-100 rounded"><strong>Error:</strong> Could not load content. Please ensure the JSON is correctly formatted and pasted into the data island.</div>`;
+                return null;
+            }
+        };
+        
+        const data = loadAndTransformData();
+        
+        if (!data) return;
+
+        const renderHeader = () => {
+            document.title = data.meta.title || "Interactive Course";
+            
+            app.header.innerHTML = `
+                <div class="flex justify-between items-start gap-4">
+                    <div>
+                        <h1 class="text-3xl font-bold text-accent">${data.meta.title}</h1>
+                        <p class="mt-2 text-primary/80">${data.meta.description}</p>
+                    </div>
+                    <button id="settingsBtn" class="flex-shrink-0 p-3 rounded-lg settings-button transition-opacity" aria-label="Display Settings">
+                        <span class="text-2xl text-accent">⚙️</span>
+                    </button>
+                </div>`;
+        };
+        
+        const renderTabs = () => {
+            app.tabs.innerHTML = `<div class="flex flex-wrap">${
+                data.units.map(unit => `
+                    <button role="tab" aria-selected="false" aria-controls="${unit.id}-panel" id="${unit.id}-tab"
+                            class="px-5 py-3 font-semibold transition-colors tab-button">
+                        ${unit.display_name}
+                    </button>`
+                ).join('')
+            }</div>`;
+        };
+
+        const renderPanels = () => {
+            app.panels.innerHTML = data.units.map(unit => {
+                const introHTML = unit.introduction ? `<p class="lead">${unit.introduction}</p>` : '';
+                const paragraphsHTML = (unit.paragraphs || []).map(p => `
+                    <h3>${p.heading}</h3>
+                    <p>${p.content}</p>
+                `).join('');
+                const proseClasses = THEMES[state.theme].isDark ? 'prose prose-lg max-w-none prose-invert' : 'prose prose-lg max-w-none';
+                return `
+                    <div role="tabpanel" id="${unit.id}-panel" aria-labelledby="${unit.id}-tab" hidden>
+                        <div class="${proseClasses}">
+                            <h2>${unit.name}</h2>
+                            ${introHTML}
+                            ${paragraphsHTML}
+                        </div>
+                    </div>`;
+            }).join('');
+        };
+
+        const switchTab = (tabId) => {
+            if (!data.units.some(u => u.id === tabId)) {
+                tabId = data.units[0]?.id;
+            }
+            if (!tabId) return;
+
+            app.tabs.querySelectorAll('[role="tab"]').forEach(tab => {
+                const isActive = tab.id === `${tabId}-tab`;
+                tab.setAttribute('aria-selected', isActive);
+                tab.classList.toggle('tab-active', isActive);
+            });
+
+            app.panels.querySelectorAll('[role="tabpanel"]').forEach(panel => {
+                panel.hidden = panel.id !== `${tabId}-panel`;
+            });
+            
+            state.activeTab = tabId;
+            saveState();
+        };
+
+        const setupEventListeners = () => {
+            app.tabs.addEventListener('click', e => {
+                const tab = e.target.closest('[role="tab"]');
+                if (tab) switchTab(tab.id.replace('-tab', ''));
+            });
+
+            app.header.addEventListener('click', e => {
+                if (e.target.closest('#settingsBtn')) {
+                    app.settings.modal.classList.remove('hidden');
+                    app.settings.themeSelect.focus();
+                }
+            });
+            
+            const closeModal = () => {
+                app.settings.modal.classList.add('hidden');
+                document.getElementById('settingsBtn')?.focus();
+            };
+            app.settings.closeBtn.addEventListener('click', closeModal);
+            app.settings.modal.addEventListener('keydown', e => {
+                if (e.key === 'Escape') closeModal();
+            });
+
+            app.settings.themeSelect.addEventListener('change', (e) => {
+                applyTheme(e.target.value);
+                renderPanels();
+                const activePanel = document.getElementById(`${state.activeTab}-panel`);
+                if(activePanel) activePanel.hidden = false;
+            });
+        };
+
+        const init = () => {
+            loadState();
+            populateThemeSelector();
+            applyTheme(state.theme);
+            renderHeader();
+            renderTabs();
+            renderPanels();
+            setupEventListeners();
+            switchTab(state.activeTab || data.units[0]?.id);
+        };
+
+        init();
+    });
+    </script>
+</body>
+</html>
+

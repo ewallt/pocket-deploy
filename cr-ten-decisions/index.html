@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Course Template</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com/3.4.1?plugins=typography"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Default Theme: Newspaper */
+        :root {
+            --bg-gradient: #fdfdf8;
+            --text: #1c1c1c;
+            --accent-text: #8c1c13;
+            --nav-bg: #f1f1eb;
+            --nav-border: #dcdcd3;
+            --nav-text: #1c1c1c;
+            --nav-hover-bg: #e5e5dd;
+            --nav-active-bg: #dcdcd3;
+            --nav-active-text: #1c1c1c;
+            --prose-text: var(--text);
+            --prose-headings: var(--accent-text);
+            --prose-links: var(--accent-text);
+            --prose-bold: var(--text);
+            font-family: 'Merriweather', serif;
+        }
+
+        .theme-emerald-paper, .theme-cyber-blue, .theme-emerald-gold {
+            font-family: 'Lato', sans-serif;
+        }
+        
+        body {
+            background: var(--bg-gradient);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .ui-bg { background-color: var(--nav-bg); }
+        .ui-border { border-color: var(--nav-border); }
+        .text-primary { color: var(--text); }
+        .text-accent { color: var(--accent-text); }
+
+        .tab-button {
+            background-color: var(--nav-bg);
+            color: var(--nav-text);
+            border-bottom: 3px solid transparent;
+        }
+        .tab-button:hover, .tab-button:focus-visible {
+            background-color: var(--nav-hover-bg);
+        }
+        .tab-button.tab-active {
+            background-color: var(--nav-active-bg);
+            color: var(--nav-active-text);
+            border-bottom-color: var(--accent-text);
+        }
+
+        .settings-button { background-color: var(--nav-hover-bg); }
+        .settings-button:hover { opacity: 0.8; }
+        *:focus-visible { outline: 3px solid var(--accent-text); outline-offset: 2px; }
+
+        .prose { color: var(--prose-text); }
+        .prose h2, .prose h3, .prose a, .prose strong { color: var(--prose-headings); }
+        .prose p.lead { color: var(--prose-text); }
+    </style>
+</head>
+<body class="transition-colors duration-300">
+    <div class="container mx-auto px-4 py-6 max-w-7xl">
+        <header id="app-header" class="ui-bg border ui-border rounded-lg shadow-lg p-6 mb-6"></header>
+        <nav id="app-tabs" class="ui-bg border ui-border rounded-lg shadow-lg mb-6" role="tablist" aria-label="Main navigation"></nav>
+        <main id="app-panels" class="ui-bg border ui-border rounded-lg shadow-lg p-6 md:p-8"></main>
+        
+        <div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+            <div class="ui-bg border ui-border rounded-lg p-6 max-w-md w-full shadow-2xl">
+                <h2 id="settings-title" class="text-xl font-bold text-accent mb-4">Display Settings</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label for="themeSelect" class="block text-primary font-semibold mb-2">Theme</label>
+                        <select id="themeSelect" class="w-full px-3 py-2 rounded ui-bg border ui-border text-primary">
+                        </select>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button id="closeSettings" class="px-4 py-2 rounded text-primary hover:opacity-80">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 
+    ============================================================
+    vvvvvvvvvvvvvv PASTE YOUR JSON CONTENT BELOW vvvvvvvvvvvvvv
+    ============================================================
+    -->
+    <script type="application/json" id="app-data">
+{
+  "kershaw-fateful-choices": {
+    "title": "Fateful Choices: Ten Decisions That Changed the World, 1940–1941",
+    "description": "A 10-unit analysis, based on the work of Ian Kershaw, exploring the pivotal decisions by world leaders that shaped the course of the Second World War.",
+    "categories": {
+      "unit-1-britain-fights-on": {
+        "display_order": 10,
+        "name": "Unit 1: Britain Fights On (May–June 1940)",
+        "display_name": "Unit 1",
+        "paragraphs": [
+          {
+            "heading": "The War Cabinet Crisis",
+            "content": "In late May 1940, with France collapsing and the British Expeditionary Force retreating toward Dunkirk, Britain’s leaders confronted a stark choice: pursue negotiations via Mussolini, or fight on alone. Winston Churchill had been Prime Minister for barely two weeks when his five-man War Cabinet began to debate whether there was any realistic path to a negotiated peace with Hitler that preserved Britain’s independence. Foreign Secretary Lord Halifax pressed for exploring terms through Rome, arguing that the strategic situation was dire and the nation could not afford heroic gestures. Churchill countered that any approach would signal weakness, embolden Hitler, and likely result in demands—naval disarmament, imperial concessions, political subservience—that would leave Britain free in name only. Over several tense meetings between 24 and 28 May, the cabinet weighed the military facts against the moral and political costs. The question was not abstract: it was about national survival on terms worthy of survival."
+          },
+          {
+            "heading": "What Negotiation Really Meant",
+            "content": "The argument for sounding out terms imagined a limited, face-saving compromise. Churchill insisted that this was a fantasy. Germany held every card on the continent; a regime that had torn up treaties at will could not be trusted to keep a British deal. Any armistice while the Wehrmacht stood triumphant would come at a price set in Berlin: the Royal Navy curtailed, air defenses neutralized, colonies ceded or demilitarized, and domestic politics forced into alignment with Axis interests. Even if the initial conditions looked tolerable, Britain would be strategically shackled, with no guarantee Hitler would not return for more. Churchill’s core point was that the very act of asking would shatter British morale and alienate potential supporters abroad. Diplomacy born of panic was not peace; it was a prelude to subjugation. The choice, he argued, was therefore not peace versus war, but freedom with peril versus safety that was only nominal."
+          },
+          {
+            "heading": "The Military Balance Behind the Debate",
+            "content": "Churchill’s case rested not only on principle but on hard power where Britain still possessed decisive advantages. The army was in crisis, but the Royal Navy remained the strongest fleet in the world, capable of keeping the Channel and the Atlantic contested. The Royal Air Force, aided by radar and an integrated air-defense system, offered the realistic prospect of blunting a Luftwaffe assault. Britain’s island geography complicated any German invasion, which would require control of the skies, a protected crossing, and sustained logistics that the Kriegsmarine could not guarantee. Moreover, the Empire and Commonwealth stood behind Britain, providing manpower, bases, and resources. The military calculus was grim but not hopeless. The prospect of evacuating much of the BEF from Dunkirk—if it succeeded—would further stiffen Britain’s hand. Churchill argued that these assets meant Britain could choose to continue the fight with a reasonable expectation of survival."
+          },
+          {
+            "heading": "Morale, Legitimacy, and the Public",
+            "content": "The cabinet crisis was also about domestic legitimacy. Churchill believed that opening talks would break the national spirit just as it needed fortifying. The British public had braced for bad news from France but not for capitulation. A negotiated approach would look like elite panic and invite division: if the government faltered now, why should ordinary Britons black out their windows, queue for rations, or face bombs with stoicism? By holding firm, the cabinet could unify the political class around a single, comprehensible aim—resistance—and anchor a language of defiance that citizens could adopt as their own. Churchill understood that morale was a strategic asset: a people who believed they were fighting for something more than survival—law, liberty, and a way of life—would endure setbacks that a purely material calculus would call intolerable. In this view, political clarity was as vital as ships and planes."
+          },
+          {
+            "heading": "Empire, Allies, and the American Audience",
+            "content": "Choosing to fight on also preserved the credibility Britain needed to mobilize its empire and court the United States. Dominion governments watched London for cues; a retreat into negotiation would ripple through Ottawa, Canberra, Wellington, and Cape Town, dampening commitment and clouding command relationships. In Washington, Franklin Roosevelt faced a public still wary of entanglement. If Britain sought terms, American intervention would become politically impossible; if Britain stood firm, aid could be framed as support for a valiant democracy resisting tyranny. Churchill saw that the long war would be decided by coalitions and production. Holding out in 1940 was not about winning alone; it was about staying in the game until the balance of resources—industrial, financial, and human—could be brought to bear. Strategic endurance depended on moral example, and moral example depended on refusing to beg favors from dictators."
+          },
+          {
+            "heading": "From War Cabinet to Wider Cabinet",
+            "content": "A key procedural turning point came when Churchill broadened the decision beyond the five-man War Cabinet to the full cabinet, where support for continued resistance was overwhelming. This maneuver did not merely neutralize Halifax’s position; it made defiance a collective commitment across parties and ministries. In a democracy at war, authority gains strength from inclusiveness: the wider cabinet’s endorsement bound political rivals to the same course and signaled to the country that the government was united. It also limited the risk of a future reversal under pressure. Once the larger body had publicly embraced the decision, the political cost of backsliding rose sharply. Churchill was not improvising rhetoric alone; he was building institutional ballast for a long struggle. By the end of May, the machinery of state, not just its figurehead, owned the decision to fight on."
+          },
+          {
+            "heading": "Dunkirk and the Meaning of Rescue",
+            "content": "The evacuation from Dunkirk, which unfolded between 26 May and 4 June, validated Churchill’s wager on endurance. The operation did not redeem the strategic disaster in France, nor recover the lost equipment, but it returned a core of trained soldiers to British soil. That living cadre could seed a rebuilt army, stiffen home defense, and later form the nucleus of expeditionary forces. Symbolically, Dunkirk reframed retreat as resilience: a nation that rescued its army in the teeth of defeat could plausibly promise to fight on the beaches and fields of its own island. The rescue also proved the worth of maritime control and civilian mobilization—fishermen and ferrymen alongside destroyers—reinforcing the narrative that Britain’s strengths were collective and adaptable. The decision not to sue for peace thus acquired visible, human substance: these men had come home not to surrender, but to prepare for the next phase."
+          },
+          {
+            "heading": "Why the Choice Still Matters",
+            "content": "Kershaw treats Britain’s decision to fight on as a hinge choice: without it, subsequent Allied coalitions and strategies would have been impossible. The choice yielded no immediate victories; it guaranteed hardship, air raids, and uncertainty. But it preserved the conditions under which Britain could draw on imperial resources, bargain for American aid, and exploit its naval and air advantages. It denied Hitler a tidy settlement in the west and forced him into a two-front future that would strain German resources beyond endurance. The logic is stark: the decision was less about winning quickly than about refusing to lose irreversibly. By committing to a long war—politically, psychologically, and strategically—Britain transformed a moment of near-collapse into the foundation of eventual victory. The cabinet did not discover a painless path; it chose the only path consistent with independence and the hope of a just peace."
+          }
+        ]
+      },
+      "unit-2-hitler-turns-east": {
+        "display_order": 20,
+        "name": "Unit 2: Hitler Turns East — The Decision for Barbarossa",
+        "display_name": "Unit 2",
+        "paragraphs": [
+          {
+            "heading": "From Triumph to Strategic Dilemma",
+            "content": "After the stunning victories of 1940, Hitler faced a strategic dilemma: with Britain unbowed and the United States edging closer to engagement, how could Germany secure a decisive outcome? A negotiated settlement with London seemed remote, and a cross-Channel invasion was beyond German naval and air capacity. In this context, turning east toward the Soviet Union appeared to offer a strategic shortcut. If the Red Army could be shattered quickly, Hitler believed, Germany would seize resources—grain from Ukraine, oil from the Caucasus—that could sustain a protracted struggle. The destruction of the USSR, moreover, would leave Britain isolated and perhaps resigned to terms. Kershaw emphasizes that this was not a choice forced on Germany by fate. It was a deliberate decision formed from a blend of ideological conviction and a dangerously optimistic reading of military possibilities."
+          },
+          {
+            "heading": "Ideology as Strategy",
+            "content": "The decision for war against the USSR cannot be understood apart from Nazi ideology. Hitler’s worldview cast Bolshevism as a mortal enemy and Slavs and Jews as racial inferiors destined for dispossession or death. Lebensraum was not rhetoric for the rally hall; it was a program for conquest and colonization. By 1940, ideology and strategy fused: the annihilation of the Soviet state promised both political salvation and material gain. Kershaw underlines how this fusion skewed risk assessment. The assumption that the Red Army would collapse like France reflected racial contempt as much as intelligence estimates. Ideology also prefigured the brutality of the campaign—commissar orders, starvation plans, and the early phases of the Holocaust in the east—ensuring that even a military success would create ungovernable hatreds and insurgencies. Strategy built on dehumanization mismeasured both the enemy’s will and the costs of occupation."
+          },
+          {
+            "heading": "Intelligence, Assumptions, and Hubris",
+            "content": "German planning rested on the belief that the Soviet Union was a colossus with feet of clay: purges had gutted the officer corps, recent failures in Finland had exposed weakness, and industrial relocations seemed too slow to matter. These premises contained shards of truth but ignored countervailing realities—the depth of Soviet manpower, the capacity of centralized authority to mobilize ruthlessly, and the geographic scale that punished aggressors. German intelligence underestimated Soviet reserves and overestimated the ability of blitzkrieg to carry to decisive depth across vast distances with inadequate logistics. Kershaw highlights the role of hubris born of 1940: the Wehrmacht’s triumphs in the west had created an intoxicating belief in speed and shock. The lesson of France became a dogma, blinding planners to the fact that the Soviet problem was not simply bigger—it was fundamentally different."
+          },
+          {
+            "heading": "Directive and Timetable",
+            "content": "Hitler’s intention to attack took formal shape across late 1940, culminating in a directive that laid out the destruction of Soviet forces west of the Dnieper–Dvina line and the seizure of key economic regions. The plan assumed a short, decisive campaign completed before autumn rains and winter cold. It prioritized massive encirclements over methodical advances, trusting that shattered Soviet armies would release the Wehrmacht for a triumphant march on Leningrad, Moscow, and the Ukraine. The timetable was tight because it had to be: Germany lacked the resources for a long eastern war. Yet events conspired to compress and then delay the schedule—diversions in the Balkans, the need to stabilize flanks, and weather. The decision thus locked Germany into a campaign with minimal margin for error. Every delay translated into diminished odds that speed alone could secure victory."
+          },
+          {
+            "heading": "Logistics: The Strategic Undercarriage",
+            "content": "German doctrine celebrated operational brilliance, but the eastern war would be decided by supply. Rail gauges differed; roads were poor; fuel and spare parts were finite. The Wehrmacht could achieve spectacular encirclements, yet still find its spearheads starved of gasoline and ammunition. Kershaw stresses that logistical fragility was not a mere afterthought but a structural weakness built into the decision. The planners’ confidence that Soviet resistance would collapse quickly justified thin supply lines and optimistic consumption tables. When the Red Army absorbed defeats and kept fighting, every mile forward worsened German logistics, while the Soviets gained time to mobilize, relocate factories, and feed new formations into the line. Strategy premised on swift annihilation offered no contingency for a stubborn enemy reclaiming depth as a weapon."
+          },
+          {
+            "heading": "Alternatives Not Taken",
+            "content": "Could Germany have chosen differently? Kershaw considers, without endorsing, alternatives: a Mediterranean strategy to knock out Britain’s periphery, intensified air and U-boat campaigns to coerce London, or consolidation on the continent while preparing for a long war. Each path had costs and uncertainties, but all avoided the immediate creation of a two-front land war against a continental giant. Hitler rejected them because they did not promise decisive political results within months. The eastern decision thus reflected impatience and a gambler’s instinct: the desire to secure strategic resources and prestige in one throw. In choosing the riskiest option for the highest payoff—and underestimating the risks—Hitler set Germany on a trajectory that no later brilliance could reverse once the initial bet failed."
+          },
+          {
+            "heading": "War Aims and Occupation Policy",
+            "content": "The decision for Barbarossa carried with it a blueprint for occupation that guaranteed ferocious resistance. Economic planners imagined starving cities and exploiting the countryside to feed Germany; security directives treated large categories of people as enemies to be eliminated on sight. These policies were not incidental cruelties; they were instruments to achieve the war’s ideological and resource aims. Kershaw notes the strategic boomerang: terror unified disparate Soviet populations, hardened resolve, and made collaboration rare beyond the first weeks. The same measures that were supposed to make the east feed the Reich instead required garrisons, police battalions, and supply that drained combat power from the front. Occupation became a second war behind the lines that Germany could not win cheaply, and which multiplied the costs of the initial decision."
+          },
+          {
+            "heading": "A Decision That Decided the War",
+            "content": "By turning east, Hitler transformed a European conflict into a continental catastrophe that Germany lacked the means to control. Kershaw’s judgment is spare: the decision for Barbarossa was the pivotal strategic error of the war. It committed Germany to destroy a state with deeper manpower, relocatable industry, brutal endurance, and allies forming beyond the horizon. When the Soviet Union did not collapse in 1941, the rationale for the campaign unraveled, leaving Germany trapped in the very two-front struggle it had sought to avoid. From that point, even tactical brilliance could not compensate for structural inferiority in resources, logistics, and political legitimacy. The decision, born of ideology and overconfidence, condemned the Reich to a war of attrition it could never win—and set the terms of its eventual defeat."
+          }
+        ]
+      },
+      "unit-3-japan-southward-advance": {
+        "display_order": 30,
+        "name": "Unit 3: Japan Turns South — The “Golden Opportunity” and the Oil Squeeze",
+        "display_name": "Unit 3",
+        "paragraphs": [
+          {
+            "heading": "Strategic Dilemma After China",
+            "content": "By 1940, Japan’s long war in China had created a strategic cul-de-sac: the army was bogged down, the economy strained, and the home islands critically dependent on imported raw materials. Oil was the vital hinge. The United States, the Netherlands (through the Dutch East Indies), and the British Empire controlled the taps. Tokyo’s leaders faced a stark choice: accept vulnerability and scale back ambitions, or seize resource basins to free Japan from Western leverage. Kershaw shows that the decision to look south—toward Indochina, Malaya, and the Dutch East Indies—emerged from this resource logic. The vision was seductive: a rich “Co-Prosperity Sphere” supplying oil, rubber, tin, and rice would make Japan self-reliant and secure. But it also meant tangling with Western empires. What began as a solution to a supply problem evolved into a pathway toward confrontation with powers whose industrial bases dwarfed Japan’s own."
+          },
+          {
+            "heading": "Deterrence by Pact—or Delusion?",
+            "content": "The Tripartite Pact (September 1940) allied Japan with Germany and Italy, promising mutual aid if any signatory were attacked by a power not then at war (implicitly, the United States). Japanese leaders hoped this would deter Washington from interfering in Asia, buying time to consolidate gains. Kershaw argues that this calculation misread American politics and industrial potential. The pact bolstered hardliners in Tokyo, yet in Washington it underscored the global nature of the threat and stiffened resolve to rearm and support Britain. Deterrence thus had a perverse effect: rather than restraining the United States, it nudged it toward closer collaboration with London and toward economic measures that would tighten the vise on Japan’s fuel lifeline. The pact advertised ambition without solving the underlying problem—oil—and it encouraged Tokyo to believe that rapid, decisive moves would cow opponents rather than mobilize them."
+          },
+          {
+            "heading": "Indochina as Springboard",
+            "content": "Tokyo’s stepwise occupation of French Indochina (first the north in September 1940, then the south in July 1941) was conceived as a measured move short of war. It offered airfields and anchorages from which to threaten Malaya and the Dutch East Indies, while exploiting the weakness of Vichy France. To Japanese planners, this looked like prudent staging: a way to position forces, cut Chinese supply routes, and signal resolve. Kershaw emphasizes the unintended consequences. Each advance triggered sharper Allied reactions, because it revealed Japan’s trajectory more clearly than any communiqué. The southern move, in particular, convinced Washington that Tokyo intended to make a play for the Indies’ oil, turning a regional land war into a contest for control of maritime Asia. Indochina did not merely provide bases; it advertised Japan’s timetable and handed the United States a clear threshold for retaliation."
+          },
+          {
+            "heading": "Oil at the Center of Strategy",
+            "content": "Everything circled back to petroleum. Japan’s navy, air force, and industry drank fuel faster than domestic stocks could be replenished; the empire’s shipping lanes could not be kept moving without steady imports. The Dutch East Indies promised salvation: fields in Sumatra and Java, modest by American standards, were nonetheless decisive in Asian terms. Kershaw notes that resource arithmetic framed strategic horizons: planners estimated how long Japan could operate under embargo before the fleet withered at anchor. The numbers were grim. The logic of the southward advance was therefore a logic of the ticking clock. Tokyo would either secure oil swiftly or lose the ability to fight at all. This compressed timetable favored boldness and discouraged compromise, because delay translated directly into military impotence. Oil did not merely power engines; it powered the will to gamble."
+          },
+          {
+            "heading": "American Embargo and the Time Trap",
+            "content": "The U.S. response tightened from partial embargoes to a comprehensive oil freeze after the southern Indochina move in July 1941. Japanese assets were frozen; licenses for oil were effectively halted. Kershaw underscores how this created a fast-fading window for Tokyo: reserves were finite, and once drawn down, could not be restored without access to new fields. Diplomacy continued, but negotiations were conducted under the tyranny of dwindling fuel. The more Japan mobilized to seize oil, the more it consumed the stocks it needed for war; the more it waited for a diplomatic breakthrough, the weaker its military position became. The embargo did not force immediate capitulation, but it stripped Japanese leaders of comfortable middle options. The strategic center collapsed into a choice between retreat and violent expansion, and the latter, to many in Tokyo, looked like the only path consistent with national honor and security."
+          },
+          {
+            "heading": "North or South? The Doctrinal Reckoning",
+            "content": "For years Japan had debated two strategic schools: strike north against the Soviet Union (Hokushin-ron) or strike south into maritime Asia (Nanshin-ron). The 1939 defeat at Khalkhin Gol by Soviet forces discredited the northern option. The navy, dominant in the southward school, argued that Japan’s destiny lay across the seas, where the empire could exploit islands and shipping lanes rather than slam again into Siberia’s land mass. Kershaw shows how institutional preferences fused with resource logic: the navy wanted access to oil and rubber; the army wanted a winnable campaign after China. By late 1940, the southward advance was less an abstract doctrine than a bureaucratic consensus hardening into state policy. Strategy was no longer a debate about ideals but a procurement plan for survival. That convergence narrowed the political space for dissent and made escalation more likely."
+          },
+          {
+            "heading": "Misreading Will and Distance",
+            "content": "Japanese leaders believed that a swift seizure of Southeast Asian positions would shock Britain and the Netherlands into acquiescence and deter the United States through a fortified defensive perimeter. Kershaw identifies two fatal misreadings. First, they underestimated Allied willingness to fight for distant colonies, imagining that European exhaustion and American isolationism would dampen resolve. Second, they misjudged distance: occupying far-flung islands was easy; sustaining them under blockade and air attack was not. A defensive cordon of garrisons across thousands of miles required shipping Japan did not have and escorts it could not spare. The southward decision thus carried the seeds of overextension. It promised a glittering empire and delivered a spiderweb of vulnerable points that the Allies could pick apart methodically once their industrial engines were fully engaged."
+          },
+          {
+            "heading": "A Choice That Narrowed Choices",
+            "content": "Kershaw’s verdict is that the turn south was not yet a declaration of war on the United States, but it made such a war increasingly probable. Each step—Indochina, mobilization, naval planning—reduced the room for diplomatic compromise while increasing the costs of delay. The decision created a forked path whose easier branch kept vanishing: either Japan struck hard to seize oil and impose a new status quo, or it accepted strategic dependency under American pressure. In that sense, the southward advance was both cause and prelude. It explained why, by late 1941, Japanese leaders felt cornered into choosing between humiliation and a pre-emptive blow. The bid for autonomy through conquest produced its opposite: a predicament in which autonomy could be preserved only by initiating a wider, riskier war."
+          }
+        ]
+      },
+      "unit-4-mussolini-enters-war": {
+        "display_order": 40,
+        "name": "Unit 4: Mussolini Enters the War — Italy’s Misjudged Gamble",
+        "display_name": "Unit 4",
+        "paragraphs": [
+          {
+            "heading": "From “Non-Belligerent” to Belligerent",
+            "content": "When Europe erupted in 1939, Mussolini declared Italy “non-belligerent,” signaling sympathy for Hitler without committing to combat. By the spring of 1940, as France reeled and Britain stood isolated, he reversed course. On 10 June 1940, Italy entered the war. Kershaw presents this as a decision driven less by strategy than by prestige and timing. Mussolini feared that if he remained on the sidelines and Germany dictated the peace, Italy would gain nothing. He sought a place at the victor’s table by paying an entry fee he assumed would be small. The premise was simple: strike late, cheaply, and be rewarded richly. That premise ignored Italy’s material weaknesses—thin stocks of fuel and ammunition, fragile industry, and poorly equipped forces—and overestimated what “easy victories” still remained after Germany’s lightning successes had already remade the map."
+          },
+          {
+            "heading": "The Myth of the Parallel War",
+            "content": "Mussolini dreamt of a “parallel war,” in which Italy would fight alongside Germany but pursue independent objectives: dominate the Mediterranean, expand in North and East Africa, and seize slices of the Balkans. Kershaw shows how fantasy collided with logistics. Italy’s armed forces were organized for show as much as for war; tanks were obsolete, aircraft lacked range and reliability, and supply in desert theaters was a nightmare. The Regia Marina was sizable but constrained by fuel shortages and cautious doctrine. The idea of a parallel war presumed freedom of action that Italy’s economy and command systems could not deliver. In practice, “parallel” meant “parasitic”: every Italian setback would require German rescue, drawing Berlin into secondary theaters that did little to advance the Reich’s central strategic aims and that consumed scarce time and matériel."
+          },
+          {
+            "heading": "Alps, Alps—and Little Else",
+            "content": "Italy’s first offensive, a push across the Alpine frontier against a collapsing France, yielded meager returns. The terrain favored defenders; the French, though beaten in the north, fought effectively in the mountains. The campaign’s limited gains contrasted sharply with Mussolini’s bombast and exposed the gap between rhetoric and capability. Kershaw interprets this opening as symptomatic: Italian planning assumed opponents would crumble when confronted, but when they did not, operations bogged down. The regime’s habit of substituting zeal for preparation—announce, then improvise—would echo in later fiascos. The Alpine effort won a scrap of territory and a seat at the armistice photo—insufficient reward for the strategic liabilities Italy had just embraced by entering a global war it was not prepared to wage."
+          },
+          {
+            "heading": "Egypt and the Mirage of Momentum",
+            "content": "In North Africa, Italian forces advanced from Libya into Egypt in September 1940, only to be hurled back by a smaller but better led and supplied British force. The counteroffensive smashed the Italian Tenth Army, captured tens of thousands of prisoners, and threatened Libya itself. Kershaw emphasizes the pattern: Italian columns, long on men and short on mobility and logistics, presented brittle targets. The British exploited interior lines, radio intelligence, and combined-arms tactics that Italy struggled to match. The disaster forced Germany to dispatch the Afrika Korps under Rommel, transforming a peripheral theater into a magnet for Axis resources. What Mussolini had imagined as a quick grab for prestige became a costly sink of ships, fuel, and attention at the very moment Berlin needed to concentrate for decisive operations elsewhere."
+          },
+          {
+            "heading": "Greece: Prestige Over Prudence",
+            "content": "Mussolini’s invasion of Greece in October 1940, launched with minimal preparation, compounded the blunders. Expecting a swift collapse, Italy instead met fierce resistance, difficult terrain, and miserable weather. The offensive stalled, then reversed. To prevent a total Italian humiliation, Germany intervened in April 1941, invading Yugoslavia and Greece. Kershaw treats this as one of Mussolini’s most consequential miscalculations: it forced Hitler to divert forces to the Balkans, complicating timetables, and added occupation burdens that would drag on Axis logistics and morale. Whether or not it meaningfully delayed Barbarossa, the Balkan interlude absorbed attention and reinforced a structural problem: Italy’s ambitions generated crises that Berlin had to solve, turning alliance into dependency and sapping Axis coherence."
+          },
+          {
+            "heading": "Economy and Readiness",
+            "content": "Italy’s economy could not sustain modern war. Autarkic policies had not produced resilience; raw materials were scarce; industrial plant lagged behind Western standards; and the regime’s habit of spreading resources across showpiece projects left the services with gaps in essentials. Kershaw notes that Mussolini chose war on the cheap: no serious stockpiling, no reform of procurement, and inadequate training cycles. The result was a force frequently brave at the unit level but brittle at scale. Supply chains broke under stress, communications faltered, and air cover was often insufficient. Entering war under these conditions was not merely premature—it was strategically reckless. The decision magnified Italy’s weaknesses, and because it was framed as a bid for status, it encouraged further risks to redeem early failures."
+          },
+          {
+            "heading": "Alliance Dynamics: Burden, Not Bonus",
+            "content": "In theory, Italy’s entry should have multiplied Axis power. In practice, it divided German focus, consumed shipping, and complicated command. Rommel’s presence in Libya brought operational dash but also entailed a steady convoy battle across the Mediterranean against British sea and air power. In the Balkans, German campaigns repaired Italian reverses but imposed occupation duties that chained divisions far from decisive fronts. Kershaw underlines that alliance cohesion requires aligned goals and complementary capacities; the Axis had neither. Mussolini’s need for visibility pushed operations that offered Hitler little strategic payoff. Instead of strengthening the Axis, Italy’s intervention repeatedly exposed its seams, advertising to the Allies where pressure could produce disproportionate returns."
+          },
+          {
+            "heading": "Why the Gamble Failed",
+            "content": "Mussolini entered war to avoid being a spectator at peace; he became a spectator to his own military unraveling. Kershaw’s judgment is that the decision added width, not depth, to Axis power: more fronts, not more strength. It accelerated Allied learning in the Mediterranean, showcased Axis vulnerabilities, and drained German resources from the main effort against the Soviet Union. Above all, it demonstrated how decisions driven by prestige, rather than sober assessment of means and ends, can corrode coalition strategy. Italy sought gains without paying the price of preparation; the bill arrived in defeats that Berlin had to underwrite. The gamble failed because it mistook opportunism for strategy and imagined that timing could substitute for capability. In a total war of endurance, it was a losing bet from the moment it was placed."
+          }
+        ]
+      },
+      "unit-5-roosevelt-aids-britain": {
+        "display_order": 50,
+        "name": "Unit 5: Roosevelt’s Road to War — Aid to Britain (1940–41)",
+        "display_name": "Unit 5",
+        "paragraphs": [
+          {
+            "heading": "The Political Straitjacket",
+            "content": "Franklin Roosevelt believed that Britain’s survival was the hinge on which American security turned, but he governed inside a political straitjacket. The Neutrality Acts constrained arms sales and shipping; opinion polls showed a public determined to stay out of another European war; and 1940 was an election year. Kershaw emphasizes that Roosevelt’s problem was not will but method: how to shift the nation from neutrality to engagement without fracturing domestic consensus. He framed the problem as one of hemispheric defense and long-term American safety, arguing that a Nazi-dominated Europe would eventually menace the United States. The rhetoric was calibrated to move opinion by degrees, stitching strategic necessity to a familiar language of prudence and peacekeeping. The policy that emerged was incrementalism with a destination: aid short of war."
+          },
+          {
+            "heading": "From Cash-and-Carry to Creative Lawyering",
+            "content": "Before France fell, Roosevelt had already loosened constraints through the 1939 revision of Neutrality, permitting cash-and-carry sales to belligerents. After the collapse, the cash requirement became a trap—Britain was running out of dollars. The administration responded with legal ingenuity. Kershaw notes how lawyers and policymakers searched for ways to help without formally violating statute or exploding political norms. They reinterpreted authorities, widened executive discretion over surplus matériel, and emphasized the President’s commander-in-chief responsibilities for continental defense. Each step was small enough to withstand congressional and judicial scrutiny, but in aggregate the steps amounted to a strategic pivot. The White House did not smash the law; it threaded it, building precedents that would later support more audacious measures."
+          },
+          {
+            "heading": "Destroyers-for-Bases",
+            "content": "The September 1940 destroyers-for-bases deal exemplified Roosevelt’s craft. Britain received fifty overage U.S. destroyers sorely needed for convoy escort; the United States received long-term leases on Atlantic bases from Newfoundland to the Caribbean. Kershaw underscores the dual dividend. Strategically, the deal stiffened Britain’s anti-submarine screen during the lethal learning curve of the Battle of the Atlantic. Politically, the administration could claim that America had not given away warships but traded them for concrete gains in hemispheric defense. The exchange reshaped perceptions: the United States was no longer a distant supplier but a partner erecting a common strategic perimeter. The transaction became a rhetorical bridge from neutrality toward co-belligerency, while keeping the letter of nonintervention intact."
+          },
+          {
+            "heading": "The Two-Ocean Navy and Rearmament",
+            "content": "Aid to Britain was inseparable from America’s own rearmament. The 1940 Two-Ocean Navy Act authorized a massive expansion of battleships, carriers, cruisers, and auxiliaries; the first peacetime draft in U.S. history signaled seriousness. Kershaw’s point is that Roosevelt yoked generosity abroad to prudence at home, presenting both as facets of the same defensive logic. Building American strength blunted isolationist critiques—aid would not leave the United States exposed—while simultaneously reassuring London that help would grow over time. Rearmament also created a production base that could flood the Allies with matériel once legal barriers fell. Factories that tooled up in 1940–41 would become the arsenal of democracy in 1942–45. The road to war was paved not only with speeches, but with machine tools and slipways."
+          },
+          {
+            "heading": "The “Arsenal of Democracy”",
+            "content": "Roosevelt’s fireside chat of 29 December 1940 minted the phrase that defined policy: the United States would be the arsenal of democracy. He recast aid as self-protection by proxy—if Britain fell, America would face the tempest alone; if Britain stood, the storm would be broken far from American shores. Kershaw notes the rhetorical finesse: the President framed assistance not as charity or crusade but as insurance. The image resonated with a public wary of entanglement yet newly conscious of danger. By promising weapons rather than expeditionary armies, Roosevelt could promise safety without immediate sacrifice. The slogan created conceptual room for a financing mechanism commensurate with Britain’s need—credit that functioned like a pipeline rather than a sale."
+          },
+          {
+            "heading": "Lend-Lease: The Financial Keystone",
+            "content": "The Lend-Lease Act of March 1941 solved the dollar problem by replacing purchase with provision. The United States would \"lend\" or \"lease\" arms and supplies to nations whose defense was vital to American security, to be returned or repaid after the danger passed. Kershaw emphasizes how radical the instrument was in effect if not in formal language: it transformed the United States into Britain’s quartermaster. It also established presidential discretion over recipients and quantities, enabling rapid, adaptable support as battlefield needs shifted. For London, it meant survival through 1941; for Washington, it meant influence over Allied strategy and a stake in the war’s outcome short of a declaration. Lend-Lease transmuted sympathy into logistics, and logistics into strategy."
+          },
+          {
+            "heading": "Managing Congress and the Public",
+            "content": "The legislative fight for Lend-Lease was real, but Roosevelt’s coalition held. The administration showcased British need with hard numbers, put forward service chiefs to testify, and allowed Congress to revise oversight provisions to blunt fears of executive overreach. Kershaw highlights the tempo: the White House kept the initiative, moving from speech to bill to appropriation before opposition could reconsolidate. The President never called for war; he called for tools. By keeping the focus on matériel, he preserved bipartisan cover for isolationists to accept aid while still disavowing intervention. Once the principal was accepted—that American security could require equipping other countries—the subsequent steps, from escort zones to an undeclared naval conflict, became easier to justify."
+          },
+          {
+            "heading": "Strategic Consequences",
+            "content": "Aid to Britain did more than avert collapse; it reshaped the geometry of power. Lend-Lease tied British war planning to American production schedules and priorities. It reassured the Soviet Union later in 1941 that the West would not abandon the continental fight. It signaled to Germany and Japan that American resources would increasingly weigh on the scales, even absent a formal belligerency. Kershaw’s judgment is that Roosevelt’s decision to aid Britain was the decisive political choice that made eventual American entry both likely and strategically coherent. It created continuity between neutrality and war by ensuring that when the United States did fight, it would enter a conflict already aligned with its interests, with allies sustained, and with its own industrial base at speed."
+          }
+        ]
+      },
+      "unit-6-stalin-miscalculates": {
+        "display_order": 60,
+        "name": "Unit 6: Stalin’s Gamble — Ignoring the Warnings of Invasion (1940–June 1941)",
+        "display_name": "Unit 6",
+        "paragraphs": [
+          {
+            "heading": "Buying Time with a Pact",
+            "content": "After the Molotov–Ribbentrop Pact of August 1939, Stalin read the European war as a struggle among capitalists that could be exploited for Soviet advantage. The USSR annexed eastern Poland, the Baltic states, and Bessarabia, pushing its borders westward and gaining buffers against Germany. Kershaw stresses that the logic was transactional: trade with Germany would feed Soviet industry; neutrality would keep the Red Army out of a premature showdown. The price of time was moral and diplomatic isolation, but Stalin judged it worth paying. By late 1940, however, German victories had upset the calculus. The buffer shrank to a thin glacis, and the USSR confronted an emboldened partner whose needs and ambitions were growing faster than Soviet defenses could be strengthened."
+          },
+          {
+            "heading": "The Shadow of the Purges",
+            "content": "The Great Purge had hollowed the Soviet officer corps and traumatized the surviving leadership. Promotions accelerated men without seasoning; initiative became dangerous; and communication up the chain was filtered by fear. Kershaw argues that this institutional damage shaped Stalin’s reading of risk. A leadership that had shot thousands of its own officers was predisposed to believe that the greatest danger lay within: panic, provocation, or deviation from the line. Warnings of German attack were evaluated as potential traps or mistakes by subordinates who might be seeking cover for their own failures. The memory of fabricated plots bred a habit of disbelief that proved lethal when real threats materialized."
+          },
+          {
+            "heading": "Warnings Without Conviction",
+            "content": "From late 1940 into June 1941, a flood of intelligence—diplomatic reports, aerial reconnaissance, partisan signals, even precise dates from agents—pointed to a German invasion. Stalin discounted them. Kershaw highlights the pattern: accurate reports were lumped with rumors; conflicting details were used to dismiss the core; and Hitler’s need for Soviet grain and oil was assumed to make war irrational. A mechanized buildup on the frontier was reinterpreted as pressure for concessions. The belief that the Germans would not risk a two-front war became a dogma that no further evidence could dislodge. The result was a willful blindness that mistook the scale of German preparations for a negotiating tactic."
+          },
+          {
+            "heading": "Provocation Anxiety",
+            "content": "Stalin feared that alerting the army or fortifying positions too visibly would give Berlin a pretext. Orders emphasized avoiding incidents, restricting reconnaissance, and keeping units in peacetime posture. Kershaw shows how this caution had a paradoxical effect: it maximized vulnerability. Forward-deployed Soviet formations sat in exposed salients, ammunition dispersed, aircraft lined wingtip-to-wingtip on open fields. Commanders who moved proactively risked reprimand; those who complied found their forces unready when the blow fell. A strategy designed to delay war by avoiding provocation instead ensured that if war came, it would begin on German terms, with the Red Army caught mid-gesture."
+          },
+          {
+            "heading": "The November Conversation",
+            "content": "Molotov’s November 1940 visit to Berlin deepened misreads. The Soviets pressed for recognition of interests in the Balkans and the Straits; Hitler responded with airy talk of global spheres while already drafting plans for invasion. Kershaw interprets the encounter as a dialogue of the deaf: each side heard what confirmed its priors. Moscow took the absence of an ultimatum as room for maneuver; Berlin took Soviet assertiveness as evidence that coexistence would be intolerable. The meeting did not clarify intentions; it allowed both regimes to proceed with their chosen courses while claiming they had explored alternatives. Diplomacy bought neither clarity nor safety."
+          },
+          {
+            "heading": "June 22: Catastrophe of First Contact",
+            "content": "When Germany struck on 22 June 1941, the consequences of miscalculation were immediate and devastating. Airfields were pulverized in place; command links snapped; entire armies were encircled in weeks. Kershaw notes that shock was not only psychological but organizational: the system had been tuned to avoid provocation, not to absorb a first blow. Stalin himself was stunned into paralysis before reasserting control. The prewar belief that Germany would not risk a long war blinded the Soviet leadership to how far Hitler would go to secure a short one. The butcher’s bill for disbelief came due at once, in prisoners, destroyed equipment, and shattered front lines stretching from the Baltic to the Black Sea."
+          },
+          {
+            "heading": "Why the Calculus Persisted",
+            "content": "Stalin’s refusal to credit warnings was not simple naivety. Kershaw traces it to interacting motives: a desire to maximize time for rearmament; an ideological contempt that read fascists as opportunists rather than fanatics; a bureaucratic culture that punished bad news; and a reasonable fear that premature mobilization could spark war before the Red Army was ready. These motives were not irrational taken singly; together they formed a trap. Each day of delay promised more tanks and planes; each tank and plane justified another day of delay. The logic of prudence became the engine of calamity. The decision not to decide—to gamble that war could be postponed indefinitely—produced the worst possible timing when it arrived."
+          },
+          {
+            "heading": "The Strategic Aftermath",
+            "content": "The initial catastrophe did not end the Soviet state. Industry relocated east of the Urals; mobilization gathered millions; commanders learned brutally fast. Yet the price of the first months could never be repaid. Kershaw’s assessment is that Stalin’s prewar choice—to ignore, to delay, to avoid provocations—determined the scale of early losses and the ferocity of the struggle that followed. By underestimating Hitler and overestimating his own ability to control events, Stalin ceded the opening moves of the largest land war in history. The USSR survived and ultimately prevailed, but the margin was narrower, the suffering greater, and the path longer than it needed to be. The decision to buy time mortgaged the future at punitive rates."
+          }
+        ]
+      },
+      "unit-7-undeclared-naval-war": {
+        "display_order": 70,
+        "name": "Unit 7: Roosevelt’s Undeclared Naval War — From Patrols to “Shoot-on-Sight” (1941)",
+        "display_name": "Unit 7",
+        "paragraphs": [
+          {
+            "heading": "From Neutrality to Armed Neutrality",
+            "content": "By early 1941, Franklin Roosevelt had moved the United States from statutory neutrality toward what he called armed neutrality. The Navy expanded “Neutrality Patrols” across the Western Atlantic, tracking U-boats and reporting their positions to the Royal Navy. The administration presented this as hemispheric defense rather than belligerency, but the practical effect was to shorten the Allies’ detection loop and lengthen the Axis’s. Kershaw treats this as a deliberate blurring of lines: the President reframed distance as danger and used geography as a legal key to unlock action. The policy created facts in the sea lanes: American warships shadowed convoys, gathered intelligence, and rehearsed the escort tasks that would soon become routine. The United States was not yet at war, but it sailed on war’s edges."
+          },
+          {
+            "heading": "Bases, Iceland, and Forward Posture",
+            "content": "Destroyers-for-bases opened a chain of Atlantic sites; in mid-1941 U.S. Marines and then Army troops relieved British forces in Iceland. Officially this was to prevent a strategic vacuum; operationally it pushed the U.S. security perimeter thousands of miles east. Airfields, radio beacons, and weather stations tightened Allied command and control across the North Atlantic. Kershaw notes the political cunning: each discrete move could be sold as defensive, but the cumulative effect was offensive leverage. Greenland and Iceland were waypoints on a line of approach to Europe; occupying them signaled that American ships and aircraft would operate where the convoy war was hottest. The map of neutrality had been redrawn to overlap the map of battle."
+          },
+          {
+            "heading": "Escorts in Everything but Name",
+            "content": "Before Congress authorized formal convoy escort, the Navy improvised functional equivalents. U.S. destroyers patrolled ahead of and alongside merchantmen, broadcast U-boat contacts to British escorts, and marked danger zones with depth-charge attacks meant as warnings. Rules of engagement were calibrated to deter without triggering a declaration: do not fire unless fired upon, but maneuver aggressively; do not announce “escort,” but never leave a convoy alone. Kershaw emphasizes that this choreography was strategic pedagogy for the American public. Every safe crossing and every dramatic after-action report normalized the idea that protecting ships on the high seas was a U.S. responsibility. By the time the word “convoy” appeared in orders, the practice already existed at sea."
+          },
+          {
+            "heading": "The Greer Incident and “Shoot-on-Sight”",
+            "content": "In September 1941, after a German submarine and the destroyer USS Greer exchanged attacks while stalking each other in the North Atlantic, Roosevelt went on radio to announce a new standard: any Axis warship found in waters “necessary for American defense” would be fired upon on sight. Kershaw underlines the constitutional audacity wrapped in common-sense language. The President recast the Atlantic as a defensive moat and declared that hostile prowlers there were lawful targets. This was not merely a rhetorical escalation; it changed the tactical dialogue. Commanders now had clarity that suspicion and contact could justify force. German captains, facing bolder American approaches, responded with torpedoes. The undeclared war had acquired a clear, simple verb: shoot."
+          },
+          {
+            "heading": "Kearny, Reuben James, and the Price of Proximity",
+            "content": "Soon after, the USS Kearny was torpedoed, and the destroyer USS Reuben James was sunk with heavy loss of life. These shocks did not reverse policy; they hardened it. Kershaw argues that the incidents validated Roosevelt’s narrative that aggression was already upon the United States. The casualties created moral gravity without yet provoking a formal declaration, a paradox that served the President’s timing. Isolationists lost ground; interventionists gained sympathy. At sea, captains internalized the lesson that caution in a submarine war could be lethal, while audacity might save convoys. The events converted abstraction—Atlantic security—into names of ships and men, knitting domestic emotion to maritime strategy."
+          },
+          {
+            "heading": "Anglo-American Integration in the Atlantic",
+            "content": "Operationally, the undeclared war fused the U.S. Navy into the Allied command fabric. Common signal books, intelligence sharing, and patrol sectoring meant the North Atlantic was increasingly one battle space. Escort groups transitioned from ad hoc pairings to structured rotations. Kershaw highlights the feedback loop: practice refined doctrine; doctrine improved survival; improved survival justified more practice. American yards accelerated escort construction, and coastal air patrols plugged gaps between convoy routes and ports. The U-boat arm still held initiative in many lanes, but the strategic vector had turned: the Allies were learning faster than the Axis could scale. When formal belligerency came, the machinery would not need to be invented; it was already humming."
+          },
+          {
+            "heading": "Law, Politics, and Presidential Craft",
+            "content": "Roosevelt’s pathway preserved constitutional optics while altering strategic substance. He stacked incremental measures—patrols, bases, escorts, shoot-on-sight—into a staircase the public could climb. Congress retained oversight through appropriations and hearings, but the tempo of events favored the executive; by the time legislators debated one rung, the administration stood on the next. Kershaw’s reading is unsentimental: the President judged that law and opinion were pliable if shifted by small, purposeful steps tied to the vocabulary of defense. The result was not a stealth war but a negotiated one, with domestic consent manufactured in stages. The United States did not stumble into the Atlantic fight; it was walked there, deliberately."
+          },
+          {
+            "heading": "Strategic Consequences of a War Without Declaration",
+            "content": "By December 1941, the United States was, in effect, a belligerent in the Atlantic. Convoys relied on American escorts; U-boats treated American destroyers as enemy warships; Allied planning assumed U.S. leadership in shipbuilding and basing. Kershaw concludes that the undeclared naval war made a later declaration a change of legal state, not of strategic reality. It also signaled to Germany and Japan that American resources and resolve would weigh heavily. When open war arrived, the Atlantic transition was seamless: the convoy system expanded, the escort groups hardened, and the industrial pipeline surged. The decision to fight first in practice and only later in law ensured that the arsenal of democracy already knew how to use its tools."
+          }
+        ]
+      },
+      "unit-8-japan-chooses-war": {
+        "display_order": 80,
+        "name": "Unit 8: Japan Chooses War with the United States — The Pearl Harbor Decision",
+        "display_name": "Unit 8",
+        "paragraphs": [
+          {
+            "heading": "Deadlines and Imperial Conferences",
+            "content": "Through 1941, Japanese leaders framed the crisis as a race against the fuel gauge. Naval planners calculated months, not years, of usable reserves; each diplomatic week spent meant fewer operational months later. At a series of Imperial Conferences, deadlines hardened: if negotiations failed by late autumn, Japan would act to secure the southern resources zone and neutralize American interference. Kershaw stresses that the setting mattered—the throne’s presence lent decisions an aura of inevitability and unity, even where doubts persisted. Once a timetable was sanctified, bureaucracies aligned to meet it. War became the default if diplomacy did not produce relief on Japanese terms."
+          },
+          {
+            "heading": "Negotiations, Principles, and the Hull Note",
+            "content": "Talks in Washington revolved around incompatible principles. Tokyo sought recognition of its role in Asia and relief from embargoes while retaining gains in China; Washington insisted on withdrawal from China and Indochina, adherence to open-door trade, and renunciation of coercion. The final American communication—often called the Hull Note—restated those demands plainly. From Tokyo’s perspective, it read like an ultimatum; from Washington’s, it merely codified longstanding positions. Kershaw observes that by the time pen touched paper, the military clock dominated the diplomatic one. Even a softer American letter would have collided with Japanese deadlines and with the internal logic that saw compromise as both humiliation and strategic self-harm."
+          },
+          {
+            "heading": "Yamamoto’s Gamble",
+            "content": "Admiral Isoroku Yamamoto argued that only a crushing opening blow could give Japan space to consolidate a southern empire. The plan to strike Pearl Harbor aimed to disable the U.S. Pacific Fleet’s battleships, delay American counteraction, and buy six months for advances into Malaya, the Philippines, and the Dutch East Indies. Kershaw underscores the paradox: the Pearl Harbor plan was tactically brilliant and strategically desperate. It assumed that shock could substitute for parity and that a nation of vast industry could be dissuaded by a dramatic setback. The operation’s very audacity reflected an awareness that time, oil, and steel ran in America’s favor."
+          },
+          {
+            "heading": "Secrecy, Training, and the Mechanics of Surprise",
+            "content": "Japan engineered surprise through radio deception, long-range navigation, and meticulous training with shallow-running torpedoes tailored to Pearl Harbor’s depth. Carriers rehearsed deck cycles; pilots practiced target approaches against mock-ups; midget submarines offered an additional, if unreliable, hedge. Kershaw notes that the operational culture that produced surprise also narrowed strategic thinking: excellence at solving the tactical problem of the opening raid was mistaken for solving the larger problem of American mobilization. The Navy could hit hard; it could not change the arithmetic of shipyards, oil refineries, and pilot training pipelines waiting across the Pacific."
+          },
+          {
+            "heading": "Alternatives Considered and Discarded",
+            "content": "Tokyo debated delaying war to squeeze concessions, accepting a reduced posture in China to reopen trade, or striking north against the USSR if the German invasion succeeded. Each alternative collided with institutions and pride. The army would not abandon China; the navy would not fight Siberia’s land war; neither service wanted to drift into impotence while fuel ran down. Kershaw argues that the search for alternatives was genuine but bounded: the questions asked presupposed that Japan must retain empire and autonomy against rising American pressure. Within that frame, the option set tilted relentlessly toward pre-emption. A state that demands security on maximal terms will often prefer the risks of war to the certainty of concession."
+          },
+          {
+            "heading": "Honor, Psychology, and the Politics of No Return",
+            "content": "Leaders spoke of national honor as a concrete strategic good. Domestic politics reinforced the rhetoric: years of propaganda about sacred missions in Asia made retreat appear not only costly but illegitimate. Police controls muffled dissenting voices; military factions equated compromise with betrayal. Kershaw is careful not to reduce the choice to emotion—oil and time were real pressures—but he insists that the moral vocabulary shaped how facts were interpreted. The same stockpiles that argued for caution to some argued for urgency to others; the same embargo that suggested bargaining to outsiders suggested a fight for dignity to insiders. Once cabinet changes elevated hardliners, the politics of no return took hold."
+          },
+          {
+            "heading": "December 7 and the Cost of Success",
+            "content": "The attack achieved tactical surprise and inflicted spectacular damage on battleships and airfields. Yet the American carriers were at sea, the submarine force and repair yards survived, and fuel tanks were left intact. Kershaw emphasizes the irony: success at Pearl Harbor accelerated the very mobilization it sought to deter. Outrage unified U.S. opinion, erased constitutional hesitation, and released the full power of an industrial democracy. Japan had purchased months of freedom of action at the price of awakening a far larger enemy, and the window it bought was too narrow to fortify an ocean-spanning empire against a foe that could replace losses many times over."
+          },
+          {
+            "heading": "A Decision That Made Global War Unavoidable",
+            "content": "By choosing war with the United States, Japan ensured that the conflict it hoped to localize would become fully global and existential. The decision tied Tokyo’s fate to Germany’s and linked the Pacific resource war to the Atlantic convoy war and the Eastern Front. Kershaw’s judgment is crisp: Pearl Harbor solved none of Japan’s structural problems and created new ones that no operational brilliance could fix. It provided shock without strategy for victory, time without the means to exploit it, and glory that masked strategic insolvency. The choice, irresistible to men trapped by deadlines and dreams, defined the arc of the Pacific struggle—and the limits of empire built on borrowed oil."
+          }
+        ]
+      },
+      "unit-9-hitler-declares-war-us": {
+        "display_order": 90,
+        "name": "Unit 9: Hitler Declares War on the United States (December 1941)",
+        "display_name": "Unit 9",
+        "paragraphs": [
+          {
+            "heading": "From Skirmish to State of War",
+            "content": "Before December 1941, Germany and the United States were already fighting a shadow war in the Atlantic. American destroyers tracked U-boats, relayed contacts to British escorts, occupied Iceland, and increasingly fired on German submarines under a shoot-on-sight policy. In Berlin, these measures were read as creeping belligerency, but the situation still contained a legal ambiguity that preserved diplomatic options. Kershaw emphasizes that the Atlantic confrontation had not yet foreclosed maneuver: Washington could still have concentrated on Japan after Pearl Harbor, and Berlin, by avoiding a formal declaration, might have limited the scope of American involvement against the Reich. The transition from de facto hostilities to de jure war thus hinged on Hitler’s choice—one not compelled by treaty text or immediate military necessity, but by a mixture of ideology, miscalculation, and performative resolve."
+          },
+          {
+            "heading": "Tripartite Pact: Obligation or Opportunity?",
+            "content": "The Tripartite Pact did not require Germany to declare war on a power that attacked one of its partners unless Germany itself was attacked, a condition not met on 7 December. Nevertheless, Hitler treated Japan’s strike as an opening to align narratives and intimidate the United States. Kershaw argues that he saw advantage in presenting a united Axis front and in signaling contempt for American staying power. By declaring war first, Hitler aimed to seize the initiative, collapse legal distinctions in the Atlantic, and frame the conflict as an inevitable clash between blocs. The pact became a political alibi for a decision he wished to take anyway, converting a technically avoidable escalation into a stage for declaring that history had moved beyond neutrality and debate."
+          },
+          {
+            "heading": "The Strategic Gamble",
+            "content": "Hitler calculated that the United States—shocked by Pearl Harbor—would focus on the Pacific for years, leaving Germany free to finish off the Soviet Union. He believed a ruthless U-boat campaign could throttle British supply lines before American shipyards and escorts reached critical mass. Kershaw underlines the seductive arithmetic: if submarines could sink merchant tonnage faster than Americans could build it, Britain might still be coerced. Early 1942 seemed to validate the gamble as U-boats ravaged coastal shipping in the so-called \"Second Happy Time.\" Yet the logic ignored compounding variables: American industrial mobilization accelerated, convoy systems tightened, and air coverage expanded. A strategy premised on a static opponent collided with a society that learned, built, and adapted at scale."
+          },
+          {
+            "heading": "Ideology, Prestige, and Momentum",
+            "content": "Beyond calculations lay psychology. Hitler viewed the United States as a plutocratic, racially mixed society incapable of sustained sacrifice, and he was loath to appear reactive while Japan seemed bold. Declaring war allowed him to posture as the driver of events, not their victim. Kershaw notes how momentum inside the Nazi system favored maximal choices: a regime that had ridden risk to repeated triumphs in 1938–40 now treated escalation as a proof of will. Prestige politics—refusing to be seen as hesitating or dependent on Tokyo—intertwined with ideological contempt to make prudence look like weakness. The very traits that had produced audacity earlier now produced overreach."
+          },
+          {
+            "heading": "The Reichstag Speech",
+            "content": "On 11 December 1941, Hitler announced war in a Reichstag speech framing the United States as the true author of global conflict and Germany as merely unmasking a hidden enemy. The performance offered a cathartic clarity to domestic audiences: the world was neatly split, and Germany’s path was righteous and determined. Internationally, the speech erased any residual diplomatic ambiguity that might have limited American moves. Kershaw reads the address as theater with strategic consequences: words converted an avoidable two-front struggle into formal reality, binding policy to rhetoric and leaving little room for recalibration when events turned adverse."
+          },
+          {
+            "heading": "Atlantic Consequences",
+            "content": "Once war was declared, the U.S. Navy integrated fully into Allied convoy systems, escort groups standardized procedures with the Royal Navy, and American air power expanded anti-submarine coverage from Greenland to West Africa. Shipyards poured out Liberty ships and destroyer escorts; radar, HF/DF, codebreaking, and long-range patrols steadily drove down U-boat success rates. Kershaw emphasizes the compounding effect: each technical increment shortened the Allies’ learning loop, while German production and training lagged. By 1943, the Battle of the Atlantic tipped decisively. The gambit that American industry would be too slow had underestimated the elasticity of an economy that could retool at continental scale."
+          },
+          {
+            "heading": "Coalition and the Germany-First Principle",
+            "content": "Formal war simplified Allied grand strategy. The United States could now channel Lend-Lease, planning, and force deployments under a shared \"Germany First\" doctrine with Britain and, soon, the Soviet Union. Kershaw highlights how Hitler’s declaration solved Roosevelt’s political problem: it legitimated prioritizing Europe over the Pacific in American strategy. A diffuse sympathy became an explicit alliance, coordinating shipping, production schedules, and operations. The decision thus strengthened precisely what German planning needed to disrupt: an adversary coalition with synchronized logistics and a common target."
+          },
+          {
+            "heading": "A Self-Inflicted Strategic Defeat",
+            "content": "Kershaw’s verdict is stark: declaring war on the United States converted a contest Germany might still have compartmentalized into an all-embracing struggle against the world’s largest industrial power. It removed the last sliver of hope that the Anglo-American relationship could be restrained by law or politics, accelerated the unification of Allied war economies, and invited an opponent with greater endurance into the decisive theater. The choice did not cause Germany’s defeat on its own, but it ensured that defeat would be total, because it made compromise and exhaustion impossible outcomes. The costs of pride and ideology were now written into the structure of the war."
+          }
+        ]
+      },
+      "unit-10-decision-to-kill-jews": {
+        "display_order": 100,
+        "name": "Unit 10: The Decision to Kill the Jews — Radicalization and the “Final Solution” (1941)",
+        "display_name": "Unit 10",
+        "paragraphs": [
+          {
+            "heading": "From Persecution to Extermination",
+            "content": "Between 1933 and 1940, Nazi anti-Jewish policy advanced through exclusion, expropriation, and confinement—laws, pogroms, ghettos, and forced emigration. War transformed that trajectory. By 1941, millions of Jews lived under German control in Poland and, after June, across the occupied Soviet territories. Kershaw argues that the prewar repertoire—expulsion and segregation—no longer \"solved\" what the regime called the Jewish question. Conquest created a vast captive population and an ideological opportunity to enact the regime’s genocidal fantasies. The shift from persecution to murder was not an accident of local brutality; it emerged from a leadership that had long imagined a Europe cleansed of Jews and now wielded war as the instrument to realize it."
+          },
+          {
+            "heading": "The Eastern War as Catalyst",
+            "content": "Operation Barbarossa unleashed a war of annihilation in which the categories of soldier, partisan, and Jew were collapsed by Nazi doctrine. Einsatzgruppen followed the Wehrmacht, shooting Jewish men, then entire communities—women, children, the elderly—into pits across Ukraine, Belarus, and the Baltics. These mass shootings, often with local collaboration, were not yet the industrialized murder of the camps, but they were genocide by bullet. Kershaw stresses that the eastern campaign radicalized aims and methods: violence normalized, command lines habituated to killing, and the scale of Jewish populations under German control made ad hoc massacres both logistically taxing and morally corrosive even to perpetrators. The quest for a \"comprehensive\" solution gathered speed amid the bloodshed."
+          },
+          {
+            "heading": "Signals from the Top",
+            "content": "Hitler’s public language remained euphemistic—\"removal,\" \"elimination,\" \"extermination\" used with deliberate ambiguity—but his private signals drove policy. Himmler’s visits to the front, orders to extend shootings to women and children, and Goering’s letter of 31 July 1941 authorizing Heydrich to prepare a \"Final Solution\" provided administrative cover. Kershaw is careful: there is no single signed order that neatly encapsulates the decision; instead there is a cumulative pattern in 1941 of green lights, permissions, and expectations that pushed officials toward killing as policy. In a regime where initiative in radicalism was rewarded, subordinates competed to translate the Führer’s wishes into ever more lethal programs."
+          },
+          {
+            "heading": "Precedents and Techniques",
+            "content": "The euthanasia program (T4), begun in 1939 against the disabled within Germany, provided personnel, technologies, and organizational routines later adapted to mass murder of Jews. Gas vans were tested in occupied territories; facilities at Chełmno began killing in December 1941; planning for stationary extermination centers—Belzec, Sobibor, Treblinka—accelerated into 1942. Kershaw notes that technique followed intent: once murder was authorized in principle, the state sought methods that were faster, more concealed, and less psychologically burdensome for perpetrators. The administrative mind turned to throughput and secrecy—rail schedules, camouflage, and paperwork—revealing a terrifying fusion of modern management and ideological savagery."
+          },
+          {
+            "heading": "Wannsee: Coordination, Not Conception",
+            "content": "The Wannsee Conference of 20 January 1942 is often misdescribed as the moment of decision. Kershaw clarifies that the decision to kill had already been made in 1941; Wannsee coordinated responsibilities among ministries and security offices for implementing deportations and murder. Euphemism dominated the minutes—\"evacuation to the East,\" \"appropriate treatment\"—but the substance was bureaucratic division of labor for genocide. The meeting demonstrates how deeply state apparatuses—Foreign Office, Interior, Transport—were implicated. The Final Solution was not a rogue SS project; it was a national policy organized across desks and departments."
+          },
+          {
+            "heading": "Occupation, Logistics, and Murder",
+            "content": "Ghettos in Poland were starved and diseased; deportations thinned them on timetables synchronized with rail availability and the construction of killing centers. The same trains that moved coal and troops moved entire communities to their deaths. Kershaw emphasizes the logistical imagination at work: lists, quotas, and timetables gave genocide a veneer of order. Yet occupation realities—labor demands, partisan war, transport bottlenecks—also shaped the sequence and geography of killing. Genocide was not an interruption of the war effort; it was integrated into it, diverting materiel and attention while stoking hatred that made governance by consent impossible."
+          },
+          {
+            "heading": "Complicity and the Web of Actors",
+            "content": "While the SS orchestrated, many others enabled: Wehrmacht units provided security and sometimes direct assistance; police battalions shot and cordoned; civil officials compiled registries and managed property; allied and satellite regimes participated to varying degrees. Kershaw insists that genocide required a web, not a single thread. The regime’s structure—competitive, decentralized, reward-driven—meant that radical solutions rose from below as often as they flowed from above. This distributed complicity complicated accountability then and reveals the moral collapse of institutions that chose career, ideology, or obedience over humanity."
+          },
+          {
+            "heading": "The Strategic and Moral Verdict",
+            "content": "The decision to kill the Jews was the regime’s defining crime and a strategic self-harm. It consumed rail capacity, manpower, and administrative focus; it inflamed resistance; and it exposed the regime’s aims to the world, hardening Allied resolve for unconditional surrender. Kershaw’s judgment is that genocide was not a by-product of war but a core war aim made executable by war. The choice sealed the Reich’s moral isolation and wrote a bill that could be paid only with total defeat and postwar reckoning. The Final Solution was the endpoint of a politics that made extermination thinkable; once chosen, it defined both the character and the destiny of Hitler’s war."
+          }
+        ]
+      }
+    }
+  }
+}
+    </script>
+    <!-- 
+    ============================================================
+    ^^^^^^^^^^^^^^ PASTE YOUR JSON CONTENT ABOVE ^^^^^^^^^^^^^^
+    ============================================================
+    -->
+
+    <script defer>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        const THEMES = {
+          'newspaper': { 
+            name: 'Newspaper', 
+            type: 'classic', 
+            isDark: false 
+          },
+          'emerald-paper': {
+            name: 'Emerald Paper', 
+            type: 'variable', 
+            isDark: false,
+            vars: {
+              '--bg-gradient': '#f7fbf9', '--text': '#1e2b28', '--accent-text': '#0f7f6d', '--nav-bg': '#e7f3ef',
+              '--nav-border': '#86c8ba', '--nav-text': '#1e2b28', '--nav-hover-bg': '#d7ece6', '--nav-active-bg': '#bfe3d9',
+              '--nav-active-text': '#1e2b28', '--prose-text': '#1e2b28', '--prose-headings': '#0f7f6d'
+            }
+          },
+          'cyber-blue': {
+            name: 'Cyber Night', 
+            type: 'variable', 
+            isDark: true,
+            vars: {
+              '--bg-gradient': 'rgb(2, 6, 23)',
+              '--text': 'rgb(203, 213, 225)',
+              '--accent-text': 'rgb(203, 213, 225)',
+              '--nav-bg': 'rgb(30, 41, 59)',
+              '--nav-border': 'rgb(51, 65, 85)',
+              '--nav-text': 'rgb(203, 213, 225)',
+              '--nav-hover-bg': 'rgb(15, 23, 42)',
+              '--nav-active-bg': 'rgb(51, 65, 85)',
+              '--nav-active-text': '#FFFFFF',
+              '--prose-text': 'rgb(203, 213, 225)',
+              '--prose-headings': '#FFFFFF'
+            }
+          },
+          'emerald-gold': {
+            name: 'Emerald/Gold', 
+            type: 'variable', 
+            isDark: true,
+            vars: {
+              '--bg-gradient': 'linear-gradient(135deg,#022c22 0%,#064e3b 60%,#065f46 100%)', '--text': '#ecfdf5',
+              '--accent-text': '#f0c475', '--nav-bg': '#064e3b', '--nav-border': '#d4a24c', '--nav-text': '#ecfdf5',
+              '--nav-hover-bg': '#065f46', '--nav-active-bg': '#0b3d31', '--nav-active-text': '#f0c475',
+              '--prose-text': '#a7f3d0', '--prose-headings': '#f0c475'
+            }
+          }
+        };
+
+        const app = {
+            root: document.documentElement,
+            header: document.getElementById('app-header'),
+            tabs: document.getElementById('app-tabs'),
+            panels: document.getElementById('app-panels'),
+            settings: {
+                modal: document.getElementById('settingsModal'),
+                closeBtn: document.getElementById('closeSettings'),
+                themeSelect: document.getElementById('themeSelect')
+            }
+        };
+
+        const state = { activeTab: null, theme: 'newspaper' };
+
+        const loadState = () => {
+            state.theme = localStorage.getItem('appTheme') || 'newspaper';
+            state.activeTab = localStorage.getItem('activeTab');
+        };
+
+        const saveState = () => {
+            localStorage.setItem('appTheme', state.theme);
+            localStorage.setItem('activeTab', state.activeTab);
+        };
+
+        const applyTheme = (themeKey) => {
+            const theme = THEMES[themeKey];
+            if (!theme) return;
+
+            app.root.className = '';
+            app.root.style.cssText = '';
+
+            if (theme.type === 'variable' && theme.vars) {
+                for (const [key, value] of Object.entries(theme.vars)) {
+                    app.root.style.setProperty(key, value);
+                }
+                app.root.classList.add(`theme-${themeKey}`);
+            }
+
+            state.theme = themeKey;
+            if (app.settings.themeSelect.value !== themeKey) {
+                app.settings.themeSelect.value = themeKey;
+            }
+            saveState();
+        };
+
+        const populateThemeSelector = () => {
+            app.settings.themeSelect.innerHTML = Object.entries(THEMES).map(([key, theme]) => 
+                `<option value="${key}">${theme.name}</option>`
+            ).join('');
+        };
+
+        const loadAndTransformData = () => {
+            try {
+                const dataNode = document.getElementById('app-data');
+                if (!dataNode.textContent.trim()) {
+                    console.error("JSON data is empty.");
+                    return null;
+                }
+                const rawData = JSON.parse(dataNode.textContent);
+                
+                const topLevelKey = Object.keys(rawData)[0];
+                if (!topLevelKey) {
+                    console.error("JSON data is missing a top-level key.");
+                    return null;
+                }
+                const course = rawData[topLevelKey];
+                
+                const units = Object.entries(course.categories).map(([id, unitData]) => ({ id, ...unitData }))
+                    .sort((a, b) => a.display_order - b.display_order);
+                return { meta: { title: course.title, description: course.description }, units };
+            } catch (e) {
+                console.error("Failed to load or transform app data:", e);
+                app.panels.innerHTML = `<div class="p-4 text-red-500 bg-red-100 rounded"><strong>Error:</strong> Could not load content. Please ensure the JSON is correctly formatted and pasted into the data island.</div>`;
+                return null;
+            }
+        };
+        
+        const data = loadAndTransformData();
+        
+        if (!data) return;
+
+        const renderHeader = () => {
+            document.title = data.meta.title || "Interactive Course";
+            
+            app.header.innerHTML = `
+                <div class="flex justify-between items-start gap-4">
+                    <div>
+                        <h1 class="text-3xl font-bold text-accent">${data.meta.title}</h1>
+                        <p class="mt-2 text-primary/80">${data.meta.description}</p>
+                    </div>
+                    <button id="settingsBtn" class="flex-shrink-0 p-3 rounded-lg settings-button transition-opacity" aria-label="Display Settings">
+                        <span class="text-2xl text-accent">⚙️</span>
+                    </button>
+                </div>`;
+        };
+        
+        const renderTabs = () => {
+            app.tabs.innerHTML = `<div class="flex flex-wrap">${
+                data.units.map(unit => `
+                    <button role="tab" aria-selected="false" aria-controls="${unit.id}-panel" id="${unit.id}-tab"
+                            class="px-5 py-3 font-semibold transition-colors tab-button">
+                        ${unit.display_name}
+                    </button>`
+                ).join('')
+            }</div>`;
+        };
+
+        const renderPanels = () => {
+            app.panels.innerHTML = data.units.map(unit => {
+                const introHTML = unit.introduction ? `<p class="lead">${unit.introduction}</p>` : '';
+                const paragraphsHTML = (unit.paragraphs || []).map(p => `
+                    <h3>${p.heading}</h3>
+                    <p>${p.content}</p>
+                `).join('');
+                const proseClasses = THEMES[state.theme].isDark ? 'prose prose-lg max-w-none prose-invert' : 'prose prose-lg max-w-none';
+                return `
+                    <div role="tabpanel" id="${unit.id}-panel" aria-labelledby="${unit.id}-tab" hidden>
+                        <div class="${proseClasses}">
+                            <h2>${unit.name}</h2>
+                            ${introHTML}
+                            ${paragraphsHTML}
+                        </div>
+                    </div>`;
+            }).join('');
+        };
+
+        const switchTab = (tabId) => {
+            if (!data.units.some(u => u.id === tabId)) {
+                tabId = data.units[0]?.id;
+            }
+            if (!tabId) return;
+
+            app.tabs.querySelectorAll('[role="tab"]').forEach(tab => {
+                const isActive = tab.id === `${tabId}-tab`;
+                tab.setAttribute('aria-selected', isActive);
+                tab.classList.toggle('tab-active', isActive);
+            });
+
+            app.panels.querySelectorAll('[role="tabpanel"]').forEach(panel => {
+                panel.hidden = panel.id !== `${tabId}-panel`;
+            });
+            
+            state.activeTab = tabId;
+            saveState();
+        };
+
+        const setupEventListeners = () => {
+            app.tabs.addEventListener('click', e => {
+                const tab = e.target.closest('[role="tab"]');
+                if (tab) switchTab(tab.id.replace('-tab', ''));
+            });
+
+            app.header.addEventListener('click', e => {
+                if (e.target.closest('#settingsBtn')) {
+                    app.settings.modal.classList.remove('hidden');
+                    app.settings.themeSelect.focus();
+                }
+            });
+            
+            const closeModal = () => {
+                app.settings.modal.classList.add('hidden');
+                document.getElementById('settingsBtn')?.focus();
+            };
+            app.settings.closeBtn.addEventListener('click', closeModal);
+            app.settings.modal.addEventListener('keydown', e => {
+                if (e.key === 'Escape') closeModal();
+            });
+
+            app.settings.themeSelect.addEventListener('change', (e) => {
+                applyTheme(e.target.value);
+                renderPanels();
+                const activePanel = document.getElementById(`${state.activeTab}-panel`);
+                if(activePanel) activePanel.hidden = false;
+            });
+        };
+
+        const init = () => {
+            loadState();
+            populateThemeSelector();
+            applyTheme(state.theme);
+            renderHeader();
+            renderTabs();
+            renderPanels();
+            setupEventListeners();
+            switchTab(state.activeTab || data.units[0]?.id);
+        };
+
+        init();
+    });
+    </script>
+</body>
+</html>
+

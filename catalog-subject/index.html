@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en" class="theme-newspaper">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Apps Catalog — By Subject</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root{
+      --bg:#f8fafc; --panel:#ffffff; --border:#e5e7eb; --text:#0f172a; --muted:#475569; --accent:#2563eb;
+      --chip-bg:#eef2ff; --chip-text:#3730a3; --chip-border:#c7d2fe; --chip-on:#1d4ed8; --chip-on-bg:#dbeafe;
+    }
+    body{background:var(--bg); color:var(--text);}
+    .panel{background:var(--panel); border:1px solid var(--border); border-radius:12px;}
+    .chip{
+      display:inline-flex; align-items:center; gap:.5rem; padding:.35rem .7rem; border-radius:999px;
+      border:1px solid var(--chip-border); background:var(--chip-bg); color:var(--chip-text);
+      font-size:.85rem; line-height:1; cursor:pointer; user-select:none;
+    }
+    .chip[aria-pressed="true"]{ background:var(--chip-on-bg); color:#0b1f4f; border-color:var(--chip-on);}
+    .badge{
+      display:inline-block; font-size:.72rem; padding:.15rem .45rem; border-radius:999px; border:1px solid var(--border); color:var(--muted);
+    }
+    .link{color:var(--accent); text-decoration:underline;}
+    .grid{display:grid; grid-template-columns:repeat(1,minmax(0,1fr)); gap:1rem;}
+    @media(min-width:640px){ .grid{grid-template-columns:repeat(2,minmax(0,1fr));} }
+    @media(min-width:1024px){ .grid{grid-template-columns:repeat(3,minmax(0,1fr));} }
+    .card{padding:1rem; border:1px solid var(--border); border-radius:10px; background:#fff; transition:box-shadow .15s, transform .15s;}
+    .card:hover{ box-shadow:0 8px 22px rgba(2,6,23,.06); transform:translateY(-1px); }
+    .muted{color:var(--muted);}
+    .sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;}
+  </style>
+</head>
+<body class="antialiased">
+  <header class="max-w-6xl mx-auto px-4 pt-6 pb-2">
+    <h1 class="text-2xl font-bold">Apps Catalog</h1>
+    <p class="muted mt-1 text-sm">Filter by <strong>subject</strong> or search by title/id. Tap a card to open the app.</p>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 pb-24">
+    <section class="panel p-4 sm:p-5 mb-4">
+      <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+        <div class="flex-1">
+          <label for="q" class="sr-only">Search</label>
+          <input id="q" type="search" inputmode="search" placeholder="Search apps… (title or id)"
+                 class="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+        <div class="text-sm muted shrink-0" id="counts">0 shown</div>
+      </div>
+      <div id="chips" class="mt-3 flex flex-wrap gap-2"></div>
+    </section>
+
+    <section id="results" class="grid"></section>
+
+    <!-- Optional inline fallback: if fetching /apps.json fails, paste your JSON below and keep the tag -->
+    <script id="apps-data" type="application/json">
+[
+  { "id": "folio-ntw-hermeneutic", "title": "Folio — Template (CR JSON compatible)", "type": "folio", "url": "https://ewallt.github.io/pocket-deploy/folio-ntw-hermeneutic/" },
+  { "id": "otf-ntw-hermeneutic", "title": "N.T. Wright's Hermeneutic: An Exploration", "type": "otf", "url": "https://ewallt.github.io/pocket-deploy/otf-ntw-hermeneutic/" },
+  { "id": "hr-cognitive-bias-history", "title": "Introduction: The History of Cognitive Bias Research", "type": "hr", "url": "https://ewallt.github.io/pocket-deploy/hr-cognitive-bias-history/" },
+  { "id": "chr-cognitive-bias-codex", "title": "The Cognitive Bias Codex", "type": "chr", "url": "https://ewallt.github.io/pocket-deploy/chr-cognitive-bias-codex/" },
+  { "id": "cr-architects-of-mind", "title": "Architects of the Mind", "type": "cr", "url": "https://ewallt.github.io/pocket-deploy/cr-architects-of-mind/" },
+  { "id": "tr-rationality-playbook", "title": "The Personal Rationality Playbook", "type": "tr", "url": "https://ewallt.github.io/pocket-deploy/tr-rationality-playbook/" },
+  { "id": "tr-team-decision-playbook", "title": "The Team Decision Playbook", "type": "tr", "url": "https://ewallt.github.io/pocket-deploy/tr-team-decision-playbook/" },
+  { "id": "tr-critical-thinker-playbook", "title": "The Critical Thinker's Playbook", "type": "tr", "url": "https://ewallt.github.io/pocket-deploy/tr-critical-thinker-playbook/" },
+  { "id": "dashboard", "title": "Main Dashboard", "type": "dashboard", "url": "https://ewallt.github.io/pocket-deploy/dashboard/" },
+  { "id": "dashboard-wisdom-of-crowds", "title": "Wisdom of Crowds Dashboard", "type": "dashboard", "url": "https://ewallt.github.io/pocket-deploy/dashboard-wisdom-of-crowds/" },
+  { "id": "dashboard-cognitive-toolkit", "title": "Cognitive Toolkit Dashboard", "type": "dashboard", "url": "https://ewallt.github.io/pocket-deploy/dashboard-cognitive-toolkit/" },
+  { "id": "tr-traffic-dashboard", "title": "Traffic Research Dashboard", "type": "tr", "url": "https://ewallt.github.io/pocket-deploy/tr-traffic-dashboard/" },
+  { "id": "tr-aging-dashboard", "title": "Aging Research Dashboard", "type": "tr", "url": "https://ewallt.github.io/pocket-deploy/tr-aging-dashboard/" },
+  { "id": "dashboard-ww2-why", "title": "WWII: Why the Allies Won — Dashboard", "type": "dashboard", "url": "https://ewallt.github.io/pocket-deploy/dashboard-ww2-why/" },
+
+  { "id": "dashboard-parasitic-mind", "title": "The Parasitic Mind — Dashboard", "type": "dashboard", "url": "https://ewallt.github.io/pocket-deploy/dashboard-parasitic-mind/" },
+  { "id": "cr-parasitic-mind-essay", "title": "The Parasitic Mind — Core Thesis & Critique", "type": "cr", "url": "https://ewallt.github.io/pocket-deploy/cr-parasitic-mind-essay/" },
+  { "id": "cr-noise-essay", "title": "Noise, Signal, and Judgment", "type": "cr", "url": "https://ewallt.github.io/pocket-deploy/cr-noise-essay/" },
+  { "id": "cr-elephant-in-the-brain", "title": "The Elephant in the Brain — Hidden Motives", "type": "cr", "url": "https://ewallt.github.io/pocket-deploy/cr-elephant-in-the-brain/" },
+
+  { "id": "dashboard-ppl-gospel", "title": "People & Gospel — Dashboard", "type": "dashboard", "url": "https://ewallt.github.io/pocket-deploy/dashboard-ppl-gospel/" },
+  { "id": "ppl-hays-gospel", "title": "Richard B. Hays — Gospel", "type": "ppl", "url": "https://ewallt.github.io/pocket-deploy/ppl-hays-gospel/" },
+  { "id": "ppl-moltmann-gospel", "title": "Jürgen Moltmann — Gospel", "type": "ppl", "url": "https://ewallt.github.io/pocket-deploy/ppl-moltmann-gospel/" },
+  { "id": "ppl-ntwright-gospel", "title": "N. T. Wright — Gospel", "type": "ppl", "url": "https://ewallt.github.io/pocket-deploy/ppl-ntwright-gospel/" },
+  { "id": "ppl-waggoner-gospel", "title": "E. J. Waggoner — Gospel", "type": "ppl", "url": "https://ewallt.github.io/pocket-deploy/ppl-waggoner-gospel/" },
+  { "id": "ppl-wieland-gospel", "title": "Robert J. Wieland — Gospel", "type": "ppl", "url": "https://ewallt.github.io/pocket-deploy/ppl-wieland-gospel/" },
+  { "id": "ppl-grahammaxwell-gospel", "title": "Graham Maxwell — Gospel", "type": "ppl", "url": "https://ewallt.github.io/pocket-deploy/ppl-grahammaxwell-gospel/" },
+
+  { "id": "hr-wisdom-of-crowds-history", "title": "Introduction: The History of Crowd Wisdom", "type": "hr", "url": "https://ewallt.github.io/pocket-deploy/hr-wisdom-of-crowds-history/" },
+  { "id": "chr-wisdom-of-crowds", "title": "Wisdom of Crowds Chronicle", "type": "chr", "url": "https://ewallt.github.io/pocket-deploy/chr-wisdom-of-crowds/" },
+  { "id": "cr-wisdom-of-crowds", "title": "Minds of the Many", "type": "cr", "url": "https://ewallt.github.io/pocket-deploy/cr-wisdom-of-crowds/" },
+  { "id": "tr-wisdom-casebook", "title": "The Casebook of Collective Intelligence", "type": "tr", "url": "https://ewallt.github.io/pocket-deploy/tr-wisdom-casebook/" },
+  { "id": "tr-wisdom-playbook", "title": "The Collective Intelligence Playbook", "type": "tr", "url": "https://ewallt.github.io/pocket-deploy/tr-wisdom-playbook/" },
+  { "id": "tr-wisdom-paradoxicon", "title": "The Paradoxicon: Puzzles of Group Behavior", "type": "tr", "url": "https://ewallt.github.io/pocket-deploy/tr-wisdom-paradoxicon/" },
+
+  { "id": "dashboard-composite", "title": "Composite Dashboard", "type": "dashboard", "url": "https://ewallt.github.io/pocket-deploy/dashboard-composite/" },
+  { "id": "ar-baking", "title": "The Baker's Lab: The Science Behind the Art", "type": "ar", "url": "https://ewallt.github.io/pocket-deploy/ar-baking/" },
+  { "id": "ar-piracy", "title": "The Golden Age of Piracy: Myth and Reality", "type": "ar", "url": "https://ewallt.github.io/pocket-deploy/ar-piracy/" },
+  { "id": "ar-atomic-age", "title": "The Atomic Age: From Discovery to Deterrence", "type": "ar", "url": "https://ewallt.github.io/pocket-deploy/ar-atomic-age/" },
+  { "id": "ar-boyhood", "title": "San Diego in the 1960s: A Child's Geography", "type": "ar", "url": "https://ewallt.github.io/pocket-deploy/ar-boyhood/" },
+  { "id": "ar-theology", "title": "Foundations of Christian Theology", "type": "ar", "url": "https://ewallt.github.io/pocket-deploy/ar-theology/" },
+  { "id": "ar-boyd", "title": "Greg Boyd's Theological Philosophy", "type": "ar", "url": "https://ewallt.github.io/pocket-deploy/ar-boyd/" },
+  { "id": "ar-cslewis", "title": "C.S. Lewis: Scholar, Storyteller, Apologist", "type": "ar", "url": "https://ewallt.github.io/pocket-deploy/ar-cslewis/" },
+  { "id": "ar-sda-gospel", "title": "The Seventh-day Adventist Understanding of the Gospel", "type": "ar", "url": "https://ewallt.github.io/pocket-deploy/ar-sda-gospel/" },
+  { "id": "ar-cruciform-academic", "title": "The Cruciform Life: Academic Perspectives", "type": "ar", "url": "https://ewallt.github.io/pocket-deploy/ar-cruciform-academic/" },
+  { "id": "ar-cruciform-pastoral", "title": "The Cruciform Life: Pastoral Perspectives", "type": "ar", "url": "https://ewallt.github.io/pocket-deploy/ar-cruciform-pastoral/" },
+
+  { "id": "chr-open-theism", "title": "Open Theism: God's Dynamic Relationship with Creation", "type": "chr", "url": "https://ewallt.github.io/pocket-deploy/chr-open-theism/" },
+  { "id": "chr-cruciform", "title": "The Cruciform Way: Living Shaped by the Cross", "type": "chr", "url": "https://ewallt.github.io/pocket-deploy/chr-cruciform/" },
+  { "id": "chr-red-sea", "title": "Red Sea: Deliverance and Divine Intervention", "type": "chr", "url": "https://ewallt.github.io/pocket-deploy/chr-red-sea/" },
+  { "id": "chr-exodus-experience", "title": "The Exodus Experience", "type": "chr", "url": "https://ewallt.github.io/pocket-deploy/chr-exodus-experience/" },
+
+  { "id": "cr-maxwell-p", "title": "A. Graham Maxwell: God's Character and Human Understanding", "type": "cr", "url": "https://ewallt.github.io/pocket-deploy/cr-maxwell-p/" },
+  { "id": "cr-boyd-p", "title": "Greg Boyd: Open Theism and Spiritual Warfare", "type": "cr", "url": "https://ewallt.github.io/pocket-deploy/cr-boyd-p/" },
+  { "id": "cr-wieland-p", "title": "Robert Wieland: Grace, Law, and Adventist Theology", "type": "cr", "url": "https://ewallt.github.io/pocket-deploy/cr-wieland-p/" },
+  { "id": "cr-song-of-Moses", "title": "The Song of Moses", "type": "cr", "url": "https://ewallt.github.io/pocket-deploy/cr-song-of-Moses/" },
+
+  { "id": "hr-roman-emperor", "title": "The Roman Emperor: Power and Paradox", "type": "hr", "url": "https://ewallt.github.io/pocket-deploy/hr-roman-emperor/" },
+  { "id": "hr-apollo", "title": "Apollo Program: Humanity's Greatest Journey", "type": "hr", "url": "https://ewallt.github.io/pocket-deploy/hr-apollo/" },
+  { "id": "hr-ai", "title": "The Rise of Artificial Intelligence: A Historical Perspective", "type": "hr", "url": "https://ewallt.github.io/pocket-deploy/hr-ai/" },
+  { "id": "hr-ai-papers", "title": "Foundational Papers in AI Research", "type": "hr", "url": "https://ewallt.github.io/pocket-deploy/hr-ai-papers/" },
+
+  { "id": "br-bulge", "title": "Battle of the Bulge: Ardennes Offensive", "type": "br", "url": "https://ewallt.github.io/pocket-deploy/br-bulge/" },
+  { "id": "br-d-day", "title": "D-Day: Operation Overlord", "type": "br", "url": "https://ewallt.github.io/pocket-deploy/br-d-day/" },
+  { "id": "br-midway", "title": "Battle of Midway: Turning Point in the Pacific", "type": "br", "url": "https://ewallt.github.io/pocket-deploy/br-midway/" },
+  { "id": "br-waterloo", "title": "Battle of Waterloo: Napoleon's Final Defeat", "type": "br", "url": "https://ewallt.github.io/pocket-deploy/br-waterloo/" },
+  { "id": "br-gettysburg", "title": "Battle of Gettysburg: High Water Mark of the Confederacy", "type": "br", "url": "https://ewallt.github.io/pocket-deploy/br-gettysburg/" },
+
+  { "id": "ic-currents", "title": "The War of the Currents", "type": "ic", "url": "https://ewallt.github.io/pocket-deploy/ic-currents/" },
+  { "id": "ic-urbanism", "title": "The Battle for the City's Soul", "type": "ic", "url": "https://ewallt.github.io/pocket-deploy/ic-urbanism/" },
+
+  { "id": "abrahamic-covenant", "title": "The Abrahamic Covenant", "type": "misc", "url": "https://ewallt.github.io/pocket-deploy/abrahamic-covenant/" },
+  { "id": "quiz-app", "title": "Dynamic Quiz Application", "type": "misc", "url": "https://ewallt.github.io/pocket-deploy/quiz-app/" },
+  { "id": "otf-typology", "title": "Typology in the Sanctuary and Exodus", "type": "otf", "url": "https://ewallt.github.io/pocket-deploy/otf-typology/" },
+
+  { "id": "db-red-sea", "title": "Red Sea Dashboard", "type": "dashboard", "url": "https://ewallt.github.io/pocket-deploy/db-red-sea/" }
+]
+
+    </script>
+  </main>
+
+  <script>
+  (function(){
+    const state = { data: [], search: "", activeSubjects: new Set() }; // empty set = All
+
+    // ----- Subject mapping & heuristics -----
+    const OVERRIDE = new Map(Object.entries({
+      // Theology dashboards & items
+      "dashboard-ppl-gospel":"theology",
+      "otf-ntw-hermeneutic":"theology",
+      "ar-theology":"theology","ar-boyd":"theology","ar-cslewis":"theology",
+      "ar-sda-gospel":"theology","ar-cruciform-academic":"theology","ar-cruciform-pastoral":"theology",
+      "ppl-hays-gospel":"theology","ppl-moltmann-gospel":"theology","ppl-ntwright-gospel":"theology",
+      "ppl-waggoner-gospel":"theology","ppl-wieland-gospel":"theology","ppl-grahammaxwell-gospel":"theology",
+      "chr-open-theism":"theology","chr-cruciform":"theology","chr-red-sea":"theology","chr-exodus-experience":"theology",
+      "cr-maxwell-p":"theology","cr-boyd-p":"theology","cr-wieland-p":"theology","cr-song-of-Moses":"theology",
+      "abrahamic-covenant":"theology","otf-typology":"theology","db-red-sea":"theology",
+
+      // Rationality / cognitive toolkit
+      "dashboard-cognitive-toolkit":"rationality","dashboard-wisdom-of-crowds":"rationality",
+      "dashboard-parasitic-mind":"rationality",
+      "hr-cognitive-bias-history":"rationality","chr-cognitive-bias-codex":"rationality","cr-architects-of-mind":"rationality",
+      "tr-rationality-playbook":"rationality","tr-team-decision-playbook":"rationality","tr-critical-thinker-playbook":"rationality",
+      "hr-wisdom-of-crowds-history":"rationality","chr-wisdom-of-crowds":"rationality","cr-wisdom-of-crowds":"rationality",
+      "tr-wisdom-casebook":"rationality","tr-wisdom-playbook":"rationality","tr-wisdom-paradoxicon":"rationality",
+      "cr-parasitic-mind-essay":"rationality","cr-noise-essay":"rationality","cr-elephant-in-the-brain":"rationality",
+      "ic-currents":"rationality","ic-urbanism":"rationality",
+
+      // History
+      "dashboard-ww2-why":"history",
+      "hr-roman-emperor":"history","hr-apollo":"history","hr-ai":"history","hr-ai-papers":"history",
+      "ar-piracy":"history","ar-atomic-age":"history","ar-boyhood":"history",
+
+      // Warfare
+      "br-bulge":"warfare","br-d-day":"warfare","br-midway":"warfare","br-waterloo":"warfare","br-gettysburg":"warfare",
+
+      // Misc (composite/main dashboards, tools, template, baking)
+      "dashboard":"misc","dashboard-composite":"misc",
+      "tr-traffic-dashboard":"misc","tr-aging-dashboard":"misc",
+      "ar-baking":"misc","quiz-app":"misc","folio-ntw-hermeneutic":"misc"
+    }));
+
+    function subjectOf(app){
+      if(OVERRIDE.has(app.id)) return OVERRIDE.get(app.id);
+
+      const id=(app.id||"").toLowerCase();
+      const title=(app.title||"").toLowerCase();
+      const has=(s)=>id.includes(s)||title.includes(s);
+
+      if(id.startsWith("ppl-")||id.startsWith("chr-")) return "theology";
+      if(id.startsWith("tr-")||has("bias")||has("wisdom of crowds")) return "rationality";
+      if(id.startsWith("hr-")||has("wwii")||has("roman")||has("apollo")) return "history";
+      if(id.startsWith("br-")||has("battle")) return "warfare";
+      if(id.startsWith("dashboard-")){
+        if(has("gospel")) return "theology";
+        if(has("cognitive")||has("wisdom")) return "rationality";
+        if(has("ww2")) return "history";
+        return "misc";
+      }
+      return "misc";
+    }
+
+    // ----- Labels -----
+    const SUBJECT_LABEL = {theology:"Theology", rationality:"Rationality", history:"History", warfare:"Warfare", misc:"Misc"};
+    function typeLabel(t){
+      const m={cr:"Colorful Reader",ccr:"Composite CR",ppl:"Perplexity View",chr:"Chronicle",ar:"Adaptive Reader",hr:"History Report",br:"Battle Report",ic:"Idea Comparator",tr:"Toolkit/Playbook",dashboard:"Dashboard",misc:"Misc",otf:"One-off/Essay",folio:"Template"};
+      return m[t]||t?.toUpperCase()||"";
+    }
+    function esc(s){return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+
+    // ----- Persistence -----
+    const LS_KEY = "apps_catalog_subject_state_v1";
+    function loadPersist(){
+      try{
+        const raw=localStorage.getItem(LS_KEY); if(!raw) return;
+        const obj=JSON.parse(raw);
+        if(Array.isArray(obj.activeSubjects)) state.activeSubjects=new Set(obj.activeSubjects);
+        if(typeof obj.search==="string") state.search=obj.search;
+      }catch(_){}
+    }
+    function savePersist(){
+      localStorage.setItem(LS_KEY, JSON.stringify({activeSubjects:[...state.activeSubjects], search:state.search}));
+    }
+
+    // ----- Data loading -----
+    async function loadData(){
+      const candidates=["./apps.json","../apps.json","../../apps.json","/apps.json"];
+      for(const url of candidates){
+        try{
+          const res=await fetch(url,{cache:"no-store"});
+          if(res.ok){ const j=await res.json(); if(Array.isArray(j)) return j; }
+        }catch(_){}
+      }
+      // inline fallback
+      const island=document.getElementById("apps-data");
+      if(island && island.textContent.trim()){
+        try{ const j=JSON.parse(island.textContent); if(Array.isArray(j)) return j; }catch(_){}
+      }
+      throw new Error("Unable to load apps.json");
+    }
+
+    // ----- DOM refs -----
+    const chipsEl=document.getElementById("chips");
+    const resultsEl=document.getElementById("results");
+    const countsEl=document.getElementById("counts");
+    const qEl=document.getElementById("q");
+
+    // ----- UI builders -----
+    function buildSubjectChips(data){
+      chipsEl.innerHTML="";
+      const allBtn=document.createElement("button");
+      allBtn.className="chip";
+      allBtn.dataset.subject="";
+      allBtn.setAttribute("aria-pressed", state.activeSubjects.size===0 ? "true":"false");
+      allBtn.innerHTML=`<span>All</span><span class="badge">${data.length}</span>`;
+      chipsEl.appendChild(allBtn);
+
+      // counts
+      const counts={};
+      for(const item of data){ const s=subjectOf(item); counts[s]=(counts[s]||0)+1; }
+
+      const order=["theology","rationality","history","warfare","misc"];
+      for(const s of order){
+        if(!counts[s]) continue;
+        const btn=document.createElement("button");
+        btn.className="chip";
+        btn.dataset.subject=s;
+        btn.setAttribute("aria-pressed", state.activeSubjects.has(s)? "true":"false");
+        btn.innerHTML=`<span>${SUBJECT_LABEL[s]}</span><span class="badge">${counts[s]}</span>`;
+        chipsEl.appendChild(btn);
+      }
+    }
+
+    function apply(){
+      const q=(state.search||"").toLowerCase().trim();
+      const filtered = state.data.filter(item=>{
+        const subj=subjectOf(item);
+        const ok = state.activeSubjects.size===0 || state.activeSubjects.has(subj);
+        if(!ok) return false;
+        if(!q) return true;
+        return (item.title||"").toLowerCase().includes(q) || (item.id||"").toLowerCase().includes(q);
+      });
+
+      // sort by subject, then title
+      filtered.sort((a,b)=>{
+        const sa=SUBJECT_LABEL[subjectOf(a)]||"Misc";
+        const sb=SUBJECT_LABEL[subjectOf(b)]||"Misc";
+        if(sa!==sb) return sa.localeCompare(sb);
+        return (a.title||"").localeCompare(b.title||"");
+      });
+
+      resultsEl.innerHTML="";
+      for(const app of filtered){
+        const subj = SUBJECT_LABEL[subjectOf(app)] || "Misc";
+        const card=document.createElement("a");
+        card.href=app.url; card.target="_blank"; card.rel="noopener"; card.className="card block";
+        card.innerHTML=`
+          <div class="flex items-start justify-between gap-3">
+            <h3 class="text-base font-semibold leading-tight">${esc(app.title||app.id)}</h3>
+            <div class="flex gap-2 items-center">
+              <span class="badge">${esc(subj)}</span>
+              <span class="badge">${esc(typeLabel(app.type||""))}</span>
+            </div>
+          </div>
+          <p class="muted mt-1 text-sm">${esc(app.id||"")}</p>
+          <p class="mt-2 text-sm"><span class="link">Open</span> →</p>
+        `;
+        resultsEl.appendChild(card);
+      }
+      countsEl.textContent=`${filtered.length} shown`;
+
+      // refresh chip states
+      chipsEl.querySelectorAll(".chip").forEach(ch=>{
+        const s=ch.dataset.subject;
+        const on = s ? state.activeSubjects.has(s) : (state.activeSubjects.size===0);
+        ch.setAttribute("aria-pressed", on ? "true":"false");
+      });
+    }
+
+    // ----- Events -----
+    chipsEl.addEventListener("click",(e)=>{
+      const btn=e.target.closest(".chip"); if(!btn) return;
+      const s=btn.dataset.subject;
+      if(!s){ state.activeSubjects.clear(); }
+      else{ state.activeSubjects.has(s) ? state.activeSubjects.delete(s) : state.activeSubjects.add(s); }
+      savePersist(); apply();
+    });
+
+    qEl.addEventListener("input", ()=>{
+      state.search = qEl.value || "";
+      savePersist(); apply();
+    });
+
+    // ----- Init -----
+    (async function init(){
+      try{
+        loadPersist();
+        state.data = await loadData();
+        qEl.value = state.search;
+        buildSubjectChips(state.data);
+        apply();
+      }catch(err){
+        resultsEl.innerHTML = `
+          <div class="panel p-6">
+            <h3 class="text-lg font-semibold">Couldn’t load <code>apps.json</code></h3>
+            <p class="muted mt-1">Place this file at the repo root and refresh, or paste it in the inline data-island above.</p>
+          </div>`;
+      }
+    })();
+  })();
+  </script>
+</body>
+</html>
+

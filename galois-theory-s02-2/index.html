@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Galois Theory: Structure and Examples — Part 2</title>
+<style>
+:root{--bg:#0f172a;--panel:#1f2937;--ink:#e5e7eb;--muted:#94a3b8;--brand:#60a5fa;--border:#1f2937}
+@media(prefers-color-scheme:light){:root{--bg:#f8fafc;--panel:#ffffff;--ink:#1e293b;--muted:#64748b;--brand:#3b82f6;--border:#e2e8f0}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,Apple Color Emoji,Segoe UI Emoji}
+.wrapper{max-width:760px;margin:0 auto;padding:48px 20px}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:28px;box-shadow:0 0 0 1px rgba(0,0,0,.12) inset}
+h1{margin:0 0 8px;font-size:2rem;line-height:1.2}
+.lead{color:var(--muted);margin:0 0 24px}
+a{color:var(--brand);text-decoration:none}
+a:hover{text-decoration:underline}
+article p{margin:0 0 16px}
+hr{border:0;border-top:1px solid var(--border);margin:24px 0}
+.nav{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+.nav a{padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:rgba(96,165,250,.08);color:var(--ink)}
+small.muted{color:var(--muted);display:block;margin-top:24px}
+</style>
+</head>
+<body>
+<div class="wrapper"><div class="panel">
+<div class="nav"><a href="/pocket-deploy/dashboard-galois-theory-s02/">Dashboard</a><a href="/pocket-deploy/galois-theory-s02-1/">Prev</a><a href="/pocket-deploy/galois-theory-s02-3/">Next</a></div>
+<h1>Galois Theory: Structure and Examples</h1>
+<p class="lead">Part 2 · Computing Galois Groups</p>
+<article>
+<p>Computing the Galois group of a polynomial is central to applying Galois theory, yet it can be challenging in practice. The Galois group Gal(K/F) of a polynomial f(x) ∈ F[x] is the group of automorphisms of the splitting field K that fix F. These automorphisms permute the roots of f while preserving all algebraic relations, so Gal(K/F) embeds into the symmetric group Sₙ where n is the degree of f. Determining the precise subgroup requires analyzing how roots are related algebraically. For small degrees (n ≤ 4), explicit formulas and case analysis often suffice. For larger degrees, techniques from algebra, number theory, and computation become essential. We begin with fundamental principles and progress through examples of increasing complexity.</p>
+<p>The degree of the splitting field [K:F] equals the order |Gal(K/F)|, providing an immediate constraint. If f is irreducible of degree n, then [F(α):F] = n for any root α, so n divides [K:F]. The Galois group acts transitively on the roots of an irreducible polynomial, meaning for any two roots α, β, there exists σ ∈ Gal(K/F) with σ(α) = β. This limits possibilities: transitive subgroups of Sₙ are significantly fewer than all subgroups. For example, transitive subgroups of S₃ are S₃ itself and the cyclic subgroup ℤ₃ (realized as 3-cycles), while S₃ has six subgroups total. Testing irreducibility using Eisenstein's criterion or reduction modulo primes narrows the candidates further. If f factors modulo a prime p, the factorization pattern constrains the cycle structure of elements in Gal(K/F), leveraging Frobenius elements and Chebotarev density in advanced contexts.</p>
+<p>For quadratic polynomials f(x) = x² + bx + c over a field F (characteristic ≠ 2), the splitting field is K = F(√Δ) where Δ = b² − 4c is the discriminant. If Δ ∈ F, the polynomial splits in F and Gal(K/F) is trivial. Otherwise, [K:F] = 2 and Gal(K/F) ≅ ℤ₂, with the nontrivial automorphism swapping the two roots r₁ and r₂ (equivalently, sending √Δ to −√Δ). This simple pattern generalizes: the discriminant determines solvability and structure. For higher degrees, discriminants become more complex (polynomials in the coefficients), but they remain powerful invariants. A polynomial has Galois group contained in the alternating group Aₙ if and only if its discriminant is a square in F, since Aₙ consists of even permutations, those preserving the sign of the discriminant.</p>
+<p>Cubic polynomials over ℚ illustrate richer behavior. Consider f(x) = x³ + px + q, assumed irreducible (hence with three real or one real and two complex roots). The splitting field is K = ℚ(α, √Δ) where α is a root and Δ = −4p³ − 27q² is the discriminant. If Δ is a square in ℚ, then Gal(K/ℚ) ⊆ A₃ ≅ ℤ₃, a cyclic group. If Δ is not a square, then Gal(K/ℚ) = S₃, as the discriminant is not fixed by all permutations. For example, f(x) = x³ − 2 has Δ = 108, not a square, so its Galois group over ℚ is S₃ (order 6). The polynomial x³ − 3x + 1 has discriminant 81 = 9², a square, yielding Gal(K/ℚ) ≅ ℤ₃. Checking the discriminant is often the quickest method for cubics, determining whether the group is the full symmetric group or its cyclic subgroup.</p>
+<p>Quartic polynomials admit more varied Galois groups, all of which are transitive subgroups of S₄. These include S₄ (order 24), A₄ (order 12), the dihedral group D₄ (order 8), the Klein four-group V₄ (order 4), and cyclic groups ℤ₄ and ℤ₂. Resolvent cubics help distinguish these cases: given a quartic f, one constructs an auxiliary cubic whose roots encode relationships among the roots of f. The Galois group of the resolvent provides information about the Galois group of f. For instance, if the resolvent is irreducible with non-square discriminant, Gal(f) = S₄; if the resolvent splits completely, further tests determine whether Gal(f) is V₄, D₄, or a cyclic group. Ferrari's method for solving quartics implicitly uses resolvents, and the solvability of quartics by radicals reflects that all transitive subgroups of S₄ are solvable groups.</p>
+<p>For quintics and beyond, Galois groups are harder to compute explicitly, but theoretical results guide the analysis. The generic degree-n polynomial has Galois group Sₙ. Specific polynomials may have smaller groups; for example, x⁵ − x − 1 has Galois group S₅ (proven via irreducibility and discriminant arguments), while x⁵ − 2 has a solvable Galois group (a Frobenius group of order 20). Computational algebra systems such as Magma, SageMath, and GAP implement algorithms to compute Galois groups over ℚ, using factorizations modulo primes, resolvents, and Tschirnhaus transformations. These tools employ sophisticated number theory, but the underlying principle remains: analyze how automorphisms permute roots by studying algebraic dependencies among roots and testing group-theoretic constraints.</p>
+<p>In summary, computing Galois groups combines theoretical constraints (degree, transitivity, discriminants) with specific techniques (resolvents, factorizations modulo primes). For low-degree polynomials, hand calculations often succeed. For higher degrees, computational tools and advanced theory become necessary. Regardless of approach, the goal is the same: identify the subgroup of Sₙ capturing the symmetries of the polynomial's roots. This identification unlocks the power of Galois theory, enabling conclusions about solvability, field structure, and deeper algebraic properties. Mastery of these techniques transforms abstract theory into concrete problem-solving capability, bridging the gap between Galois's original insights and modern computational algebra.</p>
+</article>
+<hr />
+<div class="nav"><a href="/pocket-deploy/dashboard-galois-theory-s02/">Dashboard</a><a href="/pocket-deploy/galois-theory-s02-1/">Prev</a><a href="/pocket-deploy/galois-theory-s02-3/">Next</a></div>
+<small class="muted">Galois Theory · Series 2 of 3</small>
+</div></div>
+</body>
+</html>

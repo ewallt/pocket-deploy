@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City Evolution Knowledge Base Explorer</title>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg,#2c3e50 0%,#34495e 100%);
+            --accent-1: #e74c3c;
+            --accent-2: #c03b2b;
+            --btn-gradient: linear-gradient(45deg,#e74c3c,#c0392b);
+            --accent-1-rgb: 231, 76, 60;
+            --accent-warning: #ffc107;
+            --accent-warning-rgb: 255, 193, 7;
+            --text-primary: #ecf0f1;
+            --text-secondary: #bdc3c7;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Georgia', serif;
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+        .header {
+            background: rgba(0,0,0,0.3);
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 3px solid var(--accent-1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-top: 0;
+        }
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, var(--accent-1), var(--accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            filter: drop-shadow(0 0 15px rgba(var(--accent-1-rgb), 0.3));
+        }
+        .header p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0,0,0,0.2);
+            padding: 1rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+
+    /* --- FINAL BUTTON RULES START --- */
+    /* Base style for ALL buttons */
+    .tab-button, #settings-btn, .sector-button {
+        padding: 12px 24px;
+        background: var(--ui-background);
+        border: none;
+        color: var(--text-primary);
+        cursor: pointer;
+        border-radius: 5px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    /* Specific settings for the icon */
+    #settings-btn {
+        font-size: 1.2rem;
+        padding: 10px 15px;
+    }
+    /* HOVER state for buttons */
+    .tab-button:hover, .sector-button:hover, #settings-btn:hover {
+        background: var(--btn-gradient);
+        transform: translateY(-2px);
+    }
+    /* ACTIVE state for selected buttons */
+    .tab-button.active, .sector-button.active {
+        background: var(--btn-gradient);
+        border-color: var(--accent-2);
+        transform: translateY(-2px);
+        color: var(--btn-text-active);
+    }
+    /* LOGIC-DRIVEN TEXT COLOR FOR HOVER AND ACTIVE STATES */
+    .btn-light-text:hover, .btn-light-text.active {
+         color: var(--text-primary);
+    }
+    .btn-dark-text:hover, .btn-dark-text.active {
+         color: var(--btn-text-active);
+    }
+    
+    /* --- FINAL BUTTON RULES END --- */
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+    
+    /* Modal Styles */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.7);
+        justify-content: center;
+        align-items: center;
+        animation: fadeIn 0.3s ease;
+    }
+    .modal-overlay.show {
+        display: flex;
+    }
+    .modal-content {
+        background: #2c3e50;
+        padding: 2rem;
+        border-radius: 10px;
+        border: 1px solid rgba(255,255,255,0.2);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        text-align: center;
+        position: relative;
+        width: 90%;
+        max-width: 400px;
+    }
+    .modal-content h3 {
+        color: var(--accent-1);
+        margin-bottom: 1.5rem;
+        font-size: 1.5rem;
+    }
+    
+    .modal-content label {
+        font-size: 1.1rem;
+        margin-right: 10px;
+    }
+    #theme-select {
+        background-color: var(--ui-background);
+        color: var(--text-primary);
+        border: 1px solid var(--accent-2);
+        border-radius: 5px;
+        padding: 8px;
+        font-size: 1rem;
+    }
+    .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        color: #aaa;
+        font-size: 28px;
+        font-weight: bold;
+        background: none;
+        border: none;
+        cursor: pointer;
+    }
+    .close-btn:hover,
+    .close-btn:focus {
+        color: var(--text-primary);
+        text-decoration: none;
+    }
+    .tab-content {
+        display: none;
+        animation: fadeIn 0.5s ease-in;
+    }
+    .tab-content.active {
+        display: block;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .section-card {
+        background: rgba(255,255,255,0.05);
+        backdrop-filter: blur(10px);
+        border-radius: 10px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        border: 1px solid rgba(255,255,255,0.2);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+    .section-title {
+        color: var(--accent-1);
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--accent-1);
+    }
+    .subsection {
+        margin: 1.5rem 0;
+    }
+    .subsection h3 {
+        color: var(--accent-1);
+        font-size: 1.3rem;
+        margin-bottom: 0.8rem;
+    }
+    .subsection h4 {
+        color: var(--accent-2);
+        font-size: 1.1rem;
+        margin: 1rem 0 0.5rem 0;
+    }
+    .sector-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+    .sector-card {
+        background: rgba(255,255,255,0.05);
+        border-radius: 8px;
+        padding: 1.5rem;
+        border-left: 4px solid var(--accent-1);
+        transition: transform 0.3s ease;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+    .sector-card:hover {
+        transform: translateY(-5px);
+        background: rgba(255,255,255,0.1);
+    }
+    .sector-name {
+        color: var(--accent-1);
+        font-size: 1.4rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+    .casualties-highlight {
+        background: rgba(var(--accent-warning-rgb), 0.15);
+        padding: 1rem;
+        border-radius: 5px;
+        border-left: 4px solid var(--accent-warning);
+        margin: 1rem 0;
+    }
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+        margin: 1.5rem 0;
+    }
+       .stat-card {
+        background: var(--ui-background-accent);
+        padding: 1.5rem;
+        border-radius: 8px;
+        text-align: center;
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+    .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: var(--accent-1);
+        display: block;
+    }
+    .stat-label {
+        color: var(--text-secondary);
+        margin-top: 0.5rem;
+    }
+    /* --- TIMELINE STYLES START --- */
+    .timeline {
+        position: relative;
+        padding-left: 2rem;
+        margin-top: 2rem;
+    }
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: var(--accent-1);
+    }
+    .timeline-item {
+        position: relative;
+        margin-bottom: 2rem;
+        padding-left: 2rem;
+    }
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -2.05rem;
+        top: 5px;
+        width: 12px;
+        height: 12px;
+        background: var(--accent-1);
+        border-radius: 50%;
+        border: 2px solid var(--ui-background);
+    }
+    .timeline-time {
+        color: var(--accent-1);
+        font-weight: bold;
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+    }
+    /* --- TIMELINE STYLES END --- */
+    .search-box {
+        width: 100%;
+        padding: 12px;
+        font-size: 1rem;
+        border: none;
+        border-radius: 5px;
+        background: rgba(255,255,255,0.1);
+        color: var(--text-primary);
+        margin-bottom: 2rem;
+    }
+    .search-box::placeholder {
+        color: var(--text-secondary);
+    }
+    .highlight {
+        background: rgba(var(--accent-1-rgb), 0.3);
+        padding: 2px 4px;
+        border-radius: 3px;
+    }
+    .interactive-map {
+        background: var(--container-background-subtle);
+        padding: 2rem;
+        border-radius: 10px;
+        text-align: center;
+        margin-bottom: 2rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .sector-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+    }
+    .sector-detail {
+        display: none;
+        margin-top: 2rem;
+        padding: 1.5rem;
+        background: rgba(255,255,255,0.05);
+        border-radius: 8px;
+    }
+    .sector-detail.show {
+        display: block;
+    }
+    
+    @media (max-width: 768px) {
+        .header h1 {
+            font-size: 2rem;
+        }
+        .nav-tabs {
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            padding: 1rem;
+        }
+        .sector-grid {
+            grid-template-columns: 1fr;
+        }
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+<script>
+// Self-executing function to manage all theme logic.
+(function() {
+    const DEFAULT_THEME_NAME = 'cyber-blue';
+
+    let THEMES = {
+        'cyber-blue': {
+            '--bg-gradient': 'linear-gradient(135deg,#0a0a23 0%,#1a1a3a 50%,#2e2e5e 100%)',
+            '--accent-1': '#a8b8d0', '--accent-1-rgb': '168, 184, 208',
+            '--accent-2': '#8899b3',
+            '--btn-gradient': 'linear-gradient(45deg,#1a1a3a,#2e2e5e)',
+            '--accent-warning': '#e8b339',
+            '--accent-warning-rgb': '232, 179, 57',
+            '--ui-background': '#34495e',
+            '--ui-background-accent': 'rgba(52, 73, 94, 0.8)',
+            '--container-background-subtle': 'rgba(0, 0, 0, 0.3)',
+            '--btn-text-active': '#ecf0f1'
+        },
+        'teal-matrix': {
+            '--bg-gradient': 'linear-gradient(135deg,#0a231c 0%,#1a3a31 50%,#2e5e50 100%)',
+            '--accent-1': '#ace0d5', '--accent-1-rgb': '172, 224, 213',
+            '--accent-2': '#92b3a9',
+            '--btn-gradient': 'linear-gradient(45deg,#1a3a31,#2e5e50)',
+            '--accent-warning': '#e8b339',
+            '--accent-warning-rgb': '232, 179, 57',
+            '--ui-background': '#345e55',
+            '--ui-background-accent': 'rgba(52, 94, 85, 0.8)',
+            '--container-background-subtle': 'rgba(0, 0, 0, 0.3)',
+            '--btn-text-active': '#ecf0f1'
+        },
+        'red-alert': {
+            '--bg-gradient': 'linear-gradient(135deg,#0a0a23 0%,#1a1a3a 50%,#2e2e5e 100%)',
+            '--ui-background': '#34495e',
+            '--ui-background-accent': 'rgba(52, 73, 94, 0.8)',
+            '--container-background-subtle': 'rgba(0, 0, 0, 0.3)',
+            '--accent-1': '#e74c3c',
+            '--accent-2': '#c03b2b',
+            '--btn-gradient': 'linear-gradient(45deg,#e74c3c,#c0392b)',
+            '--accent-1-rgb': '231, 76, 60',
+            '--accent-warning': '#e8b339',
+            '--accent-warning-rgb': '232, 179, 57',
+            '--btn-text-active': '#ffffff'
+        },
+        'scorched-gold': {
+            '--bg-gradient': 'linear-gradient(135deg,#0a231f 0%,#193a33 50%,#2e5e54 100%)',
+            '--ui-background': '#345e56',
+            '--ui-background-accent': 'rgba(52, 94, 86, 0.8)',
+            '--container-background-subtle': 'rgba(0, 0, 0, 0.3)',
+            '--accent-1': '#f0c475',
+            '--accent-2': '#d4a24c',
+            '--btn-gradient': 'linear-gradient(45deg,#f0c475,#d4a24c)',
+            '--accent-1-rgb': '240, 196, 117',
+            '--btn-text-active': '#2a1d15',
+            '--accent-warning': '#e8b339',
+            '--accent-warning-rgb': '232, 179, 57'
+        }
+    };
+    function finalizeThemes(themes) {
+        for (const themeName in themes) {
+            const theme = themes[themeName];
+            const gradient = theme['--btn-gradient'];
+            if (gradient.includes('#d') || gradient.includes('#e') || gradient.includes('#f')) {
+                theme.hover_style = 'btn-dark-text'; 
+            } else {
+                theme.hover_style = 'btn-light-text';
+            }
+        }
+        return themes;
+    }
+    THEMES = finalizeThemes(THEMES);
+
+    function applyTheme(name) {
+        const theme = THEMES[name];
+        if (theme) {
+            const root = document.documentElement;
+            for (const [key, value] of Object.entries(theme)) {
+                if(key !== 'hover_style') {
+                    root.style.setProperty(key, value);
+                }
+            }
+            const buttons = document.querySelectorAll('.tab-button, .sector-button, #settings-btn');
+            buttons.forEach(button => {
+                button.classList.remove('btn-light-text', 'btn-dark-text');
+                if (theme.hover_style) {
+                    button.classList.add(theme.hover_style);
+                }
+            });
+        }
+    }
+
+    window.setTheme = function(name) {
+        applyTheme(name);
+        localStorage.setItem('city-evolution-theme', name);
+    }
+
+    const availableThemeNames = Object.keys(THEMES);
+    const savedTheme = localStorage.getItem('city-evolution-theme');
+    let themeToLoad = DEFAULT_THEME_NAME;
+    if (savedTheme && availableThemeNames.includes(savedTheme)) {
+        themeToLoad = savedTheme;
+    }
+    
+    applyTheme(themeToLoad);
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const themeSelect = document.getElementById('theme-select');
+        if (themeSelect) {
+            themeSelect.innerHTML = '';
+            availableThemeNames.forEach(name => {
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = name.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                themeSelect.appendChild(option);
+            });
+            themeSelect.value = themeToLoad;
+        }
+    });
+})();
+</script>
+
+</head>
+<body>
+    <div id="settings-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button id="close-modal-btn" class="close-btn">&times;</button>
+            <h3>Display Settings</h3>
+            <label for="theme-select">Theme:</label>
+            <select id="theme-select" onchange="setTheme(this.value)"></select>
+        </div>
+    </div>
+    <div class="header">
+        <h1>City Evolution Mapper</h1>
+        <p>Urban Development Through Time • From Ancient Settlements to Modern Metropolises</p>
+    </div>
+    <div class="nav-tabs">
+        <button class="tab-button active" data-tab="overview">Overview</button>
+        <button class="tab-button" data-tab="ancient">Ancient Origins</button>
+        <button class="tab-button" data-tab="development">Development Phases</button>
+        <button class="tab-button" data-tab="transportation">Transport Networks</button>
+        <button class="tab-button" data-tab="economic">Economic Centers</button>
+        <button class="tab-button" data-tab="search">Search Database</button>
+        <button id="settings-btn" title="Settings">⚙️</button>
+    </div>
+    <div class="container">
+        <div id="overview" class="tab-content active">
+             <div class="section-card">
+                <h2 class="section-title">The Evolution of Urban Civilization</h2>
+                <p style="font-size: 1.2rem; line-height: 1.8; margin-bottom: 2rem;">
+                    Cities are humanity's greatest collective achievement, representing millennia of social, economic, and technological evolution. From the first permanent settlements along river valleys to today's sprawling megacities, urban centers have shaped the course of human history, driving innovation, culture, and progress.
+                </p>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-number">~10,000 BCE</span>
+                        <div class="stat-label">First Permanent Settlements</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">3500 BCE</span>
+                        <div class="stat-label">Rise of First Cities</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">56%</span>
+                        <div class="stat-label">Global Urban Population (2020)</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">43</span>
+                        <div class="stat-label">Megacities Worldwide (10M+)</div>
+                    </div>
+                </div>
+                <div class="interactive-map">
+                    <h3 style="color: var(--accent-1); margin-bottom: 1rem;">Key Urban Development Patterns</h3>
+                    <p>Click on each pattern to explore how cities evolved through different forces:</p>
+                    <div class="sector-buttons">
+                        <button class="sector-button" data-sector="geographic">Geographic Factors</button>
+                        <button class="sector-button" data-sector="trade">Trade Routes</button>
+                        <button class="sector-button" data-sector="political">Political Forces</button>
+                        <button class="sector-button" data-sector="industrial">Industrial Revolution</button>
+                    </div>
+                    <div id="geographic-detail" class="sector-detail">
+                        <h4 style="color: var(--accent-1);">Geographic Factors</h4>
+                        <p><strong>Key Elements:</strong> Rivers, harbors, crossroads, defensive positions, climate</p>
+                        <p><strong>Examples:</strong> Most ancient cities developed along rivers (Tigris-Euphrates, Nile, Indus) providing water, transport, and fertile soil. Natural harbors created trading hubs like Constantinople and New York.</p>
+                    </div>
+                    <div id="trade-detail" class="sector-detail">
+                        <h4 style="color: var(--accent-1);">Trade Routes</h4>
+                        <p><strong>Key Networks:</strong> Silk Road, Mediterranean trade, Trans-Saharan routes, Maritime spice trade</p>
+                        <p><strong>Impact:</strong> Cities at trade crossroads became wealthy cosmopolitan centers. Venice dominated Mediterranean trade, while Samarkand flourished on the Silk Road.</p>
+                    </div>
+                    <div id="political-detail" class="sector-detail">
+                        <h4 style="color: var(--accent-1);">Political Forces</h4>
+                        <p><strong>Drivers:</strong> Capital cities, military outposts, colonial settlements, planned capitals</p>
+                        <p><strong>Examples:</strong> Rome expanded through military conquest, Washington DC was purpose-built as a capital, Brasília was created to develop Brazil's interior.</p>
+                    </div>
+                    <div id="industrial-detail" class="sector-detail">
+                        <h4 style="color: var(--accent-1);">Industrial Revolution</h4>
+                        <p><strong>Transformation:</strong> Factory systems, railway networks, worker housing, urban sprawl</p>
+                        <p><strong>Impact:</strong> Cities like Manchester and Detroit exploded in size. Industrial zones shaped urban geography, creating distinct working-class and industrial districts.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="ancient" class="tab-content">
+            <div class="section-card">
+                <h2 class="section-title">Ancient Urban Origins</h2>
+                <div class="sector-grid">
+                    <div class="sector-card">
+                        <h3 class="sector-name">Mesopotamian Cities</h3>
+                        <p>The world's first cities emerged in Mesopotamia around 3500 BCE. Uruk, Ur, and Babylon pioneered urban planning with temples, markets, and residential quarters. These cities invented writing, law codes, and complex administration.</p>
+                    </div>
+                    <div class="sector-card">
+                        <h3 class="sector-name">Egyptian Urban Centers</h3>
+                        <p>Memphis and Thebes served as capitals of ancient Egypt. Cities were carefully planned along the Nile, with monumental architecture reflecting divine kingship. Urban design integrated religious, administrative, and residential functions.</p>
+                    </div>
+                    <div class="sector-card">
+                        <h3 class="sector-name">Indus Valley Cities</h3>
+                        <p>Harappa and Mohenjo-daro (2600-1900 BCE) featured sophisticated urban planning with grid patterns, drainage systems, and standardized construction. These cities had public baths, granaries, and advanced water management.</p>
+                    </div>
+                </div>
+                <div class="subsection">
+                    <h3 class="section-title">Timeline of Early Urbanization</h3>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-time">10,000 BCE</div>
+                            <h4>Neolithic Revolution</h4>
+                            <p>Agriculture enables permanent settlements. Jericho and Çatalhöyük emerge as early proto-cities with populations of several thousand.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-time">3500 BCE</div>
+                            <h4>Rise of Sumerian Cities</h4>
+                            <p>Uruk becomes the world's largest city with 50,000+ inhabitants. Cities develop specialized crafts, trade networks, and social hierarchies.</p>
+                        </div>
+                         <div class="timeline-item">
+                            <div class="timeline-time">2500 BCE</div>
+                            <h4>Urban Networks Expand</h4>
+                            <p>Cities spread across Eurasia and North Africa. Trade networks connect urban centers from the Mediterranean to the Indus Valley.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="development" class="tab-content">
+            <div class="section-card">
+                <h2 class="section-title">Major Urban Development Phases</h2>
+                <div class="sector-grid">
+                    <div class="sector-card">
+                        <div class="sector-name">Classical Cities (500 BCE - 500 CE)</div>
+                        <p>Greek poleis and Roman cities established urban models copied for centuries. Forums, amphitheaters, aqueducts, and grid plans became standard. Rome reached 1 million inhabitants at its peak.</p>
+                    </div>
+                    <div class="sector-card">
+                        <div class="sector-name">Medieval Towns (500 - 1500 CE)</div>
+                        <p>Cities contracted but remained vital centers. Walls defined urban boundaries. Markets, guilds, and cathedrals shaped city life. Venice, Paris, and London emerged as major centers.</p>
+                    </div>
+                    <div class="sector-card">
+                        <div class="sector-name">Renaissance Cities (1400 - 1600)</div>
+                        <p>Urban renewal and planned expansions. Florence pioneered Renaissance urbanism. Ideal city concepts influenced design. Public squares and perspective vistas transformed cityscapes.</p>
+                    </div>
+                    <div class="sector-card">
+                        <div class="sector-name">Industrial Cities (1750 - 1900)</div>
+                        <p>Explosive growth driven by factories. Manchester grew from 25,000 to 500,000 people. Railways reshaped urban geography. Worker housing and industrial zones created new urban patterns.</p>
+                    </div>
+                    <div class="sector-card">
+                        <div class="sector-name">Modern Metropolis (1900 - Present)</div>
+                        <p>Skyscrapers, suburbs, and automobiles transformed cities. Urban planning became professional discipline. Megacities emerged in developing world. Digital technology creates smart cities.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="transportation" class="tab-content">
+            <div class="section-card">
+                <h2 class="section-title">Transportation Networks & Urban Form</h2>
+                <div class="sector-grid">
+                    <div class="sector-card">
+                        <h3 class="sector-name">Walking Cities (Pre-1850)</h3>
+                        <p>Compact, dense settlements limited by walking distance. Mixed-use neighborhoods with work and residence close together. City diameter rarely exceeded 3 miles. Streets designed for foot traffic and horses.</p>
+                    </div>
+                    <div class="sector-card">
+                        <h3 class="sector-name">Transit Cities (1850-1940)</h3>
+                        <p>Streetcars and railways enabled expansion along corridors. Star-shaped cities developed along transit lines. Suburbs emerged at station stops. Central business districts intensified as transit hubs.</p>
+                    </div>
+                </div>
+                <div class="subsection">
+                    <h3>Evolution of Urban Transit Systems</h3>
+                    <p style="font-size: 1.1rem; line-height: 1.7;">
+                        Transportation technology has fundamentally shaped urban form. Ancient cities relied on foot traffic and pack animals, limiting their size. Roman roads enabled larger empires but cities remained compact. Canals in the medieval period connected cities but didn't change their internal structure. The railroad age created linear development along tracks and enabled commuter suburbs. Streetcars extended this pattern, creating "streetcar suburbs." The automobile age brought dispersed, low-density sprawl and highway-oriented development. Today, cities are rediscovering mass transit to combat congestion and pollution.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div id="economic" class="tab-content">
+            <div class="section-card">
+                <h2 class="section-title">Economic Forces Shaping Cities</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-number">70%</span>
+                        <div class="stat-label">Global GDP from Cities</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">600</span>
+                        <div class="stat-label">Cities Generate 60% of GDP</div>
+                    </div>
+                     <div class="stat-card">
+                        <span class="stat-number">80%</span>
+                        <div class="stat-label">Economic Growth in Cities</div>
+                    </div>
+                </div>
+                <div class="sector-grid">
+                    <div class="sector-card">
+                        <h3 class="sector-name">Medieval Market Towns</h3>
+                        <p>Weekly markets and annual fairs drove urban growth. Guilds controlled production and trade. Market squares became civic centers. Cities gained charters for self-governance through economic power.</p>
+                    </div>
+                     <div class="sector-card">
+                        <h3 class="sector-name">Port Cities & Maritime Trade</h3>
+                         <p>Venice, Amsterdam, and London dominated global trade. Warehouses, docks, and merchant quarters shaped waterfronts. Colonial trade created vast wealth and cosmopolitan populations.</p>
+                    </div>
+                     <div class="sector-card">
+                        <h3 class="sector-name">Industrial Districts</h3>
+                         <p>Manchester's cotton mills, Detroit's auto plants, and Pittsburgh's steel works created specialized industrial cities. Factory zones, worker housing, and rail yards defined urban geography.</p>
+                    </div>
+                     <div class="sector-card">
+                        <h3 class="sector-name">Financial Centers</h3>
+                         <p>Wall Street, the City of London, and Hong Kong Central became global financial hubs. Skyscrapers housed banks and exchanges. Service economies replaced manufacturing in city centers.</p>
+                    </div>
+                     <div class="sector-card">
+                        <h3 class="sector-name">Tech Hubs & Innovation Districts</h3>
+                         <p>Silicon Valley pioneered the tech cluster model. Cities now cultivate innovation districts mixing research, startups, and urban amenities. Knowledge economy reshapes urban development.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="search" class="tab-content">
+            <div class="section-card">
+                <h2 class="section-title">Search the Urban History Database</h2>
+                <input type="text" id="searchInput" class="search-box" placeholder="Search for cities, concepts, time periods, or urban features...">
+
+```
+            <div id="searchResults">
+                <p style="text-align: center; color: var(--text-secondary); font-style: italic; margin: 2rem 0;">
+                    Enter a search term above to explore the urban development knowledge base.<br>
+                    Try searching for: "Rome", "Industrial", "Mesopotamia", "Transit", "Sprawl", etc.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    // Knowledge base for searching
+    const knowledgeBase = {
+        "Rome": "Ancient Rome pioneered urban planning on a massive scale, reaching 1 million inhabitants by 100 CE. Romans developed concrete, aqueducts, sewers, and monumental architecture. The Roman forum model influenced city centers for millennia.",
+        "Mesopotamia": "The birthplace of cities around 3500 BCE. Sumerian cities like Uruk and Ur created the first urban institutions: temples, palaces, markets, and schools. These cities invented writing, mathematics, and urban administration.",
+        "Industrial Revolution": "Transformed cities between 1750-1900. Factory systems concentrated workers in unprecedented numbers. Cities like Manchester grew from 25,000 to 500,000 people. Railways, canals, and worker housing reshaped urban geography.",
+        "Grid Plan": "An urban planning pattern using perpendicular streets. Used in ancient Harappa, Greek colonies, Roman camps, and American cities. Manhattan's 1811 grid plan became the model for American urban expansion.",
+        "Sprawl": "Low-density, automobile-dependent urban expansion characteristic of post-1945 development. Enabled by highways and cars, sprawl created edge cities, strip malls, and segregated land uses. Now criticized for environmental and social costs.",
+        "Transit": "Mass transportation systems that shaped urban form. Horse-drawn omnibuses (1820s), streetcars (1880s), subways (1860s), and buses (1920s) each enabled different patterns of urban growth and suburban development.",
+        "Zoning": "Legal mechanism to separate land uses, introduced in New York (1916). Zoning segregated residential, commercial, and industrial areas, shaping modern urban form but also contributing to social segregation.",
+        "Garden City": "Urban planning concept by Ebenezer Howard (1898) combining city and country benefits. Influenced suburban development and new towns worldwide. Letchworth and Welwyn were the first garden cities.",
+        "Medieval": "Medieval cities (500-1500 CE) were compact, walled settlements centered on markets and cathedrals. Narrow, winding streets followed organic patterns. Guilds controlled economic life. Population rarely exceeded 50,000.",
+        "Skyscraper": "Tall buildings enabled by steel frames and elevators, first appearing in Chicago (1880s). Skyscrapers concentrated activities vertically, creating dense central business districts and iconic skylines.",
+        "Suburb": "Residential areas on city peripheries. Elite suburbs emerged with railways (1850s), streetcar suburbs followed (1890s), then automobile suburbs (1920s). Post-WWII suburbanization transformed metropolitan areas.",
+        "Agora": "Central public space in ancient Greek cities serving as marketplace and civic center. The agora was essential to democratic life, hosting political debates, commerce, and social interaction.",
+        "Forum": "Roman adaptation of the Greek agora, serving as the city's civic, commercial, and religious center. Forums featured basilicas, temples, and markets, establishing a model for European city centers.",
+        "Bazaar": "Traditional Middle Eastern and Asian marketplace, often covered. Bazaars like Istanbul's Grand Bazaar or Tehran's Grand Bazaar remain vital urban centers, mixing commerce, craft production, and social life.",
+        "Venice": "Medieval maritime republic built on lagoon islands. Venice pioneered international banking, maritime law, and urban density. Its canal system and pedestrian network offer alternative urban models.",
+        "Paris": "Baron Haussmann's renovation (1853-1870) created modern Paris with broad boulevards, parks, and monuments. This transformation became the model for urban renewal worldwide, though controversial for displacing poor residents.",
+        "New York": "America's first megacity, growing from 60,000 (1800) to 3.4 million (1900). The 1811 grid plan, Central Park, skyscrapers, and subway system established patterns for American urbanization.",
+        "Tokyo": "World's largest metropolitan area with 37 million people. Tokyo demonstrates extreme density with efficient public transit, mixed-use development, and distinctive neighborhood villages within the megacity.",
+        "Brasília": "Planned capital of Brazil (1960) designed by Oscar Niemeyer and Lucio Costa. Modernist urban planning created a city shaped like an airplane, demonstrating both possibilities and limitations of top-down city design.",
+        "Çatalhöyük": "Neolithic proto-city in Turkey (7500 BCE) with 10,000 residents. Houses were accessed through roofs, with no streets. Demonstrates early experiments in dense urban living before the rise of true cities.",
+        "Harappa": "Major city of the Indus Valley Civilization (2600-1900 BCE). Featured grid planning, standardized brick construction, sophisticated drainage, and public baths. Among history's first planned cities.",
+        "Constantinople": "Capital of Byzantine and Ottoman Empires, now Istanbul. Strategic location between Europe and Asia made it a crucial trade hub. Its walls, cisterns, and monuments influenced urban fortification and design.",
+        "Aqueduct": "Water supply systems perfected by Romans. Aqueducts enabled cities to grow beyond local water sources. Rome had 11 aqueducts supplying 1 million people with 1 cubic meter of water per person daily.",
+        "Silk Road": "Trade network connecting East and West (130 BCE - 1453 CE). Cities along the route like Samarkand, Bukhara, and Xi'an became wealthy cosmopolitan centers, spreading ideas, technologies, and cultures.",
+        "Gentrification": "Process of neighborhood change involving displacement of lower-income residents by wealthier newcomers. Common in post-industrial cities as former industrial areas become desirable for their character and location.",
+        "Smart City": "Cities using digital technology to improve services and quality of life. Sensors, data analytics, and connectivity optimize traffic, energy use, and city services. Singapore and Barcelona lead smart city initiatives.",
+        "Megacity": "Urban areas with over 10 million inhabitants. In 1950, only Tokyo and New York qualified. By 2020, 43 megacities existed, mostly in Asia, Africa, and Latin America, presenting unprecedented management challenges.",
+        "Urban Heat Island": "Cities are typically 2-5°F warmer than surrounding areas due to concrete, asphalt, and reduced vegetation. This effect increases energy consumption and health risks, driving interest in green infrastructure."
+    };
+    // Initialize the application
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeTabs();
+        initializeSectorButtons();
+        initializeSearch();
+        initializeModal();
+    });
+    function initializeModal() {
+        const modal = document.getElementById('settings-modal');
+        const openBtn = document.getElementById('settings-btn');
+        const closeBtn = document.getElementById('close-modal-btn');
+        if (modal && openBtn && closeBtn) {
+            openBtn.addEventListener('click', () => {
+                modal.classList.add('show');
+            });
+            closeBtn.addEventListener('click', () => {
+                modal.classList.remove('show');
+            });
+            modal.addEventListener('click', (event) => {
+                if (event.target === modal) {
+                    modal.classList.remove('show');
+                }
+            });
+        }
+    }
+    function initializeTabs() {
+        const tabButtons = document.querySelectorAll('.tab-button');
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const tabName = this.getAttribute('data-tab');
+                showTab(tabName);
+            });
+        });
+    }
+    function showTab(tabName) {
+        try {
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => {
+                if (content && content.classList) {
+                    content.classList.remove('active');
+                }
+            });
+            const tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach(button => {
+                if (button && button.classList) {
+                    button.classList.remove('active');
+                }
+            });
+            const targetTab = document.getElementById(tabName);
+            if (targetTab && targetTab.classList) {
+                targetTab.classList.add('active');
+            }
+            const activeButton = document.querySelector(`[data-tab="${tabName}"]`);
+            if (activeButton && activeButton.classList) {
+                activeButton.classList.add('active');
+            }
+        } catch (error) {
+            console.error('Error in showTab:', error);
+        }
+    }
+    function initializeSectorButtons() {
+        const sectorButtons = document.querySelectorAll('.sector-button');
+        sectorButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const sectorName = this.getAttribute('data-sector');
+                showSectorDetail(sectorName, this);
+            });
+        });
+    }
+    function showSectorDetail(sector, clickedButton) {
+        try {
+            const details = document.querySelectorAll('.sector-detail');
+            details.forEach(detail => detail.classList.remove('show'));
+            const buttons = document.querySelectorAll('.sector-button');
+            buttons.forEach(button => button.classList.remove('active'));
+            const targetDetail = document.getElementById(sector + '-detail');
+            if (targetDetail) {
+                targetDetail.classList.add('show');
+                clickedButton.classList.add('active');
+            }
+        } catch (error) {
+            console.error('Error in showSectorDetail:', error);
+        }
+    }
+    function initializeSearch() {
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.addEventListener('keyup', searchContent);
+        }
+    }
+    function searchContent() {
+        try {
+            const searchInput = document.getElementById('searchInput');
+            const resultsDiv = document.getElementById('searchResults');
+            
+            if (!searchInput || !resultsDiv) return;
+            
+            const searchTerm = searchInput.value.toLowerCase();
+            if (searchTerm.length < 2) {
+                resultsDiv.innerHTML = '<p style="text-align: center; color: var(--text-secondary); font-style: italic; margin: 2rem 0;">Enter a search term above to explore the urban development knowledge base.<br>Try searching for: "Rome", "Industrial", "Mesopotamia", "Transit", "Sprawl", etc.</p>';
+                return;
+            }
+            let results = [];
+            
+            for (const key in knowledgeBase) {
+                if (knowledgeBase.hasOwnProperty(key)) {
+                    const value = knowledgeBase[key];
+                    if (key.toLowerCase().includes(searchTerm) || value.toLowerCase().includes(searchTerm)) {
+                        results.push({
+                            title: key,
+                            content: value,
+                            relevance: key.toLowerCase().startsWith(searchTerm) ? 2 : 1
+                        });
+                    }
+                }
+            }
+            results.sort((a, b) => b.relevance - a.relevance);
+            if (results.length === 0) {
+                resultsDiv.innerHTML = `<div class="section-card"><h3 style="color: var(--accent-1);">No results found for "${searchInput.value}"</h3><p>Try searching for city names, historical periods, urban concepts, or development patterns.</p></div>`;
+                return;
+            }
+            let resultHTML = `<h3 style="color: var(--accent-1); margin-bottom: 1.5rem;">Search Results for "${searchInput.value}"</h3>`;
+            
+            for (let i = 0; i < results.length; i++) {
+                const result = results[i];
+                const highlightedContent = result.content.replace(new RegExp(searchTerm, 'gi'), '<span class="highlight">$&</span>');
+                
+                resultHTML += `<div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid var(--accent-1);"><h4 style="color: var(--accent-1); margin-bottom: 0.8rem;">${result.title}</h4><p style="line-height: 1.6;">${highlightedContent}</p></div>`;
+            }
+            resultsDiv.innerHTML = resultHTML;
+        } catch (error) {
+            console.error('Error in searchContent:', error);
+        }
+    }
+</script>
+
+</body>
+</html>

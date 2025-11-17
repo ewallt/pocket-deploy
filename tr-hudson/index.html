@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Threaded Reader</title>
+
+  <!-- Prepaint bootstrap: set dark + theme class before paint to avoid flicker -->
+  <script>
+  (function () {
+    const root = document.documentElement;
+    try {
+      const savedTheme = localStorage.getItem('theme');       // 'light' | 'dark' | null
+      const savedColor = localStorage.getItem('colorScheme'); // 'slate' | 'emerald' | future
+      const isDark = savedTheme !== 'light';                  // default to dark if unset
+      root.classList.toggle('dark', isDark);
+      // Apply colored theme classes ONLY in dark mode; light is always neutral slate
+      root.classList.toggle('theme-emerald', isDark && savedColor === 'emerald');
+    } catch (_) {}
+  })();
+  </script>
+
+  <!-- Tailwind (with Typography) -->
+  <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' };
+  </script>
+
+  <!-- Google Font (optional) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+
+  <style>
+  :root { color-scheme: light dark; }
+  html { scroll-behavior: smooth; }
+  .font-newspaper { font-family: 'Lora', serif; }
+  :where(h2,h3,h4){ scroll-margin-top: 84px; }
+  mark { background: #fde68a; padding: .1em .2em; border-radius: .2rem; }
+  @media (max-width: 380px){ .prose { font-size: .96rem; } }
+
+  /* ---------- Semantic surfaces (read from CSS variables) ---------- */
+.hero {
+  /* give the header an explicit base fill so gradient blends to the right hue */
+  background-color: var(--hero-base);
+  background:
+    radial-gradient(50% 120% at 10% 10%, var(--hero-r1), transparent 60%),
+    radial-gradient(80% 140% at 90% 10%, var(--hero-r2), transparent 70%),
+    linear-gradient(180deg, var(--hero-wash), transparent 35%);
+}
+.border-var { border-color: var(--border) !important; }
+.surface { border-width: 1px; border-style: solid; border-color: var(--border); }
+.hr-var { border-color: var(--border); }
+.subtitle { color: var(--subtitle-fg); }
+.timeline-fg { color: var(--timeline-fg); }
+.footer-note { color: var(--footer-fg); }
+.active-link { color: var(--active); font-weight: 700; }
+
+.input-surface {
+  border: 1px solid var(--input-border);
+  background-color: var(--input-bg);
+}
+.btn-surface { border: 1px solid var(--btn-border); }
+.btn-surface:hover { background: var(--btn-hover-bg); }
+.toc-link:hover { background: var(--hover-bg); }
+
+/* ---------- Slate (default) variables ---------- */
+:root{
+  /* accents / inks */
+  --active: rgb(59,130,246);                      /* sky-500 */
+  --subtitle-fg: rgb(71,85,105);                  /* slate-600 */
+  --timeline-fg: rgb(100,116,139);                /* slate-500 */
+  --footer-fg: rgb(100,116,139);                  /* slate-500 */
+
+  /* surfaces */
+  --border: rgb(226,232,240);                     /* slate-200 */
+  --hover-bg: rgb(248,250,252);                   /* slate-50 */
+  --btn-border: rgb(203,213,225);                 /* slate-300 */
+  --btn-hover-bg: rgb(248,250,252);               /* slate-50 */
+  --input-border: rgba(203,213,225,0.7);          /* slate-300/70 */
+  --input-bg: rgba(255,255,255,0.7);              /* white/70 */
+
+  /* hero base & gradient (light) */
+  --hero-base: transparent;                       /* keep light header airy */
+  --hero-r1: rgba(49,46,129,.12);                 /* indigo-700 */
+  --hero-r2: rgba(234,88,12,.12);                 /* orange-600 hint */
+  --hero-wash: rgba(14,165,233,.08);              /* sky-500 wash */
+}
+.dark{
+  --subtitle-fg: rgb(203,213,225);                /* slate-300 */
+  --timeline-fg: rgb(148,163,184);                /* slate-400 */
+  --footer-fg: rgb(148,163,184);                  /* slate-400 */
+
+  --border: rgb(30,41,59);                        /* slate-800 */
+  --hover-bg: rgb(15,23,42);                      /* slate-900 */
+  --btn-border: rgb(51,65,85);                    /* slate-700 */
+  --btn-hover-bg: rgb(15,23,42);                  /* slate-900 */
+  --input-border: rgba(51,65,85,0.7);             /* slate-700/70 */
+  --input-bg: rgba(2,6,23,0.6);                   /* slate-950/60 */
+
+  /* hero base & gradient (dark) */
+  --hero-base: rgb(2,6,23);                       /* slate-950 */
+  --hero-r1: rgba(49,46,129,.12);
+  --hero-r2: rgba(234,88,12,.12);
+  --hero-wash: rgba(14,165,233,.08);
+}
+
+/* ---------- Emerald theme overrides (light & dark) ---------- */
+.theme-emerald{
+  --active: #10b981;                              /* emerald-500 */
+
+  --border: rgb(187,247,208);                     /* emerald-200 */
+  --hover-bg: rgb(240,253,244);                   /* emerald-50 */
+  --btn-border: rgb(187,247,208);                 /* emerald-200 */
+  --btn-hover-bg: rgb(240,253,244);               /* emerald-50 */
+  --input-border: rgba(110,231,183,0.7);          /* emerald-300/70 */
+  --input-bg: rgba(255,255,255,0.7);              /* white/70 */
+
+  /* keep subtitles/timeline neutral for readability over hero */
+  --subtitle-fg: rgb(71,85,105);                  /* slate-600 */
+  --timeline-fg: rgb(71,85,105);                  /* slate-600 */
+  --footer-fg: rgb(16,185,129);                   /* emerald-500 */
+
+  /* hero base & gradient (emerald light) */
+  --hero-base: transparent;
+  --hero-r1: rgba(16,185,129,.14);                /* emerald-500 */
+  --hero-r2: rgba(163,230,53,.12);                /* lime-400 */
+  --hero-wash: rgba(5,150,105,.10);               /* emerald-600 wash */
+}
+.dark.theme-emerald{
+  /* ↑ Give borders enough contrast on dark emerald surfaces */
+  --border: rgba(110,231,183,0.55);                /* emerald-300 @ 55% */
+  --hover-bg: rgb(6,78,59);                        /* emerald-900 */
+  --btn-border: rgba(110,231,183,0.45);            /* slightly softer than borders */
+  --btn-hover-bg: rgb(6,78,59);                    /* emerald-900 */
+  --input-border: rgba(110,231,183,0.55);          /* match border contrast */
+  --input-bg: rgba(6,95,70,0.60);                  /* emerald-900/60 */
+
+  /* text accents for readability */
+  --footer-fg: rgb(110,231,183);                   /* emerald-300/400 */
+  --subtitle-fg: rgb(226,252,236);                 /* emerald-100 */
+  --timeline-fg: rgb(187,247,208);                 /* emerald-200 */
+
+  /* hero base & gradient (unchanged, stays emerald) */
+  --hero-base: rgb(2,44,34);                       /* emerald-950 (#022c22) */
+  --hero-r1: rgba(16,185,129,.14);
+  --hero-r2: rgba(163,230,53,.12);
+  --hero-wash: rgba(5,150,105,.10);
+}
+
+/* ===== Mobile FAB quick settings ===== */
+#fabPanel.show { display:block; animation: fadeUp .14s ease-out; }
+@keyframes fadeUp { from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:translateY(0)} }
+  </style>
+
+</head>
+
+<body class="bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 pb-[env(safe-area-inset-bottom)]">
+
+  <!-- Header -->
+  <header id="top" class="hero border-b border-var">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-between gap-4">
+      <div>
+        <h1 id="docTitle" class="text-2xl sm:text-3xl font-bold font-newspaper tracking-tight">Loading...</h1>
+        <p id="docSubtitle" class="subtitle text-sm sm:text-base"></p>
+      </div>
+      <div class="flex items-center gap-2">
+        <label for="search" class="sr-only">Search</label>
+        <input id="search" type="search" placeholder="Search…" class="hidden md:block w-56 rounded-xl input-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400" />
+        <button id="clearSearch" type="button" class="hidden md:inline-flex text-xs px-2 py-2 rounded-lg btn-surface">Clear</button>
+
+        <!-- Header controls: hidden on small screens -->
+        <button id="colorSchemeToggle" type="button" class="hidden sm:inline-flex items-center justify-center rounded-xl btn-surface px-3 py-2 text-sm" title="Change color scheme">
+          <span class="inline md:hidden">Colors</span>
+          <svg aria-hidden="true" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/>
+            <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/>
+            <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/>
+            <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/>
+            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 7.012 17.461 2 12 2z"/>
+          </svg>
+        </button>
+        <button id="themeToggle" type="button" class="hidden sm:inline-flex items-center justify-center rounded-xl btn-surface px-3 py-2 text-sm" title="Toggle dark mode" aria-pressed="false">
+          <span class="inline md:hidden">Theme</span>
+          <svg aria-hidden="true" class="w-5 h-5 hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg aria-hidden="true" class="w-5 h-5 dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6" id="timelineWrap" hidden>
+      <nav aria-label="Journey timeline" id="timelineNav" class="timeline-fg">
+        <ol id="timeline" class="grid grid-cols-3 sm:grid-cols-6 items-center gap-x-2 gap-y-1 text-[11px] sm:text-sm"></ol>
+        <div id="timelineCoda" class="mt-2 text-[11px] sm:text-xs"></div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)] gap-8">
+    <!-- Sidebar -->
+    <aside class="lg:sticky lg:top-4 h-max">
+      <nav aria-label="On this page" class="rounded-2xl surface p-4">
+        <h2 class="text-sm font-semibold mb-2">Sections</h2>
+        <ol id="toc" class="space-y-1 text-sm"></ol>
+        <hr class="my-4 hr-var" />
+        <button id="expandAll" type="button" class="w-full text-xs px-3 py-2 rounded-lg btn-surface">Expand All</button>
+        <button id="collapseAll" type="button" class="mt-2 w-full text-xs px-3 py-2 rounded-lg btn-surface">Collapse All</button>
+      </nav>
+    </aside>
+
+    <section id="content" class="prose prose-slate dark:prose-invert max-w-none">
+      <!-- Content is generated by script from JSON -->
+    </section>
+  </main>
+
+  <footer class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 text-xs footer-note">
+    Threaded Reader — a single-file template
+  </footer>
+
+  <!-- Mobile quick settings FAB + Panel -->
+  <button id="fab" class="fixed z-40 top-4 right-4 sm:hidden rounded-full shadow-lg px-4 py-3 text-sm btn-surface backdrop-blur">
+    ⚙️
+  </button>
+  <div id="fabPanel" class="bg-white dark:bg-slate-800 sm:hidden fixed z-40 top-20 right-4 w-56 rounded-xl surface p-3 hidden">
+    <div class="text-xs mb-2 opacity-80">Quick settings</div>
+    <button id="fabTheme" class="w-full text-sm px-3 py-2 rounded-lg btn-surface mb-2">Toggle Theme</button>
+    <button id="fabColor" class="w-full text-sm px-3 py-2 rounded-lg btn-surface">Cycle Colors</button>
+  </div>
+
+  <script id="embedded-json" type="application/json">
+    {
+      "title": "The Hudson River School: Forging a National Identity",
+      "description": "An exploration of America's first native art movement, the Hudson River School, which championed the romantic, sublime, and spiritual power of the American wilderness and created a powerful new vision for a young nation.",
+      "articles": [
+        {
+          "title": "Thomas Cole: The Father of the Movement",
+          "introduction": "This article introduces the founder of the school, his romantic philosophy, and his allegorical works that defined the movement's core anxieties about the conflict between nature and civilization.",
+          "threads": [
+            {
+              "title": "The Romantic Visionary",
+              "content": "<p>Thomas Cole (1801-1848) is widely considered the father of the Hudson River School, not just for his artistic skill but for his philosophical vision. Arriving from England, he was one of the first artists to see the American landscape not as something to be tamed, but as a powerful source of moral, spiritual, and national meaning. He believed the wild, untamed nature of the New World was its greatest asset, a direct manifestation of God's creation that could instruct and inspire the young nation in a way that Europe's ancient ruins could not.</p>"
+            },
+            {
+              "title": "A Journey Up the Hudson",
+              "content": "<p>The movement began in the autumn of 1825 when Cole took a steamship up the Hudson River and then ventured into the Catskill Mountains to sketch. The resulting paintings were exhibited in a New York City storefront, where they were discovered and praised by prominent figures of the art world. This single event ignited public and artistic imagination, proving that the American landscape was a worthy subject for grand, ambitious art and launching the nation's first homegrown artistic movement.</p>"
+            },
+            {
+              "title": "The Sublime and the Picturesque",
+              "content": "<p>Cole's work is defined by two key concepts from European Romanticism: the sublime and the picturesque. The sublime referred to the feeling of awe, terror, and wonder experienced before the overwhelming power of nature—seen in his paintings of stormy skies, jagged peaks, and vast wildernesses. The picturesque, in contrast, represented the calm, pastoral beauty of a cultivated landscape in harmony with human settlement. Cole masterfully played these two ideas against each other, often within the same canvas, to explore America's relationship with nature.</p>"
+            },
+            {
+              "title": "A Warning in the Wilderness: The Course of Empire",
+              "content": "<p>Cole was deeply anxious about the rapid industrialization and expansion he witnessed. This anxiety is most famously expressed in his monumental five-painting series, *The Course of Empire* (1833-36). The series charts the cyclical rise and fall of a fictional civilization, moving from a savage state of nature, through pastoral and glorious heights, to a violent end and final desolation. It served as a powerful and direct cautionary tale for the United States, warning that unchecked ambition and luxury could lead to ruin.</p>"
+            },
+            {
+              "title": "The Anxious Landscape: The Oxbow",
+              "content": "<p>His most famous single painting, *View from Mount Holyoke, Northampton, Massachusetts, after a Thunderstorm—The Oxbow* (1836), is a masterpiece of this tension. On the left, a stormy, wild wilderness represents untamed nature, while on the right, a calm, cultivated river valley signifies peaceful civilization. Cole painted himself in the middle, looking back at the viewer as if to ask: which path will America choose? It is a complex and deeply personal statement about the nation's future, masquerading as a simple landscape.</p>"
+            },
+            {
+              "title": "Art as Moral Allegory",
+              "content": "<p>For Cole, landscape painting was never just about depicting a beautiful scene; it was a form of moral instruction. He used nature as a stage for grand allegories about life, death, faith, and the human condition. In series like *The Voyage of Life*, he used the metaphor of a river journey to illustrate the stages of human life from infancy to old age. This belief in art's moral purpose elevated landscape painting from mere decoration to a serious intellectual and spiritual pursuit.</p>"
+            },
+            {
+              "title": "Cole's Legacy: A Foundation for American Art",
+              "content": "<p>Thomas Cole's influence was profound and immediate. He not only established the American wilderness as a subject of national pride but also created the philosophical framework for the entire Hudson River School. He mentored the next generation of artists, most notably Asher B. Durand, to whom he passed the torch. By defining landscape painting as the preeminent American art form, Cole laid the essential groundwork upon which all subsequent American landscape art would be built.</p>"
+            }
+          ]
+        },
+        {
+          "title": "The Second Generation: Sublimity and Expansion",
+          "introduction": "This article focuses on the artists who took Cole's vision and scaled it up, reflecting the nation's spirit of Manifest Destiny. It covers the two 'superstars' of the movement's peak, Church and Bierstadt.",
+          "threads": [
+            {
+              "title": "Manifest Destiny on Canvas",
+              "content": "<p>The second generation of Hudson River School painters, active in the 1850s and 60s, embodied the nation's confident spirit of 'Manifest Destiny'—the belief in its divine right to expand across the continent. These artists moved beyond the Catskills and New England, seeking out even more dramatic and exotic landscapes. Their enormous canvases of the Rocky Mountains, the Andes, and the Arctic captured a sense of boundless possibility and national ambition, transforming landscape painting into a form of patriotic spectacle.</p>"
+            },
+            {
+              "title": "Frederic Edwin Church: The Scientist and the Showman",
+              "content": "<p>Frederic Edwin Church (1826-1900), Thomas Cole's only formal pupil, became the movement's biggest star. He combined his teacher's romanticism with a passion for scientific accuracy, influenced by the naturalist Alexander von Humboldt. Church traveled extensively, from South America to the Arctic, making detailed sketches of geology, botany, and atmospheric phenomena. He then synthesized these observations in his studio to create vast, composite landscapes that were both scientifically plausible and spectacularly dramatic.</p>"
+            },
+            {
+              "title": "Blockbuster Paintings: Niagara and The Heart of the Andes",
+              "content": "<p>Church pioneered the concept of the single-painting exhibition, unveiling his monumental works as major public events. His paintings, like *Niagara* (1857) and *The Heart of the Andes* (1859), were displayed in darkened rooms with dramatic lighting, and viewers often used opera glasses to inspect their intricate details. These 'blockbuster' shows drew thousands of paying customers, making Church a national celebrity and proving that an American artist could rival any in Europe for ambition and popular appeal.</p>"
+            },
+            {
+              "title": "Albert Bierstadt: Mythologizing the American West",
+              "content": "<p>What Church did for the exotic tropics, Albert Bierstadt (1830-1902) did for the American West. After traveling with a government survey expedition, the German-born artist began producing enormous, panoramic paintings of the Rocky Mountains and Yosemite Valley. These works were often not topographically accurate, but were instead carefully constructed, idealized visions that created a powerful national mythology of the West as a pristine, new Eden, ready for American settlement.</p>"
+            },
+            {
+              "title": "Theatrics of Light and Scale",
+              "content": "<p>Bierstadt's technique was perfectly suited to his epic subject matter. He used a formula of meticulous foreground detail, a vast and often exaggerated sense of scale, and dramatic, almost theatrical lighting, with golden shafts of light breaking through dark storm clouds. This combination created a powerful sense of awe and wonder, inviting Eastern audiences to imagine themselves in these sublime, divinely blessed landscapes. His work became synonymous with the romantic image of the American frontier.</p>"
+            },
+            {
+              "title": "Art and National Expansion",
+              "content": "<p>The work of Church and Bierstadt was more than just art; it was a powerful form of cultural propaganda. Their paintings both reflected and fueled the 19th-century American belief in its own exceptionalism and its destiny to expand. By presenting the wilderness as both beautiful and empty (often minimizing the presence of Native Americans), their art provided a visual justification for westward expansion and the taming of the continent.</p>"
+            },
+            {
+              "title": "The Peak and its Critics",
+              "content": "<p>At their peak in the 1860s, Church and Bierstadt were the most famous and highly-paid artists in America. However, by the 1870s, tastes began to change. A new generation of critics and patrons, influenced by more intimate European art, began to see their massive canvases as grandiose, bombastic, and old-fashioned. The very theatricality that had made them popular eventually led to their decline in critical favor, paving the way for new artistic movements.</p>"
+            }
+          ]
+        },
+        {
+          "title": "Luminism: The Poetry of Light and Stillness",
+          "introduction": "This article explores the quieter, more contemplative branch of the Hudson River School, focusing on the treatment of light and atmosphere.",
+          "threads": [
+            {
+              "title": "The Art of Quiet Contemplation",
+              "content": "<p>Luminism was not a self-proclaimed movement but a term coined by later art historians to describe a distinct style that emerged from the Hudson River School in the 1850s-70s. In contrast to the dramatic grandeur of Church and Bierstadt, Luminist painters like John F. Kensett and Sanford R. Gifford pursued a quieter, more poetic vision. Their work is characterized by a profound sense of stillness, serene light, and ordered composition, often focusing on calm coastal scenes and tranquil inland waters.</p>"
+            },
+            {
+              "title": "The 'Invisible Brushstroke'",
+              "content": "<p>A key technical feature of Luminism is the concealment of the artist's brushwork. These painters applied paint in thin, smooth layers, eliminating any visible texture to create highly polished, almost crystalline surfaces. This 'invisible brushstroke' removes the artist's personal gesture from the painting, giving the scene a sense of objective, timeless clarity. The effect is one of quiet meditation, inviting the viewer to contemplate the scene rather than the artist's technique.</p>"
+            },
+            {
+              "title": "John F. Kensett: The Poetry of the New England Coast",
+              "content": "<p>John Frederick Kensett (1816-1872) was a master of Luminist serenity. His mature works, particularly his paintings of the Newport, Rhode Island, and Long Island Sound coastlines, are studies in minimalist elegance. He pared down his compositions to essential elements—a calm sea, a rocky shore, a vast sky—and focused on capturing subtle gradations of light and atmosphere. His paintings evoke a sense of profound peace and timeless stability, reflecting a deep emotional connection to the landscape.</p>"
+            },
+            {
+              "title": "Sanford R. Gifford: Master of Atmosphere and Haze",
+              "content": "<p>While still a Luminist, Sanford Robinson Gifford (1823-1880) specialized in what became known as 'aerial Luminism.' He was a master at depicting hazy, light-filled atmospheres, particularly the golden glow of sunrise or the warm haze of an Indian summer afternoon. In his paintings, light itself becomes the main subject, dissolving solid forms and unifying the entire composition in a soft, radiant envelope of color. His work beautifully captures the ephemeral and almost spiritual quality of atmospheric light.</p>"
+            },
+            {
+              "title": "A Spiritual Light: Transcendentalist Connections",
+              "content": "<p>The philosophy of Luminism is deeply connected to American Transcendentalism, the literary and philosophical movement led by writers like Ralph Waldo Emerson and Henry David Thoreau. The Transcendentalists believed in finding the divine directly in nature, seeing the natural world as a reflection of a higher spiritual truth. The clear, ordered, and light-filled world of Luminist painting can be seen as a visual expression of this philosophy—a landscape imbued with an immanent, spiritual presence.</p>"
+            },
+            {
+              "title": "A Different Kind of Sublime",
+              "content": "<p>Luminism offered a different vision of the sublime from the stormy, dramatic landscapes of Cole or Church. Instead of awe inspired by terror, the Luminist sublime is one of overwhelming stillness and silence. The vast, empty spaces and the precise, crystalline light in these paintings can evoke a sense of infinity and eternity, making the viewer feel a part of a larger, ordered, and divine cosmos. It is a sublime of peace rather than of power.</p>"
+            },
+            {
+              "title": "Rediscovery of a Movement",
+              "content": "<p>Like much of the Hudson River School, Luminism fell out of favor in the late 19th century and was largely forgotten. It was not until the mid-20th century that art historians began to re-examine these works and recognize Luminism as a distinct and uniquely American contribution to landscape painting. Today, these quiet, contemplative masterpieces are celebrated for their sophisticated technique and their profound expression of a uniquely American spiritual relationship with nature.</p>"
+            }
+          ]
+        },
+        {
+          "title": "The Decline and Lasting Legacy",
+          "introduction": "This final article explains why the movement faded from prominence and what its enduring impact on American culture has been.",
+          "threads": [
+            {
+              "title": "A Changing Nation, A Changing Art",
+              "content": "<p>The dominance of the Hudson River School began to wane in the years following the Civil War. The cultural, social, and technological landscape of America was changing rapidly, and the art world changed with it. The romantic, optimistic vision of the movement began to feel out of step with the realities of a more complex and industrialized nation, leading artists and patrons to seek out new styles and subjects.</p>"
+            },
+            {
+              "title": "The Scars of the Civil War",
+              "content": "<p>The Civil War (1861-1865) inflicted a deep psychological wound on the nation, shattering the pre-war optimism that had fueled the Hudson River School's vision of America as a new Eden. The immense death and destruction made the idealized, pristine landscapes of artists like Church and Bierstadt seem less relevant to a generation grappling with trauma and reconstruction. The national mood shifted towards a more sober, introspective, and realistic perspective.</p>"
+            },
+            {
+              "title": "The Rise of European Influence",
+              "content": "<p>As American artists and collectors traveled to Europe with increasing ease, they were exposed to new artistic trends that offered a compelling alternative to the Hudson River School's detailed style. The more intimate, moody, and painterly landscapes of the French Barbizon School, in particular, became highly fashionable. This new taste favored smaller, more personal works over the grand, theatrical canvases that had been the hallmark of the Hudson River School's second generation.</p>"
+            },
+            {
+              "title": "The Closing of the Frontier",
+              "content": "<p>The very wilderness that the Hudson River School celebrated was rapidly disappearing. The expansion of railroads, industry, and settlement meant that the 'untouched' nature they painted was becoming a thing of the past. This led to a sense of nostalgia and loss in the work of later artists, a shift from celebrating a divine creation to mourning a vanishing world. The art began to look backward rather than forward.</p>"
+            },
+            {
+              "title": "A Bridge to Conservation: Thomas Moran and Yellowstone",
+              "content": "<p>Paradoxically, the movement's decline helped sow the seeds of its greatest legacy: conservation. The paintings of late-school artists, particularly Thomas Moran's spectacular canvases of the Yellowstone region, were instrumental in the environmental movement. Moran's work was shown to members of Congress and was a key factor in persuading them to establish Yellowstone as the world's first national park in 1872, preserving the very landscapes the school had immortalized.</p>"
+            },
+            {
+              "title": "Falling Out of Fashion",
+              "content": "<p>By the 1880s and 90s, the arrival of Impressionism and other modern movements rendered the Hudson River School's meticulous, romantic style definitively old-fashioned. A new generation of American artists, like those we explore in the Gilded Age document, sought a more direct, personal, and contemporary mode of expression. For nearly a century, the Hudson River School was largely dismissed by critics and forgotten by the public.</p>"
+            },
+            {
+              "title": "The Enduring Legacy: Defining America's Landscape",
+              "content": "<p>Despite falling out of fashion, the Hudson River School's ultimate achievement was monumental. It was the first coherent, indigenous American art movement that successfully established a national artistic identity. More importantly, these artists permanently shaped how Americans see and value their natural landscape. The iconic images of the Catskills, Yosemite, and the Rocky Mountains that live in the national imagination were largely created on the canvases of the Hudson River School painters, making their work a foundational part of American cultural identity.</p>"
+            }
+          ]
+        }
+      ]
+    }
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // ===== Utilities =====
+      const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+      const slug = s => s.toLowerCase().replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-');
+
+      // ===== Read Metadata from JSON =====
+      let jsonData = {};
+      try {
+        jsonData = JSON.parse(document.getElementById('embedded-json').textContent);
+      } catch (e) {
+        console.error("Error parsing embedded JSON:", e);
+        document.getElementById('docTitle').textContent = 'Error Loading Content';
+        return;
+      }
+      const docTitle = jsonData.title || 'Untitled Document';
+      const docSubtitle = jsonData.description || '';
+      const timelineStepsData = jsonData.timeline_steps;
+      const timelineLabelsData = jsonData.timeline_labels;
+      
+      // ===== Populate Header from Metadata =====
+      document.getElementById('docTitle').textContent = docTitle;
+      document.getElementById('docSubtitle').textContent = docSubtitle;
+      document.title = docTitle;
+
+      // ===== Build Content from JSON =====
+      const contentSection = document.getElementById('content');
+      let contentHtml = '';
+      if (jsonData.articles) {
+        jsonData.articles.forEach(article => {
+          contentHtml += `<article id="${slug(article.title)}">`;
+          contentHtml += `<h2>${article.title}</h2>`;
+          if (article.introduction) {
+            contentHtml += `<p>${article.introduction}</p>`;
+          }
+          if (article.threads) {
+            article.threads.forEach(thread => {
+              contentHtml += `<details open>`;
+              contentHtml += `<summary><h3>${thread.title}</h3></summary>`;
+              if (thread.content) {
+                contentHtml += `<div class="pl-4 border-l-2 border-var">${thread.content}</div>`;
+              }
+              contentHtml += `</details>`;
+            });
+          }
+          contentHtml += `</article>`;
+        });
+      }
+      contentSection.innerHTML = contentHtml;
+
+      // ===== Theme packs =====
+      const THEME_PACKS = {
+        slate: {
+          proseClass: 'prose-slate',
+          bodyClass: 'bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 pb-[env(safe-area-inset-bottom)]'
+        },
+        emerald: {
+          proseClass: 'prose-emerald',
+          bodyClass: 'bg-white text-emerald-900 dark:bg-emerald-950 dark:text-emerald-100 pb-[env(safe-area-inset-bottom)]'
+        }
+      };
+      const availableThemes = Object.keys(THEME_PACKS);
+
+      function applyTheme(themeKey){
+        const root = document.documentElement;
+        const isDark = root.classList.contains('dark');
+        const pack = THEME_PACKS[themeKey] || THEME_PACKS.slate;
+        root.classList.toggle('theme-emerald', isDark && themeKey === 'emerald');
+        document.body.className = isDark ? pack.bodyClass : THEME_PACKS.slate.bodyClass;
+        contentSection.className = `prose ${pack.proseClass} dark:prose-invert max-w-none`;
+        try { localStorage.setItem('colorScheme', themeKey); } catch(_){}
+      }
+
+      let currentThemeIndex = 0;
+      try {
+        const saved = localStorage.getItem('colorScheme');
+        if (saved && THEME_PACKS[saved]) currentThemeIndex = availableThemes.indexOf(saved);
+      } catch(_) {}
+      
+      const colorBtn = document.getElementById('colorSchemeToggle');
+      colorBtn?.addEventListener('click', () => {
+        const root = document.documentElement;
+        if (!root.classList.contains('dark')) {
+          root.classList.add('dark');
+          try { localStorage.setItem('theme','dark'); } catch(_){}
+          document.getElementById('themeToggle')?.setAttribute('aria-pressed','true');
+          applyTheme(availableThemes[currentThemeIndex]); // apply color when switching to dark
+          return;
+        }
+        currentThemeIndex = (currentThemeIndex + 1) % availableThemes.length;
+        const newTheme = availableThemes[currentThemeIndex];
+        applyTheme(newTheme);
+        buildTOC();
+      });
+
+      const themeBtn = document.getElementById('themeToggle');
+      if (themeBtn) {
+        themeBtn.setAttribute('aria-pressed', String(document.documentElement.classList.contains('dark')));
+      }
+      themeBtn?.addEventListener('click', () => {
+        const root = document.documentElement;
+        const isDark = root.classList.toggle('dark');
+        try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch(_){}
+        themeBtn.setAttribute('aria-pressed', String(isDark));
+
+        if (!isDark) {
+          root.classList.remove('theme-emerald');
+          applyTheme('slate');
+        } else {
+          let saved = 'slate';
+          try { const s = localStorage.getItem('colorScheme'); if (s) saved = s; } catch(_){}
+          applyTheme(saved);
+        }
+        buildTOC();
+      });
+
+      // ===== Expand/Collapse, TOC, Timeline, Search (Functions now use the dynamically generated content) =====
+      const getDetails = () => document.querySelectorAll('#content details');
+      const expandBtn = document.getElementById('expandAll');
+      const collapseBtn = document.getElementById('collapseAll');
+
+      if (getDetails().length === 0) {
+        if(expandBtn) expandBtn.hidden = true;
+        if(collapseBtn) collapseBtn.hidden = true;
+      } else {
+        expandBtn?.addEventListener('click', () => { getDetails().forEach(d => d.open = true); });
+        collapseBtn?.addEventListener('click', () => { getDetails().forEach(d => d.open = false); });
+      }
+
+      (function addBackToTopLinks(){
+        $$('#content > article').forEach((article, index, arr) => {
+          if (index === arr.length - 1) return;
+          const wrapper = document.createElement('div');
+          wrapper.className = 'mt-6 flex justify-end';
+          wrapper.innerHTML = `<a href="#top" class="text-sm underline decoration-dotted">Back to top</a>`;
+          article.appendChild(wrapper);
+        });
+      })();
+
+      function buildTOC(){
+        const toc = document.getElementById('toc');
+        if (!toc) return;
+        const headings = $$('#content h2, #content h3');
+        const items = headings.map(h => {
+          const parentArticle = h.closest('article');
+          const parentSlug = parentArticle ? parentArticle.id : '';
+          if (!h.id) h.id = parentSlug + '-' + slug(h.textContent);
+          return { id: h.id, text: h.textContent.trim(), level: h.tagName.toLowerCase() };
+        });
+
+        toc.innerHTML = items.map(({id, text, level}) => {
+          const pad = level === 'h3' ? ' pl-4' : '';
+          return `<li><a href="#${id}" class="toc-link block px-2 py-1.5 rounded${pad}">${text}</a></li>`;
+        }).join('');
+
+        const links = $$('#toc a');
+        const sections = items.map(i => document.getElementById(i.id));
+        const obs = new IntersectionObserver(entries => {
+          entries.forEach(e => {
+            if (e.isIntersecting) {
+              links.forEach(a => a.classList.remove('active-link'));
+              const id = '#' + e.target.id;
+              const active = links.find(a => a.getAttribute('href') === id);
+              active?.classList.add('active-link');
+            }
+          });
+        }, { rootMargin: '-40% 0px -55% 0px', threshold: 0.01 });
+        sections.forEach(sec => sec && obs.observe(sec));
+      }
+      
+      (function buildTimeline(){
+        const wrap = document.getElementById('timelineWrap');
+        const list = document.getElementById('timeline');
+        const coda = document.getElementById('timelineCoda');
+
+        if (!timelineStepsData || !wrap || !list) { if(wrap) wrap.hidden = true; return; }
+        const steps = timelineStepsData.split(',').map(s => s.trim());
+        const labels = timelineLabelsData ? timelineLabelsData.split(',').map(s => s.trim()) : [];
+        if (!steps.length) { wrap.hidden = true; return; }
+        wrap.hidden = false;
+
+        const mkStep = (id, label) => (
+          `<li class="flex items-center gap-2"><span class="inline-block w-[14px] h-[14px] rounded-full border-2 border-current bg-current"></span><a href="#${id}" class="hover:underline">${label}</a></li>`
+        );
+        const segments = [];
+        steps.forEach((id, idx) => {
+          const el = $$('#content h2, #content h3').find(h => slug(h.textContent) === id);
+          if (el && !el.id) el.id = id;
+          const label = labels[idx] || (el?.textContent || id.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()));
+          segments.push(mkStep(id, label));
+          if (idx !== steps.length - 1) segments.push('<li class="h-[2px] bg-current opacity-35"></li>');
+        });
+        list.innerHTML = segments.join('');
+      })();
+
+      (function searchHL(){
+        const input = document.getElementById('search');
+        const clearBtn = document.getElementById('clearSearch');
+        if (!input || !contentSection) return;
+        let originalHTML = '';
+        function restore(){ 
+          if (originalHTML) {
+            contentSection.innerHTML = originalHTML; 
+            buildTOC(); // Rebuild TOC to reattach observers
+          }
+        }
+        function highlight(term){
+          if (!originalHTML) originalHTML = contentSection.innerHTML;
+          restore();
+          if (!term) return;
+          const esc = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+          const re = new RegExp(`(${esc})(?![^<]*>)`, 'gi');
+          contentSection.innerHTML = contentSection.innerHTML.replace(re, '<mark>$1</mark>');
+          buildTOC();
+        }
+        let t; 
+        input.addEventListener('input', (e) => { 
+          clearTimeout(t); 
+          t = setTimeout(() => highlight(e.target.value.trim()), 120); 
+        });
+        clearBtn?.addEventListener('click', () => { 
+          if (input) input.value=''; 
+          restore(); 
+        });
+      })();
+
+      buildTOC();
+      try {
+        const saved = localStorage.getItem('colorScheme');
+        applyTheme(saved && THEME_PACKS[saved] ? saved : 'slate');
+      } catch(_){
+        applyTheme('slate');
+      }
+
+      // ===== Mobile FAB wiring =====
+      const fab = document.getElementById('fab');
+      const fabPanel = document.getElementById('fabPanel');
+      const fabTheme = document.getElementById('fabTheme');
+      const fabColor = document.getElementById('fabColor');
+
+      fab?.addEventListener('click', () => fabPanel.classList.toggle('show'));
+      document.addEventListener('click', (e)=>{
+        if (fabPanel && !fabPanel.contains(e.target) && fab && !fab.contains(e.target)) fabPanel.classList.remove('show');
+      });
+      fabTheme?.addEventListener('click', () => document.getElementById('themeToggle')?.click());
+      fabColor?.addEventListener('click', () => document.getElementById('colorSchemeToggle')?.click());
+    });
+  </script>
+</body>
+</html>
