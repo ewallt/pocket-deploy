@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Manila Bay (1898)</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111833;
+      --ink:#e6ecff;
+      --muted:#a7b0cc;
+      --brand:#8bb9ff;
+      --accent:#c0ffe1;
+      --border:#26325b;
+      --chip:#1a2347;
+      --shadow:0 8px 28px rgba(0,0,0,.35);
+      --radius:12px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+      line-height:1.6;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
+        radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+      padding-bottom:2rem;
+    }
+
+    .container{max-width:860px;margin:0 auto;padding:1rem}
+
+    .breadcrumb{margin-bottom:1rem;font-size:.9rem}
+    .breadcrumb a{color:var(--brand);text-decoration:none}
+    .breadcrumb span{color:var(--muted)}
+
+    header{
+      background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:2rem 1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+    }
+
+    h1{color:var(--ink);font-size:1.75rem;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;font-style:italic}
+
+    .main-answer{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+      border-left:4px solid var(--brand);
+    }
+    .main-answer h2{color:var(--brand);font-size:1.3rem;margin-bottom:1rem}
+    .main-answer p{font-size:1.05rem;line-height:1.7}
+
+    .section{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      margin-bottom:1rem;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .section-header{
+      padding:1.1rem 1.25rem;
+      background:linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%);
+      color:var(--ink);
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      user-select:none;
+    }
+
+    .section-header h2{font-size:1.15rem;font-weight:700}
+    .section-icon{font-size:1.35rem;transition:transform .3s ease}
+    .section.active .section-icon{transform:rotate(180deg)}
+
+    .section-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+    .section.active .section-content{max-height:5000px}
+
+    .section-inner{padding:1.25rem}
+
+    h3{color:var(--brand);font-size:1.08rem;margin:1.3rem 0 .65rem 0}
+    h3:first-child{margin-top:0}
+
+    .timeline{
+      border-left:3px solid var(--brand);
+      padding-left:1.25rem;
+      margin-left:.5rem;
+    }
+
+    .timeline-item{margin-bottom:1.25rem;position:relative}
+    .timeline-item::before{
+      content:'';
+      position:absolute;left:-1.65rem;top:.25rem;
+      width:12px;height:12px;border-radius:50%;
+      background:var(--brand);border:3px solid var(--panel);
+      box-shadow:0 0 0 2px var(--brand);
+    }
+
+    .timeline-item strong{color:var(--brand);display:block;margin-bottom:.25rem}
+
+    .source{
+      background:color-mix(in oklab,var(--chip) 65%, transparent);
+      border-radius:8px;padding:1rem;margin-top:1.2rem;
+      font-size:.95rem;color:var(--muted);
+      border:1px solid var(--border);
+    }
+
+    .back-to-top{
+      position:fixed;bottom:1.5rem;right:1rem;
+      background:var(--brand);color:#001;
+      width:50px;height:50px;border-radius:50%;
+      border:none;font-size:1.5rem;cursor:pointer;
+      box-shadow:var(--shadow);opacity:0;transition:opacity .3s ease;
+      z-index:1000;display:flex;align-items:center;justify-content:center;
+    }
+    .back-to-top.visible{opacity:1}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="https://ewallt.github.io/pocket-deploy/is-spanish-american-war-hub/">← Spanish-American War</a>
+    </div>
+
+    <header>
+      <h1>Manila Bay (1898)</h1>
+      <p class="subtitle">Dewey's crushing victory destroys the Spanish Pacific fleet</p>
+    </header>
+
+    <div class="main-answer">
+      <h2>Core Summary</h2>
+      <p>On May 1, 1898, Commodore George Dewey led the U.S. Asiatic Squadron into Manila Bay and in seven hours of fighting completely destroyed the Spanish Pacific fleet without losing a single American life. This stunning one-sided victory gave the United States control of the Philippines, established American power in the Pacific, and became one of the most decisive naval battles in history. Dewey's famous order "You may fire when you are ready, Gridley" entered American legend.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>Strategic Context</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <h3>Why the Philippines Mattered</h3>
+          <p>Though the Spanish-American War began over Cuba, Assistant Secretary of the Navy Theodore Roosevelt had long advocated for striking Spanish possessions in Asia. The Philippines represented Spain's largest Pacific colony and a strategic naval base. Capturing Manila would cripple Spain's ability to resupply or reinforce its forces and provide the United States with a crucial foothold in Asian waters during an era of imperial competition with European powers.</p>
+
+          <h3>Dewey's Preparation</h3>
+          <p>Dewey had positioned his squadron in Hong Kong, gathering intelligence on Spanish defenses and ensuring his ships were in top condition. When war was declared, he immediately set sail for Manila with six warships. The Spanish commander, Admiral Patricio Montojo, had obsolete vessels and inadequate defenses. He positioned his fleet near Cavite in shallow water, hoping damaged ships could be salvaged and that shore batteries would provide support—but neither assumption proved effective.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>Forces & Commanders</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <h3>American Squadron</h3>
+          <p><strong>Commodore George Dewey</strong> commanded a modern squadron of six warships with superior firepower and speed. His flagship, the USS Olympia, led four cruisers and two gunboats—all steel-hulled, well-armed, and manned by professional crews. The Americans possessed overwhelming advantages in gunnery, training, and tactical coordination.</p>
+
+          <h3>Spanish Defense</h3>
+          <p><strong>Admiral Patricio Montojo</strong> faced an impossible task. His fleet consisted of seven aging wooden ships, poorly maintained and outgunned. Shore batteries at Cavite were undermanned and lacked modern ammunition. Montojo knew defeat was likely but chose to fight near shore to minimize casualties and allow survivors to escape to land.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>Timeline of Battle</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="timeline">
+            <div class="timeline-item">
+              <strong>5:00 AM, May 1</strong>
+              <p>American squadron enters Manila Bay under cover of darkness, passing the fortifications at Corregidor. Spanish shore batteries fire but cause no damage.</p>
+            </div>
+            <div class="timeline-item">
+              <strong>5:40 AM</strong>
+              <p>Dewey gives his famous order: "You may fire when you are ready, Gridley." The USS Olympia opens fire at 5,500 yards, beginning the battle.</p>
+            </div>
+            <div class="timeline-item">
+              <strong>5:40 AM - 7:30 AM</strong>
+              <p>American ships make five systematic passes, pouring devastating fire into the Spanish fleet. Spanish return fire is ineffective. Every Spanish vessel is hit repeatedly.</p>
+            </div>
+            <div class="timeline-item">
+              <strong>7:35 AM</strong>
+              <p>Dewey withdraws to assess damage and allow crews to eat breakfast. Americans discover they have suffered only minor damage and few casualties.</p>
+            </div>
+            <div class="timeline-item">
+              <strong>11:16 AM</strong>
+              <p>Battle resumes. American fire completes the destruction of the Spanish fleet. Montojo's flagship Reina Cristina is burning wreck.</p>
+            </div>
+            <div class="timeline-item">
+              <strong>12:30 PM</strong>
+              <p>Spanish fleet is completely destroyed. White flags raised. Montojo surrenders. The Battle of Manila Bay is over.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>Turning Points</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <h3>Superior Technology and Training</h3>
+          <p>The battle was decided before the first shot. American ships had modern steel hulls, rapid-fire guns, and well-trained crews. Spanish vessels were wooden relics with obsolete armament. American gunnery was devastatingly accurate while Spanish fire was largely ineffective. This wasn't a contest—it was a demonstration of American naval superiority.</p>
+
+          <h3>The Breakfast Break</h3>
+          <p>Dewey's decision to withdraw and assess damage after two hours revealed supreme confidence. He discovered his squadron had suffered only eight wounded and no serious damage, while the Spanish fleet was already crippled. The Americans literally paused for breakfast before returning to finish the job. This moment exemplified the battle's one-sided nature.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>Outcomes</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <h3>Casualties</h3>
+          <p><strong>American:</strong> 1 killed (heat exhaustion), 8 wounded, no ships lost</p>
+          <p><strong>Spanish:</strong> 381 killed, 280 wounded, entire fleet destroyed (11 vessels sunk or captured)</p>
+
+          <h3>Immediate Impact</h3>
+          <p>The victory gave the United States control of Manila Bay and isolated Spanish forces in the Philippines. Dewey became a national hero overnight. The battle demonstrated American naval power to the world and validated years of naval modernization. Spanish authorities in Manila were cut off from reinforcement and would eventually surrender the entire colony.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>Historical Significance</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <h3>America Becomes a Pacific Power</h3>
+          <p>Manila Bay marked America's arrival as a global naval power. The victory led to U.S. acquisition of the Philippines, Guam, and other Pacific territories. For the first time, the United States possessed overseas colonies and naval bases spanning the Pacific. This fundamentally altered American foreign policy and set the stage for 20th-century Pacific rivalry with Japan.</p>
+
+          <h3>The New Navy Validated</h3>
+          <p>The battle vindicated decades of American naval reform. Steel battleships, professional training, and modern tactics proved their worth against an older European naval tradition. The U.S. Navy's performance at Manila Bay announced that America could compete with European powers on the world stage. Within two decades, the U.S. would possess one of the world's largest and most advanced navies.</p>
+
+          <h3>Consequences for Spain</h3>
+          <p>The crushing defeat at Manila Bay, combined with losses in Cuba, shattered what remained of Spanish imperial power. Spain's 400-year presence in Asia ended overnight. The disaster accelerated Spain's decision to sue for peace and marked the final collapse of the once-mighty Spanish Empire.</p>
+
+          <div class="source">
+            <strong>Key Historical Works:</strong> "The Imperial Cruise" by James Bradley, "The War Lovers" by Evan Thomas, "Admiral of the New Empire" by Ronald Spector
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑</button>
+  </div>
+
+  <script>
+    function toggleSection(header) {
+      const section = header.parentElement;
+      const allSections = document.querySelectorAll('.section');
+      allSections.forEach(s => {
+        if (s !== section) s.classList.remove('active');
+      });
+      section.classList.toggle('active');
+    }
+
+    window.addEventListener('scroll', () => {
+      const btn = document.querySelector('.back-to-top');
+      if (window.scrollY > 300) {
+        btn.classList.add('visible');
+      } else {
+        btn.classList.remove('visible');
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>San Juan Hill (1898)</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111833;
+      --ink:#e6ecff;
+      --muted:#a7b0cc;
+      --brand:#8bb9ff;
+      --accent:#c0ffe1;
+      --border:#26325b;
+      --chip:#1a2347;
+      --shadow:0 8px 28px rgba(0,0,0,.35);
+      --radius:12px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+      line-height:1.6;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
+        radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+      padding-bottom:2rem;
+    }
+
+    .container{max-width:860px;margin:0 auto;padding:1rem}
+
+    .breadcrumb{margin-bottom:1rem;font-size:.9rem}
+    .breadcrumb a{color:var(--brand);text-decoration:none}
+    .breadcrumb span{color:var(--muted)}
+
+    header{
+      background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:2rem 1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+    }
+
+    h1{color:var(--ink);font-size:1.75rem;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;font-style:italic}
+
+    .main-answer{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+      border-left:4px solid var(--brand);
+    }
+    .main-answer h2{color:var(--brand);font-size:1.3rem;margin-bottom:1rem}
+    .main-answer p{font-size:1.05rem;line-height:1.7}
+
+    .section{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      margin-bottom:1rem;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .section-header{
+      padding:1.1rem 1.25rem;
+      background:linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%);
+      color:var(--ink);
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      user-select:none;
+    }
+
+    .section-header h2{font-size:1.15rem;font-weight:700}
+    .section-icon{font-size:1.35rem;transition:transform .3s ease}
+    .section.active .section-icon{transform:rotate(180deg)}
+
+    .section-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+    .section.active .section-content{max-height:5000px}
+
+    .section-inner{padding:1.25rem}
+
+    h3{color:var(--brand);font-size:1.08rem;margin:1.3rem 0 .65rem 0}
+    h3:first-child{margin-top:0}
+
+    .timeline{
+      border-left:3px solid var(--brand);
+      padding-left:1.25rem;
+      margin-left:.5rem;
+    }
+
+    .timeline-item{margin-bottom:1.25rem;position:relative}
+    .timeline-item::before{
+      content:'';
+      position:absolute;left:-1.65rem;top:.25rem;
+      width:12px;height:12px;border-radius:50%;
+      background:var(--brand);border:3px solid var(--panel);
+      box-shadow:0 0 0 2px var(--brand);
+    }
+
+    .timeline-item strong{color:var(--brand);display:block;margin-bottom:.25rem}
+
+    .source{
+      background:color-mix(in oklab,var(--chip) 65%, transparent);
+      border-radius:8px;padding:1rem;margin-top:1.2rem;
+      font-size:.95rem;color:var(--muted);
+      border:1px solid var(--border);
+    }
+
+    .back-to-top{
+      position:fixed;bottom:1.5rem;right:1rem;
+      background:var(--brand);color:#001;
+      width:50px;height:50px;border-radius:50%;
+      border:none;font-size:1.5rem;cursor:pointer;
+      box-shadow:var(--shadow);opacity:0;transition:opacity .3s ease;
+      z-index:1000;display:flex;align-items:center;justify-content:center;
+    }
+    .back-to-top.visible{opacity:1}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="https://ewallt.github.io/pocket-deploy/is-spanish-american-war-hub/">← Spanish-American War</a>
+    </div>
+
+    <header>
+      <h1>San Juan Hill (1898)</h1>
+      <p class="subtitle">The famous charge that made Roosevelt a legend</p>
+    </header>
+
+    <div class="main-answer">
+      <h2>Core Summary</h2>
+      <p>On July 1, 1898, American forces stormed the fortified Spanish positions on San Juan Heights and neighboring Kettle Hill overlooking Santiago. After hours pinned down under withering fire, Theodore Roosevelt led the Rough Riders in a dramatic mounted charge up Kettle Hill while regular infantry stormed the main ridge. Despite heavy casualties, American forces seized both heights, placing Santiago under siege and ensuring American victory. The charge became the war's most celebrated moment and catapulted Roosevelt to national heroism. The battle's iconic status overshadowed its tactical confusion and high cost.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>Strategic Context</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <h3>The Heights Must Fall</h3>
+          <p>San Juan Heights formed the outer defensive line protecting Santiago from the east. Spanish forces had fortified the ridgeline with trenches and blockhouses commanding the approaches. American forces needed to seize these heights to bring Santiago under artillery range and force its surrender. The attack was essential to American strategy, but the approaches were exposed and the defenses strong.</p>
+
+          <h3>Coordinated Attack Plan</h3>
+          <p>General Shafter's plan called for simultaneous attacks on two objectives: El Caney to the north would be taken by one division, while San Juan Heights would be assaulted by the main force. Success at El Caney would free those troops to reinforce the San Juan attack. But El Caney proved tougher than expected, leaving San Juan attackers without promised reinforcements and facing fierce Spanish resistance alone.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>Forces & Commanders</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <h3>American Attackers</h3>
+          <p><strong>General William Shafter</strong> commanded overall operations but was ill and remained at the rear. Division commanders like <strong>General Jacob Kent</strong> directed the infantry assault on San Juan Hill proper, while cavalry units including Roosevelt's Rough Riders attacked the adjacent Kettle Hill. Roughly 8,000 American troops participated in the main assault, many experiencing their first major combat.</p>
+
+          <h3>Spanish Defenders</h3>
+          <p>About 750 Spanish troops under <strong>General Arsenio Linares</strong> held the San Juan Heights in prepared positions. Though heavily outnumbered, they possessed excellent fields of fire from fortified trenches and blockhouses. Spanish troops used smokeless powder Mauser rifles that made them nearly invisible while inflicting heavy casualties on American forces advancing across open ground.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>Timeline of Battle</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="timeline">
+            <div class="timeline-item">
+              <strong>8:00 AM, July 1</strong>
+              <p>American forces begin moving into position. A Signal Corps observation balloon draws intense Spanish fire, revealing American positions and causing casualties.</p>
+            </div>
+            <div class="timeline-item">
+              <strong>10:00 AM - 1:00 PM</strong>
+              <p>American troops pinned down in tall grass and jungle below the heights. Spanish fire from fortified positions inflicts steady casualties. Confusion reigns as units jam the narrow approaches.</p>
+            </div>
+            <div class="timeline-item">
+              <strong>1:00 PM</strong>
+              <p>American artillery begins bombardment. Officers rally troops for assault. Infantry begins advancing up the main ridge toward San Juan Hill.</p>
+            </div>
+            <div class="timeline-item">
+              <strong>1:30 PM</strong>
+              <p>Roosevelt leads the Rough Riders in a mounted charge up Kettle Hill. Regular cavalry and infantry follow. The attackers reach the crest and drive off Spanish defenders.</p>
+            </div>
+            <div class="timeline-item">
+              <strong>2:00 PM</strong>
+              <p>Infantry assault on San Juan Hill proper succeeds. Americans storm the main blockhouse and trenches. Spanish defenders fall back toward Santiago.</p>
+            </div>
+            <div class="timeline-item">
+              <strong>3:00 PM</strong>
+              <p>Americans consolidate positions on the heights. Santiago now within American artillery range. Spanish counterattacks repulsed. The battle ends.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>Turning Points</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <h3>The Balloon Fiasco</h3>
+          <p>An observation balloon meant to spot Spanish positions instead drew concentrated enemy fire, marking American troop concentrations perfectly. The balloon became a beacon guiding Spanish riflemen to their targets. This disaster exemplified the battle's poor planning—brave troops overcoming incompetent leadership through sheer determination.</p>
+
+          <h3>Roosevelt's Charge</h3>
+          <p>When orders to attack finally came, Roosevelt mounted his horse and led the Rough Riders up Kettle Hill in a dramatic charge that broke the tactical stalemate. His conspicuous bravery rallied other units and created momentum. Roosevelt later promoted himself for the Medal of Honor for this action (he was awarded it posthumously in 2001). The charge became the war's defining image, though most participants were on foot and the main fighting was on the adjacent San Juan Hill.</p>
+
+          <h3>Spanish Withdrawal</h3>
+          <p>Outnumbered ten-to-one, Spanish defenders inflicted maximum casualties before falling back to secondary positions closer to Santiago. They had made the Americans pay dearly for every yard, demonstrating that Spanish troops, though doomed strategically, remained formidable tactically.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>Outcomes</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <h3>Casualties</h3>
+          <p><strong>American:</strong> 144 killed, 1,024 wounded</p>
+          <p><strong>Spanish:</strong> 114 killed, 366 wounded</p>
+
+          <h3>Immediate Impact</h3>
+          <p>American forces seized the heights and brought Santiago under siege. Spanish forces were pushed back into the city's inner defenses. The victory was decisive but costly—American casualties were the highest of any battle in the campaign. Shafter briefly considered retreat before his subordinates convinced him to press the advantage. Within two weeks, Santiago would surrender.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>Historical Significance</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <h3>Creating the Roosevelt Legend</h3>
+          <p>San Juan Hill made Theodore Roosevelt the most famous man in America. His self-promoted version of the battle—leading a glorious cavalry charge against Spanish fortifications—captured popular imagination. Roosevelt parlayed this fame into the New York governorship and then the vice presidency, succeeding to the presidency after McKinley's assassination in 1901. American political history pivoted on this moment.</p>
+
+          <h3>Iconic American Victory</h3>
+          <p>The battle became the symbol of American military prowess. Paintings, songs, and stories celebrated the charge up San Juan Hill (often conflating Kettle Hill and San Juan Hill). The image of brave Americans storming Spanish fortifications embodied American confidence and martial spirit. The battle's messy reality—tactical confusion, poor leadership, high casualties—was forgotten in favor of a heroic narrative that served emerging American imperialism.</p>
+
+          <h3>Lessons Ignored</h3>
+          <p>San Juan Hill demonstrated the deadly effectiveness of entrenched infantry with modern rifles. Frontal assaults against prepared positions cost dearly. These lessons should have influenced American military doctrine, but they were largely ignored. Fifteen years later in World War I, American commanders would relearn these bitter truths at far greater cost on the Western Front.</p>
+
+          <div class="source">
+            <strong>Key Historical Works:</strong> "The Rough Riders" by Theodore Roosevelt, "The War Lovers" by Evan Thomas, "The Spanish-American War" by David Trask
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑</button>
+  </div>
+
+  <script>
+    function toggleSection(header) {
+      const section = header.parentElement;
+      const allSections = document.querySelectorAll('.section');
+      allSections.forEach(s => {
+        if (s !== section) s.classList.remove('active');
+      });
+      section.classList.toggle('active');
+    }
+
+    window.addEventListener('scroll', () => {
+      const btn = document.querySelector('.back-to-top');
+      if (window.scrollY > 300) {
+        btn.classList.add('visible');
+      } else {
+        btn.classList.remove('visible');
+      }
+    });
+  </script>
+</body>
+</html>

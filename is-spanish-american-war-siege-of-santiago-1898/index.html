@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Siege of Santiago (1898)</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111833;
+      --ink:#e6ecff;
+      --muted:#a7b0cc;
+      --brand:#8bb9ff;
+      --accent:#c0ffe1;
+      --border:#26325b;
+      --chip:#1a2347;
+      --shadow:0 8px 28px rgba(0,0,0,.35);
+      --radius:12px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+      line-height:1.6;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
+        radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+      padding-bottom:2rem;
+    }
+
+    .container{max-width:860px;margin:0 auto;padding:1rem}
+
+    .breadcrumb{margin-bottom:1rem;font-size:.9rem}
+    .breadcrumb a{color:var(--brand);text-decoration:none}
+    .breadcrumb span{color:var(--muted)}
+
+    header{
+      background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:2rem 1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+    }
+
+    h1{color:var(--ink);font-size:1.75rem;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;font-style:italic}
+
+    .main-answer{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+      border-left:4px solid var(--brand);
+    }
+    .main-answer h2{color:var(--brand);font-size:1.3rem;margin-bottom:1rem}
+    .main-answer p{font-size:1.05rem;line-height:1.7}
+
+    .section{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      margin-bottom:1rem;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .section-header{
+      padding:1.1rem 1.25rem;
+      background:linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%);
+      color:var(--ink);
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      user-select:none;
+    }
+
+    .section-header h2{font-size:1.15rem;font-weight:700}
+    .section-icon{font-size:1.35rem;transition:transform .3s ease}
+    .section.active .section-icon{transform:rotate(180deg)}
+
+    .section-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+    .section.active .section-content{max-height:5000px}
+
+    .section-inner{padding:1.25rem}
+
+    h3{color:var(--brand);font-size:1.08rem;margin:1.3rem 0 .65rem 0}
+    h3:first-child{margin-top:0}
+
+    .timeline{
+      border-left:3px solid var(--brand);
+      padding-left:1.25rem;
+      margin-left:.5rem;
+    }
+
+    .timeline-item{margin-bottom:1.25rem;position:relative}
+    .timeline-item::before{
+      content:'';
+      position:absolute;left:-1.65rem;top:.25rem;
+      width:12px;height:12px;border-radius:50%;
+      background:var(--brand);border:3px solid var(--panel);
+      box-shadow:0 0 0 2px var(--brand);
+    }
+
+    .timeline-item strong{color:var(--brand);display:block;margin-bottom:.25rem}
+
+    .source{
+      background:color-mix(in oklab,var(--chip) 65%, transparent);
+      border-radius:8px;padding:1rem;margin-top:1.2rem;
+      font-size:.95rem;color:var(--muted);
+      border:1px solid var(--border);
+    }
+
+    .back-to-top{
+      position:fixed;bottom:1.5rem;right:1rem;
+      background:var(--brand);color:#001;
+      width:50px;height:50px;border-radius:50%;
+      border:none;font-size:1.5rem;cursor:pointer;
+      box-shadow:var(--shadow);opacity:0;transition:opacity .3s ease;
+      z-index:1000;display:flex;align-items:center;justify-content:center;
+    }
+    .back-to-top.visible{opacity:1}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="https://ewallt.github.io/pocket-deploy/is-spanish-american-war-hub/">← Spanish-American War</a>
+    </div>
+
+    <header>
+      <h1>Siege of Santiago (1898)</h1>
+      <p class="subtitle">The final siege forces Spanish surrender and ends the war in Cuba</p>
+    </header>
+
+    <div class="main-answer">
+      <h2>Core Summary</h2>
+      <p>After capturing San Juan Heights on July 1, American forces established a siege of Santiago de Cuba. For two weeks, American artillery bombarded the city while disease ravaged both armies. The destruction of the Spanish fleet on July 3 sealed Santiago's fate—cut off from reinforcement and resupply, the garrison had no hope of relief. On July 17, Spanish Governor-General José Toral surrendered the city and 24,000 troops, ending Spanish resistance in eastern Cuba. The siege's success owed more to Spanish hopelessness than American military prowess. With Santiago's fall, Spain's position in Cuba collapsed, and the war effectively ended.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>Strategic Context</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <h3>Santiago's Hopeless Position</h3>
+          <p>After July 1, Santiago was doomed. American forces controlled the heights overlooking the city. The Spanish fleet had been destroyed trying to escape. No relief force could reach Santiago through American naval blockade or land forces. Food and ammunition were running low. Yellow fever and disease were decimating both armies. Spanish commanders knew they couldn't hold out indefinitely, but honor demanded they resist as long as possible before surrendering.</p>
+
+          <h3>American Vulnerability</h3>
+          <p>Though Americans held the dominant position, General Shafter's forces were suffering terribly from tropical disease. Yellow fever, malaria, and dysentery were killing more men than Spanish bullets. Shafter himself was ill and briefly considered withdrawing from the heights. American victory depended on Spanish surrender coming before disease destroyed the besieging army. It became a race between Spanish morale and American health.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>Forces & Commanders</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <h3>American Besiegers</h3>
+          <p><strong>General William Shafter</strong> commanded roughly 15,000 troops surrounding Santiago, though thousands were sick. Shafter was himself ill throughout the siege and directed operations from his headquarters. The American advantage lay in artillery positioned on San Juan Heights and complete naval control preventing Spanish resupply. Time, however, was not on the American side as disease ravaged the army.</p>
+
+          <h3>Spanish Defenders</h3>
+          <p><strong>General José Toral</strong> commanded Santiago's defense after General Linares was wounded. Toral had about 10,000 troops in the city plus another 14,000 scattered in the region, but they were cut off, low on supplies, and demoralized by the fleet's destruction. Spanish authorities in Havana ordered Toral to hold out, but he understood the situation was hopeless and sought honorable surrender terms.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>Timeline of Siege</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="timeline">
+            <div class="timeline-item">
+              <strong>July 1-2</strong>
+              <p>Americans consolidate control of San Juan Heights. Artillery positioned to bombard Santiago. Spanish forces pull back into city defenses.</p>
+            </div>
+            <div class="timeline-item">
+              <strong>July 3</strong>
+              <p>Spanish fleet destroyed attempting to break out of harbor. Santiago now completely isolated with no hope of relief or escape.</p>
+            </div>
+            <div class="timeline-item">
+              <strong>July 4-10</strong>
+              <p>American artillery bombardment begins. Disease spreads through American camp. Both commanders seek to end the siege—Americans before disease destroys their army, Spanish with honor intact.</p>
+            </div>
+            <div class="timeline-item">
+              <strong>July 10-13</strong>
+              <p>Negotiations begin. Spanish seek terms allowing troops to march out with honor. Americans demand unconditional surrender but eventually compromise.</p>
+            </div>
+            <div class="timeline-item">
+              <strong>July 14</strong>
+              <p>Final terms agreed. Spanish will surrender all forces in eastern Cuba. Officers keep sidearms. Troops to be repatriated to Spain.</p>
+            </div>
+            <div class="timeline-item">
+              <strong>July 17</strong>
+              <p>Formal surrender ceremony. American flag raised over Santiago. Spanish troops lay down arms. The siege and the Cuban campaign are over.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>Turning Points</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <h3>Destruction of the Spanish Fleet</h3>
+          <p>The July 3 naval battle sealed Santiago's fate. With Cervera's squadron destroyed, no relief could reach the city by sea, and Spanish forces elsewhere in Cuba couldn't break through American lines. Toral's garrison was utterly isolated. The fleet's destruction transformed Santiago from a difficult siege into a formality—surrender was only a matter of time and negotiation.</p>
+
+          <h3>Disease as Decisive Factor</h3>
+          <p>Yellow fever and malaria were killing American troops at an alarming rate. General Shafter knew he had to secure surrender before his army collapsed from disease. This gave Spanish negotiators leverage—they could delay and extract honorable terms because Americans desperately needed quick resolution. Disease, not Spanish military strength, determined the siege's negotiations and timeline.</p>
+
+          <h3>Generous Surrender Terms</h3>
+          <p>American desperation to end the siege before disease destroyed their army led to surprisingly generous terms. Spanish troops were allowed to march out with honor, officers kept their sidearms, and all would be repatriated to Spain at U.S. expense. These terms encouraged Spanish garrisons elsewhere in Cuba to surrender quickly rather than fight on hopelessly. Generosity proved strategically wise.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>Outcomes</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <h3>Casualties</h3>
+          <p><strong>American:</strong> 23 killed in combat during siege, hundreds dead from disease</p>
+          <p><strong>Spanish:</strong> Minimal casualties during siege proper, but entire garrison of 24,000 surrendered</p>
+
+          <h3>Immediate Impact</h3>
+          <p>Santiago's surrender gave Americans control of eastern Cuba and effectively ended organized Spanish resistance. Other Spanish garrisons quickly surrendered under similar terms. The American army, ravaged by disease, was evacuated to healthier locations. Spain's government, having lost Cuba's major city and its fleet, began seeking peace negotiations. The war was effectively over.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>Historical Significance</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <h3>End of Spanish Cuba</h3>
+          <p>Santiago's fall marked the end of nearly 400 years of Spanish rule in Cuba. The city had been the first Spanish settlement on the island, and its surrender symbolized Spain's complete loss of its most important Caribbean colony. Within weeks, Spain would sue for peace and cede not only Cuba but also Puerto Rico and the Philippines. An empire built over centuries ended at Santiago.</p>
+
+          <h3>Disease as Military Reality</h3>
+          <p>The siege demonstrated that tropical disease remained the greatest threat to military operations in the Caribbean. More American soldiers died from disease than from combat in the entire war. The experience led to major reforms in military medicine, including Walter Reed's yellow fever research. Future American operations in the tropics would require serious attention to disease prevention and tropical medicine.</p>
+
+          <h3>Victory Despite Weakness</h3>
+          <p>American victory at Santiago came despite serious military shortcomings: inadequate medical services, poor logistics, obsolete equipment, and commanders falling ill. Americans won because Spanish forces were even more badly off—cut off, outnumbered, demoralized, and without hope. The siege revealed that American military power was still developing and that victory came more from Spanish weakness than American strength. It would take years of reform to create a truly professional modern army.</p>
+
+          <div class="source">
+            <strong>Key Historical Works:</strong> "The Spanish-American War" by David Trask, "An Army for Empire" by Graham Cosmas, "Splendid Little War" by Frank Freidel
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑</button>
+  </div>
+
+  <script>
+    function toggleSection(header) {
+      const section = header.parentElement;
+      const allSections = document.querySelectorAll('.section');
+      allSections.forEach(s => {
+        if (s !== section) s.classList.remove('active');
+      });
+      section.classList.toggle('active');
+    }
+
+    window.addEventListener('scroll', () => {
+      const btn = document.querySelector('.back-to-top');
+      if (window.scrollY > 300) {
+        btn.classList.add('visible');
+      } else {
+        btn.classList.remove('visible');
+      }
+    });
+  </script>
+</body>
+</html>

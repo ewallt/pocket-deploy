@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Spanish-American War Hub</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111833;
+      --ink:#e6ecff;
+      --muted:#a7b0cc;
+      --brand:#8bb9ff;
+      --accent:#c0ffe1;
+      --border:#26325b;
+      --chip:#1a2347;
+      --shadow:0 8px 28px rgba(0,0,0,.35);
+      --radius:14px;
+      --radius-sm:10px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+      line-height:1.6;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
+        radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+      padding-bottom:2rem;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .container{max-width:1100px;margin:0 auto;padding:1rem}
+
+    .breadcrumb{
+      margin-bottom:1rem;
+      font-size:.92rem;
+    }
+    .breadcrumb a{
+      color:var(--brand);
+      text-decoration:none;
+    }
+    .breadcrumb a:hover{
+      text-decoration:underline;
+    }
+    .breadcrumb span{
+      color:var(--muted);
+      margin:0 .5rem;
+    }
+
+    header{
+      background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:2rem 1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+    }
+
+    h1{
+      color:var(--ink);
+      font-size:1.9rem;
+      margin-bottom:.4rem;
+      letter-spacing:-.02em;
+    }
+
+    .subtitle{
+      color:var(--muted);
+      font-size:.98rem;
+      font-style:italic;
+    }
+
+    .toolbar{
+      display:flex;gap:.75rem;flex-wrap:wrap;
+      margin:1rem 0 1.25rem 0;
+    }
+
+    .search{
+      flex:1 1 320px;
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:999px;
+      display:flex;align-items:center;gap:.5rem;
+      padding:.65rem .9rem;
+      box-shadow:var(--shadow);
+    }
+    .search input{
+      width:100%;border:none;background:transparent;color:var(--ink);
+      outline:none;font-size:1rem;
+    }
+    .chip{
+      background:color-mix(in oklab,var(--chip) 75%, transparent);
+      border:1px solid var(--border);
+      color:var(--ink);
+      padding:.5rem .75rem;border-radius:999px;
+      font-size:.9rem;cursor:pointer;user-select:none;
+    }
+    .chip.active{outline:2px solid var(--brand)}
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(3, minmax(0,1fr));
+      gap:1rem;
+    }
+    @media (max-width:720px){ .grid{grid-template-columns:repeat(2, minmax(0,1fr));} }
+    @media (max-width:480px){
+      .grid{grid-template-columns:1fr;}
+      h1{font-size:1.6rem}
+    }
+
+    .card{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:1rem;
+      box-shadow:var(--shadow);
+      display:flex;flex-direction:column;gap:.6rem;
+      transition:transform .15s ease, border-color .2s ease;
+      position:relative;
+      overflow:hidden;
+    }
+    .card::after{
+      content:'';
+      position:absolute;inset:0;
+      background:radial-gradient(400px 160px at 110% -10%, rgba(139,185,255,.10), transparent 60%);
+      pointer-events:none;
+    }
+    .card:hover{transform:translateY(-2px);border-color:color-mix(in oklab,var(--brand) 60%, var(--border))}
+    .card h3{
+      color:var(--brand);font-size:1.05rem;letter-spacing:.01em;
+    }
+    .card p{
+      color:var(--muted);font-size:.95rem;line-height:1.5;
+    }
+
+    .tagrow{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.2rem}
+    .tag{
+      font-size:.75rem;color:var(--ink);
+      background:color-mix(in oklab,var(--chip) 65%, transparent);
+      border:1px solid var(--border);
+      padding:.25rem .5rem;border-radius:999px;
+    }
+
+    .btn{
+      display:inline-block;text-decoration:none;
+      background:color-mix(in oklab,var(--brand) 90%, transparent);
+      color:var(--ink);border:1px solid var(--brand);
+      padding:.6rem .85rem;border-radius:999px;font-size:.95rem;
+      margin-top:.5rem;transition:background .2s ease;
+    }
+    .btn:hover{background:var(--brand);color:#001}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="https://ewallt.github.io/pocket-deploy/is-war-hub/">← Military History Hub</a>
+    </div>
+
+    <header>
+      <h1>Spanish-American War</h1>
+      <p class="subtitle">The war of 1898 that launched America onto the world stage</p>
+    </header>
+
+    <div class="toolbar">
+      <div class="search">
+        <span>🔍</span>
+        <input type="text" id="searchBox" placeholder="Search battles…" />
+      </div>
+      <div class="chip" data-tag="naval">⚓ Naval</div>
+      <div class="chip" data-tag="cuba">🏝️ Cuba</div>
+      <div class="chip" data-tag="1898">📅 1898</div>
+    </div>
+
+    <div class="grid" id="battleGrid"></div>
+  </div>
+
+  <script>
+    const apps = [
+      {
+        id:"is-spanish-american-war-manila-bay-1898",
+        title:"Manila Bay (1898)",
+        blurb:"Dewey's crushing victory destroys Spanish Pacific fleet in a single morning.",
+        tags:["naval","philippines","1898"],
+        view:"https://ewallt.github.io/pocket-deploy/is-spanish-american-war-manila-bay-1898/index.html"
+      },
+      {
+        id:"is-spanish-american-war-santiago-de-cuba-1898",
+        title:"Santiago de Cuba (1898)",
+        blurb:"Naval battle seals Spanish defeat in the Caribbean theater.",
+        tags:["naval","cuba","1898"],
+        view:"https://ewallt.github.io/pocket-deploy/is-spanish-american-war-santiago-de-cuba-1898/index.html"
+      },
+      {
+        id:"is-spanish-american-war-las-guasimas-1898",
+        title:"Las Guasimas (1898)",
+        blurb:"First major land engagement in Cuba. American forces advance.",
+        tags:["cuba","land","1898"],
+        view:"https://ewallt.github.io/pocket-deploy/is-spanish-american-war-las-guasimas-1898/index.html"
+      },
+      {
+        id:"is-spanish-american-war-san-juan-hill-1898",
+        title:"San Juan Hill (1898)",
+        blurb:"The famous charge. Roosevelt's Rough Riders become legend.",
+        tags:["cuba","land","1898","famous"],
+        view:"https://ewallt.github.io/pocket-deploy/is-spanish-american-war-san-juan-hill-1898/index.html"
+      },
+      {
+        id:"is-spanish-american-war-el-caney-1898",
+        title:"El Caney (1898)",
+        blurb:"Fierce Spanish resistance delays American advance toward Santiago.",
+        tags:["cuba","land","1898"],
+        view:"https://ewallt.github.io/pocket-deploy/is-spanish-american-war-el-caney-1898/index.html"
+      },
+      {
+        id:"is-spanish-american-war-siege-of-santiago-1898",
+        title:"Siege of Santiago (1898)",
+        blurb:"The final siege forces Spanish surrender and ends the war in Cuba.",
+        tags:["cuba","siege","1898"],
+        view:"https://ewallt.github.io/pocket-deploy/is-spanish-american-war-siege-of-santiago-1898/index.html"
+      }
+    ];
+
+    const grid = document.getElementById('battleGrid');
+    const searchBox = document.getElementById('searchBox');
+    const chips = document.querySelectorAll('.chip');
+
+    let activeTag = null;
+
+    function render(items) {
+      grid.innerHTML = '';
+      items.forEach(app => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <h3>${app.title}</h3>
+          <p>${app.blurb}</p>
+          <div class="tagrow">
+            ${app.tags.map(t => `<span class="tag">${t}</span>`).join('')}
+          </div>
+          <a class="btn" href="${app.view}">View Battle →</a>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function filterApps() {
+      const query = searchBox.value.toLowerCase();
+      let filtered = apps;
+      if (activeTag) {
+        filtered = filtered.filter(app => app.tags.includes(activeTag));
+      }
+      if (query) {
+        filtered = filtered.filter(app =>
+          app.title.toLowerCase().includes(query) ||
+          app.blurb.toLowerCase().includes(query)
+        );
+      }
+      render(filtered);
+    }
+
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        const tag = chip.getAttribute('data-tag');
+        if (activeTag === tag) {
+          activeTag = null;
+          chip.classList.remove('active');
+        } else {
+          chips.forEach(c => c.classList.remove('active'));
+          activeTag = tag;
+          chip.classList.add('active');
+        }
+        filterApps();
+      });
+    });
+
+    searchBox.addEventListener('input', filterApps);
+
+    render(apps);
+  </script>
+</body>
+</html>
