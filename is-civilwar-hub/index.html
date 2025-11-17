@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Civil War Hub</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111833;
+      --ink:#e6ecff;
+      --muted:#a7b0cc;
+      --brand:#8bb9ff;
+      --accent:#c0ffe1;
+      --border:#26325b;
+      --chip:#1a2347;
+      --shadow:0 8px 28px rgba(0,0,0,.35);
+      --radius:14px;
+      --radius-sm:10px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+      line-height:1.6;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
+        radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+      padding-bottom:2rem;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .container{max-width:1100px;margin:0 auto;padding:1rem}
+
+    .breadcrumb{
+      margin-bottom:1rem;
+      font-size:.92rem;
+    }
+    .breadcrumb a{
+      color:var(--brand);
+      text-decoration:none;
+    }
+    .breadcrumb a:hover{
+      text-decoration:underline;
+    }
+    .breadcrumb span{
+      color:var(--muted);
+      margin:0 .5rem;
+    }
+
+    header{
+      background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:2rem 1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+    }
+
+    h1{
+      color:var(--ink);
+      font-size:1.9rem;
+      margin-bottom:.4rem;
+      letter-spacing:-.02em;
+    }
+
+    .subtitle{
+      color:var(--muted);
+      font-size:.98rem;
+      font-style:italic;
+    }
+
+    .toolbar{
+      display:flex;gap:.75rem;flex-wrap:wrap;
+      margin:1rem 0 1.25rem 0;
+    }
+
+    .search{
+      flex:1 1 320px;
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:999px;
+      display:flex;align-items:center;gap:.5rem;
+      padding:.65rem .9rem;
+      box-shadow:var(--shadow);
+    }
+    .search input{
+      width:100%;border:none;background:transparent;color:var(--ink);
+      outline:none;font-size:1rem;
+    }
+    .chip{
+      background:color-mix(in oklab,var(--chip) 75%, transparent);
+      border:1px solid var(--border);
+      color:var(--ink);
+      padding:.5rem .75rem;border-radius:999px;
+      font-size:.9rem;cursor:pointer;user-select:none;
+    }
+    .chip.active{outline:2px solid var(--brand)}
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(4, minmax(0,1fr));
+      gap:1rem;
+    }
+    @media (max-width:980px){ .grid{grid-template-columns:repeat(3, minmax(0,1fr));} }
+    @media (max-width:720px){ .grid{grid-template-columns:repeat(2, minmax(0,1fr));} }
+    @media (max-width:480px){
+      .grid{grid-template-columns:1fr;}
+      h1{font-size:1.6rem}
+      .chip{padding:.6rem .8rem}
+      .btn{padding:.7rem .9rem;font-size:1rem}
+      .card p{min-height:auto}
+    }
+
+    .card{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:1rem;
+      box-shadow:var(--shadow);
+      display:flex;flex-direction:column;gap:.6rem;
+      transition:transform .15s ease, border-color .2s ease;
+      position:relative;
+      overflow:hidden;
+    }
+    .card::after{
+      content:'';
+      position:absolute;inset:0;
+      background:radial-gradient(400px 160px at 110% -10%, rgba(139,185,255,.10), transparent 60%);
+      pointer-events:none;
+    }
+    .card:hover{transform:translateY(-2px);border-color:color-mix(in oklab,var(--brand) 60%, var(--border))}
+    .card h3{
+      color:var(--brand);font-size:1.05rem;letter-spacing:.01em;
+    }
+    .card p{
+      color:var(--muted);font-size:.95rem;line-height:1.5;min-height:3.2em;
+    }
+
+    .tagrow{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.2rem}
+    .tag{
+      font-size:.75rem;color:var(--ink);
+      background:color-mix(in oklab,var(--chip) 65%, transparent);
+      border:1px solid var(--border);
+      padding:.25rem .5rem;border-radius:999px;
+    }
+
+    .actions{display:flex;gap:.5rem;margin-top:.35rem}
+    .btn{
+      width:100%;
+      text-align:center;text-decoration:none;
+      background:linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%);
+      color:#e6ecff;border:1px solid var(--border);
+      padding:.55rem .7rem;border-radius:10px;font-weight:600;font-size:.9rem;
+    }
+
+    footer{
+      margin-top:1.25rem;
+      color:var(--muted);
+      font-size:.88rem;text-align:center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="https://ewallt.github.io/pocket-deploy/is-war-hub/index.html">Military History Hub</a>
+      <span>›</span>
+      Civil War
+    </div>
+    <header>
+      <h1>Civil War Hub</h1>
+      <p class="subtitle">A Nation Divided (1861–1865)</p>
+      <div class="toolbar">
+        <div class="search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 21l-4.2-4.2M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <input id="searchInput" type="search" placeholder="Filter by title, region, year, or tags…" autocomplete="off"/>
+        </div>
+        <button class="chip" data-tag="all">All</button>
+        <button class="chip" data-tag="eastern">Eastern</button>
+        <button class="chip" data-tag="western">Western</button>
+        <button class="chip" data-tag="siege">Siege</button>
+        <button class="chip" data-tag="turning-point">Turning Point</button>
+      </div>
+    </header>
+
+    <main>
+      <div id="grid" class="grid" aria-live="polite"></div>
+    </main>
+
+    <footer>The conflict that preserved the Union and ended slavery in America.</footer>
+  </div>
+
+  <script>
+    // ---- Canonical parent (so children can breadcrumb back) ----
+    const PARENT_DASHBOARD = {
+      title: "Civil War Hub",
+      url: "https://ewallt.github.io/pocket-deploy/is-civilwar-hub/index.html"
+    };
+
+    // ---- Configure Civil War battles ----
+    const apps = [
+      {
+        id:"is-civilwar-fort-sumter-1861",
+        title:"Fort Sumter (1861)",
+        blurb:"Confederate artillery opens fire on federal garrison. The war begins.",
+        tags:["eastern","1861","war-start"],
+        view:"https://ewallt.github.io/pocket-deploy/is-civilwar-fort-sumter-1861/index.html"
+      },
+      {
+        id:"is-civilwar-first-bull-run-1861",
+        title:"First Bull Run (1861)",
+        blurb:"The first major battle shatters illusions of a quick war. Confederate victory stuns the North.",
+        tags:["eastern","1861"],
+        view:"https://ewallt.github.io/pocket-deploy/is-civilwar-first-bull-run-1861/index.html"
+      },
+      {
+        id:"is-civilwar-shiloh-1862",
+        title:"Shiloh (1862)",
+        blurb:"Grant's narrow victory in Tennessee. Over 23,000 casualties reveal the war's brutal scope.",
+        tags:["western","1862"],
+        view:"https://ewallt.github.io/pocket-deploy/is-civilwar-shiloh-1862/index.html"
+      },
+      {
+        id:"is-civilwar-antietam-1862",
+        title:"Antietam (1862)",
+        blurb:"America's bloodiest single day. Lee's invasion halted; Lincoln issues Emancipation Proclamation.",
+        tags:["eastern","1862","turning-point"],
+        view:"https://ewallt.github.io/pocket-deploy/is-civilwar-antietam-1862/index.html"
+      },
+      {
+        id:"is-civilwar-fredericksburg-1862",
+        title:"Fredericksburg (1862)",
+        blurb:"Futile Union assaults against impregnable Confederate positions. Burnside's devastating defeat.",
+        tags:["eastern","1862"],
+        view:"https://ewallt.github.io/pocket-deploy/is-civilwar-fredericksburg-1862/index.html"
+      },
+      {
+        id:"is-civilwar-chancellorsville-1863",
+        title:"Chancellorsville (1863)",
+        blurb:"Lee's masterpiece. Outnumbered Confederates win brilliant victory but lose Stonewall Jackson.",
+        tags:["eastern","1863"],
+        view:"https://ewallt.github.io/pocket-deploy/is-civilwar-chancellorsville-1863/index.html"
+      },
+      {
+        id:"is-civilwar-gettysburg-1863",
+        title:"Gettysburg (1863)",
+        blurb:"Three days of carnage in Pennsylvania. Pickett's Charge fails; Lee retreats. The war's turning point.",
+        tags:["eastern","1863","turning-point"],
+        view:"https://ewallt.github.io/pocket-deploy/is-civilwar-gettysburg-1863/index.html"
+      },
+      {
+        id:"is-civilwar-vicksburg-1863",
+        title:"Vicksburg (1863)",
+        blurb:"Grant's siege splits the Confederacy. Union controls the Mississippi River.",
+        tags:["western","siege","1863","turning-point"],
+        view:"https://ewallt.github.io/pocket-deploy/is-civilwar-vicksburg-1863/index.html"
+      },
+      {
+        id:"is-civilwar-chickamauga-1863",
+        title:"Chickamauga (1863)",
+        blurb:"Bragg's last major victory. Union army retreats to Chattanooga in confusion.",
+        tags:["western","1863"],
+        view:"https://ewallt.github.io/pocket-deploy/is-civilwar-chickamauga-1863/index.html"
+      },
+      {
+        id:"is-civilwar-wilderness-1864",
+        title:"The Wilderness (1864)",
+        blurb:"Grant and Lee clash in dense Virginia forest. Unlike predecessors, Grant refuses to retreat.",
+        tags:["eastern","1864"],
+        view:"https://ewallt.github.io/pocket-deploy/is-civilwar-wilderness-1864/index.html"
+      },
+      {
+        id:"is-civilwar-atlanta-1864",
+        title:"Atlanta (1864)",
+        blurb:"Sherman captures the South's industrial heart. Victory ensures Lincoln's reelection.",
+        tags:["western","1864","turning-point"],
+        view:"https://ewallt.github.io/pocket-deploy/is-civilwar-atlanta-1864/index.html"
+      },
+      {
+        id:"is-civilwar-petersburg-1864",
+        title:"Petersburg (1864–65)",
+        blurb:"Nine-month siege gradually strangles Lee's army. The beginning of the end.",
+        tags:["eastern","siege","1864","1865"],
+        view:"https://ewallt.github.io/pocket-deploy/is-civilwar-petersburg-1864/index.html"
+      }
+    ];
+
+    // ---- Render cards ----
+    const grid = document.getElementById('grid');
+    const searchInput = document.getElementById('searchInput');
+    const chips = Array.from(document.querySelectorAll('.chip'));
+    let activeTag = 'all';
+
+    function makeCard(app){
+      const el = document.createElement('article');
+      el.className = 'card';
+      el.dataset.tags = app.tags.join(' ').toLowerCase();
+      el.dataset.title = app.title.toLowerCase();
+      el.innerHTML = `
+        <h3>${app.title}</h3>
+        <p>${app.blurb}</p>
+        <div class="tagrow">
+          ${app.tags.map(t=>`<span class="tag">#${t}</span>`).join('')}
+        </div>
+        <div class="actions">
+          <a class="btn" href="${app.view}">Open</a>
+        </div>
+      `;
+      return el;
+    }
+
+    function render(){
+      grid.innerHTML = '';
+      const q = (searchInput.value || '').trim().toLowerCase();
+      apps
+        .filter(a=>{
+          const tagOk = activeTag==='all' ? true : a.tags.map(t=>t.toLowerCase()).includes(activeTag);
+          const text = (a.title + ' ' + a.blurb + ' ' + a.tags.join(' ')).toLowerCase();
+          const qOk = !q || text.includes(q);
+          return tagOk && qOk;
+        })
+        .forEach(a=>grid.appendChild(makeCard(a)));
+
+      // Defensive: ensure same-tab navigation
+      grid.querySelectorAll('a.btn').forEach(a=>{
+        a.removeAttribute('target');
+        a.removeAttribute('rel');
+      });
+    }
+
+    // ---- Interactions ----
+    searchInput.addEventListener('input', render);
+    chips.forEach(chip=>{
+      chip.addEventListener('click', ()=>{
+        chips.forEach(c=>c.classList.remove('active'));
+        chip.classList.add('active');
+        activeTag = chip.dataset.tag;
+        render();
+      });
+    });
+    // default: All active
+    document.querySelector('.chip[data-tag="all"]').classList.add('active');
+
+    // Initial render
+    render();
+  </script>
+</body>
+</html>

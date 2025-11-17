@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vicksburg (1863)</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111833;
+      --ink:#e6ecff;
+      --muted:#a7b0cc;
+      --brand:#8bb9ff;
+      --accent:#c0ffe1;
+      --border:#26325b;
+      --chip:#1a2347;
+      --bad:#ff6b6b;
+      --shadow:0 8px 28px rgba(0,0,0,.35);
+      --radius:12px;
+      --radius-sm:8px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+      line-height:1.6;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
+        radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+      padding-bottom:2rem;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .container{max-width:860px;margin:0 auto;padding:1rem}
+
+    header{
+      background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:2rem 1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+    }
+
+    h1{
+      color:var(--ink);
+      font-size:1.75rem;
+      margin-bottom:.5rem;
+      letter-spacing:-.015em;
+    }
+
+    .subtitle{
+      color:var(--muted);
+      font-size:.95rem;
+      font-style:italic;
+    }
+
+    .breadcrumb{
+      margin-bottom:1rem;
+      font-size:.9rem;
+    }
+    .breadcrumb a{color:var(--brand);text-decoration:none}
+    .breadcrumb span{color:var(--muted)}
+
+    .main-answer{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+      border-left:4px solid var(--brand);
+    }
+
+    .main-answer h2{
+      color:var(--brand);
+      font-size:1.3rem;
+      margin-bottom:1rem;
+      letter-spacing:.01em;
+    }
+
+    .main-answer p{font-size:1.05rem;line-height:1.7}
+
+    .section{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      margin-bottom:1rem;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .section-header{
+      padding:1.1rem 1.25rem;
+      background:linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%);
+      color:var(--ink);
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      border-bottom:1px solid var(--border);
+    }
+
+    .section-header h2{
+      font-size:1.15rem;
+      font-weight:700;
+      letter-spacing:.01em;
+    }
+
+    .section-icon{font-size:1.35rem;transition:transform .3s ease}
+    .section.active .section-icon{transform:rotate(180deg)}
+
+    .section-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+    .section.active .section-content{max-height:5000px}
+
+    .section-inner{padding:1.25rem}
+
+    h3{
+      color:var(--brand);
+      font-size:1.08rem;
+      margin:1.3rem 0 .65rem 0;
+      letter-spacing:.01em;
+    }
+    h3:first-child{margin-top:0}
+
+    .list-item{
+      background:color-mix(in oklab,var(--chip) 75%, transparent);
+      border-left:3px solid var(--brand);
+      padding:1rem;
+      margin-bottom:.75rem;
+      border-radius:var(--radius-sm);
+      border:1px solid var(--border);
+    }
+
+    .timeline{
+      border-left:3px solid var(--brand);
+      padding-left:1.25rem;
+      margin-left:.5rem;
+    }
+
+    .timeline-item{
+      margin-bottom:1.25rem;
+      position:relative;
+    }
+
+    .timeline-item::before{
+      content:'';
+      position:absolute;left:-1.65rem;top:.25rem;
+      width:12px;height:12px;border-radius:50%;
+      background:var(--brand);border:3px solid var(--panel);
+      box-shadow:0 0 0 2px var(--brand);
+    }
+
+    .timeline-item:last-child{
+      margin-bottom:0;
+    }
+
+    .timeline-item:last-child::before{
+      width:16px;
+      height:16px;
+      left:-1.75rem;
+      background:var(--accent);
+      box-shadow:0 0 0 2px var(--accent);
+    }
+
+    .timeline-item strong{color:var(--brand);display:block;margin-bottom:.25rem}
+
+    .source{
+      background:color-mix(in oklab,var(--chip) 65%, transparent);
+      border-radius:8px;padding:1rem;margin-top:1.2rem;
+      font-size:.95rem;color:var(--muted);
+      border:1px solid var(--border);
+    }
+    .source strong{color:var(--ink)}
+
+    .back-to-top{
+      position:fixed;bottom:1.5rem;right:1rem;
+      background:var(--brand);color:#001;
+      width:50px;height:50px;border-radius:50%;
+      border:none;font-size:1.5rem;cursor:pointer;
+      box-shadow:var(--shadow);opacity:0;transition:opacity .3s ease;
+      z-index:1000;display:flex;align-items:center;justify-content:center;
+      font-weight:900;
+    }
+    .back-to-top.visible{opacity:1}
+    .back-to-top:active{transform:scale(.96)}
+
+    a{color:var(--brand)}
+
+    @media (max-width:480px){
+      h1{font-size:1.5rem}
+      .section-header h2{font-size:1.05rem}
+      .container{padding:.75rem}
+      header{padding:1.5rem 1rem}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="https://ewallt.github.io/pocket-deploy/is-civilwar-hub/index.html">Civil War Hub</a> <span>›</span> Vicksburg
+    </div>
+
+    <header>
+      <h1>Vicksburg (1863)</h1>
+      <p class="subtitle">Grant's Siege Splits the Confederacy</p>
+    </header>
+
+    <div class="main-answer">
+      <h2>Core Summary</h2>
+      <p>After months of maneuvering along the Mississippi River, Ulysses S. Grant besieged Vicksburg, Mississippi, from May 18 to July 4, 1863. Confederate General John Pemberton's 30,000 troops held the fortified city perched on 200-foot bluffs overlooking the river. Grant's initial assaults failed with heavy casualties. He settled into siege warfare, surrounding the city and cutting all supply lines. Artillery bombardment and starvation slowly strangled the garrison. Civilians hid in caves carved from hillsides to escape constant shelling. Pemberton surrendered on July 4—the same day Lee retreated from Gettysburg. Vicksburg's fall gave the Union complete control of the Mississippi River, splitting the Confederacy and fulfilling Winfield Scott's Anaconda Plan. Lincoln declared: "The Father of Waters again goes unvexed to the sea."</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🎯 Strategic Context</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Mississippi Gibraltar:</strong> Vicksburg sat on towering bluffs dominating a hairpin turn in the Mississippi River. Confederate batteries could sink any Union vessel attempting to pass. Capturing it was essential to Union strategy for controlling the river and splitting the Confederacy.
+          </div>
+          <div class="list-item">
+            <strong>Grant's Campaign:</strong> After months of failed approaches through Louisiana swamps, Grant crossed the Mississippi below Vicksburg in late April. He marched inland, defeated Confederate forces at Champion Hill and Big Black River, then drove Pemberton into Vicksburg's fortifications.
+          </div>
+          <div class="list-item">
+            <strong>Siege Begins:</strong> Grant's May 19 and 22 assaults failed with over 3,000 casualties. Learning from costly mistakes, he settled into systematic siege operations, surrounding the city with 77,000 troops and cutting all supply routes. Starvation would accomplish what frontal assault could not.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🪖 Forces & Commanders</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Union:</strong> Grant commanded approximately 77,000 troops surrounding Vicksburg. William T. Sherman, James McPherson, and John McClernand led corps. Admiral David Porter's gunboats provided naval support and prevented Confederate river traffic.
+          </div>
+          <div class="list-item">
+            <strong>Confederate:</strong> Pemberton commanded 30,000 troops and 100,000 civilians trapped in Vicksburg. General Joseph E. Johnston attempted to assemble a relief force at Jackson but never attacked Grant's siege lines. Communication between Pemberton and Johnston was sporadic and contradictory.
+          </div>
+          <div class="list-item">
+            <strong>Casualties:</strong> Union: 806 killed, 3,940 wounded, 164 missing during the siege. Confederate: 805 killed, 1,938 wounded, 29,491 surrendered. Total: approximately 37,000 casualties. Disease and starvation produced as many casualties as combat.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📅 Timeline</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="timeline">
+            <div class="timeline-item">
+              <strong>May 18, 1863:</strong> Grant's army completes encirclement of Vicksburg. Siege operations begin with constant artillery bombardment.
+            </div>
+            <div class="timeline-item">
+              <strong>May 19 & 22:</strong> Grant orders two major assaults on Confederate fortifications. Both fail with heavy Union losses. Sherman's troops suffer particularly heavy casualties. Grant resolves to starve Vicksburg into submission.
+            </div>
+            <div class="timeline-item">
+              <strong>May-July:</strong> Union artillery bombards the city day and night. Civilians dig caves in hillsides for protection. Confederate soldiers and civilians eat mules, horses, rats—anything to survive. Disease spreads. Water becomes scarce in summer heat.
+            </div>
+            <div class="timeline-item">
+              <strong>June:</strong> Johnston assembles a 30,000-man relief force at Jackson but refuses to attack Grant's siege lines. Pemberton sends desperate messages pleading for rescue. Grant intercepts communications and reinforces against potential relief attempts.
+            </div>
+            <div class="timeline-item">
+              <strong>July 3:</strong> Pemberton requests surrender terms after his officers vote unanimously to capitulate. Grant initially demands unconditional surrender. Pemberton negotiates parole for his garrison to avoid burden of 30,000 prisoners.
+            </div>
+            <div class="timeline-item">
+              <strong>July 4, 1863:</strong> Pemberton surrenders 29,491 Confederates and the city. Union troops occupy Vicksburg as Confederate soldiers march out and stack arms. News reaches the North the same day as Gettysburg victory reports. The dual triumphs electrify the Union.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>⚡ Turning Points</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Failed Assaults:</strong> Grant's May 22 assault convinced him that siege was necessary. The costly attack—3,000 casualties in a single day—taught Grant that properly fortified positions could not be taken by frontal assault. This lesson shaped his later strategy at Petersburg.
+          </div>
+          <div class="list-item">
+            <strong>Starvation Tactics:</strong> Grant's complete encirclement cut all food supplies to the city. Confederate troops' rations dwindled from full provisions to quarter-rations to starvation. Disease and malnutrition accomplished what bullets could not. By late June, Pemberton's army was combat-ineffective from hunger.
+          </div>
+          <div class="list-item">
+            <strong>Johnston's Passivity:</strong> Johnston's failure to attack Grant's siege lines doomed Vicksburg. With 30,000 troops at Jackson, a coordinated attack might have forced Grant to lift the siege. Instead, Johnston's caution and Pemberton's isolation ensured Confederate defeat.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📊 Outcomes</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Mississippi River Secured:</strong> Union control of the entire Mississippi River split the Confederacy geographically, isolating Texas, Arkansas, and Louisiana. Confederate trans-Mississippi armies could no longer easily support forces east of the river. Critical supplies from the West were lost.
+          </div>
+          <div class="list-item">
+            <strong>Grant's Ascension:</strong> Lincoln finally found a general who won decisive victories through strategic brilliance rather than just superior numbers. Grant's Vicksburg campaign—the river crossing, living off the land, defeating superior forces at Champion Hill, then methodical siege—demonstrated complete mastery of warfare. By March 1864, Lincoln promoted him to command all Union armies.
+          </div>
+          <div class="list-item">
+            <strong>Anaconda Complete:</strong> Vicksburg's fall completed Winfield Scott's Anaconda Plan for strangling the Confederacy. Combined with the naval blockade, Union forces now controlled all Confederate borders. The South's ability to import weapons and export cotton was nearly eliminated.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🔍 Historical Significance</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <p style="margin-bottom:1rem">Vicksburg ranks among history's most brilliant military campaigns. Historian James McPherson calls it "one of the decisive battles not only of the Civil War but of all wars." Grant's maneuvering campaign—cutting loose from supply lines, marching inland through hostile territory, winning five battles in three weeks, then settling into successful siege—showcased operational art at its finest. The campaign's audacity rivals Napoleon's Italian campaigns. Grant took enormous calculated risks, trusting his army's discipline and his own judgment. Combined with Gettysburg, Vicksburg marked July 1863 as the war's strategic turning point. The Confederacy lost offensive capability in the East at Gettysburg and territorial control of the West's critical artery at Vicksburg. Grant's success convinced Lincoln he had found the general to win the war. Grant's Personal Memoirs devote extensive analysis to the Vicksburg campaign, which he considered his finest achievement. Military historians study it as a model of strategic maneuver and operational patience.</p>
+          <div class="source">
+            <strong>Primary Sources:</strong> Grant's Personal Memoirs (considered among the finest military memoirs ever written), soldiers' siege diaries describing starvation, civilian accounts of life in caves.
+          </div>
+          <div class="source">
+            <strong>Key Works:</strong> James M. McPherson, <em>Vicksburg</em> (1999); Michael B. Ballard, <em>Vicksburg: The Campaign That Opened the Mississippi</em> (2004); A. A. Hoehling, <em>Vicksburg: 47 Days of Siege</em> (1969).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="back-to-top" onclick="scrollToTop()">↑</button>
+
+  <script>
+    function toggleSection(header){
+      const section = header.parentElement;
+      const allSections = document.querySelectorAll('.section');
+      allSections.forEach(s=>{
+        if(s !== section) s.classList.remove('active');
+      });
+      section.classList.toggle('active');
+    }
+
+    function scrollToTop(){
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    window.addEventListener('scroll', ()=>{
+      const btn = document.querySelector('.back-to-top');
+      if(window.scrollY > 300){
+        btn.classList.add('visible');
+      } else {
+        btn.classList.remove('visible');
+      }
+    });
+  </script>
+</body>
+</html>

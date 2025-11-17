@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>First Bull Run (1861)</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111833;
+      --ink:#e6ecff;
+      --muted:#a7b0cc;
+      --brand:#8bb9ff;
+      --accent:#c0ffe1;
+      --border:#26325b;
+      --chip:#1a2347;
+      --bad:#ff6b6b;
+      --shadow:0 8px 28px rgba(0,0,0,.35);
+      --radius:12px;
+      --radius-sm:8px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+      line-height:1.6;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
+        radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+      padding-bottom:2rem;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .container{max-width:860px;margin:0 auto;padding:1rem}
+
+    header{
+      background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:2rem 1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+    }
+
+    h1{
+      color:var(--ink);
+      font-size:1.75rem;
+      margin-bottom:.5rem;
+      letter-spacing:-.015em;
+    }
+
+    .subtitle{
+      color:var(--muted);
+      font-size:.95rem;
+      font-style:italic;
+    }
+
+    .breadcrumb{
+      margin-bottom:1rem;
+      font-size:.9rem;
+    }
+    .breadcrumb a{color:var(--brand);text-decoration:none}
+    .breadcrumb span{color:var(--muted)}
+
+    .main-answer{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+      border-left:4px solid var(--brand);
+    }
+
+    .main-answer h2{
+      color:var(--brand);
+      font-size:1.3rem;
+      margin-bottom:1rem;
+      letter-spacing:.01em;
+    }
+
+    .main-answer p{font-size:1.05rem;line-height:1.7}
+
+    .section{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      margin-bottom:1rem;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .section-header{
+      padding:1.1rem 1.25rem;
+      background:linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%);
+      color:var(--ink);
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      border-bottom:1px solid var(--border);
+    }
+
+    .section-header h2{
+      font-size:1.15rem;
+      font-weight:700;
+      letter-spacing:.01em;
+    }
+
+    .section-icon{font-size:1.35rem;transition:transform .3s ease}
+    .section.active .section-icon{transform:rotate(180deg)}
+
+    .section-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+    .section.active .section-content{max-height:5000px}
+
+    .section-inner{padding:1.25rem}
+
+    h3{
+      color:var(--brand);
+      font-size:1.08rem;
+      margin:1.3rem 0 .65rem 0;
+      letter-spacing:.01em;
+    }
+    h3:first-child{margin-top:0}
+
+    .list-item{
+      background:color-mix(in oklab,var(--chip) 75%, transparent);
+      border-left:3px solid var(--brand);
+      padding:1rem;
+      margin-bottom:.75rem;
+      border-radius:var(--radius-sm);
+      border:1px solid var(--border);
+    }
+
+    .timeline{
+      border-left:3px solid var(--brand);
+      padding-left:1.25rem;
+      margin-left:.5rem;
+    }
+
+    .timeline-item{
+      margin-bottom:1.25rem;
+      position:relative;
+    }
+
+    .timeline-item::before{
+      content:'';
+      position:absolute;left:-1.65rem;top:.25rem;
+      width:12px;height:12px;border-radius:50%;
+      background:var(--brand);border:3px solid var(--panel);
+      box-shadow:0 0 0 2px var(--brand);
+    }
+
+    .timeline-item:last-child{
+      margin-bottom:0;
+    }
+
+    .timeline-item:last-child::before{
+      width:16px;
+      height:16px;
+      left:-1.75rem;
+      background:var(--accent);
+      box-shadow:0 0 0 2px var(--accent);
+    }
+
+    .timeline-item strong{color:var(--brand);display:block;margin-bottom:.25rem}
+
+    .source{
+      background:color-mix(in oklab,var(--chip) 65%, transparent);
+      border-radius:8px;padding:1rem;margin-top:1.2rem;
+      font-size:.95rem;color:var(--muted);
+      border:1px solid var(--border);
+    }
+    .source strong{color:var(--ink)}
+
+    .back-to-top{
+      position:fixed;bottom:1.5rem;right:1rem;
+      background:var(--brand);color:#001;
+      width:50px;height:50px;border-radius:50%;
+      border:none;font-size:1.5rem;cursor:pointer;
+      box-shadow:var(--shadow);opacity:0;transition:opacity .3s ease;
+      z-index:1000;display:flex;align-items:center;justify-content:center;
+      font-weight:900;
+    }
+    .back-to-top.visible{opacity:1}
+    .back-to-top:active{transform:scale(.96)}
+
+    a{color:var(--brand)}
+
+    @media (max-width:480px){
+      h1{font-size:1.5rem}
+      .section-header h2{font-size:1.05rem}
+      .container{padding:.75rem}
+      header{padding:1.5rem 1rem}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="https://ewallt.github.io/pocket-deploy/is-civilwar-hub/index.html">Civil War Hub</a> <span>›</span> First Bull Run
+    </div>
+
+    <header>
+      <h1>First Bull Run (1861)</h1>
+      <p class="subtitle">The Battle That Shattered Illusions</p>
+    </header>
+
+    <div class="main-answer">
+      <h2>Core Summary</h2>
+      <p>On July 21, 1861, untested Union and Confederate armies clashed near Manassas Junction, Virginia, in the war's first major battle. General Irvin McDowell's 35,000 Union troops attacked General P.G.T. Beauregard's 32,000 Confederates defending the vital railroad junction. Initial Union success collapsed when Confederate reinforcements arrived by rail and Thomas Jackson's brigade held Henry House Hill "like a stone wall." The Union retreat became a chaotic rout as panicked soldiers and Washington spectators fled back to the capital. The stunning Confederate victory destroyed Northern hopes for a quick war and proved both sides faced a long, brutal conflict.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🎯 Strategic Context</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>"On to Richmond!":</strong> Northern newspapers and politicians demanded action. General Winfield Scott's plan for gradual strangulation was rejected. Lincoln ordered McDowell to attack before Confederate armies could fully organize.
+          </div>
+          <div class="list-item">
+            <strong>Railroad Junction:</strong> Manassas Junction sat at the intersection of two key railroads linking Virginia to the Shenandoah Valley and the Deep South. Confederate control threatened Washington; Union capture would open the road to Richmond.
+          </div>
+          <div class="list-item">
+            <strong>Green Armies:</strong> Both sides fielded volunteers with minimal training. Officers were political appointees or Mexican War veterans dusting off old tactics. No one knew how these citizen armies would perform under fire.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🪖 Forces & Commanders</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Union:</strong> General Irvin McDowell commanded approximately 35,000 men organized in five divisions. Most had enlisted for 90 days; some regiments' enlistments expired during the campaign. McDowell knew his troops were unready but political pressure forced his hand.
+          </div>
+          <div class="list-item">
+            <strong>Confederate:</strong> General P.G.T. Beauregard commanded 22,000 troops at Manassas. General Joseph E. Johnston brought 10,000 reinforcements by rail from the Shenandoah Valley. Brigadier General Thomas J. Jackson earned his "Stonewall" nickname holding Henry House Hill.
+          </div>
+          <div class="list-item">
+            <strong>Casualties:</strong> Union: 460 killed, 1,124 wounded, 1,312 captured/missing. Confederate: 387 killed, 1,582 wounded, 13 missing. Total: approximately 4,900 casualties—shocking by 1861 standards, modest compared to battles to come.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📅 Timeline</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="timeline">
+            <div class="timeline-item">
+              <strong>July 16:</strong> McDowell's army marches from Washington toward Manassas. Poor discipline and inexperience slow the advance. The element of surprise is lost.
+            </div>
+            <div class="timeline-item">
+              <strong>July 18:</strong> Union forces probe Confederate defenses at Blackburn's Ford. They are repulsed. McDowell plans a flanking attack for July 21.
+            </div>
+            <div class="timeline-item">
+              <strong>July 21, morning:</strong> Union troops cross Bull Run creek and attack the Confederate left flank. They drive Confederate forces from Matthews Hill and Bald Hill. Victory seems imminent.
+            </div>
+            <div class="timeline-item">
+              <strong>July 21, midday:</strong> Confederate reinforcements rush to Henry House Hill. Jackson's Virginia brigade anchors the line. Union attacks stall against stubborn resistance.
+            </div>
+            <div class="timeline-item">
+              <strong>July 21, afternoon:</strong> Confederate counterattacks push Union forces off the hill. Retreat becomes rout as disorganized Union troops flee toward Washington in panic, clogging roads with abandoned equipment.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>⚡ Turning Points</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Stonewall Stands:</strong> As Confederate lines wavered on Henry House Hill, General Bee rallied his men by pointing to Jackson: "There is Jackson standing like a stone wall!" The nickname stuck. Jackson's brigade held long enough for reinforcements to arrive.
+          </div>
+          <div class="list-item">
+            <strong>Railroad Reinforcements:</strong> Johnston's troops traveled by rail from the Shenandoah Valley—the first strategic use of railroads in warfare. Their timely arrival transformed near-defeat into victory.
+          </div>
+          <div class="list-item">
+            <strong>The Retreat:</strong> When Union lines broke, inexperienced troops panicked. Civilians who had come from Washington to watch the battle clogged roads with their carriages. Soldiers threw away weapons to flee faster. The army dissolved into a mob.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📊 Outcomes</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Illusions Shattered:</strong> Both North and South had expected a short war decided by a single battle. Bull Run proved the conflict would be long, bloody, and total. "On to Richmond!" became a bitter joke.
+          </div>
+          <div class="list-item">
+            <strong>Lincoln's Response:</strong> The president called for 500,000 three-year volunteers. He replaced McDowell with General George B. McClellan, who began building the Army of the Potomac into a disciplined fighting force.
+          </div>
+          <div class="list-item">
+            <strong>Confederate Overconfidence:</strong> The South celebrated but failed to capitalize. Davis and Johnston debated pursuing the broken Union army into Washington. By the time they decided, the opportunity had passed. The war would not end in 1861.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🔍 Historical Significance</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <p style="margin-bottom:1rem">First Bull Run transformed the Civil War from political theater into grim reality. Historian William C. Davis notes that "the battle was a watershed. After Bull Run, both sides knew the war would not be short or easy." The Union rout was humiliating but salutary—it forced the North to take war seriously. McClellan's months of training after Bull Run created a genuine army. For the South, victory bred dangerous overconfidence. The Confederate government failed to leverage the triumph diplomatically or militarily. Both armies would meet again at the same ground in August 1862. The patterns established at First Bull Run—Union numerical advantage offset by Confederate tactical skill, fierce fighting followed by dramatic reversal—would repeat throughout the war.</p>
+          <div class="source">
+            <strong>Primary Sources:</strong> Official reports from McDowell, Beauregard, and Johnston; letters and diaries from soldiers on both sides.
+          </div>
+          <div class="source">
+            <strong>Key Works:</strong> William C. Davis, <em>Battle at Bull Run</em> (1977); David Detzer, <em>Donnybrook: The Battle of Bull Run, 1861</em> (2004).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="back-to-top" onclick="scrollToTop()">↑</button>
+
+  <script>
+    function toggleSection(header){
+      const section = header.parentElement;
+      const allSections = document.querySelectorAll('.section');
+      allSections.forEach(s=>{
+        if(s !== section) s.classList.remove('active');
+      });
+      section.classList.toggle('active');
+    }
+
+    function scrollToTop(){
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    window.addEventListener('scroll', ()=>{
+      const btn = document.querySelector('.back-to-top');
+      if(window.scrollY > 300){
+        btn.classList.add('visible');
+      } else {
+        btn.classList.remove('visible');
+      }
+    });
+  </script>
+</body>
+</html>
