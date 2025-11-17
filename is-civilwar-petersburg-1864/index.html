@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Petersburg (1864–65)</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111833;
+      --ink:#e6ecff;
+      --muted:#a7b0cc;
+      --brand:#8bb9ff;
+      --accent:#c0ffe1;
+      --border:#26325b;
+      --chip:#1a2347;
+      --bad:#ff6b6b;
+      --shadow:0 8px 28px rgba(0,0,0,.35);
+      --radius:12px;
+      --radius-sm:8px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+      line-height:1.6;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
+        radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+      padding-bottom:2rem;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .container{max-width:860px;margin:0 auto;padding:1rem}
+
+    header{
+      background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:2rem 1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+    }
+
+    h1{
+      color:var(--ink);
+      font-size:1.75rem;
+      margin-bottom:.5rem;
+      letter-spacing:-.015em;
+    }
+
+    .subtitle{
+      color:var(--muted);
+      font-size:.95rem;
+      font-style:italic;
+    }
+
+    .breadcrumb{
+      margin-bottom:1rem;
+      font-size:.9rem;
+    }
+    .breadcrumb a{color:var(--brand);text-decoration:none}
+    .breadcrumb span{color:var(--muted)}
+
+    .main-answer{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+      border-left:4px solid var(--brand);
+    }
+
+    .main-answer h2{
+      color:var(--brand);
+      font-size:1.3rem;
+      margin-bottom:1rem;
+      letter-spacing:.01em;
+    }
+
+    .main-answer p{font-size:1.05rem;line-height:1.7}
+
+    .section{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      margin-bottom:1rem;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .section-header{
+      padding:1.1rem 1.25rem;
+      background:linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%);
+      color:var(--ink);
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      border-bottom:1px solid var(--border);
+    }
+
+    .section-header h2{
+      font-size:1.15rem;
+      font-weight:700;
+      letter-spacing:.01em;
+    }
+
+    .section-icon{font-size:1.35rem;transition:transform .3s ease}
+    .section.active .section-icon{transform:rotate(180deg)}
+
+    .section-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+    .section.active .section-content{max-height:5000px}
+
+    .section-inner{padding:1.25rem}
+
+    h3{
+      color:var(--brand);
+      font-size:1.08rem;
+      margin:1.3rem 0 .65rem 0;
+      letter-spacing:.01em;
+    }
+    h3:first-child{margin-top:0}
+
+    .list-item{
+      background:color-mix(in oklab,var(--chip) 75%, transparent);
+      border-left:3px solid var(--brand);
+      padding:1rem;
+      margin-bottom:.75rem;
+      border-radius:var(--radius-sm);
+      border:1px solid var(--border);
+    }
+
+    .timeline{
+      border-left:3px solid var(--brand);
+      padding-left:1.25rem;
+      margin-left:.5rem;
+    }
+
+    .timeline-item{
+      margin-bottom:1.25rem;
+      position:relative;
+    }
+
+    .timeline-item::before{
+      content:'';
+      position:absolute;left:-1.65rem;top:.25rem;
+      width:12px;height:12px;border-radius:50%;
+      background:var(--brand);border:3px solid var(--panel);
+      box-shadow:0 0 0 2px var(--brand);
+    }
+
+    .timeline-item:last-child{
+      margin-bottom:0;
+    }
+
+    .timeline-item:last-child::before{
+      width:16px;
+      height:16px;
+      left:-1.75rem;
+      background:var(--accent);
+      box-shadow:0 0 0 2px var(--accent);
+    }
+
+    .timeline-item strong{color:var(--brand);display:block;margin-bottom:.25rem}
+
+    .source{
+      background:color-mix(in oklab,var(--chip) 65%, transparent);
+      border-radius:8px;padding:1rem;margin-top:1.2rem;
+      font-size:.95rem;color:var(--muted);
+      border:1px solid var(--border);
+    }
+    .source strong{color:var(--ink)}
+
+    .back-to-top{
+      position:fixed;bottom:1.5rem;right:1rem;
+      background:var(--brand);color:#001;
+      width:50px;height:50px;border-radius:50%;
+      border:none;font-size:1.5rem;cursor:pointer;
+      box-shadow:var(--shadow);opacity:0;transition:opacity .3s ease;
+      z-index:1000;display:flex;align-items:center;justify-content:center;
+      font-weight:900;
+    }
+    .back-to-top.visible{opacity:1}
+    .back-to-top:active{transform:scale(.96)}
+
+    a{color:var(--brand)}
+
+    @media (max-width:480px){
+      h1{font-size:1.5rem}
+      .section-header h2{font-size:1.05rem}
+      .container{padding:.75rem}
+      header{padding:1.5rem 1rem}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="https://ewallt.github.io/pocket-deploy/is-civilwar-hub/index.html">Civil War Hub</a> <span>›</span> Petersburg
+    </div>
+
+    <header>
+      <h1>Petersburg (1864–65)</h1>
+      <p class="subtitle">The Siege That Strangled Lee's Army</p>
+    </header>
+
+    <div class="main-answer">
+      <h2>Core Summary</h2>
+      <p>From June 1864 to April 1865, Ulysses S. Grant besieged Petersburg, Virginia, the railroad junction supplying Richmond and Lee's Army of Northern Virginia. After initial assaults failed in June, Grant extended his siege lines westward, cutting Confederate supply routes one by one. Lee's army, pinned in 37 miles of trenches, slowly starved and bled from constant Union pressure. Trench warfare, continuous artillery bombardment, mining operations, and raids foreshadowed World War I by fifty years. On April 2, 1865, Grant's forces broke through Confederate lines after Philip Sheridan's cavalry cut the last rail line at Five Forks. Lee evacuated Petersburg and Richmond, retreating westward in hopes of joining Johnston's army in North Carolina. Grant pursued relentlessly for one week. On April 9, with his starving army surrounded near Appomattox Court House, Lee surrendered. Petersburg's nine-month siege was the Confederacy's death knell.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🎯 Strategic Context</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Failed Assaults:</strong> Grant attacked Petersburg's lightly defended works in June 1864, hoping to capture the city before Lee could reinforce from Cold Harbor. Confederate defenders under P.G.T. Beauregard held just long enough for Lee's army to arrive. Initial Union assaults cost 11,000 casualties and gained nothing.
+          </div>
+          <div class="list-item">
+            <strong>Siege Begins:</strong> Unable to take Petersburg by storm, Grant settled into siege warfare. He methodically extended Union lines westward, forcing Lee to stretch his already thin defenses to match each extension. Every westward shift cut another Confederate supply route.
+          </div>
+          <div class="list-item">
+            <strong>Trench Warfare:</strong> Both armies dug elaborate trench systems stretching eventually to 37 miles. Constant sniping, artillery bombardment, and raids made life miserable. Soldiers lived underground for months in dugouts and bombproofs. The siege previewed World War I's Western Front.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🪖 Forces & Commanders</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Union:</strong> Grant commanded the Army of the Potomac (under George Meade) and Army of the James (under Benjamin Butler). By war's end, over 125,000 Union troops surrounded Petersburg. Philip Sheridan's cavalry conducted raids cutting Confederate rail lines and supply routes.
+          </div>
+          <div class="list-item">
+            <strong>Confederate:</strong> Lee commanded approximately 50,000 troops defending 37 miles of trenches by early 1865. Constant westward extensions stretched Confederate lines dangerously thin—often just a single rank of soldiers. Desertion increased dramatically as soldiers saw the hopeless situation and went home to protect starving families.
+          </div>
+          <div class="list-item">
+            <strong>Casualties:</strong> Entire campaign June 1864-April 1865: Union approximately 42,000 total casualties. Confederate approximately 28,000 total casualties plus massive desertion (thousands per month by early 1865). Disease and starvation killed as many as combat.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📅 Timeline</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="timeline">
+            <div class="timeline-item">
+              <strong>June 15-18, 1864:</strong> Grant's initial assaults on Petersburg's works fail despite opportunities for success. Beauregard's outnumbered defenders hold until Lee reinforces. Grant settles into siege warfare after 11,000 Union casualties buy nothing.
+            </div>
+            <div class="timeline-item">
+              <strong>July 30, 1864:</strong> Battle of the Crater: Union miners detonate massive 8,000-pound explosion under Confederate fort, creating 170-foot-long crater. Poorly coordinated assault into the crater becomes a slaughter as Confederates fire down on trapped Union troops. 3,800 Union casualties versus 1,500 Confederate. A promising opportunity turns to disaster.
+            </div>
+            <div class="timeline-item">
+              <strong>August-December 1864:</strong> Grant extends lines westward in a series of operations. Each extension forces Lee to thin his defenses. Continuous skirmishing. Winter brings misery to soldiers living in muddy trenches. Rations dwindle on both sides but Confederate troops starve.
+            </div>
+            <div class="timeline-item">
+              <strong>January-March 1865:</strong> Lee's army slowly starves. Confederate supply lines are cut one by one as Grant extends westward. Desertion accelerates—hundreds flee nightly. Families write begging soldiers to come home and protect them from starvation. Lee knows the end approaches but duty keeps him fighting.
+            </div>
+            <div class="timeline-item">
+              <strong>April 1, 1865:</strong> Sheridan's cavalry defeats George Pickett's force at Five Forks, cutting the Southside Railroad—Lee's last remaining supply line into Petersburg. With no food possible, Lee must evacuate immediately or starve.
+            </div>
+            <div class="timeline-item">
+              <strong>April 2, 1865:</strong> Grant orders general assault all along the line. Confederate defenses, stretched impossibly thin, break at multiple points. Lee evacuates Petersburg and Richmond overnight. Richmond falls to Union troops April 3. The Confederate government flees south.
+            </div>
+            <div class="timeline-item">
+              <strong>April 3-9, 1865:</strong> Lee's army retreats west, hoping to reach Danville and join Johnston's army in North Carolina. Grant pursues relentlessly, cutting off escape routes. Running battles at Sayler's Creek, High Bridge, and elsewhere destroy portions of Lee's army. Surrounded near Appomattox Court House with his starving men at the end of their strength, Lee surrenders April 9, 1865.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>⚡ Turning Points</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Initial Failure:</strong> Grant's June 15-18 assaults could have ended the war in 1864 if properly coordinated. Beauregard held lightly defended works through brilliant bluffing. Missed opportunities forced nine more months of siege and 70,000 additional casualties.
+          </div>
+          <div class="list-item">
+            <strong>Continuous Extension:</strong> Grant's strategy of extending westward every few weeks forced Lee to stretch defenses until they snapped. Unlike traditional sieges that simply surrounded a city, Grant maintained constant offensive pressure while methodically cutting supply lines.
+          </div>
+          <div class="list-item">
+            <strong>Five Forks:</strong> Sheridan's April 1 victory cut Lee's last rail line. With no supplies possible, evacuation became inevitable within 24 hours. Five Forks made Petersburg's fall and Richmond's abandonment unavoidable.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>📊 Outcomes</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <div class="list-item">
+            <strong>Richmond Falls:</strong> Petersburg's fall forced Richmond's evacuation. The Confederate capital burned as government officials fled south. Jefferson Davis's government collapsed. The Confederacy's symbolic and administrative heart was lost.
+          </div>
+          <div class="list-item">
+            <strong>Lee's Surrender:</strong> Unable to escape Grant's pursuit or reach Johnston's army, Lee surrendered April 9 at Appomattox Court House. The Army of Northern Virginia—symbol of Confederate resistance for four years—ceased to exist. Approximately 28,000 Confederate soldiers laid down their arms.
+          </div>
+          <div class="list-item">
+            <strong>War's End:</strong> Other Confederate armies surrendered in following weeks. Johnston surrendered to Sherman April 26 in North Carolina. Remaining Confederate forces in Alabama, Mississippi, and Trans-Mississippi surrendered by late May. The Civil War effectively ended with Lee's surrender.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2>🔍 Historical Significance</h2>
+        <span class="section-icon">▼</span>
+      </div>
+      <div class="section-content">
+        <div class="section-inner">
+          <p style="margin-bottom:1rem">Petersburg represents the Civil War's final chapter and previews World War I's trench warfare by half a century. Historian Noah Andre Trudeau calls it "the longest continuous operation of the entire war." The siege's nine months of trench warfare featured soldiers living in muddy trenches, enduring constant artillery bombardment, dying from sniper fire and disease. The Battle of the Crater foreshadowed WWI mining operations. Grant's continuous extension strategy demonstrated patient, methodical generalship—he refused quick fixes, instead applying relentless pressure until Confederate lines broke from exhaustion and starvation. Lee, trapped in static defense, lost his greatest asset: mobility. The Army of Northern Virginia's slow strangulation contrasted tragically with its earlier brilliance at Chancellorsville and Second Bull Run. Starvation, desertion, and hopelessness destroyed Lee's army as surely as Grant's assaults. Petersburg proved modern industrial warfare favored the side with superior resources willing to apply them continuously and patiently. Lee's tactical genius could not overcome logistical reality—an army that cannot eat cannot fight. When Sheridan cut his last supply line at Five Forks, Lee had no choice but evacuation, retreat, and surrender. Petersburg was not dramatic like Gettysburg, but it decided the war through grinding attrition.</p>
+          <div class="source">
+            <strong>Primary Sources:</strong> Grant's Personal Memoirs, Lee's final dispatches and surrender correspondence, soldiers' descriptions of trench warfare and starvation.
+          </div>
+          <div class="source">
+            <strong>Key Works:</strong> Noah Andre Trudeau, <em>The Last Citadel: Petersburg, Virginia, June 1864-April 1865</em> (1991); A. Wilson Greene, <em>The Final Battles of the Petersburg Campaign</em> (2013); John Horn, <em>The Petersburg Campaign</em> (1993).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="back-to-top" onclick="scrollToTop()">↑</button>
+
+  <script>
+    function toggleSection(header){
+      const section = header.parentElement;
+      const allSections = document.querySelectorAll('.section');
+      allSections.forEach(s=>{
+        if(s !== section) s.classList.remove('active');
+      });
+      section.classList.toggle('active');
+    }
+
+    function scrollToTop(){
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    window.addEventListener('scroll', ()=>{
+      const btn = document.querySelector('.back-to-top');
+      if(window.scrollY > 300){
+        btn.classList.add('visible');
+      } else {
+        btn.classList.remove('visible');
+      }
+    });
+  </script>
+</body>
+</html>
