@@ -92,18 +92,19 @@
         }
         .card:hover {
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            border-color: var(--primary-color-300);
         }
         .clickable-card { cursor: pointer; }
         
-        .tag {
-            display: inline-block;
-            background-color: var(--primary-color-100);
-            color: var(--primary-color-700);
-            font-size: 0.75rem;
-            font-weight: 500;
-            padding: 0.25rem 0.5rem;
-            margin-right: 0.25rem;
-            border-radius: 0.25rem;
+        .phase-header {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--neutral-color-500);
+            border-bottom: 2px solid var(--neutral-color-200);
+            padding-bottom: 0.5rem;
         }
 
         /* Layout */
@@ -113,7 +114,7 @@
              gap: var(--space-4);
         }
         @media (min-width: 768px) {
-             .main-grid { grid-template-columns: minmax(280px, 1fr) 2fr; }
+             .main-grid { grid-template-columns: minmax(300px, 1fr) 2fr; }
         }
         .list-container {
             max-height: calc(80vh - 100px);
@@ -160,6 +161,27 @@
             box-shadow: 0 0 0 4px white;
         }
 
+        /* Musings Toggle */
+        .musings-toggle {
+            display: flex;
+            align-items: center;
+            color: var(--primary-color-600);
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--neutral-color-200);
+        }
+        .musings-toggle:hover { color: var(--primary-color-700); }
+        .chevron {
+            width: 16px;
+            height: 16px;
+            margin-left: 0.5rem;
+            transition: transform 0.2s;
+        }
+        .rotate-180 { transform: rotate(180deg); }
+
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes spin { to { transform: rotate(360deg); } }
 
@@ -184,40 +206,48 @@
         <nav id="mainNav" class="mb-6 border-b border-neutral-300 flex flex-wrap">
             <button class="tab-button active" data-tab="stages">The 12 Stages</button>
             <button class="tab-button" data-tab="generator">Journey Generator</button>
-            <button class="tab-button" data-tab="examples">Static Examples</button>
             <button class="tab-button" data-tab="glossary">Glossary</button>
             <button class="tab-button" data-tab="meta">About</button>
         </nav>
 
         <main>
+            <!-- STAGES TAB (Static Content) -->
             <section id="stagesContent" class="tab-content active">
                 <div class="prose mx-auto mb-6 text-center">
                     <h2 class="text-3xl font-bold" style="color: var(--primary-color-700);">The Monomyth Cycle</h2>
+                    <p class="text-neutral-500">Explore the three acts of the hero's transformation: Departure, Initiation, and Return.</p>
                 </div>
                 <div class="main-grid">
+                    <!-- List Container -->
                     <div id="stagesList" class="list-container space-y-2"></div>
+                    
+                    <!-- Detail View -->
                     <div id="stageDetail" class="detail-area prose">
-                        <p class="text-center text-lg text-neutral-500 mt-10">Select a stage to explore its meaning.</p>
+                        <div class="flex items-center justify-center h-64 text-neutral-400 italic">
+                            <p>Select a stage from the list to explore its archetypal meaning.</p>
+                        </div>
                     </div>
                 </div>
             </section>
 
+            <!-- JOURNEY GENERATOR TAB (AI POWERED) -->
             <section id="generatorContent" class="tab-content">
                 <div class="max-w-3xl mx-auto">
                     <div class="text-center mb-10">
                         <h2 class="text-3xl font-bold" style="color: var(--primary-color-700);">Map a New Hero</h2>
-                        <p class="text-neutral-600 mt-2">Enter any character name (fictional, historical, or your own) to generate their 12-stage journey.</p>
+                        <p class="text-neutral-600 mt-2">Enter a character name to generate their 12-stage journey using Campbellian archetypes.</p>
                     </div>
 
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-neutral-200 mb-8">
-                        <div class="grid gap-4">
+                        <div class="grid gap-6">
                             <div>
-                                <label class="block text-sm font-medium text-neutral-700 mb-1">Hero Name</label>
+                                <label class="block text-sm font-bold text-neutral-800 mb-1">Hero Name</label>
                                 <input type="text" id="heroName" class="generator-input" placeholder="e.g., Batman, Simba, Marie Curie...">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-neutral-700 mb-1">Context (Optional)</label>
-                                <input type="text" id="heroContext" class="generator-input" placeholder="e.g., The Dark Knight Trilogy, The Lion King, Historical Biography">
+                                <label class="block text-sm font-bold text-neutral-800 mb-1">Context & Core Conflict</label>
+                                <p class="text-xs text-neutral-500 mb-2">Briefly describe their world or the problem they face. (e.g., "A detective fighting a corrupt city" or "A scientist fighting for truth")</p>
+                                <input type="text" id="heroContext" class="generator-input" placeholder="Context...">
                             </div>
                             <button onclick="generateJourney()" id="genBtn" class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-md flex justify-center items-center">
                                 <span>Generate Journey</span>
@@ -229,18 +259,7 @@
                 </div>
             </section>
 
-            <section id="examplesContent" class="tab-content">
-                <div class="prose mx-auto mb-6 text-center">
-                    <h2 class="text-3xl font-bold" style="color: var(--primary-color-700);">Classic Examples</h2>
-                </div>
-                <div class="main-grid">
-                    <div id="examplesList" class="list-container space-y-2"></div>
-                    <div id="exampleDetail" class="detail-area prose">
-                         <p class="text-center text-lg text-neutral-500 mt-10">Select a hero to trace their journey.</p>
-                    </div>
-                </div>
-            </section>
-
+            <!-- GLOSSARY TAB -->
             <section id="glossaryContent" class="tab-content">
                 <div class="prose mx-auto mb-6 text-center">
                     <h2 class="text-3xl font-bold" style="color: var(--primary-color-700);">Glossary</h2>
@@ -248,11 +267,14 @@
                 <div class="main-grid">
                     <div id="glossaryList" class="list-container space-y-2"></div>
                     <div id="glossaryDetail" class="detail-area prose">
-                        <p class="text-center text-lg text-neutral-500 mt-10">Select a term to define it.</p>
+                        <div class="flex items-center justify-center h-64 text-neutral-400 italic">
+                            <p>Select a term to define it.</p>
+                        </div>
                     </div>
                 </div>
             </section>
 
+            <!-- META TAB -->
             <section id="metaContent" class="tab-content">
                 <div class="prose mx-auto mb-6">
                     <h2 class="text-center">About</h2>
@@ -273,28 +295,36 @@
         // --- STATIC DATA ---
         const kbData = {
             stages: [
-                { title: "1. Ordinary World", body: "The hero is shown in their familiar environment, revealing everyday routines, relationships, and underlying tensions that signal a need for change." },
-                { title: "2. Call to Adventure", body: "A disruptive event—messenger, discovery, or inner yearning—invites the hero to leave the status quo." },
-                { title: "3. Refusal of the Call", body: "Fear, insecurity, or obligation causes the hero to balk. This hesitation heightens dramatic tension." },
-                { title: "4. Meeting with the Mentor", body: "A wiser figure provides guidance, training, or a talisman that boosts the hero’s confidence." },
-                { title: "5. Crossing the Threshold", body: "The hero commits to the adventure, entering a realm of unknown rules and dangers." },
-                { title: "6. Tests, Allies, Enemies", body: "In the special world, the hero faces trials, gathers allies, and confronts adversaries." },
-                { title: "7. Approach to Inmost Cave", body: "The hero and allies prepare for a central ordeal, strategizing and confronting inner doubts." },
-                { title: "8. The Ordeal", body: "A climactic crisis—often life-or-death—pushes the hero to the brink, forcing a metaphorical death and rebirth." },
-                { title: "9. Reward", body: "Having survived the ordeal, the hero claims the treasure—physical prize, secret knowledge, or reconciliation." },
-                { title: "10. The Road Back", body: "The hero recommits to finishing the adventure, heading toward home or a final showdown." },
-                { title: "11. Resurrection", body: "A final, often cosmic test purifies the hero; lessons learned are applied under maximum pressure." },
-                { title: "12. Return with Elixir", body: "The hero brings back the boon—wisdom, healing, or literal treasure—to benefit the ordinary world." }
-            ],
-            examples: [
-                { title: "Neo (The Matrix)", body: "Neo begins in the mundane world of Thomas Anderson. His call is the message 'Follow the white rabbit'. Morpheus acts as the Mentor. The red pill is the Threshold. He battles Agents (Enemies) and trains with the crew (Allies). His Resurrection occurs when he stops the bullets and sees the code." },
-                { title: "Frodo Baggins", body: "Frodo starts in the Shire. The Ring is his Call. Gandalf is the Mentor. Leaving the Shire crosses the Threshold. The Fellowship are his Allies; the Nazgul his Enemies. The Ordeal is Shelob's Lair and Mt Doom. The Elixir is the peace brought to Middle Earth, though he cannot stay." }
+                // ACT I: SEPARATION
+                { id: 1, title: "1. Ordinary World", phase: "Departure", body: "The hero is shown in their familiar environment, revealing everyday routines, relationships, and underlying tensions that signal a need for change.", musing: "I often see this 'ordinary' place not merely as a setting, but as a reflection of a soul not yet awakened to its full potential." },
+                { id: 2, title: "2. Call to Adventure", phase: "Departure", body: "A disruptive event—messenger, discovery, or inner yearning—invites the hero to leave the status quo and face the unknown.", musing: "It’s the universe knocking, signaling that the time for transformation is at hand, whether one feels ready or not." },
+                { id: 3, title: "3. Refusal of the Call", phase: "Departure", body: "Fear, insecurity, or obligation causes the hero to balk. This hesitation heightens dramatic tension and emphasizes the risks.", musing: "To refuse the call is often to refuse life itself, clinging to the drying roots of the past." },
+                { id: 4, title: "4. Meeting with the Mentor", phase: "Departure", body: "A wiser figure provides guidance, training, or a talisman that boosts the hero’s confidence to face the journey.", musing: "This figure represents the benign, guiding aspect of the unconscious, a helper on the path." },
+                { id: 5, title: "5. Crossing the Threshold", phase: "Departure", body: "The hero commits to the adventure, entering a realm of unknown rules and dangers. There is no turning back.", musing: "A step into a sphere of reborn power, where the familiar laws and limits no longer apply." },
+                
+                // ACT II: INITIATION
+                { id: 6, title: "6. Tests, Allies, Enemies", phase: "Initiation", body: "In the special world, the hero faces trials, gathers allies, and confronts adversaries, learning the new rules.", musing: "The crucible where the hero truly begins to understand the new rules of engagement." },
+                { id: 7, title: "7. Approach to Inmost Cave", phase: "Initiation", body: "The hero and allies prepare for a central ordeal, strategizing and confronting inner doubts before the main danger.", musing: "A descent into the deepest part of the psyche, where the ultimate boon and danger lie." },
+                { id: 8, title: "8. The Ordeal", phase: "Initiation", body: "A climactic crisis—often life-or-death—pushes the hero to the brink, forcing a metaphorical death and rebirth.", musing: "Here, the hero confronts their deepest fears, touching the void to find illumination." },
+                { id: 9, title: "9. Reward", phase: "Initiation", body: "Having survived the ordeal, the hero claims the treasure—physical prize, secret knowledge, or reconciliation.", musing: "The 'elixir' is often a profound insight or reconciliation with the self." },
+                
+                // ACT III: RETURN
+                { id: 10, title: "10. The Road Back", phase: "Return", body: "The hero recommits to finishing the adventure, heading toward home or a final showdown with the antagonist.", musing: "The hero must navigate the return to the ordinary world, which may resist this newfound wisdom." },
+                { id: 11, title: "11. Resurrection", phase: "Return", body: "A final, often cosmic test purifies the hero; lessons learned are applied under maximum pressure to save the world.", musing: "The hero demonstrates mastery over life and death, fear and desire." },
+                { id: 12, title: "12. Return with Elixir", phase: "Return", body: "The hero brings back the boon—wisdom, healing, or literal treasure—to benefit the ordinary world.", musing: "The true culmination, where the hero shares the life-transmuting trophy to renew the world." }
             ],
             glossary: [
-                { title: "Archetype", body: "A universally understood symbol, term, or pattern of behavior; a prototype upon which others are copied." },
-                { title: "Monomyth", body: "Campbell's term for the common template of hero stories: A hero ventures forth from the world of common day into a region of supernatural wonder." }
+                { title: "Archetype", body: "A universally understood symbol, term, or pattern of behavior; a prototype upon which others are copied. (e.g., The Hero, The Mentor, The Shadow)." },
+                { title: "Apotheosis", body: "A stage of realization where the hero achieves a god-like state of understanding, often characterized by a state of peace, love, and lack of ego." },
+                { title: "Belly of the Whale", body: "The final separation from the hero's known world and self. It is the point when the hero enters the zone of danger and is swallowed by the unknown." },
+                { title: "Freedom to Live", body: "The final result of the journey. Having conquered the fear of death, the hero lives in the moment, neither anticipating the future nor regretting the past." },
+                { title: "Master of Two Worlds", body: "The hero achieves a balance between the material and spiritual worlds, becoming comfortable and competent in both." },
+                { title: "Monomyth", body: "Campbell's term for the common template of hero stories: A hero ventures forth from the world of common day into a region of supernatural wonder." },
+                { title: "The Shadow", body: "The archetype of the antagonist, often representing the hero's own repressed fears, dark side, or rejected qualities." },
+                { title: "The Ultimate Boon", body: "The achievement of the goal of the quest. It is what the hero went on the journey to get." },
+                { title: "Threshold Guardian", body: "Figures who stand at the boundaries of the world, testing the hero's resolve before allowing them to pass." }
             ],
-            meta: { version: "2.0 (AI Enabled)", description: "A Single-Page Application exploring Joseph Campbell's Monomyth. Enter a character name in the Generator tab to see their story mapped to the 12 stages." }
+            meta: { version: "3.2 (Expanded Glossary)", description: "A Single-Page Application exploring Joseph Campbell's Monomyth. Enter a character name in the Generator tab to see their story mapped to the 12 stages." }
         };
 
         // --- UI Logic ---
@@ -323,24 +353,30 @@
 
         // --- Rendering Helpers ---
         function renderLists() {
-            // Render Stages
+            // Render Stages with Act Headers
             const stagesList = document.getElementById('stagesList');
-            kbData.stages.forEach(item => {
-                const card = createCard(item.title, () => showDetail('stageDetail', item));
-                stagesList.appendChild(card);
-            });
+            let currentPhase = "";
 
-            // Render Examples
-            const exList = document.getElementById('examplesList');
-            kbData.examples.forEach(item => {
-                const card = createCard(item.title, () => showDetail('exampleDetail', item));
-                exList.appendChild(card);
+            kbData.stages.forEach(item => {
+                // Check if we need a new phase header
+                if (item.phase !== currentPhase) {
+                    const header = document.createElement('div');
+                    header.className = "phase-header";
+                    header.innerText = item.phase === "Departure" ? "Act I: The Separation" :
+                                       item.phase === "Initiation" ? "Act II: The Initiation" :
+                                       "Act III: The Return";
+                    stagesList.appendChild(header);
+                    currentPhase = item.phase;
+                }
+
+                const card = createCard(item.title, () => showStageDetail(item));
+                stagesList.appendChild(card);
             });
 
             // Render Glossary
             const glossList = document.getElementById('glossaryList');
             kbData.glossary.forEach(item => {
-                const card = createCard(item.title, () => showDetail('glossaryDetail', item));
+                const card = createCard(item.title, () => showGlossaryDetail(item));
                 glossList.appendChild(card);
             });
         }
@@ -353,8 +389,32 @@
             return div;
         }
 
-        function showDetail(containerId, item) {
-            const container = document.getElementById(containerId);
+        // Expanded Detail View with Musings Toggle
+        function showStageDetail(item) {
+            const container = document.getElementById('stageDetail');
+            container.innerHTML = `
+                <h3 class="text-2xl font-bold text-sky-700 mb-3">${item.title}</h3>
+                <p class="text-lg leading-relaxed mb-4">${item.body}</p>
+                
+                <div class="musings-toggle" onclick="toggleMusings(this)">
+                    <span>Campbell's Musings</span>
+                    <svg class="chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+                <div class="hidden mt-3 p-4 bg-sky-50 text-sky-900 italic rounded border-l-4 border-sky-400">
+                    "${item.musing}"
+                </div>
+            `;
+        }
+
+        function toggleMusings(btn) {
+            const content = btn.nextElementSibling;
+            const chevron = btn.querySelector('.chevron');
+            content.classList.toggle('hidden');
+            chevron.classList.toggle('rotate-180');
+        }
+
+        function showGlossaryDetail(item) {
+            const container = document.getElementById('glossaryDetail');
             container.innerHTML = `
                 <h3 class="text-2xl font-bold text-sky-700 mb-3">${item.title}</h3>
                 <p class="text-lg leading-relaxed">${item.body}</p>
@@ -368,7 +428,7 @@
             if (versionEl) versionEl.innerText = kbData.meta.version;
         }
 
-        // --- AI GENERATOR LOGIC (Using gemini-1.5-flash) ---
+        // --- AI GENERATOR LOGIC (Gemini 2.5 Flash) ---
         async function generateJourney() {
             const name = document.getElementById('heroName').value;
             const context = document.getElementById('heroContext').value;
