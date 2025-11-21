@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Scott Shorts Hub</title>
+  <title>Scott's Shorts Hub</title>
   <style>
     :root{
       --bg:#0b1020;
@@ -59,13 +59,41 @@
       font-style:italic;
     }
 
+    .toolbar{
+      display:flex;gap:.75rem;flex-wrap:wrap;
+      margin:1rem 0 1.25rem 0;
+    }
+
+    .search{
+      flex:1 1 320px;
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:999px;
+      display:flex;align-items:center;gap:.5rem;
+      padding:.65rem .9rem;
+      box-shadow:var(--shadow);
+    }
+    .search input{
+      width:100%;border:none;background:transparent;color:var(--ink);
+      outline:none;font-size:1rem;
+    }
+
+    .chip{
+      background:color-mix(in oklab,var(--chip) 75%, transparent);
+      border:1px solid var(--border);
+      color:var(--ink);
+      padding:.5rem .75rem;border-radius:999px;
+      font-size:.9rem;cursor:pointer;user-select:none;
+    }
+    .chip.active{outline:2px solid var(--brand)}
+
     .grid{
       display:grid;
       grid-template-columns:repeat(3, minmax(0,1fr));
       gap:1rem;
     }
-    @media (max-width:820px){ .grid{grid-template-columns:repeat(2, minmax(0,1fr));} }
-    @media (max-width:520px){ .grid{grid-template-columns:1fr;} }
+    @media (max-width:980px){ .grid{grid-template-columns:repeat(2, minmax(0,1fr));} }
+    @media (max-width:640px){ .grid{grid-template-columns:1fr;} }
 
     .card{
       background:var(--panel);
@@ -74,9 +102,15 @@
       padding:1rem;
       box-shadow:var(--shadow);
       display:flex;flex-direction:column;gap:.6rem;
-      transition:transform .15s ease, border-color .2s ease;
       position:relative;
       overflow:hidden;
+      transition:transform .15s ease, border-color .2s ease;
+    }
+    .card::after{
+      content:'';
+      position:absolute;inset:0;
+      background:radial-gradient(400px 160px at 110% -10%, rgba(139,185,255,.10), transparent 60%);
+      pointer-events:none;
     }
     .card:hover{transform:translateY(-2px);border-color:color-mix(in oklab,var(--brand) 60%, var(--border))}
     .card h3{
@@ -84,6 +118,14 @@
     }
     .card p{
       color:var(--muted);font-size:.95rem;line-height:1.5;min-height:3.2em;
+    }
+
+    .tagrow{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.2rem}
+    .tag{
+      font-size:.75rem;color:var(--ink);
+      background:color-mix(in oklab,var(--chip) 65%, transparent);
+      border:1px solid var(--border);
+      padding:.25rem .5rem;border-radius:999px;
     }
 
     .actions{display:flex;gap:.5rem;margin-top:.35rem}
@@ -94,34 +136,129 @@
       color:#e6ecff;border:1px solid var(--border);
       padding:.55rem .7rem;border-radius:10px;font-weight:600;font-size:.9rem;
     }
+
+    footer{
+      margin-top:1.25rem;
+      color:var(--muted);
+      font-size:.88rem;text-align:center;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>Scott Shorts</h1>
-      <p class="subtitle">Small windows into the heart of God’s love</p>
+      <h1>Scott Shorts Hub</h1>
+      <p class="subtitle">Concise reflections on God’s character, judgment, sanctuary, and heaven.</p>
+      <div class="toolbar">
+        <div class="search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M21 21l-4.2-4.2M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          <input id="searchInput" type="search" placeholder="Filter by title, theme, or tags…" autocomplete="off"/>
+        </div>
+        <button class="chip" data-tag="all">All</button>
+        <button class="chip" data-tag="love">Love & Relationships</button>
+        <button class="chip" data-tag="character">Character of God</button>
+        <button class="chip" data-tag="sanctuary">Sanctuary & Rest</button>
+        <button class="chip" data-tag="judgment">Judgment</button>
+        <button class="chip" data-tag="heaven">Heaven & Hope</button>
+      </div>
     </header>
 
     <main>
-      <div class="grid">
-        <article class="card">
-          <h3>How Many Reasons Do You Have Not to Love People?</h3>
-          <p>Jesus dismantles our “good reasons” for withholding love and invites us into His kind of love.</p>
-          <div class="actions">
-            <a class="btn" href="https://ewallt.github.io/pocket-deploy/is-scott-shorts-01/index.html">Open</a>
-          </div>
-        </article>
-
-        <article class="card">
-          <h3>Which God Lives in Your Temple?</h3>
-          <p>Jesus cleanses the false picture of God from the inner sanctuary of the mind and restores the true Father.</p>
-          <div class="actions">
-            <a class="btn" href="https://ewallt.github.io/pocket-deploy/is-scott-shorts-02/index.html">Open</a>
-          </div>
-        </article>
-      </div>
+      <div id="grid" class="grid" aria-live="polite"></div>
     </main>
+
+    <footer>Public view: “Open” only. Owner page can include “Edit.”</footer>
   </div>
+
+  <script>
+    const apps = [
+      {
+        id:"is-scott-shorts-01",
+        title:"How Many Reasons Do You Have Not to Love People?",
+        blurb:"Jesus dismantles our “good reasons” for withholding love and shows us the Father who loves enemies.",
+        tags:["love","character"],
+        view:"https://ewallt.github.io/pocket-deploy/is-scott-shorts-01/index.html"
+      },
+      {
+        id:"is-scott-shorts-02",
+        title:"Which God Lives in Your Temple?",
+        blurb:"Jesus cleanses our inner picture of God, driving out fear-based images and restoring the Father of mercy.",
+        tags:["character","sanctuary"],
+        view:"https://ewallt.github.io/pocket-deploy/is-scott-shorts-02/index.html"
+      },
+      {
+        id:"is-scott-shorts-03",
+        title:"Sanctuary: A Place of Rest",
+        blurb:"From wilderness tent to the most holy place of the mind—Jesus as our true sanctuary and High Priest of peace.",
+        tags:["sanctuary","rest","character"],
+        view:"https://ewallt.github.io/pocket-deploy/is-scott-shorts-03/index.html"
+      },
+      {
+        id:"is-scott-shorts-04",
+        title:"Judgment: Light, Love, and Our Choice",
+        blurb:"Judgment as the revelation of God’s love in Christ, where our response to the light discloses our destiny.",
+        tags:["judgment","character","gospel"],
+        view:"https://ewallt.github.io/pocket-deploy/is-scott-shorts-04/index.html"
+      },
+      {
+        id:"is-scott-shorts-05",
+        title:"Heaven: Where Does God Live?",
+        blurb:"From cosmic courtyard to living temples—God’s true dwelling is “Christ in you, the hope of glory.”",
+        tags:["heaven","sanctuary","hope","character"],
+        view:"https://ewallt.github.io/pocket-deploy/is-scott-shorts-05/index.html"
+      }
+    ];
+
+    const grid = document.getElementById('grid');
+    const searchInput = document.getElementById('searchInput');
+    const chips = Array.from(document.querySelectorAll('.chip'));
+    let activeTag = 'all';
+
+    function makeCard(app){
+      const el = document.createElement('article');
+      el.className = 'card';
+      el.dataset.tags = app.tags.join(' ').toLowerCase();
+      el.dataset.title = app.title.toLowerCase();
+      el.innerHTML = `
+        <h3>${app.title}</h3>
+        <p>${app.blurb}</p>
+        <div class="tagrow">
+          ${app.tags.map(t=>`<span class="tag">#${t}</span>`).join('')}
+        </div>
+        <div class="actions">
+          <a class="btn" href="${app.view}">Open</a>
+        </div>
+      `;
+      return el;
+    }
+
+    function render(){
+      grid.innerHTML = '';
+      const q = (searchInput.value || '').trim().toLowerCase();
+      apps
+        .filter(a=>{
+          const tagOk = activeTag==='all' ? true : a.tags.map(t=>t.toLowerCase()).includes(activeTag);
+          const text = (a.title + ' ' + a.blurb + ' ' + a.tags.join(' ')).toLowerCase();
+          const qOk = !q || text.includes(q);
+          return tagOk && qOk;
+        })
+        .forEach(a=>grid.appendChild(makeCard(a)));
+    }
+
+    searchInput.addEventListener('input', render);
+    chips.forEach(chip=>{
+      chip.addEventListener('click', ()=>{
+        chips.forEach(c=>c.classList.remove('active'));
+        chip.classList.add('active');
+        activeTag = chip.dataset.tag;
+        render();
+      });
+    });
+
+    document.querySelector('.chip[data-tag="all"]').classList.add('active');
+    render();
+  </script>
 </body>
 </html>
