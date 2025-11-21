@@ -117,23 +117,21 @@
     </div>
 
     <script>
-        const APP_ID = "as-ww2-battle"; // Namespace matching the child app
+        // UPDATED: Uses dash separator to match Child
+        const APP_ID = "as-ww2-battle-"; 
 
         // --- Navigation Logic ---
         function launchMission(event) {
-            if (event) event.preventDefault(); // Stop page refresh
+            if (event) event.preventDefault(); 
             
             const input = document.getElementById('battleRequest');
             const btn = document.getElementById('launchBtn');
             const query = input.value.trim();
             
             if (query) {
-                // Visual Feedback
                 btn.innerText = "Mobilizing...";
                 btn.disabled = true;
-                
-                // Redirect to child template with query param
-                // Uses window.location.assign for robust redirection
+                // Redirects to the single template, passing the battle name
                 window.location.assign(`index.html?q=${encodeURIComponent(query)}`);
             }
         }
@@ -143,7 +141,7 @@
             const grid = document.getElementById('grid');
             const emptyState = document.getElementById('emptyState');
             
-            // Filter storage for our specific app ID keys
+            // 1. Find all keys that belong to this specific app namespace
             const keys = Object.keys(localStorage).filter(k => k.startsWith(APP_ID));
 
             if (keys.length === 0) {
@@ -151,12 +149,13 @@
                 return;
             }
 
-            // Render cards for existing battles
+            // 2. Generate a card for each saved battle
             keys.forEach(key => {
                 try {
                     const data = JSON.parse(localStorage.getItem(key));
                     
                     const card = document.createElement('a');
+                    // The link re-uses index.html but loads specific data
                     card.href = `index.html?q=${encodeURIComponent(data.title)}`;
                     card.className = 'card';
                     card.innerHTML = `
