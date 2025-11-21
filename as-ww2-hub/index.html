@@ -117,21 +117,24 @@
     </div>
 
     <script>
-        // UPDATED: Uses dash separator to match Child
+        // CONFIGURATION: Must match index.html exactly
         const APP_ID = "as-ww2-battle-"; 
 
         // --- Navigation Logic ---
         function launchMission(event) {
-            if (event) event.preventDefault(); 
+            if (event) event.preventDefault(); // Stop page refresh
             
             const input = document.getElementById('battleRequest');
             const btn = document.getElementById('launchBtn');
             const query = input.value.trim();
             
             if (query) {
+                // Visual Feedback so you know it's working
                 btn.innerText = "Mobilizing...";
                 btn.disabled = true;
-                // Redirects to the single template, passing the battle name
+                
+                // Redirect to child template with query param
+                // This assumes index.html is in the SAME folder
                 window.location.assign(`index.html?q=${encodeURIComponent(query)}`);
             }
         }
