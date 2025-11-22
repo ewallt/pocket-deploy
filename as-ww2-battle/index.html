@@ -123,30 +123,25 @@
 <body>
   <div class="container">
     <div class="breadcrumb">
-      <a href="hub.html">WWII Command Center</a> <span>›</span> Battle Analyzer
+      <a href="../as-ww2-hub/index.html">WWII Command Center</a> <span>›</span> Battle Analyzer
     </div>
 
-    <!-- Input Section -->
     <div class="search-box">
         <input type="text" id="battleInput" class="search-input" placeholder="Enter a battle (e.g. Stalingrad, Waterloo, Tet Offensive)..." value="Pearl Harbor (1941)">
         <button id="analyzeBtn" class="search-btn" onclick="handleRequest()">Request Intelligence</button>
     </div>
 
-    <!-- Dynamic Content Container -->
     <div id="reportContainer">
-        <!-- Header -->
         <header>
           <h1 id="r-title">Pearl Harbor (1941)</h1>
           <p class="subtitle" id="r-subtitle">The Surprise Attack that Brought the United States into World War II</p>
         </header>
 
-        <!-- Core Summary -->
         <section class="main-answer">
           <h2>Core Summary</h2>
           <p id="r-summary">On December 7, 1941, Japan launched a surprise aerial attack on the U.S. Pacific Fleet at Pearl Harbor, Hawaii. In less than two hours, over 2,400 Americans were killed, eight battleships damaged or sunk, and numerous aircraft destroyed. The attack galvanized the United States, leading Congress to declare war on Japan the following day.</p>
         </section>
 
-        <!-- Strategic Context -->
         <section class="section active">
           <div class="section-header" onclick="toggleSection(this)">
             <h2>🎯 Strategic Context</h2>
@@ -160,7 +155,6 @@
           </div>
         </section>
 
-        <!-- Overview -->
         <section class="section active">
           <div class="section-header" onclick="toggleSection(this)">
             <h2>⚔️ Combat Overview</h2>
@@ -174,7 +168,6 @@
           </div>
         </section>
 
-        <!-- Timeline -->
         <section class="section active">
           <div class="section-header" onclick="toggleSection(this)">
             <h2>📜 Timeline of Events</h2>
@@ -190,7 +183,6 @@
           </div>
         </section>
 
-        <!-- Turning Points -->
         <section class="section">
           <div class="section-header" onclick="toggleSection(this)">
             <h2>⚡ Turning Points / Key Factors</h2>
@@ -203,7 +195,6 @@
           </div>
         </section>
 
-        <!-- Outcomes -->
         <section class="section">
           <div class="section-header" onclick="toggleSection(this)">
             <h2>🏁 Outcomes & Consequences</h2>
@@ -216,7 +207,6 @@
           </div>
         </section>
 
-        <!-- Significance -->
         <section class="section">
           <div class="section-header" onclick="toggleSection(this)">
             <h2>🏰 Historical Significance</h2>
@@ -229,7 +219,6 @@
           </div>
         </section>
 
-        <!-- Sources -->
         <section class="section">
           <div class="section-header" onclick="toggleSection(this)">
             <h2>📚 Sources</h2>
@@ -251,6 +240,7 @@
 
   <script>
     // --- CONFIGURATION ---
+    // Domain-restricted key
     const API_KEY = "AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A"; 
     
     // APP_ID Must Match the Hub
@@ -290,8 +280,7 @@
         const btn = document.getElementById('analyzeBtn');
         const container = document.getElementById('reportContainer');
         
-        // 2. Create a cache key: "as-ww2-battle-PearlHarbor"
-        // We replace non-alphanumeric chars with nothing, preserving case.
+        // 2. Create a cache key
         const cacheKey = APP_ID + input.replace(/[^a-zA-Z0-9]/g, '');
 
         // 3. Check Local Storage First
@@ -300,12 +289,7 @@
         if (cachedData) {
             console.log("Loaded from cache");
             renderReport(JSON.parse(cachedData));
-            btn.innerText = "Intel Retrieved from Archives";
-            btn.classList.add("bg-green-600", "text-white");
-            setTimeout(() => { 
-                btn.innerText = "Request Intelligence"; 
-                btn.classList.remove("bg-green-600", "text-white");
-            }, 3000);
+            updateButtonState(btn, "Intel Retrieved", "success");
             return;
         }
 
@@ -335,19 +319,30 @@
         }
     }
 
+    function updateButtonState(btn, text, type) {
+        const originalText = "Request Intelligence";
+        btn.innerText = text;
+        if (type === "success") btn.classList.add("bg-green-600", "text-white");
+        
+        setTimeout(() => { 
+            btn.innerText = originalText; 
+            btn.classList.remove("bg-green-600", "text-white");
+        }, 3000);
+    }
+
     async function fetchBattleData(query) {
         const prompt = `
             Role: Military Historian.
             Task: Analyze the World War II battle/event: "${query}".
-            Format: STRICT JSON. No Markdown.
+            Format: STRICT JSON. No Markdown. No code blocks.
             Schema:
             {
                 "title": "Formal Name of Battle",
                 "subtitle": "A one-sentence thematic summary",
                 "summary": "A paragraph overview (3-4 sentences).",
-                "context": [{"label": "Bold Header", "text": "Description"}, {"label": "Bold Header", "text": "Description"}],
+                "context": [{"label": "Bold Header", "text": "Description"}],
                 "overview": [{"label": "Force A", "text": "Details"}, {"label": "Force B", "text": "Details"}, {"label": "Key Tactic", "text": "Details"}],
-                "timeline": [{"time": "Date/Time", "event": "Description"}, {"time": "Date/Time", "event": "Description"}],
+                "timeline": [{"time": "Date/Time", "event": "Description"}],
                 "turning_points": [{"label": "Turning Point", "text": "Why it mattered"}],
                 "outcomes": [{"label": "Outcome", "text": "Description"}],
                 "significance": [{"label": "Legacy", "text": "Why it matters historically"}],
