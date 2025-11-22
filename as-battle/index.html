@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Command Center | Battle Archives</title>
+    <title>WWII Command Center | Battle Archives</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root { 
@@ -73,40 +73,44 @@
             transition: opacity 0.2s;
         }
         .action-btn:hover { opacity: 0.9; }
+        .action-btn:disabled { opacity: 0.5; cursor: wait; }
     </style>
 </head>
 <body>
     <div class="max-w-5xl mx-auto">
         <header class="mb-8 text-center">
-            <h1 class="text-4xl font-bold text-[--brand] mb-2">Command Center</h1>
-            <p class="text-[#a7b0cc]">Archive of Analyzed Engagements</p>
+            <h1 class="text-4xl font-bold text-[--brand] mb-2">WWII Command Center</h1>
+            <p class="text-[#a7b0cc]">Pacific & European Theater Archives</p>
         </header>
 
-        <!-- The Input Zone (New Addition) -->
+        <!-- The Input Zone -->
         <div class="input-zone">
-            <label for="battleRequest" class="input-label">What battle would you like to see?</label>
-            <div class="flex flex-col items-center gap-4">
+            <label for="battleRequest" class="input-label">Which WWII engagement do you wish to analyze?</label>
+            
+            <!-- Wrapped in Form for native Enter key support -->
+            <form onsubmit="launchMission(event)" class="flex flex-col items-center gap-4">
                 <input 
                     type="text" 
                     id="battleRequest" 
                     class="main-input" 
-                    placeholder="Battle" 
+                    placeholder="e.g. Midway, Stalingrad, D-Day..." 
                     autocomplete="off"
-                    onkeypress="handleEnter(event)"
+                    required
                 >
-                <button onclick="launchMission()" class="action-btn">Initialize Analysis</button>
-            </div>
+                <button type="submit" id="launchBtn" class="action-btn">Initialize Analysis</button>
+            </form>
         </div>
 
         <!-- The Grid -->
         <div class="flex items-center gap-4 mb-6">
             <div class="h-px bg-[#26325b] flex-grow"></div>
-            <span class="text-[#59658a] text-sm uppercase tracking-widest font-bold">Archives</span>
+            <span class="text-[#59658a] text-sm uppercase tracking-widest font-bold">Declassified Archives</span>
             <div class="h-px bg-[#26325b] flex-grow"></div>
         </div>
 
+        <!-- THE GRID CONTAINER (Crucial for the script to find!) -->
         <div id="grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Empty State -->
+            <!-- Empty State (Crucial for the script to find!) -->
             <div id="emptyState" class="hidden col-span-full text-center py-12 text-[#a7b0cc] border border-dashed border-[#26325b] rounded-xl">
                 <p class="opacity-50">Archives Empty. Request a battle above to begin.</p>
             </div>
@@ -114,20 +118,26 @@
     </div>
 
     <script>
-        const APP_ID = "as-battle_"; // Namespace matching the child app
+        // CONFIGURATION: Must match index.html exactly
+        const APP_ID = "as-ww2-battle-"; 
 
         // --- Navigation Logic ---
-        function launchMission() {
+        function launchMission(event) {
+            if (event) event.preventDefault(); // Stop page refresh
+            
             const input = document.getElementById('battleRequest');
+            const btn = document.getElementById('launchBtn');
             const query = input.value.trim();
+            
             if (query) {
+                // Visual Feedback
+                btn.innerText = "Mobilizing...";
+                btn.disabled = true;
+                
                 // Redirect to child template with query param
-                window.location.href = `index.html?q=${encodeURIComponent(query)}`;
+                // Uses window.location.assign for robust redirection
+                window.location.assign(`index.html?q=${encodeURIComponent(query)}`);
             }
-        }
-
-        function handleEnter(e) {
-            if (e.key === 'Enter') launchMission();
         }
 
         // --- Archive Loading Logic ---
@@ -135,6 +145,12 @@
             const grid = document.getElementById('grid');
             const emptyState = document.getElementById('emptyState');
             
+            // Safety Check: If elements are missing, stop script to avoid crash
+            if (!grid || !emptyState) {
+                console.error("Critical Error: Grid or EmptyState element missing from HTML.");
+                return;
+            }
+
             // Filter storage for our specific app ID keys
             const keys = Object.keys(localStorage).filter(k => k.startsWith(APP_ID));
 
