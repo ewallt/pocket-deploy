@@ -14,6 +14,7 @@
       --accent:#c0ffe1;
       --border:#26325b;
       --chip:#1a2347;
+      --danger: #ff6b6b;
       --shadow:0 8px 28px rgba(0,0,0,.35);
       --radius:14px;
       --radius-sm:10px;
@@ -162,8 +163,33 @@
     }
     .card:hover{transform:translateY(-4px);border-color:color-mix(in oklab,var(--brand) 60%, var(--border))}
     
+    /* DELETE BUTTON STYLES */
+    .delete-btn {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: transparent;
+        border: 1px solid transparent;
+        color: var(--muted);
+        cursor: pointer;
+        opacity: 0; /* Hidden until hover */
+        transition: all 0.2s;
+        padding: 4px 8px;
+        border-radius: 6px;
+        z-index: 10;
+        font-weight: bold;
+        font-size: 1.1rem;
+        line-height: 1;
+    }
+    .card:hover .delete-btn { opacity: 1; }
+    .delete-btn:hover { 
+        background: rgba(255, 107, 107, 0.1); 
+        color: var(--danger); 
+        border-color: rgba(255, 107, 107, 0.3);
+    }
+    
     .card h3{
-      color:var(--brand);font-size:1.25rem;letter-spacing:.01em; margin-bottom: 0.5rem;
+      color:var(--brand);font-size:1.25rem;letter-spacing:.01em; margin-bottom: 0.5rem; padding-right: 2rem;
     }
     .card p{
       color:var(--muted);font-size:.95rem;line-height:1.5;
@@ -200,7 +226,6 @@
       <h1>WWII Command Center</h1>
       <p class="subtitle">Pacific & European Theater Archives</p>
       
-      <!-- NEW BATTLE REQUEST -->
       <div class="request-box">
         <label style="text-align:left; font-size: 0.9rem; color: var(--brand); font-weight: 600;">Initialize New Analysis</label>
         <form onsubmit="launchMission(event)" class="request-input-group">
@@ -211,7 +236,6 @@
     </header>
 
     <main>
-        <!-- FILTER TOOLBAR -->
         <div class="toolbar">
             <div class="section-title">Declassified Archives</div>
             <div class="filter-search">
@@ -220,10 +244,8 @@
             </div>
         </div>
 
-        <!-- DYNAMIC GRID -->
         <div id="grid" class="grid"></div>
         
-        <!-- EMPTY STATE -->
         <div id="emptyState" class="hidden" style="text-align:center; padding: 4rem; color: var(--muted); border: 2px dashed var(--border); border-radius: var(--radius);">
             Archives Empty. Use the command box above to generate your first report.
         </div>
@@ -252,7 +274,31 @@
         }
     }
 
-    // 2. RENDER ARCHIVES (Reads from LocalStorage)
+    // 2. EXPUNGE (DELETE) LOGIC
+    window.expungeRecord = function(event, key) {
+        // Prevent the <a> tag from firing (navigation)
+        event.preventDefault();
+        event.stopPropagation();
+
+        if(confirm("CONFIRMATION REQUIRED:\nPermanently expunge this record from the archives?")) {
+            // 1. Remove from Storage
+            localStorage.removeItem(key);
+            
+            // 2. Remove from DOM immediately
+            const card = event.target.closest('.card');
+            if (card) {
+                card.remove();
+            }
+
+            // 3. Check if grid is now empty
+            const keys = Object.keys(localStorage).filter(k => k.startsWith(APP_ID));
+            if (keys.length === 0) {
+                document.getElementById('emptyState').classList.remove('hidden');
+            }
+        }
+    }
+
+    // 3. RENDER ARCHIVES (Reads from LocalStorage)
     document.addEventListener('DOMContentLoaded', () => {
         const grid = document.getElementById('grid');
         const emptyState = document.getElementById('emptyState');
@@ -276,7 +322,9 @@
                 el.href = `../as-ww2-battle/index.html?id=${key}`; 
                 el.dataset.search = (data.title + " " + data.summary).toLowerCase();
                 
+                // Added Delete Button with stopPropagation
                 el.innerHTML = `
+                    <button class="delete-btn" onclick="window.expungeRecord(event, '${key}')" title="Expunge Record">×</button>
                     <h3>${data.title}</h3>
                     <p>${data.summary}</p>
                     <div class="meta">
@@ -292,7 +340,7 @@
         const cards = keys.map(createCard).filter(c => c !== null);
         cards.forEach(c => grid.appendChild(c));
 
-        // 3. CLIENT-SIDE FILTERING
+        // 4. CLIENT-SIDE FILTERING
         filterInput.addEventListener('input', (e) => {
             const term = e.target.value.toLowerCase();
             cards.forEach(card => {
