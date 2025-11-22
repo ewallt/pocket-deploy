@@ -11,7 +11,7 @@
       --panel:#111833;
       --ink:#e6ecff;
       --muted:#a7b0cc;
-      --brand:#8bb9ff;
+      --brand:#8bb9ff; /* Default Blue */
       --accent:#c0ffe1;
       --border:#26325b;
       --chip:#1a2347;
@@ -31,11 +31,11 @@
       line-height:1.6;
       min-height:100vh;
       padding-bottom:2rem;
+      transition: --brand 0.5s ease;
     }
     
-    /* RENAMED to avoid Tailwind conflict */
     .content-wrapper{
-        max-width:860px; /* Restored to your preferred width */
+        max-width:860px;
         margin:0 auto;
         padding:1rem;
     }
@@ -149,7 +149,7 @@
           <p id="r-summary">On December 7, 1941, Japan launched a surprise aerial attack on the U.S. Pacific Fleet at Pearl Harbor, Hawaii. In less than two hours, over 2,400 Americans were killed, eight battleships damaged or sunk, and numerous aircraft destroyed. The attack galvanized the United States, leading Congress to declare war on Japan the following day.</p>
         </section>
 
-        <section class="section active">
+        <section class="section" id="sec-context">
           <div class="section-header" onclick="toggleSection(this)">
             <h2>🎯 Strategic Context</h2>
             <span class="section-icon">▼</span>
@@ -162,7 +162,7 @@
           </div>
         </section>
 
-        <section class="section active">
+        <section class="section" id="sec-overview">
           <div class="section-header" onclick="toggleSection(this)">
             <h2>⚔️ Combat Overview</h2>
             <span class="section-icon">▼</span>
@@ -175,7 +175,7 @@
           </div>
         </section>
 
-        <section class="section active">
+        <section class="section" id="sec-timeline">
           <div class="section-header" onclick="toggleSection(this)">
             <h2>📜 Timeline of Events</h2>
             <span class="section-icon">▼</span>
@@ -190,7 +190,7 @@
           </div>
         </section>
 
-        <section class="section">
+        <section class="section" id="sec-turning">
           <div class="section-header" onclick="toggleSection(this)">
             <h2>⚡ Turning Points / Key Factors</h2>
             <span class="section-icon">▼</span>
@@ -202,7 +202,7 @@
           </div>
         </section>
 
-        <section class="section">
+        <section class="section" id="sec-outcomes">
           <div class="section-header" onclick="toggleSection(this)">
             <h2>🏁 Outcomes & Consequences</h2>
             <span class="section-icon">▼</span>
@@ -214,7 +214,7 @@
           </div>
         </section>
 
-        <section class="section">
+        <section class="section" id="sec-significance">
           <div class="section-header" onclick="toggleSection(this)">
             <h2>🏰 Historical Significance</h2>
             <span class="section-icon">▼</span>
@@ -226,7 +226,7 @@
           </div>
         </section>
 
-        <section class="section">
+        <section class="section" id="sec-sources">
           <div class="section-header" onclick="toggleSection(this)">
             <h2>📚 Sources</h2>
             <span class="section-icon">▼</span>
@@ -270,8 +270,23 @@
     document.addEventListener('DOMContentLoaded', () => {
         // 1. Check if Hub sent us an order (e.g. index.html?q=Midway)
         const urlParams = new URLSearchParams(window.location.search);
-        const battleQuery = urlParams.get('q');
+        const battleId = urlParams.get('id'); // Direct ID load
+        const battleQuery = urlParams.get('q'); // New Search Query
         
+        if (battleId) {
+            // Load specific ID from cache immediately
+            const cached = localStorage.getItem(battleId); // Hub sends full key?
+            // Actually Hub sends 'as-ww2-data-as-ww2-battle-midway' usually, 
+            // but let's handle the ID param carefully.
+            // If ID is the FULL key:
+            if(cached) {
+                 renderReport(JSON.parse(cached));
+                 return;
+            }
+            // If ID is just 'midway', we might need to construct. 
+            // For now, let's assume the Hub sends the Query param mainly for new searches.
+        }
+
         if (battleQuery) {
             document.getElementById('battleInput').value = battleQuery;
             handleRequest(); // Auto-trigger
@@ -288,7 +303,7 @@
         const container = document.getElementById('reportContainer');
         
         // 2. Create a cache key
-        const cacheKey = APP_ID + input.replace(/[^a-zA-Z0-9]/g, '');
+        const cacheKey = APP_ID + input.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
 
         // 3. Check Local Storage First
         const cachedData = localStorage.getItem(cacheKey);
@@ -302,14 +317,16 @@
 
         // 4. If not in cache, call API
         btn.disabled = true;
-        btn.innerText = "Gathering Intel from HQ...";
+        btn.innerText = "Contacting War Dept...";
         container.classList.add('loading-pulse');
 
         try {
             const result = await fetchBattleData(input);
             
-            // 5. Save to Local Storage
+            // 5. Save to Local Storage (Even Denials are saved to prevent cost spam)
             try {
+                // Add timestamp for sorting in Hub
+                result.timestamp = Date.now();
                 localStorage.setItem(cacheKey, JSON.stringify(result));
             } catch (e) {
                 console.warn("Cache full, could not save.");
@@ -338,22 +355,42 @@
     }
 
     async function fetchBattleData(query) {
+        // UPDATED PROMPT: Includes Guard Rails (Superman Protocol)
         const prompt = `
             Role: Military Historian.
-            Task: Analyze the World War II battle/event: "${query}".
-            Format: STRICT JSON. No Markdown. No code blocks.
-            Schema:
+            Task: Analyze the user query: "${query}".
+            
+            PROTOCOL 1: TYPO CORRECTION
+            If the user misspells a real event (e.g., "Batle of Buldge"), analyze the intended event.
+
+            PROTOCOL 2: RELEVANCE FILTER (The Superman Protocol)
+            If the topic is NOT related to Military History, War, or Geopolitics (e.g., "Superman", "Cookie Recipe", "ReactJS"), return a DENIAL.
+
+            Format: STRICT JSON. No Markdown.
+            
+            Schema (Standard):
             {
-                "title": "Formal Name of Battle",
-                "subtitle": "A one-sentence thematic summary",
-                "summary": "A paragraph overview (3-4 sentences).",
-                "context": [{"label": "Bold Header", "text": "Description"}],
-                "overview": [{"label": "Force A", "text": "Details"}, {"label": "Force B", "text": "Details"}, {"label": "Key Tactic", "text": "Details"}],
-                "timeline": [{"time": "Date/Time", "event": "Description"}],
-                "turning_points": [{"label": "Turning Point", "text": "Why it mattered"}],
-                "outcomes": [{"label": "Outcome", "text": "Description"}],
-                "significance": [{"label": "Legacy", "text": "Why it matters historically"}],
-                "sources": {"primary": "List primary sources", "secondary": "List key books/historians"}
+                "isDenial": false,
+                "title": "Formal Name",
+                "subtitle": "Thematic summary",
+                "summary": "Overview paragraph.",
+                "context": [{"label": "Heading", "text": "Content"}],
+                "overview": [{"label": "Label", "text": "Content"}],
+                "timeline": [{"time": "Date", "event": "Event"}],
+                "turning_points": [{"label": "Point", "text": "Reason"}],
+                "outcomes": [{"label": "Outcome", "text": "Detail"}],
+                "significance": [{"label": "Legacy", "text": "Detail"}],
+                "sources": {"primary": "Sources", "secondary": "Sources"}
+            }
+
+            Schema (Denial):
+            {
+                "isDenial": true,
+                "title": "ACCESS DENIED",
+                "subtitle": "Clearance Level Insufficient",
+                "summary": "This query is unrelated to military archives. Request terminated.",
+                "context": [], "overview": [], "timeline": [], "turning_points": [], "outcomes": [], "significance": [],
+                "sources": {"primary": "N/A", "secondary": "N/A"}
             }
         `;
 
@@ -377,10 +414,19 @@
     }
 
     function renderReport(result) {
+        // 1. Handle Denial UI (Red Alert)
+        if (result.isDenial) {
+            document.documentElement.style.setProperty('--brand', '#ff6b6b'); // Red
+        } else {
+            document.documentElement.style.setProperty('--brand', '#8bb9ff'); // Blue
+        }
+
+        // 2. Text Content
         document.getElementById('r-title').innerText = result.title;
         document.getElementById('r-subtitle').innerText = result.subtitle;
         document.getElementById('r-summary').innerText = result.summary;
 
+        // 3. Sections (Clear first to handle empty arrays from Denial)
         renderList('r-context', result.context);
         renderList('r-overview', result.overview);
         renderTimeline('r-timeline', result.timeline);
@@ -388,24 +434,47 @@
         renderList('r-outcomes', result.outcomes);
         renderList('r-significance', result.significance);
 
-        document.getElementById('r-sources').innerHTML = `
-            <strong>Primary:</strong> ${result.sources.primary}<br><br>
-            <strong>Secondary:</strong> ${result.sources.secondary}
-        `;
+        // 4. Sources
+        const srcDiv = document.getElementById('r-sources');
+        if (result.isDenial) {
+            srcDiv.innerHTML = "<strong>File Expunged.</strong>";
+        } else {
+            srcDiv.innerHTML = `
+                <strong>Primary:</strong> ${result.sources.primary}<br><br>
+                <strong>Secondary:</strong> ${result.sources.secondary}
+            `;
+        }
+        
+        // 5. Ensure accordions are closed on new render
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     }
 
     function renderList(id, items) {
         const el = document.getElementById(id);
-        el.innerHTML = items.map(i => `
-            <div class="list-item"><strong>${i.label}:</strong> ${i.text}</div>
-        `).join('');
+        const section = el.closest('.section');
+        
+        if (!items || items.length === 0) {
+            section.style.display = 'none'; // Hide empty sections (useful for Denial)
+        } else {
+            section.style.display = 'block';
+            el.innerHTML = items.map(i => `
+                <div class="list-item"><strong>${i.label}:</strong> ${i.text}</div>
+            `).join('');
+        }
     }
 
     function renderTimeline(id, items) {
         const el = document.getElementById(id);
-        el.innerHTML = items.map(i => `
-            <div class="timeline-item"><strong>${i.time}:</strong> ${i.event}</div>
-        `).join('');
+        const section = el.closest('.section');
+
+        if (!items || items.length === 0) {
+            section.style.display = 'none';
+        } else {
+            section.style.display = 'block';
+            el.innerHTML = items.map(i => `
+                <div class="timeline-item"><strong>${i.time}:</strong> ${i.event}</div>
+            `).join('');
+        }
     }
   </script>
 </body>
