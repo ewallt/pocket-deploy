@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The War Room</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #0b1020; color: #e6ecff; height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .factory-card {
+            background: #111833; border: 1px solid #26325b; padding: 3rem;
+            border-radius: 14px; box-shadow: 0 8px 28px rgba(0,0,0,.5);
+            max-width: 500px; width: 100%; text-align: center;
+        }
+        input {
+            width: 100%; background: #0b1020; border: 1px solid #26325b;
+            color: white; padding: 1rem; border-radius: 8px; margin: 1.5rem 0;
+            font-size: 1.1rem; outline: none; text-align: center;
+        }
+        input:focus { border-color: #8bb9ff; }
+        button {
+            background: #8bb9ff; color: #0b1020; font-weight: bold;
+            padding: 0.75rem 2rem; border-radius: 8px; width: 100%;
+            transition: opacity 0.2s;
+        }
+        button:hover { opacity: 0.9; }
+    </style>
+</head>
+<body>
+    <div class="factory-card">
+        <h1 class="text-3xl font-bold mb-2">The War Room</h1>
+        <p class="text-gray-400 mb-4">Initialize a Campaign Theater</p>
+        
+        <form onsubmit="deployCampaign(event)">
+            <input type="text" id="campaignInput" placeholder="e.g. Napoleonic Wars, Civil War..." required autocomplete="off">
+            <button type="submit">Open Campaign Dashboard</button>
+        </form>
+    </div>
+
+    <script>
+        function deployCampaign(e) {
+            e.preventDefault();
+            const input = document.getElementById('campaignInput').value.trim();
+            if (!input) return;
+
+            // Normalize: "The Civil War" -> "civil-war"
+            const slug = input.toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-') // Replace non-alphanumeric with hyphen
+                .replace(/(^-|-$)/g, '');    // Trim leading/trailing hyphens
+
+            // Redirect to the Abstract Hub with the context param
+            window.location.assign(`../as-war-hub/index.html?war=${slug}`);
+        }
+    </script>
+</body>
+</html>
