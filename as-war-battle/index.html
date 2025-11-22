@@ -20,6 +20,7 @@
       background: radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
                   radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%), var(--bg);
       line-height:1.6; min-height:100vh; padding: 1rem;
+      transition: --brand 0.5s ease;
     }
     .content-wrapper{ max-width:860px; margin:0 auto; }
     
@@ -32,37 +33,141 @@
     h1 { font-size: 2rem; font-weight: 700; color: var(--ink); margin-bottom: 0.5rem; line-height: 1.2; }
     .subtitle { color: var(--muted); font-style: italic; font-size: 1rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 1.5rem; }
 
-    /* Sections */
-    .section { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 1.5rem; overflow: hidden; }
-    .section-header { background: linear-gradient(180deg, rgba(255,255,255,0.05), transparent); padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); color: var(--brand); font-weight: bold; font-size: 1.1rem; }
-    .section-content { padding: 1.5rem; color: var(--muted); }
+    /* Accordion Sections */
+    .section { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 1rem; overflow: hidden; box-shadow: var(--shadow); transition: border-color 0.2s; }
+    .section-header { 
+        padding: 1.05rem 1.25rem; 
+        background: linear-gradient(135deg,#1a2a6b 0%,#0f172a 100%); 
+        color: var(--ink); 
+        display: flex; justify-content: space-between; align-items: center; 
+        cursor: pointer; border-bottom: 1px solid var(--border); user-select: none; 
+    }
+    .section-header h2 { font-size: 1.12rem; margin: 0; font-weight: 600; color: var(--brand); }
+    .section-icon { font-size: 1.2rem; transition: transform 0.28s ease; }
+    .section.active .section-icon { transform: rotate(180deg); }
     
-    /* Lists */
-    .list-item { margin-bottom: 0.75rem; padding-left: 1rem; border-left: 2px solid var(--brand); }
-    .list-item strong { color: var(--ink); }
+    .section-content { max-height: 0; overflow: hidden; transition: max-height 0.38s ease; }
+    .section.active .section-content { max-height: 5000px; border-top: 1px solid var(--border); }
+    .section-inner { padding: 1.25rem; }
+
+    /* List Items */
+    .list-item { background: color-mix(in oklab,var(--chip) 75%,transparent); border-left: 3px solid var(--brand); padding: 1rem; margin-bottom: 0.75rem; border-radius: var(--radius-sm); border: 1px solid var(--border); color: var(--muted); }
+    .list-item strong { color: var(--ink); display: block; margin-bottom: 0.2rem; }
+
+    /* Timeline */
+    .timeline { border-left: 3px solid var(--brand); padding-left: 1.25rem; margin-left: 0.5rem; }
+    .timeline-item { position: relative; margin-bottom: 1.15rem; color: var(--muted); }
+    .timeline-item::before { content: ''; position: absolute; left: -1.65rem; top: 0.4rem; width: 12px; height: 12px; border-radius: 50%; background: var(--brand); border: 3px solid var(--panel); box-shadow: 0 0 0 2px var(--brand); }
+    .timeline-item strong { display: block; color: var(--brand); margin-bottom: 0.25rem; }
 
     /* Loading/Error States */
-    .loading { opacity: 0.5; animation: pulse 2s infinite; pointer-events: none; }
-    @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 0.2; } }
+    .loading-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; opacity: .5; pointer-events: none; }
+    @keyframes pulse { 0%, 100% { opacity: .5; } 50% { opacity: .2; } }
     .denial-box { border: 1px dashed var(--bad); color: var(--bad); padding: 2rem; text-align: center; background: rgba(255, 107, 107, 0.05); border-radius: var(--radius); }
+    
+    .main-answer { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.25rem; border-left: 4px solid var(--brand); }
   </style>
 </head>
 <body>
   <div class="content-wrapper">
     <div class="breadcrumb">
-      <a id="backLink" href="#">← Return to War Hub</a>
+      <a id="backLink" href="#">← Return to Hub</a>
     </div>
 
     <div id="reportContainer">
-        <h1 id="r-title">Initializing...</h1>
-        <p id="r-subtitle" class="subtitle"></p>
-        <div id="r-content"></div> 
+        <header>
+          <h1 id="r-title">Initializing...</h1>
+          <p id="r-subtitle" class="subtitle"></p>
+        </header>
+
+        <section class="main-answer">
+          <h2 style="color:var(--brand); font-size:1.25rem; margin-bottom:.8rem">Executive Summary</h2>
+          <p id="r-summary" style="color:var(--muted)">Accessing Archives...</p>
+        </section>
+
+        <section class="section" id="sec-context">
+          <div class="section-header" onclick="toggleSection(this)">
+            <h2>🎯 Strategic Context</h2>
+            <span class="section-icon">▼</span>
+          </div>
+          <div class="section-content">
+            <div class="section-inner" id="r-context"></div>
+          </div>
+        </section>
+
+        <section class="section" id="sec-overview">
+          <div class="section-header" onclick="toggleSection(this)">
+            <h2>⚔️ Combat Overview</h2>
+            <span class="section-icon">▼</span>
+          </div>
+          <div class="section-content">
+            <div class="section-inner" id="r-overview"></div>
+          </div>
+        </section>
+
+        <section class="section" id="sec-timeline">
+          <div class="section-header" onclick="toggleSection(this)">
+            <h2>📜 Timeline of Events</h2>
+            <span class="section-icon">▼</span>
+          </div>
+          <div class="section-content">
+            <div class="section-inner">
+              <div class="timeline" id="r-timeline"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="sec-turning">
+          <div class="section-header" onclick="toggleSection(this)">
+            <h2>⚡ Turning Points</h2>
+            <span class="section-icon">▼</span>
+          </div>
+          <div class="section-content">
+            <div class="section-inner" id="r-turning"></div>
+          </div>
+        </section>
+
+        <section class="section" id="sec-outcomes">
+          <div class="section-header" onclick="toggleSection(this)">
+            <h2>🏁 Outcomes & Legacy</h2>
+            <span class="section-icon">▼</span>
+          </div>
+          <div class="section-content">
+            <div class="section-inner" id="r-outcomes"></div>
+          </div>
+        </section>
+
+        <section class="section" id="sec-significance">
+          <div class="section-header" onclick="toggleSection(this)">
+            <h2>🏰 Historical Significance</h2>
+            <span class="section-icon">▼</span>
+          </div>
+          <div class="section-content">
+            <div class="section-inner" id="r-significance"></div>
+          </div>
+        </section>
+
+        <section class="section" id="sec-sources">
+          <div class="section-header" onclick="toggleSection(this)">
+            <h2>📚 Sources</h2>
+            <span class="section-icon">▼</span>
+          </div>
+          <div class="section-content">
+            <div class="section-inner" id="r-sources" style="font-size: 0.9rem; color: var(--muted);"></div>
+          </div>
+        </section>
     </div>
   </div>
 
   <script>
     // --- CONFIGURATION ---
     const API_KEY = "AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A"; 
+
+    // --- UI HELPERS ---
+    function toggleSection(header){
+      const section = header.parentElement;
+      section.classList.toggle('active');
+    }
 
     // --- 1. CONTEXT EXTRACTION ---
     const urlParams = new URLSearchParams(window.location.search);
@@ -89,11 +194,9 @@
     // --- 2. INIT ---
     document.addEventListener('DOMContentLoaded', () => {
         if (RECORD_ID) {
-            // Priority 1: Direct ID Load (Fast)
             const cached = localStorage.getItem(RECORD_ID);
             if(cached) renderReport(JSON.parse(cached));
         } else if (QUERY_PARAM) {
-            // Priority 2: New Search
             handleRequest(QUERY_PARAM);
         }
     });
@@ -104,39 +207,32 @@
         const simpleKey = query.toLowerCase().replace(/[^a-z0-9]/g, '');
         const fullKey = APP_ID + simpleKey;
 
-        // Check Cache
         const cached = localStorage.getItem(fullKey);
         if (cached) {
-            console.log("Loading from cache:", fullKey);
             renderReport(JSON.parse(cached));
             return;
         }
 
         // Fetch
         const container = document.getElementById('reportContainer');
-        container.classList.add('loading');
+        container.classList.add('loading-pulse');
         document.getElementById('r-title').innerText = "Contacting War Room...";
-        document.getElementById('r-subtitle').innerText = "Decrypting Archives via Gemini...";
+        document.getElementById('r-subtitle').innerText = `Consulting ${WAR_NAME} Archives...`;
 
         try {
             const result = await fetchBattleData(query);
-            
-            // Timestamp for sorting
             result.timestamp = Date.now();
-            
-            // Save to Storage
             localStorage.setItem(fullKey, JSON.stringify(result));
-            
             renderReport(result);
         } catch(e) {
             document.getElementById('r-title').innerText = "Mission Failed";
             document.getElementById('r-subtitle').innerText = "Error: " + e.message;
         } finally {
-            container.classList.remove('loading');
+            container.classList.remove('loading-pulse');
         }
     }
 
-    // --- 4. AI PROMPT (THE FACTORY LOGIC) ---
+    // --- 4. AI PROMPT (AGNOSTIC + SNAPSHOT SCHEMA) ---
     async function fetchBattleData(query) {
         const prompt = `
             Role: Expert Military Historian.
@@ -145,20 +241,34 @@
 
             Instructions:
             1. Analyze the query strictly within the context of ${WAR_NAME}.
-            2. If the query is unrelated to ${WAR_NAME} (e.g. asking about "Tanks" in the "Civil War" or "Napoleon" in "WW2"), return a Denial.
+            2. If the query is unrelated to ${WAR_NAME} (e.g. asking about "Tanks" in the "Civil War"), return a Denial.
             3. Typo Correction: Assume the user meant a battle/person within ${WAR_NAME}.
 
             Format: STRICT JSON (No markdown).
+            
+            Schema (Standard):
             {
-                "isDenial": boolean,
+                "isDenial": false,
                 "title": "Formal Name",
                 "subtitle": "Thematic Summary",
-                "summary": "Overview paragraph (3-4 sentences)",
-                "sections": [
-                    {"header": "Strategic Context", "content": "Details..."},
-                    {"header": "The Combat", "content": "Details..."},
-                    {"header": "Outcome & Legacy", "content": "Details..."}
-                ]
+                "summary": "Overview paragraph (3-4 sentences).",
+                "context": [{"label": "Header", "text": "Content"}],
+                "overview": [{"label": "Label", "text": "Content"}],
+                "timeline": [{"time": "Date/Time", "event": "Description"}],
+                "turning_points": [{"label": "Point", "text": "Reason"}],
+                "outcomes": [{"label": "Outcome", "text": "Detail"}],
+                "significance": [{"label": "Legacy", "text": "Detail"}],
+                "sources": {"primary": "List sources", "secondary": "List sources"}
+            }
+
+            Schema (Denial):
+            {
+                "isDenial": true,
+                "title": "ACCESS DENIED",
+                "subtitle": "Irrelevant Query",
+                "summary": "This topic is outside the operational theater of the ${WAR_NAME}.",
+                "context": [], "overview": [], "timeline": [], "turning_points": [], "outcomes": [], "significance": [],
+                "sources": {"primary": "", "secondary": ""}
             }
         `;
 
@@ -176,46 +286,73 @@
 
         const data = await response.json();
         if(data.error) throw new Error(data.error.message);
-
         const rawText = data.candidates[0].content.parts[0].text;
         return JSON.parse(rawText);
     }
 
-    // --- 5. RENDERER ---
-    function renderReport(data) {
+    // --- 5. RENDERER (SNAPSHOT UI) ---
+    function renderReport(result) {
         const titleEl = document.getElementById('r-title');
         const subEl = document.getElementById('r-subtitle');
-        const contentEl = document.getElementById('r-content');
 
-        // Handle Denials (Red Theme)
-        if (data.isDenial) {
-            document.documentElement.style.setProperty('--brand', '#ff6b6b'); // Red
+        // Handle Denials
+        if (result.isDenial) {
+            document.documentElement.style.setProperty('--brand', '#ff6b6b');
             titleEl.innerText = "ACCESS DENIED";
-            subEl.innerText = "Subject outside operational theater.";
-            contentEl.innerHTML = `<div class="denial-box">This record has been flagged as irrelevant to the ${WAR_NAME}.</div>`;
+            subEl.innerText = result.subtitle;
+            document.getElementById('r-summary').innerHTML = `<div class="denial-box">${result.summary}</div>`;
+            // Hide accordions on denial
+            document.querySelectorAll('.section').forEach(el => el.style.display = 'none');
             return;
         }
 
-        // Handle Success (Blue Theme)
-        document.documentElement.style.setProperty('--brand', '#8bb9ff'); // Blue
-        titleEl.innerText = data.title;
-        subEl.innerText = data.subtitle;
+        // Handle Success
+        document.documentElement.style.setProperty('--brand', '#8bb9ff');
+        titleEl.innerText = result.title;
+        subEl.innerText = result.subtitle;
+        document.getElementById('r-summary').innerText = result.summary;
 
-        // Render Summary
-        let html = `<div class="section"><div class="section-content" style="color:var(--ink); font-size:1.1rem;">${data.summary}</div></div>`;
+        // Reset visibility
+        document.querySelectorAll('.section').forEach(el => el.style.display = 'block');
+
+        // Render Lists
+        renderList('r-context', result.context);
+        renderList('r-overview', result.overview);
+        renderTimeline('r-timeline', result.timeline);
+        renderList('r-turning', result.turning_points);
+        renderList('r-outcomes', result.outcomes);
+        renderList('r-significance', result.significance);
+
+        // Render Sources
+        document.getElementById('r-sources').innerHTML = `
+            <strong>Primary:</strong> ${result.sources.primary}<br><br>
+            <strong>Secondary:</strong> ${result.sources.secondary}
+        `;
         
-        // Render Sections
-        if (data.sections) {
-            data.sections.forEach(sec => {
-                html += `
-                    <div class="section">
-                        <div class="section-header">${sec.header}</div>
-                        <div class="section-content">${sec.content}</div>
-                    </div>
-                `;
-            });
+        // Ensure closed state on load
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    }
+
+    function renderList(id, items) {
+        const el = document.getElementById(id);
+        if (!items || items.length === 0) {
+            el.innerHTML = '<div class="list-item">No data available.</div>';
+            return;
         }
-        contentEl.innerHTML = html;
+        el.innerHTML = items.map(i => `
+            <div class="list-item"><strong>${i.label}:</strong> ${i.text}</div>
+        `).join('');
+    }
+
+    function renderTimeline(id, items) {
+        const el = document.getElementById(id);
+        if (!items || items.length === 0) {
+            el.innerHTML = '<div class="timeline-item">No timeline data available.</div>';
+            return;
+        }
+        el.innerHTML = items.map(i => `
+            <div class="timeline-item"><strong>${i.time}:</strong> ${i.event}</div>
+        `).join('');
     }
   </script>
 </body>
