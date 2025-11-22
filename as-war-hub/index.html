@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Command Center</title>
+  <style>
+    :root{ --bg:#0b1020; --panel:#111833; --ink:#e6ecff; --muted:#a7b0cc; --brand:#8bb9ff; --border:#26325b; --radius:14px; }
+    body{ font-family:sans-serif; background:var(--bg); color:var(--ink); padding:2rem; }
+    .container{ max-width:1100px; margin:0 auto; }
+    .header { text-align:center; padding: 2rem; border:1px solid var(--border); border-radius:var(--radius); background:var(--panel); margin-bottom: 2rem; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:1.5rem; }
+    .card { background:var(--panel); border:1px solid var(--border); padding:1.5rem; border-radius:var(--radius); color: inherit; text-decoration: none; position: relative; }
+    .card:hover { border-color: var(--brand); }
+    .delete-btn { position: absolute; top: 10px; right: 10px; background: none; border: none; color: #ff6b6b; cursor: pointer; font-size: 1.2rem; }
+    .request-box { margin-top: 1.5rem; display: flex; gap: 0.5rem; justify-content: center; }
+    input { background: var(--bg); border: 1px solid var(--border); color: white; padding: 0.5rem 1rem; border-radius: 8px; }
+    button { background: var(--brand); border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+        <div style="margin-bottom: 1rem; font-size: 0.9rem;">
+            <a href="../as-war-room/index.html" style="color:var(--muted); text-decoration:none;">← Return to War Room</a>
+        </div>
+        <h1 id="pageTitle">Command Center</h1>
+        <p id="pageSubtitle" class="text-gray-400">Loading Theater...</p>
+
+        <div class="request-box">
+            <input type="text" id="battleRequest" placeholder="Initialize new operation...">
+            <button onclick="launchMission()">Launch</button>
+        </div>
+    </div>
+
+    <div id="grid" class="grid"></div>
+    <div id="emptyState" style="text-align:center; display:none; color:var(--muted);">No intelligence records found for this conflict.</div>
+  </div>
+
+  <script>
+    // 1. SETUP CONTEXT
+    const urlParams = new URLSearchParams(window.location.search);
+    const WAR_SLUG = urlParams.get('war');
+
+    if (!WAR_SLUG) {
+        // Safety: If no war is specified, go back to factory
+        window.location.href = '../as-war-room/index.html';
+    }
+
+    // Dynamic ID: as-civil-war-data-
+    const APP_ID = `as-${WAR_SLUG}-data-`;
+    
+    // UI Cleanup
+    const warTitle = WAR_SLUG.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    document.title = `${warTitle} | Command`;
+    document.getElementById('pageTitle').innerText = `${warTitle} Command`;
+    document.getElementById('pageSubtitle').innerText = `Operational Theater Archives`;
+
+    // 2. LAUNCH LOGIC
+    function launchMission() {
+        const query = document.getElementById('battleRequest').value.trim();
+        if (query) {
+            // PASS THE WAR CONTEXT TO THE VIEWER
+            window.location.assign(`../as-war-battle/index.html?war=${WAR_SLUG}&q=${encodeURIComponent(query)}`);
+        }
+    }
+
+    // 3. EXPUNGE LOGIC
+    window.expungeRecord = function(event, key) {
+        event.preventDefault();
+        event.stopPropagation();
+        if(confirm("Expunge record?")) {
+            localStorage.removeItem(key);
+            event.target.closest('.card').remove();
+        }
+    }
+
+    // 4. RENDER LOGIC
+    document.addEventListener('DOMContentLoaded', () => {
+        const grid = document.getElementById('grid');
+        const keys = Object.keys(localStorage).filter(k => k.startsWith(APP_ID));
+        
+        if (keys.length === 0) {
+            document.getElementById('emptyState').style.display = 'block';
+            return;
+        }
+
+        keys.forEach(key => {
+            try {
+                const data = JSON.parse(localStorage.getItem(key));
+                const card = document.createElement('a');
+                card.className = 'card';
+                // Pass War Context AND Record ID
+                card.href = `../as-war-battle/index.html?war=${WAR_SLUG}&id=${key}`;
+                
+                // Visual Cue for Denials
+                if(data.isDenial) card.style.borderColor = '#ff6b6b';
+
+                card.innerHTML = `
+                    <button class="delete-btn" onclick="window.expungeRecord(event, '${key}')">×</button>
+                    <h3>${data.title}</h3>
+                    <p style="color:var(--muted); font-size:0.9rem; margin-top:0.5rem; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;">${data.summary}</p>
+                `;
+                grid.appendChild(card);
+            } catch(e) {}
+        });
+    });
+  </script>
+</body>
+</html>
