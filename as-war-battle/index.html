@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Battle Analyzer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+      /* ... PASTE CSS FROM PREVIOUS VIEWER SESSION ... */
+       /* Ensure .back-to-top, .section, etc are included */
+       :root{ --bg:#0b1020; --panel:#111833; --ink:#e6ecff; --muted:#a7b0cc; --brand:#8bb9ff; --border:#26325b; --radius:12px; }
+       body{ background: var(--bg); color: var(--ink); padding: 1rem; font-family: sans-serif;}
+       .content-wrapper { max-width: 860px; margin: 0 auto; }
+       /* Add necessary structural CSS here if not pasting full block */
+  </style>
+</head>
+<body>
+  <div class="content-wrapper">
+    <div class="breadcrumb" style="margin-bottom:1rem; color: #8bb9ff;">
+      <a id="backLink" href="#" style="text-decoration:none;">← Return to Hub</a>
+    </div>
+
+    <div id="reportContainer">
+        <h1 id="r-title" class="text-3xl font-bold mb-2">Initializing...</h1>
+        <p id="r-subtitle" class="italic text-gray-400 mb-6"></p>
+        <div id="r-content"></div> </div>
+  </div>
+
+  <script>
+    const API_KEY = "AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A"; 
+    
+    // 1. CONTEXT EXTRACTION
+    const urlParams = new URLSearchParams(window.location.search);
+    const WAR_SLUG = urlParams.get('war');
+    const RECORD_ID = urlParams.get('id');
+    const QUERY_PARAM = urlParams.get('q');
+
+    if (!WAR_SLUG) { alert("Missing War Context"); window.location.href='../as-war-room/index.html'; }
+
+    // Beautify the war name
+    const WAR_NAME = WAR_SLUG.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    
+    // Set Dynamic App ID
+    const APP_ID = `as-${WAR_SLUG}-data-`;
+
+    // Update Back Link
+    document.getElementById('backLink').href = `../as-war-hub/index.html?war=${WAR_SLUG}`;
+
+    // 2. INIT
+    document.addEventListener('DOMContentLoaded', () => {
+        if (RECORD_ID) {
+            const cached = localStorage.getItem(RECORD_ID);
+            if(cached) renderReport(JSON.parse(cached));
+        } else if (QUERY_PARAM) {
+            handleRequest(QUERY_PARAM);
+        }
+    });
+
+    // 3. HANDLER
+    async function handleRequest(query) {
+        // Generate a simplified key for this specific battle/query
+        const simpleKey = query.toLowerCase().replace(/[^a-z0-9]/g, '');
+        const fullKey = APP_ID + simpleKey;
+
+        // Check Cache
+        const cached = localStorage.getItem(fullKey);
+        if (cached) {
+            renderReport(JSON.parse(cached));
+            return;
+        }
+
+        // Fetch
+        document.getElementById('r-subtitle').innerText = "Contacting War Room AI...";
+        try {
+            const result = await fetchBattleData(query);
+            result.timestamp = Date.now();
+            localStorage.setItem(fullKey, JSON.stringify(result));
+            renderReport(result);
+        } catch(e) {
+            document.getElementById('r-title').innerText = "Mission Failed";
+            document.getElementById('r-subtitle').innerText = e.message;
+        }
+    }
+
+    // 4. AI PROMPT (THE FACTORY LOGIC)
+    async function fetchBattleData(query) {
+        const prompt = `
+            Role: Expert Military Historian.
+            CONTEXT: You are analyzing the conflict: "${WAR_NAME}".
+            QUERY: "${query}".
+
+            Instructions:
+            1. Analyze the query strictly within the context of ${WAR_NAME}.
+            2. If the query is unrelated to ${WAR_NAME} (e.g. asking about "Tanks" in the "Civil War"), return a Denial.
+            3. Typo Correction: Assume the user meant a battle/person within ${WAR_NAME}.
+
+            Format: STRICT JSON.
+            {
+                "isDenial": boolean,
+                "title": "Formal Name",
+                "subtitle": "Thematic Summary",
+                "summary": "Overview paragraph",
+                "sections": [
+                    {"header": "Strategic Context", "content": "bullet points..."},
+                    {"header": "The Combat", "content": "bullet points..."},
+                    {"header": "Outcome", "content": "bullet points..."}
+                ]
+            }
+        `;
+
+        const response = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`,
+            {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: prompt }] }],
+                    generationConfig: { responseMimeType: "application/json" }
+                })
+            }
+        );
+
+        const data = await response.json();
+        const rawText = data.candidates[0].content.parts[0].text;
+        return JSON.parse(rawText);
+    }
+
+    // 5. RENDERER (Simplified for the abstract)
+    function renderReport(data) {
+        const titleEl = document.getElementById('r-title');
+        const contentEl = document.getElementById('r-content');
+
+        if (data.isDenial) {
+            titleEl.innerText = "ACCESS DENIED";
+            titleEl.style.color = "#ff6b6b";
+            document.getElementById('r-subtitle').innerText = "Subject outside operational theater.";
+            contentEl.innerHTML = `<div style="padding:2rem; border:1px dashed #ff6b6b; color:#ff6b6b; text-align:center;">This record has been flagged as irrelevant to the ${WAR_NAME}.</div>`;
+            return;
+        }
+
+        titleEl.innerText = data.title;
+        titleEl.style.color = "#e6ecff";
+        document.getElementById('r-subtitle').innerText = data.subtitle;
+
+        // Build Sections Dynamicallly
+        let html = `<div style="background:#111833; padding:1.5rem; border-radius:12px; margin-bottom:1rem; border:1px solid #26325b;">${data.summary}</div>`;
+        
+        if (data.sections) {
+            data.sections.forEach(sec => {
+                html += `
+                    <div style="background:#111833; border:1px solid #26325b; border-radius:12px; margin-bottom:1rem; padding:1.25rem;">
+                        <h3 style="color:#8bb9ff; font-weight:bold; margin-bottom:0.5rem; font-size:1.1rem;">${sec.header}</h3>
+                        <p style="color:#a7b0cc;">${sec.content}</p>
+                    </div>
+                `;
+            });
+        }
+        contentEl.innerHTML = html;
+    }
+  </script>
+</body>
+</html>
