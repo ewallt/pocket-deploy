@@ -6,104 +6,158 @@
   <title>Battle Analyzer</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-      /* ... PASTE CSS FROM PREVIOUS VIEWER SESSION ... */
-       /* Ensure .back-to-top, .section, etc are included */
-       :root{ --bg:#0b1020; --panel:#111833; --ink:#e6ecff; --muted:#a7b0cc; --brand:#8bb9ff; --border:#26325b; --radius:12px; }
-       body{ background: var(--bg); color: var(--ink); padding: 1rem; font-family: sans-serif;}
-       .content-wrapper { max-width: 860px; margin: 0 auto; }
-       /* Add necessary structural CSS here if not pasting full block */
+    /* DARK COMMAND CENTER THEME */
+    :root{
+      --bg:#0b1020; --panel:#111833; --ink:#e6ecff; --muted:#a7b0cc;
+      --brand:#8bb9ff; --accent:#c0ffe1; --border:#26325b; --chip:#1a2347;
+      --bad:#ff6b6b; --shadow:0 8px 28px rgba(0,0,0,.35);
+      --radius:12px; --radius-sm:8px;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+      color:var(--ink);
+      background: radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
+                  radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%), var(--bg);
+      line-height:1.6; min-height:100vh; padding: 1rem;
+    }
+    .content-wrapper{ max-width:860px; margin:0 auto; }
+    
+    /* Navigation */
+    .breadcrumb{ margin-bottom:1rem; font-size:.92rem; }
+    .breadcrumb a{ color:var(--brand); text-decoration:none; transition:opacity 0.2s; }
+    .breadcrumb a:hover { opacity: 0.8; }
+
+    /* Typography */
+    h1 { font-size: 2rem; font-weight: 700; color: var(--ink); margin-bottom: 0.5rem; line-height: 1.2; }
+    .subtitle { color: var(--muted); font-style: italic; font-size: 1rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 1.5rem; }
+
+    /* Sections */
+    .section { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 1.5rem; overflow: hidden; }
+    .section-header { background: linear-gradient(180deg, rgba(255,255,255,0.05), transparent); padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); color: var(--brand); font-weight: bold; font-size: 1.1rem; }
+    .section-content { padding: 1.5rem; color: var(--muted); }
+    
+    /* Lists */
+    .list-item { margin-bottom: 0.75rem; padding-left: 1rem; border-left: 2px solid var(--brand); }
+    .list-item strong { color: var(--ink); }
+
+    /* Loading/Error States */
+    .loading { opacity: 0.5; animation: pulse 2s infinite; pointer-events: none; }
+    @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 0.2; } }
+    .denial-box { border: 1px dashed var(--bad); color: var(--bad); padding: 2rem; text-align: center; background: rgba(255, 107, 107, 0.05); border-radius: var(--radius); }
   </style>
 </head>
 <body>
   <div class="content-wrapper">
-    <div class="breadcrumb" style="margin-bottom:1rem; color: #8bb9ff;">
-      <a id="backLink" href="#" style="text-decoration:none;">← Return to Hub</a>
+    <div class="breadcrumb">
+      <a id="backLink" href="#">← Return to War Hub</a>
     </div>
 
     <div id="reportContainer">
-        <h1 id="r-title" class="text-3xl font-bold mb-2">Initializing...</h1>
-        <p id="r-subtitle" class="italic text-gray-400 mb-6"></p>
-        <div id="r-content"></div> </div>
+        <h1 id="r-title">Initializing...</h1>
+        <p id="r-subtitle" class="subtitle"></p>
+        <div id="r-content"></div> 
+    </div>
   </div>
 
   <script>
+    // --- CONFIGURATION ---
     const API_KEY = "AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A"; 
-    
-    // 1. CONTEXT EXTRACTION
+
+    // --- 1. CONTEXT EXTRACTION ---
     const urlParams = new URLSearchParams(window.location.search);
     const WAR_SLUG = urlParams.get('war');
     const RECORD_ID = urlParams.get('id');
     const QUERY_PARAM = urlParams.get('q');
 
-    if (!WAR_SLUG) { alert("Missing War Context"); window.location.href='../as-war-room/index.html'; }
+    // Safety Check
+    if (!WAR_SLUG) {
+        alert("Missing War Context. Redirecting to War Room.");
+        window.location.href='../as-war-room/index.html';
+    }
 
-    // Beautify the war name
+    // Beautify the war name (e.g. "civil-war" -> "Civil War")
     const WAR_NAME = WAR_SLUG.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
     
     // Set Dynamic App ID
     const APP_ID = `as-${WAR_SLUG}-data-`;
 
     // Update Back Link
+    document.getElementById('backLink').innerText = `← Return to ${WAR_NAME} Hub`;
     document.getElementById('backLink').href = `../as-war-hub/index.html?war=${WAR_SLUG}`;
 
-    // 2. INIT
+    // --- 2. INIT ---
     document.addEventListener('DOMContentLoaded', () => {
         if (RECORD_ID) {
+            // Priority 1: Direct ID Load (Fast)
             const cached = localStorage.getItem(RECORD_ID);
             if(cached) renderReport(JSON.parse(cached));
         } else if (QUERY_PARAM) {
+            // Priority 2: New Search
             handleRequest(QUERY_PARAM);
         }
     });
 
-    // 3. HANDLER
+    // --- 3. HANDLER ---
     async function handleRequest(query) {
-        // Generate a simplified key for this specific battle/query
+        // Generate a simplified key for this specific battle
         const simpleKey = query.toLowerCase().replace(/[^a-z0-9]/g, '');
         const fullKey = APP_ID + simpleKey;
 
         // Check Cache
         const cached = localStorage.getItem(fullKey);
         if (cached) {
+            console.log("Loading from cache:", fullKey);
             renderReport(JSON.parse(cached));
             return;
         }
 
         // Fetch
-        document.getElementById('r-subtitle').innerText = "Contacting War Room AI...";
+        const container = document.getElementById('reportContainer');
+        container.classList.add('loading');
+        document.getElementById('r-title').innerText = "Contacting War Room...";
+        document.getElementById('r-subtitle').innerText = "Decrypting Archives via Gemini...";
+
         try {
             const result = await fetchBattleData(query);
+            
+            // Timestamp for sorting
             result.timestamp = Date.now();
+            
+            // Save to Storage
             localStorage.setItem(fullKey, JSON.stringify(result));
+            
             renderReport(result);
         } catch(e) {
             document.getElementById('r-title').innerText = "Mission Failed";
-            document.getElementById('r-subtitle').innerText = e.message;
+            document.getElementById('r-subtitle').innerText = "Error: " + e.message;
+        } finally {
+            container.classList.remove('loading');
         }
     }
 
-    // 4. AI PROMPT (THE FACTORY LOGIC)
+    // --- 4. AI PROMPT (THE FACTORY LOGIC) ---
     async function fetchBattleData(query) {
         const prompt = `
             Role: Expert Military Historian.
-            CONTEXT: You are analyzing the conflict: "${WAR_NAME}".
+            CONTEXT: You are analyzing the conflict known as: "${WAR_NAME}".
             QUERY: "${query}".
 
             Instructions:
             1. Analyze the query strictly within the context of ${WAR_NAME}.
-            2. If the query is unrelated to ${WAR_NAME} (e.g. asking about "Tanks" in the "Civil War"), return a Denial.
+            2. If the query is unrelated to ${WAR_NAME} (e.g. asking about "Tanks" in the "Civil War" or "Napoleon" in "WW2"), return a Denial.
             3. Typo Correction: Assume the user meant a battle/person within ${WAR_NAME}.
 
-            Format: STRICT JSON.
+            Format: STRICT JSON (No markdown).
             {
                 "isDenial": boolean,
                 "title": "Formal Name",
                 "subtitle": "Thematic Summary",
-                "summary": "Overview paragraph",
+                "summary": "Overview paragraph (3-4 sentences)",
                 "sections": [
-                    {"header": "Strategic Context", "content": "bullet points..."},
-                    {"header": "The Combat", "content": "bullet points..."},
-                    {"header": "Outcome", "content": "bullet points..."}
+                    {"header": "Strategic Context", "content": "Details..."},
+                    {"header": "The Combat", "content": "Details..."},
+                    {"header": "Outcome & Legacy", "content": "Details..."}
                 ]
             }
         `;
@@ -121,36 +175,42 @@
         );
 
         const data = await response.json();
+        if(data.error) throw new Error(data.error.message);
+
         const rawText = data.candidates[0].content.parts[0].text;
         return JSON.parse(rawText);
     }
 
-    // 5. RENDERER (Simplified for the abstract)
+    // --- 5. RENDERER ---
     function renderReport(data) {
         const titleEl = document.getElementById('r-title');
+        const subEl = document.getElementById('r-subtitle');
         const contentEl = document.getElementById('r-content');
 
+        // Handle Denials (Red Theme)
         if (data.isDenial) {
+            document.documentElement.style.setProperty('--brand', '#ff6b6b'); // Red
             titleEl.innerText = "ACCESS DENIED";
-            titleEl.style.color = "#ff6b6b";
-            document.getElementById('r-subtitle').innerText = "Subject outside operational theater.";
-            contentEl.innerHTML = `<div style="padding:2rem; border:1px dashed #ff6b6b; color:#ff6b6b; text-align:center;">This record has been flagged as irrelevant to the ${WAR_NAME}.</div>`;
+            subEl.innerText = "Subject outside operational theater.";
+            contentEl.innerHTML = `<div class="denial-box">This record has been flagged as irrelevant to the ${WAR_NAME}.</div>`;
             return;
         }
 
+        // Handle Success (Blue Theme)
+        document.documentElement.style.setProperty('--brand', '#8bb9ff'); // Blue
         titleEl.innerText = data.title;
-        titleEl.style.color = "#e6ecff";
-        document.getElementById('r-subtitle').innerText = data.subtitle;
+        subEl.innerText = data.subtitle;
 
-        // Build Sections Dynamicallly
-        let html = `<div style="background:#111833; padding:1.5rem; border-radius:12px; margin-bottom:1rem; border:1px solid #26325b;">${data.summary}</div>`;
+        // Render Summary
+        let html = `<div class="section"><div class="section-content" style="color:var(--ink); font-size:1.1rem;">${data.summary}</div></div>`;
         
+        // Render Sections
         if (data.sections) {
             data.sections.forEach(sec => {
                 html += `
-                    <div style="background:#111833; border:1px solid #26325b; border-radius:12px; margin-bottom:1rem; padding:1.25rem;">
-                        <h3 style="color:#8bb9ff; font-weight:bold; margin-bottom:0.5rem; font-size:1.1rem;">${sec.header}</h3>
-                        <p style="color:#a7b0cc;">${sec.content}</p>
+                    <div class="section">
+                        <div class="section-header">${sec.header}</div>
+                        <div class="section-content">${sec.content}</div>
                     </div>
                 `;
             });
