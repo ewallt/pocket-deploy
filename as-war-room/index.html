@@ -6,51 +6,155 @@
     <title>The War Room</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background-color: #0b1020; color: #e6ecff; height: 100vh; display: flex; align-items: center; justify-content: center; }
+        /* CSS variables from the Hub for consistency */
+        :root { --brand: #8bb9ff; --border: #26325b; --panel: #111833; --muted: #a7b0cc; --ink: #e6ecff; }
+
+        body { background-color: #0b1020; color: #e6ecff; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding-top: 5vh; }
+        .factory-wrapper { max-width: 600px; width: 90%; }
         .factory-card {
-            background: #111833; border: 1px solid #26325b; padding: 3rem;
+            background: var(--panel); border: 1px solid var(--border); padding: 3rem;
             border-radius: 14px; box-shadow: 0 8px 28px rgba(0,0,0,.5);
-            max-width: 500px; width: 100%; text-align: center;
+            margin-bottom: 2rem;
         }
         input {
-            width: 100%; background: #0b1020; border: 1px solid #26325b;
-            color: white; padding: 1rem; border-radius: 8px; margin: 1.5rem 0;
+            width: 100%; background: #0b1020; border: 1px solid var(--border);
+            color: var(--ink); padding: 1rem; border-radius: 8px; margin: 1.5rem 0;
             font-size: 1.1rem; outline: none; text-align: center;
         }
-        input:focus { border-color: #8bb9ff; }
+        input:focus { border-color: var(--brand); }
         button {
-            background: #8bb9ff; color: #0b1020; font-weight: bold;
+            background: var(--brand); color: #0b1020; font-weight: bold;
             padding: 0.75rem 2rem; border-radius: 8px; width: 100%;
             transition: opacity 0.2s;
         }
         button:hover { opacity: 0.9; }
+
+        /* Campaign List Styles */
+        .campaign-list {
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .campaign-item {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            padding: 1rem;
+            border-radius: 8px;
+            color: var(--ink);
+            text-decoration: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: border-color 0.2s;
+        }
+        .campaign-item:hover {
+            border-color: var(--brand);
+        }
+        .campaign-item strong {
+            color: var(--brand);
+            font-size: 1.1rem;
+        }
     </style>
 </head>
 <body>
-    <div class="factory-card">
-        <h1 class="text-3xl font-bold mb-2">The War Room</h1>
-        <p class="text-gray-400 mb-4">Initialize a Campaign Theater</p>
-        
-        <form onsubmit="deployCampaign(event)">
-            <input type="text" id="campaignInput" placeholder="e.g. Napoleonic Wars, Civil War..." required autocomplete="off">
-            <button type="submit">Open Campaign Dashboard</button>
-        </form>
+    <div class="factory-wrapper">
+        <div class="factory-card">
+            <h1 class="text-3xl font-bold mb-2 text-center">The War Room</h1>
+            <p class="text-gray-400 mb-4 text-center">Initialize a Campaign Theater</p>
+            
+            <form onsubmit="deployCampaign(event)">
+                <input type="text" id="campaignInput" placeholder="e.g. Napoleonic Wars, Civil War..." required autocomplete="off">
+                <button type="submit">Open Campaign Dashboard</button>
+            </form>
+        </div>
+
+        <div id="activeCampaigns" style="display:none;">
+            <h2 class="text-xl font-bold mb-3 text-center" style="color:var(--muted)">— Active Campaigns —</h2>
+            <div id="campaignList" class="campaign-list">
+                </div>
+        </div>
     </div>
 
     <script>
+        const WAR_ROOM_KEY = 'as-war-room-campaigns';
+
+        // --- Campaign Management (State Layer) ---
+
+        function getCampaigns() {
+            try {
+                const stored = localStorage.getItem(WAR_ROOM_KEY);
+                return stored ? JSON.parse(stored) : [];
+            } catch (e) {
+                console.error("Failed to load campaigns:", e);
+                return [];
+            }
+        }
+
+        function saveCampaigns(campaigns) {
+            try {
+                localStorage.setItem(WAR_ROOM_KEY, JSON.stringify(campaigns));
+            } catch (e) {
+                console.error("Failed to save campaigns:", e);
+            }
+        }
+
+        // --- UI Hydration ---
+
+        function loadCampaigns() {
+            const campaigns = getCampaigns();
+            const listEl = document.getElementById('campaignList');
+            const containerEl = document.getElementById('activeCampaigns');
+            listEl.innerHTML = '';
+
+            if (campaigns.length === 0) {
+                containerEl.style.display = 'none';
+                return;
+            }
+
+            campaigns.forEach(campaign => {
+                const a = document.createElement('a');
+                a.href = `../as-war-hub/index.html?war=${campaign.slug}`;
+                a.className = 'campaign-item';
+                a.innerHTML = `
+                    <strong>${campaign.name}</strong>
+                    <span style="color:var(--muted); font-size: 0.9rem;">OPEN →</span>
+                `;
+                listEl.appendChild(a);
+            });
+
+            containerEl.style.display = 'block';
+        }
+
+        // --- Core Factory Logic ---
+
         function deployCampaign(e) {
             e.preventDefault();
-            const input = document.getElementById('campaignInput').value.trim();
+            const inputEl = document.getElementById('campaignInput');
+            const input = inputEl.value.trim();
             if (!input) return;
 
-            // Normalize: "The Civil War" -> "civil-war"
+            // Normalize name and slug
+            const name = input.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
             const slug = input.toLowerCase()
-                .replace(/[^a-z0-9]+/g, '-') // Replace non-alphanumeric with hyphen
-                .replace(/(^-|-$)/g, '');    // Trim leading/trailing hyphens
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/(^-|-$)/g, '');
+
+            const campaigns = getCampaigns();
+            const exists = campaigns.some(c => c.slug === slug);
+
+            // Persist the new campaign if it doesn't already exist
+            if (!exists) {
+                campaigns.push({ name: name, slug: slug });
+                saveCampaigns(campaigns);
+            }
 
             // Redirect to the Abstract Hub with the context param
             window.location.assign(`../as-war-hub/index.html?war=${slug}`);
         }
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', loadCampaigns);
     </script>
 </body>
 </html>
