@@ -3,86 +3,150 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Battle Analyzer</title>
+  <title>Battle Analyzer (AI)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* DARK COMMAND CENTER THEME */
     :root{
-      --bg:#0b1020; --panel:#111833; --ink:#e6ecff; --muted:#a7b0cc;
-      --brand:#8bb9ff; --accent:#c0ffe1; --border:#26325b; --chip:#1a2347;
-      --bad:#ff6b6b; --shadow:0 8px 28px rgba(0,0,0,.35);
-      --radius:12px; --radius-sm:8px;
+      --bg:#0b1020;
+      --panel:#111833;
+      --ink:#e6ecff;
+      --muted:#a7b0cc;
+      --brand:#8bb9ff; /* Default Blue */
+      --accent:#c0ffe1;
+      --border:#26325b;
+      --chip:#1a2347;
+      --bad:#ff6b6b;
+      --shadow:0 8px 28px rgba(0,0,0,.35);
+      --radius:12px;
+      --radius-sm:8px;
     }
     *{margin:0;padding:0;box-sizing:border-box}
     body{
       font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
       color:var(--ink);
-      background: radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
-                  radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%), var(--bg);
-      line-height:1.6; min-height:100vh; padding: 1rem;
+      background:
+        radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
+        radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
+        var(--bg);
+      line-height:1.6;
+      min-height:100vh;
+      padding-bottom:2rem;
       transition: --brand 0.5s ease;
     }
-    .content-wrapper{ max-width:860px; margin:0 auto; }
     
-    /* Navigation */
-    .breadcrumb{ margin-bottom:1rem; font-size:.92rem; }
-    .breadcrumb a{ color:var(--brand); text-decoration:none; transition:opacity 0.2s; }
-    .breadcrumb a:hover { opacity: 0.8; }
-
-    /* Typography */
-    h1 { font-size: 2rem; font-weight: 700; color: var(--ink); margin-bottom: 0.5rem; line-height: 1.2; }
-    .subtitle { color: var(--muted); font-style: italic; font-size: 1rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 1.5rem; }
-
-    /* Accordion Sections */
-    .section { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 1rem; overflow: hidden; box-shadow: var(--shadow); transition: border-color 0.2s; }
-    .section-header { 
-        padding: 1.05rem 1.25rem; 
-        background: linear-gradient(135deg,#1a2a6b 0%,#0f172a 100%); 
-        color: var(--ink); 
-        display: flex; justify-content: space-between; align-items: center; 
-        cursor: pointer; border-bottom: 1px solid var(--border); user-select: none; 
+    .content-wrapper{
+        max-width:860px;
+        margin:0 auto;
+        padding:1rem;
     }
-    .section-header h2 { font-size: 1.12rem; margin: 0; font-weight: 600; color: var(--brand); }
-    .section-icon { font-size: 1.2rem; transition: transform 0.28s ease; }
-    .section.active .section-icon { transform: rotate(180deg); }
+
+    .breadcrumb{margin-bottom:1rem;font-size:.92rem}
+    .breadcrumb a{color:var(--brand);text-decoration:none}
+    .breadcrumb span{color:var(--muted);margin:0 .5rem}
     
-    .section-content { max-height: 0; overflow: hidden; transition: max-height 0.38s ease; }
-    .section.active .section-content { max-height: 5000px; border-top: 1px solid var(--border); }
-    .section-inner { padding: 1.25rem; }
+    /* SEARCH HEADER */
+    .search-box {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow);
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    .search-input {
+        flex: 1;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        color: var(--ink);
+        padding: 0.75rem 1rem;
+        border-radius: var(--radius-sm);
+        font-size: 1rem;
+    }
+    .search-input:focus { outline: 2px solid var(--brand); border-color: transparent; }
+    .search-btn {
+        background: var(--brand);
+        color: #0b1020;
+        font-weight: bold;
+        border: none;
+        padding: 0 1.5rem;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: opacity 0.2s;
+    }
+    .search-btn:hover { opacity: 0.9; }
+    .search-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* List Items */
-    .list-item { background: color-mix(in oklab,var(--chip) 75%,transparent); border-left: 3px solid var(--brand); padding: 1rem; margin-bottom: 0.75rem; border-radius: var(--radius-sm); border: 1px solid var(--border); color: var(--muted); }
-    .list-item strong { color: var(--ink); display: block; margin-bottom: 0.2rem; }
+    header{
+      background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 85%,transparent),var(--panel));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:2rem 1.5rem;
+      margin-bottom:1.25rem;
+      box-shadow:var(--shadow);
+      text-align: center;
+    }
+    h1{font-size:1.75rem;color:var(--ink);margin-bottom:.4rem}
+    .subtitle{color:var(--muted);font-size:.95rem;font-style:italic}
+    
+    .main-answer{
+      background:var(--panel);border:1px solid var(--border);
+      border-radius:var(--radius);padding:1.5rem;margin-bottom:1.25rem;
+      box-shadow:var(--shadow);border-left:4px solid var(--brand);
+    }
+    .main-answer h2{color:var(--brand);font-size:1.25rem;margin-bottom:.8rem}
+    .main-answer p{font-size:1.03rem;line-height:1.65;color:var(--muted)}
+    
+    .section{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:1rem;box-shadow:var(--shadow);overflow:hidden}
+    .section-header{padding:1.05rem 1.25rem;background:linear-gradient(135deg,#1a2a6b 0%,#0f172a 100%);color:var(--ink);display:flex;justify-content:space-between;align-items:center;cursor:pointer;border-bottom:1px solid var(--border);user-select:none}
+    .section-header h2{font-size:1.12rem;margin:0}
+    .section-icon{font-size:1.35rem;transition:transform .28s ease}
+    .section.active .section-icon{transform:rotate(180deg)}
+    .section-content{max-height:0;overflow:hidden;transition:max-height .38s ease}
+    .section.active .section-content{max-height:5000px}
+    .section-inner{padding:1.25rem}
+    
+    .list-item{background:color-mix(in oklab,var(--chip) 75%,transparent);border-left:3px solid var(--brand);padding:1rem;margin-bottom:.75rem;border-radius:var(--radius-sm);border:1px solid var(--border);color:var(--muted)}
+    
+    .timeline{border-left:3px solid var(--brand);padding-left:1.25rem;margin-left:.5rem}
+    .timeline-item{position:relative;margin-bottom:1.15rem;color:var(--muted)}
+    .timeline-item::before{content:'';position:absolute;left:-1.65rem;top:.25rem;width:12px;height:12px;border-radius:50%;background:var(--brand);border:3px solid var(--panel);box-shadow:0 0 0 2px var(--brand)}
+    .timeline-item strong{display:block;color:var(--brand);margin-bottom:.25rem}
+    
+    .source{background:color-mix(in oklab,var(--chip) 65%,transparent);border-radius:8px;padding:1rem;margin-top:1rem;font-size:.95rem;color:var(--muted);border:1px solid var(--border)}
+    .source strong{color:var(--ink)}
+    
+    .back-to-top{position:fixed;right:1rem;bottom:1.5rem;width:50px;height:50px;border-radius:50%;background:var(--brand);color:#001;border:none;font-size:1.5rem;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);opacity:0;transition:opacity .3s ease;z-index:1000; cursor: pointer;}
+    .back-to-top.visible{opacity:1}
+    a{color:var(--brand)}
 
-    /* Timeline */
-    .timeline { border-left: 3px solid var(--brand); padding-left: 1.25rem; margin-left: 0.5rem; }
-    .timeline-item { position: relative; margin-bottom: 1.15rem; color: var(--muted); }
-    .timeline-item::before { content: ''; position: absolute; left: -1.65rem; top: 0.4rem; width: 12px; height: 12px; border-radius: 50%; background: var(--brand); border: 3px solid var(--panel); box-shadow: 0 0 0 2px var(--brand); }
-    .timeline-item strong { display: block; color: var(--brand); margin-bottom: 0.25rem; }
-
-    /* Loading/Error States */
-    .loading-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; opacity: .5; pointer-events: none; }
+    /* Loading State */
+    .loading-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; opacity: .5; }
     @keyframes pulse { 0%, 100% { opacity: .5; } 50% { opacity: .2; } }
-    .denial-box { border: 1px dashed var(--bad); color: var(--bad); padding: 2rem; text-align: center; background: rgba(255, 107, 107, 0.05); border-radius: var(--radius); }
-    
-    .main-answer { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.25rem; border-left: 4px solid var(--brand); }
   </style>
 </head>
 <body>
   <div class="content-wrapper">
     <div class="breadcrumb">
-      <a id="backLink" href="#">← Return to Hub</a>
+      <a href="../as-ww2-hub/index.html">WWII Command Center</a> <span>›</span> Battle Analyzer
+    </div>
+
+    <div class="search-box">
+        <input type="text" id="battleInput" class="search-input" placeholder="Enter a battle (e.g. Stalingrad, Waterloo, Tet Offensive)..." value="Pearl Harbor (1941)">
+        <button id="analyzeBtn" class="search-btn" onclick="handleRequest()">Request Intelligence</button>
     </div>
 
     <div id="reportContainer">
         <header>
-          <h1 id="r-title">Initializing...</h1>
-          <p id="r-subtitle" class="subtitle"></p>
+          <h1 id="r-title">Pearl Harbor (1941)</h1>
+          <p class="subtitle" id="r-subtitle">The Surprise Attack that Brought the United States into World War II</p>
         </header>
 
         <section class="main-answer">
-          <h2 style="color:var(--brand); font-size:1.25rem; margin-bottom:.8rem">Executive Summary</h2>
-          <p id="r-summary" style="color:var(--muted)">Accessing Archives...</p>
+          <h2>Core Summary</h2>
+          <p id="r-summary">On December 7, 1941, Japan launched a surprise aerial attack on the U.S. Pacific Fleet at Pearl Harbor, Hawaii. In less than two hours, over 2,400 Americans were killed, eight battleships damaged or sunk, and numerous aircraft destroyed. The attack galvanized the United States, leading Congress to declare war on Japan the following day.</p>
         </section>
 
         <section class="section" id="sec-context">
@@ -91,7 +155,10 @@
             <span class="section-icon">▼</span>
           </div>
           <div class="section-content">
-            <div class="section-inner" id="r-context"></div>
+            <div class="section-inner" id="r-context">
+              <div class="list-item"><strong>Japanese Objective:</strong> Cripple the U.S. Pacific Fleet long enough to secure dominance in Southeast Asia.</div>
+              <div class="list-item"><strong>American Situation:</strong> The U.S. had imposed oil embargoes and demanded Japanese withdrawal from China.</div>
+            </div>
           </div>
         </section>
 
@@ -101,7 +168,10 @@
             <span class="section-icon">▼</span>
           </div>
           <div class="section-content">
-            <div class="section-inner" id="r-overview"></div>
+            <div class="section-inner" id="r-overview">
+               <div class="list-item"><strong>Japanese Force:</strong> Six carriers launched 353 aircraft in two waves.</div>
+               <div class="list-item"><strong>Surprise Achieved:</strong> U.S. radar detected the attack too late; ships were caught at anchor.</div>
+            </div>
           </div>
         </section>
 
@@ -112,28 +182,35 @@
           </div>
           <div class="section-content">
             <div class="section-inner">
-              <div class="timeline" id="r-timeline"></div>
+              <div class="timeline" id="r-timeline">
+                <div class="timeline-item"><strong>07:48 AM:</strong> First wave attacks Battleship Row.</div>
+                <div class="timeline-item"><strong>08:55 AM:</strong> Second wave strikes airfields and ships.</div>
+              </div>
             </div>
           </div>
         </section>
 
         <section class="section" id="sec-turning">
           <div class="section-header" onclick="toggleSection(this)">
-            <h2>⚡ Turning Points</h2>
+            <h2>⚡ Turning Points / Key Factors</h2>
             <span class="section-icon">▼</span>
           </div>
           <div class="section-content">
-            <div class="section-inner" id="r-turning"></div>
+            <div class="section-inner" id="r-turning">
+               <div class="list-item"><strong>Carrier Survival:</strong> U.S. aircraft carriers were at sea and survived.</div>
+            </div>
           </div>
         </section>
 
         <section class="section" id="sec-outcomes">
           <div class="section-header" onclick="toggleSection(this)">
-            <h2>🏁 Outcomes & Legacy</h2>
+            <h2>🏁 Outcomes & Consequences</h2>
             <span class="section-icon">▼</span>
           </div>
           <div class="section-content">
-            <div class="section-inner" id="r-outcomes"></div>
+            <div class="section-inner" id="r-outcomes">
+               <div class="list-item"><strong>War Expansion:</strong> The U.S. fully entered World War II.</div>
+            </div>
           </div>
         </section>
 
@@ -143,7 +220,9 @@
             <span class="section-icon">▼</span>
           </div>
           <div class="section-content">
-            <div class="section-inner" id="r-significance"></div>
+            <div class="section-inner" id="r-significance">
+               <div class="list-item"><strong>Strategic Shift:</strong> Ended the era of the battleship; rose the era of the carrier.</div>
+            </div>
           </div>
         </section>
 
@@ -153,122 +232,165 @@
             <span class="section-icon">▼</span>
           </div>
           <div class="section-content">
-            <div class="section-inner" id="r-sources" style="font-size: 0.9rem; color: var(--muted);"></div>
+            <div class="section-inner">
+              <div class="source" id="r-sources">
+                  <strong>Primary:</strong> Navy Action Reports.<br>
+                  <strong>Secondary:</strong> "At Dawn We Slept" by Gordon Prange.
+              </div>
+            </div>
           </div>
         </section>
     </div>
   </div>
 
+  <button id="backToTop" class="back-to-top" onclick="scrollToTop()" aria-label="Back to top">↑</button>
+
   <script>
     // --- CONFIGURATION ---
+    // Domain-restricted key
     const API_KEY = "AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A"; 
+    
+    // APP_ID Must Match the Hub
+    const APP_ID = "as-ww2-battle-"; 
 
-    // --- UI HELPERS ---
+    // --- UI LOGIC ---
     function toggleSection(header){
       const section = header.parentElement;
       section.classList.toggle('active');
     }
 
-    // --- 1. CONTEXT EXTRACTION ---
-    const urlParams = new URLSearchParams(window.location.search);
-    const WAR_SLUG = urlParams.get('war');
-    const RECORD_ID = urlParams.get('id');
-    const QUERY_PARAM = urlParams.get('q');
+    window.addEventListener('scroll',()=>{
+      const btn=document.getElementById('backToTop');
+      if(window.pageYOffset>300) btn.classList.add('visible');
+      else btn.classList.remove('visible');
+    });
+    function scrollToTop(){window.scrollTo({top:0,behavior:'smooth'});}
 
-    // Safety Check
-    if (!WAR_SLUG) {
-        alert("Missing War Context. Redirecting to War Room.");
-        window.location.href='../as-war-room/index.html';
-    }
-
-    // Beautify the war name (e.g. "civil-war" -> "Civil War")
-    const WAR_NAME = WAR_SLUG.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-    
-    // Set Dynamic App ID
-    const APP_ID = `as-${WAR_SLUG}-data-`;
-
-    // Update Back Link
-    document.getElementById('backLink').innerText = `← Return to ${WAR_NAME} Hub`;
-    document.getElementById('backLink').href = `../as-war-hub/index.html?war=${WAR_SLUG}`;
-
-    // --- 2. INIT ---
+    // --- INITIALIZATION ---
     document.addEventListener('DOMContentLoaded', () => {
-        if (RECORD_ID) {
-            const cached = localStorage.getItem(RECORD_ID);
-            if(cached) renderReport(JSON.parse(cached));
-        } else if (QUERY_PARAM) {
-            handleRequest(QUERY_PARAM);
+        // 1. Check if Hub sent us an order (e.g. index.html?q=Midway)
+        const urlParams = new URLSearchParams(window.location.search);
+        const battleId = urlParams.get('id'); // Direct ID load
+        const battleQuery = urlParams.get('q'); // New Search Query
+        
+        if (battleId) {
+            // Load specific ID from cache immediately
+            const cached = localStorage.getItem(battleId); // Hub sends full key?
+            // Actually Hub sends 'as-ww2-data-as-ww2-battle-midway' usually, 
+            // but let's handle the ID param carefully.
+            // If ID is the FULL key:
+            if(cached) {
+                 renderReport(JSON.parse(cached));
+                 return;
+            }
+            // If ID is just 'midway', we might need to construct. 
+            // For now, let's assume the Hub sends the Query param mainly for new searches.
+        }
+
+        if (battleQuery) {
+            document.getElementById('battleInput').value = battleQuery;
+            handleRequest(); // Auto-trigger
         }
     });
 
-    // --- 3. HANDLER ---
-    async function handleRequest(query) {
-        // Generate a simplified key for this specific battle
-        const simpleKey = query.toLowerCase().replace(/[^a-z0-9]/g, '');
-        const fullKey = APP_ID + simpleKey;
+    // --- CORE LOGIC: CACHE + API ---
+    
+    async function handleRequest() {
+        const input = document.getElementById('battleInput').value.trim();
+        if(!input) return alert("Please enter a battle name.");
+        
+        const btn = document.getElementById('analyzeBtn');
+        const container = document.getElementById('reportContainer');
+        
+        // 2. Create a cache key
+        const cacheKey = APP_ID + input.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
 
-        const cached = localStorage.getItem(fullKey);
-        if (cached) {
-            renderReport(JSON.parse(cached));
+        // 3. Check Local Storage First
+        const cachedData = localStorage.getItem(cacheKey);
+        
+        if (cachedData) {
+            console.log("Loaded from cache");
+            renderReport(JSON.parse(cachedData));
+            updateButtonState(btn, "Intel Retrieved", "success");
             return;
         }
 
-        // Fetch
-        const container = document.getElementById('reportContainer');
+        // 4. If not in cache, call API
+        btn.disabled = true;
+        btn.innerText = "Contacting War Dept...";
         container.classList.add('loading-pulse');
-        document.getElementById('r-title').innerText = "Contacting War Room...";
-        document.getElementById('r-subtitle').innerText = `Consulting ${WAR_NAME} Archives...`;
 
         try {
-            const result = await fetchBattleData(query);
-            result.timestamp = Date.now();
-            localStorage.setItem(fullKey, JSON.stringify(result));
+            const result = await fetchBattleData(input);
+            
+            // 5. Save to Local Storage (Even Denials are saved to prevent cost spam)
+            try {
+                // Add timestamp for sorting in Hub
+                result.timestamp = Date.now();
+                localStorage.setItem(cacheKey, JSON.stringify(result));
+            } catch (e) {
+                console.warn("Cache full, could not save.");
+            }
+
             renderReport(result);
-        } catch(e) {
-            document.getElementById('r-title').innerText = "Mission Failed";
-            document.getElementById('r-subtitle').innerText = "Error: " + e.message;
+
+        } catch (e) {
+            alert("Mission Failed: " + e.message);
         } finally {
+            btn.disabled = false;
+            btn.innerText = "Request Intelligence";
             container.classList.remove('loading-pulse');
         }
     }
 
-    // --- 4. AI PROMPT (AGNOSTIC + SNAPSHOT SCHEMA) ---
+    function updateButtonState(btn, text, type) {
+        const originalText = "Request Intelligence";
+        btn.innerText = text;
+        if (type === "success") btn.classList.add("bg-green-600", "text-white");
+        
+        setTimeout(() => { 
+            btn.innerText = originalText; 
+            btn.classList.remove("bg-green-600", "text-white");
+        }, 3000);
+    }
+
     async function fetchBattleData(query) {
+        // UPDATED PROMPT: Includes Guard Rails (Superman Protocol)
         const prompt = `
-            Role: Expert Military Historian.
-            CONTEXT: You are analyzing the conflict known as: "${WAR_NAME}".
-            QUERY: "${query}".
+            Role: Military Historian.
+            Task: Analyze the user query: "${query}".
+            
+            PROTOCOL 1: TYPO CORRECTION
+            If the user misspells a real event (e.g., "Batle of Buldge"), analyze the intended event.
 
-            Instructions:
-            1. Analyze the query strictly within the context of ${WAR_NAME}.
-            2. If the query is unrelated to ${WAR_NAME} (e.g. asking about "Tanks" in the "Civil War"), return a Denial.
-            3. Typo Correction: Assume the user meant a battle/person within ${WAR_NAME}.
+            PROTOCOL 2: RELEVANCE FILTER (The Superman Protocol)
+            If the topic is NOT related to Military History, War, or Geopolitics (e.g., "Superman", "Cookie Recipe", "ReactJS"), return a DENIAL.
 
-            Format: STRICT JSON (No markdown).
+            Format: STRICT JSON. No Markdown.
             
             Schema (Standard):
             {
                 "isDenial": false,
                 "title": "Formal Name",
-                "subtitle": "Thematic Summary",
-                "summary": "Overview paragraph (3-4 sentences).",
-                "context": [{"label": "Header", "text": "Content"}],
+                "subtitle": "Thematic summary",
+                "summary": "Overview paragraph.",
+                "context": [{"label": "Heading", "text": "Content"}],
                 "overview": [{"label": "Label", "text": "Content"}],
-                "timeline": [{"time": "Date/Time", "event": "Description"}],
+                "timeline": [{"time": "Date", "event": "Event"}],
                 "turning_points": [{"label": "Point", "text": "Reason"}],
                 "outcomes": [{"label": "Outcome", "text": "Detail"}],
                 "significance": [{"label": "Legacy", "text": "Detail"}],
-                "sources": {"primary": "List sources", "secondary": "List sources"}
+                "sources": {"primary": "Sources", "secondary": "Sources"}
             }
 
             Schema (Denial):
             {
                 "isDenial": true,
                 "title": "ACCESS DENIED",
-                "subtitle": "Irrelevant Query",
-                "summary": "This topic is outside the operational theater of the ${WAR_NAME}.",
+                "subtitle": "Clearance Level Insufficient",
+                "summary": "This query is unrelated to military archives. Request terminated.",
                 "context": [], "overview": [], "timeline": [], "turning_points": [], "outcomes": [], "significance": [],
-                "sources": {"primary": "", "secondary": ""}
+                "sources": {"primary": "N/A", "secondary": "N/A"}
             }
         `;
 
@@ -286,36 +408,25 @@
 
         const data = await response.json();
         if(data.error) throw new Error(data.error.message);
-        const rawText = data.candidates[0].content.parts[0].text;
+        
+        const rawText = data.candidates[0].content.parts[0].text.replace(/```json/g, '').replace(/```/g, '').trim();
         return JSON.parse(rawText);
     }
 
-    // --- 5. RENDERER (SNAPSHOT UI) ---
     function renderReport(result) {
-        const titleEl = document.getElementById('r-title');
-        const subEl = document.getElementById('r-subtitle');
-
-        // Handle Denials
+        // 1. Handle Denial UI (Red Alert)
         if (result.isDenial) {
-            document.documentElement.style.setProperty('--brand', '#ff6b6b');
-            titleEl.innerText = "ACCESS DENIED";
-            subEl.innerText = result.subtitle;
-            document.getElementById('r-summary').innerHTML = `<div class="denial-box">${result.summary}</div>`;
-            // Hide accordions on denial
-            document.querySelectorAll('.section').forEach(el => el.style.display = 'none');
-            return;
+            document.documentElement.style.setProperty('--brand', '#ff6b6b'); // Red
+        } else {
+            document.documentElement.style.setProperty('--brand', '#8bb9ff'); // Blue
         }
 
-        // Handle Success
-        document.documentElement.style.setProperty('--brand', '#8bb9ff');
-        titleEl.innerText = result.title;
-        subEl.innerText = result.subtitle;
+        // 2. Text Content
+        document.getElementById('r-title').innerText = result.title;
+        document.getElementById('r-subtitle').innerText = result.subtitle;
         document.getElementById('r-summary').innerText = result.summary;
 
-        // Reset visibility
-        document.querySelectorAll('.section').forEach(el => el.style.display = 'block');
-
-        // Render Lists
+        // 3. Sections (Clear first to handle empty arrays from Denial)
         renderList('r-context', result.context);
         renderList('r-overview', result.overview);
         renderTimeline('r-timeline', result.timeline);
@@ -323,36 +434,47 @@
         renderList('r-outcomes', result.outcomes);
         renderList('r-significance', result.significance);
 
-        // Render Sources
-        document.getElementById('r-sources').innerHTML = `
-            <strong>Primary:</strong> ${result.sources.primary}<br><br>
-            <strong>Secondary:</strong> ${result.sources.secondary}
-        `;
+        // 4. Sources
+        const srcDiv = document.getElementById('r-sources');
+        if (result.isDenial) {
+            srcDiv.innerHTML = "<strong>File Expunged.</strong>";
+        } else {
+            srcDiv.innerHTML = `
+                <strong>Primary:</strong> ${result.sources.primary}<br><br>
+                <strong>Secondary:</strong> ${result.sources.secondary}
+            `;
+        }
         
-        // Ensure closed state on load
+        // 5. Ensure accordions are closed on new render
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     }
 
     function renderList(id, items) {
         const el = document.getElementById(id);
+        const section = el.closest('.section');
+        
         if (!items || items.length === 0) {
-            el.innerHTML = '<div class="list-item">No data available.</div>';
-            return;
+            section.style.display = 'none'; // Hide empty sections (useful for Denial)
+        } else {
+            section.style.display = 'block';
+            el.innerHTML = items.map(i => `
+                <div class="list-item"><strong>${i.label}:</strong> ${i.text}</div>
+            `).join('');
         }
-        el.innerHTML = items.map(i => `
-            <div class="list-item"><strong>${i.label}:</strong> ${i.text}</div>
-        `).join('');
     }
 
     function renderTimeline(id, items) {
         const el = document.getElementById(id);
+        const section = el.closest('.section');
+
         if (!items || items.length === 0) {
-            el.innerHTML = '<div class="timeline-item">No timeline data available.</div>';
-            return;
+            section.style.display = 'none';
+        } else {
+            section.style.display = 'block';
+            el.innerHTML = items.map(i => `
+                <div class="timeline-item"><strong>${i.time}:</strong> ${i.event}</div>
+            `).join('');
         }
-        el.innerHTML = items.map(i => `
-            <div class="timeline-item"><strong>${i.time}:</strong> ${i.event}</div>
-        `).join('');
     }
   </script>
 </body>
