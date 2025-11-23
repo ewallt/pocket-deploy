@@ -6,17 +6,87 @@
     <title>Loading...</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Base styles - will be overridden by JS */
-        :root { --brand: #fff; --panel: rgba(255,255,255,0.05); }
-        body { background-color: #000; color: #fff; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding-top: 10vh; font-family: sans-serif; }
+        /* 1. STRICT DARK COMMAND CENTER THEME */
+        :root { 
+            --brand: #8bb9ff; /* Default, will be overridden by JS */
+            --bg: #0b1020;    /* STRICT NAVY */
+            --panel: #111833; /* STRICT NAVY PANEL */
+            --border: #26325b;
+            --ink: #e6ecff;
+            --muted: #a7b0cc;
+        }
+
+        body { 
+            background-color: var(--bg); 
+            color: var(--ink); 
+            min-height: 100vh; 
+            display: flex; 
+            align-items: flex-start; 
+            justify-content: center; 
+            padding-top: 10vh; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            /* Standard War Hub Gradient */
+            background: radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.10), transparent 55%),
+                        radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.05), transparent 60%), var(--bg);
+        }
+
         .wrapper { max-width: 600px; width: 90%; }
-        .card { background: var(--panel); border: 1px solid rgba(255,255,255,0.1); padding: 3rem; border-radius: 14px; margin-bottom: 2rem; backdrop-filter: blur(10px); }
-        input { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 1rem; border-radius: 8px; margin: 1.5rem 0; font-size: 1.1rem; outline: none; text-align: center; }
+
+        .card { 
+            background: var(--panel); 
+            border: 1px solid var(--border); 
+            padding: 3rem; 
+            border-radius: 14px; 
+            margin-bottom: 2rem; 
+            box-shadow: 0 8px 28px rgba(0,0,0,0.35);
+        }
+
+        h1 { color: var(--ink); margin-bottom: 0.5rem; }
+        p { color: var(--muted); margin-bottom: 2rem; }
+
+        /* Inputs & Buttons */
+        input { 
+            width: 100%; 
+            background: var(--bg); 
+            border: 1px solid var(--border); 
+            color: var(--ink); 
+            padding: 1rem; 
+            border-radius: 8px; 
+            margin: 1.5rem 0; 
+            font-size: 1.1rem; 
+            outline: none; 
+            text-align: center; 
+            transition: border-color 0.2s;
+        }
         input:focus { border-color: var(--brand); }
-        button { background: var(--brand); color: #000; font-weight: bold; padding: 0.75rem 2rem; border-radius: 8px; width: 100%; transition: opacity 0.2s; }
+
+        button { 
+            background: var(--brand); 
+            color: var(--bg); /* High contrast text on button */
+            font-weight: bold; 
+            padding: 0.75rem 2rem; 
+            border-radius: 8px; 
+            width: 100%; 
+            transition: opacity 0.2s; 
+        }
         button:hover { opacity: 0.9; }
-        .list-item { display: block; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 1rem; margin-bottom: 0.5rem; border-radius: 8px; color: #ccc; text-decoration: none; display: flex; justify-content: space-between; }
-        .list-item:hover { border-color: var(--brand); color: #fff; }
+
+        /* List Items */
+        .list-item { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            background: var(--panel); 
+            border: 1px solid var(--border); 
+            padding: 1rem; 
+            margin-bottom: 0.5rem; 
+            border-radius: 8px; 
+            color: var(--ink); 
+            text-decoration: none; 
+            transition: border-color 0.2s;
+        }
+        .list-item:hover { border-color: var(--brand); }
+        .list-item span { color: var(--brand); font-size: 1.2rem; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -41,17 +111,25 @@
         // 1. BOOTSTRAP
         const urlParams = new URLSearchParams(window.location.search);
         const FACTORY_SLUG = urlParams.get('factory');
-        if (!FACTORY_SLUG) { alert("No Factory ID provided."); window.location.href = '../as-factory-admin/index.html'; }
+        
+        // Safety Check
+        if (!FACTORY_SLUG) { 
+            alert("No Factory ID provided."); 
+            window.location.href = '../as-factory-admin/index.html'; 
+        }
 
         // 2. LOAD CONFIG
         const configStr = localStorage.getItem(`as-config-${FACTORY_SLUG}`);
-        if (!configStr) { alert("Invalid Configuration. Re-run Architect."); window.location.href = '../as-factory-admin/index.html'; }
+        if (!configStr) { 
+            alert("Invalid Configuration. Re-run Architect."); 
+            window.location.href = '../as-factory-admin/index.html'; 
+        }
         const CONFIG = JSON.parse(configStr);
 
-        // 3. APPLY THEME & TEXT
+        // 3. APPLY THEME (ACCENTS ONLY)
         document.title = CONFIG.text.roomTitle;
         document.documentElement.style.setProperty('--brand', CONFIG.theme.brand);
-        document.body.style.background = `radial-gradient(circle at 50% -20%, ${CONFIG.theme.bg_gradient_1}, ${CONFIG.theme.bg_gradient_2})`;
+        // Note: We DO NOT touch document.body.style.background anymore.
         
         document.getElementById('roomTitle').innerText = CONFIG.text.roomTitle;
         document.getElementById('subTitle').innerText = `Initialize New ${CONFIG.text.unitNoun} Group`;
