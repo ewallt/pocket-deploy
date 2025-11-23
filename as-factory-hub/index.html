@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hub</title>
+  <style>
+    /* Base styles */
+    :root { --brand: #fff; --panel: rgba(255,255,255,0.05); }
+    body { font-family: sans-serif; background: #000; color: #fff; padding: 2rem; min-height: 100vh; }
+    .container { max-width: 1100px; margin: 0 auto; }
+    .header { text-align: center; padding: 2rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; background: var(--panel); margin-bottom: 2rem; backdrop-filter: blur(10px); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+    .card { background: var(--panel); border: 1px solid rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 14px; color: inherit; text-decoration: none; position: relative; transition: border-color 0.2s; }
+    .card:hover { border-color: var(--brand); }
+    .delete-btn { position: absolute; top: 10px; right: 10px; background: none; border: none; color: #ff6b6b; cursor: pointer; font-size: 1.2rem; }
+    input { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 0.5rem 1rem; border-radius: 8px; margin-right: 0.5rem; }
+    button { background: var(--brand); border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-weight: bold; color: #000; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+        <a id="backLink" href="#" style="color: #888; text-decoration: none; font-size: 0.9rem;">← Return</a>
+        <h1 id="pageTitle" style="font-size: 2rem; font-weight: bold; margin: 0.5rem 0;">...</h1>
+        <p id="pageSubtitle" style="color: #888;">...</p>
+        <div style="margin-top: 1.5rem;">
+            <input type="text" id="unitInput" placeholder="...">
+            <button onclick="launch()">ANALYZE</button>
+        </div>
+    </div>
+    <div id="grid" class="grid"></div>
+  </div>
+
+  <script>
+    // 1. BOOTSTRAP
+    const urlParams = new URLSearchParams(window.location.search);
+    const FACTORY_SLUG = urlParams.get('factory');
+    const CONTEXT_SLUG = urlParams.get('context');
+
+    if (!FACTORY_SLUG || !CONTEXT_SLUG) window.location.href = '../as-factory-admin/index.html';
+
+    // 2. LOAD CONFIG
+    const CONFIG = JSON.parse(localStorage.getItem(`as-config-${FACTORY_SLUG}`));
+    const CONTEXT_NAME = CONTEXT_SLUG.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+
+    // 3. APPLY THEME
+    document.title = `${CONTEXT_NAME} | ${CONFIG.text.hubTitle}`;
+    document.documentElement.style.setProperty('--brand', CONFIG.theme.brand);
+    document.body.style.background = `radial-gradient(circle at 50% -20%, ${CONFIG.theme.bg_gradient_1}, ${CONFIG.theme.bg_gradient_2})`;
+
+    document.getElementById('backLink').innerText = `← Return to ${CONFIG.text.roomTitle}`;
+    document.getElementById('backLink').href = `../as-factory-room/index.html?factory=${FACTORY_SLUG}`;
+    document.getElementById('pageTitle').innerText = CONTEXT_NAME;
+    document.getElementById('pageSubtitle').innerText = CONFIG.text.hubTitle;
+    document.getElementById('unitInput').placeholder = `New ${CONFIG.text.unitNoun}...`;
+
+    // 4. DATA LOGIC
+    const APP_ID = `as-${FACTORY_SLUG}-${CONTEXT_SLUG}-data-`;
+
+    function launch() {
+        const query = document.getElementById('unitInput').value.trim();
+        if (query) {
+            window.location.assign(`../as-factory-viewer/index.html?factory=${FACTORY_SLUG}&context=${CONTEXT_SLUG}&q=${encodeURIComponent(query)}`);
+        }
+    }
+
+    // Render Grid
+    const grid = document.getElementById('grid');
+    const keys = Object.keys(localStorage).filter(k => k.startsWith(APP_ID));
+    
+    keys.forEach(key => {
+        try {
+            const data = JSON.parse(localStorage.getItem(key));
+            const card = document.createElement('a');
+            card.className = 'card';
+            card.href = `../as-factory-viewer/index.html?factory=${FACTORY_SLUG}&context=${CONTEXT_SLUG}&id=${key}`;
+            if(data.isDenial) card.style.borderColor = '#ff6b6b';
+            
+            card.innerHTML = `
+                <button class="delete-btn" onclick="event.preventDefault(); localStorage.removeItem('${key}'); this.closest('.card').remove();">×</button>
+                <h3 style="font-weight:bold; font-size:1.1rem; color:var(--brand);">${data.title}</h3>
+                <p style="color:#888; font-size:0.9rem; margin-top:0.5rem;">${data.subtitle || data.summary}</p>
+            `;
+            grid.appendChild(card);
+        } catch(e) {}
+    });
+  </script>
+</body>
+</html>
