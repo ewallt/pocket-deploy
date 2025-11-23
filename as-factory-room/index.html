@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading...</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Base styles - will be overridden by JS */
+        :root { --brand: #fff; --panel: rgba(255,255,255,0.05); }
+        body { background-color: #000; color: #fff; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding-top: 10vh; font-family: sans-serif; }
+        .wrapper { max-width: 600px; width: 90%; }
+        .card { background: var(--panel); border: 1px solid rgba(255,255,255,0.1); padding: 3rem; border-radius: 14px; margin-bottom: 2rem; backdrop-filter: blur(10px); }
+        input { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 1rem; border-radius: 8px; margin: 1.5rem 0; font-size: 1.1rem; outline: none; text-align: center; }
+        input:focus { border-color: var(--brand); }
+        button { background: var(--brand); color: #000; font-weight: bold; padding: 0.75rem 2rem; border-radius: 8px; width: 100%; transition: opacity 0.2s; }
+        button:hover { opacity: 0.9; }
+        .list-item { display: block; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 1rem; margin-bottom: 0.5rem; border-radius: 8px; color: #ccc; text-decoration: none; display: flex; justify-content: space-between; }
+        .list-item:hover { border-color: var(--brand); color: #fff; }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="card" id="mainCard">
+            <h1 id="roomTitle" class="text-3xl font-bold mb-2 text-center">...</h1>
+            <p id="subTitle" class="text-gray-400 mb-4 text-center">...</p>
+            
+            <form onsubmit="deployContext(event)">
+                <input type="text" id="contextInput" required autocomplete="off">
+                <button type="submit">OPEN</button>
+            </form>
+        </div>
+
+        <div id="activeList" style="display:none;">
+            <h2 class="text-sm font-bold mb-3 text-center text-gray-500 uppercase tracking-widest">Active Archives</h2>
+            <div id="listContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        // 1. BOOTSTRAP
+        const urlParams = new URLSearchParams(window.location.search);
+        const FACTORY_SLUG = urlParams.get('factory');
+        if (!FACTORY_SLUG) { alert("No Factory ID provided."); window.location.href = '../as-factory-admin/index.html'; }
+
+        // 2. LOAD CONFIG
+        const configStr = localStorage.getItem(`as-config-${FACTORY_SLUG}`);
+        if (!configStr) { alert("Invalid Configuration. Re-run Architect."); window.location.href = '../as-factory-admin/index.html'; }
+        const CONFIG = JSON.parse(configStr);
+
+        // 3. APPLY THEME & TEXT
+        document.title = CONFIG.text.roomTitle;
+        document.documentElement.style.setProperty('--brand', CONFIG.theme.brand);
+        document.body.style.background = `radial-gradient(circle at 50% -20%, ${CONFIG.theme.bg_gradient_1}, ${CONFIG.theme.bg_gradient_2})`;
+        
+        document.getElementById('roomTitle').innerText = CONFIG.text.roomTitle;
+        document.getElementById('subTitle').innerText = `Initialize New ${CONFIG.text.unitNoun} Group`;
+        document.getElementById('contextInput').placeholder = CONFIG.text.inputPlaceholder;
+
+        // 4. LOGIC
+        const LIST_KEY = `as-${FACTORY_SLUG}-list`;
+
+        function loadList() {
+            const list = JSON.parse(localStorage.getItem(LIST_KEY) || '[]');
+            const container = document.getElementById('listContainer');
+            container.innerHTML = '';
+            
+            if (list.length > 0) {
+                document.getElementById('activeList').style.display = 'block';
+                list.forEach(item => {
+                    const el = document.createElement('a');
+                    el.className = 'list-item';
+                    el.href = `../as-factory-hub/index.html?factory=${FACTORY_SLUG}&context=${item.slug}`;
+                    el.innerHTML = `<strong>${item.name}</strong> <span>→</span>`;
+                    container.appendChild(el);
+                });
+            }
+        }
+
+        function deployContext(e) {
+            e.preventDefault();
+            const input = document.getElementById('contextInput').value.trim();
+            if(!input) return;
+
+            const name = input.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+            const slug = input.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
+            const list = JSON.parse(localStorage.getItem(LIST_KEY) || '[]');
+            if (!list.some(i => i.slug === slug)) {
+                list.push({ name, slug });
+                localStorage.setItem(LIST_KEY, JSON.stringify(list));
+            }
+            window.location.assign(`../as-factory-hub/index.html?factory=${FACTORY_SLUG}&context=${slug}`);
+        }
+
+        loadList();
+    </script>
+</body>
+</html>
