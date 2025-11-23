@@ -20,7 +20,6 @@
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
         background-color: var(--bg);
         color: var(--ink);
-        /* Exact Gradient from War Hub */
         background: radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.10), transparent 55%),
                     radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.05), transparent 60%), var(--bg);
         padding: 1rem; 
@@ -33,7 +32,6 @@
     .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; opacity: 0.8; transition: opacity 0.2s; }
     .breadcrumb a:hover { opacity: 1; }
 
-    /* Typography */
     h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1.2; color: var(--ink); }
     .subtitle { color: var(--muted); font-style: italic; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
 
@@ -80,17 +78,11 @@
         padding: 1.5rem; 
     }
 
-    /* Children Styling (Lists & Paragraphs) */
     .section-content ul { list-style: none; padding: 0; margin: 0; }
-    .section-content li { 
-        margin-bottom: 0.75rem; 
-        padding-left: 1rem; 
-        border-left: 2px solid var(--brand); 
-    }
+    .section-content li { margin-bottom: 0.75rem; padding-left: 1rem; border-left: 2px solid var(--brand); }
     .section-content p { margin-bottom: 1rem; }
     .section-content strong { color: var(--ink); }
 
-    /* Summary Box */
     .main-summary {
         background: var(--panel);
         border: 1px solid var(--border);
@@ -103,7 +95,6 @@
         color: var(--ink);
     }
 
-    /* Loading/Error */
     .loading { opacity: 0.5; pointer-events: none; animation: pulse 1.5s infinite; }
     @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 0.2; } }
   </style>
@@ -122,7 +113,8 @@
   </div>
 
   <script>
-    const API_KEY = ""; // Set API Key
+    // --- API KEY ---
+    const API_KEY = "AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A"; 
     
     // 1. BOOTSTRAP
     const urlParams = new URLSearchParams(window.location.search);
@@ -131,14 +123,14 @@
     const RECORD_ID = urlParams.get('id');
     const QUERY = urlParams.get('q');
 
-    const CONFIG = JSON.parse(localStorage.getItem(`as-config-${FACTORY_SLUG}`));
-    const CONTEXT_NAME = CONTEXT_SLUG.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    const configStr = localStorage.getItem(`as-config-${FACTORY_SLUG}`);
+    const CONFIG = configStr ? JSON.parse(configStr) : { theme: { brand: '#8bb9ff' }, ai: { role: 'System', sections: [] } };
+    
+    const CONTEXT_NAME = CONTEXT_SLUG ? CONTEXT_SLUG.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : 'Unknown';
 
-    // 2. APPLY THEME (ACCENTS ONLY)
-    // We strictly control the Brand color, but keep the background Navy
+    // 2. APPLY THEME
     document.documentElement.style.setProperty('--brand', CONFIG.theme.brand);
-    // Tint the border slightly with the brand color for integration
-    document.documentElement.style.setProperty('--border', `${CONFIG.theme.brand}33`); // 20% opacity
+    document.documentElement.style.setProperty('--border', `${CONFIG.theme.brand}33`); 
     
     document.getElementById('backLink').innerText = `← Return to ${CONTEXT_NAME}`;
     document.getElementById('backLink').href = `../as-factory-hub/index.html?factory=${FACTORY_SLUG}&context=${CONTEXT_SLUG}`;
@@ -157,7 +149,6 @@
             const cached = localStorage.getItem(fullKey);
             if(cached) { render(JSON.parse(cached)); return; }
 
-            // Fetch
             document.getElementById('container').classList.add('loading');
             document.getElementById('r-title').innerText = "Processing...";
             document.getElementById('r-subtitle').innerText = `Consulting ${CONFIG.ai.role}...`;
@@ -168,17 +159,17 @@
                 localStorage.setItem(fullKey, JSON.stringify(result));
                 render(result);
             } catch(e) {
-                alert(e.message);
-                document.getElementById('r-title').innerText = "Error";
+                document.getElementById('r-title').innerText = "Generation Failed";
+                document.getElementById('r-subtitle').innerText = "System Error";
+                document.getElementById('r-content').innerHTML = `<div style="border:1px dashed #ff6b6b; color:#ff6b6b; padding:2rem; text-align:center;">${e.message}</div>`;
             } finally {
                 document.getElementById('container').classList.remove('loading');
             }
         }
     }
 
-    // 4. DYNAMIC PROMPT BUILDER
+    // 4. DYNAMIC PROMPT
     async function fetchAI(query) {
-        // Build schema list for the prompt
         const schemaInstructions = CONFIG.ai.sections.map(s => 
             `{ "label": "${s.label}", "content": "Write content based on instruction: ${s.instruction}" }`
         ).join(',\n');
@@ -187,7 +178,6 @@
             Role: ${CONFIG.ai.role}.
             Context: ${CONFIG.ai.context}: "${CONTEXT_NAME}".
             Query: "${query}".
-
             Guard Rails: ${CONFIG.ai.guardRails} If violated, return isDenial: true.
 
             Format: STRICT JSON.
@@ -196,9 +186,7 @@
                 "title": "Formal Title",
                 "subtitle": "Thematic Subtitle",
                 "summary": "Executive Summary (Paragraph)",
-                "sections": [ 
-                    ${schemaInstructions} 
-                ]
+                "sections": [ ${schemaInstructions} ]
             }
         `;
 
@@ -206,11 +194,15 @@
             method: "POST", headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json" } })
         });
+        
         const data = await response.json();
+        if(data.error) throw new Error(`API Error: ${data.error.message}`);
+        if(!data.candidates || !data.candidates[0]) throw new Error("AI returned no content.");
+
         return JSON.parse(data.candidates[0].content.parts[0].text);
     }
 
-    // 5. RENDERER (SNAPSHOT UI)
+    // 5. RENDERER
     function render(data) {
         const title = document.getElementById('r-title');
         const sub = document.getElementById('r-subtitle');
@@ -227,29 +219,23 @@
         title.innerText = data.title;
         sub.innerText = data.subtitle;
         
-        // 1. Render Summary Card
         let html = `<div class="main-summary">${data.summary}</div>`;
         
-        // 2. Render Accordions
         if(data.sections) {
             data.sections.forEach((sec, index) => {
                 const configSec = CONFIG.ai.sections[index] || { icon: "🔹" };
-                
                 html += `
                     <div class="section">
                         <div class="section-header" onclick="this.parentElement.classList.toggle('active')">
                             <span>${configSec.icon} ${sec.label}</span>
                             <span class="section-icon">▼</span>
                         </div>
-                        <div class="section-content">
-                            ${sec.content}
-                        </div>
+                        <div class="section-content">${sec.content}</div>
                     </div>
                 `;
             });
         }
         content.innerHTML = html;
-        
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     }
 
