@@ -131,7 +131,7 @@
 <body>
 
     <div class="terminal">
-        <h1 class="text-3xl font-bold">Snapshot Architect v1.2</h1>
+        <h1 class="text-3xl font-bold">Snapshot Architect v1.4</h1>
         <p>Initialize a new domain construct.</p>
         
         <form onsubmit="buildApp(event)">
@@ -174,7 +174,11 @@
                 1. Define a visual theme (colors).
                 2. Define an AI Persona (role).
                 3. Define terminology (titles, nouns).
-                4. Define 4 distinct "Snapshot Sections" for analysis (Label, Icon, Instruction).
+                4. Define exactly 7 distinct "Snapshot Sections" for analysis using this specific topology:
+                   - Section 1: MUST be "Context/Background" (Adapt label to domain, e.g., "Historical Context", "Chemical Properties").
+                   - Section 3: MUST be "Timeline/Sequence" (Adapt label, e.g., "Timeline of Events", "Reaction Sequence"). If the domain has absolutely no temporal aspect (e.g. abstract math), instruct the prompt to output "N/A" for this section.
+                   - Section 7: MUST be "Sources/References" (Adapt label).
+                   - Sections 2, 4, 5, 6: Generate tailored analytical categories specific to the domain depth.
 
                 Output: STRICT JSON.
                 {
@@ -199,7 +203,10 @@
                             { "label": "Section 1", "icon": "Emoji", "instruction": "Prompt instruction" },
                             { "label": "Section 2", "icon": "Emoji", "instruction": "Prompt instruction" },
                             { "label": "Section 3", "icon": "Emoji", "instruction": "Prompt instruction" },
-                            { "label": "Section 4", "icon": "Emoji", "instruction": "Prompt instruction" }
+                            { "label": "Section 4", "icon": "Emoji", "instruction": "Prompt instruction" },
+                            { "label": "Section 5", "icon": "Emoji", "instruction": "Prompt instruction" },
+                            { "label": "Section 6", "icon": "Emoji", "instruction": "Prompt instruction" },
+                            { "label": "Section 7", "icon": "Emoji", "instruction": "Prompt instruction" }
                         ]
                     }
                 }
