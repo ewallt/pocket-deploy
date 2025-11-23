@@ -4,32 +4,130 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Hub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* Base styles */
-    :root { --brand: #fff; --panel: rgba(255,255,255,0.05); }
-    body { font-family: sans-serif; background: #000; color: #fff; padding: 2rem; min-height: 100vh; }
+    /* 1. STRICT DARK COMMAND CENTER THEME */
+    :root { 
+        --brand: #8bb9ff; /* Default, overridden by JS */
+        --bg: #0b1020;    /* STRICT NAVY */
+        --panel: #111833; /* STRICT NAVY PANEL */
+        --border: #26325b;
+        --ink: #e6ecff;
+        --muted: #a7b0cc;
+        --bad: #ff6b6b;
+    }
+
+    body { 
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+        background-color: var(--bg);
+        color: var(--ink);
+        /* Standard War Hub Gradient */
+        background: radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.10), transparent 55%),
+                    radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.05), transparent 60%), var(--bg);
+        padding: 2rem; 
+        min-height: 100vh; 
+    }
+
     .container { max-width: 1100px; margin: 0 auto; }
-    .header { text-align: center; padding: 2rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; background: var(--panel); margin-bottom: 2rem; backdrop-filter: blur(10px); }
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
-    .card { background: var(--panel); border: 1px solid rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 14px; color: inherit; text-decoration: none; position: relative; transition: border-color 0.2s; }
-    .card:hover { border-color: var(--brand); }
-    .delete-btn { position: absolute; top: 10px; right: 10px; background: none; border: none; color: #ff6b6b; cursor: pointer; font-size: 1.2rem; }
-    input { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 0.5rem 1rem; border-radius: 8px; margin-right: 0.5rem; }
-    button { background: var(--brand); border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-weight: bold; color: #000; }
+
+    /* Header Card */
+    .header { 
+        text-align: center; 
+        padding: 2.5rem; 
+        border: 1px solid var(--border); 
+        border-radius: 14px; 
+        background: var(--panel); 
+        margin-bottom: 2rem; 
+        box-shadow: 0 8px 28px rgba(0,0,0,0.35);
+    }
+
+    /* Grid & Cards */
+    .grid { 
+        display: grid; 
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+        gap: 1.5rem; 
+    }
+
+    .card { 
+        background: var(--panel); 
+        border: 1px solid var(--border); 
+        padding: 1.5rem; 
+        border-radius: 14px; 
+        color: inherit; 
+        text-decoration: none; 
+        position: relative; 
+        transition: transform 0.2s, border-color 0.2s; 
+        display: block;
+    }
+    .card:hover { 
+        border-color: var(--brand); 
+        transform: translateY(-2px);
+    }
+
+    .delete-btn { 
+        position: absolute; 
+        top: 10px; 
+        right: 10px; 
+        background: transparent; 
+        border: none; 
+        color: var(--muted); 
+        cursor: pointer; 
+        font-size: 1.2rem; 
+        transition: color 0.2s;
+    }
+    .delete-btn:hover { color: var(--bad); }
+
+    /* Inputs & Buttons */
+    input { 
+        background: var(--bg); 
+        border: 1px solid var(--border); 
+        color: var(--ink); 
+        padding: 0.75rem 1rem; 
+        border-radius: 8px; 
+        margin-right: 0.5rem; 
+        font-size: 1rem;
+        outline: none;
+        min-width: 300px;
+        transition: border-color 0.2s;
+    }
+    input:focus { border-color: var(--brand); }
+
+    button { 
+        background: var(--brand); 
+        border: none; 
+        padding: 0.75rem 1.5rem; 
+        border-radius: 8px; 
+        cursor: pointer; 
+        font-weight: bold; 
+        color: var(--bg); /* High contrast */
+        transition: opacity 0.2s;
+    }
+    button:hover { opacity: 0.9; }
+
+    /* Links */
+    #backLink { color: var(--muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
+    #backLink:hover { color: var(--ink); }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-        <a id="backLink" href="#" style="color: #888; text-decoration: none; font-size: 0.9rem;">← Return</a>
-        <h1 id="pageTitle" style="font-size: 2rem; font-weight: bold; margin: 0.5rem 0;">...</h1>
-        <p id="pageSubtitle" style="color: #888;">...</p>
-        <div style="margin-top: 1.5rem;">
-            <input type="text" id="unitInput" placeholder="...">
+        <div style="margin-bottom: 1rem;">
+            <a id="backLink" href="#">← Return</a>
+        </div>
+        <h1 id="pageTitle" style="font-size: 2.2rem; font-weight: 700; margin: 0.5rem 0; color: var(--ink);">...</h1>
+        <p id="pageSubtitle" style="color: var(--muted);">...</p>
+        
+        <div style="margin-top: 2rem; display: flex; justify-content: center; align-items: center;">
+            <input type="text" id="unitInput" placeholder="..." autocomplete="off">
             <button onclick="launch()">ANALYZE</button>
         </div>
     </div>
+
     <div id="grid" class="grid"></div>
+    <div id="emptyState" style="text-align:center; display:none; color:var(--muted); margin-top: 3rem;">
+        No records found. Initialize a new analysis above.
+    </div>
   </div>
 
   <script>
@@ -38,22 +136,31 @@
     const FACTORY_SLUG = urlParams.get('factory');
     const CONTEXT_SLUG = urlParams.get('context');
 
-    if (!FACTORY_SLUG || !CONTEXT_SLUG) window.location.href = '../as-factory-admin/index.html';
+    if (!FACTORY_SLUG || !CONTEXT_SLUG) {
+        alert("Invalid parameters.");
+        window.location.href = '../as-factory-admin/index.html';
+    }
 
     // 2. LOAD CONFIG
-    const CONFIG = JSON.parse(localStorage.getItem(`as-config-${FACTORY_SLUG}`));
+    const configStr = localStorage.getItem(`as-config-${FACTORY_SLUG}`);
+    if (!configStr) {
+        alert("Configuration missing.");
+        window.location.href = '../as-factory-admin/index.html';
+    }
+    const CONFIG = JSON.parse(configStr);
+    
     const CONTEXT_NAME = CONTEXT_SLUG.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
-    // 3. APPLY THEME
+    // 3. APPLY THEME (ACCENTS ONLY)
     document.title = `${CONTEXT_NAME} | ${CONFIG.text.hubTitle}`;
     document.documentElement.style.setProperty('--brand', CONFIG.theme.brand);
-    document.body.style.background = `radial-gradient(circle at 50% -20%, ${CONFIG.theme.bg_gradient_1}, ${CONFIG.theme.bg_gradient_2})`;
+    // Note: We DO NOT touch document.body.style.background anymore.
 
     document.getElementById('backLink').innerText = `← Return to ${CONFIG.text.roomTitle}`;
     document.getElementById('backLink').href = `../as-factory-room/index.html?factory=${FACTORY_SLUG}`;
     document.getElementById('pageTitle').innerText = CONTEXT_NAME;
     document.getElementById('pageSubtitle').innerText = CONFIG.text.hubTitle;
-    document.getElementById('unitInput').placeholder = `New ${CONFIG.text.unitNoun}...`;
+    document.getElementById('unitInput').placeholder = `New ${CONFIG.text.unitNoun} (e.g. ${CONFIG.text.unitNoun === 'Battle' ? 'Waterloo' : 'Chapter 1'})...`;
 
     // 4. DATA LOGIC
     const APP_ID = `as-${FACTORY_SLUG}-${CONTEXT_SLUG}-data-`;
@@ -65,26 +172,53 @@
         }
     }
 
-    // Render Grid
+    // 5. RENDER GRID
     const grid = document.getElementById('grid');
+    // Filter keys strictly for this Factory + Context
     const keys = Object.keys(localStorage).filter(k => k.startsWith(APP_ID));
     
+    if (keys.length === 0) {
+        document.getElementById('emptyState').style.display = 'block';
+    }
+
     keys.forEach(key => {
         try {
             const data = JSON.parse(localStorage.getItem(key));
             const card = document.createElement('a');
             card.className = 'card';
             card.href = `../as-factory-viewer/index.html?factory=${FACTORY_SLUG}&context=${CONTEXT_SLUG}&id=${key}`;
-            if(data.isDenial) card.style.borderColor = '#ff6b6b';
+            
+            // Denial Visual Cue
+            if(data.isDenial) {
+                card.style.borderColor = '#ff6b6b';
+                card.style.backgroundColor = 'rgba(255, 107, 107, 0.05)';
+            }
             
             card.innerHTML = `
-                <button class="delete-btn" onclick="event.preventDefault(); localStorage.removeItem('${key}'); this.closest('.card').remove();">×</button>
-                <h3 style="font-weight:bold; font-size:1.1rem; color:var(--brand);">${data.title}</h3>
-                <p style="color:#888; font-size:0.9rem; margin-top:0.5rem;">${data.subtitle || data.summary}</p>
+                <button class="delete-btn" title="Delete Record" onclick="event.preventDefault(); event.stopPropagation(); deleteItem('${key}', this);">×</button>
+                <h3 style="font-weight:bold; font-size:1.2rem; color:var(--brand); margin-bottom:0.5rem;">${data.title}</h3>
+                <p style="color:var(--muted); font-size:0.95rem; line-height:1.5; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;">
+                    ${data.subtitle || data.summary || 'No summary available.'}
+                </p>
             `;
             grid.appendChild(card);
-        } catch(e) {}
+        } catch(e) {
+            console.warn("Skipping corrupt record:", key);
+        }
     });
+
+    function deleteItem(key, btn) {
+        if(confirm("Permanently remove this record?")) {
+            localStorage.removeItem(key);
+            const card = btn.closest('.card');
+            card.remove();
+            
+            // Check if empty
+            if(document.querySelectorAll('.card').length === 0) {
+                document.getElementById('emptyState').style.display = 'block';
+            }
+        }
+    }
   </script>
 </body>
 </html>
