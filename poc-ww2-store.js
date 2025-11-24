@@ -1,7 +1,7 @@
 const STORAGE_KEY = 'poc-ww2-db';
 
 const Store = {
-  // Read all items from LocalStorage
+  // 1. Read all items
   getAll: () => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -14,29 +14,33 @@ const Store = {
     }
   },
 
-  // Save a NEW item
+  // 2. Read single item (Restored)
+  getById: (id) => {
+    const items = Store.getAll();
+    return items.find(i => i.id === id);
+  },
+
+  // 3. Save new item
   save: (newItem) => {
     const items = Store.getAll();
     
-    // Prevent ID Collisions (Simple check)
+    // Check for ID collision
     if (items.find(i => i.id === newItem.id)) {
-      // Fallback: Append a random string if ID exists
+      // Simple fallback: append random suffix
       newItem.id = newItem.id + '-' + Math.random().toString(36).substr(2, 5);
     }
 
     items.push(newItem);
     
-    // Commit to storage
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ items: items }));
     console.log(`Saved item: ${newItem.meta.title}`);
   },
 
-  // Delete an item by ID
+  // 4. Delete item
   delete: (id) => {
     const items = Store.getAll();
     const filtered = items.filter(i => i.id !== id);
     
-    // Write back to storage
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ items: filtered }));
     console.log(`Deleted item: ${id}`);
   }
