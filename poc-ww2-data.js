@@ -10,8 +10,6 @@ const DATABASE = {
       },
       content: {
         summary: "On 1 September 1939, Germany invaded Poland from the west, north, and south; on 17 September, the USSR invaded from the east under the terms of the Molotov–Ribbentrop Pact. Rapid German mechanized thrusts, close air support, and encirclements overwhelmed Polish defenses despite stubborn resistance at places like Westerplatte, the Bzura, and Warsaw. By early October, organized Polish resistance had collapsed and Germany and the Soviet Union partitioned the country, triggering Britain and France’s declarations of war on Germany and the start of WWII in Europe.",
-        
-        // These keys map directly to APP_CONFIG.sections[i].key
         context: [
           "<strong>German Aim:</strong> Destroy Poland quickly to secure eastern flank and reclaim territory lost after WWI.",
           "<strong>Soviet Aim:</strong> Occupy eastern Poland according to the secret protocol of the German–Soviet pact.",
@@ -49,6 +47,57 @@ const DATABASE = {
         sources: [
           "<strong>Primary:</strong> German OKH/OKW war diaries; Polish operational reports; Soviet documents; diplomatic communiqués; contemporary press.",
           "<strong>Secondary:</strong> Steven Zaloga, <em>Poland 1939</em>; Roger Moorhouse, <em>Poland 1939: The Outbreak of World War II</em>; Williamson Murray & Allan Millett, <em>A War to Be Won</em>."
+        ]
+      }
+    },
+    {
+      id: "is-ww2-battle-of-france-1940",
+      meta: {
+        title: "Battle of France (1940)",
+        subtitle: "The Blitzkrieg that Shattered the Western Front",
+        blurb: "Blitzkrieg through the Low Countries; fall of France.",
+        tags: ["europe", "western-front", "land", "1940", "turning-point"]
+      },
+      content: {
+        summary: "Ending the 'Phoney War,' Germany launched a stunning offensive in May 1940. While Army Group B drew Allied forces into Belgium, Army Group A executed the 'Manstein Plan,' driving armored columns through the dense Ardennes forest. This 'Sickle Cut' isolated the Allied armies in the north, leading to the evacuation at Dunkirk. With the best Allied units removed from the continent, German forces turned south, overwhelming remaining French resistance. France signed an armistice on 22 June, leaving Britain to stand alone.",
+        context: [
+          "<strong>The Phoney War:</strong> Following the fall of Poland, months of inactivity on the Western Front lulled Allies into reliance on the Maginot Line.",
+          "<strong>Dyle Plan:</strong> The Allied strategy was to advance into Belgium to stop the Germans at the Dyle River, assuming the Ardennes was impassable to tanks.",
+          "<strong>German Strategy:</strong> Shifted from the original Schlieffen-like plan to Manstein's bold proposal for a piercing thrust through the center."
+        ],
+        forces: [
+          "<strong>Germany:</strong> 136 divisions. Key commanders: Gerd von Rundstedt, Ewald von Kleist, Erwin Rommel (7th Panzer). Dominant Luftwaffe air superiority.",
+          "<strong>Allies:</strong> 144 divisions (French, British BEF, Belgian, Dutch). Commander-in-Chief Maurice Gamelin. Superior tank numbers but poor doctrine and communications.",
+          "<strong>Technology:</strong> German Panzer III/IVs concentrated in divisions vs. French Char B1s dispersed in infantry support roles."
+        ],
+        timeline: [
+          { label: "10 May", text: "German invasion of Netherlands, Belgium, and Luxembourg. Allies advance north as planned." },
+          { label: "13-14 May", text: "Guderian's XIX Panzer Corps crosses the Meuse at Sedan; the decisive breakthrough." },
+          { label: "15 May", text: "Dutch surrender. French reserves fail to contain the Panzer corridor." },
+          { label: "20 May", text: "German tanks reach the English Channel at Abbeville, cutting off the BEF and French First Army." },
+          { label: "26 May - 4 Jun", text: "Operation Dynamo: Over 338,000 Allied troops evacuated from Dunkirk." },
+          { label: "5 Jun", text: "Case Red: German forces turn south to destroy remaining French armies." },
+          { label: "14 Jun", text: "Paris falls; declared an open city to avoid destruction." },
+          { label: "22 Jun", text: "Armistice signed at Compiègne in the same railway carriage used for the 1918 armistice." }
+        ],
+        turningPoints: [
+          "<strong>The Sedan Breakthrough:</strong> Crossing the Meuse faster than French doctrine deemed possible unhinged the entire Allied defensive line.",
+          "<strong>The Halt Order:</strong> Hitler's pause outside Dunkirk (24 May) allowed the Allies to organize a defensive perimeter for evacuation.",
+          "<strong>Air Superiority:</strong> The Luftwaffe decimated Allied air power early, allowing Stukas to operate as flying artillery."
+        ],
+        outcomes: [
+          "<strong>Occupation:</strong> Northern and Western France occupied; Vichy regime established in the south under Pétain.",
+          "<strong>Britain Isolated:</strong> The UK remained the sole major power fighting Germany, leading to the Battle of Britain.",
+          "<strong>Blitzkrieg Legend:</strong> The speed of victory convinced German leadership of their invincibility, influencing the decision to invade Russia."
+        ],
+        significance: [
+          "<strong>End of Trench Warfare:</strong> Proved that mobility and combined arms had rendered static defenses like the Maginot Line obsolete.",
+          "<strong>Geopolitical Shift:</strong> The rapid collapse of a perceived superpower (France) shocked the world and spurred US rearmament.",
+          "<strong>Strategic Depth:</strong> Germany gained Atlantic ports for U-boats, intensifying the Battle of the Atlantic."
+        ],
+        sources: [
+          "<strong>Primary:</strong> Rommel's <em>The Rommel Papers</em>; Marc Bloch, <em>Strange Defeat</em>; General Halder's Diaries.",
+          "<strong>Secondary:</strong> Karl-Heinz Frieser, <em>The Blitzkrieg Legend</em>; Julian Jackson, <em>The Fall of France</em>; Alistair Horne, <em>To Lose a Battle</em>."
         ]
       }
     }
