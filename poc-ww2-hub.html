@@ -7,10 +7,8 @@
   <link rel="stylesheet" href="poc-ww2-styles.css">
 </head>
 <body>
-  <!-- 1. Load Configuration -->
   <script src="poc-ww2-config.js"></script>
   
-  <!-- 2. Load Storage Adapter -->
   <script src="poc-ww2-store.js"></script>
 
   <div class="container">
@@ -63,17 +61,33 @@
       el.className = 'card';
       const tagsHtml = item.meta.tags.map(t => `<span class="tag">#${t}</span>`).join('');
 
+      // INJECT HTML (Including the delete button)
       el.innerHTML = `
+        <button class="card-delete" title="Delete Battle">×</button>
         <h3>${item.meta.title}</h3>
         <p>${item.meta.blurb}</p>
         <div class="tagrow">
           ${tagsHtml}
         </div>
         <div class="actions">
-          <!-- FIXED LINK: Points to your canonical file poc-ww2-viewer.html -->
           <a class="btn" href="poc-ww2-viewer.html?id=${item.id}">Open</a>
         </div>
       `;
+
+      // ATTACH DELETE EVENT
+      const deleteBtn = el.querySelector('.card-delete');
+      deleteBtn.addEventListener('click', (e) => {
+        // Stop click from bubbling (if we add card click events later)
+        e.stopPropagation();
+
+        if (confirm(`Delete "${item.meta.title}"? This cannot be undone.`)) {
+            // Delete from Store
+            Store.delete(item.id);
+            // Re-render immediately to remove from UI
+            render();
+        }
+      });
+
       return el;
     }
 
