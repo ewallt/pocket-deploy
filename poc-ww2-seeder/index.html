@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>WWII Data Seeder</title>
+  <style>
+    body { font-family: monospace; background: #111; color: #0f0; padding: 2rem; }
+    h1 { border-bottom: 1px solid #333; padding-bottom: 0.5rem; }
+    .status { padding: 1rem; border: 1px solid #333; margin-top: 1rem; background: #222; }
+    .success { color: #0f0; }
+    .error { color: #f55; }
+    pre { white-space: pre-wrap; word-wrap: break-word; color: #ccc; }
+  </style>
+</head>
+<body>
+
+  <h1>LocalStorage Seeder</h1>
+  <div id="output">Initializing...</div>
+
+  <!-- 
+    Load the Static Data Source.
+    NOTE: This expects 'poc-ww2-data.js' to be in the same directory.
+  -->
+  <script src="poc-ww2-data.js"></script>
+
+  <script>
+    // The key where all data will live in the browser's storage
+    const STORAGE_KEY = 'poc-ww2-db';
+    const output = document.getElementById('output');
+
+    function log(msg, type = 'neutral') {
+      const div = document.createElement('div');
+      div.className = `status ${type}`;
+      div.innerHTML = msg;
+      output.appendChild(div);
+    }
+
+    try {
+      // 1. Check if static data loaded successfully from the script tag
+      if (typeof DATABASE === 'undefined') {
+        throw new Error("poc-ww2-data.js not found or DATABASE undefined. Please check the file exists.");
+      }
+
+      // 2. Write to Local Storage
+      // We store the whole object structure: { items: [...] }
+      const jsonString = JSON.stringify(DATABASE);
+      localStorage.setItem(STORAGE_KEY, jsonString);
+
+      // 3. Verify the write was successful by reading it back
+      const storedData = localStorage.getItem(STORAGE_KEY);
+      
+      if (!storedData) {
+        throw new Error("Write failed. LocalStorage is empty.");
+      }
+
+      const parsed = JSON.parse(storedData);
+      const count = parsed.items ? parsed.items.length : 0;
+
+      log(`✅ Success! Database seeded to key: <strong>${STORAGE_KEY}</strong>`, 'success');
+      log(`📦 Item Count: ${count}`);
+      log(`📄 Raw Data Preview (First 200 chars): <br><pre>${jsonString.substring(0, 200)}...</pre>`);
+
+    } catch (e) {
+      log(`❌ Error: ${e.message}`, 'error');
+      console.error(e);
+    }
+  </script>
+
+</body>
+</html>
