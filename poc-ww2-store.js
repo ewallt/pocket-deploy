@@ -18,5 +18,16 @@ const Store = {
   getById: (id) => {
     const items = Store.getAll();
     return items.find(i => i.id === id);
+  },
+
+  // Delete an item by ID
+  delete: (id) => {
+    const items = Store.getAll();
+    const filtered = items.filter(i => i.id !== id);
+    
+    // Write back to storage
+    // We maintain the root { items: [] } structure
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ items: filtered }));
+    console.log(`Deleted item: ${id}`);
   }
 };
