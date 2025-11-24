@@ -1,44 +1,45 @@
 const Brain = {
   // --- CONFIGURATION ---
-  // PASTE YOUR KEY HERE. 
-  // Ensure you have "Website Restrictions" set in Google Cloud Console.
+  // Paste your key here
   API_KEY: 'AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A', 
 
+  // STRICTLY GEMINI 2.5
   MODEL: 'gemini-2.5-flash', 
-  API_URL: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
+  
+  get API_URL() {
+    return `https://generativelanguage.googleapis.com/v1beta/models/${this.MODEL}:generateContent`;
+  },
 
-  // --- PROMPT ENGINEERING ---
-  generatePrompt: (topic) => `
+  // --- SYSTEM INSTRUCTION ---
+  // 2.5 Architecture separates the Persona from the Prompt
+  SYSTEM_PROMPT: `
     You are a WWII Historian Engine. 
-    Role: Generate a strict JSON object for a database application. 
-    Topic: "${topic}"
+    Role: Generate a strict JSON object for a database application.
+    Tone: Objective, encyclopedic, "Navy Blue" style (precise, military context).
     
     Constraints:
-    1. Output ONLY valid JSON. No markdown formatting. No backticks.
-    2. Tone: Objective, encyclopedic, "Navy Blue" style (precise, military context).
-    3. Generate a unique "id" in kebab-case (e.g., "battle-of-midway-1942").
-    4. "meta.tags" allowed values: "europe", "pacific", "eastern-front", "western-front", "africa", "turning-point".
+    1. Output ONLY valid JSON.
+    2. Generate a unique "id" in kebab-case (e.g., "battle-of-midway-1942").
+    3. "meta.tags" allowed: "europe", "pacific", "eastern-front", "western-front", "africa", "turning-point".
     
-    Required JSON Schema:
+    JSON Schema:
     {
       "id": "string",
       "meta": {
-        "title": "Battle Name (Year)",
-        "subtitle": "Short strategic context",
-        "blurb": "2-sentence summary for the card view.",
-        "tags": ["tag1", "tag2"]
+        "title": "String",
+        "subtitle": "String",
+        "blurb": "String",
+        "tags": ["tag"]
       },
       "content": {
-        "summary": "Full narrative (~200 words). Use HTML <strong> for emphasis.",
-        "context": ["Bullet point 1", "Bullet point 2"],
-        "forces": ["<strong>Allies:</strong> Details", "<strong>Axis:</strong> Details"],
-        "timeline": [
-          { "label": "Date", "text": "Event description" }
-        ],
-        "turningPoints": ["Point 1", "Point 2"],
-        "outcomes": ["Outcome 1", "Outcome 2"],
-        "significance": ["Why this matters historically"],
-        "sources": ["Citation 1", "Citation 2"]
+        "summary": "HTML String",
+        "context": ["String"],
+        "forces": ["String"],
+        "timeline": [{ "label": "Date", "text": "Event" }],
+        "turningPoints": ["String"],
+        "outcomes": ["String"],
+        "significance": ["String"],
+        "sources": ["String"]
       }
     }
   `,
@@ -46,9 +47,25 @@ const Brain = {
   // --- API EXECUTION ---
   generateBattle: async (topic) => {
     const payload = {
+      // 1. System Persona
+      system_instruction: {
+        parts: [{ text: Brain.SYSTEM_PROMPT }]
+      },
+      // 2. User Request
       contents: [{
-        parts: [{ text: Brain.generatePrompt(topic) }]
-      }]
+        parts: [{ text: `Topic: ${topic}` }]
+      }],
+      // 3. Safety Settings (Standard for History/War topics)
+      safetySettings: [
+        { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+        { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+        { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+        { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+      ],
+      // 4. Native JSON Mode (2.5 Feature)
+      generationConfig: {
+        response_mime_type: "application/json"
+      }
     };
 
     try {
@@ -58,21 +75,20 @@ const Brain = {
         body: JSON.stringify(payload)
       });
 
-      if (!response.ok) throw new Error(`API Error: ${response.status} - ${response.statusText}`);
+      if (!response.ok) {
+        // Enhanced Error Logging to see why 2.5 might reject it
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(`API Error ${response.status}: ${errorData.error?.message || response.statusText}`);
+      }
 
       const data = await response.json();
       
-      // Safety check for empty response
-      if (!data.candidates || data.candidates.length === 0) {
-        throw new Error("AI returned no content.");
+      if (!data.candidates || !data.candidates[0].content) {
+        throw new Error("AI blocked the content or returned empty.");
       }
 
-      const rawText = data.candidates[0].content.parts[0].text;
-      
-      // Sanitization: Remove Markdown code blocks if the AI adds them
-      const cleanJson = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
-      
-      return JSON.parse(cleanJson);
+      // Native JSON parsing
+      return JSON.parse(data.candidates[0].content.parts[0].text);
 
     } catch (err) {
       console.error("Brain Failure:", err);
