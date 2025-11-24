@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>WWII Viewer</title>
+  <style>
+    /* --- NAVY BLUE COMMAND CENTER CSS --- */
+    :root{
+      --bg:#0b1020; --panel:#111833; --ink:#e6ecff; --muted:#a7b0cc;
+      --brand:#8bb9ff; --accent:#c0ffe1; --border:#26325b; --chip:#1a2347;
+      --shadow:0 8px 28px rgba(0,0,0,.35); --radius:12px; --radius-sm:8px;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+      color:var(--ink);
+      background: radial-gradient(1200px 600px at 10% -5%, rgba(139,185,255,.20), transparent 55%),
+                  radial-gradient(1000px 400px at 95% 10%, rgba(192,255,225,.18), transparent 60%),
+                  var(--bg);
+      line-height:1.6; min-height:100vh; padding-bottom:2rem;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    }
+    .container{max-width:860px;margin:0 auto;padding:1rem}
+    
+    /* Navigation */
+    .breadcrumb{margin-bottom:1rem;font-size:.92rem}
+    .breadcrumb a{color:var(--brand);text-decoration:none}
+    .breadcrumb span{color:var(--muted);margin:0 .5rem}
+    
+    /* Header */
+    header{
+      background:linear-gradient(180deg, color-mix(in oklab,var(--panel) 85%, transparent), var(--panel));
+      border:1px solid var(--border); border-radius:var(--radius);
+      padding:2rem 1.5rem; margin-bottom:1.25rem; box-shadow:var(--shadow);
+    }
+    h1{font-size:1.75rem;color:var(--ink);margin-bottom:.4rem}
+    .subtitle{color:var(--muted);font-size:.95rem;font-style:italic}
+    
+    /* Main Summary Box */
+    .main-answer{
+      background:var(--panel); border:1px solid var(--border);
+      border-radius:var(--radius); padding:1.5rem; margin-bottom:1.25rem;
+      box-shadow:var(--shadow); border-left:4px solid var(--brand);
+    }
+    .main-answer h2{color:var(--brand);font-size:1.25rem;margin-bottom:.8rem}
+    .main-answer p{font-size:1.03rem;line-height:1.65;color:var(--muted)}
+
+    /* Accordion Sections */
+    .section{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:1rem;box-shadow:var(--shadow);overflow:hidden}
+    .section-header{padding:1.05rem 1.25rem;background:linear-gradient(135deg,#1a2a6b 0%,#0f172a 100%);color:var(--ink);display:flex;justify-content:space-between;align-items:center;cursor:pointer;border-bottom:1px solid var(--border);user-select:none}
+    .section-header h2{font-size:1.12rem;margin:0}
+    .section-icon{font-size:1.35rem;transition:transform .28s ease}
+    .section.active .section-icon{transform:rotate(180deg)}
+    .section-content{max-height:0;overflow:hidden;transition:max-height .38s ease}
+    .section.active .section-content{max-height:5000px}
+    .section-inner{padding:1.25rem}
+
+    /* Content Types */
+    .list-item{background:color-mix(in oklab,var(--chip) 75%, transparent);border-left:3px solid var(--brand);padding:1rem;margin-bottom:.75rem;border-radius:var(--radius-sm);border:1px solid var(--border);color:var(--muted)}
+    
+    .timeline{border-left:3px solid var(--brand);padding-left:1.25rem;margin-left:.5rem}
+    .timeline-item{position:relative;margin-bottom:1.15rem;color:var(--muted)}
+    .timeline-item::before{content:'';position:absolute;left:-1.65rem;top:.25rem;width:12px;height:12px;border-radius:50%;background:var(--brand);border:3px solid var(--panel);box-shadow:0 0 0 2px var(--brand)}
+    .timeline-item strong{display:block;color:var(--brand);margin-bottom:.25rem}
+
+    .source{background:color-mix(in oklab,var(--chip) 65%, transparent);border-radius:8px;padding:1rem;margin-top:1rem;font-size:.95rem;color:var(--muted);border:1px solid var(--border)}
+    .source strong{color:var(--ink)}
+
+    /* Utilities */
+    .back-to-top{position:fixed;right:1rem;bottom:1.5rem;width:50px;height:50px;border-radius:50%;background:var(--brand);color:#001;border:none;font-size:1.5rem;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);opacity:0;transition:opacity .3s ease;z-index:1000}
+    .back-to-top.visible{opacity:1}
+    .error-msg{ text-align:center; margin-top:3rem; color:var(--muted); }
+  </style>
+</head>
+<body>
+  <script src="poc-data.js"></script>
+
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="poc-hub.html">WWII Hub</a> <span id="bread-title">› Loading...</span>
+    </div>
+
+    <div id="app-root">
+      </div>
+  </div>
+
+  <button id="backToTop" class="back-to-top" onclick="scrollToTop()">↑</button>
+
+  <script>
+    // 1. Utilities
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    // 2. Render Logic
+    function renderPage() {
+      const id = getQueryParam('id');
+      const appRoot = document.getElementById('app-root');
+      const breadTitle = document.getElementById('bread-title');
+
+      // Check if DATABASE exists (loaded from poc-data.js)
+      if (typeof DATABASE === 'undefined') {
+        appRoot.innerHTML = `<div class="error-msg"><h2>Error</h2><p>Data source not loaded.</p></div>`;
+        return;
+      }
+
+      const item = DATABASE.items.find(i => i.id === id);
+
+      if (!item) {
+        breadTitle.innerText = "› Error";
+        appRoot.innerHTML = `<div class="error-msg"><h2>404: Battle Not Found</h2><p>Could not find ID: ${id}</p></div>`;
+        return;
+      }
+
+      // Update Meta
+      document.title = item.meta.title;
+      breadTitle.innerText = `› ${item.meta.title}`;
+
+      // Build HTML Header & Summary
+      let html = `
+        <header>
+          <h1>${item.meta.title}</h1>
+          <p class="subtitle">${item.meta.subtitle}</p>
+        </header>
+
+        <section class="main-answer">
+          <h2>Core Summary</h2>
+          <p>${item.content.summary}</p>
+        </section>
+      `;
+
+      // Loop Sections via Factory Pattern
+      item.content.sections.forEach((section, index) => {
+        const isActive = index === 0 ? 'active' : ''; // Open first one by default
+        
+        let innerHTML = '';
+
+        if (section.type === 'list') {
+          innerHTML = section.items.map(txt => 
+            `<div class="list-item">${txt}</div>`
+          ).join('');
+        } 
+        else if (section.type === 'timeline') {
+          const events = section.items.map(evt => 
+            `<div class="timeline-item"><strong>${evt.label}:</strong> ${evt.text}</div>`
+          ).join('');
+          innerHTML = `<div class="timeline">${events}</div>`;
+        }
+        else if (section.type === 'source') {
+          innerHTML = section.items.map(txt => 
+            `<div class="source">${txt}</div>`
+          ).join('');
+        }
+
+        html += `
+          <section class="section ${isActive}">
+            <div class="section-header" onclick="toggleSection(this)">
+              <h2>${section.title}</h2>
+              <span class="section-icon">▼</span>
+            </div>
+            <div class="section-content">
+              <div class="section-inner">
+                ${innerHTML}
+              </div>
+            </div>
+          </section>
+        `;
+      });
+
+      appRoot.innerHTML = html;
+    }
+
+    // 3. Interaction Logic (Accordion)
+    function toggleSection(header) {
+      const section = header.parentElement;
+      // Auto-close others
+      document.querySelectorAll('.section').forEach(s => {
+        if (s !== section && s.classList.contains('active')) s.classList.remove('active');
+      });
+      section.classList.toggle('active');
+    }
+
+    // 4. Scroll Logic
+    window.addEventListener('scroll', () => {
+      const btn = document.getElementById('backToTop');
+      if (window.pageYOffset > 300) btn.classList.add('visible');
+      else btn.classList.remove('visible');
+    });
+    function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+    // Init
+    document.addEventListener('DOMContentLoaded', renderPage);
+  </script>
+</body>
+</html>
