@@ -2,7 +2,7 @@ const Brain = {
   // --- CONFIGURATION ---
   // PASTE YOUR KEY HERE. 
   // Ensure you have "Website Restrictions" set in Google Cloud Console.
-  API_KEY: 'YOUR_API_KEY_GOES_HERE', 
+  API_KEY: 'AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A', 
 
   MODEL: 'gemini-1.5-flash', 
   API_URL: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
