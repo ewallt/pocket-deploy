@@ -4,20 +4,20 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>WWII Viewer</title>
-  <!-- External CSS -->
   <link rel="stylesheet" href="poc-ww2-styles.css">
 </head>
 <body>
-  <!-- 1. Load Adjunct Files -->
+  <!-- 1. Load Configuration & Logic -->
   <script src="poc-ww2-config.js"></script>
   <script src="poc-ww2-renderers.js"></script>
-  <script src="poc-ww2-data.js"></script>
+  
+  <!-- 2. Load Storage Adapter (Replaces static data file) -->
+  <script src="poc-ww2-store.js"></script>
 
-  <!-- Container.narrow applied to match previous max-width: 860px -->
   <div class="container narrow">
     <div class="breadcrumb">
-      <!-- Note: We point back to the v2 hub here -->
-      <a href="poc-ww2-hub.html" id="nav-hub-link">Hub</a> <span id="bread-title">...</span>
+      <!-- Link back to the local storage Hub -->
+      <a href="poc-ww2-hub-local.html" id="nav-hub-link">Hub</a> <span id="bread-title">...</span>
     </div>
 
     <div id="app-root">
@@ -36,8 +36,6 @@
         root.style.setProperty(key, value);
       }
     }
-
-    // Apply default theme immediately
     applyTheme('default');
 
     // --- 2. UTILITIES ---
@@ -53,18 +51,17 @@
       const breadTitle = document.getElementById('bread-title');
       const navHubLink = document.getElementById('nav-hub-link');
 
-      // Set UI Labels from Config
       breadTitle.innerText = APP_CONFIG.labels.loading;
       navHubLink.innerText = APP_CONFIG.labels.backToHub;
 
-      // Validation
-      if (typeof DATABASE === 'undefined') {
-        appRoot.innerHTML = `<div class="error-msg"><h2>Error</h2><p>Data source not loaded.</p></div>`;
+      // VALIDATION: Check if Store is loaded
+      if (typeof Store === 'undefined') {
+        appRoot.innerHTML = `<div class="error-msg"><h2>Error</h2><p>Storage adapter not loaded.</p></div>`;
         return;
       }
 
-      // Data Lookup
-      const item = DATABASE.items.find(i => i.id === id);
+      // RETRIEVAL: Fetch directly from the Store
+      const item = Store.getById(id);
 
       if (!item) {
         breadTitle.innerText = APP_CONFIG.labels.errorTitle;
@@ -72,15 +69,16 @@
           <div class="error-msg">
             <h2>${APP_CONFIG.labels.errorBody}</h2>
             <p>ID: ${id || 'null'}</p>
+            <p style="font-size:0.9rem; margin-top:0.5rem">Ensure you have run the Seeder.</p>
           </div>`;
         return;
       }
 
-      // Update Meta
+      // META
       document.title = item.meta.title;
       breadTitle.innerText = `› ${item.meta.title}`;
 
-      // --- BUILD HEADER (Static Structure) ---
+      // HEADER
       let html = `
         <header>
           <h1>${item.meta.title}</h1>
@@ -93,20 +91,13 @@
         </section>
       `;
 
-      // --- BUILD ACCORDIONS (Dynamic Structure from Config) ---
+      // ACCORDIONS
       APP_CONFIG.sections.forEach((sectionConfig, index) => {
         const isActive = index === 0 ? 'active' : ''; 
-        
-        // 1. Get Data for this section
         const sectionData = item.content[sectionConfig.key];
-
-        // 2. Get Renderer
         const renderFn = RENDERERS[sectionConfig.type] || RENDERERS.list;
-        
-        // 3. Generate inner HTML
         const innerHTML = renderFn(sectionData);
 
-        // 4. Append Section HTML
         html += `
           <section class="section ${isActive}">
             <div class="section-header" onclick="toggleSection(this)">
@@ -128,14 +119,12 @@
     // --- 4. INTERACTION LOGIC ---
     function toggleSection(header) {
       const section = header.parentElement;
-      // Accordion behavior: Close others
       document.querySelectorAll('.section').forEach(s => {
         if (s !== section && s.classList.contains('active')) s.classList.remove('active');
       });
       section.classList.toggle('active');
     }
 
-    // --- 5. SCROLL LOGIC ---
     window.addEventListener('scroll', () => {
       const btn = document.getElementById('backToTop');
       if (window.pageYOffset > 300) btn.classList.add('visible');
@@ -143,7 +132,6 @@
     });
     function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
-    // --- INIT ---
     document.addEventListener('DOMContentLoaded', renderPage);
   </script>
 </body>
