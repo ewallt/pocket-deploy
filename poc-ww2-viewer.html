@@ -10,18 +10,27 @@
   <!-- 1. Load Configuration & Logic -->
   <script src="poc-ww2-config.js"></script>
   <script src="poc-ww2-renderers.js"></script>
-  
-  <!-- 2. Load Storage Adapter (Replaces static data file) -->
   <script src="poc-ww2-store.js"></script>
 
   <div class="container narrow">
     <div class="breadcrumb">
-      <!-- Link back to the local storage Hub -->
       <a href="poc-ww2-hub-local.html" id="nav-hub-link">Hub</a> <span id="bread-title">...</span>
     </div>
 
     <div id="app-root">
       <!-- Content injected here -->
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div id="deleteModal" class="modal-overlay">
+    <div class="modal">
+      <h3>Delete Battle?</h3>
+      <p>This action cannot be undone. Are you sure you want to remove this record from local storage?</p>
+      <div class="modal-actions">
+        <button class="modal-btn cancel" onclick="closeModal()">Cancel</button>
+        <button class="modal-btn confirm" onclick="executeDelete()">Delete</button>
+      </div>
     </div>
   </div>
 
@@ -38,15 +47,19 @@
     }
     applyTheme('default');
 
-    // --- 2. UTILITIES ---
+    // --- 2. UTILITIES & STATE ---
     function getQueryParam(param) {
       const urlParams = new URLSearchParams(window.location.search);
       return urlParams.get(param);
     }
 
+    let currentId = null; // Store ID globally for delete logic
+
     // --- 3. CORE RENDER LOGIC ---
     function renderPage() {
       const id = getQueryParam('id');
+      currentId = id; // Capture ID
+
       const appRoot = document.getElementById('app-root');
       const breadTitle = document.getElementById('bread-title');
       const navHubLink = document.getElementById('nav-hub-link');
@@ -54,13 +67,11 @@
       breadTitle.innerText = APP_CONFIG.labels.loading;
       navHubLink.innerText = APP_CONFIG.labels.backToHub;
 
-      // VALIDATION: Check if Store is loaded
       if (typeof Store === 'undefined') {
         appRoot.innerHTML = `<div class="error-msg"><h2>Error</h2><p>Storage adapter not loaded.</p></div>`;
         return;
       }
 
-      // RETRIEVAL: Fetch directly from the Store
       const item = Store.getById(id);
 
       if (!item) {
@@ -69,7 +80,6 @@
           <div class="error-msg">
             <h2>${APP_CONFIG.labels.errorBody}</h2>
             <p>ID: ${id || 'null'}</p>
-            <p style="font-size:0.9rem; margin-top:0.5rem">Ensure you have run the Seeder.</p>
           </div>`;
         return;
       }
@@ -78,9 +88,10 @@
       document.title = item.meta.title;
       breadTitle.innerText = `› ${item.meta.title}`;
 
-      // HEADER
+      // HEADER with Delete Button
       let html = `
         <header>
+          <button class="btn-delete" onclick="confirmDelete()">Delete Battle</button>
           <h1>${item.meta.title}</h1>
           <p class="subtitle">${item.meta.subtitle}</p>
         </header>
@@ -125,6 +136,32 @@
       section.classList.toggle('active');
     }
 
+    // --- 5. DELETE LOGIC ---
+    const modal = document.getElementById('deleteModal');
+
+    function confirmDelete() {
+      modal.classList.add('open');
+    }
+
+    function closeModal() {
+      modal.classList.remove('open');
+    }
+
+    function executeDelete() {
+      if (!currentId) return;
+      
+      Store.delete(currentId);
+      
+      // Redirect back to Hub after deletion
+      window.location.href = 'poc-ww2-hub-local.html';
+    }
+
+    // Close modal if clicking outside
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    // --- 6. SCROLL LOGIC ---
     window.addEventListener('scroll', () => {
       const btn = document.getElementById('backToTop');
       if (window.pageYOffset > 300) btn.classList.add('visible');
