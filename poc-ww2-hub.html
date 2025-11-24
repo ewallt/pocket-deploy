@@ -4,13 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>WWII Hub</title>
-  <!-- External CSS -->
   <link rel="stylesheet" href="poc-ww2-styles.css">
 </head>
 <body>
-  <!-- 1. Load Data & Config -->
+  <!-- 1. Load Configuration -->
   <script src="poc-ww2-config.js"></script>
-  <script src="poc-ww2-data.js"></script>
+  
+  <!-- 2. Load Storage Adapter (Replaces static data file) -->
+  <script src="poc-ww2-store.js"></script>
 
   <div class="container">
     <header>
@@ -22,7 +23,6 @@
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 21l-4.2-4.2M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke-linecap="round"/></svg>
           <input id="searchInput" type="search" placeholder="Filter by title, theater, year, or tags…" autocomplete="off"/>
         </div>
-        <!-- Filter Chips -->
         <button class="chip active" data-tag="all">All</button>
         <button class="chip" data-tag="europe">Europe</button>
         <button class="chip" data-tag="eastern-front">Eastern Front</button>
@@ -33,12 +33,10 @@
     </header>
 
     <main>
-      <div id="grid" class="grid">
-        <!-- Cards injected by JS -->
-      </div>
+      <div id="grid" class="grid"></div>
     </main>
 
-    <footer>Public view: “Open” only. Modular Architecture POC.</footer>
+    <footer>Public view: “Open” only. LocalStorage Architecture.</footer>
   </div>
 
   <script>
@@ -51,8 +49,6 @@
         root.style.setProperty(key, value);
       }
     }
-
-    // Apply default theme immediately
     applyTheme('default');
 
 
@@ -65,7 +61,6 @@
     function makeCard(item){
       const el = document.createElement('article');
       el.className = 'card';
-      
       const tagsHtml = item.meta.tags.map(t => `<span class="tag">#${t}</span>`).join('');
 
       el.innerHTML = `
@@ -75,8 +70,8 @@
           ${tagsHtml}
         </div>
         <div class="actions">
-          <!-- Pointing to the v2 viewer -->
-          <a class="btn" href="poc-ww2-viewer-v2.html?id=${item.id}">Open</a>
+          <!-- Link to the LocalStorage Viewer -->
+          <a class="btn" href="poc-ww2-viewer-local.html?id=${item.id}">Open</a>
         </div>
       `;
       return el;
@@ -85,14 +80,23 @@
     function render(){
       grid.innerHTML = '';
       
-      if (typeof DATABASE === 'undefined') {
-        grid.innerHTML = `<div class="error-msg">Error: poc-ww2-data.js not loaded.</div>`;
+      // VALIDATION: Check Store
+      if (typeof Store === 'undefined') {
+        grid.innerHTML = `<div class="error-msg">Error: poc-ww2-store.js not loaded.</div>`;
+        return;
+      }
+
+      // RETRIEVAL: Fetch all items from Store
+      const items = Store.getAll();
+
+      if (items.length === 0) {
+        grid.innerHTML = `<div class="error-msg">Database is empty. Please run the Seeder.</div>`;
         return;
       }
 
       const q = (searchInput.value || '').trim().toLowerCase();
 
-      DATABASE.items
+      items
         .filter(item => {
           const tagOk = activeTag === 'all' ? true : item.meta.tags.includes(activeTag);
           const text = (item.meta.title + ' ' + item.meta.blurb + ' ' + item.meta.tags.join(' ')).toLowerCase();
@@ -102,9 +106,8 @@
         .forEach(item => grid.appendChild(makeCard(item)));
     }
 
-    // ---- Interactions ----
+    // Interactions
     searchInput.addEventListener('input', render);
-
     chips.forEach(chip => {
       chip.addEventListener('click', () => {
         chips.forEach(c => c.classList.remove('active'));
