@@ -14,24 +14,11 @@
 
   <div class="container narrow">
     <div class="breadcrumb">
-      <!-- FIXED LINK: Points to your canonical file poc-ww2-hub.html -->
       <a href="poc-ww2-hub.html" id="nav-hub-link">Hub</a> <span id="bread-title">...</span>
     </div>
 
     <div id="app-root">
       <!-- Content injected here -->
-    </div>
-  </div>
-
-  <!-- Delete Confirmation Modal -->
-  <div id="deleteModal" class="modal-overlay">
-    <div class="modal">
-      <h3>Delete Battle?</h3>
-      <p>This action cannot be undone. Are you sure you want to remove this record from local storage?</p>
-      <div class="modal-actions">
-        <button class="modal-btn cancel" onclick="closeModal()">Cancel</button>
-        <button class="modal-btn confirm" onclick="executeDelete()">Delete</button>
-      </div>
     </div>
   </div>
 
@@ -48,19 +35,15 @@
     }
     applyTheme('default');
 
-    // --- 2. UTILITIES & STATE ---
+    // --- 2. UTILITIES ---
     function getQueryParam(param) {
       const urlParams = new URLSearchParams(window.location.search);
       return urlParams.get(param);
     }
 
-    let currentId = null; // Store ID globally for delete logic
-
     // --- 3. CORE RENDER LOGIC ---
     function renderPage() {
       const id = getQueryParam('id');
-      currentId = id; // Capture ID
-
       const appRoot = document.getElementById('app-root');
       const breadTitle = document.getElementById('bread-title');
       const navHubLink = document.getElementById('nav-hub-link');
@@ -89,10 +72,9 @@
       document.title = item.meta.title;
       breadTitle.innerText = `› ${item.meta.title}`;
 
-      // HEADER with Delete Button
+      // HEADER (Cleaned up - No delete button)
       let html = `
         <header>
-          <button class="btn-delete" onclick="confirmDelete()">Delete Battle</button>
           <h1>${item.meta.title}</h1>
           <p class="subtitle">${item.meta.subtitle}</p>
         </header>
@@ -137,33 +119,7 @@
       section.classList.toggle('active');
     }
 
-    // --- 5. DELETE LOGIC ---
-    const modal = document.getElementById('deleteModal');
-
-    function confirmDelete() {
-      modal.classList.add('open');
-    }
-
-    function closeModal() {
-      modal.classList.remove('open');
-    }
-
-    function executeDelete() {
-      if (!currentId) return;
-      
-      Store.delete(currentId);
-      
-      // Redirect back to Hub after deletion
-      // FIXED LINK: Points to your actual filename poc-ww2-hub.html
-      window.location.href = 'poc-ww2-hub.html';
-    }
-
-    // Close modal if clicking outside
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) closeModal();
-    });
-
-    // --- 6. SCROLL LOGIC ---
+    // --- 5. SCROLL LOGIC ---
     window.addEventListener('scroll', () => {
       const btn = document.getElementById('backToTop');
       if (window.pageYOffset > 300) btn.classList.add('visible');
