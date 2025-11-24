@@ -4,8 +4,8 @@ const Brain = {
   // Ensure you have "Website Restrictions" set in Google Cloud Console.
   API_KEY: 'AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A', 
 
-  MODEL: 'gemini-1.5-flash', 
-  API_URL: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
+  MODEL: 'gemini-2.5-flash', 
+  API_URL: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
 
   // --- PROMPT ENGINEERING ---
   generatePrompt: (topic) => `
