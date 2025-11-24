@@ -5,11 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>WWII Hub</title>
   <style>
-    /* --- NAVY BLUE COMMAND CENTER CSS --- */
+    /* --- BASE VARIABLES (Overridden by Config) --- */
     :root{
       --bg:#0b1020; --panel:#111833; --ink:#e6ecff; --muted:#a7b0cc;
       --brand:#8bb9ff; --accent:#c0ffe1; --border:#26325b; --chip:#1a2347;
-      --shadow:0 8px 28px rgba(0,0,0,.35); --radius:14px;
+      
+      /* Structural */
+      --shadow:0 8px 28px rgba(0,0,0,.35); 
+      --radius:14px;
     }
     *{margin:0;padding:0;box-sizing:border-box}
     
@@ -89,6 +92,8 @@
   </style>
 </head>
 <body>
+  <!-- 1. Load Data & Config -->
+  <script src="poc-ww2-config.js"></script>
   <script src="poc-ww2-data.js"></script>
 
   <div class="container">
@@ -101,6 +106,7 @@
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 21l-4.2-4.2M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke-linecap="round"/></svg>
           <input id="searchInput" type="search" placeholder="Filter by title, theater, year, or tags…" autocomplete="off"/>
         </div>
+        <!-- Filter Chips -->
         <button class="chip active" data-tag="all">All</button>
         <button class="chip" data-tag="europe">Europe</button>
         <button class="chip" data-tag="eastern-front">Eastern Front</button>
@@ -112,13 +118,31 @@
 
     <main>
       <div id="grid" class="grid">
-        </div>
+        <!-- Cards injected by JS -->
+      </div>
     </main>
 
-    <footer>Public view: “Open” only. POC Data Architecture.</footer>
+    <footer>Public view: “Open” only. Modular Architecture POC.</footer>
   </div>
 
   <script>
+    // --- 1. SETUP & THEME ---
+    function applyTheme(themeName) {
+      // Check if config exists
+      if (typeof APP_CONFIG === 'undefined') return;
+      
+      const theme = APP_CONFIG.themes[themeName] || APP_CONFIG.themes.default;
+      const root = document.documentElement;
+      for (const [key, value] of Object.entries(theme.colors)) {
+        root.style.setProperty(key, value);
+      }
+    }
+
+    // Apply default theme immediately
+    applyTheme('default');
+
+
+    // --- 2. RENDER LOGIC ---
     const grid = document.getElementById('grid');
     const searchInput = document.getElementById('searchInput');
     const chips = Array.from(document.querySelectorAll('.chip'));
@@ -138,6 +162,7 @@
           ${tagsHtml}
         </div>
         <div class="actions">
+          <!-- Link points to the generic viewer with ID parameter -->
           <a class="btn" href="poc-ww2-viewer.html?id=${item.id}">Open</a>
         </div>
       `;
@@ -149,7 +174,7 @@
       
       // Check if DATABASE exists
       if (typeof DATABASE === 'undefined') {
-        grid.innerHTML = `<div class="error-msg">Error: poc-data.js not loaded.</div>`;
+        grid.innerHTML = `<div class="error-msg">Error: poc-ww2-data.js not loaded.</div>`;
         return;
       }
 
