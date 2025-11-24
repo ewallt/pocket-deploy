@@ -14,10 +14,21 @@ const Store = {
     }
   },
 
-  // Find a specific item by ID
-  getById: (id) => {
+  // Save a NEW item
+  save: (newItem) => {
     const items = Store.getAll();
-    return items.find(i => i.id === id);
+    
+    // Prevent ID Collisions (Simple check)
+    if (items.find(i => i.id === newItem.id)) {
+      // Fallback: Append a random string if ID exists
+      newItem.id = newItem.id + '-' + Math.random().toString(36).substr(2, 5);
+    }
+
+    items.push(newItem);
+    
+    // Commit to storage
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ items: items }));
+    console.log(`Saved item: ${newItem.meta.title}`);
   },
 
   // Delete an item by ID
@@ -26,7 +37,6 @@ const Store = {
     const filtered = items.filter(i => i.id !== id);
     
     // Write back to storage
-    // We maintain the root { items: [] } structure
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ items: filtered }));
     console.log(`Deleted item: ${id}`);
   }
