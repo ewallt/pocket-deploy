@@ -40,15 +40,12 @@
     </main>
 
     <footer style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1rem; color: var(--muted); font-size: 0.9rem;">
-      <span>LocalStorage Architecture. v1.1</span>
+      <span>LocalStorage Architecture. v1.3 (Dynamic)</span>
       
       <div style="display: flex; align-items: center; gap: 0.5rem;">
         <label for="themeSelect" style="font-size: 0.85rem;">Theme:</label>
         <select id="themeSelect" style="background: var(--chip); color: var(--ink); border: 1px solid var(--border); padding: 0.3rem; border-radius: 6px; outline: none;">
-          <option value="navy">Navy Command</option>
-          <option value="field">Field Ops</option>
-          <option value="paper">Archives</option>
-        </select>
+          </select>
       </div>
     </footer>
   </div>
@@ -58,9 +55,24 @@
     const themeSelect = document.getElementById('themeSelect');
     const THEME_KEY = 'poc-ww2-theme-pref';
 
+    // 1a. DYNAMIC POPULATION (The new "Smart" logic)
+    function populateThemeDropdown() {
+      if (typeof APP_CONFIG === 'undefined' || !themeSelect) return;
+      
+      themeSelect.innerHTML = ''; // Clear safe
+      
+      Object.entries(APP_CONFIG.themes).forEach(([key, themeData]) => {
+        const opt = document.createElement('option');
+        opt.value = key; // e.g., 'emerald'
+        opt.textContent = themeData.name; // e.g., 'High Command'
+        themeSelect.appendChild(opt);
+      });
+    }
+
+    // 1b. APPLICATION LOGIC
     function applyTheme(themeName) {
       if (typeof APP_CONFIG === 'undefined') return;
-      // Fallback to 'navy' if theme doesn't exist
+      // Fallback
       const theme = APP_CONFIG.themes[themeName] || APP_CONFIG.themes.navy;
       
       // Inject CSS Variables
@@ -69,18 +81,22 @@
         root.style.setProperty(key, value);
       }
       
-      // Update UI state
+      // Sync UI
       if(themeSelect) themeSelect.value = themeName;
       
-      // Persist choice
+      // Persist
       localStorage.setItem(THEME_KEY, themeName);
     }
 
-    // Initialize Theme
+    // --- INITIALIZATION ORDER ---
+    // 1. Build the menu first
+    populateThemeDropdown();
+
+    // 2. Load the preference
     const savedTheme = localStorage.getItem(THEME_KEY) || 'navy';
     applyTheme(savedTheme);
 
-    // Listen for Theme Changes
+    // 3. Listen for changes
     themeSelect.addEventListener('change', (e) => {
       applyTheme(e.target.value);
     });
@@ -173,7 +189,6 @@
         // Refresh UI
         render();
         
-        // Tiny delay to allow render to finish before alert
         setTimeout(() => alert(`Success! Added ${battleObject.meta.title}`), 100);
 
       } catch (err) {
