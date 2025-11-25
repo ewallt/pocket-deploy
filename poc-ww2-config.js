@@ -10,104 +10,104 @@ const APP_CONFIG = {
 
   // --- THEME ENGINE ---
   themes: {
-    // 1. NAVY COMMAND (Default) - Deep Blue
+    // 1. NAVY COMMAND (Blue - User Favorite for Trust/Focus)
     "navy": {
       name: "Navy Command",
       colors: {
-        "--bg": "#0b1020",
-        "--panel": "#111833",
-        "--ink": "#e6ecff",
-        "--muted": "#a7b0cc",
-        "--brand": "#8bb9ff",
-        "--accent": "#c0ffe1",
-        "--border": "#26325b",
-        "--chip": "#1a2347",
-        "--bad": "#ff6b6b"
+        "--bg": "#0f172a",       // Slate 900 (Not pure black)
+        "--panel": "#1e293b",    // Slate 800
+        "--ink": "#e2e8f0",      // Slate 200
+        "--muted": "#94a3b8",    // Slate 400
+        "--brand": "#38bdf8",    // Sky Blue
+        "--accent": "#0ea5e9",   // Ocean Blue
+        "--border": "#334155",
+        "--chip": "#1e293b",
+        "--bad": "#ef4444"
       }
     },
 
-    // 2. DESERT RATS - Warm Brown/Sand
+    // 2. DESERT RATS (Warm Earth - 2025 "Mocha" Trend)
     "desert": {
       name: "Desert Rats",
       colors: {
-        "--bg": "#292524",       // Warm Dark Brown
-        "--panel": "#44403c",    // Stone Brown
-        "--ink": "#f5f5f4",      // Stone White
+        "--bg": "#292524",       // Stone 900
+        "--panel": "#44403c",    // Stone 700
+        "--ink": "#f5f5f4",      // Warm White
         "--muted": "#a8a29e",    // Warm Grey
-        "--brand": "#fbbf24",    // Sand Gold
-        "--accent": "#38bdf8",   // Oasis Blue
+        "--brand": "#fbbf24",    // Amber Gold
+        "--accent": "#d97706",   // Deep Amber
         "--border": "#57534e",
         "--chip": "#57534e",
-        "--bad": "#ef4444"
-      }
-    },
-
-    // 3. ARCHIVES - Sepia/Light Mode
-    "paper": {
-      name: "Archives",
-      colors: {
-        "--bg": "#f0ebd8",
-        "--panel": "#e6e0cf",
-        "--ink": "#2b2520",
-        "--muted": "#6b5d52",
-        "--brand": "#8a2be2",
-        "--accent": "#d35400",
-        "--border": "#d6cdb2",
-        "--chip": "#dcd3bf",
-        "--bad": "#c0392b"
-      }
-    },
-
-    // 4. HIGH COMMAND (Reverted) - Emerald/Mint/Gold
-    "emerald": {
-      name: "High Command",
-      colors: {
-        "--bg": "#022c22",       // Deepest Green
-        "--panel": "#064e3b",    // Rich Forest
-        "--ink": "#ecfdf5",      // Mint White (Restored for readability)
-        "--muted": "#6ee7b7",    // Soft Green
-        "--brand": "#fbbf24",    // Gold
-        "--accent": "#f59e0b",   // Amber
-        "--border": "#065f46",
-        "--chip": "#064e3b",
-        "--bad": "#ef4444"
-      }
-    },
-
-    // 5. ATLANTIC WALL - Steel/Slate Grey
-    "steel": {
-      name: "Atlantic Wall",
-      colors: {
-        "--bg": "#111827",       // Gray 900
-        "--panel": "#1f2937",    // Gray 800
-        "--ink": "#f9fafb",      // Gray 50
-        "--muted": "#9ca3af",    // Gray 400
-        "--brand": "#38bdf8",    // Sky Blue
-        "--accent": "#f472b6",   // Pinkish red
-        "--border": "#374151",
-        "--chip": "#374151",
         "--bad": "#f87171"
       }
     },
 
-    // 6. ENIGMA MACHINE - Terminal Black/Green
-    "cipher": {
-      name: "Enigma Machine",
+    // 3. ARCHIVES (Light Mode - Best for Long Reading)
+    "paper": {
+      name: "Archives",
       colors: {
-        "--bg": "#000000",       // Pure Black
-        "--panel": "#111111",    // Off Black
-        "--ink": "#e5e5e5",      // Dim White
-        "--muted": "#666666",    // Dark Grey
-        "--brand": "#22c55e",    // Terminal Green
-        "--accent": "#4ade80",   // Bright Green
-        "--border": "#333333",
-        "--chip": "#222222",
-        "--bad": "#ff0000"
+        "--bg": "#f5f5f4",       // Stone 100 (Not harsh white)
+        "--panel": "#e7e5e4",    // Stone 200
+        "--ink": "#292524",      // Stone 900 (Softer than black)
+        "--muted": "#57534e",    // Stone 600
+        "--brand": "#0f766e",    // Teal (Classic Ink)
+        "--accent": "#d97706",   // Orange highlight
+        "--border": "#d6d3d1",
+        "--chip": "#e7e5e4",
+        "--bad": "#b91c1c"
+      }
+    },
+
+    // 4. HIGH COMMAND (Your Request: Strict Green/Gold)
+    "emerald": {
+      name: "High Command",
+      colors: {
+        "--bg": "#022c22",       // Deepest Green
+        "--panel": "#14532d",    // Green 900
+        "--ink": "#fef08a",      // Pale Gold (Yellow 200)
+        "--muted": "#bef264",    // Lime 300
+        "--brand": "#ffd700",    // Pure Gold
+        "--accent": "#eab308",   // Darker Gold
+        "--border": "#365314",   // Olive 900
+        "--chip": "#1a2e05",     // Deep Olive
+        "--bad": "#d97706"       // Amber
+      }
+    },
+
+    // 5. LUFTWAFFE (Cool Grey/Steel - Better than flat grey)
+    "luftwaffe": {
+      name: "Luftwaffe",
+      colors: {
+        "--bg": "#1e293b",       // Slate 800
+        "--panel": "#334155",    // Slate 700
+        "--ink": "#f1f5f9",      // Slate 100
+        "--muted": "#cbd5e1",    // Slate 300
+        "--brand": "#a5f3fc",    // Cyan 200 (Electric Ice)
+        "--accent": "#22d3ee",   // Cyan 400
+        "--border": "#475569",
+        "--chip": "#475569",
+        "--bad": "#f87171"
+      }
+    },
+
+    // 6. RED ARMY (Deep Maroon - "Luxury Dark Mode")
+    "crimson": {
+      name: "Red Army",
+      colors: {
+        "--bg": "#2a0a0a",       // Very Dark Red/Black
+        "--panel": "#450a0a",    // Deep Maroon
+        "--ink": "#ffe4e6",      // Rose White
+        "--muted": "#fda4af",    // Rose 300
+        "--brand": "#f43f5e",    // Rose 500 (Vibrant but not neon)
+        "--accent": "#fbbf24",   // Gold (Soviet Star)
+        "--border": "#881337",   // Rose 900
+        "--chip": "#881337",
+        "--bad": "#9f1239"
       }
     }
   },
 
-  // --- VIEWER SECTIONS ---
+  // --- VIEWER SECTIONS (Unchanged) ---
   sections: [
     { key: "timeline", title: "Chronology", type: "timeline" },
     { key: "context", title: "Strategic Context", type: "list" },
