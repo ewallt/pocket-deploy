@@ -8,9 +8,7 @@
 </head>
 <body>
   <script src="poc-ww2-config.js"></script>
-  
   <script src="poc-ww2-store.js"></script>
-  
   <script src="poc-ww2-brain.js"></script>
 
   <div class="container">
@@ -41,26 +39,57 @@
       <div id="grid" class="grid"></div>
     </main>
 
-    <footer>Public view: “Open” only. LocalStorage Architecture.</footer>
+    <footer style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1rem; color: var(--muted); font-size: 0.9rem;">
+      <span>LocalStorage Architecture. v1.1</span>
+      
+      <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <label for="themeSelect" style="font-size: 0.85rem;">Theme:</label>
+        <select id="themeSelect" style="background: var(--chip); color: var(--ink); border: 1px solid var(--border); padding: 0.3rem; border-radius: 6px; outline: none;">
+          <option value="navy">Navy Command</option>
+          <option value="field">Field Ops</option>
+          <option value="paper">Archives</option>
+        </select>
+      </div>
+    </footer>
   </div>
 
   <script>
-    // --- 1. SETUP & THEME ---
+    // --- 1. SETUP & THEME ENGINE ---
+    const themeSelect = document.getElementById('themeSelect');
+    const THEME_KEY = 'poc-ww2-theme-pref';
+
     function applyTheme(themeName) {
       if (typeof APP_CONFIG === 'undefined') return;
-      const theme = APP_CONFIG.themes[themeName] || APP_CONFIG.themes.default;
+      // Fallback to 'navy' if theme doesn't exist
+      const theme = APP_CONFIG.themes[themeName] || APP_CONFIG.themes.navy;
+      
+      // Inject CSS Variables
       const root = document.documentElement;
       for (const [key, value] of Object.entries(theme.colors)) {
         root.style.setProperty(key, value);
       }
+      
+      // Update UI state
+      if(themeSelect) themeSelect.value = themeName;
+      
+      // Persist choice
+      localStorage.setItem(THEME_KEY, themeName);
     }
-    applyTheme('default');
+
+    // Initialize Theme
+    const savedTheme = localStorage.getItem(THEME_KEY) || 'navy';
+    applyTheme(savedTheme);
+
+    // Listen for Theme Changes
+    themeSelect.addEventListener('change', (e) => {
+      applyTheme(e.target.value);
+    });
 
 
     // --- 2. RENDER LOGIC ---
     const grid = document.getElementById('grid');
     const searchInput = document.getElementById('searchInput');
-    const chips = Array.from(document.querySelectorAll('.chip'));
+    const chips = Array.from(document.querySelectorAll('.chip:not(#btnAdd)'));
     let activeTag = 'all';
 
     function makeCard(item){
@@ -96,17 +125,15 @@
     function render(){
       grid.innerHTML = '';
       
-      // VALIDATION: Check Store
       if (typeof Store === 'undefined') {
         grid.innerHTML = `<div class="error-msg">Error: poc-ww2-store.js not loaded.</div>`;
         return;
       }
 
-      // RETRIEVAL: Fetch all items from Store
       const items = Store.getAll();
 
       if (items.length === 0) {
-        grid.innerHTML = `<div class="error-msg">Database is empty. Please run the Seeder.</div>`;
+        grid.innerHTML = `<div class="error-msg">Database is empty. Please run the Seeder or Add a Battle.</div>`;
         return;
       }
 
@@ -145,7 +172,9 @@
         
         // Refresh UI
         render();
-        alert(`Success! Added ${battleObject.meta.title}`);
+        
+        // Tiny delay to allow render to finish before alert
+        setTimeout(() => alert(`Success! Added ${battleObject.meta.title}`), 100);
 
       } catch (err) {
         alert("Error generating content. Check the console (F12) for details.");
@@ -160,6 +189,7 @@
 
     // --- 4. INTERACTIONS ---
     searchInput.addEventListener('input', render);
+    
     chips.forEach(chip => {
       chip.addEventListener('click', () => {
         chips.forEach(c => c.classList.remove('active'));
