@@ -1,219 +1,127 @@
-/* =========================================
-   1. BASE VARIABLES & RESET
-   ========================================= */
-:root {
-  /* Default placeholders (Overridden by poc-ww2-config.js) */
-  --bg: #0b1020;
-  --panel: #111833;
-  --ink: #e6ecff;
-  --muted: #a7b0cc;
-  --brand: #8bb9ff;
-  --accent: #c0ffe1;
-  --border: #26325b;
-  --chip: #1a2347;
-  --bad: #ff6b6b;
-  
-  /* Button Variables defaults */
-  --btn-bg: var(--brand);
-  --btn-text: var(--panel);
+const APP_CONFIG = {
+  labels: {
+    loading: "Decrypting...",
+    backToHub: "← Return to Command",
+    errorTitle: "Intelligence Not Found",
+    errorBody: "The requested record does not exist in the local archives.",
+    summaryHeader: "Strategic Summary"
+  },
 
-  /* Structural - Non-Configurable */
-  --shadow: 0 8px 28px rgba(0, 0, 0, .35);
-  --radius: 12px;
-  --radius-sm: 8px;
-}
+  themes: {
+    // ========================================================================
+    // GROUP A: CLASSIC (Hardcoded Blue Buttons)
+    // ========================================================================
+    
+    "navy": {
+      name: "Navy Command",
+      colors: {
+        "--bg": "#0b1020", "--panel": "#111833", "--ink": "#e6ecff", "--muted": "#a7b0cc",
+        "--brand": "#8bb9ff", "--accent": "#c0ffe1", "--border": "#26325b", "--chip": "#1a2347", "--bad": "#ff6b6b",
+        "--btn-bg": "linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%)", "--btn-text": "#e6ecff"
+      }
+    },
+    "desert": {
+      name: "Desert Rats",
+      colors: {
+        "--bg": "#292524", "--panel": "#44403c", "--ink": "#f5f5f4", "--muted": "#a8a29e",
+        "--brand": "#fbbf24", "--accent": "#d97706", "--border": "#57534e", "--chip": "#57534e", "--bad": "#f87171",
+        "--btn-bg": "linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%)", "--btn-text": "#e6ecff"
+      }
+    },
+    "paper": {
+      name: "Archives",
+      colors: {
+        "--bg": "#f5f5f4", "--panel": "#e7e5e4", "--ink": "#292524", "--muted": "#57534e",
+        "--brand": "#0f766e", "--accent": "#d97706", "--border": "#d6d3d1", "--chip": "#e7e5e4", "--bad": "#b91c1c",
+        "--btn-bg": "linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%)", "--btn-text": "#e6ecff"
+      }
+    },
+    "emerald": {
+      name: "High Command",
+      colors: {
+        "--bg": "#022c22", "--panel": "#064e3b", "--ink": "#ecfdf5", "--muted": "#6ee7b7",
+        "--brand": "#fbbf24", "--accent": "#f59e0b", "--border": "#065f46", "--chip": "#064e3b", "--bad": "#ef4444",
+        "--btn-bg": "linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%)", "--btn-text": "#e6ecff"
+      }
+    },
+    "luftwaffe": {
+      name: "Luftwaffe",
+      colors: {
+        "--bg": "#1e293b", "--panel": "#334155", "--ink": "#f1f5f9", "--muted": "#cbd5e1",
+        "--brand": "#a5f3fc", "--accent": "#22d3ee", "--border": "#475569", "--chip": "#475569", "--bad": "#f87171",
+        "--btn-bg": "linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%)", "--btn-text": "#e6ecff"
+      }
+    },
+    "sonar": {
+      name: "Sonar Sweep",
+      colors: {
+        "--bg": "#042f2e", "--panel": "#115e59", "--ink": "#ccfbf1", "--muted": "#5eead4",
+        "--brand": "#2dd4bf", "--accent": "#fbbf24", "--border": "#134e4a", "--chip": "#134e4a", "--bad": "#f43f5e",
+        "--btn-bg": "linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%)", "--btn-text": "#e6ecff"
+      }
+    },
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+    // ========================================================================
+    // GROUP B: EXPERIMENTAL (Buttons match Brand Color)
+    // ========================================================================
+    
+    "navy_exp": {
+      name: "Navy (Exp)",
+      colors: {
+        "--bg": "#0b1020", "--panel": "#111833", "--ink": "#e6ecff", "--muted": "#a7b0cc",
+        "--brand": "#8bb9ff", "--accent": "#c0ffe1", "--border": "#26325b", "--chip": "#1a2347", "--bad": "#ff6b6b",
+        "--btn-bg": "var(--brand)", "--btn-text": "var(--panel)"
+      }
+    },
+    "desert_exp": {
+      name: "Desert (Exp)",
+      colors: {
+        "--bg": "#292524", "--panel": "#44403c", "--ink": "#f5f5f4", "--muted": "#a8a29e",
+        "--brand": "#fbbf24", "--accent": "#d97706", "--border": "#57534e", "--chip": "#57534e", "--bad": "#f87171",
+        "--btn-bg": "var(--brand)", "--btn-text": "var(--panel)"
+      }
+    },
+    "paper_exp": {
+      name: "Archives (Exp)",
+      colors: {
+        "--bg": "#f5f5f4", "--panel": "#e7e5e4", "--ink": "#292524", "--muted": "#57534e",
+        "--brand": "#0f766e", "--accent": "#d97706", "--border": "#d6d3d1", "--chip": "#e7e5e4", "--bad": "#b91c1c",
+        "--btn-bg": "var(--brand)", "--btn-text": "#ffffff"
+      }
+    },
+    "emerald_exp": {
+      name: "High Command (Exp)",
+      colors: {
+        "--bg": "#022c22", "--panel": "#064e3b", "--ink": "#ecfdf5", "--muted": "#6ee7b7",
+        "--brand": "#fbbf24", "--accent": "#f59e0b", "--border": "#065f46", "--chip": "#064e3b", "--bad": "#ef4444",
+        "--btn-bg": "var(--brand)", "--btn-text": "var(--panel)"
+      }
+    },
+    "luftwaffe_exp": {
+      name: "Luftwaffe (Exp)",
+      colors: {
+        "--bg": "#1e293b", "--panel": "#334155", "--ink": "#f1f5f9", "--muted": "#cbd5e1",
+        "--brand": "#a5f3fc", "--accent": "#22d3ee", "--border": "#475569", "--chip": "#475569", "--bad": "#f87171",
+        "--btn-bg": "var(--brand)", "--btn-text": "var(--panel)"
+      }
+    },
+    "sonar_exp": {
+      name: "Sonar (Exp)",
+      colors: {
+        "--bg": "#042f2e", "--panel": "#115e59", "--ink": "#ccfbf1", "--muted": "#5eead4",
+        "--brand": "#2dd4bf", "--accent": "#fbbf24", "--border": "#134e4a", "--chip": "#134e4a", "--bad": "#f43f5e",
+        "--btn-bg": "var(--brand)", "--btn-text": "var(--panel)"
+      }
+    }
+  },
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  color: var(--ink);
-  background: 
-    radial-gradient(1200px 600px at 10% -5%, rgba(139, 185, 255, .20), transparent 55%),
-    radial-gradient(1000px 400px at 95% 10%, rgba(192, 255, 225, .18), transparent 60%),
-    var(--bg);
-  line-height: 1.6;
-  min-height: 100vh;
-  padding-bottom: 2rem;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-.container { max-width: 1100px; margin: 0 auto; padding: 1rem; }
-.container.narrow { max-width: 860px; }
-
-
-/* =========================================
-   2. SHARED COMPONENTS (Header, Typography)
-   ========================================= */
-header {
-  background: linear-gradient(180deg, color-mix(in oklab, var(--panel) 85%, transparent), var(--panel));
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 2rem 1.5rem;
-  margin-bottom: 1.25rem;
-  box-shadow: var(--shadow);
-  position: relative;
-}
-
-/* MODIFIED: Color changed from var(--ink) to var(--brand) */
-h1 { 
-  font-size: 1.9rem; 
-  color: var(--brand); 
-  margin-bottom: .4rem; 
-  letter-spacing: -.02em; 
-}
-
-.subtitle { color: var(--muted); font-size: .98rem; font-style: italic; }
-
-.error-msg { text-align: center; color: var(--bad); padding: 2rem; margin-top: 1rem; }
-
-.breadcrumb { margin-bottom: 1rem; font-size: .92rem; }
-.breadcrumb a { color: var(--brand); text-decoration: none; }
-.breadcrumb span { color: var(--muted); margin: 0 .5rem; }
-
-footer { margin-top: 1.25rem; color: var(--muted); font-size: .88rem; text-align: center; }
-
-
-/* =========================================
-   3. HUB SPECIFIC (Grid, Cards, Toolbar)
-   ========================================= */
-.toolbar { display: flex; gap: .75rem; flex-wrap: wrap; margin: 1rem 0 1.25rem 0; }
-
-.search {
-  flex: 1 1 320px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  display: flex;
-  align-items: center;
-  gap: .5rem;
-  padding: .65rem .9rem;
-  box-shadow: var(--shadow);
-}
-.search input { width: 100%; border: none; background: transparent; color: var(--ink); outline: none; font-size: 1rem; }
-
-.chip {
-  background: color-mix(in oklab, var(--chip) 75%, transparent);
-  border: 1px solid var(--border);
-  color: var(--ink);
-  padding: .5rem .75rem;
-  border-radius: 999px;
-  font-size: .9rem;
-  cursor: pointer;
-  transition: background .2s;
-}
-.chip:hover { background: var(--chip); }
-.chip.active { outline: 2px solid var(--brand); }
-
-.grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
-@media (max-width: 980px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-@media (max-width: 720px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 480px) { 
-  .grid { grid-template-columns: 1fr; } 
-  h1 { font-size: 1.6rem; }
-  .chip { padding: .6rem .8rem; }
-}
-
-.card {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1rem;
-  box-shadow: var(--shadow);
-  display: flex;
-  flex-direction: column;
-  gap: .6rem;
-  transition: transform .15s ease, border-color .2s ease;
-  position: relative;
-  overflow: hidden;
-}
-.card:hover { transform: translateY(-2px); border-color: color-mix(in oklab, var(--brand) 60%, var(--border)); }
-.card h3 { color: var(--brand); font-size: 1.05rem; letter-spacing: .01em; }
-.card p { color: var(--muted); font-size: .95rem; line-height: 1.5; min-height: 3.2em; }
-
-.card-delete {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  background: rgba(0,0,0,0.3);
-  color: var(--muted);
-  border: 1px solid transparent;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s;
-  z-index: 10;
-  font-family: sans-serif;
-  font-weight: bold;
-  font-size: 1rem;
-  line-height: 1;
-}
-.card-delete:hover {
-  background: var(--bad);
-  color: #fff;
-  border-color: var(--bad);
-}
-
-.tagrow { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .2rem; }
-.tag { font-size: .75rem; color: var(--ink); background: color-mix(in oklab, var(--chip) 65%, transparent); border: 1px solid var(--border); padding: .25rem .5rem; border-radius: 999px; }
-
-.actions { display: flex; gap: .5rem; margin-top: .35rem; }
-
-.btn {
-  width: 100%;
-  text-align: center;
-  text-decoration: none;
-  background: var(--btn-bg);
-  color: var(--btn-text);
-  border: 1px solid var(--border);
-  padding: .55rem .7rem;
-  border-radius: 10px;
-  font-weight: 600;
-  font-size: .9rem;
-  cursor: pointer;
-  transition: opacity 0.2s;
-}
-.btn:hover { opacity: 0.9; }
-
-
-/* =========================================
-   4. VIEWER SPECIFIC (Accordions, Timeline)
-   ========================================= */
-.main-answer {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1.5rem;
-  margin-bottom: 1.25rem;
-  box-shadow: var(--shadow);
-  border-left: 4px solid var(--brand);
-}
-.main-answer h2 { color: var(--brand); font-size: 1.25rem; margin-bottom: .8rem; }
-.main-answer p { font-size: 1.03rem; line-height: 1.65; color: var(--muted); }
-
-.section { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 1rem; box-shadow: var(--shadow); overflow: hidden; }
-.section-header { padding: 1.05rem 1.25rem; background: linear-gradient(135deg, color-mix(in oklab, var(--brand) 15%, var(--panel)), var(--panel)); color: var(--ink); display: flex; justify-content: space-between; align-items: center; cursor: pointer; border-bottom: 1px solid var(--border); user-select: none; }
-.section-header h2 { font-size: 1.12rem; margin: 0; }
-.section-icon { font-size: 1.35rem; transition: transform .28s ease; }
-.section.active .section-icon { transform: rotate(180deg); }
-.section-content { max-height: 0; overflow: hidden; transition: max-height .38s ease; }
-.section.active .section-content { max-height: 5000px; }
-.section-inner { padding: 1.25rem; }
-
-.list-item { background: color-mix(in oklab, var(--chip) 75%, transparent); border-left: 3px solid var(--brand); padding: 1rem; margin-bottom: .75rem; border-radius: var(--radius-sm); border: 1px solid var(--border); color: var(--muted); }
-
-.timeline { border-left: 3px solid var(--brand); padding-left: 1.25rem; margin-left: .5rem; }
-.timeline-item { position: relative; margin-bottom: 1.15rem; color: var(--muted); }
-.timeline-item::before { content: ''; position: absolute; left: -1.65rem; top: .25rem; width: 12px; height: 12px; border-radius: 50%; background: var(--brand); border: 3px solid var(--panel); box-shadow: 0 0 0 2px var(--brand); }
-.timeline-item strong { display: block; color: var(--brand); margin-bottom: .25rem; }
-
-.source { background: color-mix(in oklab, var(--chip) 65%, transparent); border-radius: 8px; padding: 1rem; margin-top: 1rem; font-size: .95rem; color: var(--muted); border: 1px solid var(--border); }
-.source strong { color: var(--ink); }
-
-.back-to-top { position: fixed; right: 1rem; bottom: 1.5rem; width: 50px; height: 50px; border-radius: 50%; background: var(--brand); color: var(--panel); border: none; font-size: 1.5rem; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow); opacity: 0; transition: opacity .3s ease; z-index: 1000; cursor: pointer; }
-.back-to-top.visible { opacity: 1; }
+  sections: [
+    { key: "timeline", title: "Chronology", type: "timeline" },
+    { key: "context", title: "Strategic Context", type: "list" },
+    { key: "forces", title: "Opposing Forces", type: "list" },
+    { key: "turningPoints", title: "Key Turning Points", type: "list" },
+    { key: "outcomes", title: "Outcomes", type: "list" },
+    { key: "significance", title: "Historical Significance", type: "list" },
+    { key: "sources", title: "Intelligence Sources", type: "list" }
+  ]
+};
