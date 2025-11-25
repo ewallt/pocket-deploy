@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="poc-ww2-styles.css">
 </head>
 <body>
-  <!-- 1. Load Configuration & Logic -->
   <script src="poc-ww2-config.js"></script>
   <script src="poc-ww2-renderers.js"></script>
   <script src="poc-ww2-store.js"></script>
@@ -18,8 +17,7 @@
     </div>
 
     <div id="app-root">
-      <!-- Content injected here -->
-    </div>
+      </div>
   </div>
 
   <button id="backToTop" class="back-to-top" onclick="scrollToTop()">↑</button>
@@ -56,6 +54,7 @@
         return;
       }
 
+      // Use the Store to find the item (Now works with the restored getById)
       const item = Store.getById(id);
 
       if (!item) {
@@ -72,7 +71,7 @@
       document.title = item.meta.title;
       breadTitle.innerText = `› ${item.meta.title}`;
 
-      // HEADER (Cleaned up - No delete button)
+      // HEADER
       let html = `
         <header>
           <h1>${item.meta.title}</h1>
@@ -87,7 +86,9 @@
 
       // ACCORDIONS
       APP_CONFIG.sections.forEach((sectionConfig, index) => {
-        const isActive = index === 0 ? 'active' : ''; 
+        // CHANGE: Removed logic that set 'active' on index === 0
+        const isActive = ''; 
+        
         const sectionData = item.content[sectionConfig.key];
         const renderFn = RENDERERS[sectionConfig.type] || RENDERERS.list;
         const innerHTML = renderFn(sectionData);
