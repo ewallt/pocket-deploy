@@ -9,69 +9,79 @@ const APP_CONFIG = {
 
   themes: {
     // ========================================================================
-    // GROUP A: MOCHA LAB (Mapped to Original Keys)
-    // The keys stay the same (navy, desert, paper...) so the app doesn't crash.
-    // The colors are now the 6 Yellow/Mocha variations.
+    // GROUP A: THE A/B TEST LAB (Green vs Brown)
+    // Keys kept stable to prevent crashes.
+    // Buttons kept Blue (Linear Gradient) for consistent comparison.
     // ========================================================================
     
-    "navy": { // Was Blue, Now Mocha 1
-      name: "1. Mocha (Amber)",
+    // 1. HIGH COMMAND + KHAKI (Green Background)
+    "navy": { 
+      name: "1. HC (Khaki)",
       colors: {
-        "--bg": "#292524", "--panel": "#44403c", "--ink": "#f5f5f4", "--muted": "#a8a29e",
-        "--brand": "#fbbf24", /* AMBER-400 */
-        "--accent": "#38bdf8", "--border": "#57534e", "--chip": "#57534e", "--bad": "#ef4444",
+        "--bg": "#022c22", "--panel": "#064e3b", "--ink": "#ecfdf5", "--muted": "#6ee7b7",
+        "--brand": "#d4b483", /* KHAKI */
+        "--accent": "#f59e0b", "--border": "#065f46", "--chip": "#064e3b", "--bad": "#ef4444",
         "--btn-bg": "linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%)", "--btn-text": "#e6ecff"
       }
     },
-    "desert": { // Was Sand, Now Mocha 2
+
+    // 2. MOCHA + KHAKI (Brown Background) - UNCHANGED
+    "desert": { 
       name: "2. Mocha (Khaki)",
       colors: {
         "--bg": "#292524", "--panel": "#44403c", "--ink": "#f5f5f4", "--muted": "#a8a29e",
-        "--brand": "#d4b483", /* DESATURATED KHAKI */
+        "--brand": "#d4b483", /* KHAKI */
         "--accent": "#38bdf8", "--border": "#57534e", "--chip": "#57534e", "--bad": "#ef4444",
         "--btn-bg": "linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%)", "--btn-text": "#e6ecff"
       }
     },
-    "paper": { // Was Light, Now Mocha 3
-      name: "3. Mocha (Lemon)",
+
+    // 3. HIGH COMMAND + LIME (Green Background)
+    "paper": { 
+      name: "3. HC (Lime)",
       colors: {
-        "--bg": "#292524", "--panel": "#44403c", "--ink": "#f5f5f4", "--muted": "#a8a29e",
-        "--brand": "#ffff00", /* PURE YELLOW */
-        "--accent": "#38bdf8", "--border": "#57534e", "--chip": "#57534e", "--bad": "#ef4444",
+        "--bg": "#022c22", "--panel": "#064e3b", "--ink": "#ecfdf5", "--muted": "#6ee7b7",
+        "--brand": "#d9f99d", /* LIME */
+        "--accent": "#f59e0b", "--border": "#065f46", "--chip": "#064e3b", "--bad": "#ef4444",
         "--btn-bg": "linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%)", "--btn-text": "#e6ecff"
       }
     },
-    "emerald": { // Was Green, Now Mocha 4
+
+    // 4. MOCHA + LIME (Brown Background) - UNCHANGED
+    "emerald": { 
       name: "4. Mocha (Lime)",
       colors: {
         "--bg": "#292524", "--panel": "#44403c", "--ink": "#f5f5f4", "--muted": "#a8a29e",
-        "--brand": "#d9f99d", /* LIME-200 */
+        "--brand": "#d9f99d", /* LIME */
         "--accent": "#38bdf8", "--border": "#57534e", "--chip": "#57534e", "--bad": "#ef4444",
         "--btn-bg": "linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%)", "--btn-text": "#e6ecff"
       }
     },
-    "luftwaffe": { // Was Slate, Now Mocha 5
-      name: "5. Mocha (Goldenrod)",
+
+    // 5. HIGH COMMAND + CREAM (Green Background)
+    "luftwaffe": { 
+      name: "5. HC (Cream)",
       colors: {
-        "--bg": "#292524", "--panel": "#44403c", "--ink": "#f5f5f4", "--muted": "#a8a29e",
-        "--brand": "#d97706", /* AMBER-600 */
-        "--accent": "#38bdf8", "--border": "#57534e", "--chip": "#57534e", "--bad": "#ef4444",
+        "--bg": "#022c22", "--panel": "#064e3b", "--ink": "#ecfdf5", "--muted": "#6ee7b7",
+        "--brand": "#fef08a", /* CREAM */
+        "--accent": "#f59e0b", "--border": "#065f46", "--chip": "#064e3b", "--bad": "#ef4444",
         "--btn-bg": "linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%)", "--btn-text": "#e6ecff"
       }
     },
-    "sonar": { // Was Teal, Now Mocha 6
+
+    // 6. MOCHA + CREAM (Brown Background) - UNCHANGED
+    "sonar": { 
       name: "6. Mocha (Cream)",
       colors: {
         "--bg": "#292524", "--panel": "#44403c", "--ink": "#f5f5f4", "--muted": "#a8a29e",
-        "--brand": "#fef08a", /* YELLOW-200 */
+        "--brand": "#fef08a", /* CREAM */
         "--accent": "#38bdf8", "--border": "#57534e", "--chip": "#57534e", "--bad": "#ef4444",
         "--btn-bg": "linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%)", "--btn-text": "#e6ecff"
       }
     },
 
     // ========================================================================
-    // GROUP B: FINAL ROSTER (Keys maintained for stability)
-    // These are the "Real" themes you liked, with brand-matched buttons.
+    // GROUP B: FINAL ROSTER (Unchanged)
     // ========================================================================
     
     "navy_exp": {
