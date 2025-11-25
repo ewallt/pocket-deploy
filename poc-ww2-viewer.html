@@ -24,14 +24,20 @@
 
   <script>
     // --- 1. SETUP & THEME ---
-    function applyTheme(themeName) {
-      const theme = APP_CONFIG.themes[themeName] || APP_CONFIG.themes.default;
+    function applyTheme() {
+      // 1. Read preference from Storage
+      const themeName = localStorage.getItem('poc-ww2-theme-pref') || 'navy';
+      
+      if (typeof APP_CONFIG === 'undefined') return;
+      const theme = APP_CONFIG.themes[themeName] || APP_CONFIG.themes.navy;
+      
+      // 2. Inject CSS Variables
       const root = document.documentElement;
       for (const [key, value] of Object.entries(theme.colors)) {
         root.style.setProperty(key, value);
       }
     }
-    applyTheme('default');
+    applyTheme(); // Auto-run on load
 
     // --- 2. UTILITIES ---
     function getQueryParam(param) {
@@ -54,7 +60,7 @@
         return;
       }
 
-      // Use the Store to find the item (Now works with the restored getById)
+      // Retrieve Data
       const item = Store.getById(id);
 
       if (!item) {
@@ -67,11 +73,11 @@
         return;
       }
 
-      // META
+      // Set Metadata
       document.title = item.meta.title;
       breadTitle.innerText = `› ${item.meta.title}`;
 
-      // HEADER
+      // Build Header & Summary
       let html = `
         <header>
           <h1>${item.meta.title}</h1>
@@ -84,9 +90,9 @@
         </section>
       `;
 
-      // ACCORDIONS
-      APP_CONFIG.sections.forEach((sectionConfig, index) => {
-        // CHANGE: Removed logic that set 'active' on index === 0
+      // Build Accordions (Default: Closed)
+      APP_CONFIG.sections.forEach((sectionConfig) => {
+        // No 'active' class added here
         const isActive = ''; 
         
         const sectionData = item.content[sectionConfig.key];
@@ -114,9 +120,13 @@
     // --- 4. INTERACTION LOGIC ---
     function toggleSection(header) {
       const section = header.parentElement;
+      
+      // Optional: Close others when opening one (Accordion Style)
+      // Remove this block if you want multiple open at once
       document.querySelectorAll('.section').forEach(s => {
         if (s !== section && s.classList.contains('active')) s.classList.remove('active');
       });
+
       section.classList.toggle('active');
     }
 
