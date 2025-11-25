@@ -9,74 +9,66 @@ const APP_CONFIG = {
 
   themes: {
     // ========================================================================
-    // GROUP A: YELLOW TESTING LAB (Variations of "Mocha/Desert")
+    // GROUP A: MOCHA LAB (6 Variations of Yellow - Blue Buttons)
     // ========================================================================
     
-    // 1. ODD (Keep Navy)
-    "navy": {
-      name: "1. Navy (Control)",
-      colors: {
-        "--bg": "#0b1020", "--panel": "#111833", "--ink": "#e6ecff", "--muted": "#a7b0cc",
-        "--brand": "#8bb9ff", "--accent": "#c0ffe1", "--border": "#26325b", "--chip": "#1a2347", "--bad": "#ff6b6b",
-        "--btn-bg": "linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%)", "--btn-text": "#e6ecff"
-      }
-    },
-
-    // 2. EVEN (TEST A: KHAKI / SAND) - Desaturated, Earthy
-    "desert_sand": {
-      name: "2. Desert (Test: Khaki)",
+    "mocha_1": {
+      name: "1. Mocha (Original Amber)",
       colors: {
         "--bg": "#292524", "--panel": "#44403c", "--ink": "#f5f5f4", "--muted": "#a8a29e",
-        "--brand": "#d4b483", /* KHAKI: Low saturation, realistic sand */
+        "--brand": "#fbbf24", /* AMBER-400 */
         "--accent": "#38bdf8", "--border": "#57534e", "--chip": "#57534e", "--bad": "#ef4444",
         "--btn-bg": "linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%)", "--btn-text": "#e6ecff"
       }
     },
-
-    // 3. ODD (Keep Paper)
-    "paper": {
-      name: "3. Archives (Control)",
-      colors: {
-        "--bg": "#f5f5f4", "--panel": "#e7e5e4", "--ink": "#292524", "--muted": "#57534e",
-        "--brand": "#0f766e", "--accent": "#d97706", "--border": "#d6d3d1", "--chip": "#e7e5e4", "--bad": "#b91c1c",
-        "--btn-bg": "linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%)", "--btn-text": "#e6ecff"
-      }
-    },
-
-    // 4. EVEN (TEST B: VIVID / CANARY) - Bright, High Contrast
-    "desert_vivid": {
-      name: "4. Desert (Test: Vivid)",
+    "mocha_2": {
+      name: "2. Mocha (Khaki/Sand)",
       colors: {
         "--bg": "#292524", "--panel": "#44403c", "--ink": "#f5f5f4", "--muted": "#a8a29e",
-        "--brand": "#facc15", /* VIVID YELLOW: Pure, bright yellow-gold */
+        "--brand": "#d4b483", /* DESATURATED KHAKI */
         "--accent": "#38bdf8", "--border": "#57534e", "--chip": "#57534e", "--bad": "#ef4444",
         "--btn-bg": "linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%)", "--btn-text": "#e6ecff"
       }
     },
-
-    // 5. ODD (Keep Luftwaffe)
-    "luftwaffe": {
-      name: "5. Luftwaffe (Control)",
+    "mocha_3": {
+      name: "3. Mocha (Vivid Lemon)",
       colors: {
-        "--bg": "#1e293b", "--panel": "#334155", "--ink": "#f1f5f9", "--muted": "#cbd5e1",
-        "--brand": "#a5f3fc", "--accent": "#22d3ee", "--border": "#475569", "--chip": "#475569", "--bad": "#f87171",
+        "--bg": "#292524", "--panel": "#44403c", "--ink": "#f5f5f4", "--muted": "#a8a29e",
+        "--brand": "#ffff00", /* PURE YELLOW */
+        "--accent": "#38bdf8", "--border": "#57534e", "--chip": "#57534e", "--bad": "#ef4444",
         "--btn-bg": "linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%)", "--btn-text": "#e6ecff"
       }
     },
-
-    // 6. EVEN (TEST C: SULPHUR / GREENISH) - "Vivid Greenish Yellow" from image
-    "desert_sulphur": {
-      name: "6. Desert (Test: Sulphur)",
+    "mocha_4": {
+      name: "4. Mocha (Sulphur/Lime)",
       colors: {
         "--bg": "#292524", "--panel": "#44403c", "--ink": "#f5f5f4", "--muted": "#a8a29e",
-        "--brand": "#d9f99d", /* LIME/SULPHUR: Greenish tint */
+        "--brand": "#d9f99d", /* LIME-200 */
+        "--accent": "#38bdf8", "--border": "#57534e", "--chip": "#57534e", "--bad": "#ef4444",
+        "--btn-bg": "linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%)", "--btn-text": "#e6ecff"
+      }
+    },
+    "mocha_5": {
+      name: "5. Mocha (Goldenrod)",
+      colors: {
+        "--bg": "#292524", "--panel": "#44403c", "--ink": "#f5f5f4", "--muted": "#a8a29e",
+        "--brand": "#d97706", /* AMBER-600 (Darker/Orange) */
+        "--accent": "#38bdf8", "--border": "#57534e", "--chip": "#57534e", "--bad": "#ef4444",
+        "--btn-bg": "linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%)", "--btn-text": "#e6ecff"
+      }
+    },
+    "mocha_6": {
+      name: "6. Mocha (Pastel Cream)",
+      colors: {
+        "--bg": "#292524", "--panel": "#44403c", "--ink": "#f5f5f4", "--muted": "#a8a29e",
+        "--brand": "#fef08a", /* YELLOW-200 (Soft) */
         "--accent": "#38bdf8", "--border": "#57534e", "--chip": "#57534e", "--bad": "#ef4444",
         "--btn-bg": "linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%)", "--btn-text": "#e6ecff"
       }
     },
 
     // ========================================================================
-    // GROUP B: EXPERIMENTAL (Full Roster, Matched Buttons)
+    // GROUP B: FINAL ROSTER (Unchanged, Matched Buttons)
     // ========================================================================
     
     "navy_exp": {
@@ -91,8 +83,7 @@ const APP_CONFIG = {
       name: "8. Desert (Final)",
       colors: {
         "--bg": "#292524", "--panel": "#44403c", "--ink": "#f5f5f4", "--muted": "#a8a29e",
-        "--brand": "#fbbf24", /* AMBER GOLD (Original) */
-        "--accent": "#d97706", "--border": "#57534e", "--chip": "#57534e", "--bad": "#f87171",
+        "--brand": "#fbbf24", "--accent": "#d97706", "--border": "#57534e", "--chip": "#57534e", "--bad": "#f87171",
         "--btn-bg": "var(--brand)", "--btn-text": "var(--panel)"
       }
     },
@@ -108,8 +99,7 @@ const APP_CONFIG = {
       name: "10. High Command (Final)",
       colors: {
         "--bg": "#022c22", "--panel": "#064e3b", "--ink": "#ecfdf5", "--muted": "#6ee7b7",
-        "--brand": "#fcd34d", /* Updated to a lighter, cleaner gold */
-        "--accent": "#f59e0b", "--border": "#065f46", "--chip": "#064e3b", "--bad": "#ef4444",
+        "--brand": "#fbbf24", "--accent": "#f59e0b", "--border": "#065f46", "--chip": "#064e3b", "--bad": "#ef4444",
         "--btn-bg": "var(--brand)", "--btn-text": "var(--panel)"
       }
     },
