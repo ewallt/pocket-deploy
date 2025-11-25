@@ -20,7 +20,8 @@ const Brain = {
     1. Output ONLY valid JSON.
     2. Generate a unique "id" in kebab-case (e.g., "battle-of-midway-1942").
     3. "meta.tags" allowed: "europe", "pacific", "eastern-front", "western-front", "africa", "turning-point".
-    4. Timeline: Strictly limit to 4-8 key events. Focus on the most critical dates only.
+    4. "meta.blurb": STRICTLY under 15 words. Concise strategic summary only.
+    5. Timeline: Strictly limit to 4-8 key events. Focus on the most critical dates.
     
     JSON Schema:
     {
