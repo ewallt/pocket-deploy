@@ -13,7 +13,7 @@
 
   <div class="container">
     <header>
-      <h1>WWII Hub</h1>
+      <h1 style="color: var(--brand);">WWII Hub</h1>
       <p class="subtitle">Key Battles & Campaigns (1939–1945)</p>
       
       <div class="toolbar">
@@ -40,11 +40,11 @@
     </main>
 
     <footer style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1rem; color: var(--muted); font-size: 0.9rem;">
-      <span>LocalStorage Architecture. v1.3 (Dynamic)</span>
+      <span>LocalStorage Architecture. v1.7</span>
       
       <div style="display: flex; align-items: center; gap: 0.5rem;">
         <label for="themeSelect" style="font-size: 0.85rem;">Theme:</label>
-        <select id="themeSelect" style="background: var(--chip); color: var(--ink); border: 1px solid var(--border); padding: 0.3rem; border-radius: 6px; outline: none;">
+        <select id="themeSelect" style="min-width: 150px; background: var(--chip); color: var(--ink); border: 1px solid var(--border); padding: 0.3rem; border-radius: 6px; outline: none;">
           </select>
       </div>
     </footer>
@@ -55,16 +55,15 @@
     const themeSelect = document.getElementById('themeSelect');
     const THEME_KEY = 'poc-ww2-theme-pref';
 
-    // 1a. DYNAMIC POPULATION (The new "Smart" logic)
+    // 1a. DYNAMIC POPULATION
     function populateThemeDropdown() {
       if (typeof APP_CONFIG === 'undefined' || !themeSelect) return;
-      
-      themeSelect.innerHTML = ''; // Clear safe
+      themeSelect.innerHTML = ''; 
       
       Object.entries(APP_CONFIG.themes).forEach(([key, themeData]) => {
         const opt = document.createElement('option');
-        opt.value = key; // e.g., 'emerald'
-        opt.textContent = themeData.name; // e.g., 'High Command'
+        opt.value = key; 
+        opt.textContent = themeData.name; 
         themeSelect.appendChild(opt);
       });
     }
@@ -72,31 +71,22 @@
     // 1b. APPLICATION LOGIC
     function applyTheme(themeName) {
       if (typeof APP_CONFIG === 'undefined') return;
-      // Fallback
       const theme = APP_CONFIG.themes[themeName] || APP_CONFIG.themes.navy;
       
-      // Inject CSS Variables
       const root = document.documentElement;
       for (const [key, value] of Object.entries(theme.colors)) {
         root.style.setProperty(key, value);
       }
       
-      // Sync UI
       if(themeSelect) themeSelect.value = themeName;
-      
-      // Persist
       localStorage.setItem(THEME_KEY, themeName);
     }
 
-    // --- INITIALIZATION ORDER ---
-    // 1. Build the menu first
+    // --- INITIALIZATION ---
     populateThemeDropdown();
-
-    // 2. Load the preference
     const savedTheme = localStorage.getItem(THEME_KEY) || 'navy';
     applyTheme(savedTheme);
 
-    // 3. Listen for changes
     themeSelect.addEventListener('change', (e) => {
       applyTheme(e.target.value);
     });
@@ -125,7 +115,6 @@
         </div>
       `;
 
-      // Event Listener: Delete
       const deleteBtn = el.querySelector('.card-delete');
       deleteBtn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -169,33 +158,24 @@
     const btnAdd = document.getElementById('btnAdd');
 
     btnAdd.addEventListener('click', async () => {
-      // Input
       const topic = prompt("Enter the battle or campaign name (e.g., 'Battle of Kursk'):");
       if (!topic) return;
 
-      // UI Loading State
       const originalText = btnAdd.innerText;
       btnAdd.innerText = "Generating...";
       btnAdd.disabled = true;
       btnAdd.style.opacity = "0.7";
 
       try {
-        // AI Generation
         const battleObject = await Brain.generateBattle(topic);
-        
-        // Save to LocalStorage
         Store.save(battleObject);
-        
-        // Refresh UI
         render();
-        
         setTimeout(() => alert(`Success! Added ${battleObject.meta.title}`), 100);
 
       } catch (err) {
         alert("Error generating content. Check the console (F12) for details.");
         console.error(err);
       } finally {
-        // Reset UI
         btnAdd.innerText = originalText;
         btnAdd.disabled = false;
         btnAdd.style.opacity = "1";
