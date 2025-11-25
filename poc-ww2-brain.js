@@ -19,7 +19,7 @@ const Brain = {
     Constraints:
     1. Output ONLY valid JSON.
     2. Generate a unique "id" in kebab-case (e.g., "battle-of-midway-1942").
-    3. "meta.tags" allowed: "europe", "pacific", "eastern-front", "western-front", "africa", "turning-point".
+    3. "meta.tags" allowed: "europe", "pacific", "eastern-front", "western-front", "africa", "turning-point", "1939", "1940", "1941", "1942", "1943", "1944", "1945".
     4. "meta.blurb": STRICTLY under 15 words. Concise strategic summary only.
     5. Timeline: Strictly limit to 4-8 key events. Focus on the most critical dates.
     
