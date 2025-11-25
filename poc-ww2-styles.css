@@ -12,6 +12,10 @@
   --border: #26325b;
   --chip: #1a2347;
   --bad: #ff6b6b;
+  
+  /* NEW: Button Variables defaults */
+  --btn-bg: var(--brand);
+  --btn-text: var(--panel);
 
   /* Structural - Non-Configurable */
   --shadow: 0 8px 28px rgba(0, 0, 0, .35);
@@ -49,7 +53,7 @@ header {
   padding: 2rem 1.5rem;
   margin-bottom: 1.25rem;
   box-shadow: var(--shadow);
-  position: relative; /* Context for absolute positioning if needed */
+  position: relative;
 }
 
 h1 { font-size: 1.9rem; color: var(--ink); margin-bottom: .4rem; letter-spacing: -.02em; }
@@ -121,7 +125,6 @@ footer { margin-top: 1.25rem; color: var(--muted); font-size: .88rem; text-align
 .card h3 { color: var(--brand); font-size: 1.05rem; letter-spacing: .01em; }
 .card p { color: var(--muted); font-size: .95rem; line-height: 1.5; min-height: 3.2em; }
 
-/* NEW: Floating Delete Button on Card */
 .card-delete {
   position: absolute;
   top: 0.5rem;
@@ -153,18 +156,21 @@ footer { margin-top: 1.25rem; color: var(--muted); font-size: .88rem; text-align
 .tag { font-size: .75rem; color: var(--ink); background: color-mix(in oklab, var(--chip) 65%, transparent); border: 1px solid var(--border); padding: .25rem .5rem; border-radius: 999px; }
 
 .actions { display: flex; gap: .5rem; margin-top: .35rem; }
+
+/* MODIFIED: Now uses variables for theming */
 .btn {
   width: 100%;
   text-align: center;
   text-decoration: none;
-  background: linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%);
-  color: #e6ecff;
+  background: var(--btn-bg);   /* Was hardcoded linear-gradient */
+  color: var(--btn-text);      /* Was hardcoded #e6ecff */
   border: 1px solid var(--border);
   padding: .55rem .7rem;
   border-radius: 10px;
   font-weight: 600;
   font-size: .9rem;
   cursor: pointer;
+  transition: opacity 0.2s;
 }
 .btn:hover { opacity: 0.9; }
 
@@ -185,7 +191,7 @@ footer { margin-top: 1.25rem; color: var(--muted); font-size: .88rem; text-align
 .main-answer p { font-size: 1.03rem; line-height: 1.65; color: var(--muted); }
 
 .section { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 1rem; box-shadow: var(--shadow); overflow: hidden; }
-.section-header { padding: 1.05rem 1.25rem; background: linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%); color: var(--ink); display: flex; justify-content: space-between; align-items: center; cursor: pointer; border-bottom: 1px solid var(--border); user-select: none; }
+.section-header { padding: 1.05rem 1.25rem; background: linear-gradient(135deg, color-mix(in oklab, var(--brand) 15%, var(--panel)), var(--panel)); color: var(--ink); display: flex; justify-content: space-between; align-items: center; cursor: pointer; border-bottom: 1px solid var(--border); user-select: none; }
 .section-header h2 { font-size: 1.12rem; margin: 0; }
 .section-icon { font-size: 1.35rem; transition: transform .28s ease; }
 .section.active .section-icon { transform: rotate(180deg); }
@@ -203,60 +209,5 @@ footer { margin-top: 1.25rem; color: var(--muted); font-size: .88rem; text-align
 .source { background: color-mix(in oklab, var(--chip) 65%, transparent); border-radius: 8px; padding: 1rem; margin-top: 1rem; font-size: .95rem; color: var(--muted); border: 1px solid var(--border); }
 .source strong { color: var(--ink); }
 
-.back-to-top { position: fixed; right: 1rem; bottom: 1.5rem; width: 50px; height: 50px; border-radius: 50%; background: var(--brand); color: #001; border: none; font-size: 1.5rem; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow); opacity: 0; transition: opacity .3s ease; z-index: 1000; }
+.back-to-top { position: fixed; right: 1rem; bottom: 1.5rem; width: 50px; height: 50px; border-radius: 50%; background: var(--brand); color: var(--panel); border: none; font-size: 1.5rem; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow); opacity: 0; transition: opacity .3s ease; z-index: 1000; cursor: pointer; }
 .back-to-top.visible { opacity: 1; }
-
-/* =========================================
-   5. MODAL & UTILITIES (New for Deletion)
-   ========================================= */
-.btn-delete {
-  background: transparent;
-  color: var(--bad);
-  border: 1px solid var(--bad);
-  padding: 0.4rem 0.8rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 0.85rem;
-  transition: all 0.2s;
-  margin-top: 1rem;
-  float: right; /* Quick align in header */
-}
-.btn-delete:hover {
-  background: var(--bad);
-  color: #fff;
-}
-
-/* Modal Overlay */
-.modal-overlay {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.7);
-  backdrop-filter: blur(4px);
-  display: flex; align-items: center; justify-content: center;
-  opacity: 0; pointer-events: none;
-  transition: opacity 0.2s ease;
-  z-index: 2000;
-}
-.modal-overlay.open { opacity: 1; pointer-events: all; }
-
-/* Modal Box */
-.modal {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  padding: 1.5rem;
-  border-radius: var(--radius);
-  max-width: 400px;
-  width: 90%;
-  box-shadow: var(--shadow);
-  text-align: center;
-  transform: translateY(10px);
-  transition: transform 0.2s ease;
-}
-.modal-overlay.open .modal { transform: translateY(0); }
-
-.modal h3 { color: var(--ink); margin-bottom: 0.5rem; }
-.modal p { color: var(--muted); margin-bottom: 1.5rem; font-size: 0.95rem; }
-
-.modal-actions { display: flex; gap: 0.75rem; justify-content: center; }
-.modal-btn { padding: 0.6rem 1.2rem; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; }
-.modal-btn.cancel { background: var(--chip); color: var(--ink); border: 1px solid var(--border); }
-.modal-btn.confirm { background: var(--bad); color: #fff; }
