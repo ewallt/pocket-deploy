@@ -1,7 +1,17 @@
 const APP_CONFIG = {
-  // 1. THEMES: Defines CSS variables for different aesthetics
+  // --- LABELS & TEXT ---
+  labels: {
+    loading: "Decrypting...",
+    backToHub: "← Return to Command",
+    errorTitle: "Intelligence Not Found",
+    errorBody: "The requested record does not exist in the local archives.",
+    summaryHeader: "Strategic Summary"
+  },
+
+  // --- THEME ENGINE ---
   themes: {
-    default: {
+    // 1. THE DEFAULT (Command Center)
+    "navy": {
       name: "Navy Command",
       colors: {
         "--bg": "#0b1020",
@@ -15,40 +25,46 @@ const APP_CONFIG = {
         "--bad": "#ff6b6b"
       }
     },
-    sepia: {
-      name: "Field Report",
+    // 2. TACTICAL (Olive/Gold)
+    "field": {
+      name: "Field Operations",
       colors: {
-        "--bg": "#f4ecd8",
-        "--panel": "#eaddcf",
-        "--ink": "#2b2118",
-        "--muted": "#5c4b3e",
-        "--brand": "#8b0000",
-        "--accent": "#d4a017",
-        "--border": "#c7b299",
-        "--chip": "#d6c4b0",
-        "--bad": "#a33"
+        "--bg": "#1a1c10",
+        "--panel": "#26291b",
+        "--ink": "#e8e6d1",
+        "--muted": "#9ba188",
+        "--brand": "#d4e157", // Gold/Green
+        "--accent": "#ff9800",
+        "--border": "#3d422e",
+        "--chip": "#323824",
+        "--bad": "#e57373"
+      }
+    },
+    // 3. LIGHT MODE (Paper/Ink)
+    "paper": {
+      name: "Archives",
+      colors: {
+        "--bg": "#f0ebd8",
+        "--panel": "#e6e0cf",
+        "--ink": "#2b2520",     // Dark text
+        "--muted": "#6b5d52",
+        "--brand": "#8a2be2",   // Ink Purple
+        "--accent": "#d35400",  // Burnt Orange
+        "--border": "#d6cdb2",
+        "--chip": "#dcd3bf",
+        "--bad": "#c0392b"
       }
     }
   },
 
-  // 2. SECTION SKELETON: The 7 Hard-coded Accordions
-  // Maps data keys to UI titles and specific renderers
+  // --- VIEWER SECTIONS ---
   sections: [
-    { key: "context",       title: "🎯 Strategic Context",      type: "list" },
-    { key: "forces",        title: "🪖 Forces & Commanders",    type: "list" },
-    { key: "timeline",      title: "📜 Campaign Timeline",      type: "timeline" },
-    { key: "turningPoints", title: "⚡ Turning Points",         type: "list" },
-    { key: "outcomes",      title: "🏁 Outcomes & Consequences",type: "list" },
-    { key: "significance",  title: "🏰 Historical Significance",type: "list" },
-    { key: "sources",       title: "📚 Sources",                type: "source" }
-  ],
-
-  // 3. GLOBAL UI STRINGS
-  labels: {
-    loading: "› Loading...",
-    errorTitle: "› Error",
-    errorBody: "404: Battle Not Found",
-    summaryHeader: "Core Summary",
-    backToHub: "WWII Hub"
-  }
+    { key: "timeline", title: "Chronology", type: "timeline" },
+    { key: "context", title: "Strategic Context", type: "list" },
+    { key: "forces", title: "Opposing Forces", type: "list" },
+    { key: "turningPoints", title: "Key Turning Points", type: "list" },
+    { key: "outcomes", title: "Outcomes", type: "list" },
+    { key: "significance", title: "Historical Significance", type: "list" },
+    { key: "sources", title: "Intelligence Sources", type: "list" }
+  ]
 };
