@@ -52,17 +52,25 @@ const APP_CONFIG = {
         "--btn-bg": "linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%)", "--btn-text": "#e6ecff"
       }
     },
-    "cipher": {
-      name: "Enigma Machine",
+    // 6. SONAR SWEEP (Teal/Deep Ocean)
+    "sonar": {
+      name: "Sonar Sweep",
       colors: {
-        "--bg": "#000000", "--panel": "#111111", "--ink": "#e5e5e5", "--muted": "#666666",
-        "--brand": "#22c55e", "--accent": "#4ade80", "--border": "#333333", "--chip": "#222222", "--bad": "#ff0000",
+        "--bg": "#042f2e",      // Teal 950 (Very dark)
+        "--panel": "#115e59",   // Teal 800
+        "--ink": "#ccfbf1",     // Mint White
+        "--muted": "#5eead4",   // Bright Cyan text
+        "--brand": "#2dd4bf",   // Teal 400 (The Pop)
+        "--accent": "#fbbf24",  // Amber
+        "--border": "#134e4a",
+        "--chip": "#134e4a",
+        "--bad": "#f43f5e",
         "--btn-bg": "linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%)", "--btn-text": "#e6ecff"
       }
     },
 
     // ========================================================================
-    // GROUP B: EXPERIMENTAL (Buttons match 'Add Battle' / Brand Color)
+    // GROUP B: EXPERIMENTAL (Buttons match Brand Color)
     // ========================================================================
     
     "navy_exp": {
@@ -86,7 +94,7 @@ const APP_CONFIG = {
       colors: {
         "--bg": "#f5f5f4", "--panel": "#e7e5e4", "--ink": "#292524", "--muted": "#57534e",
         "--brand": "#0f766e", "--accent": "#d97706", "--border": "#d6d3d1", "--chip": "#e7e5e4", "--bad": "#b91c1c",
-        "--btn-bg": "var(--brand)", "--btn-text": "#ffffff" /* Special override for Teal legibility */
+        "--btn-bg": "var(--brand)", "--btn-text": "#ffffff"
       }
     },
     "emerald_exp": {
@@ -105,11 +113,12 @@ const APP_CONFIG = {
         "--btn-bg": "var(--brand)", "--btn-text": "var(--panel)"
       }
     },
-    "cipher_exp": {
-      name: "Enigma (Exp)",
+    // 12. SONAR SWEEP EXP (Teal buttons)
+    "sonar_exp": {
+      name: "Sonar (Exp)",
       colors: {
-        "--bg": "#000000", "--panel": "#111111", "--ink": "#e5e5e5", "--muted": "#666666",
-        "--brand": "#22c55e", "--accent": "#4ade80", "--border": "#333333", "--chip": "#222222", "--bad": "#ff0000",
+        "--bg": "#042f2e", "--panel": "#115e59", "--ink": "#ccfbf1", "--muted": "#5eead4",
+        "--brand": "#2dd4bf", "--accent": "#fbbf24", "--border": "#134e4a", "--chip": "#134e4a", "--bad": "#f43f5e",
         "--btn-bg": "var(--brand)", "--btn-text": "var(--panel)"
       }
     }
