@@ -10,23 +10,23 @@ const APP_CONFIG = {
 
   // --- THEME ENGINE ---
   themes: {
-    // 1. NAVY COMMAND (Blue - User Favorite for Trust/Focus)
+    // 1. NAVY COMMAND (Restored Original) - Deep Blue
     "navy": {
       name: "Navy Command",
       colors: {
-        "--bg": "#0f172a",       // Slate 900 (Not pure black)
-        "--panel": "#1e293b",    // Slate 800
-        "--ink": "#e2e8f0",      // Slate 200
-        "--muted": "#94a3b8",    // Slate 400
-        "--brand": "#38bdf8",    // Sky Blue
-        "--accent": "#0ea5e9",   // Ocean Blue
-        "--border": "#334155",
-        "--chip": "#1e293b",
-        "--bad": "#ef4444"
+        "--bg": "#0b1020",
+        "--panel": "#111833",
+        "--ink": "#e6ecff",
+        "--muted": "#a7b0cc",
+        "--brand": "#8bb9ff",
+        "--accent": "#c0ffe1",
+        "--border": "#26325b",
+        "--chip": "#1a2347",
+        "--bad": "#ff6b6b"
       }
     },
 
-    // 2. DESERT RATS (Warm Earth - 2025 "Mocha" Trend)
+    // 2. DESERT RATS (Kept Optimized) - Warm Stone/Mocha
     "desert": {
       name: "Desert Rats",
       colors: {
@@ -42,39 +42,39 @@ const APP_CONFIG = {
       }
     },
 
-    // 3. ARCHIVES (Light Mode - Best for Long Reading)
+    // 3. ARCHIVES (Kept Optimized) - Soft Light Mode
     "paper": {
       name: "Archives",
       colors: {
-        "--bg": "#f5f5f4",       // Stone 100 (Not harsh white)
+        "--bg": "#f5f5f4",       // Stone 100
         "--panel": "#e7e5e4",    // Stone 200
-        "--ink": "#292524",      // Stone 900 (Softer than black)
+        "--ink": "#292524",      // Stone 900
         "--muted": "#57534e",    // Stone 600
-        "--brand": "#0f766e",    // Teal (Classic Ink)
-        "--accent": "#d97706",   // Orange highlight
+        "--brand": "#0f766e",    // Teal Ink
+        "--accent": "#d97706",   // Orange
         "--border": "#d6d3d1",
         "--chip": "#e7e5e4",
         "--bad": "#b91c1c"
       }
     },
 
-    // 4. HIGH COMMAND (Your Request: Strict Green/Gold)
+    // 4. HIGH COMMAND (Restored) - Emerald/Mint/Gold
     "emerald": {
       name: "High Command",
       colors: {
         "--bg": "#022c22",       // Deepest Green
-        "--panel": "#14532d",    // Green 900
-        "--ink": "#fef08a",      // Pale Gold (Yellow 200)
-        "--muted": "#bef264",    // Lime 300
-        "--brand": "#ffd700",    // Pure Gold
-        "--accent": "#eab308",   // Darker Gold
-        "--border": "#365314",   // Olive 900
-        "--chip": "#1a2e05",     // Deep Olive
-        "--bad": "#d97706"       // Amber
+        "--panel": "#064e3b",    // Rich Forest
+        "--ink": "#ecfdf5",      // Mint White (Readable)
+        "--muted": "#6ee7b7",    // Soft Green
+        "--brand": "#fbbf24",    // Gold
+        "--accent": "#f59e0b",   // Amber
+        "--border": "#065f46",
+        "--chip": "#064e3b",
+        "--bad": "#ef4444"
       }
     },
 
-    // 5. LUFTWAFFE (Cool Grey/Steel - Better than flat grey)
+    // 5. LUFTWAFFE (Kept Optimized) - Slate Blue/Grey
     "luftwaffe": {
       name: "Luftwaffe",
       colors: {
@@ -82,32 +82,32 @@ const APP_CONFIG = {
         "--panel": "#334155",    // Slate 700
         "--ink": "#f1f5f9",      // Slate 100
         "--muted": "#cbd5e1",    // Slate 300
-        "--brand": "#a5f3fc",    // Cyan 200 (Electric Ice)
-        "--accent": "#22d3ee",   // Cyan 400
+        "--brand": "#a5f3fc",    // Electric Ice
+        "--accent": "#22d3ee",   // Cyan
         "--border": "#475569",
         "--chip": "#475569",
         "--bad": "#f87171"
       }
     },
 
-    // 6. RED ARMY (Deep Maroon - "Luxury Dark Mode")
-    "crimson": {
-      name: "Red Army",
+    // 6. ENIGMA MACHINE (Restored Original) - Pure Black/Green
+    "cipher": {
+      name: "Enigma Machine",
       colors: {
-        "--bg": "#2a0a0a",       // Very Dark Red/Black
-        "--panel": "#450a0a",    // Deep Maroon
-        "--ink": "#ffe4e6",      // Rose White
-        "--muted": "#fda4af",    // Rose 300
-        "--brand": "#f43f5e",    // Rose 500 (Vibrant but not neon)
-        "--accent": "#fbbf24",   // Gold (Soviet Star)
-        "--border": "#881337",   // Rose 900
-        "--chip": "#881337",
-        "--bad": "#9f1239"
+        "--bg": "#000000",       // Pure Black
+        "--panel": "#111111",    // Off Black
+        "--ink": "#e5e5e5",      // Dim White
+        "--muted": "#666666",    // Dark Grey
+        "--brand": "#22c55e",    // Terminal Green
+        "--accent": "#4ade80",   // Bright Green
+        "--border": "#333333",
+        "--chip": "#222222",
+        "--bad": "#ff0000"
       }
     }
   },
 
-  // --- VIEWER SECTIONS (Unchanged) ---
+  // --- VIEWER SECTIONS ---
   sections: [
     { key: "timeline", title: "Chronology", type: "timeline" },
     { key: "context", title: "Strategic Context", type: "list" },
