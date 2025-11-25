@@ -22,11 +22,11 @@ const APP_CONFIG = {
         "--accent": "#c0ffe1",
         "--border": "#26325b",
         "--chip": "#1a2347",
-        "--bad": "#ff6b6b" // Red
+        "--bad": "#ff6b6b"
       }
     },
-    
-    // 2. DESERT RATS (New) - Warm Brown/Sand
+
+    // 2. DESERT RATS - Warm Brown/Sand
     "desert": {
       name: "Desert Rats",
       colors: {
@@ -35,14 +35,14 @@ const APP_CONFIG = {
         "--ink": "#f5f5f4",      // Stone White
         "--muted": "#a8a29e",    // Warm Grey
         "--brand": "#fbbf24",    // Sand Gold
-        "--accent": "#38bdf8",   // Oasis Blue (Contrast)
+        "--accent": "#38bdf8",   // Oasis Blue
         "--border": "#57534e",
         "--chip": "#57534e",
         "--bad": "#ef4444"
       }
     },
 
-    // 3. ARCHIVES (Paper) - Sepia/Light Mode
+    // 3. ARCHIVES - Sepia/Light Mode
     "paper": {
       name: "Archives",
       colors: {
@@ -58,23 +58,23 @@ const APP_CONFIG = {
       }
     },
 
-    // 4. HIGH COMMAND (Refined) - Strictly Green & Gold
+    // 4. HIGH COMMAND (Strict Green & Gold)
     "emerald": {
       name: "High Command",
       colors: {
-        "--bg": "#022c22",       // Deepest Green
-        "--panel": "#064e3b",    // Rich Forest
-        "--ink": "#fffbeb",      // Cream/Pale Gold (No white)
-        "--muted": "#d1fae5",    // Pale Green
+        "--bg": "#022c22",       // Deepest Forest (Warm base)
+        "--panel": "#14532d",    // Green 900
+        "--ink": "#fef08a",      // Pale Gold (Yellow 200) - No White
+        "--muted": "#bef264",    // Lime 300 - No Blue
         "--brand": "#ffd700",    // Pure Gold
-        "--accent": "#f59e0b",   // Amber
-        "--border": "#065f46",
-        "--chip": "#064e3b",
-        "--bad": "#d97706"       // Dark Amber (Instead of Red)
+        "--accent": "#eab308",   // Darker Gold
+        "--border": "#365314",   // Olive 900
+        "--chip": "#1a2e05",     // Deep Olive
+        "--bad": "#d97706"       // Amber 600
       }
     },
 
-    // 5. ATLANTIC WALL (Steel) - Slate Grey
+    // 5. ATLANTIC WALL - Steel/Slate Grey
     "steel": {
       name: "Atlantic Wall",
       colors: {
@@ -90,7 +90,7 @@ const APP_CONFIG = {
       }
     },
 
-    // 6. CIPHER (New) - Terminal Black/Phosphor Green
+    // 6. ENIGMA MACHINE - Terminal Black/Green
     "cipher": {
       name: "Enigma Machine",
       colors: {
@@ -102,7 +102,7 @@ const APP_CONFIG = {
         "--accent": "#4ade80",   // Bright Green
         "--border": "#333333",
         "--chip": "#222222",
-        "--bad": "#ff0000"       // Stark Red
+        "--bad": "#ff0000"
       }
     }
   },
