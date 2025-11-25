@@ -9,11 +9,13 @@ const APP_CONFIG = {
 
   themes: {
     // ========================================================================
-    // GROUP A: MOCHA LAB (6 Variations of Yellow - Blue Buttons)
+    // GROUP A: MOCHA LAB (Mapped to Original Keys)
+    // The keys stay the same (navy, desert, paper...) so the app doesn't crash.
+    // The colors are now the 6 Yellow/Mocha variations.
     // ========================================================================
     
-    "mocha_1": {
-      name: "1. Mocha (Original Amber)",
+    "navy": { // Was Blue, Now Mocha 1
+      name: "1. Mocha (Amber)",
       colors: {
         "--bg": "#292524", "--panel": "#44403c", "--ink": "#f5f5f4", "--muted": "#a8a29e",
         "--brand": "#fbbf24", /* AMBER-400 */
@@ -21,8 +23,8 @@ const APP_CONFIG = {
         "--btn-bg": "linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%)", "--btn-text": "#e6ecff"
       }
     },
-    "mocha_2": {
-      name: "2. Mocha (Khaki/Sand)",
+    "desert": { // Was Sand, Now Mocha 2
+      name: "2. Mocha (Khaki)",
       colors: {
         "--bg": "#292524", "--panel": "#44403c", "--ink": "#f5f5f4", "--muted": "#a8a29e",
         "--brand": "#d4b483", /* DESATURATED KHAKI */
@@ -30,8 +32,8 @@ const APP_CONFIG = {
         "--btn-bg": "linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%)", "--btn-text": "#e6ecff"
       }
     },
-    "mocha_3": {
-      name: "3. Mocha (Vivid Lemon)",
+    "paper": { // Was Light, Now Mocha 3
+      name: "3. Mocha (Lemon)",
       colors: {
         "--bg": "#292524", "--panel": "#44403c", "--ink": "#f5f5f4", "--muted": "#a8a29e",
         "--brand": "#ffff00", /* PURE YELLOW */
@@ -39,8 +41,8 @@ const APP_CONFIG = {
         "--btn-bg": "linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%)", "--btn-text": "#e6ecff"
       }
     },
-    "mocha_4": {
-      name: "4. Mocha (Sulphur/Lime)",
+    "emerald": { // Was Green, Now Mocha 4
+      name: "4. Mocha (Lime)",
       colors: {
         "--bg": "#292524", "--panel": "#44403c", "--ink": "#f5f5f4", "--muted": "#a8a29e",
         "--brand": "#d9f99d", /* LIME-200 */
@@ -48,27 +50,28 @@ const APP_CONFIG = {
         "--btn-bg": "linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%)", "--btn-text": "#e6ecff"
       }
     },
-    "mocha_5": {
+    "luftwaffe": { // Was Slate, Now Mocha 5
       name: "5. Mocha (Goldenrod)",
       colors: {
         "--bg": "#292524", "--panel": "#44403c", "--ink": "#f5f5f4", "--muted": "#a8a29e",
-        "--brand": "#d97706", /* AMBER-600 (Darker/Orange) */
+        "--brand": "#d97706", /* AMBER-600 */
         "--accent": "#38bdf8", "--border": "#57534e", "--chip": "#57534e", "--bad": "#ef4444",
         "--btn-bg": "linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%)", "--btn-text": "#e6ecff"
       }
     },
-    "mocha_6": {
-      name: "6. Mocha (Pastel Cream)",
+    "sonar": { // Was Teal, Now Mocha 6
+      name: "6. Mocha (Cream)",
       colors: {
         "--bg": "#292524", "--panel": "#44403c", "--ink": "#f5f5f4", "--muted": "#a8a29e",
-        "--brand": "#fef08a", /* YELLOW-200 (Soft) */
+        "--brand": "#fef08a", /* YELLOW-200 */
         "--accent": "#38bdf8", "--border": "#57534e", "--chip": "#57534e", "--bad": "#ef4444",
         "--btn-bg": "linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%)", "--btn-text": "#e6ecff"
       }
     },
 
     // ========================================================================
-    // GROUP B: FINAL ROSTER (Unchanged, Matched Buttons)
+    // GROUP B: FINAL ROSTER (Keys maintained for stability)
+    // These are the "Real" themes you liked, with brand-matched buttons.
     // ========================================================================
     
     "navy_exp": {
