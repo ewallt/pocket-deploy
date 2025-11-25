@@ -22,24 +22,26 @@ const APP_CONFIG = {
         "--accent": "#c0ffe1",
         "--border": "#26325b",
         "--chip": "#1a2347",
-        "--bad": "#ff6b6b"
+        "--bad": "#ff6b6b" // Red
       }
     },
-    // 2. FIELD OPS (Army) - Olive/Tactical
-    "field": {
-      name: "Field Operations",
+    
+    // 2. DESERT RATS (New) - Warm Brown/Sand
+    "desert": {
+      name: "Desert Rats",
       colors: {
-        "--bg": "#1a1c10",
-        "--panel": "#26291b",
-        "--ink": "#e8e6d1",
-        "--muted": "#9ba188",
-        "--brand": "#d4e157",
-        "--accent": "#ff9800",
-        "--border": "#3d422e",
-        "--chip": "#323824",
-        "--bad": "#e57373"
+        "--bg": "#292524",       // Warm Dark Brown
+        "--panel": "#44403c",    // Stone Brown
+        "--ink": "#f5f5f4",      // Stone White
+        "--muted": "#a8a29e",    // Warm Grey
+        "--brand": "#fbbf24",    // Sand Gold
+        "--accent": "#38bdf8",   // Oasis Blue (Contrast)
+        "--border": "#57534e",
+        "--chip": "#57534e",
+        "--bad": "#ef4444"
       }
     },
+
     // 3. ARCHIVES (Paper) - Sepia/Light Mode
     "paper": {
       name: "Archives",
@@ -55,22 +57,24 @@ const APP_CONFIG = {
         "--bad": "#c0392b"
       }
     },
-    // 4. HIGH COMMAND - Emerald Green & Gold
+
+    // 4. HIGH COMMAND (Refined) - Strictly Green & Gold
     "emerald": {
       name: "High Command",
       colors: {
         "--bg": "#022c22",       // Deepest Green
         "--panel": "#064e3b",    // Rich Forest
-        "--ink": "#ecfdf5",      // Mint White
-        "--muted": "#6ee7b7",    // Soft Green
-        "--brand": "#fbbf24",    // Gold
+        "--ink": "#fffbeb",      // Cream/Pale Gold (No white)
+        "--muted": "#d1fae5",    // Pale Green
+        "--brand": "#ffd700",    // Pure Gold
         "--accent": "#f59e0b",   // Amber
         "--border": "#065f46",
         "--chip": "#064e3b",
-        "--bad": "#ef4444"
+        "--bad": "#d97706"       // Dark Amber (Instead of Red)
       }
     },
-    // 5. ATLANTIC WALL - Steel/Slate Grey
+
+    // 5. ATLANTIC WALL (Steel) - Slate Grey
     "steel": {
       name: "Atlantic Wall",
       colors: {
@@ -78,26 +82,27 @@ const APP_CONFIG = {
         "--panel": "#1f2937",    // Gray 800
         "--ink": "#f9fafb",      // Gray 50
         "--muted": "#9ca3af",    // Gray 400
-        "--brand": "#38bdf8",    // Sky Blue (Luftwaffe feel)
+        "--brand": "#38bdf8",    // Sky Blue
         "--accent": "#f472b6",   // Pinkish red
         "--border": "#374151",
         "--chip": "#374151",
         "--bad": "#f87171"
       }
     },
-    // 6. EASTERN FRONT - Crimson/Dark
-    "crimson": {
-      name: "Eastern Front",
+
+    // 6. CIPHER (New) - Terminal Black/Phosphor Green
+    "cipher": {
+      name: "Enigma Machine",
       colors: {
-        "--bg": "#2a0a0a",       // Black/Red mix
-        "--panel": "#450a0a",    // Deep Blood Red
-        "--ink": "#ffe4e6",      // Rose White
-        "--muted": "#fca5a5",    // Pale Red
-        "--brand": "#ef4444",    // Soviet Red
-        "--accent": "#fcd34d",   // Star Gold
-        "--border": "#7f1d1d",
-        "--chip": "#7f1d1d",
-        "--bad": "#991b1b"
+        "--bg": "#000000",       // Pure Black
+        "--panel": "#111111",    // Off Black
+        "--ink": "#e5e5e5",      // Dim White
+        "--muted": "#666666",    // Dark Grey
+        "--brand": "#22c55e",    // Terminal Green
+        "--accent": "#4ade80",   // Bright Green
+        "--border": "#333333",
+        "--chip": "#222222",
+        "--bad": "#ff0000"       // Stark Red
       }
     }
   },
