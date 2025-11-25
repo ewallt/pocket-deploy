@@ -58,19 +58,19 @@ const APP_CONFIG = {
       }
     },
 
-    // 4. HIGH COMMAND (Strict Green & Gold)
+    // 4. HIGH COMMAND (Reverted) - Emerald/Mint/Gold
     "emerald": {
       name: "High Command",
       colors: {
-        "--bg": "#022c22",       // Deepest Forest (Warm base)
-        "--panel": "#14532d",    // Green 900
-        "--ink": "#fef08a",      // Pale Gold (Yellow 200) - No White
-        "--muted": "#bef264",    // Lime 300 - No Blue
-        "--brand": "#ffd700",    // Pure Gold
-        "--accent": "#eab308",   // Darker Gold
-        "--border": "#365314",   // Olive 900
-        "--chip": "#1a2e05",     // Deep Olive
-        "--bad": "#d97706"       // Amber 600
+        "--bg": "#022c22",       // Deepest Green
+        "--panel": "#064e3b",    // Rich Forest
+        "--ink": "#ecfdf5",      // Mint White (Restored for readability)
+        "--muted": "#6ee7b7",    // Soft Green
+        "--brand": "#fbbf24",    // Gold
+        "--accent": "#f59e0b",   // Amber
+        "--border": "#065f46",
+        "--chip": "#064e3b",
+        "--bad": "#ef4444"
       }
     },
 
