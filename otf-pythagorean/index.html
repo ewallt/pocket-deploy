@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pythagorean Triple Visualizer</title>
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --text-color: #212529;
+            --primary-color: #2c3e50;
+            --accent-blue: #2980b9;
+            --accent-orange: #d35400;
+            --accent-green: #27ae60;
+            --accent-purple: #8e44ad;
+            --border-color: #dee2e6;
+            --panel-bg: #ffffff;
+            --tab-inactive: #e9ecef;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin: 0 0 15px 0;
+            font-weight: 600;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            background: var(--tab-inactive);
+            color: #666;
+            font-size: 15px;
+            font-weight: 500;
+            border-radius: 8px 8px 0 0;
+            transition: background 0.2s, color 0.2s;
+            flex-grow: 1;
+            max-width: 200px;
+        }
+
+        .tab-btn.active {
+            background: var(--primary-color);
+            color: #fff;
+        }
+
+        .tab-content {
+            display: none;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .tab-content.active {
+            display: flex;
+        }
+
+        /* Control Panel */
+        .control-panel {
+            background: var(--panel-bg);
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input[type="number"] {
+            padding: 6px 10px;
+            font-size: 16px;
+            width: 70px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+        }
+
+        .presets {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        button {
+            padding: 5px 12px;
+            background-color: #fff;
+            color: var(--primary-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background-color: #e9ecef;
+            border-color: #adb5bd;
+        }
+
+        button.active-preset {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* Math Panel */
+        .math-panel {
+            background: var(--panel-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .math-panel {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .math-section h3 {
+            margin: 0 0 12px 0;
+            font-size: 1.1em;
+            color: var(--primary-color);
+            border-bottom: 2px solid #f1f3f5;
+            padding-bottom: 6px;
+        }
+
+        .math-content {
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 0.9em;
+            border: 1px solid #e9ecef;
+        }
+
+        .highlight-identity {
+            color: var(--accent-orange);
+            font-weight: bold;
+        }
+        
+        .highlight-green {
+            color: var(--accent-green);
+            font-weight: bold;
+        }
+        
+        .highlight-purple {
+            color: var(--accent-purple);
+            font-weight: bold;
+        }
+
+        /* Visual Panel */
+        .visual-panel {
+            background: var(--panel-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .canvas-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        canvas {
+            background: #fff;
+            border: 1px solid #eee;
+            width: 100%;
+        }
+
+        .legend {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .swatch {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Pythagorean Triple Visualizer</h1>
+
+    <!-- Tabs Header -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('tab1')">Pythagorean Construction</button>
+        <button class="tab-btn" onclick="switchTab('tab2')">Number Line Patterns</button>
+        <button class="tab-btn" onclick="switchTab('tab3')">Mental Math Squares</button>
+    </div>
+
+    <!-- TAB 1: Pythagorean -->
+    <div id="tab1" class="tab-content active">
+        <div class="control-panel">
+            <div class="input-group">
+                <label for="inputA">Input Leg (a):</label>
+                <input type="number" id="inputA" value="3" min="1" step="1">
+            </div>
+            <div class="presets">
+                <span>Presets:</span>
+                <button onclick="setA(3)">3</button>
+                <button onclick="setA(5)">5</button>
+                <button onclick="setA(7)">7</button>
+                <span>|</span>
+                <button onclick="setA(4)">4</button>
+                <button onclick="setA(6)">6</button>
+                <button onclick="setA(8)">8</button>
+            </div>
+        </div>
+
+        <div class="math-panel">
+            <div class="math-section">
+                <h3>Values</h3>
+                <div id="valuesOutput" class="math-content"></div>
+            </div>
+            <div class="math-section">
+                <h3>Derivation: Starting from a</h3>
+                <div id="factorOutput" class="math-content"></div>
+            </div>
+        </div>
+
+        <div class="visual-panel">
+            <!-- Number Line Canvas -->
+            <div class="canvas-container" style="margin-bottom: 20px;">
+                <h4 style="margin: 0 0 10px 0; color: #555;">Structure of the Number Line</h4>
+                <canvas id="numLineCanvas" height="140"></canvas>
+            </div>
+
+            <!-- Geometric Square Canvas -->
+            <div class="canvas-container">
+                <h4 style="margin: 0 0 10px 0; color: #555;">Geometric Proof: Area b²</h4>
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="swatch" style="background: #e67e22;"></div>
+                        <span>Boomerang (b²)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="swatch" style="background: rgba(52, 152, 219, 0.3); border: 1px solid #2980b9"></div>
+                        <span>Gap (a²)</span>
+                    </div>
+                </div>
+                <canvas id="mainCanvas"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 2: Pattern Explorer -->
+    <div id="tab2" class="tab-content">
+        <div class="control-panel">
+            <div class="input-group">
+                <label for="inputMid">Midpoint (m):</label>
+                <input type="number" id="inputMid" value="10" min="4" step="1">
+            </div>
+            <div class="presets">
+                <span>Distance from Midpoint (d):</span>
+                <button id="btnDist1" onclick="setDist(1)" class="active-preset">1</button>
+                <button id="btnDist2" onclick="setDist(2)">2</button>
+                <button id="btnDist3" onclick="setDist(3)">3</button>
+                <button id="btnDist4" onclick="setDist(4)">4</button>
+            </div>
+        </div>
+
+        <div class="visual-panel">
+            <div class="canvas-container">
+                <canvas id="patternCanvas" height="180"></canvas>
+            </div>
+        </div>
+
+        <div class="math-panel">
+            <div class="math-section">
+                <h3>Arithmetic Example</h3>
+                <div id="patternMath" class="math-content"></div>
+            </div>
+            <div class="math-section">
+                <h3>Algebraic Conclusion</h3>
+                <div id="patternAlgebra" class="math-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 3: Mental Math Squares -->
+    <div id="tab3" class="tab-content">
+        <div class="control-panel">
+            <div class="input-group">
+                <label for="inputTarget">Number to Square (c):</label>
+                <input type="number" id="inputTarget" value="13" min="1" step="1">
+            </div>
+            <div class="input-group">
+                <label for="inputOffset">Offset (a):</label>
+                <input type="number" id="inputOffset" value="3" min="1" step="1">
+            </div>
+            <div class="presets">
+                <span>Try:</span>
+                <button onclick="setMental(13, 3)">13 (a=3)</button>
+                <button onclick="setMental(19, 1)">19 (a=1)</button>
+                <button onclick="setMental(98, 2)">98 (a=2)</button>
+                <button onclick="setMental(21, 1)">21 (a=1)</button>
+            </div>
+        </div>
+
+        <div class="math-panel">
+            <div class="math-section">
+                <h3>Strategy: c² = (c-a)(c+a) + a²</h3>
+                <div id="mentalMathOutput" class="math-content"></div>
+            </div>
+            <div class="math-section">
+                <h3>Calculation Steps</h3>
+                <div id="mentalStepsOutput" class="math-content"></div>
+            </div>
+        </div>
+
+        <div class="visual-panel">
+            <div class="canvas-container">
+                <h4 style="margin: 0 0 10px 0; color: #555;">Visualizing the Area c²</h4>
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="swatch" style="background: #8e44ad;"></div>
+                        <span>Easy Product (c-a)(c+a)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="swatch" style="background: rgba(52, 152, 219, 0.3); border: 1px solid #2980b9"></div>
+                        <span>Correction Square (a²)</span>
+                    </div>
+                </div>
+                <canvas id="mentalCanvas"></canvas>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // --- Global State ---
+    const state = {
+        // Tab 1 State
+        a: 3, b: 0, c: 0, k: 0, isOdd: true,
+        // Tab 2 State
+        mid: 10, dist: 1,
+        // Tab 3 State
+        target: 13, offset: 3
+    };
+
+    // --- Tab Switching ---
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        
+        document.getElementById(tabId).classList.add('active');
+        
+        const btns = document.querySelectorAll('.tab-btn');
+        if(tabId === 'tab1') btns[0].classList.add('active');
+        else if(tabId === 'tab2') btns[1].classList.add('active');
+        else btns[2].classList.add('active');
+
+        // Re-render visuals
+        if(tabId === 'tab1') renderVisualsTab1();
+        else if(tabId === 'tab2') renderVisualsTab2();
+        else renderVisualsTab3();
+    }
+
+    // --- Helpers ---
+    function setupCanvas(canvas, w, h) {
+        const dpr = window.devicePixelRatio || 1;
+        canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
+        canvas.width = w * dpr; canvas.height = h * dpr;
+        const ctx = canvas.getContext('2d');
+        ctx.scale(dpr, dpr);
+        return ctx;
+    }
+
+    // --- TAB 1 Logic ---
+    function setA(val) {
+        document.getElementById('inputA').value = val;
+        updateStateTab1(val);
+    }
+
+    function updateStateTab1(val) {
+        state.a = val;
+        state.isOdd = (state.a % 2 !== 0);
+        if (state.isOdd) {
+            state.c = (state.a * state.a + 1) / 2;
+            state.b = (state.a * state.a - 1) / 2;
+            state.k = null;
+        } else {
+            state.k = state.a / 2;
+            state.c = state.k * state.k + 1;
+            state.b = state.k * state.k - 1;
+        }
+        renderMathTab1();
+        renderVisualsTab1();
+    }
+
+    function renderMathTab1() {
+        const { a, b, c, k, isOdd } = state;
+        let valHtml = '';
+        if (isOdd) {
+            valHtml += `<div><strong>Odd a=${a}</strong></div>`;
+            valHtml += `<div>c = (${a}² + 1)/2 = <strong>${c}</strong></div>`;
+        } else {
+            valHtml += `<div><strong>Even a=${a}</strong> (k=${k})</div>`;
+            valHtml += `<div>c = ${k}² + 1 = <strong>${c}</strong></div>`;
+        }
+        valHtml += `<div>b = <strong>${b}</strong></div>`;
+        valHtml += `<div style="margin-top:10px; border-top:1px dashed #ccc; padding-top:5px;">`;
+        valHtml += `<span class="highlight-identity">a² + b² = c²</span><br>`;
+        valHtml += `${a}² + ${b}² = ${c}²</div>`;
+        document.getElementById('valuesOutput').innerHTML = valHtml;
+
+        let factHtml = '';
+        if (isOdd) {
+            factHtml += `<div><strong>Start at a (${a}):</strong></div>`;
+            factHtml += `<div>1. Square it: ${a}² = ${a*a}</div>`;
+            factHtml += `<div>2. Add 1, Divide by 2: (${a}² + 1)/2 = <strong>${c}</strong></div>`;
+            factHtml += `<div style="margin-top:10px;"><strong>Endpoints check:</strong></div>`;
+            factHtml += `<div>c - a = (a - 1)² / 2</div>`;
+            factHtml += `<div>c + a = (a + 1)² / 2</div>`;
+            factHtml += `<div class="highlight-green">Product is a square (b²)</div>`;
+        } else {
+            factHtml += `<div><strong>Start at a (${a}):</strong></div>`;
+            factHtml += `<div>1. Divide by 2: k = ${a}/2 = ${state.k}</div>`;
+            factHtml += `<div>2. Square, Add 1: ${state.k}² + 1 = <strong>${c}</strong></div>`;
+            factHtml += `<div style="margin-top:10px;"><strong>Endpoints check:</strong></div>`;
+            factHtml += `<div>c - a = (k - 1)²</div>`;
+            factHtml += `<div>c + a = (k + 1)²</div>`;
+            factHtml += `<div class="highlight-green">Product is a square (b²)</div>`;
+        }
+        document.getElementById('factorOutput').innerHTML = factHtml;
+    }
+
+    function renderVisualsTab1() {
+        const width = document.getElementById('tab1').clientWidth;
+        if(width === 0) return; 
+        
+        // 1. Num Line
+        const numCanvas = document.getElementById('numLineCanvas');
+        const ctxNum = setupCanvas(numCanvas, width, 140);
+        const { a, c, isOdd } = state;
+        
+        const marginX = 50;
+        const maxVal = c + a;
+        const scaleNum = (width - 2*marginX) / maxVal;
+        const yLine = 70;
+
+        function toNumX(val) { return marginX + (val * scaleNum); }
+
+        ctxNum.beginPath();
+        ctxNum.moveTo(toNumX(0)-10, yLine);
+        ctxNum.lineTo(toNumX(maxVal)+10, yLine);
+        ctxNum.strokeStyle = '#333';
+        ctxNum.lineWidth = 2;
+        ctxNum.stroke();
+
+        function drawTick(val, labelF, labelV, highlight) {
+            const x = toNumX(val);
+            ctxNum.beginPath();
+            ctxNum.moveTo(x, yLine-8); ctxNum.lineTo(x, yLine+8);
+            ctxNum.strokeStyle = highlight ? '#2c3e50' : '#333';
+            ctxNum.lineWidth = highlight ? 2 : 1;
+            ctxNum.stroke();
+            ctxNum.textAlign = 'center';
+            ctxNum.fillStyle = '#555';
+            ctxNum.font = '14px sans-serif';
+            ctxNum.fillText(labelF, x, yLine-20);
+            ctxNum.fillStyle = highlight ? '#000' : '#555';
+            ctxNum.font = highlight ? 'bold 13px sans-serif' : '13px sans-serif';
+            ctxNum.fillText(labelV, x, yLine+25);
+        }
+
+        drawTick(0, "0", "0", false);
+        if (isOdd) {
+            drawTick(c-a, `(a-1)²/2`, c-a, true);
+            drawTick(c, `(a²+1)/2`, c, true);
+            drawTick(c+a, `(a+1)²/2`, c+a, true);
+        } else {
+            drawTick(c-a, `(k-1)²`, c-a, true);
+            drawTick(c, `k²+1`, c, true);
+            drawTick(c+a, `(k+1)²`, c+a, true);
+        }
+
+        const x1 = toNumX(c-a);
+        const x2 = toNumX(c+a);
+        const braceY = yLine + 45;
+        ctxNum.beginPath();
+        ctxNum.moveTo(x1, braceY); ctxNum.lineTo(x1, braceY+10);
+        ctxNum.lineTo(x2, braceY+10); ctxNum.lineTo(x2, braceY);
+        ctxNum.strokeStyle = '#e67e22'; ctxNum.stroke();
+        ctxNum.fillStyle = '#e67e22'; ctxNum.font = 'italic 13px sans-serif';
+        ctxNum.fillText(`Product is square (b²)`, (x1+x2)/2, braceY+25);
+
+        // 2. Geometric
+        const mainCanvas = document.getElementById('mainCanvas');
+        const heightGeo = Math.min(width < 600 ? width * 0.95 : width * 0.6, 600);
+        const ctx = setupCanvas(mainCanvas, width, heightGeo);
+        
+        const marginY = 80;
+        const plotH = heightGeo - (2 * marginY);
+        const plotW = width - (2 * marginX);
+        const maxY = c;
+        const scale = Math.min(plotW / maxVal, plotH / maxY);
+        const originX = marginX + (plotW - (maxVal * scale)) / 2;
+        const originY = heightGeo - marginY;
+
+        function toScreen(x, y) { return { x: originX + x*scale, y: originY - y*scale }; }
+
+        ctx.beginPath();
+        const axStart = toScreen(-0.5, 0); const axEnd = toScreen(c+a+0.5, 0);
+        ctx.moveTo(axStart.x, axStart.y); ctx.lineTo(axEnd.x, axEnd.y);
+        ctx.strokeStyle = '#333'; ctx.lineWidth = 2; ctx.stroke();
+
+        function drawGeoTick(val, label, major) {
+            const p = toScreen(val, 0);
+            ctx.beginPath(); ctx.moveTo(p.x, p.y-6); ctx.lineTo(p.x, p.y+6); ctx.stroke();
+            ctx.textAlign = 'center'; 
+            ctx.font = major ? 'bold 14px sans-serif' : '12px sans-serif';
+            ctx.fillStyle = '#333'; ctx.fillText(label, p.x, p.y+25);
+            if(major) { ctx.font = '12px sans-serif'; ctx.fillStyle='#7f8c8d'; ctx.fillText(val, p.x, p.y+42); }
+        }
+        drawGeoTick(0,'0',true); drawGeoTick(c-a,'c-a',true); drawGeoTick(c,'c',true); drawGeoTick(c+a,'c+a',true);
+
+        const p0=toScreen(0,0), p1=toScreen(c-a,0), p2=toScreen(c-a,a), p3=toScreen(c,a), p4=toScreen(c,c), p5=toScreen(0,c);
+        ctx.beginPath();
+        ctx.moveTo(p0.x,p0.y); ctx.lineTo(p1.x,p1.y); ctx.lineTo(p2.x,p2.y); ctx.lineTo(p3.x,p3.y); ctx.lineTo(p4.x,p4.y); ctx.lineTo(p5.x,p5.y); ctx.closePath();
+        ctx.fillStyle='#e67e22'; ctx.fill(); ctx.strokeStyle='#d35400'; ctx.lineWidth=2; ctx.stroke();
+        
+        const labelPos = toScreen((c-a)/2, c/2);
+        if((c-a)*scale > 30) { ctx.fillStyle='#fff'; ctx.font='bold 16px sans-serif'; ctx.textAlign='center'; ctx.fillText('b²', labelPos.x, labelPos.y); }
+
+        const pGap = toScreen(c-a, a);
+        ctx.fillStyle='rgba(52, 152, 219, 0.3)'; ctx.fillRect(pGap.x, pGap.y, a*scale, a*scale);
+        ctx.strokeStyle='#2980b9'; ctx.strokeRect(pGap.x, pGap.y, a*scale, a*scale);
+        if(a*scale > 25) { ctx.fillStyle='#2980b9'; ctx.font='bold 14px sans-serif'; const cg=toScreen(c-a/2, a/2); ctx.fillText('a²', cg.x, cg.y); }
+
+        function drawBrace(x1, x2, yOff, txt) {
+            const s1=toScreen(x1,0), s2=toScreen(x2,0); const y=originY+yOff;
+            ctx.beginPath(); ctx.strokeStyle='#555'; ctx.lineWidth=1;
+            ctx.moveTo(s1.x, originY+10); ctx.lineTo(s1.x, y); ctx.lineTo(s2.x, y); ctx.lineTo(s2.x, originY+10); ctx.stroke();
+            ctx.fillStyle='#555'; ctx.font='12px sans-serif'; ctx.textAlign='center'; ctx.fillText(txt, (s1.x+s2.x)/2, y+15);
+        }
+        drawBrace(0, c-a, 60, `c-a`); drawBrace(0, c+a, 85, `c+a`);
+    }
+
+    // --- TAB 2 Logic ---
+    function setDist(d) {
+        state.dist = d;
+        for(let i=1; i<=4; i++) {
+            const btn = document.getElementById('btnDist'+i);
+            if(i === d) btn.classList.add('active-preset');
+            else btn.classList.remove('active-preset');
+        }
+        renderMathTab2();
+        renderVisualsTab2();
+    }
+
+    function renderMathTab2() {
+        const { mid, dist } = state;
+        const left = mid - dist;
+        const right = mid + dist;
+        const prod = left * right;
+        const squareOfDist = dist * dist;
+        const total = prod + squareOfDist;
+
+        let mathHtml = `<div><strong>Midpoint (m) = ${mid}</strong></div>`;
+        mathHtml += `<div><strong>Spacing (d) = ${dist}</strong></div>`;
+        mathHtml += `<div style="margin-top:10px;">Endpoints: ${left} and ${right}</div>`;
+        mathHtml += `<div>Product: ${left} × ${right} = <strong>${prod}</strong></div>`;
+        mathHtml += `<div>Add square of spacing (${dist}²): ${prod} + ${squareOfDist} = <strong>${total}</strong></div>`;
+        mathHtml += `<div class="highlight-green" style="margin-top:5px;">Result: ${total} is ${mid}²</div>`;
+        document.getElementById('patternMath').innerHTML = mathHtml;
+
+        let algHtml = `<div>Let midpoint be <strong>m</strong>.</div>`;
+        algHtml += `<div>Let spacing be <strong>d</strong>.</div>`;
+        algHtml += `<div style="margin-top:10px;">Endpoints are <strong>(m - d)</strong> and <strong>(m + d)</strong>.</div>`;
+        algHtml += `<div>Product: (m - d)(m + d) = m² - d²</div>`;
+        algHtml += `<div>Add back d²:</div>`;
+        algHtml += `<div class="highlight-identity" style="margin-top:5px; font-size:1.1em;">(m - d)(m + d) + d² = m²</div>`;
+        document.getElementById('patternAlgebra').innerHTML = algHtml;
+    }
+
+    function renderVisualsTab2() {
+        const width = document.getElementById('tab2').clientWidth;
+        if(width === 0) return;
+
+        const canvas = document.getElementById('patternCanvas');
+        const ctx = setupCanvas(canvas, width, 180);
+        const { mid, dist } = state;
+
+        const range = dist * 3; 
+        const minVal = mid - range;
+        const maxVal = mid + range;
+        
+        const marginX = 40;
+        const plotW = width - 2*marginX;
+        const scale = plotW / (maxVal - minVal);
+        const yLine = 100;
+
+        function toX(val) { return marginX + (val - minVal) * scale; }
+
+        ctx.beginPath();
+        ctx.moveTo(0, yLine); ctx.lineTo(width, yLine);
+        ctx.strokeStyle = '#ccc'; ctx.lineWidth = 1; ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(toX(mid-dist), yLine); ctx.lineTo(toX(mid+dist), yLine);
+        ctx.strokeStyle = '#333'; ctx.lineWidth = 2; ctx.stroke();
+
+        function drawTick(val, label, color, isMain) {
+            const x = toX(val);
+            ctx.beginPath(); ctx.moveTo(x, yLine-10); ctx.lineTo(x, yLine+10);
+            ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.stroke();
+            
+            ctx.fillStyle = color; ctx.textAlign = 'center';
+            ctx.font = isMain ? 'bold 14px sans-serif' : '12px sans-serif';
+            ctx.fillText(label, x, yLine + 30);
+            
+            ctx.font = 'italic 12px sans-serif'; ctx.fillStyle = '#777';
+            if(val === mid) ctx.fillText('m', x, yLine - 20);
+            if(val === mid-dist) ctx.fillText('m-d', x, yLine - 20);
+            if(val === mid+dist) ctx.fillText('m+d', x, yLine - 20);
+        }
+
+        drawTick(mid, mid, '#2c3e50', true);
+        drawTick(mid-dist, mid-dist, '#e67e22', true);
+        drawTick(mid+dist, mid+dist, '#e67e22', true);
+
+        function drawArc(x1, x2, label) {
+            ctx.beginPath();
+            const cx = (x1+x2)/2; const r = Math.abs(x2-x1)/2;
+            ctx.arc(cx, yLine, r, Math.PI, 0); 
+            ctx.strokeStyle = '#2980b9'; ctx.lineWidth = 1; ctx.setLineDash([4, 2]); ctx.stroke(); ctx.setLineDash([]);
+            ctx.fillStyle = '#2980b9'; ctx.font = 'bold 12px sans-serif'; ctx.textAlign = 'center'; ctx.fillText(label, cx, yLine - r - 5);
+        }
+        drawArc(toX(mid-dist), toX(mid), dist);
+        drawArc(toX(mid), toX(mid+dist), dist);
+
+        ctx.font = '16px sans-serif'; ctx.fillStyle = '#333'; ctx.textAlign = 'center';
+        ctx.fillText(`(${mid-dist}) × (${mid+dist}) + ${dist}² = ${mid}²`, width/2, 160);
+    }
+
+    // --- TAB 3 Logic ---
+    function setMental(c, a) {
+        document.getElementById('inputTarget').value = c;
+        document.getElementById('inputOffset').value = a;
+        state.target = c;
+        state.offset = a;
+        renderMathTab3();
+        renderVisualsTab3();
+    }
+
+    function renderMathTab3() {
+        const c = state.target;
+        const a = state.offset;
+        const minus = c - a;
+        const plus = c + a;
+        const easyProd = minus * plus;
+        const a2 = a * a;
+        const total = easyProd + a2;
+
+        let logicHtml = `<div><strong>Goal: Calculate ${c}²</strong></div>`;
+        logicHtml += `<div>Chosen offset a = ${a}</div>`;
+        logicHtml += `<div>Formula: (c - a)(c + a) + a²</div>`;
+        logicHtml += `<div>Plug in: (${c} - ${a})(${c} + ${a}) + ${a}²</div>`;
+        document.getElementById('mentalMathOutput').innerHTML = logicHtml;
+
+        let stepsHtml = `<div>1. Calculate (c-a)(c+a):</div>`;
+        stepsHtml += `<div style="padding-left:15px; color:#555;">${minus} × ${plus} = <strong>${easyProd}</strong></div>`;
+        stepsHtml += `<div>2. Add a² (${a}² = ${a2}):</div>`;
+        stepsHtml += `<div style="padding-left:15px; color:#555;">${easyProd} + ${a2} = <strong>${total}</strong></div>`;
+        stepsHtml += `<div class="highlight-purple" style="margin-top:5px;">Result: ${c}² = ${total}</div>`;
+        document.getElementById('mentalStepsOutput').innerHTML = stepsHtml;
+    }
+
+    function renderVisualsTab3() {
+        const width = document.getElementById('tab3').clientWidth;
+        if(width === 0) return;
+
+        const mainCanvas = document.getElementById('mentalCanvas');
+        const heightGeo = Math.min(width < 600 ? width * 0.95 : width * 0.6, 600);
+        const ctx = setupCanvas(mainCanvas, width, heightGeo);
+        
+        const c = state.target;
+        const a = state.offset;
+
+        // Ensure a < c for visualization, though math holds regardless
+        // If a >= c, visually it breaks the "inner square" metaphor, so we clamp or warn visually?
+        // We will just draw it. If a >= c, the geometry overlaps weirdly, but usually a is small.
+        
+        const marginY = 80;
+        const marginX = 50;
+        const plotH = heightGeo - (2 * marginY);
+        const plotW = width - (2 * marginX);
+        const maxVal = c + a; // Using c+a width logic consistent with Tab 1
+        const maxY = c;
+        const scale = Math.min(plotW / maxVal, plotH / maxY);
+        const originX = marginX + (plotW - (maxVal * scale)) / 2;
+        const originY = heightGeo - marginY;
+
+        function toScreen(x, y) { return { x: originX + x*scale, y: originY - y*scale }; }
+
+        // Draw Axis
+        ctx.beginPath();
+        const axStart = toScreen(-0.5, 0); const axEnd = toScreen(c+a+0.5, 0);
+        ctx.moveTo(axStart.x, axStart.y); ctx.lineTo(axEnd.x, axEnd.y);
+        ctx.strokeStyle = '#333'; ctx.lineWidth = 2; ctx.stroke();
+
+        // Ticks
+        function drawGeoTick(val, label, major) {
+            const p = toScreen(val, 0);
+            ctx.beginPath(); ctx.moveTo(p.x, p.y-6); ctx.lineTo(p.x, p.y+6); ctx.stroke();
+            ctx.textAlign = 'center'; 
+            ctx.font = major ? 'bold 14px sans-serif' : '12px sans-serif';
+            ctx.fillStyle = '#333'; ctx.fillText(label, p.x, p.y+25);
+            if(major) { ctx.font = '12px sans-serif'; ctx.fillStyle='#7f8c8d'; ctx.fillText(val, p.x, p.y+42); }
+        }
+        drawGeoTick(0,'0',true); 
+        drawGeoTick(c-a,'c-a',true); 
+        drawGeoTick(c,'c',true); 
+        drawGeoTick(c+a,'c+a',true);
+
+        // Draw Boomerang (Easy Product Area)
+        // Similar geometry to Tab 1, but colored purple
+        const p0=toScreen(0,0), p1=toScreen(c-a,0), p2=toScreen(c-a,a), p3=toScreen(c,a), p4=toScreen(c,c), p5=toScreen(0,c);
+        ctx.beginPath();
+        ctx.moveTo(p0.x,p0.y); ctx.lineTo(p1.x,p1.y); ctx.lineTo(p2.x,p2.y); ctx.lineTo(p3.x,p3.y); ctx.lineTo(p4.x,p4.y); ctx.lineTo(p5.x,p5.y); ctx.closePath();
+        ctx.fillStyle='#8e44ad'; ctx.fill(); // Purple
+        ctx.strokeStyle='#6c3483'; ctx.lineWidth=2; ctx.stroke();
+
+        const labelPos = toScreen((c-a)/2, c/2);
+        if((c-a)*scale > 30) { ctx.fillStyle='#fff'; ctx.font='bold 16px sans-serif'; ctx.textAlign='center'; ctx.fillText(`${c-a}×${c+a}`, labelPos.x, labelPos.y); }
+
+        // Draw Correction Square (a^2)
+        const pGap = toScreen(c-a, a);
+        ctx.fillStyle='rgba(52, 152, 219, 0.3)'; ctx.fillRect(pGap.x, pGap.y, a*scale, a*scale);
+        ctx.strokeStyle='#2980b9'; ctx.strokeRect(pGap.x, pGap.y, a*scale, a*scale);
+        if(a*scale > 25) { ctx.fillStyle='#2980b9'; ctx.font='bold 14px sans-serif'; const cg=toScreen(c-a/2, a/2); ctx.fillText('a²', cg.x, cg.y); }
+
+        // Braces
+        function drawBrace(x1, x2, yOff, txt) {
+            const s1=toScreen(x1,0), s2=toScreen(x2,0); const y=originY+yOff;
+            ctx.beginPath(); ctx.strokeStyle='#555'; ctx.lineWidth=1;
+            ctx.moveTo(s1.x, originY+10); ctx.lineTo(s1.x, y); ctx.lineTo(s2.x, y); ctx.lineTo(s2.x, originY+10); ctx.stroke();
+            ctx.fillStyle='#555'; ctx.font='12px sans-serif'; ctx.textAlign='center'; ctx.fillText(txt, (s1.x+s2.x)/2, y+15);
+        }
+        drawBrace(0, c-a, 60, `c-a`); drawBrace(0, c+a, 85, `c+a`);
+    }
+
+    // --- Events ---
+    document.getElementById('inputA').addEventListener('input', (e)=>{
+        const val = parseInt(e.target.value);
+        if(val>0) setA(val);
+    });
+    
+    document.getElementById('inputMid').addEventListener('input', (e)=>{
+        const val = parseInt(e.target.value);
+        if(val>0) { state.mid = val; renderMathTab2(); renderVisualsTab2(); }
+    });
+
+    document.getElementById('inputTarget').addEventListener('input', (e)=>{
+        const val = parseInt(e.target.value);
+        if(val>0) { state.target = val; renderMathTab3(); renderVisualsTab3(); }
+    });
+    document.getElementById('inputOffset').addEventListener('input', (e)=>{
+        const val = parseInt(e.target.value);
+        if(val>0) { state.offset = val; renderMathTab3(); renderVisualsTab3(); }
+    });
+
+    window.addEventListener('resize', ()=>{
+        const active = document.querySelector('.tab-content.active').id;
+        if(active === 'tab1') renderVisualsTab1();
+        else if(active === 'tab2') renderVisualsTab2();
+        else renderVisualsTab3();
+    });
+
+    // Start
+    updateStateTab1(3);
+    renderMathTab2();
+    renderVisualsTab3(); // Init visual 3
+
+</script>
+
+</body>
+</html>
