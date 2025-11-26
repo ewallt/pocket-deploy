@@ -9,23 +9,23 @@ const APP_CONFIG = {
 
   themes: {
     // ========================================================================
-    // GROUP A: THE NAVY CLASS (New! Slots 1-3)
-    // Value-Matched to Original Navy (Deep Saturation + Soft Highlight)
+    // GROUP A: THE NAVY CLASS (Optically Tuned)
+    // We cheated the math so they "feel" the same to the human eye.
     // ========================================================================
     
     "iso_green": { 
       name: "1. Navy Class: Army",
       colors: {
-        "--bg": "#051a10",        // Deepest Jungle (Matches Navy BG)
-        "--panel": "#0f2e1d",     // Deep Forest (Matches Navy Panel)
-        "--chip": "#1a3b29",      // Chip slightly lighter (Navy Style)
+        "--bg": "#021c10",        // Darker than Blue (Green glows)
+        "--panel": "#0b2e1e",     // Deep Forest
+        "--chip": "#173d2b",      
         "--border": "#1f4f35",    
         "--ink": "#e3fcec",       // Mint White
         "--muted": "#8abfac",     
-        "--brand": "#6ee7b7",     // Soft Emerald (Matches #8bb9ff value)
-        "--accent": "#34d399",    
+        "--brand": "#34d399",     // Emerald-400 (Slightly softer than the Blue)
+        "--accent": "#10b981",    
         "--bad": "#ef4444",
-        "--btn-bg": "linear-gradient(135deg, #0f2e1d 0%, #051a10 100%)", // Green Gradient
+        "--btn-bg": "linear-gradient(135deg, #0b2e1e 0%, #021c10 100%)", 
         "--btn-text": "#e3fcec"
       }
     },
@@ -33,39 +33,39 @@ const APP_CONFIG = {
     "iso_brown": { 
       name: "2. Navy Class: Marine",
       colors: {
-        "--bg": "#1a120b",        // Deepest Coffee
-        "--panel": "#2e2015",     // Deep Leather
-        "--chip": "#3d2b1f",      
-        "--border": "#4f3829",    
-        "--ink": "#fceee3",       // Bone White
-        "--muted": "#bf9f8a",     
-        "--brand": "#fcd34d",     // Soft Gold (Matches #8bb9ff value)
-        "--accent": "#fbbf24",    
+        "--bg": "#1f150b",        // Warmer/Lighter than Blue (to avoid mud)
+        "--panel": "#362516",     // Rich Leather
+        "--chip": "#4a3321",      
+        "--border": "#61442e",    
+        "--ink": "#fef3c7",       // Warm Cream
+        "--muted": "#d6c0a8",     
+        "--brand": "#fbbf24",     // Amber-400 (High saturation to pop)
+        "--accent": "#f59e0b",    
         "--bad": "#ef4444",
-        "--btn-bg": "linear-gradient(135deg, #2e2015 0%, #1a120b 100%)", // Brown Gradient
-        "--btn-text": "#fceee3"
+        "--btn-bg": "linear-gradient(135deg, #362516 0%, #1f150b 100%)", 
+        "--btn-text": "#fef3c7"
       }
     },
 
     "iso_purple": { 
       name: "3. Navy Class: Air",
       colors: {
-        "--bg": "#100b20",        // Deepest Indigo
-        "--panel": "#1d1533",     // Deep Violet
-        "--chip": "#2a1f45",      
-        "--border": "#3b2b5c",    
-        "--ink": "#f0e6ff",       // Lavender White
-        "--muted": "#a99ec2",     
-        "--brand": "#c084fc",     // Soft Purple (Matches #8bb9ff value)
+        "--bg": "#170e2e",        // Lighter than Blue (Purple is heavy)
+        "--panel": "#281a4a",     // Deep Royal
+        "--chip": "#372661",      
+        "--border": "#4c3682",    
+        "--ink": "#f3e8ff",       // Lavender
+        "--muted": "#c4b5fd",     
+        "--brand": "#c084fc",     // Purple-400 (Needs to be bright to be seen)
         "--accent": "#a855f7",    
         "--bad": "#ef4444",
-        "--btn-bg": "linear-gradient(135deg, #1d1533 0%, #100b20 100%)", // Purple Gradient
-        "--btn-text": "#f0e6ff"
+        "--btn-bg": "linear-gradient(135deg, #281a4a 0%, #170e2e 100%)", 
+        "--btn-text": "#f3e8ff"
       }
     },
 
     // ========================================================================
-    // GROUP B: THE BLUEPRINT LAB (Was Group A) -> Now Slots 4-9
+    // GROUP B: THE BLUEPRINT LAB (Unchanged)
     // ========================================================================
     "navy": { 
       name: "4. Lab: Mocha",
@@ -117,7 +117,7 @@ const APP_CONFIG = {
     },
 
     // ========================================================================
-    // GROUP C: THE PAPER LAB (Was Group B) -> Now Slots 10-15
+    // GROUP C: THE PAPER LAB (Unchanged)
     // ========================================================================
     "navy_exp": {
       name: "10. Paper: Royal Navy",
@@ -169,7 +169,7 @@ const APP_CONFIG = {
     },
 
     // ========================================================================
-    // GROUP D: FINAL ROSTER (Was Group C) -> Now Slots 16-21
+    // GROUP D: FINAL ROSTER (Unchanged)
     // ========================================================================
     "navy_final": {
       name: "16. Orig: Navy",
@@ -215,7 +215,7 @@ const APP_CONFIG = {
       name: "21. Orig: Sonar",
       colors: {
         "--bg": "#042f2e", "--panel": "#115e59", "--chip": "#115e59", "--border": "#134e4a",
-        "--ink": "#ccfbf1", "--muted": "#5eead4", "--brand": "#fef9c3", "--accent": "#22d3ee", "--bad": "#f43f5e",
+        "--ink": "#ccfbf1", "--muted": "#5eead4", "--brand": "#fef9c3", "--accent": "#2dd4bf", "--bad": "#f43f5e",
         "--btn-bg": "var(--brand)", "--btn-text": "#042f2e"
       }
     }
