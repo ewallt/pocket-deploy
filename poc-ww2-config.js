@@ -9,7 +9,7 @@ const APP_CONFIG = {
 
   themes: {
     // ========================================================================
-    // GROUP A: THE TEST LAB (Unchanged)
+    // GROUP A: THE TEST LAB (Khaki/Lime/Cream Buttons)
     // ========================================================================
     
     // 1. HIGH COMMAND + KHAKI
@@ -79,10 +79,9 @@ const APP_CONFIG = {
     },
 
     // ========================================================================
-    // GROUP B: FINAL ROSTER
+    // GROUP B: FINAL ROSTER (Slot 12 Updated to White)
     // ========================================================================
     
-    // 7. NAVY (Blue)
     "navy_exp": {
       name: "7. Navy (Final)",
       colors: {
@@ -92,20 +91,16 @@ const APP_CONFIG = {
       }
     },
     
-    // 8. DESERT (Cream - Selected Winner)
     "desert_exp": {
       name: "8. Desert (Final)",
       colors: {
         "--bg": "#292524", "--panel": "#44403c", "--ink": "#f5f5f4", "--muted": "#a8a29e",
-        "--brand": "#d4b483", /* KHAKI (Swapped to Khaki as requested in previous turn logic, or do you want Cream?) */ 
-        /* Wait, you said "Mocha gets Khaki" in the previous turn. I will stick to Khaki here. */
-        "--brand": "#d4b483", 
+        "--brand": "#d4b483", /* KHAKI */
         "--accent": "#d97706", "--border": "#57534e", "--chip": "#57534e", "--bad": "#f87171",
         "--btn-bg": "var(--brand)", "--btn-text": "var(--panel)"
       }
     },
     
-    // 9. ARCHIVES (Teal/Sepia)
     "paper_exp": {
       name: "9. Archives (Final)",
       colors: {
@@ -115,7 +110,6 @@ const APP_CONFIG = {
       }
     },
     
-    // 10. HIGH COMMAND (Cream - Selected Winner)
     "emerald_exp": {
       name: "10. High Command (Final)",
       colors: {
@@ -126,7 +120,6 @@ const APP_CONFIG = {
       }
     },
     
-    // 11. LUFTWAFFE (Ice Blue)
     "luftwaffe_exp": {
       name: "11. Luftwaffe (Final)",
       colors: {
@@ -136,7 +129,7 @@ const APP_CONFIG = {
       }
     },
     
-    // 12. SONAR (Coral - Research Based)
+    // 12. SONAR (Updated: White Brand)
     "sonar_exp": {
       name: "12. Sonar (Final)",
       colors: {
@@ -144,12 +137,12 @@ const APP_CONFIG = {
         "--panel": "#115e59",   // Medium Teal
         "--ink": "#ccfbf1",     // Mint White
         "--muted": "#5eead4",   // Cyan Text
-        "--brand": "#fb7185",   // CORAL / SALMON (Complementary)
+        "--brand": "#ffffff",   // PURE WHITE
         "--accent": "#2dd4bf",  // Teal Accent
         "--border": "#134e4a",
         "--chip": "#134e4a",
         "--bad": "#f43f5e",
-        "--btn-bg": "var(--brand)", "--btn-text": "#042f2e" /* Dark text on Coral */
+        "--btn-bg": "var(--brand)", "--btn-text": "#042f2e" /* Dark text on White button */
       }
     }
   },
