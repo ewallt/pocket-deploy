@@ -9,131 +9,113 @@ const APP_CONFIG = {
 
   themes: {
     // ========================================================================
-    // GROUP A: THE ISOMORPHIC LAB (All Structure = High Command)
-    // Structure: Chip == Panel. Button Text == Panel.
+    // GROUP A: THE BLUEPRINT LAB (High Contrast, White on Deep Color)
+    // Structure: Chip == Panel. Button Text == Panel. Brand == White.
     // ========================================================================
     
-    // 1. MOCHA (Requested Baseline)
+    // 1. MOCHA (The Warm Exception)
     "navy": { 
-      name: "1. Lab: Mocha",
+      name: "1. Mocha (Khaki)",
       colors: {
         "--bg": "#292524",        // Warm Dark Brown
         "--panel": "#44403c",     // Stone Brown
-        "--chip": "#44403c",      // = PANEL (The Isomorphic Rule)
-        "--border": "#57534e",    // Lighter Border
-        
-        "--ink": "#f5f5f4",       // White Text
-        "--muted": "#a8a29e",     // Grey Text
-        
-        "--brand": "#d4b483",     // Khaki Brand
-        "--accent": "#d97706",    // Amber Accent
-        "--bad": "#ef4444",       // Red Alert
-        
+        "--chip": "#44403c",      // = PANEL
+        "--border": "#57534e",    
+        "--ink": "#f5f5f4",       
+        "--muted": "#a8a29e",     
+        "--brand": "#d4b483",     // Khaki
+        "--accent": "#d97706",    
+        "--bad": "#ef4444",
         "--btn-bg": "var(--brand)", 
-        "--btn-text": "var(--panel)" // = PANEL
+        "--btn-text": "var(--panel)"
       }
     },
 
-    // 2. MIDNIGHT (Deep Blue / Gold)
+    // 2. TEAL BLUEPRINT (Requested)
     "desert": { 
-      name: "2. Lab: Midnight",
+      name: "2. Lab: Teal",
       colors: {
-        "--bg": "#020617",        // Almost Black Blue
-        "--panel": "#0f172a",     // Slate 900
-        "--chip": "#0f172a",      // = PANEL
-        "--border": "#1e293b",    // Slate 800
-        
-        "--ink": "#f8fafc",       // Slate 50
-        "--muted": "#94a3b8",     // Slate 400
-        
-        "--brand": "#fbbf24",     // Bright Gold
-        "--accent": "#f59e0b", 
-        "--bad": "#ef4444",
-        
+        "--bg": "#134e4a",        // Teal 900
+        "--panel": "#115e59",     // Teal 800
+        "--chip": "#115e59",      // = PANEL
+        "--border": "#14b8a6",    // Teal 500 (Bright Border for Blueprint look)
+        "--ink": "#f0fdfa",       // Teal 50
+        "--muted": "#5eead4",     // Teal 300
+        "--brand": "#ffffff",     // Pure White
+        "--accent": "#2dd4bf", 
+        "--bad": "#fb7185",
         "--btn-bg": "var(--brand)", 
         "--btn-text": "var(--panel)"
       }
     },
 
-    // 3. RED ALERT (Crimson / Orange)
+    // 3. VIOLET BLUEPRINT
     "paper": { 
-      name: "3. Lab: Red Alert",
-      colors: {
-        "--bg": "#2a0a0a",        // Dark Blood
-        "--panel": "#450a0a",     // Red 950
-        "--chip": "#450a0a",      // = PANEL
-        "--border": "#7f1d1d",    // Red 900
-        
-        "--ink": "#ffe4e6",       // Rose White
-        "--muted": "#fda4af",     // Rose 300
-        
-        "--brand": "#fb923c",     // Orange (High Viz)
-        "--accent": "#f43f5e", 
-        "--bad": "#991b1b",
-        
-        "--btn-bg": "var(--brand)", 
-        "--btn-text": "var(--panel)"
-      }
-    },
-
-    // 4. CONCRETE (Grey / Toxic Green)
-    "emerald": { 
-      name: "4. Lab: Concrete",
-      colors: {
-        "--bg": "#18181b",        // Zinc 950
-        "--panel": "#27272a",     // Zinc 900
-        "--chip": "#27272a",      // = PANEL
-        "--border": "#3f3f46",    // Zinc 700
-        
-        "--ink": "#f4f4f5",       // Zinc 100
-        "--muted": "#a1a1aa",     // Zinc 400
-        
-        "--brand": "#a3e635",     // Lime 400
-        "--accent": "#bef264", 
-        "--bad": "#ef4444",
-        
-        "--btn-bg": "var(--brand)", 
-        "--btn-text": "var(--panel)"
-      }
-    },
-
-    // 5. ROYAL PURPLE (Plum / Lavender)
-    "luftwaffe": { 
-      name: "5. Lab: Royal",
+      name: "3. Lab: Violet",
       colors: {
         "--bg": "#2e1065",        // Violet 950
         "--panel": "#4c1d95",     // Violet 900
         "--chip": "#4c1d95",      // = PANEL
-        "--border": "#5b21b6",    // Violet 800
-        
-        "--ink": "#f3e8ff",       // Purple 100
-        "--muted": "#c4b5fd",     // Purple 300
-        
-        "--brand": "#e879f9",     // Fuchsia 400
-        "--accent": "#d8b4fe", 
-        "--bad": "#fb7185",
-        
+        "--border": "#8b5cf6",    // Violet 500
+        "--ink": "#f5f3ff",       // Violet 50
+        "--muted": "#c4b5fd",     // Violet 300
+        "--brand": "#ffffff",     // Pure White
+        "--accent": "#a78bfa", 
+        "--bad": "#f43f5e",
         "--btn-bg": "var(--brand)", 
         "--btn-text": "var(--panel)"
       }
     },
 
-    // 6. BLUEPRINT (Deep Blue / White)
+    // 4. ROSE BLUEPRINT
+    "emerald": { 
+      name: "4. Lab: Rose",
+      colors: {
+        "--bg": "#4c0519",        // Rose 950
+        "--panel": "#881337",     // Rose 900
+        "--chip": "#881337",      // = PANEL
+        "--border": "#f43f5e",    // Rose 500
+        "--ink": "#fff1f2",       // Rose 50
+        "--muted": "#fda4af",     // Rose 300
+        "--brand": "#ffffff",     // Pure White
+        "--accent": "#fb7185", 
+        "--bad": "#fbbf24",       // Gold for alert (Red on Red is bad)
+        "--btn-bg": "var(--brand)", 
+        "--btn-text": "var(--panel)"
+      }
+    },
+
+    // 5. INDIGO BLUEPRINT
+    "luftwaffe": { 
+      name: "5. Lab: Indigo",
+      colors: {
+        "--bg": "#1e1b4b",        // Indigo 950
+        "--panel": "#312e81",     // Indigo 900
+        "--chip": "#312e81",      // = PANEL
+        "--border": "#6366f1",    // Indigo 500
+        "--ink": "#eef2ff",       // Indigo 50
+        "--muted": "#a5b4fc",     // Indigo 300
+        "--brand": "#ffffff",     // Pure White
+        "--accent": "#818cf8", 
+        "--bad": "#f43f5e",
+        "--btn-bg": "var(--brand)", 
+        "--btn-text": "var(--panel)"
+      }
+    },
+
+    // 6. SKY BLUEPRINT (The Original "Perfect" One)
     "sonar": { 
-      name: "6. Lab: Blueprint",
+      name: "6. Lab: Sky",
       colors: {
         "--bg": "#0c4a6e",        // Sky 900
         "--panel": "#075985",     // Sky 800
         "--chip": "#075985",      // = PANEL
-        "--border": "#0369a1",    // Sky 700
-        
+        "--border": "#0ea5e9",    // Sky 500
         "--ink": "#f0f9ff",       // Sky 50
-        "--muted": "#bae6fd",     // Sky 200
-        
+        "--muted": "#7dd3fc",     // Sky 300
         "--brand": "#ffffff",     // Pure White
         "--accent": "#38bdf8", 
         "--bad": "#f43f5e",
-        
         "--btn-bg": "var(--brand)", 
         "--btn-text": "var(--panel)"
       }
@@ -155,7 +137,8 @@ const APP_CONFIG = {
       name: "8. Desert (Final)",
       colors: {
         "--bg": "#292524", "--panel": "#44403c", "--ink": "#f5f5f4", "--muted": "#a8a29e",
-        "--brand": "#d4b483", "--accent": "#d97706", "--border": "#57534e", "--chip": "#57534e", "--bad": "#f87171",
+        "--brand": "#d4b483", 
+        "--accent": "#d97706", "--border": "#57534e", "--chip": "#57534e", "--bad": "#f87171",
         "--btn-bg": "var(--brand)", "--btn-text": "var(--panel)"
       }
     },
@@ -171,7 +154,8 @@ const APP_CONFIG = {
       name: "10. High Command (Final)",
       colors: {
         "--bg": "#022c22", "--panel": "#064e3b", "--ink": "#ecfdf5", "--muted": "#6ee7b7",
-        "--brand": "#fef08a", "--accent": "#f59e0b", "--border": "#065f46", "--chip": "#064e3b", "--bad": "#ef4444",
+        "--brand": "#fef08a", 
+        "--accent": "#f59e0b", "--border": "#065f46", "--chip": "#064e3b", "--bad": "#ef4444",
         "--btn-bg": "var(--brand)", "--btn-text": "var(--panel)"
       }
     },
@@ -187,7 +171,8 @@ const APP_CONFIG = {
       name: "12. Sonar (Final)",
       colors: {
         "--bg": "#042f2e", "--panel": "#115e59", "--ink": "#ccfbf1", "--muted": "#5eead4",
-        "--brand": "#fef9c3", "--accent": "#2dd4bf", "--border": "#134e4a", "--chip": "#134e4a", "--bad": "#f43f5e",
+        "--brand": "#fef9c3", 
+        "--accent": "#2dd4bf", "--border": "#134e4a", "--chip": "#134e4a", "--bad": "#f43f5e",
         "--btn-bg": "var(--brand)", "--btn-text": "#042f2e"
       }
     }
