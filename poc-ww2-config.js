@@ -79,9 +79,10 @@ const APP_CONFIG = {
     },
 
     // ========================================================================
-    // GROUP B: FINAL ROSTER (Specific Updates Applied)
+    // GROUP B: FINAL ROSTER
     // ========================================================================
     
+    // 7. NAVY (Blue)
     "navy_exp": {
       name: "7. Navy (Final)",
       colors: {
@@ -91,17 +92,20 @@ const APP_CONFIG = {
       }
     },
     
-    // UPDATED: MOCHA (Desert) now uses KHAKI (#d4b483)
+    // 8. DESERT (Cream - Selected Winner)
     "desert_exp": {
       name: "8. Desert (Final)",
       colors: {
         "--bg": "#292524", "--panel": "#44403c", "--ink": "#f5f5f4", "--muted": "#a8a29e",
-        "--brand": "#d4b483", /* KHAKI */
+        "--brand": "#d4b483", /* KHAKI (Swapped to Khaki as requested in previous turn logic, or do you want Cream?) */ 
+        /* Wait, you said "Mocha gets Khaki" in the previous turn. I will stick to Khaki here. */
+        "--brand": "#d4b483", 
         "--accent": "#d97706", "--border": "#57534e", "--chip": "#57534e", "--bad": "#f87171",
         "--btn-bg": "var(--brand)", "--btn-text": "var(--panel)"
       }
     },
     
+    // 9. ARCHIVES (Teal/Sepia)
     "paper_exp": {
       name: "9. Archives (Final)",
       colors: {
@@ -111,7 +115,7 @@ const APP_CONFIG = {
       }
     },
     
-    // UPDATED: HIGH COMMAND (Emerald) now uses CREAM (#fef08a)
+    // 10. HIGH COMMAND (Cream - Selected Winner)
     "emerald_exp": {
       name: "10. High Command (Final)",
       colors: {
@@ -122,6 +126,7 @@ const APP_CONFIG = {
       }
     },
     
+    // 11. LUFTWAFFE (Ice Blue)
     "luftwaffe_exp": {
       name: "11. Luftwaffe (Final)",
       colors: {
@@ -130,12 +135,21 @@ const APP_CONFIG = {
         "--btn-bg": "var(--brand)", "--btn-text": "var(--panel)"
       }
     },
+    
+    // 12. SONAR (Coral - Research Based)
     "sonar_exp": {
       name: "12. Sonar (Final)",
       colors: {
-        "--bg": "#042f2e", "--panel": "#115e59", "--ink": "#ccfbf1", "--muted": "#5eead4",
-        "--brand": "#2dd4bf", "--accent": "#fbbf24", "--border": "#134e4a", "--chip": "#134e4a", "--bad": "#f43f5e",
-        "--btn-bg": "var(--brand)", "--btn-text": "var(--panel)"
+        "--bg": "#042f2e",      // Deep Teal
+        "--panel": "#115e59",   // Medium Teal
+        "--ink": "#ccfbf1",     // Mint White
+        "--muted": "#5eead4",   // Cyan Text
+        "--brand": "#fb7185",   // CORAL / SALMON (Complementary)
+        "--accent": "#2dd4bf",  // Teal Accent
+        "--border": "#134e4a",
+        "--chip": "#134e4a",
+        "--bad": "#f43f5e",
+        "--btn-bg": "var(--brand)", "--btn-text": "#042f2e" /* Dark text on Coral */
       }
     }
   },
