@@ -9,8 +9,7 @@ const APP_CONFIG = {
 
   themes: {
     // ========================================================================
-    // GROUP A: THE TEST LAB
-    // FIXED: Buttons now use 'var(--brand)' instead of the blue gradient
+    // GROUP A: THE TEST LAB (Unchanged)
     // ========================================================================
     
     // 1. HIGH COMMAND + KHAKI
@@ -80,7 +79,7 @@ const APP_CONFIG = {
     },
 
     // ========================================================================
-    // GROUP B: FINAL ROSTER (Unchanged)
+    // GROUP B: FINAL ROSTER (Specific Updates Applied)
     // ========================================================================
     
     "navy_exp": {
@@ -91,15 +90,18 @@ const APP_CONFIG = {
         "--btn-bg": "var(--brand)", "--btn-text": "var(--panel)"
       }
     },
+    
+    // UPDATED: MOCHA (Desert) now uses KHAKI (#d4b483)
     "desert_exp": {
       name: "8. Desert (Final)",
       colors: {
         "--bg": "#292524", "--panel": "#44403c", "--ink": "#f5f5f4", "--muted": "#a8a29e",
-        "--brand": "#fef08a",
+        "--brand": "#d4b483", /* KHAKI */
         "--accent": "#d97706", "--border": "#57534e", "--chip": "#57534e", "--bad": "#f87171",
         "--btn-bg": "var(--brand)", "--btn-text": "var(--panel)"
       }
     },
+    
     "paper_exp": {
       name: "9. Archives (Final)",
       colors: {
@@ -108,15 +110,18 @@ const APP_CONFIG = {
         "--btn-bg": "var(--brand)", "--btn-text": "#ffffff"
       }
     },
+    
+    // UPDATED: HIGH COMMAND (Emerald) now uses CREAM (#fef08a)
     "emerald_exp": {
       name: "10. High Command (Final)",
       colors: {
         "--bg": "#022c22", "--panel": "#064e3b", "--ink": "#ecfdf5", "--muted": "#6ee7b7",
-        "--brand": "#fef08a", 
+        "--brand": "#fef08a", /* CREAM */
         "--accent": "#f59e0b", "--border": "#065f46", "--chip": "#064e3b", "--bad": "#ef4444",
         "--btn-bg": "var(--brand)", "--btn-text": "var(--panel)"
       }
     },
+    
     "luftwaffe_exp": {
       name: "11. Luftwaffe (Final)",
       colors: {
