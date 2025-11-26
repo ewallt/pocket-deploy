@@ -1,8 +1,4 @@
-/* =========================================
-   1. BASE VARIABLES & RESET
-   ========================================= */
 :root {
-  /* Default placeholders (Overridden by poc-ww2-config.js) */
   --bg: #0b1020;
   --panel: #111833;
   --ink: #e6ecff;
@@ -13,11 +9,9 @@
   --chip: #1a2347;
   --bad: #ff6b6b;
   
-  /* Button Variables defaults */
   --btn-bg: var(--brand);
   --btn-text: var(--panel);
 
-  /* Structural */
   --shadow: 0 8px 28px rgba(0, 0, 0, .35);
   --radius: 12px;
   --radius-sm: 8px;
@@ -28,10 +22,9 @@
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   color: var(--ink);
-  background: 
-    radial-gradient(1200px 600px at 10% -5%, rgba(139, 185, 255, .20), transparent 55%),
-    radial-gradient(1000px 400px at 95% 10%, rgba(192, 255, 225, .18), transparent 60%),
-    var(--bg);
+  background: radial-gradient(1200px 600px at 10% -5%, rgba(139, 185, 255, .20), transparent 55%),
+              radial-gradient(1000px 400px at 95% 10%, rgba(192, 255, 225, .18), transparent 60%),
+              var(--bg);
   line-height: 1.6;
   min-height: 100vh;
   padding-bottom: 2rem;
@@ -42,10 +35,6 @@ body {
 .container { max-width: 1100px; margin: 0 auto; padding: 1rem; }
 .container.narrow { max-width: 860px; }
 
-
-/* =========================================
-   2. SHARED COMPONENTS (Header, Typography)
-   ========================================= */
 header {
   background: linear-gradient(180deg, color-mix(in oklab, var(--panel) 85%, transparent), var(--panel));
   border: 1px solid var(--border);
@@ -58,31 +47,19 @@ header {
 
 h1 { font-size: 1.9rem; color: var(--brand); margin-bottom: .4rem; letter-spacing: -.02em; }
 .subtitle { color: var(--muted); font-size: .98rem; font-style: italic; }
-
 .error-msg { text-align: center; color: var(--bad); padding: 2rem; margin-top: 1rem; }
-
 .breadcrumb { margin-bottom: 1rem; font-size: .92rem; }
 .breadcrumb a { color: var(--brand); text-decoration: none; }
 .breadcrumb span { color: var(--muted); margin: 0 .5rem; }
-
 footer { margin-top: 1.25rem; color: var(--muted); font-size: .88rem; text-align: center; }
 
-
-/* =========================================
-   3. HUB SPECIFIC (Grid, Cards, Toolbar)
-   ========================================= */
 .toolbar { display: flex; gap: .75rem; flex-wrap: wrap; margin: 1rem 0 1.25rem 0; }
-
 .search {
   flex: 1 1 320px;
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 999px;
-  display: flex;
-  align-items: center;
-  gap: .5rem;
-  padding: .65rem .9rem;
-  box-shadow: var(--shadow);
+  display: flex; align-items: center; gap: .5rem; padding: .65rem .9rem; box-shadow: var(--shadow);
 }
 .search input { width: 100%; border: none; background: transparent; color: var(--ink); outline: none; font-size: 1rem; }
 
@@ -102,11 +79,7 @@ footer { margin-top: 1.25rem; color: var(--muted); font-size: .88rem; text-align
 .grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
 @media (max-width: 980px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 720px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 480px) { 
-  .grid { grid-template-columns: 1fr; } 
-  h1 { font-size: 1.6rem; }
-  .chip { padding: .6rem .8rem; }
-}
+@media (max-width: 480px) { .grid { grid-template-columns: 1fr; } h1 { font-size: 1.6rem; } .chip { padding: .6rem .8rem; } }
 
 .card {
   background: var(--panel);
@@ -114,96 +87,53 @@ footer { margin-top: 1.25rem; color: var(--muted); font-size: .88rem; text-align
   border-radius: var(--radius);
   padding: 1rem;
   box-shadow: var(--shadow);
-  display: flex;
-  flex-direction: column;
-  gap: .6rem;
+  display: flex; flex-direction: column; gap: .6rem;
   transition: transform .15s ease, border-color .2s ease;
-  position: relative;
-  overflow: hidden;
+  position: relative; overflow: hidden;
 }
 .card:hover { transform: translateY(-2px); border-color: color-mix(in oklab, var(--brand) 60%, var(--border)); }
 .card h3 { color: var(--brand); font-size: 1.05rem; letter-spacing: .01em; }
 .card p { color: var(--muted); font-size: .95rem; line-height: 1.5; min-height: 3.2em; }
 
 .card-delete {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  background: rgba(0,0,0,0.3);
-  color: var(--muted);
-  border: 1px solid transparent;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s;
-  z-index: 10;
-  font-family: sans-serif;
-  font-weight: bold;
-  font-size: 1rem;
-  line-height: 1;
+  position: absolute; top: 0.5rem; right: 0.5rem;
+  background: rgba(0,0,0,0.3); color: var(--muted);
+  border: 1px solid transparent; width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.2s; z-index: 10;
+  font-family: sans-serif; font-weight: bold; font-size: 1rem; line-height: 1;
 }
-.card-delete:hover {
-  background: var(--bad);
-  color: #fff;
-  border-color: var(--bad);
-}
+.card-delete:hover { background: var(--bad); color: #fff; border-color: var(--bad); }
 
 .tagrow { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .2rem; }
 .tag { font-size: .75rem; color: var(--ink); background: color-mix(in oklab, var(--chip) 65%, transparent); border: 1px solid var(--border); padding: .25rem .5rem; border-radius: 999px; }
 
 .actions { display: flex; gap: .5rem; margin-top: .35rem; }
-
 .btn {
-  width: 100%;
-  text-align: center;
-  text-decoration: none;
-  background: var(--btn-bg);
-  color: var(--btn-text);
-  border: 1px solid var(--border);
-  padding: .55rem .7rem;
-  border-radius: 10px;
-  font-weight: 600;
-  font-size: .9rem;
-  cursor: pointer;
-  transition: opacity 0.2s;
+  width: 100%; text-align: center; text-decoration: none;
+  background: var(--btn-bg); color: var(--btn-text);
+  border: 1px solid var(--border); padding: .55rem .7rem;
+  border-radius: 10px; font-weight: 600; font-size: .9rem;
+  cursor: pointer; transition: opacity 0.2s;
 }
 .btn:hover { opacity: 0.9; }
 
-
-/* =========================================
-   4. VIEWER SPECIFIC (Accordions, Timeline)
-   ========================================= */
 .main-answer {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1.5rem;
-  margin-bottom: 1.25rem;
-  box-shadow: var(--shadow);
+  background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.5rem; margin-bottom: 1.25rem; box-shadow: var(--shadow);
   border-left: 4px solid var(--brand);
 }
 .main-answer h2 { color: var(--brand); font-size: 1.25rem; margin-bottom: .8rem; }
 .main-answer p { font-size: 1.03rem; line-height: 1.65; color: var(--muted); }
 
 .section { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 1rem; box-shadow: var(--shadow); overflow: hidden; }
-
-/* FIXED: Reverted to Dark Gradient BG, but with BRAND TEXT color */
 .section-header { 
   padding: 1.05rem 1.25rem; 
   background: linear-gradient(135deg, color-mix(in oklab, var(--brand) 15%, var(--panel)), var(--panel)); 
-  color: var(--brand); /* Text matches the Hub Header */
-  display: flex; 
-  justify-content: space-between; 
-  align-items: center; 
-  cursor: pointer; 
-  border-bottom: 1px solid var(--border); 
-  user-select: none; 
+  color: var(--brand);
+  display: flex; justify-content: space-between; align-items: center; 
+  cursor: pointer; border-bottom: 1px solid var(--border); user-select: none; 
 }
-
 .section-header h2 { font-size: 1.12rem; margin: 0; }
 .section-icon { font-size: 1.35rem; transition: transform .28s ease; }
 .section.active .section-icon { transform: rotate(180deg); }
