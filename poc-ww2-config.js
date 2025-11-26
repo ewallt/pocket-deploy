@@ -9,8 +9,7 @@ const APP_CONFIG = {
 
   themes: {
     // ========================================================================
-    // GROUP A (1-6): BLUEPRINT LAB
-    // Structure: Chip=Panel, BtnText=Panel, Brand=White
+    // GROUP A (1-6): BLUEPRINT LAB (Dark / White Brand)
     // ========================================================================
     "navy": { 
       name: "1. Lab: Mocha",
@@ -62,62 +61,120 @@ const APP_CONFIG = {
     },
 
     // ========================================================================
-    // GROUP B (7-12): EXPERIMENTAL ROSTER (Updated 9, 10, 12)
+    // GROUP B (7-12): PAPER LAB (Light Mode / Dark Brand)
+    // Structure: Chip=Panel, BtnText=White
     // ========================================================================
+    
+    // 7. PAPER NAVY
     "navy_exp": {
-      name: "7. Exp: Navy",
+      name: "7. Paper: Royal Navy",
       colors: {
-        "--bg": "#0b1020", "--panel": "#111833", "--chip": "#111833", "--border": "#26325b",
-        "--ink": "#e6ecff", "--muted": "#a7b0cc", "--brand": "#8bb9ff", "--accent": "#c0ffe1", "--bad": "#ff6b6b",
-        "--btn-bg": "var(--brand)", "--btn-text": "var(--panel)"
+        "--bg": "#f0f9ff",      // Sky 50
+        "--panel": "#e0f2fe",   // Sky 100
+        "--chip": "#e0f2fe",    // = PANEL
+        "--border": "#7dd3fc",  // Sky 300
+        "--ink": "#0c4a6e",     // Sky 900
+        "--muted": "#0369a1",   // Sky 700
+        "--brand": "#0284c7",   // Sky 600 (Deep Blue)
+        "--accent": "#38bdf8", 
+        "--bad": "#b91c1c",
+        "--btn-bg": "var(--brand)", 
+        "--btn-text": "#ffffff" // WHITE TEXT
       }
     },
+
+    // 8. PAPER DESERT
     "desert_exp": {
-      name: "8. Exp: Desert",
+      name: "8. Paper: Expedition",
       colors: {
-        "--bg": "#292524", "--panel": "#44403c", "--chip": "#44403c", "--border": "#57534e",
-        "--ink": "#f5f5f4", "--muted": "#a8a29e", "--brand": "#d4b483", "--accent": "#d97706", "--bad": "#f87171",
-        "--btn-bg": "var(--brand)", "--btn-text": "var(--panel)"
+        "--bg": "#fefce8",      // Yellow 50
+        "--panel": "#fef9c3",   // Yellow 100
+        "--chip": "#fef9c3",    // = PANEL
+        "--border": "#fde047",  // Yellow 300
+        "--ink": "#422006",     // Yellow 950
+        "--muted": "#854d0e",   // Yellow 800
+        "--brand": "#a16207",   // Yellow 700 (Bronze)
+        "--accent": "#ca8a04", 
+        "--bad": "#b91c1c",
+        "--btn-bg": "var(--brand)", 
+        "--btn-text": "#ffffff"
       }
     },
-    // CHANGED: Black Ops
+
+    // 9. PAPER CRIMSON (New Try)
     "paper_exp": {
-      name: "9. Exp: Black Ops",
+      name: "9. Paper: Top Secret",
       colors: {
-        "--bg": "#09090b", "--panel": "#27272a", "--chip": "#27272a", "--border": "#3f3f46",
-        "--ink": "#fafafa", "--muted": "#a1a1aa", "--brand": "#e4e4e7", "--accent": "#ffffff", "--bad": "#ef4444",
-        "--btn-bg": "var(--brand)", "--btn-text": "var(--panel)"
+        "--bg": "#fff1f2",      // Rose 50
+        "--panel": "#ffe4e6",   // Rose 100
+        "--chip": "#ffe4e6",    // = PANEL
+        "--border": "#fda4af",  // Rose 300
+        "--ink": "#881337",     // Rose 900
+        "--muted": "#be123c",   // Rose 700
+        "--brand": "#e11d48",   // Rose 600 (Crimson)
+        "--accent": "#f43f5e", 
+        "--bad": "#991b1b",
+        "--btn-bg": "var(--brand)", 
+        "--btn-text": "#ffffff"
       }
     },
-    // CHANGED: Jungle
+
+    // 10. PAPER OLIVE (New Try)
     "emerald_exp": {
-      name: "10. Exp: Jungle",
+      name: "10. Paper: Field Map",
       colors: {
-        "--bg": "#1a2e05", "--panel": "#365314", "--chip": "#365314", "--border": "#4d7c0f",
-        "--ink": "#ecfccb", "--muted": "#bef264", "--brand": "#facc15", "--accent": "#a3e635", "--bad": "#ef4444",
-        "--btn-bg": "var(--brand)", "--btn-text": "var(--panel)"
+        "--bg": "#f7fee7",      // Lime 50
+        "--panel": "#ecfccb",   // Lime 100
+        "--chip": "#ecfccb",    // = PANEL
+        "--border": "#bef264",  // Lime 300
+        "--ink": "#1a2e05",     // Lime 950
+        "--muted": "#3f6212",   // Lime 800
+        "--brand": "#4d7c0f",   // Lime 700 (Army Green)
+        "--accent": "#65a30d", 
+        "--bad": "#b91c1c",
+        "--btn-bg": "var(--brand)", 
+        "--btn-text": "#ffffff"
       }
     },
+
+    // 11. PAPER LUFTWAFFE
     "luftwaffe_exp": {
-      name: "11. Exp: Luftwaffe",
+      name: "11. Paper: Intercept",
       colors: {
-        "--bg": "#1e293b", "--panel": "#334155", "--chip": "#334155", "--border": "#475569",
-        "--ink": "#f1f5f9", "--muted": "#cbd5e1", "--brand": "#a5f3fc", "--accent": "#22d3ee", "--bad": "#f87171",
-        "--btn-bg": "var(--brand)", "--btn-text": "var(--panel)"
+        "--bg": "#f8fafc",      // Slate 50
+        "--panel": "#e2e8f0",   // Slate 200
+        "--chip": "#e2e8f0",    // = PANEL
+        "--border": "#cbd5e1",  // Slate 300
+        "--ink": "#0f172a",     // Slate 900
+        "--muted": "#475569",   // Slate 600
+        "--brand": "#334155",   // Slate 700 (Deep Grey/Blue)
+        "--accent": "#64748b", 
+        "--bad": "#b91c1c",
+        "--btn-bg": "var(--brand)", 
+        "--btn-text": "#ffffff"
       }
     },
-    // CHANGED: Red Army
+
+    // 12. PAPER PURPLE (New Try)
     "sonar_exp": {
-      name: "12. Exp: Red Army",
+      name: "12. Paper: Cipher",
       colors: {
-        "--bg": "#450a0a", "--panel": "#7f1d1d", "--chip": "#7f1d1d", "--border": "#991b1b",
-        "--ink": "#fef2f2", "--muted": "#fecaca", "--brand": "#fbbf24", "--accent": "#f59e0b", "--bad": "#f87171",
-        "--btn-bg": "var(--brand)", "--btn-text": "var(--panel)"
+        "--bg": "#faf5ff",      // Purple 50
+        "--panel": "#f3e8ff",   // Purple 100
+        "--chip": "#f3e8ff",    // = PANEL
+        "--border": "#d8b4fe",  // Purple 300
+        "--ink": "#3b0764",     // Purple 950
+        "--muted": "#6b21a8",   // Purple 800
+        "--brand": "#7e22ce",   // Purple 600 (Deep Violet)
+        "--accent": "#9333ea", 
+        "--bad": "#b91c1c",
+        "--btn-bg": "var(--brand)", 
+        "--btn-text": "#ffffff"
       }
     },
 
     // ========================================================================
-    // GROUP C (13-18): ORIGINAL ROSTER (Preserved)
+    // GROUP C (13-18): FINAL ROSTER (Original Dark Favorites)
     // ========================================================================
     "navy_final": {
       name: "13. Orig: Navy",
