@@ -41,13 +41,13 @@
     </main>
 
     <footer style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1rem; color: var(--muted); font-size: 0.9rem;">
-      <span>LocalStorage Architecture. v1.8 (Pinning)</span>
+      <span>LocalStorage Architecture. v1.9 (Fixed Width)</span>
       
       <div style="display: flex; align-items: center; gap: 0.75rem;">
         
         <div style="display: flex; align-items: center; gap: 0.5rem;">
           <label for="themeSelect" style="font-size: 0.85rem;">Theme:</label>
-          <select id="themeSelect" style="min-width: 150px; background: var(--chip); color: var(--ink); border: 1px solid var(--border); padding: 0.3rem; border-radius: 6px; outline: none;">
+          <select id="themeSelect" style="width: 280px; background: var(--chip); color: var(--ink); border: 1px solid var(--border); padding: 0.3rem; border-radius: 6px; outline: none;">
             </select>
         </div>
 
@@ -55,7 +55,7 @@
           ★
         </button>
 
-        <label style="display: flex; align-items: center; gap: 0.3rem; font-size: 0.8rem; cursor: pointer; select-none;">
+        <label style="display: flex; align-items: center; gap: 0.3rem; font-size: 0.8rem; cursor: pointer; user-select: none;">
           <input type="checkbox" id="chkShowAll">
           Show All
         </label>
@@ -73,7 +73,7 @@
     const THEME_KEY = 'poc-ww2-theme-pref';
     const FAV_KEY = 'poc-ww2-favorites';
 
-    // DEFAULT FAVORITES (If user has none)
+    // DEFAULT FAVORITES (Matches your preferred "Final Roster" themes)
     const defaultFavs = ['navy_exp', 'desert_exp', 'emerald_exp', 'sonar_exp'];
 
     // 1a. GET FAVORITES
@@ -87,11 +87,11 @@
       localStorage.setItem(FAV_KEY, JSON.stringify(list));
     }
 
-    // 1c. POPULATE DROPDOWN (The Logic Brain)
+    // 1c. POPULATE DROPDOWN
     function populateDropdown() {
       if (typeof APP_CONFIG === 'undefined' || !themeSelect) return;
       
-      const currentVal = themeSelect.value; // Remember selection if possible
+      const currentVal = themeSelect.value; 
       themeSelect.innerHTML = ''; 
       
       const showAll = chkShowAll.checked;
@@ -105,7 +105,6 @@
           const opt = document.createElement('option');
           opt.value = key; 
           
-          // Visual Cue: Add a star text if it's a favorite, or (Hidden) if merely visible via Show All
           let label = themeData.name;
           if (showAll && !isFav) label += " (Hidden)";
           
@@ -114,11 +113,10 @@
         }
       });
 
-      // Restore value if it still exists in the list
+      // Restore value
       if (currentVal && themeSelect.querySelector(`option[value="${currentVal}"]`)) {
         themeSelect.value = currentVal;
       } else {
-        // Otherwise pick the saved preference
         const saved = localStorage.getItem(THEME_KEY);
         if(themeSelect.querySelector(`option[value="${saved}"]`)) {
             themeSelect.value = saved;
@@ -135,10 +133,10 @@
       const isFav = favorites.includes(currentTheme);
 
       if (isFav) {
-        btnPin.style.color = "var(--brand)"; // Gold/Teal/etc
+        btnPin.style.color = "var(--brand)";
         btnPin.innerText = "★";
       } else {
-        btnPin.style.color = "var(--muted)"; // Grey
+        btnPin.style.color = "var(--muted)";
         btnPin.innerText = "☆";
       }
     }
@@ -147,10 +145,10 @@
     function applyTheme(themeName) {
       if (typeof APP_CONFIG === 'undefined') return;
       
-      // Fallback Logic
+      // Safety: Fallback to 'navy_exp' if key missing
       let theme = APP_CONFIG.themes[themeName];
-      if (!theme) theme = APP_CONFIG.themes['navy_exp']; // Safety
-      if (!theme) theme = Object.values(APP_CONFIG.themes)[0]; // Double Safety
+      if (!theme) theme = APP_CONFIG.themes['navy_exp']; 
+      if (!theme) theme = Object.values(APP_CONFIG.themes)[0];
 
       const root = document.documentElement;
       for (const [key, value] of Object.entries(theme.colors)) {
@@ -159,7 +157,6 @@
       
       localStorage.setItem(THEME_KEY, themeName);
       
-      // Ensure dropdown matches (if Apply called externally)
       if(themeSelect.value !== themeName && themeSelect.querySelector(`option[value="${themeName}"]`)) {
           themeSelect.value = themeName;
       }
@@ -179,19 +176,14 @@
       let favorites = getFavorites();
 
       if (favorites.includes(currentTheme)) {
-        // Remove
         favorites = favorites.filter(f => f !== currentTheme);
       } else {
-        // Add
         favorites.push(currentTheme);
       }
       
       saveFavorites(favorites);
       updatePinState();
-      
-      // Refresh list immediately so user sees result
-      // (Only matters if Show All is unchecked, item might disappear)
-      populateDropdown(); 
+      populateDropdown(); // Refresh list to show/hide immediately if needed
     });
 
     // Select: Change Theme
@@ -202,9 +194,7 @@
 
     // --- INITIALIZATION ---
     const savedTheme = localStorage.getItem(THEME_KEY) || 'navy_exp';
-    // 1. First load the list
     populateDropdown();
-    // 2. Then apply the theme (which updates the Pin state)
     applyTheme(savedTheme);
 
 
