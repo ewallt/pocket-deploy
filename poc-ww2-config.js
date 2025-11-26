@@ -61,78 +61,85 @@ const APP_CONFIG = {
     },
 
     // ========================================================================
-    // GROUP B (7-12): PAPER LAB (Updated 9 & 10)
+    // GROUP B (7-12): THE INK LAB (Paper Background / Deep Brand Colors)
+    // Structure: Identical to Archives. Only Brand changes.
     // ========================================================================
     
+    // 7. ROYAL NAVY (Deep Blue)
     "navy_exp": {
       name: "7. Paper: Royal Navy",
       colors: {
-        "--bg": "#f0f9ff", "--panel": "#e0f2fe", "--chip": "#e0f2fe", "--border": "#7dd3fc",    
-        "--ink": "#0c4a6e", "--muted": "#0369a1", "--brand": "#0284c7", "--accent": "#38bdf8", "--bad": "#b91c1c",
-        "--btn-bg": "var(--brand)", "--btn-text": "#ffffff"
+        "--bg": "#f5f5f4", "--panel": "#e7e5e4", "--chip": "#e7e5e4", "--border": "#d6d3d1",    
+        "--ink": "#292524", "--muted": "#57534e",     
+        "--brand": "#1e3a8a",   /* Deep Blue Ink */
+        "--accent": "#3b82f6", "--bad": "#b91c1c",
+        "--btn-bg": "var(--brand)", 
+        "--btn-text": "#ffffff"
       }
     },
-    
+
+    // 8. EXPEDITION (Deep Bronze/Leather)
     "desert_exp": {
       name: "8. Paper: Expedition",
       colors: {
-        "--bg": "#fefce8", "--panel": "#fef9c3", "--chip": "#fef9c3", "--border": "#fde047",    
-        "--ink": "#422006", "--muted": "#854d0e", "--brand": "#a16207", "--accent": "#ca8a04", "--bad": "#b91c1c",
-        "--btn-bg": "var(--brand)", "--btn-text": "#ffffff"
+        "--bg": "#f5f5f4", "--panel": "#e7e5e4", "--chip": "#e7e5e4", "--border": "#d6d3d1",    
+        "--ink": "#292524", "--muted": "#57534e",     
+        "--brand": "#78350f",   /* Saddle Brown */
+        "--accent": "#d97706", "--bad": "#b91c1c",
+        "--btn-bg": "var(--brand)", 
+        "--btn-text": "#ffffff"
       }
     },
-    
-    // 9. CARBON COPY (New: Monochrome Grey/Black)
+
+    // 9. TOP SECRET (Deep Burgundy - Wax Seal)
     "paper_exp": {
-      name: "9. Paper: Carbon Copy",
+      name: "9. Paper: Top Secret",
       colors: {
-        "--bg": "#f8fafc",      // Slate 50
-        "--panel": "#e2e8f0",   // Slate 200
-        "--chip": "#e2e8f0",    // = PANEL
-        "--border": "#94a3b8",  // Slate 400
-        "--ink": "#020617",     // Slate 950 (Almost Black)
-        "--muted": "#475569",   // Slate 600
-        "--brand": "#0f172a",   // Slate 900 (Deep Black/Grey)
-        "--accent": "#334155", 
-        "--bad": "#b91c1c",
+        "--bg": "#f5f5f4", "--panel": "#e7e5e4", "--chip": "#e7e5e4", "--border": "#d6d3d1",    
+        "--ink": "#292524", "--muted": "#57534e",     
+        "--brand": "#881337",   /* Oxblood / Deep Rose */
+        "--accent": "#e11d48", "--bad": "#b91c1c",
         "--btn-bg": "var(--brand)", 
         "--btn-text": "#ffffff"
       }
     },
-    
-    // 10. EMERALD MAP (New: Cool Green, no Pea)
+
+    // 10. FOREST MAP (Deep Green - Hunter)
     "emerald_exp": {
-      name: "10. Paper: Emerald",
+      name: "10. Paper: Forest",
       colors: {
-        "--bg": "#ecfdf5",      // Emerald 50
-        "--panel": "#d1fae5",   // Emerald 100
-        "--chip": "#d1fae5",    // = PANEL
-        "--border": "#6ee7b7",  // Emerald 300
-        "--ink": "#064e3b",     // Emerald 900
-        "--muted": "#059669",   // Emerald 600
-        "--brand": "#047857",   // Emerald 700 (Rich Green)
-        "--accent": "#10b981", 
-        "--bad": "#b91c1c",
+        "--bg": "#f5f5f4", "--panel": "#e7e5e4", "--chip": "#e7e5e4", "--border": "#d6d3d1",    
+        "--ink": "#292524", "--muted": "#57534e",     
+        "--brand": "#14532d",   /* Deepest Green */
+        "--accent": "#15803d", "--bad": "#b91c1c",
         "--btn-bg": "var(--brand)", 
         "--btn-text": "#ffffff"
       }
     },
-    
+
+    // 11. INTERCEPT (Deep Slate - Typewriter Ribbon)
     "luftwaffe_exp": {
       name: "11. Paper: Intercept",
       colors: {
-        "--bg": "#f8fafc", "--panel": "#e2e8f0", "--chip": "#e2e8f0", "--border": "#cbd5e1",    
-        "--ink": "#0f172a", "--muted": "#475569", "--brand": "#334155", "--accent": "#64748b", "--bad": "#b91c1c",
-        "--btn-bg": "var(--brand)", "--btn-text": "#ffffff"
+        "--bg": "#f5f5f4", "--panel": "#e7e5e4", "--chip": "#e7e5e4", "--border": "#d6d3d1",    
+        "--ink": "#292524", "--muted": "#57534e",     
+        "--brand": "#0f172a",   /* Midnight Slate */
+        "--accent": "#475569", "--bad": "#b91c1c",
+        "--btn-bg": "var(--brand)", 
+        "--btn-text": "#ffffff"
       }
     },
-    
+
+    // 12. ENCRYPTION (Deep Purple - Imperial)
     "sonar_exp": {
-      name: "12. Paper: Cipher",
+      name: "12. Paper: Encryption",
       colors: {
-        "--bg": "#faf5ff", "--panel": "#f3e8ff", "--chip": "#f3e8ff", "--border": "#d8b4fe",    
-        "--ink": "#3b0764", "--muted": "#6b21a8", "--brand": "#7e22ce", "--accent": "#9333ea", "--bad": "#b91c1c",
-        "--btn-bg": "var(--brand)", "--btn-text": "#ffffff"
+        "--bg": "#f5f5f4", "--panel": "#e7e5e4", "--chip": "#e7e5e4", "--border": "#d6d3d1",    
+        "--ink": "#292524", "--muted": "#57534e",     
+        "--brand": "#581c87",   /* Deep Purple */
+        "--accent": "#9333ea", "--bad": "#b91c1c",
+        "--btn-bg": "var(--brand)", 
+        "--btn-text": "#ffffff"
       }
     },
 
