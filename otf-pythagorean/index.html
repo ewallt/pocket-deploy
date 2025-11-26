@@ -306,11 +306,11 @@
     <div id="tab2" class="tab-content">
         <div class="control-panel">
             <div class="input-group">
-                <label for="inputMid">Midpoint (m):</label>
+                <label for="inputMid">Midpoint (c):</label>
                 <input type="number" id="inputMid" value="10" min="4" step="1">
             </div>
             <div class="presets">
-                <span>Distance from Midpoint (d):</span>
+                <span>Distance from Midpoint (a):</span>
                 <button id="btnDist1" onclick="setDist(1)" class="active-preset">1</button>
                 <button id="btnDist2" onclick="setDist(2)">2</button>
                 <button id="btnDist3" onclick="setDist(3)">3</button>
@@ -508,7 +508,7 @@
         ctxNum.lineWidth = 2;
         ctxNum.stroke();
 
-        function drawTick(val, labelF, labelV, highlight) {
+        function drawTick(val, labelF, labelV, highlight, labelF2) {
             const x = toNumX(val);
             ctxNum.beginPath();
             ctxNum.moveTo(x, yLine-8); ctxNum.lineTo(x, yLine+8);
@@ -519,6 +519,10 @@
             ctxNum.fillStyle = '#555';
             ctxNum.font = '14px sans-serif';
             ctxNum.fillText(labelF, x, yLine-20);
+            if(labelF2) {
+                ctxNum.font = '12px sans-serif';
+                ctxNum.fillText(labelF2, x, yLine-36); // Stack above
+            }
             ctxNum.fillStyle = highlight ? '#000' : '#555';
             ctxNum.font = highlight ? 'bold 13px sans-serif' : '13px sans-serif';
             ctxNum.fillText(labelV, x, yLine+25);
@@ -530,9 +534,10 @@
             drawTick(c, `(a²+1)/2`, c, true);
             drawTick(c+a, `(a+1)²/2`, c+a, true);
         } else {
-            drawTick(c-a, `(k-1)²`, c-a, true);
-            drawTick(c, `k²+1`, c, true);
-            drawTick(c+a, `(k+1)²`, c+a, true);
+            // Updated even logic to show (a/2) form
+            drawTick(c-a, `(k-1)²`, c-a, true, `(a/2-1)²`);
+            drawTick(c, `k²+1`, c, true, `(a/2)²+1`);
+            drawTick(c+a, `(k+1)²`, c+a, true, `(a/2+1)²`);
         }
 
         const x1 = toNumX(c-a);
@@ -580,13 +585,22 @@
         ctx.moveTo(p0.x,p0.y); ctx.lineTo(p1.x,p1.y); ctx.lineTo(p2.x,p2.y); ctx.lineTo(p3.x,p3.y); ctx.lineTo(p4.x,p4.y); ctx.lineTo(p5.x,p5.y); ctx.closePath();
         ctx.fillStyle='#e67e22'; ctx.fill(); ctx.strokeStyle='#d35400'; ctx.lineWidth=2; ctx.stroke();
         
+        // Updated Boomerang Label: Show numeric area
         const labelPos = toScreen((c-a)/2, c/2);
-        if((c-a)*scale > 30) { ctx.fillStyle='#fff'; ctx.font='bold 16px sans-serif'; ctx.textAlign='center'; ctx.fillText('b²', labelPos.x, labelPos.y); }
+        if((c-a)*scale > 30) { 
+            ctx.fillStyle='#fff'; ctx.font='bold 16px sans-serif'; ctx.textAlign='center'; 
+            ctx.fillText(state.b * state.b, labelPos.x, labelPos.y); 
+        }
 
         const pGap = toScreen(c-a, a);
         ctx.fillStyle='rgba(52, 152, 219, 0.3)'; ctx.fillRect(pGap.x, pGap.y, a*scale, a*scale);
         ctx.strokeStyle='#2980b9'; ctx.strokeRect(pGap.x, pGap.y, a*scale, a*scale);
-        if(a*scale > 25) { ctx.fillStyle='#2980b9'; ctx.font='bold 14px sans-serif'; const cg=toScreen(c-a/2, a/2); ctx.fillText('a²', cg.x, cg.y); }
+        // Updated Gap Label: Show numeric area
+        if(a*scale > 25) { 
+            ctx.fillStyle='#2980b9'; ctx.font='bold 14px sans-serif'; 
+            const cg=toScreen(c-a/2, a/2); 
+            ctx.fillText(state.a * state.a, cg.x, cg.y); 
+        }
 
         function drawBrace(x1, x2, yOff, txt) {
             const s1=toScreen(x1,0), s2=toScreen(x2,0); const y=originY+yOff;
@@ -617,20 +631,21 @@
         const squareOfDist = dist * dist;
         const total = prod + squareOfDist;
 
-        let mathHtml = `<div><strong>Midpoint (m) = ${mid}</strong></div>`;
-        mathHtml += `<div><strong>Spacing (d) = ${dist}</strong></div>`;
+        // Switched m -> c, d -> a
+        let mathHtml = `<div><strong>Midpoint (c) = ${mid}</strong></div>`;
+        mathHtml += `<div><strong>Spacing (a) = ${dist}</strong></div>`;
         mathHtml += `<div style="margin-top:10px;">Endpoints: ${left} and ${right}</div>`;
         mathHtml += `<div>Product: ${left} × ${right} = <strong>${prod}</strong></div>`;
         mathHtml += `<div>Add square of spacing (${dist}²): ${prod} + ${squareOfDist} = <strong>${total}</strong></div>`;
-        mathHtml += `<div class="highlight-green" style="margin-top:5px;">Result: ${total} is ${mid}²</div>`;
+        mathHtml += `<div class="highlight-green" style="margin-top:5px;">Result: ${total} is ${mid}² (c²)</div>`;
         document.getElementById('patternMath').innerHTML = mathHtml;
 
-        let algHtml = `<div>Let midpoint be <strong>m</strong>.</div>`;
-        algHtml += `<div>Let spacing be <strong>d</strong>.</div>`;
-        algHtml += `<div style="margin-top:10px;">Endpoints are <strong>(m - d)</strong> and <strong>(m + d)</strong>.</div>`;
-        algHtml += `<div>Product: (m - d)(m + d) = m² - d²</div>`;
-        algHtml += `<div>Add back d²:</div>`;
-        algHtml += `<div class="highlight-identity" style="margin-top:5px; font-size:1.1em;">(m - d)(m + d) + d² = m²</div>`;
+        let algHtml = `<div>Let midpoint be <strong>c</strong>.</div>`;
+        algHtml += `<div>Let spacing be <strong>a</strong>.</div>`;
+        algHtml += `<div style="margin-top:10px;">Endpoints are <strong>(c - a)</strong> and <strong>(c + a)</strong>.</div>`;
+        algHtml += `<div>Product: (c - a)(c + a) = c² - a²</div>`;
+        algHtml += `<div>Add back a²:</div>`;
+        algHtml += `<div class="highlight-identity" style="margin-top:5px; font-size:1.1em;">(c - a)(c + a) + a² = c²</div>`;
         document.getElementById('patternAlgebra').innerHTML = algHtml;
     }
 
@@ -671,9 +686,10 @@
             ctx.fillText(label, x, yLine + 30);
             
             ctx.font = 'italic 12px sans-serif'; ctx.fillStyle = '#777';
-            if(val === mid) ctx.fillText('m', x, yLine - 20);
-            if(val === mid-dist) ctx.fillText('m-d', x, yLine - 20);
-            if(val === mid+dist) ctx.fillText('m+d', x, yLine - 20);
+            // Switched labels to c and a logic
+            if(val === mid) ctx.fillText('c', x, yLine - 20);
+            if(val === mid-dist) ctx.fillText('c-a', x, yLine - 20);
+            if(val === mid+dist) ctx.fillText('c+a', x, yLine - 20);
         }
 
         drawTick(mid, mid, '#2c3e50', true);
@@ -687,8 +703,8 @@
             ctx.strokeStyle = '#2980b9'; ctx.lineWidth = 1; ctx.setLineDash([4, 2]); ctx.stroke(); ctx.setLineDash([]);
             ctx.fillStyle = '#2980b9'; ctx.font = 'bold 12px sans-serif'; ctx.textAlign = 'center'; ctx.fillText(label, cx, yLine - r - 5);
         }
-        drawArc(toX(mid-dist), toX(mid), dist);
-        drawArc(toX(mid), toX(mid+dist), dist);
+        drawArc(toX(mid-dist), toX(mid), dist); // Shows 'a'
+        drawArc(toX(mid), toX(mid+dist), dist); // Shows 'a'
 
         ctx.font = '16px sans-serif'; ctx.fillStyle = '#333'; ctx.textAlign = 'center';
         ctx.fillText(`(${mid-dist}) × (${mid+dist}) + ${dist}² = ${mid}²`, width/2, 160);
@@ -789,7 +805,8 @@
         const pGap = toScreen(c-a, a);
         ctx.fillStyle='rgba(52, 152, 219, 0.3)'; ctx.fillRect(pGap.x, pGap.y, a*scale, a*scale);
         ctx.strokeStyle='#2980b9'; ctx.strokeRect(pGap.x, pGap.y, a*scale, a*scale);
-        if(a*scale > 25) { ctx.fillStyle='#2980b9'; ctx.font='bold 14px sans-serif'; const cg=toScreen(c-a/2, a/2); ctx.fillText('a²', cg.x, cg.y); }
+        // Updated Gap Label: Show "a x a" form
+        if(a*scale > 25) { ctx.fillStyle='#2980b9'; ctx.font='bold 14px sans-serif'; const cg=toScreen(c-a/2, a/2); ctx.fillText(`${a}×${a}`, cg.x, cg.y); }
 
         // Braces
         function drawBrace(x1, x2, yOff, txt) {
