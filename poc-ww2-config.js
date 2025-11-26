@@ -9,79 +9,66 @@ const APP_CONFIG = {
 
   themes: {
     // ========================================================================
-    // GROUP A: THE A/B TEST LAB (Green vs Brown)
-    // Keys kept stable to prevent crashes.
-    // Buttons kept Blue (Linear Gradient) for consistent comparison.
+    // GROUP A: THE A/B TEST LAB (Unchanged)
     // ========================================================================
     
-    // 1. HIGH COMMAND + KHAKI (Green Background)
     "navy": { 
       name: "1. HC (Khaki)",
       colors: {
         "--bg": "#022c22", "--panel": "#064e3b", "--ink": "#ecfdf5", "--muted": "#6ee7b7",
-        "--brand": "#d4b483", /* KHAKI */
+        "--brand": "#d4b483", 
         "--accent": "#f59e0b", "--border": "#065f46", "--chip": "#064e3b", "--bad": "#ef4444",
         "--btn-bg": "linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%)", "--btn-text": "#e6ecff"
       }
     },
-
-    // 2. MOCHA + KHAKI (Brown Background) - UNCHANGED
     "desert": { 
       name: "2. Mocha (Khaki)",
       colors: {
         "--bg": "#292524", "--panel": "#44403c", "--ink": "#f5f5f4", "--muted": "#a8a29e",
-        "--brand": "#d4b483", /* KHAKI */
+        "--brand": "#d4b483", 
         "--accent": "#38bdf8", "--border": "#57534e", "--chip": "#57534e", "--bad": "#ef4444",
         "--btn-bg": "linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%)", "--btn-text": "#e6ecff"
       }
     },
-
-    // 3. HIGH COMMAND + LIME (Green Background)
     "paper": { 
       name: "3. HC (Lime)",
       colors: {
         "--bg": "#022c22", "--panel": "#064e3b", "--ink": "#ecfdf5", "--muted": "#6ee7b7",
-        "--brand": "#d9f99d", /* LIME */
+        "--brand": "#d9f99d", 
         "--accent": "#f59e0b", "--border": "#065f46", "--chip": "#064e3b", "--bad": "#ef4444",
         "--btn-bg": "linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%)", "--btn-text": "#e6ecff"
       }
     },
-
-    // 4. MOCHA + LIME (Brown Background) - UNCHANGED
     "emerald": { 
       name: "4. Mocha (Lime)",
       colors: {
         "--bg": "#292524", "--panel": "#44403c", "--ink": "#f5f5f4", "--muted": "#a8a29e",
-        "--brand": "#d9f99d", /* LIME */
+        "--brand": "#d9f99d", 
         "--accent": "#38bdf8", "--border": "#57534e", "--chip": "#57534e", "--bad": "#ef4444",
         "--btn-bg": "linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%)", "--btn-text": "#e6ecff"
       }
     },
-
-    // 5. HIGH COMMAND + CREAM (Green Background)
     "luftwaffe": { 
       name: "5. HC (Cream)",
       colors: {
         "--bg": "#022c22", "--panel": "#064e3b", "--ink": "#ecfdf5", "--muted": "#6ee7b7",
-        "--brand": "#fef08a", /* CREAM */
+        "--brand": "#fef08a", 
         "--accent": "#f59e0b", "--border": "#065f46", "--chip": "#064e3b", "--bad": "#ef4444",
         "--btn-bg": "linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%)", "--btn-text": "#e6ecff"
       }
     },
-
-    // 6. MOCHA + CREAM (Brown Background) - UNCHANGED
     "sonar": { 
       name: "6. Mocha (Cream)",
       colors: {
         "--bg": "#292524", "--panel": "#44403c", "--ink": "#f5f5f4", "--muted": "#a8a29e",
-        "--brand": "#fef08a", /* CREAM */
+        "--brand": "#fef08a", 
         "--accent": "#38bdf8", "--border": "#57534e", "--chip": "#57534e", "--bad": "#ef4444",
         "--btn-bg": "linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%)", "--btn-text": "#e6ecff"
       }
     },
 
     // ========================================================================
-    // GROUP B: FINAL ROSTER (Unchanged)
+    // GROUP B: FINAL ROSTER (Cream Updated)
     // ========================================================================
     
     "navy_exp": {
@@ -92,14 +79,18 @@ const APP_CONFIG = {
         "--btn-bg": "var(--brand)", "--btn-text": "var(--panel)"
       }
     },
+    
+    // UPDATED: Now uses Cream (#fef08a)
     "desert_exp": {
       name: "8. Desert (Final)",
       colors: {
         "--bg": "#292524", "--panel": "#44403c", "--ink": "#f5f5f4", "--muted": "#a8a29e",
-        "--brand": "#fbbf24", "--accent": "#d97706", "--border": "#57534e", "--chip": "#57534e", "--bad": "#f87171",
+        "--brand": "#fef08a", /* CREAM */
+        "--accent": "#d97706", "--border": "#57534e", "--chip": "#57534e", "--bad": "#f87171",
         "--btn-bg": "var(--brand)", "--btn-text": "var(--panel)"
       }
     },
+    
     "paper_exp": {
       name: "9. Archives (Final)",
       colors: {
@@ -108,14 +99,18 @@ const APP_CONFIG = {
         "--btn-bg": "var(--brand)", "--btn-text": "#ffffff"
       }
     },
+    
+    // UPDATED: Now uses Cream (#fef08a)
     "emerald_exp": {
       name: "10. High Command (Final)",
       colors: {
         "--bg": "#022c22", "--panel": "#064e3b", "--ink": "#ecfdf5", "--muted": "#6ee7b7",
-        "--brand": "#fbbf24", "--accent": "#f59e0b", "--border": "#065f46", "--chip": "#064e3b", "--bad": "#ef4444",
+        "--brand": "#fef08a", /* CREAM */
+        "--accent": "#f59e0b", "--border": "#065f46", "--chip": "#064e3b", "--bad": "#ef4444",
         "--btn-bg": "var(--brand)", "--btn-text": "var(--panel)"
       }
     },
+    
     "luftwaffe_exp": {
       name: "11. Luftwaffe (Final)",
       colors: {
