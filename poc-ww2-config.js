@@ -8,11 +8,7 @@ const APP_CONFIG = {
   },
 
   themes: {
-    // ========================================================================
-    // GROUP A: THE BLUEPRINT LAB (High Contrast, White Brand)
-    // ========================================================================
-    
-    // 1. MOCHA (The Warm Exception)
+    // GROUP A: THE BLUEPRINT LAB
     "navy": { 
       name: "1. Mocha (Khaki)",
       colors: {
@@ -22,8 +18,6 @@ const APP_CONFIG = {
         "--btn-bg": "var(--brand)", "--btn-text": "var(--panel)"
       }
     },
-
-    // 2. TEAL BLUEPRINT
     "desert": { 
       name: "2. Lab: Teal",
       colors: {
@@ -33,8 +27,6 @@ const APP_CONFIG = {
         "--btn-bg": "var(--brand)", "--btn-text": "var(--panel)"
       }
     },
-
-    // 3. VIOLET BLUEPRINT
     "paper": { 
       name: "3. Lab: Violet",
       colors: {
@@ -44,26 +36,15 @@ const APP_CONFIG = {
         "--btn-bg": "var(--brand)", "--btn-text": "var(--panel)"
       }
     },
-
-    // 4. CARBON BLUEPRINT (New: Industrial Zinc/Grey)
     "emerald": { 
       name: "4. Lab: Carbon",
       colors: {
-        "--bg": "#09090b",        // Zinc 950 (True Black-Grey)
-        "--panel": "#27272a",     // Zinc 800
-        "--chip": "#27272a",      // = PANEL
-        "--border": "#52525b",    // Zinc 600 (Mechanical Grey)
-        "--ink": "#fafafa",       // Zinc 50
-        "--muted": "#a1a1aa",     // Zinc 400
-        "--brand": "#ffffff",     // Pure White
-        "--accent": "#e4e4e7",    // Silver
-        "--bad": "#ef4444",       // Standard Red Alert
-        "--btn-bg": "var(--brand)", 
-        "--btn-text": "var(--panel)"
+        "--bg": "#09090b", "--panel": "#27272a", "--chip": "#27272a", "--border": "#52525b",    
+        "--ink": "#fafafa", "--muted": "#a1a1aa",     
+        "--brand": "#ffffff", "--accent": "#e4e4e7", "--bad": "#ef4444",
+        "--btn-bg": "var(--brand)", "--btn-text": "var(--panel)"
       }
     },
-
-    // 5. INDIGO BLUEPRINT
     "luftwaffe": { 
       name: "5. Lab: Indigo",
       colors: {
@@ -73,8 +54,6 @@ const APP_CONFIG = {
         "--btn-bg": "var(--brand)", "--btn-text": "var(--panel)"
       }
     },
-
-    // 6. SKY BLUEPRINT
     "sonar": { 
       name: "6. Lab: Sky",
       colors: {
@@ -85,10 +64,7 @@ const APP_CONFIG = {
       }
     },
 
-    // ========================================================================
-    // GROUP B: FINAL ROSTER (Unchanged)
-    // ========================================================================
-    
+    // GROUP B: FINAL ROSTER
     "navy_exp": {
       name: "7. Navy (Final)",
       colors: {
