@@ -9,7 +9,7 @@ const APP_CONFIG = {
 
   themes: {
     // ========================================================================
-    // GROUP A: THE TEST LAB (Khaki/Lime/Cream Buttons)
+    // GROUP A: THE TEST LAB (Unchanged)
     // ========================================================================
     
     // 1. HIGH COMMAND + KHAKI
@@ -79,7 +79,7 @@ const APP_CONFIG = {
     },
 
     // ========================================================================
-    // GROUP B: FINAL ROSTER (Slot 12 Updated to White)
+    // GROUP B: FINAL ROSTER (Slot 12 Updated)
     // ========================================================================
     
     "navy_exp": {
@@ -129,7 +129,7 @@ const APP_CONFIG = {
       }
     },
     
-    // 12. SONAR (Updated: White Brand)
+    // 12. SONAR (Updated: Pale "Moonlight" Yellow)
     "sonar_exp": {
       name: "12. Sonar (Final)",
       colors: {
@@ -137,12 +137,12 @@ const APP_CONFIG = {
         "--panel": "#115e59",   // Medium Teal
         "--ink": "#ccfbf1",     // Mint White
         "--muted": "#5eead4",   // Cyan Text
-        "--brand": "#ffffff",   // PURE WHITE
+        "--brand": "#fef9c3",   // MOONLIGHT YELLOW (Very close to white)
         "--accent": "#2dd4bf",  // Teal Accent
         "--border": "#134e4a",
         "--chip": "#134e4a",
         "--bad": "#f43f5e",
-        "--btn-bg": "var(--brand)", "--btn-text": "#042f2e" /* Dark text on White button */
+        "--btn-bg": "var(--brand)", "--btn-text": "#042f2e" /* Dark text */
       }
     }
   },
