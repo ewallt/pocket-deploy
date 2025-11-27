@@ -7,17 +7,30 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚔️</text></svg>">
   <link rel="stylesheet" href="poc-ww2-styles.css">
   <style>
-    /* New Styles for Configurator Tabs */
+    /* Configurator Tabs */
     .config-tabs { display: flex; gap: 1rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
     .tab-btn { background: none; border: none; padding: 0.5rem 1rem; color: var(--muted); cursor: pointer; font-weight: bold; border-bottom: 2px solid transparent; }
     .tab-btn.active { color: var(--brand); border-bottom-color: var(--brand); }
     .config-panel { display: none; }
     .config-panel.active { display: block; }
     
-    /* Structure List Styles */
-    .struct-item { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; background: var(--bg); padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border); }
-    .struct-item input { background: transparent; border: none; color: var(--ink); flex: 1; font-family: inherit; font-size: 0.9rem; }
-    .struct-btn { background: var(--chip); border: 1px solid var(--border); color: var(--muted); cursor: pointer; border-radius: 4px; padding: 0.2rem 0.5rem; }
+    /* Structure List */
+    .struct-item { 
+      display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.5rem; 
+      background: var(--bg); padding: 0.6rem; border-radius: 6px; border: 1px solid var(--border); 
+    }
+    .struct-key { 
+      font-size: 0.7rem; color: var(--muted); font-family: monospace; width: 60px; overflow: hidden; text-overflow: ellipsis;
+    }
+    .struct-item input { 
+      background: transparent; border: none; border-bottom: 1px dashed var(--border); 
+      color: var(--ink); flex: 1; font-family: inherit; font-size: 0.95rem; padding-bottom: 2px;
+    }
+    .struct-item input:focus { outline: none; border-bottom-color: var(--brand); }
+    .struct-btn { 
+      background: var(--chip); border: 1px solid var(--border); color: var(--muted); 
+      cursor: pointer; border-radius: 4px; padding: 0.2rem 0.6rem; font-size: 0.8rem;
+    }
     .struct-btn:hover { color: var(--brand); border-color: var(--brand); }
   </style>
 </head>
@@ -50,7 +63,7 @@
     <main><div id="grid" class="grid"></div></main>
 
     <footer style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1rem; color: var(--muted); font-size: 0.9rem;">
-      <span>LocalStorage Architecture. v2.1 (Schema Engine)</span>
+      <span>LocalStorage Architecture. v2.2 (Global Config)</span>
       <div style="display: flex; align-items: center; gap: 0.75rem;">
         <div style="display: flex; align-items: center; gap: 0.5rem;">
           <label for="themeSelect" style="font-size: 0.85rem;">Theme:</label>
@@ -65,15 +78,15 @@
     </footer>
   </div>
 
-  <dialog id="configModal" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; color: var(--ink); box-shadow: 0 20px 50px rgba(0,0,0,0.5); z-index: 2000; width: 90%; max-width: 450px; backdrop-filter: blur(10px);">
-    <h2 style="margin-top: 0; color: var(--brand);">Configuration</h2>
+  <dialog id="configModal" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; color: var(--ink); box-shadow: 0 20px 50px rgba(0,0,0,0.5); z-index: 2000; width: 90%; max-width: 500px; backdrop-filter: blur(10px);">
+    <h2 style="margin-top: 0; color: var(--brand);">Global Configuration</h2>
     
     <div class="config-tabs">
-      <button class="tab-btn active" data-tab="visuals">Visuals</button>
-      <button class="tab-btn" data-tab="structure">Structure</button>
+      <button class="tab-btn" data-tab="visuals">Colors</button>
+      <button class="tab-btn active" data-tab="structure">Data Structure</button>
     </div>
 
-    <div id="tab-visuals" class="config-panel active">
+    <div id="tab-visuals" class="config-panel">
       <div style="display: grid; gap: 1rem;">
         <div style="display: flex; justify-content: space-between; align-items: center;"><label>Deep Background</label><input type="color" id="inBg"></div>
         <div style="display: flex; justify-content: space-between; align-items: center;"><label>Card Surface</label><input type="color" id="inPanel"></div>
@@ -85,18 +98,24 @@
       <button id="btnSaveCustom" style="width:100%; margin-top: 1.5rem; padding: 0.8rem; background: var(--brand); color: var(--panel); border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">Save Colors</button>
     </div>
 
-    <div id="tab-structure" class="config-panel">
-      <p style="font-size:0.85rem; color: var(--muted); margin-bottom: 1rem;">Reorder or rename sections. The AI will use this structure for new battles.</p>
-      <div id="structureList"></div>
+    <div id="tab-structure" class="config-panel active">
+      <p style="font-size:0.85rem; color: var(--muted); margin-bottom: 1rem; line-height: 1.4;">
+        <strong>Customize your Database Schema.</strong><br>
+        Changes here will instantly update the titles and order of all existing battles.
+      </p>
+      
+      <div id="structureList" style="max-height: 300px; overflow-y: auto; padding-right: 0.5rem;">
+        </div>
+
       <button id="btnSaveStructure" style="width:100%; margin-top: 1.5rem; padding: 0.8rem; background: var(--brand); color: var(--panel); border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">Save Structure</button>
-      <button id="btnResetStructure" style="width:100%; margin-top: 0.5rem; padding: 0.5rem; background: transparent; color: var(--muted); border: 1px solid var(--border); border-radius: 6px; cursor: pointer;">Reset Default</button>
+      <button id="btnResetStructure" style="width:100%; margin-top: 0.5rem; padding: 0.5rem; background: transparent; color: var(--muted); border: 1px solid var(--border); border-radius: 6px; cursor: pointer;">Reset to Default</button>
     </div>
 
     <button id="btnCloseConfig" style="position: absolute; top: 1rem; right: 1rem; background: transparent; border: none; color: var(--muted); font-size: 1.5rem; cursor: pointer;">×</button>
   </dialog>
 
   <script>
-    // --- CORE & THEME LOGIC (Collapsed for brevity - same as before) ---
+    // --- STANDARD THEME & APP LOGIC (Collapsed) ---
     const themeSelect = document.getElementById('themeSelect');
     const btnPin = document.getElementById('btnPin');
     const chkShowAll = document.getElementById('chkShowAll');
@@ -164,14 +183,13 @@
       updatePinState();
     }
 
-    // --- CONFIGURATOR LOGIC (UPDATED) ---
+    // --- CONFIGURATOR LOGIC (TABS & STRUCTURE) ---
     const modal = document.getElementById('configModal');
     const btnConfig = document.getElementById('btnConfig');
     const btnCloseConfig = document.getElementById('btnCloseConfig');
     const tabs = document.querySelectorAll('.tab-btn');
     const panels = document.querySelectorAll('.config-panel');
 
-    // Tab Switching
     tabs.forEach(tab => {
       tab.addEventListener('click', () => {
         tabs.forEach(t => t.classList.remove('active'));
@@ -181,7 +199,7 @@
       });
     });
 
-    // VISUALS LOGIC
+    // Visuals Logic
     const colorInputs = {
       '--bg': document.getElementById('inBg'), '--panel': document.getElementById('inPanel'),
       '--ink': document.getElementById('inInk'), '--muted': document.getElementById('inMuted'),
@@ -189,11 +207,9 @@
     };
 
     btnConfig.addEventListener('click', () => {
-      // 1. Load Colors
       const style = getComputedStyle(document.documentElement);
       for (const [key, el] of Object.entries(colorInputs)) el.value = style.getPropertyValue(key).trim();
-      // 2. Load Structure
-      renderStructureList();
+      renderStructureList(); // Load structure
       modal.showModal();
     });
 
@@ -217,12 +233,12 @@
       applyTheme('custom'); modal.close(); alert("Colors Saved!");
     });
 
-    // STRUCTURE LOGIC (NEW!)
+    // STRUCTURE LOGIC
     const structureList = document.getElementById('structureList');
     
     function getActiveStructure() {
       const raw = localStorage.getItem(STRUCT_KEY);
-      return raw ? JSON.parse(raw) : APP_CONFIG.sections; // Default to config
+      return raw ? JSON.parse(raw) : APP_CONFIG.sections; 
     }
 
     function renderStructureList() {
@@ -231,8 +247,10 @@
       sections.forEach((sec, index) => {
         const div = document.createElement('div');
         div.className = 'struct-item';
+        // We show the 'key' as read-only (small) so user knows the data link
         div.innerHTML = `
-          <input type="text" value="${sec.title}" data-index="${index}">
+          <span class="struct-key" title="Data Key (Immutable)">${sec.key}</span>
+          <input type="text" value="${sec.title}" data-index="${index}" title="Display Label (Editable)">
           <button class="struct-btn" onclick="moveSection(${index}, -1)">▲</button>
           <button class="struct-btn" onclick="moveSection(${index}, 1)">▼</button>
         `;
@@ -243,7 +261,6 @@
     window.moveSection = (index, direction) => {
       const sections = getActiveStructure();
       if (index + direction < 0 || index + direction >= sections.length) return;
-      // Swap
       const temp = sections[index];
       sections[index] = sections[index + direction];
       sections[index + direction] = temp;
@@ -252,31 +269,29 @@
     }
 
     document.getElementById('btnSaveStructure').addEventListener('click', () => {
-      // Capture Input Values (Renaming)
       const inputs = structureList.querySelectorAll('input');
       const currentOrder = getActiveStructure();
       inputs.forEach((inp, idx) => {
-        currentOrder[idx].title = inp.value;
+        currentOrder[idx].title = inp.value; // Only update Title
       });
       localStorage.setItem(STRUCT_KEY, JSON.stringify(currentOrder));
-      
-      // Update APP_CONFIG.sections live so Brain sees it immediately
-      APP_CONFIG.sections = currentOrder; 
+      APP_CONFIG.sections = currentOrder; // Live update
       modal.close();
-      alert("Structure Saved! New AI Battles will follow this format.");
+      alert("Structure Updated! Existing battles will now use these headers.");
     });
 
     document.getElementById('btnResetStructure').addEventListener('click', () => {
-      localStorage.removeItem(STRUCT_KEY);
-      renderStructureList();
+      if(confirm("Reset structure to default? Custom order/names will be lost.")) {
+        localStorage.removeItem(STRUCT_KEY);
+        renderStructureList();
+      }
     });
 
-    // Closing
     btnCloseConfig.addEventListener('click', () => {
       const saved = localStorage.getItem(THEME_KEY); applyTheme(saved); modal.close();
     });
 
-    // --- STANDARD APP INIT (Same as before) ---
+    // --- INIT ---
     chkShowAll.addEventListener('change', populateDropdown);
     btnPin.addEventListener('click', () => {
       const currentTheme = themeSelect.value;
