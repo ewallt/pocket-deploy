@@ -63,7 +63,7 @@
     <main><div id="grid" class="grid"></div></main>
 
     <footer style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1rem; color: var(--muted); font-size: 0.9rem;">
-      <span>LocalStorage Architecture. v2.2 (Global Config)</span>
+      <span>LocalStorage Architecture. v2.3 (AI Architect)</span>
       <div style="display: flex; align-items: center; gap: 0.75rem;">
         <div style="display: flex; align-items: center; gap: 0.5rem;">
           <label for="themeSelect" style="font-size: 0.85rem;">Theme:</label>
@@ -99,23 +99,27 @@
     </div>
 
     <div id="tab-structure" class="config-panel active">
-      <p style="font-size:0.85rem; color: var(--muted); margin-bottom: 1rem; line-height: 1.4;">
-        <strong>Customize your Database Schema.</strong><br>
-        Changes here will instantly update the titles and order of all existing battles.
+      <p style="font-size:0.85rem; color: var(--muted); margin-bottom: 1rem;">
+        Customize your Database Schema. 
       </p>
       
-      <div id="structureList" style="max-height: 300px; overflow-y: auto; padding-right: 0.5rem;">
-        </div>
+      <button id="btnMagicStructure" style="width: 100%; margin-bottom: 1rem; padding: 0.6rem; background: linear-gradient(135deg, var(--brand), var(--panel)); color: var(--ink); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; font-weight: bold;">
+        🪄 AI: Suggest New Structure
+      </button>
 
-      <button id="btnSaveStructure" style="width:100%; margin-top: 1.5rem; padding: 0.8rem; background: var(--brand); color: var(--panel); border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">Save Structure</button>
-      <button id="btnResetStructure" style="width:100%; margin-top: 0.5rem; padding: 0.5rem; background: transparent; color: var(--muted); border: 1px solid var(--border); border-radius: 6px; cursor: pointer;">Reset to Default</button>
+      <div id="structureList" style="max-height: 250px; overflow-y: auto; padding-right: 0.5rem; margin-bottom: 1rem;"></div>
+
+      <div style="display: flex; gap: 0.5rem;">
+        <button id="btnSaveStructure" style="flex: 2; padding: 0.6rem; background: var(--brand); color: var(--panel); border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">Save Structure</button>
+        <button id="btnResetStructure" style="flex: 1; padding: 0.6rem; background: transparent; color: var(--muted); border: 1px solid var(--border); border-radius: 6px; cursor: pointer;">Reset</button>
+      </div>
     </div>
 
     <button id="btnCloseConfig" style="position: absolute; top: 1rem; right: 1rem; background: transparent; border: none; color: var(--muted); font-size: 1.5rem; cursor: pointer;">×</button>
   </dialog>
 
   <script>
-    // --- STANDARD THEME & APP LOGIC (Collapsed) ---
+    // --- STANDARD THEME & APP LOGIC ---
     const themeSelect = document.getElementById('themeSelect');
     const btnPin = document.getElementById('btnPin');
     const chkShowAll = document.getElementById('chkShowAll');
@@ -183,7 +187,7 @@
       updatePinState();
     }
 
-    // --- CONFIGURATOR LOGIC (TABS & STRUCTURE) ---
+    // --- CONFIGURATOR LOGIC ---
     const modal = document.getElementById('configModal');
     const btnConfig = document.getElementById('btnConfig');
     const btnCloseConfig = document.getElementById('btnCloseConfig');
@@ -209,7 +213,7 @@
     btnConfig.addEventListener('click', () => {
       const style = getComputedStyle(document.documentElement);
       for (const [key, el] of Object.entries(colorInputs)) el.value = style.getPropertyValue(key).trim();
-      renderStructureList(); // Load structure
+      renderStructureList();
       modal.showModal();
     });
 
@@ -247,7 +251,6 @@
       sections.forEach((sec, index) => {
         const div = document.createElement('div');
         div.className = 'struct-item';
-        // We show the 'key' as read-only (small) so user knows the data link
         div.innerHTML = `
           <span class="struct-key" title="Data Key (Immutable)">${sec.key}</span>
           <input type="text" value="${sec.title}" data-index="${index}" title="Display Label (Editable)">
@@ -268,16 +271,42 @@
       renderStructureList();
     }
 
+    // NEW: Magic Wand Logic
+    document.getElementById('btnMagicStructure').addEventListener('click', async () => {
+      const btn = document.getElementById('btnMagicStructure');
+      const topic = prompt("What kind of database are you building?\n(e.g., 'Cold War Espionage', 'Greek Mythology', 'Sci-Fi Starships')");
+      if (!topic) return;
+
+      const originalText = btn.innerText;
+      btn.innerText = "Consulting Architect...";
+      btn.disabled = true;
+
+      try {
+        const newSections = await Brain.suggestSchema(topic);
+        if (Array.isArray(newSections) && newSections.length > 0) {
+          localStorage.setItem(STRUCT_KEY, JSON.stringify(newSections));
+          renderStructureList();
+          alert(`Structure updated for: ${topic}\nClick 'Save Structure' to apply.`);
+        }
+      } catch (err) {
+        alert("AI could not generate a structure. Try again.");
+        console.error(err);
+      } finally {
+        btn.innerText = originalText;
+        btn.disabled = false;
+      }
+    });
+
     document.getElementById('btnSaveStructure').addEventListener('click', () => {
       const inputs = structureList.querySelectorAll('input');
       const currentOrder = getActiveStructure();
       inputs.forEach((inp, idx) => {
-        currentOrder[idx].title = inp.value; // Only update Title
+        currentOrder[idx].title = inp.value;
       });
       localStorage.setItem(STRUCT_KEY, JSON.stringify(currentOrder));
-      APP_CONFIG.sections = currentOrder; // Live update
+      APP_CONFIG.sections = currentOrder; // Live update for current session
       modal.close();
-      alert("Structure Updated! Existing battles will now use these headers.");
+      alert("Structure Saved! New AI Battles will follow this format.");
     });
 
     document.getElementById('btnResetStructure').addEventListener('click', () => {
