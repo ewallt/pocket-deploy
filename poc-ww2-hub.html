@@ -261,13 +261,26 @@
       });
     }
 
-    window.moveSection = (index, direction) => {
-      const sections = getActiveStructure();
+   window.moveSection = (index, direction) => {
+      // 1. LOAD DATA
+      let sections = getActiveStructure();
+      
+      // 2. CAPTURE UNSAVED EDITS (The Fix)
+      // Grab whatever is currently typed in the input boxes before we move anything
+      const inputs = structureList.querySelectorAll('input');
+      inputs.forEach((inp, i) => {
+        sections[i].title = inp.value;
+      });
+
+      // 3. SWAP POSITIONS
       if (index + direction < 0 || index + direction >= sections.length) return;
       const temp = sections[index];
       sections[index] = sections[index + direction];
       sections[index + direction] = temp;
+
+      // 4. SAVE & REDRAW
       localStorage.setItem(STRUCT_KEY, JSON.stringify(sections));
+      APP_CONFIG.sections = sections; // Update live config
       renderStructureList();
     }
 
