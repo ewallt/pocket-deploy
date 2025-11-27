@@ -24,7 +24,7 @@
   <button id="backToTop" class="back-to-top" onclick="scrollToTop()">↑</button>
 
   <script>
-    // --- 1. THEME ENGINE (Viewer Version) ---
+    // --- 1. THEME ENGINE ---
     function applyTheme() {
       // 1. Get Preference
       const themeName = localStorage.getItem('poc-ww2-theme-pref') || 'navy_exp';
@@ -39,7 +39,7 @@
             for (const [key, value] of Object.entries(customColors)) {
               root.style.setProperty(key, value);
             }
-            return; // Exit if custom loaded successfully
+            return;
           } catch (e) {
             console.error("Custom theme corrupted, falling back.");
           }
@@ -48,22 +48,16 @@
 
       // 3. Standard Theme Loading
       if (typeof APP_CONFIG === 'undefined') return;
-      
-      // Robust Fallback Chain: Requested -> navy_exp -> First Available
       let theme = APP_CONFIG.themes[themeName];
       if (!theme) theme = APP_CONFIG.themes['navy_exp'];
       if (!theme) theme = Object.values(APP_CONFIG.themes)[0];
-
-      if (!theme) return; // Should never happen
 
       const root = document.documentElement;
       for (const [key, value] of Object.entries(theme.colors)) {
         root.style.setProperty(key, value);
       }
     }
-    
-    // Apply immediately on load
-    applyTheme();
+    applyTheme(); // Apply immediately
 
 
     // --- 2. UTILITIES ---
@@ -103,7 +97,7 @@
         return;
       }
 
-      // Success State - Render Content
+      // Success State - Meta
       document.title = item.meta.title;
       breadTitle.innerText = `› ${item.meta.title}`;
 
@@ -119,9 +113,17 @@
         </section>
       `;
 
-      // Render Accordions (Config-Driven)
-      APP_CONFIG.sections.forEach((sectionConfig) => {
-        const sectionData = item.content[sectionConfig.key];
+      // --- DYNAMIC STRUCTURE LOGIC ---
+      // Try to load custom structure from LocalStorage; fallback to Config default
+      const structRaw = localStorage.getItem('poc-ww2-custom-structure');
+      const activeSections = structRaw ? JSON.parse(structRaw) : APP_CONFIG.sections;
+
+      // Render Accordions based on the active list
+      activeSections.forEach((sectionConfig) => {
+        // Handle case where item might not have data for a newly created section
+        const sectionData = item.content[sectionConfig.key] || [];
+        
+        // Pick renderer (default to list if type not found)
         const renderFn = RENDERERS[sectionConfig.type] || RENDERERS.list;
         const innerHTML = renderFn(sectionData);
 
@@ -147,7 +149,7 @@
     function toggleSection(header) {
       const section = header.parentElement;
       
-      // Auto-close others (Accordion behavior)
+      // Accordion Behavior: Close others
       document.querySelectorAll('.section').forEach(s => {
         if (s !== section && s.classList.contains('active')) s.classList.remove('active');
       });
