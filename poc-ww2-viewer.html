@@ -16,88 +16,57 @@
     <div class="breadcrumb">
       <a href="poc-ww2-hub.html" id="nav-hub-link">Hub</a> <span id="bread-title">...</span>
     </div>
-
-    <div id="app-root">
-      </div>
+    <div id="app-root"></div>
   </div>
-
   <button id="backToTop" class="back-to-top" onclick="scrollToTop()">↑</button>
 
   <script>
-    // --- 1. THEME ENGINE ---
     function applyTheme() {
-      // 1. Get Preference
       const themeName = localStorage.getItem('poc-ww2-theme-pref') || 'navy_exp';
-      
-      // 2. Check for Custom Theme
       if (themeName === 'custom') {
         const customRaw = localStorage.getItem('poc-ww2-custom-theme');
         if (customRaw) {
           try {
             const customColors = JSON.parse(customRaw);
             const root = document.documentElement;
-            for (const [key, value] of Object.entries(customColors)) {
-              root.style.setProperty(key, value);
-            }
+            for (const [key, value] of Object.entries(customColors)) root.style.setProperty(key, value);
             return;
-          } catch (e) {
-            console.error("Custom theme corrupted, falling back.");
-          }
+          } catch (e) { console.error(e); }
         }
       }
-
-      // 3. Standard Theme Loading
       if (typeof APP_CONFIG === 'undefined') return;
       let theme = APP_CONFIG.themes[themeName];
       if (!theme) theme = APP_CONFIG.themes['navy_exp'];
       if (!theme) theme = Object.values(APP_CONFIG.themes)[0];
-
       const root = document.documentElement;
-      for (const [key, value] of Object.entries(theme.colors)) {
-        root.style.setProperty(key, value);
-      }
+      for (const [key, value] of Object.entries(theme.colors)) root.style.setProperty(key, value);
     }
-    applyTheme(); // Apply immediately
+    applyTheme();
 
-
-    // --- 2. UTILITIES ---
     function getQueryParam(param) {
       const urlParams = new URLSearchParams(window.location.search);
       return urlParams.get(param);
     }
 
-    // --- 3. CORE RENDER LOGIC ---
     function renderPage() {
       const id = getQueryParam('id');
       const appRoot = document.getElementById('app-root');
       const breadTitle = document.getElementById('bread-title');
       const navHubLink = document.getElementById('nav-hub-link');
 
-      // Initial State
       breadTitle.innerText = APP_CONFIG.labels.loading;
       navHubLink.innerText = APP_CONFIG.labels.backToHub;
 
-      // Safety Check
       if (typeof Store === 'undefined') {
-        appRoot.innerHTML = `<div class="error-msg"><h2>Error</h2><p>Storage adapter not loaded.</p></div>`;
-        return;
+        appRoot.innerHTML = `<div class="error-msg"><h2>Error</h2><p>Storage adapter not loaded.</p></div>`; return;
       }
-
-      // Fetch Data
       const item = Store.getById(id);
-
-      // 404 State
       if (!item) {
         breadTitle.innerText = APP_CONFIG.labels.errorTitle;
-        appRoot.innerHTML = `
-          <div class="error-msg">
-            <h2>${APP_CONFIG.labels.errorBody}</h2>
-            <p style="font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.7">ID: ${id || 'null'}</p>
-          </div>`;
+        appRoot.innerHTML = `<div class="error-msg"><h2>${APP_CONFIG.labels.errorBody}</h2><p style="font-size:0.8rem">ID: ${id || 'null'}</p></div>`;
         return;
       }
 
-      // Success State - Meta
       document.title = item.meta.title;
       breadTitle.innerText = `› ${item.meta.title}`;
 
@@ -106,58 +75,41 @@
           <h1>${item.meta.title}</h1>
           <p class="subtitle">${item.meta.subtitle}</p>
         </header>
-
         <section class="main-answer">
           <h2>${APP_CONFIG.labels.summaryHeader}</h2>
           <p>${item.content.summary}</p>
         </section>
       `;
 
-      // --- DYNAMIC STRUCTURE LOGIC ---
-      // Try to load custom structure from LocalStorage; fallback to Config default
+      // DYNAMIC STRUCTURE LOGIC
       const structRaw = localStorage.getItem('poc-ww2-custom-structure');
       const activeSections = structRaw ? JSON.parse(structRaw) : APP_CONFIG.sections;
 
-      // Render Accordions based on the active list
       activeSections.forEach((sectionConfig) => {
-        // Handle case where item might not have data for a newly created section
         const sectionData = item.content[sectionConfig.key] || [];
-        
-        // Pick renderer (default to list if type not found)
         const renderFn = RENDERERS[sectionConfig.type] || RENDERERS.list;
         const innerHTML = renderFn(sectionData);
-
         html += `
           <section class="section">
             <div class="section-header" onclick="toggleSection(this)">
               <h2>${sectionConfig.title}</h2>
               <span class="section-icon">▼</span>
             </div>
-            <div class="section-content">
-              <div class="section-inner">
-                ${innerHTML}
-              </div>
-            </div>
+            <div class="section-content"><div class="section-inner">${innerHTML}</div></div>
           </section>
         `;
       });
-
       appRoot.innerHTML = html;
     }
 
-    // --- 4. INTERACTION LOGIC ---
     function toggleSection(header) {
       const section = header.parentElement;
-      
-      // Accordion Behavior: Close others
       document.querySelectorAll('.section').forEach(s => {
         if (s !== section && s.classList.contains('active')) s.classList.remove('active');
       });
-      
       section.classList.toggle('active');
     }
 
-    // --- 5. SCROLL LOGIC ---
     window.addEventListener('scroll', () => {
       const btn = document.getElementById('backToTop');
       if (window.pageYOffset > 300) btn.classList.add('visible');
