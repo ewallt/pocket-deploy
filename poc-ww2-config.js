@@ -9,63 +9,35 @@ const APP_CONFIG = {
 
   themes: {
     // ========================================================================
-    // GROUP A: THE NAVY CLASS (Optically Tuned)
-    // We cheated the math so they "feel" the same to the human eye.
+    // GROUP A (1-3): THE NAVY CLASS (Dark / Value Matched)
     // ========================================================================
-    
     "iso_green": { 
       name: "1. Navy Class: Army",
       colors: {
-        "--bg": "#021c10",        // Darker than Blue (Green glows)
-        "--panel": "#0b2e1e",     // Deep Forest
-        "--chip": "#173d2b",      
-        "--border": "#1f4f35",    
-        "--ink": "#e3fcec",       // Mint White
-        "--muted": "#8abfac",     
-        "--brand": "#34d399",     // Emerald-400 (Slightly softer than the Blue)
-        "--accent": "#10b981",    
-        "--bad": "#ef4444",
-        "--btn-bg": "linear-gradient(135deg, #0b2e1e 0%, #021c10 100%)", 
-        "--btn-text": "#e3fcec"
+        "--bg": "#021c10", "--panel": "#0b2e1e", "--chip": "#173d2b", "--border": "#1f4f35",    
+        "--ink": "#e3fcec", "--muted": "#8abfac", "--brand": "#34d399", "--accent": "#10b981", "--bad": "#ef4444",
+        "--btn-bg": "linear-gradient(135deg, #0b2e1e 0%, #021c10 100%)", "--btn-text": "#e3fcec"
       }
     },
-
     "iso_brown": { 
       name: "2. Navy Class: Marine",
       colors: {
-        "--bg": "#1f150b",        // Warmer/Lighter than Blue (to avoid mud)
-        "--panel": "#362516",     // Rich Leather
-        "--chip": "#4a3321",      
-        "--border": "#61442e",    
-        "--ink": "#fef3c7",       // Warm Cream
-        "--muted": "#d6c0a8",     
-        "--brand": "#fbbf24",     // Amber-400 (High saturation to pop)
-        "--accent": "#f59e0b",    
-        "--bad": "#ef4444",
-        "--btn-bg": "linear-gradient(135deg, #362516 0%, #1f150b 100%)", 
-        "--btn-text": "#fef3c7"
+        "--bg": "#1f150b", "--panel": "#362516", "--chip": "#4a3321", "--border": "#61442e",    
+        "--ink": "#fef3c7", "--muted": "#d6c0a8", "--brand": "#fbbf24", "--accent": "#f59e0b", "--bad": "#ef4444",
+        "--btn-bg": "linear-gradient(135deg, #362516 0%, #1f150b 100%)", "--btn-text": "#fef3c7"
       }
     },
-
     "iso_purple": { 
       name: "3. Navy Class: Air",
       colors: {
-        "--bg": "#170e2e",        // Lighter than Blue (Purple is heavy)
-        "--panel": "#281a4a",     // Deep Royal
-        "--chip": "#372661",      
-        "--border": "#4c3682",    
-        "--ink": "#f3e8ff",       // Lavender
-        "--muted": "#c4b5fd",     
-        "--brand": "#c084fc",     // Purple-400 (Needs to be bright to be seen)
-        "--accent": "#a855f7",    
-        "--bad": "#ef4444",
-        "--btn-bg": "linear-gradient(135deg, #281a4a 0%, #170e2e 100%)", 
-        "--btn-text": "#f3e8ff"
+        "--bg": "#170e2e", "--panel": "#281a4a", "--chip": "#372661", "--border": "#4c3682",    
+        "--ink": "#f3e8ff", "--muted": "#c4b5fd", "--brand": "#c084fc", "--accent": "#a855f7", "--bad": "#ef4444",
+        "--btn-bg": "linear-gradient(135deg, #281a4a 0%, #170e2e 100%)", "--btn-text": "#f3e8ff"
       }
     },
 
     // ========================================================================
-    // GROUP B: THE BLUEPRINT LAB (Unchanged)
+    // GROUP B (4-9): THE BLUEPRINT LAB (Dark / White Brand)
     // ========================================================================
     "navy": { 
       name: "4. Lab: Mocha",
@@ -117,59 +89,84 @@ const APP_CONFIG = {
     },
 
     // ========================================================================
-    // GROUP C: THE PAPER LAB (Unchanged)
+    // GROUP C (10-15): THE INK LAB (Strict Archives Clone)
+    // All Backgrounds = #f5f5f4 (Stone). Only Brand changes.
     // ========================================================================
+    
+    // 10. BLUE INK
     "navy_exp": {
       name: "10. Paper: Royal Navy",
       colors: {
-        "--bg": "#f0f9ff", "--panel": "#e0f2fe", "--chip": "#e0f2fe", "--border": "#7dd3fc",    
-        "--ink": "#0c4a6e", "--muted": "#0369a1", "--brand": "#0284c7", "--accent": "#38bdf8", "--bad": "#b91c1c",
+        "--bg": "#f5f5f4", "--panel": "#e7e5e4", "--chip": "#e7e5e4", "--border": "#d6d3d1",    
+        "--ink": "#292524", "--muted": "#57534e",     
+        "--brand": "#1e40af",   /* Deep Blue */
+        "--accent": "#3b82f6", "--bad": "#b91c1c",
         "--btn-bg": "var(--brand)", "--btn-text": "#ffffff"
       }
     },
+    
+    // 11. BRONZE INK
     "desert_exp": {
       name: "11. Paper: Expedition",
       colors: {
-        "--bg": "#fefce8", "--panel": "#fef9c3", "--chip": "#fef9c3", "--border": "#fde047",    
-        "--ink": "#422006", "--muted": "#854d0e", "--brand": "#a16207", "--accent": "#ca8a04", "--bad": "#b91c1c",
+        "--bg": "#f5f5f4", "--panel": "#e7e5e4", "--chip": "#e7e5e4", "--border": "#d6d3d1",    
+        "--ink": "#292524", "--muted": "#57534e",     
+        "--brand": "#a16207",   /* Deep Bronze/Gold */
+        "--accent": "#ca8a04", "--bad": "#b91c1c",
         "--btn-bg": "var(--brand)", "--btn-text": "#ffffff"
       }
     },
+    
+    // 12. GREY INK
     "paper_exp": {
       name: "12. Paper: Carbon Copy",
       colors: {
-        "--bg": "#f8fafc", "--panel": "#e2e8f0", "--chip": "#e2e8f0", "--border": "#94a3b8",    
-        "--ink": "#020617", "--muted": "#475569", "--brand": "#0f172a", "--accent": "#334155", "--bad": "#b91c1c",
+        "--bg": "#f5f5f4", "--panel": "#e7e5e4", "--chip": "#e7e5e4", "--border": "#d6d3d1",    
+        "--ink": "#292524", "--muted": "#57534e",     
+        "--brand": "#334155",   /* Deep Slate Grey */
+        "--accent": "#475569", "--bad": "#b91c1c",
         "--btn-bg": "var(--brand)", "--btn-text": "#ffffff"
       }
     },
+    
+    // 13. GREEN INK
     "emerald_exp": {
       name: "13. Paper: Emerald",
       colors: {
-        "--bg": "#ecfdf5", "--panel": "#d1fae5", "--chip": "#d1fae5", "--border": "#6ee7b7",    
-        "--ink": "#064e3b", "--muted": "#059669", "--brand": "#047857", "--accent": "#10b981", "--bad": "#b91c1c",
+        "--bg": "#f5f5f4", "--panel": "#e7e5e4", "--chip": "#e7e5e4", "--border": "#d6d3d1",    
+        "--ink": "#292524", "--muted": "#57534e",     
+        "--brand": "#047857",   /* Deep Emerald */
+        "--accent": "#10b981", "--bad": "#b91c1c",
         "--btn-bg": "var(--brand)", "--btn-text": "#ffffff"
       }
     },
+    
+    // 14. SLATE/INDIGO INK
     "luftwaffe_exp": {
       name: "14. Paper: Intercept",
       colors: {
-        "--bg": "#f8fafc", "--panel": "#e2e8f0", "--chip": "#e2e8f0", "--border": "#cbd5e1",    
-        "--ink": "#0f172a", "--muted": "#475569", "--brand": "#334155", "--accent": "#64748b", "--bad": "#b91c1c",
+        "--bg": "#f5f5f4", "--panel": "#e7e5e4", "--chip": "#e7e5e4", "--border": "#d6d3d1",    
+        "--ink": "#292524", "--muted": "#57534e",     
+        "--brand": "#3730a3",   /* Deep Indigo */
+        "--accent": "#6366f1", "--bad": "#b91c1c",
         "--btn-bg": "var(--brand)", "--btn-text": "#ffffff"
       }
     },
+    
+    // 15. PURPLE INK
     "sonar_exp": {
       name: "15. Paper: Cipher",
       colors: {
-        "--bg": "#faf5ff", "--panel": "#f3e8ff", "--chip": "#f3e8ff", "--border": "#d8b4fe",    
-        "--ink": "#3b0764", "--muted": "#6b21a8", "--brand": "#7e22ce", "--accent": "#9333ea", "--bad": "#b91c1c",
+        "--bg": "#f5f5f4", "--panel": "#e7e5e4", "--chip": "#e7e5e4", "--border": "#d6d3d1",    
+        "--ink": "#292524", "--muted": "#57534e",     
+        "--brand": "#7e22ce",   /* Deep Purple */
+        "--accent": "#a855f7", "--bad": "#b91c1c",
         "--btn-bg": "var(--brand)", "--btn-text": "#ffffff"
       }
     },
 
     // ========================================================================
-    // GROUP D: FINAL ROSTER (Unchanged)
+    // GROUP D (16-21): FINAL ROSTER (Unchanged)
     // ========================================================================
     "navy_final": {
       name: "16. Orig: Navy",
