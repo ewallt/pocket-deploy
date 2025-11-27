@@ -6,6 +6,20 @@
   <title>WWII Hub</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚔️</text></svg>">
   <link rel="stylesheet" href="poc-ww2-styles.css">
+  <style>
+    /* New Styles for Configurator Tabs */
+    .config-tabs { display: flex; gap: 1rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+    .tab-btn { background: none; border: none; padding: 0.5rem 1rem; color: var(--muted); cursor: pointer; font-weight: bold; border-bottom: 2px solid transparent; }
+    .tab-btn.active { color: var(--brand); border-bottom-color: var(--brand); }
+    .config-panel { display: none; }
+    .config-panel.active { display: block; }
+    
+    /* Structure List Styles */
+    .struct-item { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; background: var(--bg); padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border); }
+    .struct-item input { background: transparent; border: none; color: var(--ink); flex: 1; font-family: inherit; font-size: 0.9rem; }
+    .struct-btn { background: var(--chip); border: 1px solid var(--border); color: var(--muted); cursor: pointer; border-radius: 4px; padding: 0.2rem 0.5rem; }
+    .struct-btn:hover { color: var(--brand); border-color: var(--brand); }
+  </style>
 </head>
 <body>
   <script src="poc-ww2-config.js"></script>
@@ -23,10 +37,7 @@
           <input id="searchInput" type="search" placeholder="Filter by title, theater, year, or tags…" autocomplete="off"/>
         </div>
         
-        <button id="btnAdd" class="chip" style="background: var(--brand); color: var(--panel); font-weight: bold; border-color: var(--brand);">
-          + Add Battle
-        </button>
-
+        <button id="btnAdd" class="chip" style="background: var(--brand); color: var(--panel); font-weight: bold; border-color: var(--brand);">+ Add Battle</button>
         <button class="chip active" data-tag="all">All</button>
         <button class="chip" data-tag="europe">Europe</button>
         <button class="chip" data-tag="eastern-front">Eastern Front</button>
@@ -36,138 +47,97 @@
       </div>
     </header>
 
-    <main>
-      <div id="grid" class="grid"></div>
-    </main>
+    <main><div id="grid" class="grid"></div></main>
 
     <footer style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1rem; color: var(--muted); font-size: 0.9rem;">
-      <span>LocalStorage Architecture. v2.0</span>
-      
+      <span>LocalStorage Architecture. v2.1 (Schema Engine)</span>
       <div style="display: flex; align-items: center; gap: 0.75rem;">
-        
         <div style="display: flex; align-items: center; gap: 0.5rem;">
           <label for="themeSelect" style="font-size: 0.85rem;">Theme:</label>
-          <select id="themeSelect" style="width: 280px; background: var(--chip); color: var(--ink); border: 1px solid var(--border); padding: 0.3rem; border-radius: 6px; outline: none;">
-            </select>
+          <select id="themeSelect" style="width: 280px; background: var(--chip); color: var(--ink); border: 1px solid var(--border); padding: 0.3rem; border-radius: 6px; outline: none;"></select>
         </div>
-
-        <button id="btnPin" title="Pin/Unpin this theme" style="background: transparent; border: 1px solid var(--border); color: var(--muted); border-radius: 4px; padding: 0.2rem 0.5rem; cursor: pointer; font-size: 1rem; line-height: 1;">★</button>
-
+        <button id="btnPin" title="Pin/Unpin" style="background: transparent; border: 1px solid var(--border); color: var(--muted); border-radius: 4px; padding: 0.2rem 0.5rem; cursor: pointer; font-size: 1rem; line-height: 1;">★</button>
         <label style="display: flex; align-items: center; gap: 0.3rem; font-size: 0.8rem; cursor: pointer; user-select: none;">
-          <input type="checkbox" id="chkShowAll">
-          Show All
+          <input type="checkbox" id="chkShowAll"> Show All
         </label>
-
-        <button id="btnConfig" title="Design Custom Theme" style="background: transparent; border: none; font-size: 1.2rem; cursor: pointer; margin-left: 0.5rem;">🎨</button>
-
+        <button id="btnConfig" title="Configure App" style="background: transparent; border: none; font-size: 1.2rem; cursor: pointer; margin-left: 0.5rem;">⚙️</button>
       </div>
     </footer>
   </div>
 
-  <dialog id="configModal" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; color: var(--ink); box-shadow: 0 20px 50px rgba(0,0,0,0.5); z-index: 2000; width: 90%; max-width: 400px; backdrop-filter: blur(10px);">
-    <h2 style="margin-top: 0; color: var(--brand);">Design Studio</h2>
-    <p style="font-size: 0.9rem; color: var(--muted); margin-bottom: 1.5rem;">Changes apply live. Save to keep them.</p>
-
-    <div style="display: grid; gap: 1rem;">
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <label>Deep Background</label><input type="color" id="inBg" value="#0b1020">
-      </div>
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <label>Card Surface</label><input type="color" id="inPanel" value="#111833">
-      </div>
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <label>Primary Text</label><input type="color" id="inInk" value="#e6ecff">
-      </div>
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <label>Muted Text</label><input type="color" id="inMuted" value="#a7b0cc">
-      </div>
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <label>Brand / Highlight</label><input type="color" id="inBrand" value="#8bb9ff">
-      </div>
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <label>Border Color</label><input type="color" id="inBorder" value="#26325b">
-      </div>
+  <dialog id="configModal" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; color: var(--ink); box-shadow: 0 20px 50px rgba(0,0,0,0.5); z-index: 2000; width: 90%; max-width: 450px; backdrop-filter: blur(10px);">
+    <h2 style="margin-top: 0; color: var(--brand);">Configuration</h2>
+    
+    <div class="config-tabs">
+      <button class="tab-btn active" data-tab="visuals">Visuals</button>
+      <button class="tab-btn" data-tab="structure">Structure</button>
     </div>
 
-    <div style="margin-top: 2rem; display: flex; gap: 0.5rem;">
-      <button id="btnSaveCustom" style="flex: 1; padding: 0.8rem; background: var(--brand); color: var(--panel); border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">Save Theme</button>
-      <button id="btnCloseConfig" style="padding: 0.8rem; background: transparent; border: 1px solid var(--border); color: var(--muted); border-radius: 6px; cursor: pointer;">Cancel</button>
+    <div id="tab-visuals" class="config-panel active">
+      <div style="display: grid; gap: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center;"><label>Deep Background</label><input type="color" id="inBg"></div>
+        <div style="display: flex; justify-content: space-between; align-items: center;"><label>Card Surface</label><input type="color" id="inPanel"></div>
+        <div style="display: flex; justify-content: space-between; align-items: center;"><label>Primary Text</label><input type="color" id="inInk"></div>
+        <div style="display: flex; justify-content: space-between; align-items: center;"><label>Muted Text</label><input type="color" id="inMuted"></div>
+        <div style="display: flex; justify-content: space-between; align-items: center;"><label>Brand / Highlight</label><input type="color" id="inBrand"></div>
+        <div style="display: flex; justify-content: space-between; align-items: center;"><label>Border Color</label><input type="color" id="inBorder"></div>
+      </div>
+      <button id="btnSaveCustom" style="width:100%; margin-top: 1.5rem; padding: 0.8rem; background: var(--brand); color: var(--panel); border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">Save Colors</button>
     </div>
+
+    <div id="tab-structure" class="config-panel">
+      <p style="font-size:0.85rem; color: var(--muted); margin-bottom: 1rem;">Reorder or rename sections. The AI will use this structure for new battles.</p>
+      <div id="structureList"></div>
+      <button id="btnSaveStructure" style="width:100%; margin-top: 1.5rem; padding: 0.8rem; background: var(--brand); color: var(--panel); border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">Save Structure</button>
+      <button id="btnResetStructure" style="width:100%; margin-top: 0.5rem; padding: 0.5rem; background: transparent; color: var(--muted); border: 1px solid var(--border); border-radius: 6px; cursor: pointer;">Reset Default</button>
+    </div>
+
+    <button id="btnCloseConfig" style="position: absolute; top: 1rem; right: 1rem; background: transparent; border: none; color: var(--muted); font-size: 1.5rem; cursor: pointer;">×</button>
   </dialog>
 
   <script>
-    // --- 1. THEME ENGINE ---
+    // --- CORE & THEME LOGIC (Collapsed for brevity - same as before) ---
     const themeSelect = document.getElementById('themeSelect');
     const btnPin = document.getElementById('btnPin');
     const chkShowAll = document.getElementById('chkShowAll');
     const THEME_KEY = 'poc-ww2-theme-pref';
     const FAV_KEY = 'poc-ww2-favorites';
     const CUSTOM_KEY = 'poc-ww2-custom-theme';
+    const STRUCT_KEY = 'poc-ww2-custom-structure';
     const defaultFavs = ['navy_exp', 'desert_exp', 'emerald_exp', 'sonar_exp'];
 
-    function getFavorites() {
-      const raw = localStorage.getItem(FAV_KEY);
-      return raw ? JSON.parse(raw) : defaultFavs;
-    }
-
-    function saveFavorites(list) {
-      localStorage.setItem(FAV_KEY, JSON.stringify(list));
-    }
+    function getFavorites() { const raw = localStorage.getItem(FAV_KEY); return raw ? JSON.parse(raw) : defaultFavs; }
+    function saveFavorites(list) { localStorage.setItem(FAV_KEY, JSON.stringify(list)); }
 
     function populateDropdown() {
       if (typeof APP_CONFIG === 'undefined' || !themeSelect) return;
       const currentVal = themeSelect.value;
       themeSelect.innerHTML = '';
-      
       const showAll = chkShowAll.checked;
       const favorites = getFavorites();
-
-      // Add Custom Option if exists
       if (localStorage.getItem(CUSTOM_KEY)) {
-        const opt = document.createElement('option');
-        opt.value = 'custom';
-        opt.text = "★ Custom Theme";
-        themeSelect.appendChild(opt);
+        const opt = document.createElement('option'); opt.value = 'custom'; opt.text = "★ Custom Theme"; themeSelect.appendChild(opt);
       }
-
       Object.entries(APP_CONFIG.themes).forEach(([key, themeData]) => {
         const isFav = favorites.includes(key);
         if (showAll || isFav) {
-          const opt = document.createElement('option');
-          opt.value = key;
-          let label = themeData.name;
-          if (showAll && !isFav) label += " (Hidden)";
-          opt.textContent = label;
-          themeSelect.appendChild(opt);
+          const opt = document.createElement('option'); opt.value = key; 
+          let label = themeData.name; if (showAll && !isFav) label += " (Hidden)";
+          opt.textContent = label; themeSelect.appendChild(opt);
         }
       });
-
-      if (currentVal && themeSelect.querySelector(`option[value="${currentVal}"]`)) {
-        themeSelect.value = currentVal;
-      } else {
-        const saved = localStorage.getItem(THEME_KEY);
-        if(themeSelect.querySelector(`option[value="${saved}"]`)) themeSelect.value = saved;
-      }
+      if (currentVal && themeSelect.querySelector(`option[value="${currentVal}"]`)) themeSelect.value = currentVal;
+      else { const saved = localStorage.getItem(THEME_KEY); if(themeSelect.querySelector(`option[value="${saved}"]`)) themeSelect.value = saved; }
       updatePinState();
     }
 
     function updatePinState() {
       const currentTheme = themeSelect.value;
-      if (currentTheme === 'custom') {
-        btnPin.style.color = "var(--muted)";
-        btnPin.innerText = "—";
-        btnPin.disabled = true;
-        return;
-      }
+      if (currentTheme === 'custom') { btnPin.style.color = "var(--muted)"; btnPin.innerText = "—"; btnPin.disabled = true; return; }
       btnPin.disabled = false;
       const favorites = getFavorites();
-      if (favorites.includes(currentTheme)) {
-        btnPin.style.color = "var(--brand)";
-        btnPin.innerText = "★";
-      } else {
-        btnPin.style.color = "var(--muted)";
-        btnPin.innerText = "☆";
-      }
+      if (favorites.includes(currentTheme)) { btnPin.style.color = "var(--brand)"; btnPin.innerText = "★"; } 
+      else { btnPin.style.color = "var(--muted)"; btnPin.innerText = "☆"; }
     }
 
     function applyTheme(themeName) {
@@ -176,95 +146,137 @@
         if (customRaw) {
           const customColors = JSON.parse(customRaw);
           const root = document.documentElement;
-          for (const [key, value] of Object.entries(customColors)) {
-            root.style.setProperty(key, value);
-          }
+          for (const [key, value] of Object.entries(customColors)) root.style.setProperty(key, value);
           localStorage.setItem(THEME_KEY, 'custom');
-          if(themeSelect.value !== 'custom') populateDropdown(); 
+          if(themeSelect.value !== 'custom') populateDropdown();
           themeSelect.value = 'custom';
           return;
         }
       }
-
       if (typeof APP_CONFIG === 'undefined') return;
       let theme = APP_CONFIG.themes[themeName];
       if (!theme) theme = APP_CONFIG.themes['navy_exp'];
       if (!theme) theme = Object.values(APP_CONFIG.themes)[0];
-
       const root = document.documentElement;
-      for (const [key, value] of Object.entries(theme.colors)) {
-        root.style.setProperty(key, value);
-      }
-      
+      for (const [key, value] of Object.entries(theme.colors)) root.style.setProperty(key, value);
       localStorage.setItem(THEME_KEY, themeName);
       if(themeSelect.value !== themeName) themeSelect.value = themeName;
       updatePinState();
     }
 
-    // --- CONFIGURATOR LOGIC ---
+    // --- CONFIGURATOR LOGIC (UPDATED) ---
     const modal = document.getElementById('configModal');
     const btnConfig = document.getElementById('btnConfig');
     const btnCloseConfig = document.getElementById('btnCloseConfig');
-    const btnSaveCustom = document.getElementById('btnSaveCustom');
-    
-    const inputs = {
-      '--bg': document.getElementById('inBg'),
-      '--panel': document.getElementById('inPanel'),
-      '--ink': document.getElementById('inInk'),
-      '--muted': document.getElementById('inMuted'),
-      '--brand': document.getElementById('inBrand'),
-      '--border': document.getElementById('inBorder')
-    };
+    const tabs = document.querySelectorAll('.tab-btn');
+    const panels = document.querySelectorAll('.config-panel');
 
-    btnConfig.addEventListener('click', () => {
-      const style = getComputedStyle(document.documentElement);
-      for (const [key, el] of Object.entries(inputs)) {
-        el.value = style.getPropertyValue(key).trim();
-      }
-      modal.showModal();
-    });
-
-    Object.values(inputs).forEach(el => {
-      el.addEventListener('input', () => {
-        const root = document.documentElement;
-        const key = Object.keys(inputs).find(k => inputs[k] === el);
-        root.style.setProperty(key, el.value);
-        if (key === '--panel') {
-          root.style.setProperty('--chip', el.value); 
-          root.style.setProperty('--btn-text', el.value);
-        }
-        if (key === '--brand') {
-          root.style.setProperty('--btn-bg', el.value);
-          root.style.setProperty('--accent', el.value);
-        }
+    // Tab Switching
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        panels.forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(`tab-${tab.dataset.tab}`).classList.add('active');
       });
     });
 
-    btnSaveCustom.addEventListener('click', () => {
+    // VISUALS LOGIC
+    const colorInputs = {
+      '--bg': document.getElementById('inBg'), '--panel': document.getElementById('inPanel'),
+      '--ink': document.getElementById('inInk'), '--muted': document.getElementById('inMuted'),
+      '--brand': document.getElementById('inBrand'), '--border': document.getElementById('inBorder')
+    };
+
+    btnConfig.addEventListener('click', () => {
+      // 1. Load Colors
+      const style = getComputedStyle(document.documentElement);
+      for (const [key, el] of Object.entries(colorInputs)) el.value = style.getPropertyValue(key).trim();
+      // 2. Load Structure
+      renderStructureList();
+      modal.showModal();
+    });
+
+    Object.values(colorInputs).forEach(el => {
+      el.addEventListener('input', () => {
+        const root = document.documentElement;
+        const key = Object.keys(colorInputs).find(k => colorInputs[k] === el);
+        root.style.setProperty(key, el.value);
+        if (key === '--panel') { root.style.setProperty('--chip', el.value); root.style.setProperty('--btn-text', el.value); }
+        if (key === '--brand') { root.style.setProperty('--btn-bg', el.value); root.style.setProperty('--accent', el.value); }
+      });
+    });
+
+    document.getElementById('btnSaveCustom').addEventListener('click', () => {
       const customTheme = {};
       const style = getComputedStyle(document.documentElement);
-      for (const key of Object.keys(inputs)) {
-        customTheme[key] = style.getPropertyValue(key).trim();
-      }
-      customTheme['--chip'] = customTheme['--panel'];
-      customTheme['--btn-text'] = customTheme['--panel'];
-      customTheme['--btn-bg'] = customTheme['--brand'];
-      customTheme['--accent'] = customTheme['--brand'];
-      customTheme['--bad'] = '#ef4444';
-
+      for (const key of Object.keys(colorInputs)) customTheme[key] = style.getPropertyValue(key).trim();
+      customTheme['--chip'] = customTheme['--panel']; customTheme['--btn-text'] = customTheme['--panel'];
+      customTheme['--btn-bg'] = customTheme['--brand']; customTheme['--accent'] = customTheme['--brand']; customTheme['--bad'] = '#ef4444';
       localStorage.setItem(CUSTOM_KEY, JSON.stringify(customTheme));
-      applyTheme('custom'); 
-      modal.close();
-      alert("Custom Theme Saved!");
+      applyTheme('custom'); modal.close(); alert("Colors Saved!");
     });
 
+    // STRUCTURE LOGIC (NEW!)
+    const structureList = document.getElementById('structureList');
+    
+    function getActiveStructure() {
+      const raw = localStorage.getItem(STRUCT_KEY);
+      return raw ? JSON.parse(raw) : APP_CONFIG.sections; // Default to config
+    }
+
+    function renderStructureList() {
+      const sections = getActiveStructure();
+      structureList.innerHTML = '';
+      sections.forEach((sec, index) => {
+        const div = document.createElement('div');
+        div.className = 'struct-item';
+        div.innerHTML = `
+          <input type="text" value="${sec.title}" data-index="${index}">
+          <button class="struct-btn" onclick="moveSection(${index}, -1)">▲</button>
+          <button class="struct-btn" onclick="moveSection(${index}, 1)">▼</button>
+        `;
+        structureList.appendChild(div);
+      });
+    }
+
+    window.moveSection = (index, direction) => {
+      const sections = getActiveStructure();
+      if (index + direction < 0 || index + direction >= sections.length) return;
+      // Swap
+      const temp = sections[index];
+      sections[index] = sections[index + direction];
+      sections[index + direction] = temp;
+      localStorage.setItem(STRUCT_KEY, JSON.stringify(sections));
+      renderStructureList();
+    }
+
+    document.getElementById('btnSaveStructure').addEventListener('click', () => {
+      // Capture Input Values (Renaming)
+      const inputs = structureList.querySelectorAll('input');
+      const currentOrder = getActiveStructure();
+      inputs.forEach((inp, idx) => {
+        currentOrder[idx].title = inp.value;
+      });
+      localStorage.setItem(STRUCT_KEY, JSON.stringify(currentOrder));
+      
+      // Update APP_CONFIG.sections live so Brain sees it immediately
+      APP_CONFIG.sections = currentOrder; 
+      modal.close();
+      alert("Structure Saved! New AI Battles will follow this format.");
+    });
+
+    document.getElementById('btnResetStructure').addEventListener('click', () => {
+      localStorage.removeItem(STRUCT_KEY);
+      renderStructureList();
+    });
+
+    // Closing
     btnCloseConfig.addEventListener('click', () => {
-      const saved = localStorage.getItem(THEME_KEY);
-      applyTheme(saved);
-      modal.close();
+      const saved = localStorage.getItem(THEME_KEY); applyTheme(saved); modal.close();
     });
 
-    // --- EVENT LISTENERS ---
+    // --- STANDARD APP INIT (Same as before) ---
     chkShowAll.addEventListener('change', populateDropdown);
     btnPin.addEventListener('click', () => {
       const currentTheme = themeSelect.value;
@@ -272,51 +284,33 @@
       let favorites = getFavorites();
       if (favorites.includes(currentTheme)) favorites = favorites.filter(f => f !== currentTheme);
       else favorites.push(currentTheme);
-      saveFavorites(favorites);
-      updatePinState();
-      populateDropdown(); 
+      saveFavorites(favorites); updatePinState(); populateDropdown(); 
     });
     themeSelect.addEventListener('change', (e) => applyTheme(e.target.value));
-
-    // --- INITIALIZATION ---
+    
     const savedTheme = localStorage.getItem(THEME_KEY) || 'navy_exp';
-    populateDropdown();
-    applyTheme(savedTheme);
+    populateDropdown(); applyTheme(savedTheme);
 
-    // --- RENDER & AI LOGIC ---
+    // --- RENDER & AI ---
     const grid = document.getElementById('grid');
     const searchInput = document.getElementById('searchInput');
     const chips = Array.from(document.querySelectorAll('.chip:not(#btnAdd)'));
     let activeTag = 'all';
 
     function makeCard(item){
-      const el = document.createElement('article');
-      el.className = 'card';
+      const el = document.createElement('article'); el.className = 'card';
       const tagsHtml = item.meta.tags.map(t => `<span class="tag">#${t}</span>`).join('');
       el.innerHTML = `
         <button class="card-delete" title="Delete Battle">×</button>
-        <h3>${item.meta.title}</h3>
-        <p>${item.meta.blurb}</p>
-        <div class="tagrow">${tagsHtml}</div>
-        <div class="actions"><a class="btn" href="poc-ww2-viewer.html?id=${item.id}">Open</a></div>
-      `;
-      const deleteBtn = el.querySelector('.card-delete');
-      deleteBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (confirm(`Delete "${item.meta.title}"?`)) {
-            Store.delete(item.id);
-            render();
-        }
-      });
+        <h3>${item.meta.title}</h3> <p>${item.meta.blurb}</p>
+        <div class="tagrow">${tagsHtml}</div> <div class="actions"><a class="btn" href="poc-ww2-viewer.html?id=${item.id}">Open</a></div>`;
+      el.querySelector('.card-delete').addEventListener('click', (e) => { e.stopPropagation(); if (confirm(`Delete "${item.meta.title}"?`)) { Store.delete(item.id); render(); } });
       return el;
     }
 
     function render(){
       grid.innerHTML = '';
-      if (typeof Store === 'undefined') {
-        grid.innerHTML = `<div class="error-msg">Error: poc-ww2-store.js not loaded.</div>`;
-        return;
-      }
+      if (typeof Store === 'undefined') return;
       const items = Store.getAll();
       const q = (searchInput.value || '').trim().toLowerCase();
       items.filter(item => {
@@ -324,8 +318,7 @@
           const text = (item.meta.title + ' ' + item.meta.blurb + ' ' + item.meta.tags.join(' ')).toLowerCase();
           const qOk = !q || text.includes(q);
           return tagOk && qOk;
-        })
-        .forEach(item => grid.appendChild(makeCard(item)));
+      }).forEach(item => grid.appendChild(makeCard(item)));
     }
 
     const btnAdd = document.getElementById('btnAdd');
@@ -337,24 +330,15 @@
       btnAdd.disabled = true;
       try {
         const battleObject = await Brain.generateBattle(topic);
-        Store.save(battleObject);
-        render();
-      } catch (err) {
-        console.error(err);
-        alert("Error generating content.");
-      } finally {
-        btnAdd.innerText = originalText;
-        btnAdd.disabled = false;
-      }
+        Store.save(battleObject); render();
+      } catch (err) { console.error(err); alert("Error generating content."); } 
+      finally { btnAdd.innerText = originalText; btnAdd.disabled = false; }
     });
 
     searchInput.addEventListener('input', render);
     chips.forEach(chip => {
       chip.addEventListener('click', () => {
-        chips.forEach(c => c.classList.remove('active'));
-        chip.classList.add('active');
-        activeTag = chip.dataset.tag;
-        render();
+        chips.forEach(c => c.classList.remove('active')); chip.classList.add('active'); activeTag = chip.dataset.tag; render();
       });
     });
     document.addEventListener('DOMContentLoaded', render);
