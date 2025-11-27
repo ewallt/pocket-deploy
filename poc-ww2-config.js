@@ -63,7 +63,6 @@ const APP_CONFIG = {
     // ========================================================================
     // GROUP B (7-12): THE INK LAB (Light Mode / Stone Paper / Deep Brand)
     // ========================================================================
-    
     "navy_exp": {
       name: "7. Paper: Royal Navy",
       colors: {
@@ -166,8 +165,9 @@ const APP_CONFIG = {
     },
 
     // ========================================================================
-    // GROUP D (19+): LEGACY ADDITIONS (New!)
+    // GROUP D (19-22): LEGACY ADDITIONS (Translucent Chips / Gradient Buttons)
     // ========================================================================
+    
     "legacy_navy": { 
       name: "19. Legacy: Navy",
       colors: {
@@ -180,8 +180,62 @@ const APP_CONFIG = {
         "--brand": "#8bb9ff",
         "--accent": "#c0ffe1",
         "--bad": "#ff6b6b",
-        "--btn-bg": "linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%)", // The Gradient
+        "--btn-bg": "linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%)", 
         "--btn-text": "#e6ecff" // Matches Ink
+      }
+    },
+
+    // 20. LEGACY ARMY (Deep Green)
+    "legacy_army": { 
+      name: "20. Legacy: Army",
+      colors: {
+        "--bg": "#051a10",        // Deepest Jungle
+        "--panel": "#0f2e1d",     // Deep Forest
+        "--chip": "#1a3b29",      // Lighter Green
+        "--border": "#1f4f35",    
+        "--ink": "#e3fcec",       // Mint White
+        "--muted": "#8abfac",     
+        "--brand": "#6ee7b7",     // Soft Emerald
+        "--accent": "#34d399",    
+        "--bad": "#ef4444",
+        "--btn-bg": "linear-gradient(135deg, #0f2e1d 0%, #051a10 100%)", 
+        "--btn-text": "#e3fcec"
+      }
+    },
+
+    // 21. LEGACY CRIMSON (Deep Red)
+    "legacy_crimson": { 
+      name: "21. Legacy: Crimson",
+      colors: {
+        "--bg": "#2a0a0a",        // Deepest Blood
+        "--panel": "#450a0a",     // Deep Red
+        "--chip": "#5c1313",      // Lighter Red
+        "--border": "#7f1d1d",    
+        "--ink": "#ffe4e6",       // Rose White
+        "--muted": "#fda4af",     
+        "--brand": "#fb7185",     // Soft Rose
+        "--accent": "#f43f5e",    
+        "--bad": "#ef4444",
+        "--btn-bg": "linear-gradient(135deg, #450a0a 0%, #2a0a0a 100%)", 
+        "--btn-text": "#ffe4e6"
+      }
+    },
+
+    // 22. LEGACY VIOLET (Deep Purple)
+    "legacy_violet": { 
+      name: "22. Legacy: Violet",
+      colors: {
+        "--bg": "#1e102e",        // Deep Void
+        "--panel": "#321c4a",     // Deep Grape
+        "--chip": "#452766",      // Lighter Grape
+        "--border": "#5b21b6",    
+        "--ink": "#f3e8ff",       // Lavender White
+        "--muted": "#c4b5fd",     
+        "--brand": "#d8b4fe",     // Soft Lavender
+        "--accent": "#a855f7",    
+        "--bad": "#ef4444",
+        "--btn-bg": "linear-gradient(135deg, #321c4a 0%, #1e102e 100%)", 
+        "--btn-text": "#f3e8ff"
       }
     }
   },
