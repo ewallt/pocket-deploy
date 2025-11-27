@@ -159,7 +159,7 @@ const APP_CONFIG = {
       name: "18. Orig: Sonar",
       colors: {
         "--bg": "#042f2e", "--panel": "#115e59", "--chip": "#115e59", "--border": "#134e4a",
-        "--ink": "#ccfbf1", "--muted": "#5eead4", "--brand": "#fef9c3", "--accent": "#22d3ee", "--bad": "#f43f5e",
+        "--ink": "#ccfbf1", "--muted": "#5eead4", "--brand": "#fef9c3", "--accent": "#2dd4bf", "--bad": "#f43f5e",
         "--btn-bg": "var(--brand)", "--btn-text": "#042f2e"
       }
     },
@@ -201,7 +201,7 @@ const APP_CONFIG = {
       }
     },
 
-    // CHANGED: SLOT 21
+    // CHANGED: SLOT 21 (Brand set to Khaki)
     "legacy_marine": { 
       name: "21. Legacy: Marine",
       colors: {
@@ -211,7 +211,7 @@ const APP_CONFIG = {
         "--border": "#4f3829",    
         "--ink": "#fceee3",       // Bone White
         "--muted": "#bf9f8a",     
-        "--brand": "#fbbf24",     // Amber Gold
+        "--brand": "#d4b483",     // KHAKI (Updated from Amber)
         "--accent": "#f59e0b",    
         "--bad": "#ef4444",
         "--btn-bg": "linear-gradient(135deg, #2e2015 0%, #1a120b 100%)", 
@@ -219,7 +219,6 @@ const APP_CONFIG = {
       }
     },
 
-    // CHANGED: SLOT 22
     "legacy_carbon": { 
       name: "22. Legacy: Carbon",
       colors: {
