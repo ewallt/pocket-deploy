@@ -165,15 +165,14 @@ const APP_CONFIG = {
     },
 
     // ========================================================================
-    // GROUP D (19-22): LEGACY ADDITIONS (Translucent Chips / Gradient Buttons)
+    // GROUP D (19-22): LEGACY ADDITIONS
     // ========================================================================
-    
     "legacy_navy": { 
       name: "19. Legacy: Navy",
       colors: {
         "--bg": "#0b1020",
         "--panel": "#111833",
-        "--chip": "#1a2347", // Distinct from panel
+        "--chip": "#1a2347", 
         "--border": "#26325b",
         "--ink": "#e6ecff",
         "--muted": "#a7b0cc",
@@ -181,21 +180,20 @@ const APP_CONFIG = {
         "--accent": "#c0ffe1",
         "--bad": "#ff6b6b",
         "--btn-bg": "linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%)", 
-        "--btn-text": "#e6ecff" // Matches Ink
+        "--btn-text": "#e6ecff" 
       }
     },
 
-    // 20. LEGACY ARMY (Deep Green)
     "legacy_army": { 
       name: "20. Legacy: Army",
       colors: {
-        "--bg": "#051a10",        // Deepest Jungle
-        "--panel": "#0f2e1d",     // Deep Forest
-        "--chip": "#1a3b29",      // Lighter Green
+        "--bg": "#051a10",
+        "--panel": "#0f2e1d",
+        "--chip": "#1a3b29", 
         "--border": "#1f4f35",    
-        "--ink": "#e3fcec",       // Mint White
+        "--ink": "#e3fcec",
         "--muted": "#8abfac",     
-        "--brand": "#6ee7b7",     // Soft Emerald
+        "--brand": "#6ee7b7",
         "--accent": "#34d399",    
         "--bad": "#ef4444",
         "--btn-bg": "linear-gradient(135deg, #0f2e1d 0%, #051a10 100%)", 
@@ -203,39 +201,39 @@ const APP_CONFIG = {
       }
     },
 
-    // 21. LEGACY CRIMSON (Deep Red)
-    "legacy_crimson": { 
-      name: "21. Legacy: Crimson",
+    // CHANGED: SLOT 21
+    "legacy_marine": { 
+      name: "21. Legacy: Marine",
       colors: {
-        "--bg": "#2a0a0a",        // Deepest Blood
-        "--panel": "#450a0a",     // Deep Red
-        "--chip": "#5c1313",      // Lighter Red
-        "--border": "#7f1d1d",    
-        "--ink": "#ffe4e6",       // Rose White
-        "--muted": "#fda4af",     
-        "--brand": "#fb7185",     // Soft Rose
-        "--accent": "#f43f5e",    
+        "--bg": "#1a120b",        // Deepest Coffee
+        "--panel": "#2e2015",     // Rich Leather
+        "--chip": "#3d2b1f",      // Distinct Lighter Brown
+        "--border": "#4f3829",    
+        "--ink": "#fceee3",       // Bone White
+        "--muted": "#bf9f8a",     
+        "--brand": "#fbbf24",     // Amber Gold
+        "--accent": "#f59e0b",    
         "--bad": "#ef4444",
-        "--btn-bg": "linear-gradient(135deg, #450a0a 0%, #2a0a0a 100%)", 
-        "--btn-text": "#ffe4e6"
+        "--btn-bg": "linear-gradient(135deg, #2e2015 0%, #1a120b 100%)", 
+        "--btn-text": "#fceee3"
       }
     },
 
-    // 22. LEGACY VIOLET (Deep Purple)
-    "legacy_violet": { 
-      name: "22. Legacy: Violet",
+    // CHANGED: SLOT 22
+    "legacy_carbon": { 
+      name: "22. Legacy: Carbon",
       colors: {
-        "--bg": "#1e102e",        // Deep Void
-        "--panel": "#321c4a",     // Deep Grape
-        "--chip": "#452766",      // Lighter Grape
-        "--border": "#5b21b6",    
-        "--ink": "#f3e8ff",       // Lavender White
-        "--muted": "#c4b5fd",     
-        "--brand": "#d8b4fe",     // Soft Lavender
-        "--accent": "#a855f7",    
+        "--bg": "#09090b",        // Deepest Zinc
+        "--panel": "#18181b",     // Dark Charcoal
+        "--chip": "#27272a",      // Distinct Lighter Grey
+        "--border": "#3f3f46",    
+        "--ink": "#fafafa",       // Pure White
+        "--muted": "#a1a1aa",     
+        "--brand": "#e4e4e7",     // Platinum
+        "--accent": "#ffffff",    
         "--bad": "#ef4444",
-        "--btn-bg": "linear-gradient(135deg, #321c4a 0%, #1e102e 100%)", 
-        "--btn-text": "#f3e8ff"
+        "--btn-bg": "linear-gradient(135deg, #18181b 0%, #09090b 100%)", 
+        "--btn-text": "#fafafa"
       }
     }
   },
