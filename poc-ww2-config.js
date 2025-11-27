@@ -62,16 +62,13 @@ const APP_CONFIG = {
 
     // ========================================================================
     // GROUP B (7-12): THE INK LAB (Light Mode / Stone Paper / Deep Brand)
-    // FIXED: All use #f5f5f4 Background. No tinted paper.
     // ========================================================================
     
     "navy_exp": {
       name: "7. Paper: Royal Navy",
       colors: {
         "--bg": "#f5f5f4", "--panel": "#e7e5e4", "--chip": "#e7e5e4", "--border": "#d6d3d1",    
-        "--ink": "#292524", "--muted": "#57534e",     
-        "--brand": "#1e40af",   /* Deep Blue */
-        "--accent": "#3b82f6", "--bad": "#b91c1c",
+        "--ink": "#292524", "--muted": "#57534e", "--brand": "#1e40af", "--accent": "#3b82f6", "--bad": "#b91c1c",
         "--btn-bg": "var(--brand)", "--btn-text": "#ffffff"
       }
     },
@@ -79,9 +76,7 @@ const APP_CONFIG = {
       name: "8. Paper: Expedition",
       colors: {
         "--bg": "#f5f5f4", "--panel": "#e7e5e4", "--chip": "#e7e5e4", "--border": "#d6d3d1",    
-        "--ink": "#292524", "--muted": "#57534e",     
-        "--brand": "#a16207",   /* Bronze/Gold */
-        "--accent": "#ca8a04", "--bad": "#b91c1c",
+        "--ink": "#292524", "--muted": "#57534e", "--brand": "#a16207", "--accent": "#ca8a04", "--bad": "#b91c1c",
         "--btn-bg": "var(--brand)", "--btn-text": "#ffffff"
       }
     },
@@ -89,9 +84,7 @@ const APP_CONFIG = {
       name: "9. Paper: Carbon Copy",
       colors: {
         "--bg": "#f5f5f4", "--panel": "#e7e5e4", "--chip": "#e7e5e4", "--border": "#d6d3d1",    
-        "--ink": "#292524", "--muted": "#57534e",     
-        "--brand": "#334155",   /* Slate Grey */
-        "--accent": "#475569", "--bad": "#b91c1c",
+        "--ink": "#292524", "--muted": "#57534e", "--brand": "#334155", "--accent": "#475569", "--bad": "#b91c1c",
         "--btn-bg": "var(--brand)", "--btn-text": "#ffffff"
       }
     },
@@ -99,9 +92,7 @@ const APP_CONFIG = {
       name: "10. Paper: Emerald",
       colors: {
         "--bg": "#f5f5f4", "--panel": "#e7e5e4", "--chip": "#e7e5e4", "--border": "#d6d3d1",    
-        "--ink": "#292524", "--muted": "#57534e",     
-        "--brand": "#047857",   /* Deep Cool Green */
-        "--accent": "#10b981", "--bad": "#b91c1c",
+        "--ink": "#292524", "--muted": "#57534e", "--brand": "#047857", "--accent": "#10b981", "--bad": "#b91c1c",
         "--btn-bg": "var(--brand)", "--btn-text": "#ffffff"
       }
     },
@@ -109,9 +100,7 @@ const APP_CONFIG = {
       name: "11. Paper: Intercept",
       colors: {
         "--bg": "#f5f5f4", "--panel": "#e7e5e4", "--chip": "#e7e5e4", "--border": "#d6d3d1",    
-        "--ink": "#292524", "--muted": "#57534e",     
-        "--brand": "#3730a3",   /* Deep Indigo */
-        "--accent": "#6366f1", "--bad": "#b91c1c",
+        "--ink": "#292524", "--muted": "#57534e", "--brand": "#3730a3", "--accent": "#6366f1", "--bad": "#b91c1c",
         "--btn-bg": "var(--brand)", "--btn-text": "#ffffff"
       }
     },
@@ -119,9 +108,7 @@ const APP_CONFIG = {
       name: "12. Paper: Cipher",
       colors: {
         "--bg": "#f5f5f4", "--panel": "#e7e5e4", "--chip": "#e7e5e4", "--border": "#d6d3d1",    
-        "--ink": "#292524", "--muted": "#57534e",     
-        "--brand": "#7e22ce",   /* Deep Purple */
-        "--accent": "#a855f7", "--bad": "#b91c1c",
+        "--ink": "#292524", "--muted": "#57534e", "--brand": "#7e22ce", "--accent": "#a855f7", "--bad": "#b91c1c",
         "--btn-bg": "var(--brand)", "--btn-text": "#ffffff"
       }
     },
@@ -173,8 +160,28 @@ const APP_CONFIG = {
       name: "18. Orig: Sonar",
       colors: {
         "--bg": "#042f2e", "--panel": "#115e59", "--chip": "#115e59", "--border": "#134e4a",
-        "--ink": "#ccfbf1", "--muted": "#5eead4", "--brand": "#fef9c3", "--accent": "#2dd4bf", "--bad": "#f43f5e",
+        "--ink": "#ccfbf1", "--muted": "#5eead4", "--brand": "#fef9c3", "--accent": "#22d3ee", "--bad": "#f43f5e",
         "--btn-bg": "var(--brand)", "--btn-text": "#042f2e"
+      }
+    },
+
+    // ========================================================================
+    // GROUP D (19+): LEGACY ADDITIONS (New!)
+    // ========================================================================
+    "legacy_navy": { 
+      name: "19. Legacy: Navy",
+      colors: {
+        "--bg": "#0b1020",
+        "--panel": "#111833",
+        "--chip": "#1a2347", // Distinct from panel
+        "--border": "#26325b",
+        "--ink": "#e6ecff",
+        "--muted": "#a7b0cc",
+        "--brand": "#8bb9ff",
+        "--accent": "#c0ffe1",
+        "--bad": "#ff6b6b",
+        "--btn-bg": "linear-gradient(135deg, #1a2a6b 0%, #0f172a 100%)", // The Gradient
+        "--btn-text": "#e6ecff" // Matches Ink
       }
     }
   },
