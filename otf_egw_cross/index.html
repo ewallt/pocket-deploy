@@ -5,21 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Centrality of the Cross</title>
     <style>
-        /* * THEME CONFIGURATION
-         * Default: "15. Orig: Archives" (paper_final)
-         * Dark Mode: "13. Orig: Navy" (navy_final)
-         */
+        /* * THEME CONFIGURATION */
         :root {
             /* Base Theme: Archives */
             --bg: #f5f5f4;
             --panel: #e7e5e4;
-            --chip: #e7e5e4; /* darkened slightly for visibility */
+            --chip: #e7e5e4; 
             --border: #d6d3d1;
             --ink: #292524;
             --muted: #57534e;
             --brand: #0f766e;
             --accent: #d97706;
-            --bad: #b91c1c;
             --btn-bg: var(--brand);
             --btn-text: #ffffff;
             
@@ -28,7 +24,8 @@
             --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             --radius: 8px;
             --shadow: 0 1px 3px rgba(0,0,0,0.1);
-            --nav-height: 60px;
+            --nav-height: 64px;
+            --container-width: 1400px; /* Limits width on ultra-wide screens */
         }
 
         /* Dark Mode Override (Navy Final) */
@@ -41,7 +38,6 @@
             --muted: #a7b0cc;
             --brand: #8bb9ff;
             --accent: #c0ffe1;
-            --bad: #ff6b6b;
             --btn-bg: var(--brand);
             --btn-text: #0b1020;
         }
@@ -59,6 +55,14 @@
         }
 
         /* --- UI SHELL --- */
+        /* Reusable container for alignment */
+        .shell-container {
+            max-width: var(--container-width);
+            margin: 0 auto;
+            width: 100%;
+            padding: 0 1rem;
+        }
+
         .app-header {
             position: fixed;
             top: 0;
@@ -67,11 +71,17 @@
             background: var(--bg);
             border-bottom: 1px solid var(--border);
             z-index: 100;
-            padding: 0.75rem 1rem;
+            height: var(--nav-height);
+            display: flex;
+            align-items: center;
+        }
+
+        /* Inner header wrapper for alignment */
+        .header-inner {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            height: var(--nav-height);
+            width: 100%;
         }
 
         .app-title {
@@ -93,8 +103,10 @@
             cursor: pointer;
             font-size: 1.2rem;
             padding: 0.25rem;
+            transition: color 0.2s;
         }
 
+        .icon-btn:hover { color: var(--ink); }
         .icon-btn.active { color: var(--accent); }
 
         /* --- FILTERS & SEARCH --- */
@@ -106,25 +118,31 @@
             background: var(--bg);
             border-bottom: 1px solid var(--border);
             z-index: 99;
-            padding: 0.5rem 1rem;
+            padding: 0.75rem 0;
+        }
+
+        .filter-inner {
             display: flex;
             gap: 0.5rem;
             overflow-x: auto;
             white-space: nowrap;
-            scrollbar-width: none; /* Hide scrollbar Firefox */
+            scrollbar-width: none;
+            align-items: center;
         }
-        .filter-bar::-webkit-scrollbar { display: none; } /* Hide scrollbar Chrome */
+        .filter-inner::-webkit-scrollbar { display: none; }
 
         .search-input {
-            flex: 0 0 160px;
+            flex: 0 0 200px;
             background: var(--panel);
             border: 1px solid var(--border);
             color: var(--ink);
-            padding: 0.4rem 0.8rem;
+            padding: 0.4rem 1rem;
             border-radius: 20px;
             font-size: 0.9rem;
             outline: none;
+            transition: border-color 0.2s;
         }
+        .search-input:focus { border-color: var(--brand); }
 
         .chip {
             background: var(--chip);
@@ -138,32 +156,39 @@
             transition: all 0.2s;
         }
 
+        .chip:hover { background: var(--border); }
         .chip.active {
             background: var(--brand);
             color: var(--btn-text);
         }
 
-        /* --- CARD FEED --- */
+        /* --- CARD FEED (The Magic Grid) --- */
         .feed {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 1rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
+            padding-top: 1.5rem;
+            padding-bottom: 3rem;
+            /* Grid Logic: Auto-fit columns, min 320px wide */
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            align-items: start; /* Prevents cards stretching to match row height */
         }
 
         .card {
             background: var(--panel);
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            padding: 1rem;
+            padding: 1.25rem;
             box-shadow: var(--shadow);
             cursor: pointer;
-            transition: transform 0.1s;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
         }
 
-        .card:active { transform: scale(0.99); }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
 
         .card-header {
             display: flex;
@@ -184,8 +209,8 @@
             color: var(--border);
             font-size: 1.2rem;
             transition: color 0.2s;
-            padding: 0.25rem;
-            margin: -0.5rem -0.5rem 0 0;
+            padding: 0 0 0.5rem 0.5rem;
+            margin-top: -0.25rem;
         }
         .fav-star.active { color: var(--accent); }
 
@@ -202,9 +227,9 @@
             font-size: 1rem;
             line-height: 1.6;
             color: var(--muted);
-            /* Clamp to 3 lines by default */
+            /* Clamp to 4 lines by default */
             display: -webkit-box;
-            -webkit-line-clamp: 3;
+            -webkit-line-clamp: 4;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
@@ -215,7 +240,8 @@
         }
 
         .card-source {
-            margin-top: 0.75rem;
+            margin-top: auto; /* Pushes source to bottom if card stretches */
+            padding-top: 1rem;
             font-size: 0.8rem;
             color: var(--brand);
             font-weight: 500;
@@ -224,27 +250,38 @@
 
         /* Empty State */
         .empty-state {
+            grid-column: 1 / -1; /* Span all columns */
             text-align: center;
             padding: 3rem;
             color: var(--muted);
+        }
+        
+        /* Mobile adjustment for search bar */
+        @media (max-width: 600px) {
+            .search-input { flex: 0 0 140px; }
+            .feed { grid-template-columns: 1fr; } /* Force 1 column on very small screens */
         }
     </style>
 </head>
 <body>
 
     <header class="app-header">
-        <div class="app-title">Centrality of the Cross</div>
-        <div class="header-controls">
-            <button id="themeToggle" class="icon-btn" aria-label="Toggle Theme">◐</button>
-            <button id="favFilterBtn" class="icon-btn" aria-label="Show Favorites">★</button>
+        <div class="shell-container header-inner">
+            <div class="app-title">Centrality of the Cross</div>
+            <div class="header-controls">
+                <button id="themeToggle" class="icon-btn" aria-label="Toggle Theme">◐</button>
+                <button id="favFilterBtn" class="icon-btn" aria-label="Show Favorites">★</button>
+            </div>
         </div>
     </header>
 
-    <div class="filter-bar" id="filterBar">
-        <input type="text" class="search-input" id="searchInput" placeholder="Search...">
-        </div>
+    <div class="filter-bar">
+        <div class="shell-container filter-inner" id="filterInner">
+            <input type="text" class="search-input" id="searchInput" placeholder="Search...">
+            </div>
+    </div>
 
-    <main class="feed" id="feed">
+    <main class="shell-container feed" id="feed">
         </main>
 
 <script>
@@ -319,7 +356,7 @@
     // --- 3. DOM ELEMENTS ---
     const feed = document.getElementById('feed');
     const searchInput = document.getElementById('searchInput');
-    const filterBar = document.getElementById('filterBar');
+    const filterInner = document.getElementById('filterInner'); // Changed target to inner
     const favBtn = document.getElementById('favFilterBtn');
     const themeBtn = document.getElementById('themeToggle');
 
@@ -368,8 +405,9 @@
     }
 
     function renderTags() {
-        // Clear existing chips except search
-        const existingChips = filterBar.querySelectorAll('.chip');
+        // Clear existing chips except search input (which is first child)
+        // We select only buttons to remove
+        const existingChips = filterInner.querySelectorAll('.chip');
         existingChips.forEach(c => c.remove());
 
         // Unique Tags
@@ -390,7 +428,7 @@
                 renderTags(); // Re-render chips to show active state
                 render();
             };
-            filterBar.appendChild(chip);
+            filterInner.appendChild(chip);
         });
     }
 
