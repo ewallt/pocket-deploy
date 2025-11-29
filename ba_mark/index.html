@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblical Architect: Gospel of Mark</title>
+   
+    <!-- Marked for Markdown -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+
+    <style>
+        :root {
+            --bg: #fdf6e3; /* Solarized Light Parchment */
+            --panel: #eee8d5;
+            --text: #657b83;
+            --accent: #b58900; /* Gold */
+            --highlight: #cb4b16; /* Orange */
+            --map-water: #2aa198;
+            --map-land: #d3cbb8;
+            --border: #d0d0d0;
+            --font-head: 'Georgia', serif;
+            --font-body: 'Segoe UI', sans-serif;
+        }
+
+
+        /* Dark Mode Override */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #1c1f24;
+                --panel: #282c34;
+                --text: #abb2bf;
+                --accent: #e5c07b;
+                --highlight: #e06c75;
+                --map-water: #56b6c2;
+                --map-land: #3e4451;
+                --border: #3b4048;
+            }
+        }
+
+
+        body { margin: 0; font-family: var(--font-body); background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+
+        /* Header */
+        header {
+            background: var(--panel); border-bottom: 1px solid var(--border); padding: 0 20px; height: 60px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+        }
+        .brand { font-family: var(--font-head); font-size: 1.4rem; font-weight: bold; color: var(--highlight); white-space: nowrap; margin-right: 20px; }
+       
+        /* Scrollable Nav */
+        .nav-wrapper { flex: 1; overflow: hidden; position: relative; }
+       
+        /* Fixed: Removed 'scrollbar-width: none' and added visible styling */
+        .nav {
+            display: flex; gap: 5px; overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 5px; /* Space for scrollbar */
+            mask-image: linear-gradient(to right, black 90%, transparent 100%);
+        }
+       
+        /* Custom Scrollbar Styling */
+        .nav::-webkit-scrollbar { height: 4px; }
+        .nav::-webkit-scrollbar-track { background: transparent; }
+        .nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+        .nav::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+       
+        .nav-btn {
+            background: transparent; border: none; padding: 10px 15px; cursor: pointer; color: var(--text); font-weight: 600; opacity: 0.7; transition: all 0.2s; border-bottom: 3px solid transparent; white-space: nowrap;
+        }
+        .nav-btn:hover { opacity: 1; }
+        .nav-btn.active { opacity: 1; border-bottom-color: var(--accent); color: var(--accent); }
+
+
+        /* Main Stage */
+        main { flex: 1; display: flex; overflow: hidden; position: relative; }
+
+
+        /* Canvas Layer */
+        .visual-container { flex: 2; position: relative; background: var(--bg); display: flex; justify-content: center; align-items: center; overflow: hidden; }
+        canvas { width: 100%; height: 100%; object-fit: contain; }
+
+
+        /* Info Sidebar */
+        aside {
+            flex: 1; min-width: 350px; max-width: 450px; background: var(--panel); border-left: 1px solid var(--border);
+            display: flex; flex-direction: column; overflow-y: auto; padding: 30px; box-shadow: -5px 0 15px rgba(0,0,0,0.05);
+        }
+
+
+        h2 { font-family: var(--font-head); color: var(--accent); border-bottom: 2px solid var(--border); padding-bottom: 10px; margin-top: 0; }
+        .content-block { margin-bottom: 30px; line-height: 1.6; }
+        .content-block h3 { color: var(--highlight); margin-bottom: 5px; font-size: 1.1rem; }
+       
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .stat-card { background: var(--bg); padding: 15px; border-radius: 6px; border: 1px solid var(--border); }
+        .stat-val { font-size: 1.2rem; font-weight: bold; color: var(--text); }
+        .stat-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; }
+
+
+        /* Overlay for interactive elements */
+        .overlay-tooltip {
+            position: absolute; background: var(--panel); padding: 10px 15px; border: 1px solid var(--accent); border-radius: 4px; pointer-events: none; opacity: 0; transition: opacity 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 10;
+        }
+
+
+        /* --- MOBILE RESPONSIVE QUERIES --- */
+        @media (max-width: 768px) {
+            main { flex-direction: column; }
+            aside {
+                width: 100%; min-width: 0; max-width: none;
+                flex: 1; border-left: none; border-top: 1px solid var(--border); padding: 20px;
+            }
+            header { padding: 0 10px; height: 55px; }
+            .brand { font-size: 1.1rem; margin-right: 10px; }
+            .nav-btn { font-size: 0.85rem; padding: 10px; }
+            .visual-container { flex: none; height: 40vh; }
+        }
+    </style>
+</head>
+<body>
+
+
+<header>
+    <div class="brand">Mark: The Servant</div>
+    <div class="nav-wrapper">
+        <div class="nav">
+            <button class="nav-btn" onclick="App.setTab(0)">1. Map</button>
+            <button class="nav-btn" onclick="App.setTab(1)">2. Structure</button>
+            <button class="nav-btn" onclick="App.setTab(2)">3. Dossier</button>
+            <button class="nav-btn active" onclick="App.setTab(3)">4. Sandwiches I</button>
+            <button class="nav-btn" onclick="App.setTab(4)">5. Sandwiches II</button>
+            <button class="nav-btn" onclick="App.setTab(5)">6. Characters</button>
+            <button class="nav-btn" onclick="App.setTab(6)">7. Greek Key</button>
+            <button class="nav-btn" onclick="App.setTab(7)">8. The Cycle</button>
+            <button class="nav-btn" onclick="App.setTab(8)">9. The Secret</button>
+            <button class="nav-btn" onclick="App.setTab(9)">10. The Commission</button>
+        </div>
+    </div>
+</header>
+
+
+<main>
+    <div class="visual-container">
+        <canvas id="mainCanvas"></canvas>
+        <div id="tooltip" class="overlay-tooltip"></div>
+    </div>
+   
+    <aside id="sidebarContent">
+        <!-- Injected via JS -->
+    </aside>
+</main>
+
+
+<script>
+    const App = {
+        tab: 0,
+        canvas: document.getElementById('mainCanvas'),
+        ctx: document.getElementById('mainCanvas').getContext('2d'),
+        sidebar: document.getElementById('sidebarContent'),
+        tooltip: document.getElementById('tooltip'),
+       
+        data: {
+            map: {
+                points: [
+                    {x: 0.5, y: 0.2, label: "Galilee", type: "Region", desc: "The Ministry of Power (Ch 1-8)."},
+                    {x: 0.55, y: 0.25, label: "Capernaum", type: "City", desc: "Peter's House. The HQ of the ministry."},
+                    {x: 0.6, y: 0.4, label: "Caesarea Philippi", type: "Turning Point", desc: "The Great Confession (Mk 8:29)."},
+                    {x: 0.5, y: 0.8, label: "Jerusalem", type: "City", desc: "The Passion Week (Ch 11-16)."},
+                    {x: 0.55, y: 0.7, label: "Jericho", type: "City", desc: "Healing of Bartimaeus."},
+                ]
+            },
+            structure: {
+                sections: [
+                    {start: 0, end: 0.5, label: "Service / Power", color: "#2aa198"},
+                    {start: 0.5, end: 0.55, label: "The Hinge", color: "#b58900"},
+                    {start: 0.55, end: 1.0, label: "Sacrifice / Passion", color: "#cb4b16"}
+                ]
+            },
+            dossier: {
+                trivia: ["Shortest Gospel", "Uses 'Immediately' 42 times", "No birth narrative", "Naked Young Man (14:51)"]
+            },
+            // Standard Markan Sandwiches
+            sandwiches1: [
+                {
+                    title: "Jairus' Daughter",
+                    ref: "Mark 5:21-43",
+                    middle: "Bleeding Woman"
+                },
+                {
+                    title: "The Fig Tree",
+                    ref: "Mark 11:12-25",
+                    middle: "Cleansing Temple"
+                },
+                {
+                    title: "Peter's Denial",
+                    ref: "Mark 14:53-72",
+                    middle: "Jesus' Confession"
+                }
+            ],
+            // Judgment / Definition Sandwiches
+            sandwiches2: [
+                {
+                    title: "The Plot to Kill",
+                    ref: "Mark 14:1-11",
+                    middle: "The Anointing"
+                },
+                {
+                    title: "King of the Jews",
+                    ref: "Mark 15:16-32",
+                    middle: "The Crucifixion"
+                }
+            ],
+            greek: [
+                { word: "Euthus", trans: "Immediately", count: 42, color: "#d33682" },
+                { word: "Diakonos", trans: "Servant", count: 29, color: "#268bd2" },
+                { word: "Exousia", trans: "Authority", count: 10, color: "#859900" },
+                { word: "Mysterion", trans: "Secret/Mystery", count: 4, color: "#b58900" }
+            ],
+            predictions: [
+                { ref: "Mark 8:31", fail: "Peter Rebukes", teach: "Take up Cross" },
+                { ref: "Mark 9:31", fail: "Argument on Greatness", teach: "Be Last of All" },
+                { ref: "Mark 10:33", fail: "James & John's Request", teach: "Servant of All" }
+            ],
+            commission: {
+                center: "Jerusalem",
+                command: "Go and Preach",
+                destinations: ["Judea", "Samaria", "Ends of the Earth"]
+            }
+        },
+
+
+        init() {
+            this.resize();
+            window.addEventListener('resize', () => this.resize());
+            this.canvas.addEventListener('mousemove', (e) => this.handleHover(e.clientX, e.clientY));
+            this.canvas.addEventListener('touchstart', (e) => {
+                const touch = e.touches[0];
+                this.handleHover(touch.clientX, touch.clientY);
+            }, {passive: true});
+           
+            // Default to Tab 9 (The Commission) for review
+            this.setTab(9);
+        },
+
+
+        resize() {
+            this.canvas.width = this.canvas.parentElement.clientWidth;
+            this.canvas.height = this.canvas.parentElement.clientHeight;
+            this.draw();
+        },
+
+
+        setTab(idx) {
+            this.tab = idx;
+            document.querySelectorAll('.nav-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+            this.renderSidebar();
+            this.draw();
+        },
+
+
+        renderSidebar() {
+            let html = "";
+            const t = this.tab;
+           
+            if(t === 0) { // Map
+                html = `<h2>1. Historical Setting</h2>
+                    <div class="content-block"><h3>Geography as Theology</h3><p>Mark moves from North (Power) to South (Sacrifice). The journey 'Up to Jerusalem' is the path to the cross.</p></div>
+                    <div class="content-block"><h3>The Gentile Audience</h3><p>Mark explains Jewish customs (e.g. hand washing) and translates Aramaic phrases ('Talitha koum'), suggesting a Roman audience.</p></div>`;
+            } else if(t === 1) { // Structure
+                html = `<h2>2. The Blueprint</h2>
+                    <div class="content-block"><h3>Two Halves</h3><p><strong>Ch 1-8:</strong> The Servant who rules over nature, demons, and sickness.<br><strong>Ch 9-16:</strong> The Servant who suffers. The pivot point is Peter's confession.</p></div>`;
+            } else if(t === 2) { // Dossier
+                html = `<h2>3. The Author</h2>
+                    <div class="content-block"><h3>John Mark</h3><p>Cousin of Barnabas. Failed on the first missionary journey with Paul, but later restored. Peter calls him 'my son'.</p></div>
+                    <div class="content-block"><h3>Fast Paced</h3><p>Mark uses the historic present tense ("Jesus says" vs "Jesus said") to make the action feel immediate.</p></div>`;
+            } else if(t === 3) { // Sandwiches I
+                html = `<h2>4. Intercalation</h2>
+                    <div class="content-block"><h3>The Markan Sandwich</h3><p>Mark loves to start Story A, interrupt it with Story B, then finish Story A. Story B provides the theological key to interpret Story A.</p></div>
+                    <div class="content-block"><h3>Example: The Fig Tree</h3><p>Jesus curses a fig tree (A), cleanses the temple (B), then the fig tree is dead (A). Meaning: The Temple is the fruitless tree.</p></div>`;
+            } else if(t === 4) { // Sandwiches II
+                html = `<h2>5. The Irony of the King</h2>
+                    <div class="content-block"><h3>Judgment Sandwiches</h3><p>In these structures, the outer brackets (The Plot, The Mocking Title) define the inner event. They turn a gift into a funeral, and an execution into a coronation.</p></div>
+                    <div class="content-block"><h3>The Cross as Throne</h3><p>Mocked as 'King' by soldiers (A) and labeled 'King' by Pilate (A), the center event—the Cross (B)—becomes the true throne of God.</p></div>`;
+            } else if(t === 5) { // Characters
+                html = `<h2>6. Irony of Character</h2>
+                    <div class="content-block"><h3>The Outsiders</h3><p>Demons, Gentiles, and Centurions often identify Jesus correctly ("Son of God").</p></div>
+                    <div class="content-block"><h3>The Insiders</h3><p>The Disciples are portrayed as remarkably dense. They constantly misunderstand Jesus' mission, expecting a conquering King, not a suffering Servant.</p></div>`;
+            } else if(t === 6) { // Greek
+                html = `<h2>7. Key Vocabulary</h2>
+                    <div class="content-block"><h3>Euthus (Immediately)</h3><p>Used 42 times. It creates a sense of breathless urgency. Jesus is a man of action moving inexorably toward the cross.</p></div>
+                    <div class="content-block"><h3>The Messianic Secret</h3><p>Jesus commands silence. He defines Messiahship by the cross, not the crown.</p></div>`;
+            } else if(t === 7) { // The Cycle
+                html = `<h2>8. The Passion Cycle</h2>
+                    <div class="content-block"><h3>The Loop</h3><p>Three times Jesus predicts his death. Three times the disciples demonstrate total ignorance. Three times Jesus corrects them with the call to servanthood.</p></div>
+                    <div class="content-block"><h3>Blindness</h3><p>This cycle dominates chapters 8-10, known as "The Way". It highlights how difficult it is to accept a suffering Messiah.</p></div>`;
+            } else if(t === 8) { // The Secret
+                html = `<h2>9. The Messianic Secret</h2>
+                    <div class="content-block"><h3>"Tell No One"</h3><p>Throughout the first half of the gospel, Jesus strictly commands demons and people to be silent about his identity.</p></div>
+                    <div class="content-block"><h3>Why?</h3><p>Because "Messiah" meant "Military Conqueror" to them. He had to redefine the word before he could accept the title.</p></div>`;
+            } else if(t === 9) { // The Commission
+                html = `<h2>10. The Great Commission</h2>
+                    <div class="content-block"><h3>The Final Command</h3><p>The gospel concludes with the Risen Christ appearing to the Eleven. He rebukes their hardness of heart but then entrusts them with the global mission.</p></div>
+                    <div class="content-block"><h3>Go Into All The World</h3><p>The mandate is clear: preach the good news to all creation. The signs of faith will accompany those who believe, extending the authority of Jesus through his followers.</p></div>`;
+            }
+            this.sidebar.innerHTML = html;
+        },
+
+
+        draw() {
+            const ctx = this.ctx;
+            const w = this.canvas.width;
+            const h = this.canvas.height;
+            ctx.clearRect(0,0,w,h);
+
+
+            switch(this.tab) {
+                case 0: this.drawMap(ctx, w, h); break;
+                case 1: this.drawStructure(ctx, w, h); break;
+                case 2: this.drawDossier(ctx, w, h); break;
+                case 3: this.drawSandwiches(ctx, w, h, this.data.sandwiches1); break;
+                case 4: this.drawSandwiches(ctx, w, h, this.data.sandwiches2); break;
+                case 5: this.drawCharacters(ctx, w, h); break;
+                case 6: this.drawGreek(ctx, w, h); break;
+                case 7: this.drawPredictions(ctx, w, h); break;
+                case 8: this.drawSecret(ctx, w, h); break;
+                case 9: this.drawCommission(ctx, w, h); break;
+            }
+        },
+
+
+        // --- DRAWING LOGIC FOR ALL TABS ---
+
+
+        drawMap(ctx, w, h) {
+            const scale = Math.min(w, h) * 0.8;
+            const offX = w/2 - scale/2; const offY = h/2 - scale/2;
+           
+            // Geography
+            ctx.strokeStyle = '#2aa198'; ctx.lineWidth = 4;
+            const galX = offX + scale * 0.55; const galY = offY + scale * 0.25;
+            const deadX = offX + scale * 0.52; const deadY = offY + scale * 0.75;
+           
+            ctx.beginPath(); ctx.arc(galX, galY, 15, 0, Math.PI*2); ctx.stroke();
+            ctx.beginPath(); ctx.ellipse(deadX, deadY, 12, 40, 0, 0, Math.PI*2); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(galX, galY + 15); ctx.bezierCurveTo(galX-10, galY+50, galX+10, galY+100, deadX, deadY - 40); ctx.stroke();
+
+
+            // Points
+            this.data.map.points.forEach(p => {
+                const px = offX + p.x * scale; const py = offY + p.y * scale;
+                ctx.fillStyle = '#b58900'; ctx.beginPath(); ctx.arc(px, py, 6, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text');
+                ctx.font = 'bold 12px sans-serif'; ctx.fillText(p.label, px + 10, py + 4);
+            });
+        },
+
+
+        drawStructure(ctx, w, h) {
+            const pad = 50; const chartW = w - pad*2; const chartH = h - pad*2; const midY = h/2;
+            ctx.beginPath(); ctx.moveTo(pad, midY);
+            ctx.quadraticCurveTo(pad + chartW*0.25, midY - 100, pad + chartW*0.5, midY);
+            ctx.quadraticCurveTo(pad + chartW*0.75, midY + 100, pad + chartW, midY + 50);
+            ctx.strokeStyle = '#268bd2'; ctx.lineWidth = 4; ctx.stroke();
+
+
+            this.data.structure.sections.forEach(sec => {
+                const sx = pad + sec.start * chartW; const wid = (sec.end - sec.start) * chartW;
+                ctx.fillStyle = sec.color; ctx.globalAlpha = 0.2; ctx.fillRect(sx, pad, wid, chartH);
+                ctx.globalAlpha = 1.0; ctx.fillStyle = sec.color; ctx.font = 'bold 14px sans-serif';
+                if(wid > 60) ctx.fillText(sec.label, sx + 5, pad - 10);
+            });
+        },
+
+
+        drawDossier(ctx, w, h) {
+            const cx = w/2; const cy = h/2; const scale = Math.min(w, h) / 400;
+            ctx.fillStyle = '#657b83';
+            ctx.beginPath(); ctx.moveTo(cx, cy+100*scale); ctx.lineTo(cx-20*scale, cy+140*scale); ctx.lineTo(cx+20*scale, cy+140*scale); ctx.fill();
+            ctx.strokeStyle = '#657b83'; ctx.lineWidth = 4*scale;
+            ctx.beginPath(); ctx.moveTo(cx-150*scale, cy+80*scale); ctx.lineTo(cx+150*scale, cy+120*scale); ctx.stroke();
+            ctx.beginPath(); ctx.arc(cx-150*scale, cy+80*scale, 40*scale, 0, Math.PI, false); ctx.stroke();
+            ctx.beginPath(); ctx.arc(cx+150*scale, cy+120*scale, 40*scale, 0, Math.PI, false); ctx.stroke();
+            ctx.fillStyle = '#2aa198'; ctx.font = `${14*scale}px sans-serif`; ctx.fillText("Internal", cx-200*scale, cy+50*scale);
+            ctx.fillStyle = '#cb4b16'; ctx.fillText("External (Tradition)", cx+80*scale, cy+90*scale);
+        },
+
+
+        drawSandwiches(ctx, w, h, dataList) {
+            const pad = 40;
+            const count = dataList.length;
+            const slotH = (h - pad*2) / count;
+            const leftMargin = 50;
+           
+            dataList.forEach((s, i) => {
+                const y = pad + i * slotH;
+                const midY = y + slotH/2;
+                const bracketDepth = 30; // How deep the horizontal arms go
+               
+                // --- VISUAL STRUCTURE (Matches Screenshot Style) ---
+               
+                // Gold Vertical Spine (Thick)
+                ctx.fillStyle = '#b58900';
+                ctx.fillRect(leftMargin, y, 5, slotH);
+               
+                // Top Gold Arm
+                ctx.fillRect(leftMargin, y, bracketDepth, 3);
+               
+                // Bottom Gold Arm
+                ctx.fillRect(leftMargin, y + slotH - 3, bracketDepth, 3);
+               
+                // Middle Orange Meat (Thick Block)
+                ctx.fillStyle = '#cb4b16';
+                ctx.fillRect(leftMargin + 40, midY - 10, 30, 20);
+               
+                // Guide Lines (Thin) connecting meat/arms to text
+                ctx.strokeStyle = '#657b83'; ctx.lineWidth = 1; ctx.globalAlpha = 0.3;
+                // Top line
+                ctx.beginPath(); ctx.moveTo(leftMargin + bracketDepth, y + 1.5); ctx.lineTo(leftMargin + 60, y + 1.5); ctx.stroke();
+                // Bottom line
+                ctx.beginPath(); ctx.moveTo(leftMargin + bracketDepth, y + slotH - 1.5); ctx.lineTo(leftMargin + 60, y + slotH - 1.5); ctx.stroke();
+                // Middle line
+                ctx.beginPath(); ctx.moveTo(leftMargin + 70, midY); ctx.lineTo(leftMargin + 90, midY); ctx.stroke();
+                ctx.globalAlpha = 1.0;
+
+
+                // --- TEXT LABELS ---
+                ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text');
+                ctx.font = 'bold 18px sans-serif';
+                ctx.textAlign = 'left';
+               
+                // Story A (Top) - Inset slightly from top arm
+                ctx.fillText(s.title, leftMargin + 70, y + 20);
+               
+                // Story A' (Bottom) - Moved UP to be inside the bracket
+                ctx.fillText(s.title, leftMargin + 70, y + slotH - 35);
+               
+                // Reference Text (Subtext)
+                ctx.fillStyle = '#93a1a1'; ctx.font = 'italic 13px sans-serif';
+                ctx.fillText(s.ref, leftMargin + 70, y + 38);
+                ctx.fillText(s.ref, leftMargin + 70, y + slotH - 17);
+
+
+                // Story B (Middle)
+                ctx.fillStyle = '#cb4b16'; ctx.font = 'bold 16px sans-serif';
+                ctx.fillText(s.middle, leftMargin + 100, midY + 5);
+            });
+        },
+
+
+        drawCharacters(ctx, w, h) {
+            const cx = w/2; const cy = h/2;
+            const scale = Math.min(w, h) / 2.5;
+           
+            // Center Jesus
+            ctx.fillStyle = '#cb4b16'; ctx.beginPath(); ctx.arc(cx, cy, 30, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.font = 'bold 12px sans-serif'; ctx.fillText("JESUS", cx, cy+4);
+
+
+            // Orbit: Insiders (Disciples) - Close but Blind
+            const insiders = ["Peter", "James", "John", "Judas"];
+            ctx.strokeStyle = '#2aa198'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(cx, cy, scale*0.5, 0, Math.PI*2); ctx.stroke();
+           
+            insiders.forEach((name, i) => {
+                const angle = (i / insiders.length) * Math.PI * 2;
+                const x = cx + Math.cos(angle) * scale * 0.5;
+                const y = cy + Math.sin(angle) * scale * 0.5;
+                ctx.fillStyle = '#2aa198'; ctx.beginPath(); ctx.arc(x, y, 15, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#fff'; ctx.fillText("?", x, y+4); // Symbol of confusion
+                ctx.fillStyle = '#657b83'; ctx.fillText(name, x, y - 20);
+            });
+
+
+            // Orbit: Outsiders - Far but Seeing
+            const outsiders = ["Centurion", "Syrophoenician", "Demons"];
+            ctx.strokeStyle = '#b58900'; ctx.setLineDash([5,5]); ctx.beginPath(); ctx.arc(cx, cy, scale*0.9, 0, Math.PI*2); ctx.stroke(); ctx.setLineDash([]);
+           
+            outsiders.forEach((name, i) => {
+                const angle = (i / outsiders.length) * Math.PI * 2 + 1;
+                const x = cx + Math.cos(angle) * scale * 0.9;
+                const y = cy + Math.sin(angle) * scale * 0.9;
+                ctx.fillStyle = '#b58900'; ctx.beginPath(); ctx.arc(x, y, 15, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#fff'; ctx.fillText("👁", x, y+4); // Symbol of sight
+                ctx.fillStyle = '#657b83'; ctx.fillText(name, x, y - 20);
+            });
+            ctx.textAlign = 'left';
+        },
+
+
+        drawGreek(ctx, w, h) {
+            const pad = 50; const barH = 40; const gap = 20;
+           
+            // Find max for scaling
+            const max = Math.max(...this.data.greek.map(g => g.count));
+           
+            this.data.greek.forEach((g, i) => {
+                const y = pad + i * (barH + gap);
+               
+                // Fixed: Reduced width multiplier to leave space on right for text
+                const len = (g.count / max) * (w - 300);
+               
+                ctx.fillStyle = g.color;
+                ctx.fillRect(150, y, len, barH);
+               
+                ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text');
+                ctx.font = 'bold 16px sans-serif'; ctx.textAlign = 'right';
+                ctx.fillText(g.word, 140, y + 25);
+               
+                ctx.textAlign = 'left';
+                ctx.font = '14px sans-serif';
+                ctx.fillText(g.count + "x (" + g.trans + ")", 150 + len + 10, y + 25);
+            });
+        },
+
+
+        drawPredictions(ctx, w, h) {
+            const count = this.data.predictions.length;
+            const stepY = h / (count + 0.5);
+           
+            this.data.predictions.forEach((p, i) => {
+                const cy = stepY * (i + 0.8);
+                const cx = w / 2;
+               
+                // Circle Loop
+                ctx.strokeStyle = '#b58900'; ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.arc(cx, cy, 50, 0, Math.PI*2); ctx.stroke();
+               
+                // Prediction (Top) - Moved ABOVE the circle
+                ctx.fillStyle = '#cb4b16'; ctx.textAlign = 'center'; ctx.font = 'bold 14px sans-serif';
+                ctx.fillText(p.ref + " Prediction", cx, cy - 65); // Moved up to clear circle
+
+
+                // Failure (Right/Bottom)
+                ctx.textAlign = 'left';
+                ctx.fillStyle = '#657b83'; ctx.font = 'bold 14px sans-serif';
+                ctx.fillText("❌ " + p.fail, cx + 60, cy + 5);
+
+
+                // Teaching (Left/Bottom)
+                ctx.textAlign = 'right';
+                ctx.fillStyle = '#2aa198'; ctx.font = 'bold 14px sans-serif';
+                ctx.fillText(p.teach + " ✅", cx - 60, cy + 5);
+               
+                // Removed the arrow loop path that created the "broken white circle"
+            });
+            ctx.textAlign = 'left';
+        },
+
+
+        drawSecret(ctx, w, h) {
+            const cy = h / 2;
+            const cx = w / 2;
+           
+            // Timeline line
+            ctx.strokeStyle = '#657b83'; ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(50, cy); ctx.lineTo(w - 50, cy); ctx.stroke();
+           
+            // Events
+            const events = [
+                {x: 0.1, type: "shh", label: "Demons Silenced"},
+                {x: 0.3, type: "shh", label: "Leper Silenced"},
+                {x: 0.5, type: "loud", label: "Leper Blabs"},
+                {x: 0.7, type: "shh", label: "Disciples Silenced"},
+                {x: 0.9, type: "loud", label: "Gospel Preached"}
+            ];
+
+
+            events.forEach(e => {
+                const ex = 50 + e.x * (w - 100);
+                if(e.type === "shh") {
+                    ctx.fillStyle = '#cb4b16';
+                    ctx.beginPath(); ctx.arc(ex, cy, 8, 0, Math.PI*2); ctx.fill();
+                    ctx.textAlign = 'center'; ctx.font = '20px sans-serif';
+                    ctx.fillText("🤫", ex, cy - 20);
+                    ctx.font = '10px sans-serif'; ctx.fillStyle = '#657b83';
+                    ctx.fillText(e.label, ex, cy - 40);
+                } else {
+                    ctx.fillStyle = '#2aa198';
+                    ctx.beginPath(); ctx.arc(ex, cy, 8, 0, Math.PI*2); ctx.fill();
+                    ctx.textAlign = 'center'; ctx.font = '20px sans-serif';
+                    ctx.fillText("📢", ex, cy + 30);
+                    ctx.font = '10px sans-serif'; ctx.fillStyle = '#657b83';
+                    ctx.fillText(e.label, ex, cy + 45);
+                }
+            });
+            ctx.textAlign = 'left';
+        },
+
+
+        drawCommission(ctx, w, h) {
+            const cx = w * 0.20; // Shifted left to 20%
+            const cy = h / 2;
+            const scale = Math.min(w, h) / 520; // Reduced scale to ensure fit
+            const comm = this.data.commission;
+
+
+            // Central Hub (Jerusalem)
+            ctx.fillStyle = '#b58900';
+            ctx.beginPath(); ctx.arc(cx, cy, 50 * scale, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.font = `bold ${16*scale}px sans-serif`;
+            ctx.fillText(comm.center, cx, cy - 10*scale);
+            ctx.font = `${14*scale}px sans-serif`;
+            ctx.fillText(comm.command, cx, cy + 20*scale);
+
+
+            // Arrows and Destinations
+            const angles = [-Math.PI/6, 0, Math.PI/6]; // Angles for Judea, Samaria, Ends of Earth
+            const radii = [120*scale, 160*scale, 200*scale];
+
+
+            comm.destinations.forEach((dest, i) => {
+                const angle = angles[i];
+                const r = radii[i];
+                const dx = cx + Math.cos(angle) * r;
+                const dy = cy + Math.sin(angle) * r;
+
+
+                // Arrow Line
+                ctx.strokeStyle = '#cb4b16'; ctx.lineWidth = 3*scale;
+                ctx.beginPath(); ctx.moveTo(cx + 50*scale, cy); ctx.lineTo(dx - 20*scale, dy); ctx.stroke();
+
+
+                // Arrowhead
+                ctx.beginPath();
+                ctx.moveTo(dx, dy);
+                ctx.lineTo(dx - 20*scale, dy - 10*scale);
+                ctx.lineTo(dx - 20*scale, dy + 10*scale);
+                ctx.fill();
+
+
+                // Destination Text
+                ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text');
+                ctx.textAlign = 'left'; ctx.font = `bold ${16*scale}px sans-serif`;
+                ctx.fillText(dest, dx + 10*scale, dy + 5*scale);
+            });
+            ctx.textAlign = 'left';
+        },
+
+
+        handleHover(clientX, clientY) {
+            if(this.tab !== 0) { this.tooltip.style.opacity = 0; return; }
+           
+            const rect = this.canvas.getBoundingClientRect();
+            const mouseX = clientX - rect.left;
+            const mouseY = clientY - rect.top;
+           
+            const w = this.canvas.width;
+            const h = this.canvas.height;
+            const scale = Math.min(w, h) * 0.8;
+            const offX = w/2 - scale/2;
+            const offY = h/2 - scale/2;
+
+
+            let hit = null;
+            this.data.map.points.forEach(p => {
+                const px = offX + p.x * scale;
+                const py = offY + p.y * scale;
+                const dist = Math.hypot(mouseX - px, mouseY - py);
+                if(dist < 20) hit = p; // Larger hit area for touch
+            });
+
+
+            if(hit) {
+                this.tooltip.style.left = (clientX + 15) + 'px';
+                this.tooltip.style.top = (clientY + 15) + 'px';
+                this.tooltip.innerHTML = `<strong>${hit.label}</strong><br><em style='font-size:0.8em'>${hit.type}</em><br>${hit.desc}`;
+                this.tooltip.style.opacity = 1;
+                document.body.style.cursor = 'pointer';
+            } else {
+                this.tooltip.style.opacity = 0;
+                document.body.style.cursor = 'default';
+            }
+        }
+    };
+
+
+    window.onload = () => App.init();
+
+
+</script>
+</body>
+</html>
+
