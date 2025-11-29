@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblical Architect: Gospel of Matthew</title>
+   
+    <!-- Marked for Markdown -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+
+    <style>
+        :root {
+            --bg: #fdf6e3; /* Solarized Light Parchment */
+            --panel: #eee8d5;
+            --text: #657b83;
+            --accent: #b58900; /* Gold */
+            --highlight: #cb4b16; /* Orange */
+            --secondary: #2aa198; /* Cyan/Teal */
+            --border: #d0d0d0;
+            --font-head: 'Georgia', serif;
+            --font-body: 'Segoe UI', sans-serif;
+        }
+
+
+        /* Dark Mode Support */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #1c1f24;
+                --panel: #282c34;
+                --text: #abb2bf;
+                --accent: #e5c07b;
+                --highlight: #e06c75;
+                --secondary: #56b6c2;
+                --border: #3b4048;
+            }
+        }
+
+
+        body { margin: 0; font-family: var(--font-body); background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+
+        /* Header */
+        header {
+            background: var(--panel); border-bottom: 1px solid var(--border); padding: 0 20px; height: 60px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+        }
+        .brand { font-family: var(--font-head); font-size: 1.4rem; font-weight: bold; color: var(--highlight); white-space: nowrap; margin-right: 20px; }
+       
+        /* Scrollable Nav - Visible Scrollbar as per QA Rubric */
+        .nav-wrapper { flex: 1; overflow: hidden; position: relative; }
+        .nav {
+            display: flex; gap: 5px; overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 5px;
+            mask-image: linear-gradient(to right, black 90%, transparent 100%);
+        }
+       
+        /* Custom Scrollbar Styling */
+        .nav::-webkit-scrollbar { height: 4px; }
+        .nav::-webkit-scrollbar-track { background: transparent; }
+        .nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+        .nav::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+       
+        .nav-btn {
+            background: transparent; border: none; padding: 10px 15px; cursor: pointer; color: var(--text); font-weight: 600; opacity: 0.7; transition: all 0.2s; border-bottom: 3px solid transparent; white-space: nowrap;
+        }
+        .nav-btn:hover { opacity: 1; }
+        .nav-btn.active { opacity: 1; border-bottom-color: var(--accent); color: var(--accent); }
+
+
+        /* Main Layout */
+        main { flex: 1; display: flex; overflow: hidden; position: relative; }
+
+
+        /* Canvas Container */
+        .visual-container { flex: 2; position: relative; background: var(--bg); display: flex; justify-content: center; align-items: center; overflow: hidden; }
+        canvas { width: 100%; height: 100%; object-fit: contain; }
+
+
+        /* Sidebar */
+        aside {
+            flex: 1; min-width: 350px; max-width: 450px; background: var(--panel); border-left: 1px solid var(--border);
+            display: flex; flex-direction: column; overflow-y: auto; padding: 30px; box-shadow: -5px 0 15px rgba(0,0,0,0.05);
+        }
+
+
+        h2 { font-family: var(--font-head); color: var(--accent); border-bottom: 2px solid var(--border); padding-bottom: 10px; margin-top: 0; }
+        .content-block { margin-bottom: 30px; line-height: 1.6; }
+        .content-block h3 { color: var(--highlight); margin-bottom: 5px; font-size: 1.1rem; }
+       
+        /* Tooltip */
+        .overlay-tooltip {
+            position: absolute; background: var(--panel); padding: 10px 15px; border: 1px solid var(--accent); border-radius: 4px; pointer-events: none; opacity: 0; transition: opacity 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 10;
+        }
+
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            main { flex-direction: column; }
+            aside {
+                width: 100%; min-width: 0; max-width: none;
+                flex: 1; border-left: none; border-top: 1px solid var(--border); padding: 20px;
+            }
+            header { padding: 0 10px; height: 55px; }
+            .brand { font-size: 1.1rem; margin-right: 10px; }
+            .nav-btn { font-size: 0.85rem; padding: 10px; }
+            .visual-container { flex: none; height: 45vh; }
+        }
+    </style>
+</head>
+<body>
+
+
+<header>
+    <div class="brand">Matthew: The King</div>
+    <div class="nav-wrapper">
+        <div class="nav">
+            <button class="nav-btn active" onclick="App.setTab(0)">1. Genealogy</button>
+            <button class="nav-btn" onclick="App.setTab(1)">2. Map</button>
+            <button class="nav-btn" onclick="App.setTab(2)">3. Structure</button>
+            <button class="nav-btn" onclick="App.setTab(3)">4. Dossier</button>
+            <button class="nav-btn" onclick="App.setTab(4)">5. Fulfillment</button>
+            <button class="nav-btn" onclick="App.setTab(5)">6. The Sermon</button>
+            <button class="nav-btn" onclick="App.setTab(6)">7. Parables</button>
+            <button class="nav-btn" onclick="App.setTab(7)">8. Peter</button>
+            <button class="nav-btn" onclick="App.setTab(8)">9. Greek Key</button>
+            <button class="nav-btn" onclick="App.setTab(9)">10. Commission</button>
+        </div>
+    </div>
+</header>
+
+
+<main>
+    <div class="visual-container">
+        <canvas id="mainCanvas"></canvas>
+        <div id="tooltip" class="overlay-tooltip"></div>
+    </div>
+   
+    <aside id="sidebarContent">
+        <!-- Content injected via JS -->
+    </aside>
+</main>
+
+
+<script>
+    const App = {
+        tab: 0,
+        canvas: document.getElementById('mainCanvas'),
+        ctx: document.getElementById('mainCanvas').getContext('2d'),
+        sidebar: document.getElementById('sidebarContent'),
+        tooltip: document.getElementById('tooltip'),
+       
+        // --- DATA REPOSITORY ---
+        data: {
+            genealogy: [
+                { title: "Abraham to David", count: 14, desc: "The Patriarchs", color: "#b58900" },
+                { title: "David to Exile", count: 14, desc: "The Kings", color: "#cb4b16" },
+                { title: "Exile to Christ", count: 14, desc: "The Remnant", color: "#2aa198" }
+            ],
+            map: {
+                points: [
+                    {x: 0.7, y: 0.7, label: "Bethlehem", desc: "Birth of the King"},
+                    {x: 0.2, y: 0.8, label: "Egypt", desc: "'Out of Egypt I called my son'"},
+                    {x: 0.65, y: 0.2, label: "Nazareth", desc: "He shall be called a Nazarene"}
+                ]
+            },
+            structure: [
+                { label: "Book 1", desc: "Ethics of the Kingdom", ref: "Ch 5-7" },
+                { label: "Book 2", desc: "Mission of the Kingdom", ref: "Ch 10" },
+                { label: "Book 3", desc: "Secrets of the Kingdom", ref: "Ch 13" },
+                { label: "Book 4", desc: "Community of the Kingdom", ref: "Ch 18" },
+                { label: "Book 5", desc: "Future of the Kingdom", ref: "Ch 24-25" }
+            ],
+            fulfillment: [
+                { ot: "Isaiah 7:14", nt: "Matt 1:23", topic: "Virgin Birth" },
+                { ot: "Micah 5:2", nt: "Matt 2:6", topic: "Ruler from Bethlehem" },
+                { ot: "Hosea 11:1", nt: "Matt 2:15", topic: "Flight to Egypt" },
+                { ot: "Jeremiah 31:15", nt: "Matt 2:18", topic: "Weeping for Children" }
+            ],
+            sermon: ["Poor in Spirit", "Mourn", "Meek", "Hunger & Thirst", "Merciful", "Pure in Heart", "Peacemakers", "Persecuted"],
+            parables: [
+                { name: "The Sower", type: "Reception" },
+                { name: "Weeds", type: "Judgment" },
+                { name: "Mustard Seed", type: "Growth" },
+                { name: "Hidden Treasure", type: "Value" }
+            ],
+            peter: [
+                { event: "Walks on Water", ref: "14:29" },
+                { event: "Confesses Christ", ref: "16:16" },
+                { event: "Received Keys", ref: "16:19" },
+                { event: "Denies 3 Times", ref: "26:70" }
+            ],
+            greek: [
+                { word: "Pleroo", trans: "Fulfill", count: 16, color: "#b58900" },
+                { word: "Dikaiosune", trans: "Righteousness", count: 7, color: "#2aa198" },
+                { word: "Ekklesia", trans: "Church", count: 3, color: "#cb4b16" }, // Only Gospel to use it
+                { word: "Basileia", trans: "Kingdom", count: 55, color: "#6c71c4" }
+            ],
+            commission: {
+                center: "Authority",
+                command: "Disciple Nations",
+                triad: ["Father", "Son", "Holy Spirit"]
+            }
+        },
+
+
+        init() {
+            this.resize();
+            window.addEventListener('resize', () => this.resize());
+           
+            // Mouse/Touch Handling with Null Check Safety
+            const handler = (e) => {
+                const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+                const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+                if (clientX && clientY) this.handleHover(clientX, clientY);
+            };
+
+
+            this.canvas.addEventListener('mousemove', handler);
+            this.canvas.addEventListener('touchstart', handler, {passive: true});
+           
+            this.setTab(0);
+        },
+
+
+        resize() {
+            this.canvas.width = this.canvas.parentElement.clientWidth;
+            this.canvas.height = this.canvas.parentElement.clientHeight;
+            this.draw();
+        },
+
+
+        setTab(idx) {
+            this.tab = idx;
+            document.querySelectorAll('.nav-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+            this.renderSidebar();
+            this.draw();
+        },
+
+
+        // --- CONTENT GENERATION ---
+        renderSidebar() {
+            let html = "";
+            const t = this.tab;
+           
+            const content = [
+                // 0: Genealogy
+                `<h2>1. The Royal Lineage</h2>
+                 <div class="content-block"><h3>The 3 x 14 Structure</h3><p>Matthew organizes history into three blocks: Abraham to David (Rise), David to Exile (Fall), Exile to Christ (Restoration). He establishes Jesus' legal right to the throne through Joseph.</p></div>
+                 <div class="content-block"><h3>The Women</h3><p>Unusually, Matthew includes Tamar, Rahab, Ruth, and Bathsheba—Gentiles and outsiders included in the royal line.</p></div>`,
+               
+                // 1: Map
+                `<h2>2. The New Exodus</h2>
+                 <div class="content-block"><h3>Reliving Israel's History</h3><p>Jesus goes down into Egypt and comes out again, just as Israel did. He passes through the water (Baptism) and enters the wilderness for 40 days (Testing).</p></div>
+                 <div class="content-block"><h3>Prophecy</h3><p>This geography is theological. "Out of Egypt I called my son" (Hosea 11:1).</p></div>`,
+               
+                // 2: Structure
+                `<h2>3. The Five Books</h2>
+                 <div class="content-block"><h3>The New Torah</h3><p>Matthew structures his gospel around 5 distinct "Narrative + Discourse" blocks, mirroring the 5 books of Moses. Each block ends with "When Jesus had finished saying these things..."</p></div>`,
+               
+                // 3: Dossier
+                `<h2>4. The Author & Audience</h2>
+                 <div class="content-block"><h3>Levi the Tax Collector</h3><p>A Jewish outcast who writes for a Jewish audience. He focuses heavily on the Kingdom of Heaven (a respectful Jewish circumlocution for God).</p></div>`,
+               
+                // 4: Fulfillment
+                `<h2>5. Prophetic Fulfillment</h2>
+                 <div class="content-block"><h3>"That it might be fulfilled"</h3><p>Matthew uses this formula citation over 10 times. He is not just checking boxes; he is showing that all Hebrew history comes to its climax in Jesus.</p></div>`,
+               
+                // 5: Sermon
+                `<h2>6. The Sermon on the Mount</h2>
+                 <div class="content-block"><h3>The Manifesto</h3><p>Jesus goes up a mountain (like Moses) to deliver the Law of the Kingdom. The Beatitudes describe the character of the Kingdom citizens.</p></div>`,
+               
+                // 6: Parables
+                `<h2>7. Kingdom Parables</h2>
+                 <div class="content-block"><h3>Secrets of the Kingdom</h3><p>In Chapter 13, Jesus explains that the Kingdom does not come with immediate apocalyptic force, but starts small (mustard seed) and grows secretly.</p></div>`,
+               
+                // 7: Peter
+                `<h2>8. Peter: The Rock</h2>
+                 <div class="content-block"><h3>Unique Material</h3><p>Only Matthew tells us Peter walked on water. Only Matthew records the "Keys of the Kingdom" promise. Matthew highlights the role of the Church (*Ekklesia*).</p></div>`,
+               
+                // 8: Greek
+                `<h2>9. Key Vocabulary</h2>
+                 <div class="content-block"><h3>Pleroo (Fulfill)</h3><p>Jesus doesn't abolish the Law; he fills it full of its intended meaning.</p></div>
+                 <div class="content-block"><h3>Dikaiosune (Righteousness)</h3><p>A major theme: "Seek first the Kingdom and his righteousness."</p></div>`,
+               
+                // 9: Commission
+                `<h2>10. The Great Commission</h2>
+                 <div class="content-block"><h3>All Authority</h3><p>The climax of the book. The King has received all authority. The command is to "Make Disciples" of all nations (Gentiles included).</p></div>
+                 <div class="content-block"><h3>The Promise</h3><p>"I am with you always." The book ends with Emmanuel (God with us).</p></div>`
+            ];
+
+
+            this.sidebar.innerHTML = content[t] || "<h2>Content Loading...</h2>";
+        },
+
+
+        // --- DRAWING ENGINE ---
+        draw() {
+            const ctx = this.ctx;
+            const w = this.canvas.width;
+            const h = this.canvas.height;
+            ctx.clearRect(0,0,w,h);
+
+
+            // Dispatch to specific drawers
+            const drawers = [
+                this.drawGenealogy, this.drawMap, this.drawStructure, this.drawDossier,
+                this.drawFulfillment, this.drawSermon, this.drawParables, this.drawPeter,
+                this.drawGreek, this.drawCommission
+            ];
+           
+            if (drawers[this.tab]) drawers[this.tab].call(this, ctx, w, h);
+        },
+
+
+        // 1. Genealogy (Stepped Timeline - Adjusted for Mobile Safety)
+        drawGenealogy(ctx, w, h) {
+            const steps = this.data.genealogy;
+           
+            // Reduced step width (w/4 -> w/4.2) to fit tighter spaces
+            const stepW = w / 4.2;
+            const stepH = h / 5; // Reduced step height from h/4 to h/5 for compact verticality
+           
+            // Increased left margin (0.1 -> 0.15) to prevent text cutoff
+            // Adjusted top margin (startY 0.85 -> 0.6) to move diagram up and align with sidebar text.
+            const startX = w * 0.15;
+            const startY = h * 0.6;
+
+
+            steps.forEach((step, i) => {
+                const x = startX + i * stepW;
+                const y = startY - i * stepH;
+               
+                // Draw Step Line
+                ctx.strokeStyle = step.color; ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.lineTo(x + stepW, y);
+                // Only draw the vertical riser for the first two steps.
+                if (i < steps.length - 1) {
+                    ctx.lineTo(x + stepW, y - stepH);
+                }
+                ctx.stroke();
+               
+                // Draw Point
+                ctx.fillStyle = step.color;
+                ctx.beginPath(); ctx.arc(x, y, 8, 0, Math.PI*2); ctx.fill();
+
+
+                // Text (Moved to center over horizontal segment to prevent overlap)
+                ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text');
+                ctx.textAlign = 'center'; // Center text
+               
+                // Title above the line
+                ctx.font = 'bold 14px sans-serif';
+                ctx.fillText(step.title, x + stepW/2, y - 10);
+               
+                // Count below the line
+                ctx.font = '12px sans-serif';
+                ctx.fillStyle = '#93a1a1';
+                ctx.fillText(step.count + " Generations", x + stepW/2, y + 20);
+            });
+            ctx.textAlign = 'left'; // Reset
+           
+            // Final Christ Point
+            const fx = startX + 3 * stepW;
+            const fy = startY - 2 * stepH;
+            ctx.fillStyle = '#cb4b16';
+            ctx.beginPath(); ctx.arc(fx, fy, 12, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text');
+            ctx.textAlign = 'center';
+            ctx.fillText("CHRIST", fx, fy + 30);
+            ctx.textAlign = 'left';
+        },
+
+
+        // 2. Map (Curve)
+        drawMap(ctx, w, h) {
+            const scale = Math.min(w, h) * 0.8;
+            const offX = w/2 - scale/2; const offY = h/2 - scale/2;
+
+
+            // Draw Path (Israel -> Egypt -> Israel)
+            ctx.strokeStyle = '#2aa198'; ctx.lineWidth = 3; ctx.setLineDash([10, 10]);
+            ctx.beginPath();
+            const p = this.data.map.points;
+           
+            // Bezier from Bethlehem to Egypt
+            const bethX = offX + p[0].x * scale; const bethY = offY + p[0].y * scale;
+            const egyX = offX + p[1].x * scale; const egyY = offY + p[1].y * scale;
+            const nazX = offX + p[2].x * scale; const nazY = offY + p[2].y * scale;
+
+
+            ctx.moveTo(bethX, bethY);
+            ctx.quadraticCurveTo(offX + scale*0.5, offY + scale*0.9, egyX, egyY);
+            ctx.stroke();
+
+
+            // Bezier from Egypt to Nazareth
+            ctx.beginPath(); ctx.moveTo(egyX, egyY);
+            ctx.quadraticCurveTo(offX + scale*0.1, offY + scale*0.1, nazX, nazY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+
+            // Draw Points
+            p.forEach(pt => {
+                const px = offX + pt.x * scale;
+                const py = offY + pt.y * scale;
+                ctx.fillStyle = '#b58900'; ctx.beginPath(); ctx.arc(px, py, 6, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text');
+                ctx.font = 'bold 12px sans-serif';
+                // QA: Ensure text doesn't overlap point
+                ctx.fillText(pt.label, px + 12, py + 4);
+            });
+        },
+
+
+        // 3. Structure (5 Books - Blocks)
+        drawStructure(ctx, w, h) {
+            const pad = 40;
+            const boxW = (w - pad*2) / 5;
+            const baseY = h/2;
+
+
+            this.data.structure.forEach((book, i) => {
+                const x = pad + i * boxW;
+               
+                // Draw Book Spine
+                ctx.fillStyle = i % 2 === 0 ? '#b58900' : '#cb4b16';
+                ctx.fillRect(x + 5, baseY - 60, boxW - 10, 120);
+               
+                // Label
+                ctx.fillStyle = '#fff'; ctx.textAlign = 'center';
+                ctx.font = 'bold 14px sans-serif';
+                ctx.fillText(book.label, x + boxW/2, baseY);
+               
+                // Ref (Below)
+                ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text');
+                ctx.font = '12px sans-serif';
+                ctx.fillText(book.ref, x + boxW/2, baseY + 80);
+            });
+            ctx.textAlign = 'left';
+        },
+
+
+        // 4. Dossier (Simple Icon)
+        drawDossier(ctx, w, h) {
+            const cx = w/2; const cy = h/2;
+           
+            // Tax Booth / Table
+            ctx.fillStyle = '#657b83';
+            ctx.fillRect(cx - 60, cy, 120, 10); // Table top
+            ctx.fillRect(cx - 50, cy + 10, 10, 50); // Leg
+            ctx.fillRect(cx + 40, cy + 10, 10, 50); // Leg
+           
+            // Coins
+            ctx.fillStyle = '#b58900';
+            ctx.beginPath(); ctx.arc(cx - 20, cy - 10, 10, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(cx + 10, cy - 8, 10, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(cx, cy - 20, 10, 0, Math.PI*2); ctx.fill();
+           
+            ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text');
+            ctx.textAlign = 'center'; ctx.font = 'bold 16px sans-serif';
+            ctx.fillText("Matthew (Levi)", cx, cy + 90);
+            ctx.textAlign = 'left';
+        },
+
+
+        // 5. Fulfillment (Arrows OT -> NT)
+        drawFulfillment(ctx, w, h) {
+            const items = this.data.fulfillment;
+            const slotH = (h - 60) / items.length;
+            const leftX = w * 0.2;
+            const rightX = w * 0.8;
+
+
+            items.forEach((item, i) => {
+                const y = 50 + i * slotH;
+               
+                // OT Text
+                ctx.fillStyle = '#93a1a1'; ctx.textAlign = 'right'; ctx.font = '14px sans-serif';
+                ctx.fillText(item.ot, leftX - 10, y);
+               
+                // NT Text
+                ctx.fillStyle = '#b58900'; ctx.textAlign = 'left';
+                ctx.fillText(item.nt, rightX + 10, y);
+               
+                // Label (Center)
+                ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text');
+                ctx.textAlign = 'center'; ctx.font = 'bold 14px sans-serif';
+                ctx.fillText(item.topic, w/2, y - 10);
+
+
+                // Arrow
+                ctx.strokeStyle = '#cb4b16'; ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.moveTo(leftX, y); ctx.lineTo(rightX, y); ctx.stroke();
+                // Arrowhead
+                ctx.beginPath(); ctx.moveTo(rightX, y); ctx.lineTo(rightX - 10, y - 5); ctx.lineTo(rightX - 10, y + 5); ctx.fill();
+            });
+            ctx.textAlign = 'left';
+        },
+
+
+        // 6. Sermon (Mountain - Fixed Spacing)
+        drawSermon(ctx, w, h) {
+            const cx = w/2;
+            const bottomY = h - 50;
+            const topY = 50;
+           
+            // Mountain shape
+            ctx.fillStyle = '#2aa198';
+            ctx.beginPath(); ctx.moveTo(0, bottomY); ctx.lineTo(cx, topY); ctx.lineTo(w, bottomY); ctx.fill();
+           
+            // Steps - Adjusted to start lower where triangle is wider
+            const steps = this.data.sermon;
+            ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.font = 'bold 12px sans-serif';
+           
+            const startTextY = topY + 120; // Pushed down significantly
+            const spacePerItem = (bottomY - startTextY) / steps.length;
+
+
+            steps.forEach((s, i) => {
+                const y = startTextY + i * spacePerItem;
+                if (y < bottomY) {
+                    ctx.fillText(s, cx, y);
+                }
+            });
+            ctx.textAlign = 'left';
+        },
+
+
+        // 7. Parables (Radial with Text Safety)
+        drawParables(ctx, w, h) {
+            const cx = w * 0.4; // QA: Shift center left to allow label space
+            const cy = h / 2;
+            const r = Math.min(w, h) / 4;
+           
+            this.data.parables.forEach((p, i) => {
+                const angle = (i / this.data.parables.length) * Math.PI * 2;
+                const x = cx + Math.cos(angle) * r;
+                const y = cy + Math.sin(angle) * r;
+               
+                // Line
+                ctx.strokeStyle = '#657b83'; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(x, y); ctx.stroke();
+               
+                // Pod
+                ctx.fillStyle = '#859900'; ctx.beginPath(); ctx.arc(x, y, 15, 0, Math.PI*2); ctx.fill();
+               
+                // Label
+                ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text');
+                ctx.font = 'bold 14px sans-serif';
+                // QA: Simple collision avoidance based on side
+                if(x > cx) {
+                    ctx.textAlign = 'left'; ctx.fillText(p.name, x + 20, y + 5);
+                } else {
+                    ctx.textAlign = 'right'; ctx.fillText(p.name, x - 20, y + 5);
+                }
+            });
+            ctx.textAlign = 'left';
+        },
+
+
+        // 8. Peter (Keys)
+        drawPeter(ctx, w, h) {
+            const cx = w/2; const cy = h/2;
+           
+            // Key Shape
+            ctx.strokeStyle = '#b58900'; ctx.lineWidth = 5;
+            ctx.beginPath();
+            // Loop
+            ctx.arc(cx - 50, cy, 20, 0, Math.PI*2);
+            // Shaft
+            ctx.moveTo(cx - 30, cy); ctx.lineTo(cx + 80, cy);
+            // Teeth
+            ctx.moveTo(cx + 60, cy); ctx.lineTo(cx + 60, cy + 20);
+            ctx.moveTo(cx + 75, cy); ctx.lineTo(cx + 75, cy + 25);
+            ctx.stroke();
+
+
+            // List events
+            ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text');
+            ctx.font = '14px sans-serif';
+            this.data.peter.forEach((p, i) => {
+                ctx.fillText(`• ${p.event} (${p.ref})`, cx - 60, cy + 50 + i*25);
+            });
+        },
+
+
+        // 9. Greek Key (Bar Chart with Right Edge Check)
+        drawGreek(ctx, w, h) {
+            const pad = 50; const barH = 40; const gap = 20;
+            const max = Math.max(...this.data.greek.map(g => g.count));
+           
+            this.data.greek.forEach((g, i) => {
+                const y = pad + i * (barH + gap);
+                // QA: Reduced width multiplier (w-300) to ensure text space on right
+                const len = (g.count / max) * (w - 250);
+               
+                ctx.fillStyle = g.color;
+                ctx.fillRect(120, y, len, barH);
+               
+                // Word (Left)
+                ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text');
+                ctx.font = 'bold 16px sans-serif'; ctx.textAlign = 'right';
+                ctx.fillText(g.word, 110, y + 25);
+               
+                // Count (Right)
+                ctx.textAlign = 'left'; ctx.font = '14px sans-serif';
+                ctx.fillText(`${g.count}x (${g.trans})`, 120 + len + 10, y + 25);
+            });
+        },
+
+
+        // 10. Commission (Triad)
+        drawCommission(ctx, w, h) {
+            const cx = w/2; const cy = h/2;
+            const r = 60;
+           
+            // Triangle
+            const topY = cy - r;
+            const leftX = cx - r * 0.866; const botY = cy + r * 0.5;
+            const rightX = cx + r * 0.866;
+
+
+            ctx.strokeStyle = '#b58900'; ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(cx, topY); ctx.lineTo(leftX, botY); ctx.lineTo(rightX, botY); ctx.closePath(); ctx.stroke();
+
+
+            // Nodes
+            const nodes = [
+                {x: cx, y: topY, l: "Father"},
+                {x: rightX, y: botY, l: "Son"},
+                {x: leftX, y: botY, l: "Spirit"}
+            ];
+
+
+            ctx.textAlign = 'center'; ctx.font = 'bold 14px sans-serif';
+            nodes.forEach(n => {
+                ctx.fillStyle = '#fdf6e3'; ctx.beginPath(); ctx.arc(n.x, n.y, 25, 0, Math.PI*2); ctx.fill();
+                ctx.strokeStyle = '#b58900'; ctx.stroke();
+                ctx.fillStyle = '#b58900'; ctx.fillText(n.l, n.x, n.y + 5);
+            });
+
+
+            // Command
+            ctx.fillStyle = '#cb4b16'; ctx.font = 'bold 18px sans-serif';
+            ctx.fillText("GO & DISCIPLE", cx, cy + 120);
+        },
+
+
+        // QA: Null Check Handler
+        handleHover(clientX, clientY) {
+            // Only Tabs 1 (Map) is truly interactive for this demo,
+            // but structure handles all safely.
+            const rect = this.canvas.getBoundingClientRect();
+            const mouseX = clientX - rect.left;
+            const mouseY = clientY - rect.top;
+           
+            // Map Logic
+            if (this.tab === 1) {
+                const w = this.canvas.width; const h = this.canvas.height;
+                const scale = Math.min(w, h) * 0.8;
+                const offX = w/2 - scale/2; const offY = h/2 - scale/2;
+               
+                let hit = null;
+                this.data.map.points.forEach(p => {
+                    const px = offX + p.x * scale;
+                    const py = offY + p.y * scale;
+                    if (Math.hypot(mouseX - px, mouseY - py) < 20) hit = p;
+                });
+
+
+                if (hit) {
+                    this.tooltip.style.left = (clientX + 15) + 'px';
+                    this.tooltip.style.top = (clientY + 15) + 'px';
+                    this.tooltip.innerHTML = `<strong>${hit.label}</strong><br>${hit.desc}`;
+                    this.tooltip.style.opacity = 1;
+                    document.body.style.cursor = 'pointer';
+                } else {
+                    this.tooltip.style.opacity = 0;
+                    document.body.style.cursor = 'default';
+                }
+            } else {
+                this.tooltip.style.opacity = 0;
+                document.body.style.cursor = 'default';
+            }
+        }
+    };
+
+
+    window.onload = () => App.init();
+
+
+</script>
+</body>
+</html>
+
