@@ -7,17 +7,19 @@
     <style>
         /* * THEME CONFIGURATION */
         :root {
-            /* Base Theme: Archives */
+            /* Base Theme: 15. Orig: Archives (Day Mode) */
             --bg: #f5f5f4;
-            --panel: #e7e5e4;
-            --chip: #e7e5e4; 
+            --panel: #ffffff;      /* crisp white for cards */
+            --chip: #e7e5e4;       /* gray chips */
             --border: #d6d3d1;
-            --ink: #292524;
+            --ink: #292524;        /* charcoal body text */
             --muted: #57534e;
-            --brand: #0f766e;
-            --accent: #d97706;
-            --btn-bg: var(--brand);
-            --btn-text: #ffffff;
+            
+            /* The Command Voice */
+            --brand: #0f766e;      /* Deep Teal */
+            --accent: #d97706;     /* Amber for active states */
+            --header-bg: #0f766e;  /* Teal Header */
+            --header-text: #ffffff;
             
             /* Layout & Type */
             --font-serif: 'Georgia', 'Cambria', serif;
@@ -25,21 +27,37 @@
             --radius: 8px;
             --shadow: 0 1px 3px rgba(0,0,0,0.1);
             --nav-height: 64px;
-            --container-width: 1400px; /* Limits width on ultra-wide screens */
+            --container-width: 1400px;
         }
 
-        /* Dark Mode Override (Navy Final) */
-        [data-theme="dark"] {
+        /* Theme: 13. Orig: Navy (Night Mode) */
+        [data-theme="navy"] {
             --bg: #0b1020;
             --panel: #111833;
             --chip: #1c2545;
             --border: #26325b;
-            --ink: #e6ecff;
+            --ink: #e6ecff;       /* pale blue-white text */
             --muted: #a7b0cc;
-            --brand: #8bb9ff;
+            
+            --brand: #8bb9ff;     /* Cyan/Blue Command Voice */
             --accent: #c0ffe1;
-            --btn-bg: var(--brand);
-            --btn-text: #0b1020;
+            --header-bg: #0b1020; /* Dark header */
+            --header-text: #8bb9ff;
+        }
+
+        /* Theme: 16. Orig: High Command (Field Mode) */
+        [data-theme="emerald"] {
+            --bg: #022c22;        /* Deep Forest */
+            --panel: #064e3b;
+            --chip: #065f46;
+            --border: #065f46;
+            --ink: #ecfdf5;       /* Mint white text */
+            --muted: #6ee7b7;
+            
+            --brand: #fef08a;     /* Pale Gold Command Voice */
+            --accent: #f59e0b;
+            --header-bg: #022c22;
+            --header-text: #fef08a;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -55,7 +73,6 @@
         }
 
         /* --- UI SHELL --- */
-        /* Reusable container for alignment */
         .shell-container {
             max-width: var(--container-width);
             margin: 0 auto;
@@ -68,15 +85,16 @@
             top: 0;
             left: 0;
             right: 0;
-            background: var(--bg);
-            border-bottom: 1px solid var(--border);
+            background: var(--header-bg);
+            color: var(--header-text);
+            border-bottom: 1px solid var(--border); /* Subtle separator */
             z-index: 100;
             height: var(--nav-height);
             display: flex;
             align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        /* Inner header wrapper for alignment */
         .header-inner {
             display: flex;
             align-items: center;
@@ -87,27 +105,45 @@
         .app-title {
             font-weight: 700;
             font-size: 1.1rem;
-            color: var(--brand);
+            color: var(--header-text);
             letter-spacing: -0.02em;
         }
 
         .header-controls {
             display: flex;
-            gap: 1rem;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        /* Theme Selector */
+        .theme-select {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: var(--header-text);
+            border-radius: 4px;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.85rem;
+            cursor: pointer;
+            outline: none;
+        }
+        
+        .theme-select option {
+            background: var(--bg);
+            color: var(--ink);
         }
 
         .icon-btn {
             background: none;
             border: none;
-            color: var(--muted);
+            color: rgba(255, 255, 255, 0.7); /* Semitransparent white for header icons */
             cursor: pointer;
             font-size: 1.2rem;
             padding: 0.25rem;
             transition: color 0.2s;
         }
 
-        .icon-btn:hover { color: var(--ink); }
-        .icon-btn.active { color: var(--accent); }
+        .icon-btn:hover { color: #fff; }
+        .icon-btn.active { color: var(--accent); opacity: 1; }
 
         /* --- FILTERS & SEARCH --- */
         .filter-bar {
@@ -159,18 +195,17 @@
         .chip:hover { background: var(--border); }
         .chip.active {
             background: var(--brand);
-            color: var(--btn-text);
+            color: var(--bg); /* Invert text on active chip */
         }
 
-        /* --- CARD FEED (The Magic Grid) --- */
+        /* --- CARD FEED (Liquid Grid) --- */
         .feed {
             padding-top: 1.5rem;
             padding-bottom: 3rem;
-            /* Grid Logic: Auto-fit columns, min 320px wide */
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 1.5rem;
-            align-items: start; /* Prevents cards stretching to match row height */
+            align-items: start;
         }
 
         .card {
@@ -183,6 +218,20 @@
             transition: transform 0.2s, box-shadow 0.2s;
             display: flex;
             flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* The "Command Voice" Left Border Accent */
+        .card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--brand);
+            opacity: 0.8;
         }
 
         .card:hover {
@@ -195,12 +244,14 @@
             justify-content: space-between;
             align-items: flex-start;
             margin-bottom: 0.5rem;
+            padding-left: 0.5rem; /* Space from accent border */
         }
 
+        /* ID is now Teal */
         .card-id {
             font-size: 0.75rem;
-            font-weight: 700;
-            color: var(--muted);
+            font-weight: 800;
+            color: var(--brand);
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
@@ -212,80 +263,94 @@
             padding: 0 0 0.5rem 0.5rem;
             margin-top: -0.25rem;
         }
+        
+        /* Active star is accent color */
         .fav-star.active { color: var(--accent); }
 
+        /* Title is now Teal */
         .card-title {
             font-family: var(--font-serif);
             font-size: 1.15rem;
             line-height: 1.3;
             margin: 0.25rem 0 0.75rem 0;
-            color: var(--ink);
+            color: var(--brand); 
+            padding-left: 0.5rem;
         }
 
         .card-body {
             font-family: var(--font-serif);
             font-size: 1rem;
             line-height: 1.6;
-            color: var(--muted);
-            /* Clamp to 4 lines by default */
+            color: var(--ink); /* Body remains charcoal */
             display: -webkit-box;
             -webkit-line-clamp: 4;
             -webkit-box-orient: vertical;
             overflow: hidden;
+            padding-left: 0.5rem;
         }
 
         .card.expanded .card-body {
             -webkit-line-clamp: unset;
-            color: var(--ink);
         }
 
+        /* Source is now Teal */
         .card-source {
-            margin-top: auto; /* Pushes source to bottom if card stretches */
+            margin-top: auto;
             padding-top: 1rem;
             font-size: 0.8rem;
             color: var(--brand);
-            font-weight: 500;
+            font-weight: 600;
             text-align: right;
+            padding-right: 0.5rem;
         }
 
-        /* Empty State */
         .empty-state {
-            grid-column: 1 / -1; /* Span all columns */
+            grid-column: 1 / -1;
             text-align: center;
             padding: 3rem;
             color: var(--muted);
         }
         
-        /* Mobile adjustment for search bar */
         @media (max-width: 600px) {
             .search-input { flex: 0 0 140px; }
-            .feed { grid-template-columns: 1fr; } /* Force 1 column on very small screens */
+            .feed { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
+    <!-- Header -->
     <header class="app-header">
         <div class="shell-container header-inner">
             <div class="app-title">Centrality of the Cross</div>
             <div class="header-controls">
-                <button id="themeToggle" class="icon-btn" aria-label="Toggle Theme">◐</button>
+                <!-- Theme Dropdown -->
+                <select id="themeSelect" class="theme-select" aria-label="Select Theme">
+                    <option value="archives">Archives</option>
+                    <option value="navy">Navy</option>
+                    <option value="emerald">High Command</option>
+                </select>
+                <!-- Favorites Toggle -->
                 <button id="favFilterBtn" class="icon-btn" aria-label="Show Favorites">★</button>
             </div>
         </div>
     </header>
 
+    <!-- Filters -->
     <div class="filter-bar">
         <div class="shell-container filter-inner" id="filterInner">
             <input type="text" class="search-input" id="searchInput" placeholder="Search...">
-            </div>
+            <!-- Chips injected here -->
+        </div>
     </div>
 
+    <!-- Feed -->
     <main class="shell-container feed" id="feed">
-        </main>
+        <!-- Cards injected here -->
+    </main>
 
 <script>
-    // --- 1. DATA (Enriched with Taxonomy) ---
+    // --- 1. DATA ---
     const TAGS = {
         ATONEMENT: "Atonement",
         LOVE: "Love of God",
@@ -352,13 +417,22 @@
     let favorites = JSON.parse(localStorage.getItem('cotc_favs')) || [];
     let activeTag = null;
     let showFavoritesOnly = false;
+    // Default theme is 'archives', could also be loaded from local storage
+    let currentTheme = localStorage.getItem('cotc_theme') || 'archives';
 
     // --- 3. DOM ELEMENTS ---
     const feed = document.getElementById('feed');
     const searchInput = document.getElementById('searchInput');
-    const filterInner = document.getElementById('filterInner'); // Changed target to inner
+    const filterInner = document.getElementById('filterInner');
     const favBtn = document.getElementById('favFilterBtn');
-    const themeBtn = document.getElementById('themeToggle');
+    const themeSelect = document.getElementById('themeSelect');
+
+    // Apply Theme
+    function applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('cotc_theme', theme);
+        themeSelect.value = theme;
+    }
 
     // --- 4. RENDER LOGIC ---
     function render() {
@@ -386,7 +460,6 @@
                 card.classList.toggle('expanded');
             };
 
-            // Formatting text for display
             const formattedText = item.text.replace(/\n/g, '<br>');
 
             card.innerHTML = `
@@ -405,12 +478,8 @@
     }
 
     function renderTags() {
-        // Clear existing chips except search input (which is first child)
-        // We select only buttons to remove
         const existingChips = filterInner.querySelectorAll('.chip');
         existingChips.forEach(c => c.remove());
-
-        // Unique Tags
         const allTags = Object.values(TAGS);
         
         allTags.forEach(tag => {
@@ -419,13 +488,13 @@
             chip.textContent = tag;
             chip.onclick = () => {
                 if (activeTag === tag) {
-                    activeTag = null; // toggle off
+                    activeTag = null;
                 } else {
                     activeTag = tag;
-                    showFavoritesOnly = false; // Reset fav mode if tag clicked
+                    showFavoritesOnly = false;
                     favBtn.classList.remove('active');
                 }
-                renderTags(); // Re-render chips to show active state
+                renderTags();
                 render();
             };
             filterInner.appendChild(chip);
@@ -446,28 +515,27 @@
             favorites.push(id);
         }
         localStorage.setItem('cotc_favs', JSON.stringify(favorites));
-        render(); // Re-render to update star icon
+        render();
     };
 
     favBtn.onclick = () => {
         showFavoritesOnly = !showFavoritesOnly;
         favBtn.classList.toggle('active', showFavoritesOnly);
         if(showFavoritesOnly) {
-            activeTag = null; // Clear tags when looking at favs
+            activeTag = null;
             renderTags();
         }
         render();
     };
 
-    searchInput.addEventListener('input', render);
-
-    // Theme Toggle
-    themeBtn.onclick = () => {
-        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-        document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    themeSelect.onchange = (e) => {
+        applyTheme(e.target.value);
     };
 
+    searchInput.addEventListener('input', render);
+
     // Init
+    applyTheme(currentTheme);
     renderTags();
     render();
 
