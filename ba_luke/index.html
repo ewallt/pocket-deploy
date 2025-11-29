@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblical Architect: Gospel of Luke</title>
+   
+    <!-- Marked for Markdown -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+
+    <style>
+        :root {
+            --bg: #fdf6e3; /* Solarized Light Parchment */
+            --panel: #eee8d5;
+            --text: #657b83;
+            --accent: #b58900; /* Gold */
+            --highlight: #cb4b16; /* Orange */
+            --secondary: #2aa198; /* Cyan/Teal */
+            --border: #d0d0d0;
+            --font-head: 'Georgia', serif;
+            --font-body: 'Segoe UI', sans-serif;
+        }
+
+
+        /* Dark Mode Support */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #1c1f24;
+                --panel: #282c34;
+                --text: #abb2bf;
+                --accent: #e5c07b;
+                --highlight: #e06c75;
+                --secondary: #56b6c2;
+                --border: #3b4048;
+            }
+        }
+
+
+        body { margin: 0; font-family: var(--font-body); background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+
+        /* Header */
+        header {
+            background: var(--panel); border-bottom: 1px solid var(--border); padding: 0 20px; height: 60px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+        }
+        .brand { font-family: var(--font-head); font-size: 1.4rem; font-weight: bold; color: var(--highlight); white-space: nowrap; margin-right: 20px; }
+       
+        /* Scrollable Nav - Visible Scrollbar as per QA Rubric */
+        .nav-wrapper { flex: 1; overflow: hidden; position: relative; }
+        .nav {
+            display: flex; gap: 5px; overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 5px;
+            mask-image: linear-gradient(to right, black 90%, transparent 100%);
+        }
+       
+        /* Custom Scrollbar Styling */
+        .nav::-webkit-scrollbar { height: 4px; }
+        .nav::-webkit-scrollbar-track { background: transparent; }
+        .nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+        .nav::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+       
+        .nav-btn {
+            background: transparent; border: none; padding: 10px 15px; cursor: pointer; color: var(--text); font-weight: 600; opacity: 0.7; transition: all 0.2s; border-bottom: 3px solid transparent; white-space: nowrap;
+        }
+        .nav-btn:hover { opacity: 1; }
+        .nav-btn.active { opacity: 1; border-bottom-color: var(--accent); color: var(--accent); }
+
+
+        /* Main Layout */
+        main { flex: 1; display: flex; overflow: hidden; position: relative; }
+
+
+        /* Canvas Container */
+        .visual-container { flex: 2; position: relative; background: var(--bg); display: flex; justify-content: center; align-items: center; overflow: hidden; }
+        canvas { width: 100%; height: 100%; object-fit: contain; }
+
+
+        /* Sidebar */
+        aside {
+            flex: 1; min-width: 350px; max-width: 450px; background: var(--panel); border-left: 1px solid var(--border);
+            display: flex; flex-direction: column; overflow-y: auto; padding: 30px; box-shadow: -5px 0 15px rgba(0,0,0,0.05);
+        }
+
+
+        h2 { font-family: var(--font-head); color: var(--accent); border-bottom: 2px solid var(--border); padding-bottom: 10px; margin-top: 0; }
+        .content-block { margin-bottom: 30px; line-height: 1.6; }
+        .content-block h3 { color: var(--highlight); margin-bottom: 5px; font-size: 1.1rem; }
+       
+        /* Tooltip */
+        .overlay-tooltip {
+            position: absolute; background: var(--panel); padding: 10px 15px; border: 1px solid var(--accent); border-radius: 4px; pointer-events: none; opacity: 0; transition: opacity 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 10;
+        }
+
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            main { flex-direction: column; }
+            aside {
+                width: 100%; min-width: 0; max-width: none;
+                flex: 1; border-left: none; border-top: 1px solid var(--border); padding: 20px;
+            }
+            header { padding: 0 10px; height: 55px; }
+            .brand { font-size: 1.1rem; margin-right: 10px; }
+            .nav-btn { font-size: 0.85rem; padding: 10px; }
+            .visual-container { flex: none; height: 45vh; }
+        }
+    </style>
+</head>
+<body>
+
+
+<header>
+    <div class="brand">Luke: The Son of Man</div>
+    <div class="nav-wrapper">
+        <div class="nav">
+            <button class="nav-btn active" onclick="App.setTab(0)">1. Genealogy</button>
+            <button class="nav-btn" onclick="App.setTab(1)">2. Map</button>
+            <button class="nav-btn" onclick="App.setTab(2)">3. Structure</button>
+            <button class="nav-btn" onclick="App.setTab(3)">4. Dossier</button>
+            <button class="nav-btn" onclick="App.setTab(4)">5. The Lost</button>
+            <button class="nav-btn" onclick="App.setTab(5)">6. The Sermon</button>
+            <button class="nav-btn" onclick="App.setTab(6)">7. Parables</button>
+            <button class="nav-btn" onclick="App.setTab(7)">8. Peter</button>
+            <button class="nav-btn" onclick="App.setTab(8)">9. Greek Key</button>
+            <button class="nav-btn" onclick="App.setTab(9)">10. Ending</button>
+        </div>
+    </div>
+</header>
+
+
+<main>
+    <div class="visual-container">
+        <canvas id="mainCanvas"></canvas>
+        <div id="tooltip" class="overlay-tooltip"></div>
+    </div>
+   
+    <aside id="sidebarContent">
+        <!-- Content injected via JS -->
+    </aside>
+</main>
+
+
+<script>
+    const App = {
+        tab: 0,
+        canvas: document.getElementById('mainCanvas'),
+        ctx: document.getElementById('mainCanvas').getContext('2d'),
+        sidebar: document.getElementById('sidebarContent'),
+        tooltip: document.getElementById('tooltip'),
+       
+        // --- DATA REPOSITORY (Luke Specific) ---
+        data: {
+            genealogy: [
+                { title: "Jesus to David", count: 42, desc: "Legal vs Natural", color: "#b58900" },
+                { title: "David to Abraham", count: 14, desc: "The Covenant", color: "#cb4b16" },
+                { title: "Abraham to Adam", count: 20, desc: "Universal Humanity", color: "#2aa198" }
+            ],
+            map: {
+                points: [
+                    {x: 0.5, y: 0.2, label: "Galilee", desc: "Ministry Power"},
+                    {x: 0.5, y: 0.5, label: "Samaria", desc: "The Travel Narrative"},
+                    {x: 0.5, y: 0.8, label: "Jerusalem", desc: "The Passion"}
+                ]
+            },
+            structure: [
+                { label: "Prologue", desc: "Birth Narratives", ref: "Ch 1-2" },
+                { label: "Galilee", desc: "Identity of Jesus", ref: "Ch 3-9" },
+                { label: "The Journey", desc: "Discipleship", ref: "Ch 9-19" },
+                { label: "Jerusalem", desc: "Conflict & Cross", ref: "Ch 19-24" }
+            ],
+            lost: [
+                { name: "Lost Sheep", val: 1, total: 100, color: "#2aa198" },
+                { name: "Lost Coin", val: 1, total: 10, color: "#b58900" },
+                { name: "Lost Son", val: 1, total: 2, color: "#cb4b16" }
+            ],
+            sermon: ["Blessed are Poor", "Blessed are Hungry", "Blessed are Weeping", "Woe to Rich", "Woe to Full", "Woe to Laughing"],
+            parables: [
+                { name: "Good Samaritan", type: "Neighbor" },
+                { name: "Rich Fool", type: "Greed" },
+                { name: "Prodigal Son", type: "Grace" },
+                { name: "Pharisee & Tax Collector", type: "Humility" }
+            ],
+            peter: [
+                { event: "Sinful Man", ref: "5:8" },
+                { event: "Confession", ref: "9:20" },
+                { event: "Sift like Wheat", ref: "22:31" },
+                { event: "Runs to Tomb", ref: "24:12" }
+            ],
+            greek: [
+                { word: "Soteria", trans: "Salvation", count: 4, color: "#b58900" },
+                { word: "Dei", trans: "Must/Necessary", count: 18, color: "#cb4b16" }, // Divine necessity
+                { word: "Ptochos", trans: "Poor", count: 11, color: "#2aa198" },
+                { word: "Hamartolos", trans: "Sinner", count: 18, color: "#6c71c4" }
+            ],
+            ending: {
+                center: "Emmaus",
+                events: ["Opened Scriptures", "Broke Bread", "Hearts Burning"]
+            }
+        },
+
+
+        init() {
+            this.resize();
+            window.addEventListener('resize', () => this.resize());
+           
+            // Mouse/Touch Handling with Null Check Safety
+            const self = this;
+           
+            const handler = (e) => {
+                const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+                const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+                if (clientX && clientY) self.handleHover(clientX, clientY);
+            };
+
+
+            this.canvas.addEventListener('mousemove', handler);
+            this.canvas.addEventListener('touchstart', handler, {passive: true});
+           
+            this.setTab(0);
+        },
+
+
+        resize() {
+            this.canvas.width = this.canvas.parentElement.clientWidth;
+            this.canvas.height = this.canvas.parentElement.clientHeight;
+            this.draw();
+        },
+
+
+        setTab(idx) {
+            this.tab = idx;
+            document.querySelectorAll('.nav-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+            this.renderSidebar();
+            this.draw();
+        },
+
+
+        // --- CONTENT GENERATION ---
+        renderSidebar() {
+            let html = "";
+            const t = this.tab;
+           
+            const content = [
+                // 0: Genealogy
+                `<h2>1. Universal Lineage</h2>
+                 <div class="content-block"><h3>Reverse Order</h3><p>Unlike Matthew (Abraham to Jesus), Luke traces Jesus backwards to Adam, emphasizing that He is the Savior of all humanity, not just the Jews.</p></div>
+                 <div class="content-block"><h3>Son of Adam</h3><p>Jesus is presented as the fulfillment of the human race.</p></div>`,
+               
+                // 1: Map
+                `<h2>2. The Travel Narrative</h2>
+                 <div class="content-block"><h3>Setting His Face</h3><p>A huge section of Luke (9:51–19:27) is a long, wandering journey to Jerusalem. This is where most of the famous parables occur.</p></div>
+                 <div class="content-block"><h3>Jerusalem</h3><p>For Luke, everything moves toward Jerusalem (Gospel) and then out from Jerusalem (Acts).</p></div>`,
+               
+                // 2: Structure
+                `<h2>3. Literary Structure</h2>
+                 <div class="content-block"><h3>The Historian</h3><p>Luke writes an "orderly account." His gospel is geographically organized: Galilee (Ministry), The Way (Discipleship), Jerusalem (Rejection).</p></div>`,
+               
+                // 3: Dossier
+                `<h2>4. The Author</h2>
+                 <div class="content-block"><h3>Luke the Physician</h3><p>A companion of Paul and the only Gentile author in the Bible. He uses precise medical language and shows deep concern for the marginalized.</p></div>
+                 <div class="content-block"><h3>Theophilus</h3><p>Written to a Roman official ("Lover of God") to provide certainty about the faith.</p></div>`,
+               
+                // 4: The Lost
+                `<h2>5. Seek and Save</h2>
+                 <div class="content-block"><h3>Chapter 15</h3><p>The "Lost and Found" department of the Bible. Three parables (Sheep, Coin, Son) defend Jesus' practice of eating with sinners.</p></div>
+                 <div class="content-block"><h3>Joy in Heaven</h3><p>The emphasis is on the celebration when the lost are found.</p></div>`,
+               
+                // 5: Sermon
+                `<h2>6. Sermon on the Plain</h2>
+                 <div class="content-block"><h3>Level Ground</h3><p>In Luke 6, Jesus stands on a "level place," emphasizing equality. He pairs Blessings with corresponding Woes (Woe to the rich, full, laughing).</p></div>`,
+               
+                // 6: Parables
+                `<h2>7. Unique Parables</h2>
+                 <div class="content-block"><h3>Stories of Grace</h3><p>Many of the most beloved parables appear only in Luke: Good Samaritan, Prodigal Son, Rich Man & Lazarus, Pharisee & Tax Collector.</p></div>`,
+               
+                // 7: Peter
+                `<h2>8. Peter's Journey</h2>
+                 <div class="content-block"><h3>Restoration</h3><p>Luke uniquely records Jesus telling Peter: "Satan asked to sift you like wheat, but I have prayed for you." Peter's failure is not the end.</p></div>`,
+               
+                // 8: Greek
+                `<h2>9. Key Vocabulary</h2>
+                 <div class="content-block"><h3>Dei (Must)</h3><p>Jesus "must" preach, "must" suffer, "must" stay at Zacchaeus' house. A sense of divine necessity drives the plot.</p></div>
+                 <div class="content-block"><h3>Soter (Savior)</h3><p>Luke uses this title for Jesus more than the other evangelists (born in the city of David, a Savior).</p></div>`,
+               
+                // 9: Ending
+                `<h2>10. The Ascension</h2>
+                 <div class="content-block"><h3>Road to Emmaus</h3><p>The risen Jesus opens the Scriptures to two despondent disciples, revealing that the Messiah *had* to suffer.</p></div>
+                 <div class="content-block"><h3>Up to Heaven</h3><p>Luke ends with the Ascension, leaving the disciples with "great joy" in the temple, setting the stage for Acts.</p></div>`
+            ];
+
+
+            this.sidebar.innerHTML = content[t] || "<h2>Content Loading...</h2>";
+        },
+
+
+        // --- DRAWING ENGINE ---
+        draw() {
+            const ctx = this.ctx;
+            const w = this.canvas.width;
+            const h = this.canvas.height;
+            ctx.clearRect(0,0,w,h);
+
+
+            // Dispatch to specific drawers
+            const drawers = [
+                this.drawGenealogy, this.drawMap, this.drawStructure, this.drawDossier,
+                this.drawLost, this.drawSermon, this.drawParables, this.drawPeter,
+                this.drawGreek, this.drawEnding
+            ];
+           
+            if (drawers[this.tab]) drawers[this.tab].call(this, ctx, w, h);
+        },
+
+
+        // 1. Genealogy (Reverse Ladder)
+        drawGenealogy(ctx, w, h) {
+            const steps = this.data.genealogy;
+            const stepW = w / 4.2;
+            const stepH = h / 5;
+           
+            // Start Top Left
+            const startX = w * 0.15;
+            const startY = h * 0.2;
+
+
+            steps.forEach((step, i) => {
+                const x = startX + i * stepW;
+                const y = startY + i * stepH;
+               
+                // Draw Step Line (Going Down)
+                ctx.strokeStyle = step.color; ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.lineTo(x + stepW, y);
+                if (i < steps.length - 1) {
+                    ctx.lineTo(x + stepW, y + stepH);
+                }
+                ctx.stroke();
+               
+                // Point
+                ctx.fillStyle = step.color;
+                ctx.beginPath(); ctx.arc(x, y, 8, 0, Math.PI*2); ctx.fill();
+
+
+                // Text
+                ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text');
+                ctx.textAlign = 'center';
+                ctx.font = 'bold 14px sans-serif';
+                ctx.fillText(step.title, x + stepW/2, y - 10);
+               
+                ctx.font = '12px sans-serif';
+                ctx.fillStyle = '#93a1a1';
+                ctx.fillText(step.count + " Generations", x + stepW/2, y + 20);
+            });
+           
+            // Final Adam Point
+            const fx = startX + 3 * stepW;
+            const fy = startY + 2 * stepH;
+            ctx.fillStyle = '#cb4b16';
+            ctx.beginPath(); ctx.arc(fx, fy, 12, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text');
+            ctx.textAlign = 'center';
+            ctx.fillText("ADAM", fx, fy + 35);
+            ctx.textAlign = 'left';
+        },
+
+
+        // 2. Map (Straight Arrow Down)
+        drawMap(ctx, w, h) {
+            const cx = w/2;
+            const pad = 60;
+            const scaleY = (h - pad*2);
+
+
+            // The Journey Line
+            ctx.strokeStyle = '#b58900'; ctx.lineWidth = 4;
+            ctx.beginPath(); ctx.moveTo(cx, pad); ctx.lineTo(cx, h - pad); ctx.stroke();
+
+
+            // Arrowhead at bottom
+            ctx.fillStyle = '#b58900';
+            ctx.beginPath(); ctx.moveTo(cx, h-pad+10); ctx.lineTo(cx-10, h-pad-10); ctx.lineTo(cx+10, h-pad-10); ctx.fill();
+
+
+            // Points
+            this.data.map.points.forEach((p, i) => {
+                const y = pad + (i / (this.data.map.points.length-1)) * scaleY;
+               
+                ctx.fillStyle = '#2aa198'; ctx.beginPath(); ctx.arc(cx, y, 8, 0, Math.PI*2); ctx.fill();
+               
+                ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text');
+                ctx.font = 'bold 14px sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText(p.label, cx + 20, y + 5);
+               
+                ctx.fillStyle = '#93a1a1'; ctx.font = '12px sans-serif';
+                ctx.textAlign = 'right';
+                ctx.fillText(p.desc, cx - 20, y + 5);
+            });
+            ctx.textAlign = 'left';
+        },
+
+
+        // 3. Structure (Horizontal Blocks)
+        drawStructure(ctx, w, h) {
+            const pad = 40;
+            const boxW = (w - pad*2) / 4;
+            const baseY = h/2;
+
+
+            this.data.structure.forEach((sec, i) => {
+                const x = pad + i * boxW;
+               
+                ctx.fillStyle = i % 2 === 0 ? '#2aa198' : '#b58900';
+                ctx.fillRect(x + 5, baseY - 50, boxW - 10, 100);
+               
+                ctx.fillStyle = '#fff'; ctx.textAlign = 'center';
+                ctx.font = 'bold 14px sans-serif';
+                ctx.fillText(sec.label, x + boxW/2, baseY);
+               
+                ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text');
+                ctx.font = '12px sans-serif';
+                ctx.fillText(sec.ref, x + boxW/2, baseY + 70);
+            });
+            ctx.textAlign = 'left';
+        },
+
+
+        // 4. Dossier (Scroll Icon)
+        drawDossier(ctx, w, h) {
+            const cx = w/2; const cy = h/2;
+            const sw = 100; const sh = 140;
+           
+            // Scroll body
+            ctx.fillStyle = '#fdf6e3';
+            ctx.shadowColor = 'rgba(0,0,0,0.1)'; ctx.shadowBlur = 10;
+            ctx.fillRect(cx - sw/2, cy - sh/2, sw, sh);
+            ctx.strokeStyle = '#657b83'; ctx.lineWidth = 2;
+            ctx.strokeRect(cx - sw/2, cy - sh/2, sw, sh);
+            ctx.shadowBlur = 0;
+
+
+            // Medical Cross Symbol
+            ctx.fillStyle = '#cb4b16';
+            ctx.fillRect(cx - 10, cy - 30, 20, 60);
+            ctx.fillRect(cx - 30, cy - 10, 60, 20);
+
+
+            ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text');
+            ctx.textAlign = 'center'; ctx.font = 'bold 16px sans-serif';
+            ctx.fillText("Luke the Physician", cx, cy + 100);
+            ctx.textAlign = 'left';
+        },
+
+
+        // 5. The Lost (Circles proportional to ratio)
+        drawLost(ctx, w, h) {
+            const cx = w/2;
+            const gap = h / 4;
+           
+            this.data.lost.forEach((l, i) => {
+                const y = gap * (i + 1);
+               
+                // Outer Circle (Total)
+                ctx.strokeStyle = l.color; ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.arc(cx - 60, y, 30, 0, Math.PI*2); ctx.stroke();
+               
+                // Inner Circle (One Lost)
+                ctx.fillStyle = l.color;
+                ctx.beginPath(); ctx.arc(cx - 60, y, 5, 0, Math.PI*2); ctx.fill(); // The one
+               
+                // Text
+                ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text');
+                ctx.font = 'bold 14px sans-serif'; ctx.textAlign = 'left';
+                ctx.fillText(l.name, cx, y - 10);
+               
+                ctx.fillStyle = '#93a1a1'; ctx.font = '12px sans-serif';
+                ctx.fillText(`1 of ${l.total}`, cx, y + 10);
+            });
+        },
+
+
+        // 6. Sermon (Plain/Level) - ADJUSTED FOR USER
+        drawSermon(ctx, w, h) {
+            const cy = h/2;
+           
+            // Ground Line
+            ctx.strokeStyle = '#2aa198'; ctx.lineWidth = 4;
+            ctx.beginPath(); ctx.moveTo(0, cy + 50); ctx.lineTo(w, cy + 50); ctx.stroke();
+           
+            // Text above and below
+            const list = this.data.sermon;
+            const mid = Math.ceil(list.length / 2);
+           
+            ctx.textAlign = 'center'; ctx.font = 'bold 14px sans-serif';
+           
+            // Blessings (Left, Above Line)
+            ctx.fillStyle = '#2aa198';
+            for(let i=0; i<mid; i++) {
+                // Rising up from the line
+                ctx.fillText(list[i], w/4, cy + 30 - (mid-i)*30);
+            }
+           
+            // Woes (Right, ALSO Above Line now)
+            ctx.fillStyle = '#cb4b16';
+            for(let i=mid; i<list.length; i++) {
+                // Rising up from the line
+                ctx.fillText(list[i], w*0.75, cy + 30 - (list.length-i)*30);
+            }
+            ctx.textAlign = 'left';
+        },
+
+
+        // 7. Parables (Radial)
+        drawParables(ctx, w, h) {
+            const cx = w * 0.4;
+            const cy = h / 2;
+            const r = Math.min(w, h) / 4;
+           
+            this.data.parables.forEach((p, i) => {
+                const angle = (i / this.data.parables.length) * Math.PI * 2;
+                const x = cx + Math.cos(angle) * r;
+                const y = cy + Math.sin(angle) * r;
+               
+                ctx.strokeStyle = '#657b83'; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(x, y); ctx.stroke();
+                ctx.fillStyle = '#b58900'; ctx.beginPath(); ctx.arc(x, y, 15, 0, Math.PI*2); ctx.fill();
+               
+                ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text');
+                ctx.font = 'bold 14px sans-serif';
+                if(x > cx) {
+                    ctx.textAlign = 'left'; ctx.fillText(p.name, x + 20, y + 5);
+                } else {
+                    ctx.textAlign = 'right'; ctx.fillText(p.name, x - 20, y + 5);
+                }
+            });
+            ctx.textAlign = 'left';
+        },
+
+
+        // 8. Peter (Sift Wheat)
+        drawPeter(ctx, w, h) {
+            const cx = w/2;
+            const startY = 60;
+            const gap = (h - 100) / this.data.peter.length;
+
+
+            ctx.strokeStyle = '#cb4b16'; ctx.lineWidth = 2; ctx.setLineDash([5,5]);
+            ctx.beginPath(); ctx.moveTo(cx, startY); ctx.lineTo(cx, h-40); ctx.stroke(); ctx.setLineDash([]);
+
+
+            this.data.peter.forEach((p, i) => {
+                const y = startY + i * gap;
+                ctx.fillStyle = '#fdf6e3'; ctx.beginPath(); ctx.arc(cx, y, 20, 0, Math.PI*2); ctx.fill();
+                ctx.strokeStyle = '#cb4b16'; ctx.stroke();
+               
+                ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text');
+                ctx.textAlign = 'center'; ctx.font = 'bold 14px sans-serif';
+                ctx.fillText(p.event, cx, y - 25);
+               
+                ctx.fillStyle = '#93a1a1'; ctx.font = '12px sans-serif';
+                ctx.fillText(p.ref, cx, y + 5);
+            });
+            ctx.textAlign = 'left';
+        },
+
+
+        // 9. Greek Key (Bar Chart)
+        drawGreek(ctx, w, h) {
+            const pad = 50; const barH = 40; const gap = 20;
+            const max = Math.max(...this.data.greek.map(g => g.count));
+           
+            this.data.greek.forEach((g, i) => {
+                const y = pad + i * (barH + gap);
+                const len = (g.count / max) * (w - 250);
+               
+                ctx.fillStyle = g.color;
+                ctx.fillRect(120, y, len, barH);
+               
+                ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text');
+                ctx.font = 'bold 16px sans-serif'; ctx.textAlign = 'right';
+                ctx.fillText(g.word, 110, y + 25);
+               
+                ctx.textAlign = 'left'; ctx.font = '14px sans-serif';
+                ctx.fillText(`${g.count}x (${g.trans})`, 120 + len + 10, y + 25);
+            });
+        },
+
+
+        // 10. Ending (Emmaus Road) - ADJUSTED FOR USER
+        drawEnding(ctx, w, h) {
+            // Shifted up to close gap significantly, as requested (25% from top)
+            const cy = h * 0.25;
+            const cx = w/2;
+           
+            // Road
+            ctx.fillStyle = '#d3cbb8';
+            ctx.beginPath();
+            ctx.moveTo(cx - 20, cy);
+            // Bring bottom up to 75% of height instead of full height (h)
+            ctx.lineTo(cx - 100, h * 0.75);
+            ctx.lineTo(cx + 100, h * 0.75);
+            ctx.lineTo(cx + 20, cy);
+            ctx.fill();
+           
+            // City on Hill
+            ctx.fillStyle = '#b58900';
+            ctx.beginPath(); ctx.arc(cx, cy - 40, 40, Math.PI, 0); ctx.fill(); // Dome
+            ctx.fillRect(cx - 40, cy - 40, 80, 40); // Base
+           
+            // Text
+            ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.font = 'bold 14px sans-serif';
+            ctx.fillText("Jerusalem", cx, cy - 20);
+           
+            ctx.fillStyle = '#cb4b16'; ctx.font = 'bold 16px sans-serif';
+            // Move text up to sit just below the new road bottom
+            ctx.fillText("Did not our hearts burn?", cx, h * 0.75 + 30);
+            ctx.textAlign = 'left';
+        },
+
+
+        handleHover(clientX, clientY) {
+            if(this.tab !== 1) { this.tooltip.style.opacity = 0; return; }
+           
+            const rect = this.canvas.getBoundingClientRect();
+            const mouseX = clientX - rect.left;
+            const mouseY = clientY - rect.top;
+           
+            const w = this.canvas.width;
+            const h = this.canvas.height;
+            // Matches drawing logic for tab 1 (Map)
+            const cx = w/2;
+            const pad = 60;
+            const scaleY = (h - pad*2);
+
+
+            let hit = null;
+            this.data.map.points.forEach((p, i) => {
+                const py = pad + (i / (this.data.map.points.length-1)) * scaleY;
+                const px = cx;
+                if (Math.hypot(mouseX - px, mouseY - py) < 20) hit = p;
+            });
+
+
+            if(hit) {
+                this.tooltip.style.left = (clientX + 15) + 'px';
+                this.tooltip.style.top = (clientY + 15) + 'px';
+                this.tooltip.innerHTML = `<strong>${hit.label}</strong><br>${hit.desc}`;
+                this.tooltip.style.opacity = 1;
+                document.body.style.cursor = 'pointer';
+            } else {
+                this.tooltip.style.opacity = 0;
+                document.body.style.cursor = 'default';
+            }
+        }
+    };
+
+
+    window.onload = () => App.init();
+
+
+</script>
+</body>
+</html>
+
