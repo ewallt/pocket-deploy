@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conflict Resolution: A Biblical Model</title>
+    <script>
+        // Suppress Tailwind production warning
+        window.process = { env: { NODE_ENV: 'production' } };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gold: #d4a574;
+            --dark-bg: #1a1815;
+            --cream-text: #faf8f3;
+            --muted-gold: rgba(212, 165, 116, 0.8);
+            --neutral-bg: #f8fafc;
+            --border-color: #cbd5e1;
+        }
+
+        body {
+            font-family: 'Crimson Text', Georgia, serif;
+            background-color: var(--neutral-bg);
+            color: #334155;
+            line-height: 1.7;
+        }
+
+        h1, h2, h3, h4 {
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        h1 { font-size: clamp(2rem, 5vw, 2.75rem); }
+        h2 { font-size: clamp(1.5rem, 4vw, 2rem); }
+
+        /* Dark Card Styling */
+        .dark-card {
+            background-color: var(--dark-bg);
+            color: var(--cream-text);
+            border-left: 4px solid var(--primary-gold);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .dark-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+        }
+
+        .card-category {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--primary-gold);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: var(--cream-text);
+        }
+
+        .card-reference {
+            font-size: 0.9rem;
+            font-style: italic;
+            color: var(--muted-gold);
+        }
+
+        /* Tab Navigation */
+        .tab-button {
+            padding: 1rem 1.5rem;
+            margin-right: 0.5rem;
+            border-radius: 0.375rem 0.375rem 0 0;
+            background-color: #e2e8f0;
+            color: #64748b;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+            border-bottom: none;
+        }
+
+        .tab-button:hover {
+            background-color: #cbd5e1;
+            color: var(--primary-gold);
+        }
+
+        .tab-button.active {
+            background-color: white;
+            color: var(--primary-gold);
+            border-color: var(--border-color);
+            border-bottom: 1px solid white;
+            position: relative;
+            top: 1px;
+        }
+
+        .tab-content {
+            display: none;
+            background-color: white;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            border-top: none;
+            border-radius: 0 0 0.375rem 0.375rem;
+            min-height: 500px;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Detail View */
+        .detail-area {
+            background-color: var(--dark-bg);
+            color: var(--cream-text);
+            padding: 2rem;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary-gold);
+            min-height: 400px;
+        }
+
+        .detail-area h3 {
+            color: var(--primary-gold);
+            margin-bottom: 1rem;
+        }
+
+        .detail-area .stage-number {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--muted-gold);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Layout */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .main-grid {
+                grid-template-columns: minmax(300px, 1fr) 2fr;
+            }
+        }
+
+        .list-container {
+            max-height: calc(80vh - 100px);
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        /* Generator Styles */
+        .generator-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-family: 'Crimson Text', Georgia, serif;
+            transition: border-color 0.2s;
+        }
+
+        .generator-input:focus {
+            outline: none;
+            border-color: var(--primary-gold);
+        }
+
+        .example-prompt {
+            background-color: #f1f5f9;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            border-left: 3px solid var(--primary-gold);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .example-prompt:hover {
+            background-color: #e2e8f0;
+            transform: translateX(4px);
+        }
+
+        /* Journey Output */
+        .resolution-step {
+            position: relative;
+            padding-left: 3rem;
+            margin-bottom: 2rem;
+            border-left: 2px solid var(--muted-gold);
+        }
+
+        .resolution-step:last-child {
+            border-left: 2px solid transparent;
+        }
+
+        .step-marker {
+            position: absolute;
+            left: -14px;
+            top: 0;
+            width: 28px;
+            height: 28px;
+            background: var(--primary-gold);
+            color: var(--dark-bg);
+            border-radius: 50%;
+            text-align: center;
+            font-size: 0.9rem;
+            line-height: 28px;
+            font-weight: bold;
+            box-shadow: 0 0 0 4px white;
+        }
+
+        .step-content {
+            background-color: var(--dark-bg);
+            color: var(--cream-text);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary-gold);
+        }
+
+        .step-content h4 {
+            color: var(--primary-gold);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Gospel Insight Toggle */
+        .gospel-toggle {
+            display: flex;
+            align-items: center;
+            color: var(--primary-gold);
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--muted-gold);
+        }
+
+        .gospel-toggle:hover {
+            color: var(--cream-text);
+        }
+
+        .chevron {
+            width: 16px;
+            height: 16px;
+            margin-left: 0.5rem;
+            transition: transform 0.2s;
+        }
+
+        .rotate-180 {
+            transform: rotate(180deg);
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Scrollbar styling for dark cards */
+        .list-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .list-container::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+
+        .list-container::-webkit-scrollbar-thumb {
+            background: var(--primary-gold);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="min-h-screen antialiased">
+    <div class="container mx-auto p-4 md:p-6 lg:p-8 max-w-7xl">
+        <header class="text-center py-8 mb-6">
+            <h1 class="font-bold" style="color: var(--dark-bg);">Conflict Resolution</h1>
+            <p class="text-xl mt-2" style="color: #64748b;">A Biblical Model from Joshua 22</p>
+        </header>
+
+        <nav id="mainNav" class="mb-6 border-b border-gray-300 flex flex-wrap">
+            <button class="tab-button active" data-tab="stages">The 7 Stages</button>
+            <button class="tab-button" data-tab="generator">Conflict Mapper</button>
+            <button class="tab-button" data-tab="glossary">Glossary</button>
+            <button class="tab-button" data-tab="about">About</button>
+        </nav>
+
+        <main>
+            <!-- STAGES TAB -->
+            <section id="stagesContent" class="tab-content active">
+                <div class="text-center mb-8">
+                    <h2 class="font-bold" style="color: var(--primary-gold);">From War to Worship</h2>
+                    <p class="text-gray-600 mt-2">Seven stages of biblical conflict resolution based on Joshua 22:30-34</p>
+                </div>
+                <div class="main-grid">
+                    <div id="stagesList" class="list-container space-y-3"></div>
+                    <div id="stageDetail" class="detail-area">
+                        <div class="flex items-center justify-center h-64 text-gray-400 italic">
+                            <p>Select a stage to explore the path from conflict to reconciliation.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CONFLICT MAPPER TAB -->
+            <section id="generatorContent" class="tab-content">
+                <div class="max-w-3xl mx-auto">
+                    <div class="text-center mb-10">
+                        <h2 class="font-bold" style="color: var(--primary-gold);">Map Your Conflict</h2>
+                        <p class="text-gray-600 mt-2">Describe a conflict and see how the biblical model applies to your situation.</p>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-8">
+                        <div class="grid gap-6">
+                            <div>
+                                <label class="block text-sm font-bold mb-2" style="color: var(--dark-bg);">Describe the Conflict</label>
+                                <textarea id="conflictInput" class="generator-input" rows="4" placeholder="E.g., Two church elders disagree about worship style..."></textarea>
+                            </div>
+
+                            <div>
+                                <p class="text-sm font-bold mb-3" style="color: var(--dark-bg);">Example Scenarios:</p>
+                                <div class="grid gap-2">
+                                    <div class="example-prompt" onclick="useExample(this)">Two elders disagree about changing worship music style - one values tradition, the other wants to reach younger people.</div>
+                                    <div class="example-prompt" onclick="useExample(this)">Family member stopped attending church after a theological disagreement with the pastor.</div>
+                                    <div class="example-prompt" onclick="useExample(this)">Church leadership accused of financial mismanagement by concerned members.</div>
+                                    <div class="example-prompt" onclick="useExample(this)">Elizabeth Bennet believes Mr. Darcy ruined her sister's happiness and is an arrogant villain (Pride and Prejudice).</div>
+                                    <div class="example-prompt" onclick="useExample(this)">The Acts 15 circumcision controversy - Judaizers claim Gentile converts must follow the Law of Moses.</div>
+                                </div>
+                            </div>
+
+                            <button onclick="mapConflict()" id="mapBtn" class="font-bold py-3 px-6 rounded-lg transition-colors shadow-md flex justify-center items-center" style="background-color: var(--primary-gold); color: var(--dark-bg);">
+                                <span>Map Resolution Path</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="resolutionOutput" class="space-y-4"></div>
+                </div>
+            </section>
+
+            <!-- GLOSSARY TAB -->
+            <section id="glossaryContent" class="tab-content">
+                <div class="text-center mb-8">
+                    <h2 class="font-bold" style="color: var(--primary-gold);">Key Terms</h2>
+                </div>
+                <div class="main-grid">
+                    <div id="glossaryList" class="list-container space-y-3"></div>
+                    <div id="glossaryDetail" class="detail-area">
+                        <div class="flex items-center justify-center h-64 text-gray-400 italic">
+                            <p>Select a term to explore its meaning.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ABOUT TAB -->
+            <section id="aboutContent" class="tab-content">
+                <div class="max-w-4xl mx-auto">
+                    <h2 class="text-center font-bold mb-8" style="color: var(--primary-gold);">The Story</h2>
+                    <div id="aboutDetail" class="prose prose-lg"></div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="text-center mt-12 py-6 border-t border-gray-300">
+            <p class="text-sm text-gray-500">Biblical Conflict Resolution Explorer. Version <span id="kbVersion"></span>.</p>
+        </footer>
+    </div>
+
+    <script>
+        const API_KEY = "AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A";
+
+        // --- DATA ---
+        const kbData = {
+            stages: [
+                {
+                    id: 1,
+                    title: "1. Threat Perceived",
+                    category: "STAGE ONE",
+                    body: "A problem or misunderstanding is identified that threatens unity, truth, or relationship. In Joshua 22, the western tribes saw the altar the eastern tribes built and immediately feared apostasy—haunted by the devastating Baal of Peor incident where 24,000 died (Numbers 25).",
+                    gospel: "Before Christ, we were enemies of God through our trespasses. Yet even in our rebellion, God perceived the threat not as cause for immediate judgment, but as invitation to reconciliation (Romans 5:10)."
+                },
+                {
+                    id: 2,
+                    title: "2. Investigation Over Assumption",
+                    category: "STAGE TWO",
+                    body: "Rather than rushing to judgment or immediate confrontation, there is a deliberate choice to seek understanding. The western tribes sent a delegation led by Phinehas—they chose to ask, not to attack.",
+                    gospel: "Christ's way is investigation before condemnation. 'Neither do I condemn you; go, and sin no more' (John 8:11). He came not to condemn but to save (John 3:17), modeling a posture of seeking to understand before pronouncing judgment."
+                },
+                {
+                    id: 3,
+                    title: "3. Confrontation With Openness",
+                    category: "STAGE THREE",
+                    body: "Direct engagement happens, but with space for explanation rather than predetermined verdict. Phinehas confronts the eastern tribes with the concern, but frames it as a question: 'What is this breach of faith you have committed?' He invites their response.",
+                    gospel: "Jesus confronted sin directly but always with openness to repentance and restoration. He was 'full of grace and truth' (John 1:14)—both, always. Truth without grace is crushing; grace without truth is meaningless."
+                },
+                {
+                    id: 4,
+                    title: "4. Explanation Heard",
+                    category: "STAGE FOUR",
+                    body: "Genuine listening occurs without interruption or immediate rebuttal. The eastern tribes explain that the altar is a witness of shared faith, not for sacrifice—a memorial to preserve unity across geographic separation. The delegation actually hears them.",
+                    gospel: "Our High Priest is not one who cannot sympathize with our weaknesses (Hebrews 4:15). Christ listens to our explanations, understands our frame, remembers we are dust. He intercedes for us with groans too deep for words (Romans 8:26-27)."
+                },
+                {
+                    id: 5,
+                    title: "5. Persuasion Accepted",
+                    category: "STAGE FIVE",
+                    body: "'It was good in their eyes'—the most remarkable phrase in the narrative. The delegation was actually willing to be persuaded, to have their minds changed by what they heard. No face-saving, no doubling down on initial conclusions.",
+                    gospel: "The gospel itself is God being 'persuaded' by Christ's sacrifice to reconcile us to Himself. Not that God needed convincing, but that the cross satisfied divine justice while demonstrating divine love. God's mind about us changes from wrath to favor through Christ (2 Corinthians 5:19)."
+                },
+                {
+                    id: 6,
+                    title: "6. Course Changed",
+                    category: "STAGE SIX",
+                    body: "'No more did they speak of making war'—a complete pivot. From mobilizing for battle to demobilizing for peace. The shift is concrete, immediate, and without defensiveness about the original posture.",
+                    gospel: "Repentance (metanoia) literally means 'change of mind.' God calls us to turn from death to life, from enmity to friendship, from judgment to grace. The cross changes everything: 'Therefore, if anyone is in Christ, he is a new creation' (2 Corinthians 5:17)."
+                },
+                {
+                    id: 7,
+                    title: "7. Crisis Becomes Worship",
+                    category: "STAGE SEVEN",
+                    body: "'They blessed God'—the ultimate transformation. What began as potential civil war ended in worship. The misunderstanding became an occasion for celebrating shared faith. Crisis transformed into opportunity for unity.",
+                    gospel: "This is the pattern of the cross: the worst event in history becomes the source of our salvation. 'Where sin abounded, grace abounded all the more' (Romans 5:20). Every crisis is an invitation to see Christ more clearly and worship more deeply."
+                }
+            ],
+            glossary: [
+                {
+                    title: "Witness",
+                    body: "In Joshua 22, the altar serves as a 'witness' (Hebrew: 'ed') between the tribes—a memorial testifying to shared covenant faith across geographic separation. It's not about uniformity of practice but unity of belief. The cross is the ultimate witness of God's love and our reconciliation."
+                },
+                {
+                    title: "Zeal",
+                    body: "Phinehas had previously shown violent zeal at Baal of Peor, executing the guilty to stop a plague (Numbers 25). At the Jordan, his zeal is channeled into investigation and peacemaking. Christ redirects our zeal from condemnation to reconciliation—zeal for truth without zeal for punishment."
+                },
+                {
+                    title: "Baal of Peor",
+                    body: "The incident in Numbers 25 where Israel's idolatry and immorality led to 24,000 deaths. This trauma haunted the western tribes and informed their fear when they saw the altar. Past wounds shape present reactions—understanding this is crucial for conflict resolution."
+                },
+                {
+                    title: "Unity vs. Uniformity",
+                    body: "The eastern tribes weren't doing something different because they believed differently—they were creating a reminder that they shared the same covenant despite geographic separation. True unity doesn't require everyone to look identical; it requires shared faith in Christ."
+                },
+                {
+                    title: "It Was Good In Their Eyes",
+                    body: "This phrase (Joshua 22:30) captures genuine persuasion—minds changed not through coercion but through understanding. The delegates were satisfied, convinced, no longer suspicious. This is the goal: not forced agreement but genuine resolution."
+                },
+                {
+                    title: "Investigation Before Accusation",
+                    body: "The principle of seeking to understand before pronouncing judgment. Proverbs 18:13 says, 'If one gives an answer before he hears, it is his folly and shame.' The western tribes could have attacked immediately but chose to send a delegation to ask first."
+                },
+                {
+                    title: "Full of Grace and Truth",
+                    body: "John 1:14 describes Jesus as embodying both grace and truth simultaneously. Not grace without truth (which is sentimentality) or truth without grace (which is cruelty), but both together. This is the model for all conflict resolution."
+                },
+                {
+                    title: "Our Struggle Is Not Against Flesh and Blood",
+                    body: "Ephesians 6:12 reminds us that the real enemy is not other people but spiritual forces of evil. When we remember this, we can engage in conflict without demonizing those who disagree with us. They're not the enemy—the Enemy is the enemy."
+                }
+            ],
+            about: {
+                version: "1.0",
+                story: `
+                    <h3 style="color: var(--primary-gold);">Joshua 22:30-34 - When Israel Nearly Went to War</h3>
+                    
+                    <p>After conquering Canaan, Joshua sends the eastern tribes (Reuben, Gad, and half of Manasseh) home across the Jordan River. Before leaving the Promised Land, they build a large, impressive altar by the river.</p>
+
+                    <p>When the western tribes hear about this altar, they immediately fear apostasy. They're haunted by the Baal of Peor incident where 24,000 Israelites died because of idolatry (Numbers 25). Their reaction is swift and severe: they gather at Shiloh to make war against their own brothers.</p>
+
+                    <p>But before attacking, they make a crucial decision: they send a delegation led by Phinehas the priest to investigate. Phinehas confronts them directly: "What is this breach of faith you have committed against the God of Israel?"</p>
+
+                    <p>The eastern tribes explain: "The Mighty One, God, the LORD! He knows; and let Israel itself know! If it was in rebellion or in breach of faith against the LORD, do not spare us today... We did it from fear that in time to come your children might say to our children, 'What have you to do with the LORD?' So we thought, 'Let us build an altar, not for burnt offering, nor for sacrifice, but to be a witness between us and you.'"</p>
+
+                    <p>The altar wasn't for worship—it was a testimony. A memorial declaring across generations: "We worship the same God you do. The Jordan River doesn't separate our faith."</p>
+
+                    <p>Then comes the pivotal verse: "When Phinehas the priest and the chiefs of the congregation... heard the words that the people of Reuben and the people of Gad and the people of Manasseh spoke, <strong>it was good in their eyes</strong>."</p>
+
+                    <p>They were persuaded. They changed their minds. "No more did they speak of making war against them." Instead, "the people of Israel blessed God and spoke no more of making war."</p>
+
+                    <p><strong>The result:</strong> From the brink of civil war to blessing God together. Crisis became worship. Division became testimony to unity.</p>
+
+                    <h3 style="color: var(--primary-gold); margin-top: 2rem;">The Gospel Connection</h3>
+
+                    <p>This pattern of conflict resolution points to Christ in profound ways:</p>
+
+                    <ul style="color: var(--cream-text); line-height: 1.8;">
+                        <li><strong>Phinehas at Peor vs. Phinehas at Jordan:</strong> At Peor, he used violence against the guilty. At Jordan, he used dialogue and discovered there was no guilt. Christ represents the ultimate shift—even when there IS real guilt, He absorbs violence rather than inflicting it.</li>
+                        
+                        <li><strong>The altar as witness:</strong> Just as the altar testified to shared faith across the Jordan, the cross testifies to reconciliation across the infinite chasm between holy God and sinful humanity.</li>
+                        
+                        <li><strong>"You have delivered Israel from the hand of the LORD":</strong> The eastern tribes' explanation revealed they hadn't committed apostasy, thus averting God's judgment. Christ actually delivers us from judgment we deserve.</li>
+                        
+                        <li><strong>From enemies to reconciled:</strong> "While we were enemies we were reconciled to God by the death of his Son" (Romans 5:10). The pattern is God's own: investigation, explanation, persuasion, reconciliation, worship.</li>
+                        
+                        <li><strong>Crisis as opportunity:</strong> The worst event in history (the crucifixion) becomes the source of our salvation. Every conflict is an invitation to see Christ more clearly.</li>
+                    </ul>
+
+                    <h3 style="color: var(--primary-gold); margin-top: 2rem;">Application: How Do We Handle Suspected Apostasy?</h3>
+
+                    <p>This narrative teaches us to:</p>
+                    
+                    <ul style="color: var(--cream-text); line-height: 1.8;">
+                        <li>Investigate before we accuse</li>
+                        <li>Actually listen, with openness to being persuaded</li>
+                        <li>Change course without defensiveness when we've misunderstood</li>
+                        <li>Remember: our struggle is not against flesh and blood (Ephesians 6:12)</li>
+                        <li>Seek unity through shared witness to Christ, not uniformity of practice</li>
+                        <li>Transform every crisis into an opportunity for worship</li>
+                    </ul>
+
+                    <p style="margin-top: 2rem; font-style: italic;">This is the way of the cross: full of grace and truth, always.</p>
+                `
+            }
+        };
+
+        // --- UI LOGIC ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const mainNav = document.getElementById('mainNav');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            mainNav.addEventListener('click', (e) => {
+                if (e.target.classList.contains('tab-button')) {
+                    const tabId = e.target.dataset.tab;
+                    document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === `${tabId}Content`) {
+                            content.classList.add('active');
+                        }
+                    });
+                }
+            });
+
+            renderLists();
+            displayAbout();
+        });
+
+        function renderLists() {
+            // Render Stages
+            const stagesList = document.getElementById('stagesList');
+            console.log('Rendering stages, count:', kbData.stages.length);
+            
+            if (!stagesList) {
+                console.error('stagesList element not found');
+                return;
+            }
+            
+            kbData.stages.forEach(stage => {
+                const card = createDarkCard(stage.category, stage.title, `Joshua 22`, () => showStageDetail(stage));
+                stagesList.appendChild(card);
+            });
+            
+            console.log('Stages rendered:', stagesList.children.length);
+
+            // Render Glossary
+            const glossList = document.getElementById('glossaryList');
+            kbData.glossary.forEach(term => {
+                const card = createDarkCard('DEFINITION', term.title, '', () => showGlossaryDetail(term));
+                glossList.appendChild(card);
+            });
+        }
+
+        function createDarkCard(category, title, reference, onClick) {
+            const div = document.createElement('div');
+            div.className = 'dark-card';
+            div.innerHTML = `
+                ${category ? `<div class="card-category">${category}</div>` : ''}
+                <div class="card-title">${title}</div>
+                ${reference ? `<div class="card-reference">${reference}</div>` : ''}
+            `;
+            div.onclick = onClick;
+            return div;
+        }
+
+        function showStageDetail(stage) {
+            const container = document.getElementById('stageDetail');
+            container.innerHTML = `
+                <div class="stage-number">${stage.category}</div>
+                <h3 class="text-3xl mb-4">${stage.title}</h3>
+                <p class="text-lg leading-relaxed mb-4">${stage.body}</p>
+                
+                <div class="gospel-toggle" onclick="toggleGospel(this)">
+                    <span>Gospel Connection</span>
+                    <svg class="chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </div>
+                <div class="hidden mt-3 p-4 rounded border-l-4" style="background-color: rgba(212, 165, 116, 0.1); border-color: var(--primary-gold); font-style: italic;">
+                    ${stage.gospel}
+                </div>
+            `;
+        }
+
+        function toggleGospel(btn) {
+            const content = btn.nextElementSibling;
+            const chevron = btn.querySelector('.chevron');
+            content.classList.toggle('hidden');
+            chevron.classList.toggle('rotate-180');
+        }
+
+        function showGlossaryDetail(term) {
+            const container = document.getElementById('glossaryDetail');
+            container.innerHTML = `
+                <div class="stage-number">DEFINITION</div>
+                <h3 class="text-3xl mb-4">${term.title}</h3>
+                <p class="text-lg leading-relaxed">${term.body}</p>
+            `;
+        }
+
+        function displayAbout() {
+            const container = document.getElementById('aboutDetail');
+            if (container) {
+                container.innerHTML = kbData.about.story;
+                container.style.color = 'var(--cream-text)';
+                container.style.backgroundColor = 'var(--dark-bg)';
+                container.style.padding = '2rem';
+                container.style.borderRadius = '10px';
+                container.style.borderLeft = '4px solid var(--primary-gold)';
+            }
+            const versionEl = document.getElementById('kbVersion');
+            if (versionEl) versionEl.innerText = kbData.about.version;
+        }
+
+        // --- EXAMPLE PROMPT HANDLER ---
+        function useExample(element) {
+            document.getElementById('conflictInput').value = element.textContent;
+        }
+
+        // --- AI CONFLICT MAPPER ---
+        async function mapConflict() {
+            const conflictDesc = document.getElementById('conflictInput').value;
+            const btn = document.getElementById('mapBtn');
+            const output = document.getElementById('resolutionOutput');
+
+            if (!conflictDesc.trim()) return alert("Please describe a conflict.");
+
+            btn.innerHTML = '<div class="spinner"></div>';
+            btn.disabled = true;
+            output.innerHTML = '';
+
+            try {
+                const systemPrompt = `
+                    You are a biblical scholar and conflict resolution expert.
+                    Task: Map the described conflict to the 7 stages of biblical conflict resolution from Joshua 22.
+                    
+                    The 7 stages are:
+                    1. Threat Perceived
+                    2. Investigation Over Assumption
+                    3. Confrontation With Openness
+                    4. Explanation Heard
+                    5. Persuasion Accepted
+                    6. Course Changed
+                    7. Crisis Becomes Worship
+                    
+                    Format: Return ONLY valid JSON array with no markdown formatting.
+                    Schema: 
+                    [
+                        {
+                            "stage": "1. Threat Perceived",
+                            "application": "Specific analysis of how this stage applies to the conflict..."
+                        },
+                        ... for all 7 stages
+                    ]
+                    
+                    Be specific and practical. Show what each stage would look like in this particular situation.
+                `;
+
+                const userPrompt = `Conflict: ${conflictDesc}`;
+
+                const payload = {
+                    contents: [{
+                        role: "user",
+                        parts: [{ text: systemPrompt + "\n\n" + userPrompt }]
+                    }],
+                    generationConfig: { 
+                        responseMimeType: "application/json",
+                        temperature: 0.7
+                    }
+                };
+
+                const response = await fetch(
+                    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
+                    {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                if (data.error) throw new Error(data.error.message);
+                if (!data.candidates || !data.candidates[0]) throw new Error("No response generated.");
+
+                let rawText = data.candidates[0].content.parts[0].text;
+                rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+
+                const result = JSON.parse(rawText);
+                renderResolution(result);
+
+            } catch (e) {
+                output.innerHTML = `<div class="p-4 bg-red-50 text-red-600 border border-red-200 rounded">Error: ${e.message}</div>`;
+            } finally {
+                btn.innerHTML = '<span>Map Resolution Path</span>';
+                btn.disabled = false;
+            }
+        }
+
+        function renderResolution(stages) {
+            const output = document.getElementById('resolutionOutput');
+            let html = '<h3 class="text-2xl font-bold mb-8 text-center" style="color: var(--primary-gold);">Resolution Path</h3>';
+            
+            stages.forEach((step, index) => {
+                html += `
+                    <div class="resolution-step">
+                        <div class="step-marker">${index + 1}</div>
+                        <div class="step-content">
+                            <h4 class="text-xl font-bold">${step.stage}</h4>
+                            <p class="mt-2 leading-relaxed">${step.application}</p>
+                        </div>
+                    </div>
+                `;
+            });
+
+            output.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
