@@ -132,39 +132,50 @@
     
     .input-section {
         background: white;
-        border: 2px solid var(--border-color);
+        border: 2px solid var(--primary-gold);
         border-radius: 12px;
         padding: 2rem;
         margin-bottom: 2rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
     
     input, select {
-        border: 1px solid var(--border-color);
+        border: 2px solid var(--border-color);
         border-radius: 6px;
-        padding: 0.5rem 1rem;
+        padding: 0.75rem 1rem;
         font-family: 'Inter', sans-serif;
+        font-size: 1rem;
+    }
+    
+    input:focus, select:focus {
+        outline: none;
+        border-color: var(--primary-gold);
     }
     
     button {
         background: var(--primary-gold);
         color: var(--dark-bg);
-        font-weight: 600;
-        padding: 0.75rem 2rem;
+        font-weight: 700;
+        font-size: 1rem;
+        padding: 0.875rem 2rem;
         border-radius: 6px;
         border: none;
         cursor: pointer;
         transition: all 0.2s;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
     
     button:hover {
         background: #c89a64;
-        transform: translateY(-1px);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
     }
     
     button:disabled {
         background: #ccc;
         cursor: not-allowed;
         transform: none;
+        box-shadow: none;
     }
     
     .error-card {
@@ -201,11 +212,12 @@
     
     <!-- Input Section -->
     <div class="input-section" id="inputSection">
-        <h2 class="text-xl font-bold mb-4">Analyze a New Testament Passage</h2>
+        <h2 class="text-2xl font-bold mb-2" style="color: var(--dark-bg);">Analyze a New Testament Passage</h2>
+        <p class="text-sm text-gray-600 mb-6">Enter a passage reference below to generate a comprehensive multi-lens analysis</p>
         
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <div>
-                <label class="block text-sm font-medium mb-1">Book</label>
+                <label class="block text-sm font-semibold mb-2" style="color: var(--dark-bg);">Book *</label>
                 <select id="bookSelect" class="w-full">
                     <option value="">Select Book...</option>
                     <option value="Matthew">Matthew</option>
@@ -239,25 +251,27 @@
             </div>
             
             <div>
-                <label class="block text-sm font-medium mb-1">Chapter</label>
+                <label class="block text-sm font-semibold mb-2" style="color: var(--dark-bg);">Chapter *</label>
                 <input type="number" id="chapterInput" class="w-full" min="1" placeholder="e.g., 3">
             </div>
             
             <div>
-                <label class="block text-sm font-medium mb-1">Verses</label>
+                <label class="block text-sm font-semibold mb-2" style="color: var(--dark-bg);">Verses *</label>
                 <input type="text" id="versesInput" class="w-full" placeholder="e.g., 16 or 16-18">
             </div>
             
             <div class="flex items-end">
-                <button id="analyzeBtn" onclick="analyzePassage()" class="w-full">
-                    Analyze Passage
+                <button id="analyzeBtn" onclick="analyzePassage()" class="w-full" style="height: 3.25rem;">
+                    🔍 Analyze Passage
                 </button>
             </div>
         </div>
         
-        <div class="text-sm text-gray-600">
-            <strong>Examples:</strong> John 3:16 • Romans 5:1-5 • Ephesians 2:8-10 • Philippians 2:5-11
-            <br><strong>Limit:</strong> 20 verses maximum
+        <div class="p-4 rounded-lg" style="background: rgba(212, 165, 116, 0.1); border: 1px solid var(--primary-gold);">
+            <div class="text-sm" style="color: var(--dark-bg);">
+                <strong>📖 Examples:</strong> John 3:16 • Romans 5:1-5 • Ephesians 2:8-10 • Philippians 2:5-11
+                <br><strong>⚠️ Limit:</strong> Maximum 20 verses per analysis
+            </div>
         </div>
         
         <div id="errorDisplay" class="mt-4" style="display: none;"></div>
