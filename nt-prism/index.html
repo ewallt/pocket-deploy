@@ -279,10 +279,12 @@
         <!-- TEST STATUS BOX -->
         <div class="mt-6 p-4 rounded-lg" style="background: var(--dark-bg); border: 2px solid var(--primary-gold);">
             <h3 class="font-bold mb-3" style="color: var(--primary-gold);">🔍 Debug Test Panel</h3>
-            <button onclick="testAPI()" class="w-full mb-3 font-bold py-2 px-4 rounded-lg" style="background: #059669; color: white;">
+            <button id="testBtn" class="w-full mb-3 font-bold py-2 px-4 rounded-lg" style="background: #059669; color: white;">
                 Test API Connection
             </button>
-            <div id="testStatus" class="text-sm p-3 rounded" style="background: rgba(255,255,255,0.1); color: var(--cream-text); font-family: monospace; min-height: 100px; max-height: 300px; overflow-y: auto; white-space: pre-wrap;"></div>
+            <div id="testStatus" class="text-sm p-3 rounded" style="background: rgba(255,255,255,0.1); color: var(--cream-text); font-family: monospace; min-height: 100px; max-height: 300px; overflow-y: auto; white-space: pre-wrap;">
+                Click button above to test...
+            </div>
         </div>
     </div>
     
@@ -446,7 +448,12 @@
     
     async function testAPI() {
         const testDiv = document.getElementById('testStatus');
-        const btn = event.target;
+        const btn = document.getElementById('testBtn');
+        
+        if (!testDiv || !btn) {
+            alert('Error: Could not find test elements!');
+            return;
+        }
         
         // Immediate feedback
         btn.textContent = '⏳ Testing...';
@@ -515,6 +522,17 @@
             btn.disabled = false;
         }
     }
+    
+    // Attach event listeners on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const testBtn = document.getElementById('testBtn');
+        if (testBtn) {
+            testBtn.addEventListener('click', testAPI);
+            document.getElementById('testStatus').textContent = 'Ready! Click button above to test API connection.\n';
+        } else {
+            console.error('Test button not found!');
+        }
+    });
     
     function showError(message) {
         const errorDiv = document.getElementById('errorDisplay');
@@ -844,7 +862,7 @@ Be accurate. Do not hallucinate Greek words or morphology. Focus on substance.`;
 
 <!-- VERSION BANNER -->
 <div style="position: fixed; bottom: 0; left: 0; right: 0; background: var(--dark-bg); color: var(--primary-gold); text-align: center; padding: 0.5rem; font-size: 0.85rem; border-top: 2px solid var(--primary-gold); z-index: 1000;">
-    <strong>VERSION 2.3 - VERBOSE TEST</strong> • Dec 14, 11:58 PM • Button should change text immediately when clicked
+    <strong>VERSION 2.4 - EVENT LISTENER FIX</strong> • Dec 14, 12:02 AM • Test box should say "Ready!" when page loads
 </div>
 ```
 
