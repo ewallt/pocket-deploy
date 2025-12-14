@@ -283,6 +283,7 @@
             <div class="loading-spinner mx-auto mb-4"></div>
             <h3 class="text-lg font-semibold mb-2">Generating Analysis...</h3>
             <p class="text-sm" style="color: var(--muted-gold);" id="loadingStatus">Preparing passage...</p>
+            <div id="debugInfo" class="mt-4 p-3 text-xs text-left" style="background: rgba(255,255,255,0.1); border-radius: 6px; font-family: monospace; max-height: 200px; overflow-y: auto;"></div>
         </div>
     </div>
     
@@ -413,6 +414,16 @@
     
     function updateLoadingStatus(message) {
         document.getElementById('loadingStatus').textContent = message;
+        addDebugLog(message);
+    }
+    
+    function addDebugLog(message) {
+        const debugDiv = document.getElementById('debugInfo');
+        if (debugDiv) {
+            const timestamp = new Date().toLocaleTimeString();
+            debugDiv.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+            debugDiv.scrollTop = debugDiv.scrollHeight;
+        }
     }
     
     function showError(message) {
@@ -420,6 +431,9 @@
         errorDiv.innerHTML = `
             <div class="error-card">
                 <strong>⚠️ Error:</strong> ${message}
+                <div class="mt-2 text-xs" style="opacity: 0.8;">
+                    Check the debug log above for details, or try a different passage.
+                </div>
             </div>
         `;
         errorDiv.style.display = 'block';
@@ -429,7 +443,7 @@
     async function generateAnalysis(book, chapter, verses) {
         const passageRef = `${book} ${chapter}:${verses}`;
         
-        console.log('Generating analysis for:', passageRef);
+        addDebugLog(`Starting analysis for: ${passageRef}`);
         
         const systemPrompt = `You are a biblical scholar creating a multi-lens exegetical analysis of ${passageRef}.
 ```
@@ -513,6 +527,7 @@ Be accurate. Do not hallucinate Greek words or morphology. Focus on substance.`;
 
 ```
         try {
+            addDebugLog('Building API request payload...');
             const payload = {
                 contents: [{
                     role: "user",
@@ -524,6 +539,7 @@ Be accurate. Do not hallucinate Greek words or morphology. Focus on substance.`;
                 }
             };
 
+            addDebugLog('Calling Gemini API...');
             const response = await fetch(
                 `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
                 {
@@ -533,23 +549,40 @@ Be accurate. Do not hallucinate Greek words or morphology. Focus on substance.`;
                 }
             );
 
+            addDebugLog(`API response status: ${response.status}`);
+
             if (!response.ok) {
-                throw new Error(`API Error: ${response.status}`);
+                const errorText = await response.text();
+                addDebugLog(`ERROR: ${errorText}`);
+                throw new Error(`API Error: ${response.status} - ${errorText.substring(0, 200)}`);
             }
 
+            addDebugLog('Parsing API response...');
             const data = await response.json();
             
-            if (data.error) throw new Error(data.error.message);
-            if (!data.candidates || !data.candidates[0]) throw new Error("No response generated.");
+            if (data.error) {
+                addDebugLog(`API returned error: ${data.error.message}`);
+                throw new Error(data.error.message);
+            }
+            
+            if (!data.candidates || !data.candidates[0]) {
+                addDebugLog('No candidates in response');
+                throw new Error("No response generated.");
+            }
 
+            addDebugLog('Extracting JSON from response...');
             let rawText = data.candidates[0].content.parts[0].text;
             rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
 
-            console.log('Raw API response:', rawText);
+            addDebugLog(`Response length: ${rawText.length} characters`);
+            addDebugLog('Parsing JSON...');
             
-            return JSON.parse(rawText);
+            const result = JSON.parse(rawText);
+            addDebugLog('✅ Analysis generated successfully!');
+            
+            return result;
         } catch (error) {
-            console.error('Error in generateAnalysis:', error);
+            addDebugLog(`❌ ERROR: ${error.message}`);
             throw error;
         }
     }
@@ -721,7 +754,7 @@ Be accurate. Do not hallucinate Greek words or morphology. Focus on substance.`;
 
 <!-- VERSION BANNER -->
 <div style="position: fixed; bottom: 0; left: 0; right: 0; background: var(--dark-bg); color: var(--primary-gold); text-align: center; padding: 0.5rem; font-size: 0.85rem; border-top: 2px solid var(--primary-gold); z-index: 1000;">
-    <strong>VERSION 2.0 - GEMINI API</strong> • Updated: Dec 14, 2025 11:45 PM • Click "Analyze Passage" button to test
+    <strong>VERSION 2.1 - DEBUG MODE</strong> • Updated: Dec 14, 2025 11:50 PM • Watch for debug log when you click analyze
 </div>
 ```
 
