@@ -608,20 +608,44 @@
             `;
         }
 
+        // FIXED LISTENER LOGIC TO PREVENT DOUBLE-TAP BUG
         function attachGreekListeners() {
+            // Check for Touch Capability
+            const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
             document.querySelectorAll('.greek-interactive').forEach(span => {
-                span.addEventListener('mouseenter', (e) => showMorphology(span.textContent, e));
-                span.addEventListener('mouseleave', () => hideTooltip());
+                
+                // 1. DESKTOP: Mouse Enter/Leave (Only add if NOT touch)
+                if (!isTouch) {
+                    span.addEventListener('mouseenter', (e) => showMorphology(span.textContent, e));
+                    span.addEventListener('mouseleave', () => hideTooltip());
+                }
+
+                // 2. MOBILE: Click to Toggle
                 span.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    if (tooltip.style.display === 'block') {
-                        hideTooltip();
-                    } else {
-                        showMorphology(span.textContent, e);
+                    if (isTouch) {
+                        const currentWord = span.textContent;
+                        const activeWord = tooltip.dataset.activeWord;
+
+                        // If already open on this word, close it.
+                        if (tooltip.style.display === 'block' && activeWord === currentWord) {
+                            hideTooltip();
+                            tooltip.dataset.activeWord = ''; 
+                        } else {
+                            // Otherwise show it
+                            showMorphology(span.textContent, e);
+                            tooltip.dataset.activeWord = currentWord;
+                        }
                     }
                 });
             });
-            document.addEventListener('click', () => hideTooltip());
+
+            // Close on background click
+            document.addEventListener('click', () => {
+                hideTooltip();
+                if(tooltip) tooltip.dataset.activeWord = '';
+            });
         }
         
         function renderLogicalFlow(data) {
