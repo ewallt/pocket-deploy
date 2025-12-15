@@ -4,219 +4,207 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Universal Inference Hub</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background-color: #f3f4f6; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none;  scrollbar-width: none; }
-        .fade-in { animation: fadeIn 0.3s ease-in; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        :root {
+            --bg-color: #1e1e1e;
+            --panel-bg: #252526;
+            --text-color: #d4d4d4;
+            --accent-color: #0e639c;
+            --border-color: #3c3c3c;
+        }
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-color); color: var(--text-color); height: 100vh; display: flex; flex-direction: column; }
+        
+        /* Header / Toolbar */
+        header { padding: 10px 20px; background: var(--panel-bg); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        h1 { margin: 0; font-size: 1.2rem; font-weight: normal; }
+        button { background: var(--accent-color); color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 2px; }
+        button:hover { opacity: 0.9; }
+        button.secondary { background: #444; }
+
+        /* Main Layout */
+        #workspace { display: flex; flex: 1; overflow: hidden; }
+        
+        /* Settings Panel (Hidden by default) */
+        #settings-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100; justify-content: center; align-items: center; }
+        #settings-box { background: var(--panel-bg); padding: 20px; width: 600px; max-width: 90%; border: 1px solid var(--border-color); box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+        .setting-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, textarea { width: 100%; background: #333; border: 1px solid var(--border-color); color: white; padding: 8px; box-sizing: border-box; font-family: monospace; }
+        textarea { height: 150px; resize: vertical; }
+
+        /* Left Pane: Chat/Input */
+        #input-pane { width: 400px; display: flex; flex-direction: column; border-right: 1px solid var(--border-color); background: var(--panel-bg); }
+        #chat-history { flex: 1; padding: 10px; overflow-y: auto; font-size: 0.9rem; }
+        .msg { margin-bottom: 10px; padding: 8px; border-radius: 4px; }
+        .msg.user { background: #3a3a3a; border-left: 3px solid var(--accent-color); }
+        .msg.system { background: #2d2d2d; color: #aaa; font-style: italic; }
+        #prompt-area { padding: 10px; border-top: 1px solid var(--border-color); }
+        #user-input { width: 100%; height: 60px; resize: none; margin-bottom: 5px; }
+
+        /* Right Pane: The "App" View */
+        #output-pane { flex: 1; padding: 20px; overflow-y: auto; background-color: white; color: black; }
+        /* Simple typography for the rendered view */
+        #output-pane h1, #output-pane h2 { border-bottom: 1px solid #ddd; padding-bottom: 5px; }
+        #output-pane code { background: #f0f0f0; padding: 2px 4px; border-radius: 3px; }
+        #output-pane pre { background: #f0f0f0; padding: 10px; overflow-x: auto; }
+        
+        /* Loading Indicator */
+        .spinner { display: inline-block; width: 12px; height: 12px; border: 2px solid rgba(255,255,255,.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s ease-in-out infinite; margin-left: 10px; display: none;}
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="h-screen flex flex-col overflow-hidden font-sans text-gray-800">
+<body>
 
-    <div id="configPanel" class="hidden absolute z-50 top-16 right-4 w-96 bg-white shadow-xl rounded-lg border border-gray-200 p-4">
-        <h3 class="font-bold text-sm text-gray-500 uppercase mb-2">Hub Context</h3>
-        <textarea id="contextDef" class="w-full h-32 text-sm border p-2 rounded mb-2" placeholder="Define what this hub is about...">
-This hub is a WWII Command Center.
-Items are Major Battles.
-Details include Date, Casualties, Victor, and Tactical Summary.
-        </textarea>
-        <button onclick="saveConfig()" class="w-full bg-blue-600 text-white py-1 rounded hover:bg-blue-700">Update Context</button>
+<header>
+    <h1>Universal Inference Hub</h1>
+    <div>
+        <span id="loader" class="spinner"></span>
+        <button onclick="toggleSettings()" class="secondary">⚙️ Configure Cartridge</button>
     </div>
+</header>
 
-    <header class="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-6 shadow-sm z-10">
-        <div class="flex items-center gap-3">
-            <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">H</div>
-            <h1 id="appTitle" class="text-xl font-bold tracking-tight">Inference Hub</h1>
+<div id="workspace">
+    <div id="input-pane">
+        <div id="chat-history">
+            <div class="msg system">System: Hub ready. Gemini 2.0 Flash Active.</div>
         </div>
-        <div class="flex gap-2">
-            <button onclick="toggleConfig()" class="p-2 text-gray-400 hover:text-gray-600" title="Edit Context">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-            </button>
+        <div id="prompt-area">
+            <textarea id="user-input" placeholder="Input parameters or query... (Ctrl+Enter to send)"></textarea>
+            <button onclick="runInference()" style="width:100%">Run Inference</button>
         </div>
-    </header>
+    </div>
+    <div id="output-pane">
+        <div style="color:#666; text-align:center; margin-top: 100px;">
+            <h3>Waiting for Inference...</h3>
+            <p>The output of your "Cartridge" will render here.</p>
+        </div>
+    </div>
+</div>
 
-    <main class="flex-1 flex overflow-hidden">
-        
-        <aside class="w-1/3 max-w-sm bg-white border-r border-gray-200 flex flex-col">
-            <div class="p-4 border-b border-gray-100 flex gap-2">
-                <input type="text" id="searchBox" placeholder="Enter topic (e.g., '1944')..." 
-                    class="w-full bg-gray-100 border-none rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                    onkeydown="handleEnterKey(event)">
-                <button onclick="triggerSearch()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 rounded-lg font-medium transition-colors">
-                    Go
-                </button>
-            </div>
-            <div id="itemList" class="flex-1 overflow-y-auto p-2 space-y-1">
-                <div class="text-center text-gray-400 mt-10 text-sm">
-                    Enter a topic above and click Go.<br>
-                    <span class="text-xs opacity-75">(e.g., "Pacific Theater", "D-Day")</span>
-                </div>
-            </div>
-        </aside>
+<div id="settings-overlay">
+    <div id="settings-box">
+        <h2>Hub Configuration</h2>
+        <div class="setting-group">
+            <label>The Cartridge (System Instruction)</label>
+            <textarea id="system-prompt" placeholder="Define who I am (e.g., 'You are a Math Visualizer...')"></textarea>
+        </div>
+        <div style="text-align: right;">
+            <button onclick="saveSettings()">Save & Close</button>
+        </div>
+    </div>
+</div>
 
-        <section class="flex-1 overflow-y-auto p-8 relative" id="detailView">
-            <div id="emptyState" class="flex flex-col items-center justify-center h-full text-gray-400">
-                <svg class="w-16 h-16 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
-                <p>Select an item to infer details</p>
-            </div>
-            
-            <div id="contentArea" class="hidden max-w-3xl mx-auto fade-in">
-                </div>
-        </section>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+    // --- State Management ---
+    // Hardcoded API Key as requested
+    const API_KEY = "AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A";
+    
+    const CONFIG = {
+        systemPrompt: localStorage.getItem('system_prompt') || 'You are a helpful assistant. Render your response in clean HTML within a div.'
+    };
 
-    </main>
+    // --- Initialization ---
+    document.getElementById('system-prompt').value = CONFIG.systemPrompt;
+    
+    // Ctrl+Enter to send
+    document.getElementById('user-input').addEventListener('keydown', function(e) {
+        if (e.ctrlKey && e.key === 'Enter') runInference();
+    });
 
-    <script>
-        // ==========================================
-        // 1. CONFIGURATION
-        // ==========================================
-        
-        // PASTE YOUR KEY HERE
-        const HARDCODED_KEY = "PASTE_YOUR_API_KEY_HERE"; 
-        
-        // Default Context
-        const DEFAULT_CONTEXT = `
-This hub is a WWII Command Center.
-Items are Major Battles.
-Details include Date, Casualties, Victor, and Tactical Summary.
-        `;
+    // --- Core Logic ---
+    function toggleSettings() {
+        const el = document.getElementById('settings-overlay');
+        el.style.display = el.style.display === 'flex' ? 'none' : 'flex';
+    }
 
-        // ==========================================
-        // 2. APP LOGIC
-        // ==========================================
-        
-        let CONTEXT = localStorage.getItem('hub_context') || DEFAULT_CONTEXT;
-        
-        // Initialize UI
-        document.getElementById('contextDef').value = CONTEXT;
+    function saveSettings() {
+        const prompt = document.getElementById('system-prompt').value;
+        localStorage.setItem('system_prompt', prompt);
+        CONFIG.systemPrompt = prompt;
+        toggleSettings();
+        addToHistory("System: Cartridge Updated.", "system");
+    }
 
-        function toggleConfig() {
-            document.getElementById('configPanel').classList.toggle('hidden');
-        }
+    function addToHistory(text, type) {
+        const history = document.getElementById('chat-history');
+        const div = document.createElement('div');
+        div.className = `msg ${type}`;
+        div.textContent = text;
+        history.appendChild(div);
+        history.scrollTop = history.scrollHeight;
+    }
 
-        function saveConfig() {
-            const ctx = document.getElementById('contextDef').value;
-            localStorage.setItem('hub_context', ctx);
-            location.reload();
-        }
+    // --- UPDATED INFERENCE ENGINE (Gemini 2.0 Flash) ---
+    async function runInference() {
+        const inputEl = document.getElementById('user-input');
+        const userText = inputEl.value.trim();
+        if (!userText) return;
 
-        // Handle 'Enter' key press
-        function handleEnterKey(e) {
-            if (e.key === 'Enter') {
-                triggerSearch();
+        addToHistory(userText, 'user');
+        inputEl.value = '';
+        document.getElementById('loader').style.display = 'inline-block';
+
+        const payload = {
+            contents: [{
+                role: "user",
+                parts: [{ text: CONFIG.systemPrompt + "\n\nUser Input: " + userText }]
+            }],
+            generationConfig: {
+                // We leave mimetype optional so the Hub can handle both Text and JSON cartridges
+                temperature: 0.7
             }
-        }
+        };
 
-        // Core Search Function
-        async function triggerSearch() {
-            const query = document.getElementById('searchBox').value;
-            if (!query) return;
+        try {
+            const response = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                }
+            );
 
-            document.getElementById('itemList').innerHTML = `<div class="p-4 text-center text-gray-500 animate-pulse">Generating list for "${query}"...</div>`;
-            
-            // 1. INFERENCE: Generate the List
-            const prompt = `
-                CONTEXT: ${CONTEXT}
-                TASK: Generate a JSON list of 6-10 items relevant to the search query: "${query}".
-                IMPORTANT: The output must be a pure JSON Array. No markdown formatting.
-                FORMAT EXAMPLE:
-                [
-                    { "id": "1", "title": "Battle Name", "subtitle": "1942 - Eastern Front" }
-                ]
-            `;
-            
-            try {
-                const data = await runInference(prompt);
-                const items = JSON.parse(cleanJSON(data));
-                renderList(items);
-            } catch (err) {
-                document.getElementById('itemList').innerHTML = `<div class="p-4 text-red-500 text-sm">Error: ${err.message}</div>`;
-            }
-        }
-
-        function renderList(items) {
-            const listEl = document.getElementById('itemList');
-            listEl.innerHTML = '';
-            items.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'p-3 hover:bg-blue-50 cursor-pointer rounded-lg border border-transparent hover:border-blue-100 transition-colors group';
-                div.innerHTML = `
-                    <div class="font-semibold text-gray-800 group-hover:text-blue-700">${item.title}</div>
-                    <div class="text-xs text-gray-500">${item.subtitle}</div>
-                `;
-                div.onclick = () => loadDetail(item);
-                listEl.appendChild(div);
-            });
-        }
-
-        async function loadDetail(item) {
-            document.getElementById('emptyState').classList.add('hidden');
-            const contentArea = document.getElementById('contentArea');
-            contentArea.classList.remove('hidden');
-            // Skeleton Loader
-            contentArea.innerHTML = `<div class="space-y-4">
-                <div class="h-8 bg-gray-200 rounded w-1/3 animate-pulse"></div>
-                <div class="h-4 bg-gray-200 rounded w-full animate-pulse"></div>
-                <div class="h-4 bg-gray-200 rounded w-full animate-pulse"></div>
-                <div class="h-64 bg-gray-100 rounded w-full animate-pulse mt-8"></div>
-            </div>`;
-
-            // 2. INFERENCE: Generate the Detail
-            const prompt = `
-                CONTEXT: ${CONTEXT}
-                ITEM: ${item.title} (${item.subtitle})
-                TASK: Generate a detailed dashboard view for this item.
-                FORMAT: Return pure HTML strings. Use Tailwind CSS classes for styling.
-                STRUCTURE REQUIREMENTS:
-                1. Title (text-3xl font-bold mb-4)
-                2. Summary Box (bg-gray-50 p-4 rounded mb-6)
-                3. Key Stats Grid (grid grid-cols-2 gap-4 mb-6)
-                4. Analysis Section (prose max-w-none)
-                NO markdown code blocks. Just the HTML.
-            `;
-
-            try {
-                const html = await runInference(prompt);
-                contentArea.innerHTML = cleanHtml(html);
-            } catch (err) {
-                contentArea.innerHTML = `<div class="text-red-500">Error: ${err.message}</div>`;
-            }
-        }
-
-        async function runInference(prompt) {
-            if (!HARDCODED_KEY || HARDCODED_KEY.includes("PASTE_YOUR")) { 
-                throw new Error("Missing API Key. Edit the HARDCODED_KEY variable in the script."); 
-            }
-            
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${HARDCODED_KEY}`;
-            const payload = {
-                contents: [{ role: "user", parts: [{ text: prompt }] }]
-            };
-
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            
             if (!response.ok) {
-                 const errData = await response.json();
-                 throw new Error(errData.error?.message || response.statusText);
+                const errorText = await response.text();
+                throw new Error(`API Error: ${response.status} - ${errorText}`);
             }
 
             const data = await response.json();
-            return data.candidates[0].content.parts[0].text;
-        }
+            
+            if (data.error) throw new Error(data.error.message);
+            if (!data.candidates || !data.candidates[0]) throw new Error("No response generated.");
 
-        function cleanJSON(text) {
-            return text.replace(/```json/g, '').replace(/```/g, '').trim();
+            let rawText = data.candidates[0].content.parts[0].text;
+            
+            // Cleanup: remove markdown code blocks if present (common with Flash 2.0)
+            rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+
+            const outputPane = document.getElementById('output-pane');
+            
+            // Try to parse as JSON first (if the Cartridge was strict)
+            try {
+                const json = JSON.parse(rawText);
+                // If JSON has an 'html' or 'htmlContent' field, render that
+                if (json.html || json.htmlContent) {
+                    outputPane.innerHTML = json.html || json.htmlContent;
+                } else {
+                    // Otherwise just show the JSON
+                    outputPane.innerHTML = `<pre>${JSON.stringify(json, null, 2)}</pre>`;
+                }
+            } catch (e) {
+                // If not JSON, render as Markdown (Default behavior)
+                outputPane.innerHTML = marked.parse(rawText);
+            }
+
+        } catch (error) {
+            console.error(error);
+            addToHistory("Error: " + error.message, 'system');
+        } finally {
+            document.getElementById('loader').style.display = 'none';
         }
-        
-        function cleanHtml(text) {
-            return text.replace(/```html/g, '').replace(/```/g, '').trim();
-        }
-    </script>
+    }
+</script>
 </body>
 </html>
