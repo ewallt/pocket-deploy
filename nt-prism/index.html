@@ -106,16 +106,19 @@
             font-weight: 600;
         }
 
+        /* UPDATED INTERACTIVE STYLES: 
+           Every word is now interactive, so we style them subtly */
         .greek-interactive {
             cursor: pointer;
-            border-bottom: 1px dotted var(--primary-gold);
-            transition: all 0.2s;
-            position: relative;
+            transition: all 0.1s;
+            display: inline-block;
+            border-radius: 3px;
+            padding: 0 2px;
         }
 
         .greek-interactive:hover {
             color: var(--primary-gold);
-            background: rgba(212, 165, 116, 0.1);
+            background: rgba(212, 165, 116, 0.15);
         }
         
         .word-study-card {
@@ -346,7 +349,9 @@
         
         // --- 1. TOOLTIP SYSTEM ---
         let tooltip;
-        let morphologyData = {}; 
+        
+        // This will now hold an index-based lookup for every word in the sequence
+        let interlinearData = []; 
 
         function createTooltip() {
             tooltip = document.createElement('div');
@@ -367,19 +372,20 @@
             document.body.appendChild(tooltip);
         }
 
-        function showMorphology(word, event) {
-            const lookupWord = word.replace(/[.,;:—·]/g, '');
-            const data = morphologyData[lookupWord];
+        // Updated to use the Index ID of the word, not just the string
+        function showMorphology(element, event) {
+            const index = element.dataset.index;
+            const data = interlinearData[index];
             
             if (!data) return;
             
             tooltip.innerHTML = `
-                <div style="font-size: 1.5rem; color: #d4a574; font-family: 'EB Garamond', serif;">${word}</div>
-                <div style="font-size: 0.85rem; color: rgba(212,165,116,0.8); font-weight:bold;">${data.morph}</div>
-                <div class="mt-1"><strong>Gloss:</strong> ${data.gloss}</div>
+                <div style="font-size: 1.5rem; color: #d4a574; font-family: 'EB Garamond', serif;">${data.g}</div>
+                <div style="font-size: 0.85rem; color: rgba(212,165,116,0.8); font-weight:bold;">${data.m}</div>
+                <div class="mt-1"><strong>Gloss:</strong> ${data.d}</div>
             `;
             
-            const rect = event.target.getBoundingClientRect();
+            const rect = element.getBoundingClientRect();
             let left = rect.left + (rect.width / 2) - 160; 
             let top = rect.bottom + 8;
             
@@ -417,11 +423,10 @@
             });
         }
         
-        // --- 3. VALIDATION AND NORMALIZATION ---
+        // --- 3. VALIDATION ---
         function validatePassage(book, reference) {
             if (!book || !reference) return { valid: false, message: "Please select a book and enter a reference." };
             
-            // Format: Chapter:Verse(s)
             if (reference.includes(':')) {
                 const parts = reference.split(':');
                 if (parts.length !== 2) return { valid: false, message: "Invalid format. Use Chapter:Verses (e.g., 3:16)" };
@@ -431,7 +436,6 @@
                 
                 if (isNaN(chapter)) return { valid: false, message: "Invalid chapter number." };
                 
-                // Truncate logic for ranges
                 if (versePart.includes('-')) {
                     const [start, end] = versePart.split('-').map(v => parseInt(v));
                     if (isNaN(start) || isNaN(end)) return { valid: false, message: "Invalid verse range." };
@@ -445,12 +449,9 @@
                         };
                     }
                 }
-                
-                // Single verse or valid short range
                 return { valid: true, cleanedRef: `${chapter}:${versePart}`, wasTruncated: false };
             } 
             
-            // Format: Whole Chapter
             const chapterOnly = parseInt(reference);
             if (!isNaN(chapterOnly)) {
                 return { valid: true, cleanedRef: `${chapterOnly}`, wasTruncated: false };
@@ -470,7 +471,6 @@
                 return;
             }
             
-            // Use the cleaned/truncated reference for the API and display
             const finalRef = validation.cleanedRef;
             const passageRef = `${book} ${finalRef}`;
             
@@ -480,13 +480,11 @@
             document.getElementById('errorDisplay').style.display = 'none';
             
             try {
-                updateLoadingStatus('Calling AI to generate comprehensive analysis...');
+                updateLoadingStatus('Generating full interlinear analysis...');
                 const analysis = await generateAnalysis(passageRef);
                 
-                morphologyData = {};
-                analysis.text_parsing.key_words.forEach(word => {
-                    morphologyData[word.greek] = { morph: word.morphology, gloss: word.gloss };
-                });
+                // Store the Full Interlinear Array
+                interlinearData = analysis.text_parsing.interlinear;
 
                 renderResults(analysis);
                 
@@ -514,35 +512,40 @@
             errorDiv.style.display = 'block';
         }
         
-        // --- 5. AI GENERATION ---
+        // --- 5. AI GENERATION (UPDATED FOR FULL INTERLINEAR) ---
         async function generateAnalysis(passageRef) {
+            // Updated Prompt to ask for ALL words
             const systemPrompt = `You are a biblical scholar. Analyze ${passageRef}.
-            Return JSON only.
             
+            CRITICAL INSTRUCTION: For 'text_parsing', do NOT provide a block of text. 
+            Provide a complete 'interlinear' array containing EVERY word in the Greek text (NA28) in order.
+            
+            Return JSON only:
             {
             "text_parsing": {
-            "english_text": "ESV Text",
-            "greek_text": "Greek text (NA28)",
-            "key_words": [
-            { "greek": "GreekWordFromText", "morphology": "ParseCode", "gloss": "EnglishGloss", "verse": "1" }
-            ]
+                "english_text": "Full ESV text here...",
+                "interlinear": [
+                    { "g": "GreekWord", "m": "MorphCode", "d": "ShortDef" },
+                    { "g": "NextWord", "m": "MorphCode", "d": "ShortDef" }
+                    ... for every word in passage
+                ]
             },
             "logical_flow": {
-            "structure": [ { "type": "premise|contrast|conclusion", "label": "Label", "content": "Explanation", "verse_ref": "v.1" } ],
-            "key_insight": "Rhetorical strategy summary"
+                "structure": [ { "type": "premise|contrast|conclusion", "label": "Label", "content": "Explanation", "verse_ref": "v.1" } ],
+                "key_insight": "Rhetorical strategy summary"
             },
             "historical_context": {
-            "notes": [ { "title": "Context Point", "content": "Explanation" } ]
+                "notes": [ { "title": "Context Point", "content": "Explanation" } ]
             },
             "theological_traditions": {
-            "concepts": [ { "title": "Concept", "traditions": [ { "name": "Tradition", "view": "Viewpoint" } ] } ]
+                "concepts": [ { "title": "Concept", "traditions": [ { "name": "Tradition", "view": "Viewpoint" } ] } ]
             },
             "word_studies": {
-            "words": [ { "greek": "Word", "transliteration": "Trans", "gloss": "Meanings", "semantic_range": "Range", "usage_note": "Usage", "theological_weight": "Significance" } ]
+                "words": [ { "greek": "Word", "transliteration": "Trans", "gloss": "Meanings", "semantic_range": "Range", "usage_note": "Usage", "theological_weight": "Significance" } ]
             }
             }
             
-            Use accurate NA28 Greek. Ensure 'key_words' appear exactly as written in 'greek_text' so they can be matched programmatically.`;
+            Maintain the exact word order of the NA28 text in the 'interlinear' array.`;
 
             const response = await fetch(
                 `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
@@ -576,16 +579,15 @@
             attachGreekListeners();
         }
 
+        // Updated to Render from the Interlinear Array
         function renderTextParsing(data) {
-            const rawGreek = data.greek_text;
-            const words = rawGreek.split(/\s+/);
-            
-            const processedGreek = words.map(word => {
-                const clean = word.replace(/[.,;:—·]/g, '');
-                if (morphologyData[clean]) {
-                    return `<span class="greek-interactive" data-word="${word}">${word}</span>`;
-                }
-                return word;
+            // Build the HTML by looping through the full array
+            // We attach the INDEX to the data attribute so we can look it up later
+            const processedGreek = data.interlinear.map((item, index) => {
+                // Check if it's punctuation (simple logic: punctuation usually has no definition or morph)
+                // But AI usually separates punctuation as its own token or attached. 
+                // We will render everything as a span.
+                return `<span class="greek-interactive" data-index="${index}">${item.g}</span>`;
             }).join(' ');
 
             return `
@@ -598,8 +600,8 @@
                     </div>
                     
                     <div class="dark-card mb-6">
-                        <h2 class="text-xl font-bold mb-4">Greek Text (Interactive)</h2>
-                        <p class="text-sm text-gray-400 mb-2">Hover or tap highlighted words for morphology.</p>
+                        <h2 class="text-xl font-bold mb-4">Greek Text (Full Interlinear)</h2>
+                        <p class="text-sm text-gray-400 mb-2">Tap ANY word for morphology.</p>
                         <div class="biblical-text greek-text" style="color: var(--cream-text);">
                             ${processedGreek}
                         </div>
@@ -608,43 +610,36 @@
             `;
         }
 
-        // FIXED LISTENER LOGIC TO PREVENT DOUBLE-TAP BUG
         function attachGreekListeners() {
-            // Check for Touch Capability
             const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 
             document.querySelectorAll('.greek-interactive').forEach(span => {
                 
-                // 1. DESKTOP: Mouse Enter/Leave (Only add if NOT touch)
                 if (!isTouch) {
-                    span.addEventListener('mouseenter', (e) => showMorphology(span.textContent, e));
+                    span.addEventListener('mouseenter', (e) => showMorphology(span, e));
                     span.addEventListener('mouseleave', () => hideTooltip());
                 }
 
-                // 2. MOBILE: Click to Toggle
                 span.addEventListener('click', (e) => {
                     e.stopPropagation();
                     if (isTouch) {
-                        const currentWord = span.textContent;
-                        const activeWord = tooltip.dataset.activeWord;
+                        const currentIndex = span.dataset.index;
+                        const activeIndex = tooltip.dataset.activeIndex;
 
-                        // If already open on this word, close it.
-                        if (tooltip.style.display === 'block' && activeWord === currentWord) {
+                        if (tooltip.style.display === 'block' && activeIndex === currentIndex) {
                             hideTooltip();
-                            tooltip.dataset.activeWord = ''; 
+                            tooltip.dataset.activeIndex = ''; 
                         } else {
-                            // Otherwise show it
-                            showMorphology(span.textContent, e);
-                            tooltip.dataset.activeWord = currentWord;
+                            showMorphology(span, e);
+                            tooltip.dataset.activeIndex = currentIndex;
                         }
                     }
                 });
             });
 
-            // Close on background click
             document.addEventListener('click', () => {
                 hideTooltip();
-                if(tooltip) tooltip.dataset.activeWord = '';
+                if(tooltip) tooltip.dataset.activeIndex = '';
             });
         }
         
