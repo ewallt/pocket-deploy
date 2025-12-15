@@ -53,7 +53,6 @@
             border-bottom: 1px solid var(--muted-gold);
         }
 
-        /* Fade effect to indicate scrolling */
         .tabs-container::after {
             content: '';
             position: absolute;
@@ -216,7 +215,6 @@
             color: #991b1b;
         }
 
-        /* UTILITY: Hide scrollbar but keep functionality */
         .hide-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -250,7 +248,7 @@
             <p class="text-sm text-gray-600 mb-6">Enter a passage reference below to generate a comprehensive multi-lens analysis</p>
             
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                <div>
+                <div class="md:col-span-1">
                     <label class="block text-sm font-semibold mb-2" style="color: var(--dark-bg);">Book *</label>
                     <select id="bookSelect" class="w-full">
                         <option value="">Select Book...</option>
@@ -284,17 +282,12 @@
                     </select>
                 </div>
                 
-                <div>
-                    <label class="block text-sm font-semibold mb-2" style="color: var(--dark-bg);">Chapter *</label>
-                    <input type="number" id="chapterInput" class="w-full" min="1" placeholder="e.g., 3">
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-semibold mb-2" style="color: var(--dark-bg);">Reference *</label>
+                    <input type="text" id="referenceInput" class="w-full" placeholder="e.g., 3:16 or 2:1-10 or 2">
                 </div>
                 
-                <div>
-                    <label class="block text-sm font-semibold mb-2" style="color: var(--dark-bg);">Verses *</label>
-                    <input type="text" id="versesInput" class="w-full" placeholder="e.g., 16 or 16-18">
-                </div>
-                
-                <div class="flex items-end">
+                <div class="md:col-span-1 flex items-end">
                     <button id="analyzeBtn" class="w-full">
                         Run Analysis 🚀
                     </button>
@@ -303,8 +296,12 @@
             
             <div class="p-4 rounded-lg" style="background: rgba(212, 165, 116, 0.1); border: 1px solid var(--primary-gold);">
                 <div class="text-sm" style="color: var(--dark-bg);">
-                    <strong>📖 Examples:</strong> John 3:16 • Romans 5:1-5 • Ephesians 2:8-10 • Philippians 2:5-11
-                    <br><strong>⚠️ Limit:</strong> Maximum 20 verses per analysis
+                    <strong>📖 Format Examples:</strong> 
+                    <ul class="list-disc ml-4 mt-1 space-y-1">
+                        <li><code>3:16</code> (Single verse)</li>
+                        <li><code>2:1-10</code> (Passage range) <span class="text-red-600 italic">- Note: Ranges longer than 20 verses will be automatically shortened to the first 20.</span></li>
+                        <li><code>2</code> (Whole chapter) <span class="italic">- Allowed for short chapters.</span></li>
+                    </ul>
                 </div>
             </div>
             
@@ -420,41 +417,63 @@
             });
         }
         
-        // --- 3. VALIDATION ---
-        function validatePassage(book, chapter, verses) {
-            if (!book || !chapter || !verses) return { valid: false, message: "Please fill in all fields." };
+        // --- 3. VALIDATION AND NORMALIZATION ---
+        function validatePassage(book, reference) {
+            if (!book || !reference) return { valid: false, message: "Please select a book and enter a reference." };
             
-            const chapterNum = parseInt(chapter);
-            if (isNaN(chapterNum) || chapterNum < 1) return { valid: false, message: "Invalid chapter." };
+            // Format: Chapter:Verse(s)
+            if (reference.includes(':')) {
+                const parts = reference.split(':');
+                if (parts.length !== 2) return { valid: false, message: "Invalid format. Use Chapter:Verses (e.g., 3:16)" };
+                
+                const chapter = parseInt(parts[0]);
+                const versePart = parts[1];
+                
+                if (isNaN(chapter)) return { valid: false, message: "Invalid chapter number." };
+                
+                // Truncate logic for ranges
+                if (versePart.includes('-')) {
+                    const [start, end] = versePart.split('-').map(v => parseInt(v));
+                    if (isNaN(start) || isNaN(end)) return { valid: false, message: "Invalid verse range." };
+                    
+                    if ((end - start + 1) > 20) {
+                        const newEnd = start + 19;
+                        return { 
+                            valid: true, 
+                            cleanedRef: `${chapter}:${start}-${newEnd}`, 
+                            wasTruncated: true 
+                        };
+                    }
+                }
+                
+                // Single verse or valid short range
+                return { valid: true, cleanedRef: `${chapter}:${versePart}`, wasTruncated: false };
+            } 
             
-            let verseCount;
-            if (verses.includes('-')) {
-                const [start, end] = verses.split('-').map(v => parseInt(v.trim()));
-                if (isNaN(start) || isNaN(end) || start < 1 || end < start) return { valid: false, message: "Invalid range." };
-                verseCount = end - start + 1;
-            } else {
-                const verseNum = parseInt(verses);
-                if (isNaN(verseNum) || verseNum < 1) return { valid: false, message: "Invalid verse." };
-                verseCount = 1;
+            // Format: Whole Chapter
+            const chapterOnly = parseInt(reference);
+            if (!isNaN(chapterOnly)) {
+                return { valid: true, cleanedRef: `${chapterOnly}`, wasTruncated: false };
             }
             
-            if (verseCount > 20) return { valid: false, message: "Max 20 verses." };
-            return { valid: true, verseCount };
+            return { valid: false, message: "Invalid reference format." };
         }
         
         // --- 4. MAIN ACTION ---
         async function analyzePassage() {
             const book = document.getElementById('bookSelect').value;
-            const chapter = document.getElementById('chapterInput').value;
-            const verses = document.getElementById('versesInput').value;
+            const referenceInput = document.getElementById('referenceInput').value;
             
-            const validation = validatePassage(book, chapter, verses);
+            const validation = validatePassage(book, referenceInput);
             if (!validation.valid) {
                 showError(validation.message);
                 return;
             }
             
-            const passageRef = `${book} ${chapter}:${verses}`;
+            // Use the cleaned/truncated reference for the API and display
+            const finalRef = validation.cleanedRef;
+            const passageRef = `${book} ${finalRef}`;
+            
             document.getElementById('passageDisplay').textContent = passageRef;
             document.getElementById('inputSection').style.display = 'none';
             document.getElementById('loadingSection').style.display = 'block';
@@ -462,7 +481,7 @@
             
             try {
                 updateLoadingStatus('Calling AI to generate comprehensive analysis...');
-                const analysis = await generateAnalysis(book, chapter, verses);
+                const analysis = await generateAnalysis(passageRef);
                 
                 morphologyData = {};
                 analysis.text_parsing.key_words.forEach(word => {
@@ -496,9 +515,7 @@
         }
         
         // --- 5. AI GENERATION ---
-        async function generateAnalysis(book, chapter, verses) {
-            const passageRef = `${book} ${chapter}:${verses}`;
-            
+        async function generateAnalysis(passageRef) {
             const systemPrompt = `You are a biblical scholar. Analyze ${passageRef}.
             Return JSON only.
             
