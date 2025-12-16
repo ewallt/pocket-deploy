@@ -500,8 +500,10 @@
                 // Un-wrap if array
                 const studyData = Array.isArray(newStudy) ? newStudy[0] : newStudy;
 
-                // Pass the morphCode from tooltip to the card creator
-                addWordStudyCard(studyData, morphCode);
+                // Pass the morphCode from tooltip (or AI fallback) to the card creator
+                const finalMorph = morphCode || studyData.morphology || "";
+                
+                addWordStudyCard(studyData, finalMorph);
                 
                 document.querySelector('.lens-tab[data-lens="words"]').click();
                 hideTooltip();
@@ -514,14 +516,15 @@
         }
 
         async function generateWordStudy(word, def) {
-            // PROMPT UPDATED: Aggressive Derivative Logic
+            // PROMPT UPDATED: Sensible Derivative Logic + Explicit Morphology Request
             const prompt = `Perform a theological word study on the Greek word "${word}" (${def}) in the context of ${currentPassageRef}.
             Return JSON only:
             {
                 "greek": "${word}",
                 "transliteration": "Transliteration",
                 "gloss": "${def}",
-                "english_derivatives": "MANDATORY: List 1-3 English words derived from this Greek root. If no direct derivative, provide a shared etymological root or mnemonic. Do not return 'None'.",
+                "morphology": "MorphCode (e.g. N-NSM or V-PAI-3S)",
+                "english_derivatives": "List clear English derivatives (e.g. logos -> logic). If none exist, return 'None'.",
                 "semantic_range": "Range of meaning",
                 "usage_note": "Specific usage in this passage",
                 "theological_weight": "Theological significance"
@@ -553,7 +556,7 @@
             const gloss = w.gloss || "N/A";
             const derivatives = w.english_derivatives || "None";
             
-            const morphologyDisplay = morphCode ? `<span class="ml-2 px-2 py-0.5 rounded bg-gray-700 text-xs text-primary-gold">${morphCode}</span>` : "";
+            const morphologyDisplay = morphCode ? `<span class="ml-2 px-2 py-0.5 rounded bg-gray-700 text-xs text-primary-gold" title="Morphology">${morphCode}</span>` : "";
 
             const html = `
             <div class="word-study-card mt-4" style="border-left-color: #059669; animation: fadeIn 0.5s;">
@@ -677,6 +680,7 @@
                 document.getElementById('loadingSection').style.display = 'none';
                 document.getElementById('resultsSection').style.display = 'block';
                 
+                // Re-init Key visibility for Text Tab (Default)
                 document.getElementById('morphKeyContainer').style.display = 'block';
 
                 createTooltip();
@@ -702,7 +706,7 @@
         
         // --- 6. AI GENERATION ---
         async function generateAnalysis(passageRef) {
-            // PROMPT UPDATED: Aggressive Derivative Logic
+            // PROMPT UPDATED: Sensible Derivative Logic + Explicit Morphology Request
             const systemPrompt = `You are a biblical scholar. Analyze ${passageRef}.
             
             CRITICAL INSTRUCTION: For 'text_parsing', do NOT provide a block of text. 
@@ -728,7 +732,16 @@
                 "concepts": [ { "title": "Concept", "traditions": [ { "name": "Tradition", "view": "Viewpoint" } ] } ]
             },
             "word_studies": {
-                "words": [ { "greek": "Word", "transliteration": "Trans", "gloss": "Definition", "morphology": "MorphCode", "english_derivatives": "MANDATORY: List 1-3 English words derived from this Greek root. If no direct derivative, provide a shared etymological root or mnemonic. Do not return 'None'.", "semantic_range": "Range", "usage_note": "Usage", "theological_weight": "Significance" } ]
+                "words": [ { 
+                    "greek": "Word", 
+                    "transliteration": "Trans", 
+                    "gloss": "Definition", 
+                    "morphology": "MorphCode (e.g. N-NSM)", 
+                    "english_derivatives": "List clear English derivatives (e.g. logos -> logic). If none exist, return 'None'.", 
+                    "semantic_range": "Range", 
+                    "usage_note": "Usage", 
+                    "theological_weight": "Significance" 
+                } ]
             }
             }
             
@@ -852,8 +865,7 @@
             return `<section class="lens-content" data-lens-content="words"><div class="dark-card"><h2 class="text-xl font-bold mb-6">Word Studies</h2>
             ${data.words.map(w => {
                 const morphCode = w.morphology || "";
-                const morphologyDisplay = morphCode ? `<span class="ml-2 px-2 py-0.5 rounded bg-gray-700 text-xs text-primary-gold">${morphCode}</span>` : "";
-                // Change Cognates to Derivatives here too
+                const morphologyDisplay = morphCode ? `<span class="ml-2 px-2 py-0.5 rounded bg-gray-700 text-xs text-primary-gold" title="Morphology">${morphCode}</span>` : "";
                 const derivatives = w.english_derivatives || "None";
 
                 return `<div class="word-study-card">
