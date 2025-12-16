@@ -106,8 +106,6 @@
             font-weight: 600;
         }
 
-        /* UPDATED INTERACTIVE STYLES: 
-           Every word is now interactive, so we style them subtly */
         .greek-interactive {
             cursor: pointer;
             transition: all 0.1s;
@@ -119,6 +117,25 @@
         .greek-interactive:hover {
             color: var(--primary-gold);
             background: rgba(212, 165, 116, 0.15);
+        }
+        
+        /* TOOLTIP BUTTON STYLE */
+        .tooltip-btn {
+            background: var(--dark-bg);
+            border: 1px solid var(--primary-gold);
+            color: var(--primary-gold);
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            margin-top: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .tooltip-btn:hover {
+            background: var(--primary-gold);
+            color: var(--dark-bg);
         }
         
         .word-study-card {
@@ -133,6 +150,19 @@
         
         .word-study-card h3 {
             color: var(--primary-gold);
+        }
+        
+        /* MORPHOLOGY KEY STYLES */
+        .morph-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+            font-size: 0.8rem;
+        }
+        .morph-item span {
+            color: var(--primary-gold);
+            font-weight: bold;
+            margin-right: 4px;
         }
         
         .loading-spinner {
@@ -338,7 +368,48 @@
             
             <div id="lensContainer"></div>
             
-            <button onclick="location.reload()" class="btn-secondary mt-8 mx-auto block">
+            <div class="max-w-7xl mx-auto mt-8 mb-6">
+                <div class="dark-card p-4">
+                    <h3 class="text-sm font-bold uppercase tracking-wider mb-3 text-center" style="border-bottom: 1px solid var(--muted-gold); padding-bottom: 8px;">Morphology Reference Guide</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+                        <div>
+                            <div class="font-bold mb-1 text-white">Parts of Speech</div>
+                            <div class="morph-item"><span>N</span> Noun</div>
+                            <div class="morph-item"><span>V</span> Verb</div>
+                            <div class="morph-item"><span>A</span> Adjective</div>
+                            <div class="morph-item"><span>D</span> Adverb</div>
+                            <div class="morph-item"><span>P</span> Preposition</div>
+                            <div class="morph-item"><span>C</span> Conjunction</div>
+                        </div>
+                        <div>
+                            <div class="font-bold mb-1 text-white">Case</div>
+                            <div class="morph-item"><span>N</span> Nominative</div>
+                            <div class="morph-item"><span>G</span> Genitive</div>
+                            <div class="morph-item"><span>D</span> Dative</div>
+                            <div class="morph-item"><span>A</span> Accusative</div>
+                            <div class="morph-item"><span>V</span> Vocative</div>
+                        </div>
+                        <div>
+                            <div class="font-bold mb-1 text-white">Tense</div>
+                            <div class="morph-item"><span>P</span> Present</div>
+                            <div class="morph-item"><span>I</span> Imperfect</div>
+                            <div class="morph-item"><span>A</span> Aorist</div>
+                            <div class="morph-item"><span>F</span> Future</div>
+                            <div class="morph-item"><span>R</span> Perfect</div>
+                        </div>
+                        <div>
+                            <div class="font-bold mb-1 text-white">Mood</div>
+                            <div class="morph-item"><span>I</span> Indicative</div>
+                            <div class="morph-item"><span>M</span> Imperative</div>
+                            <div class="morph-item"><span>S</span> Subjunctive</div>
+                            <div class="morph-item"><span>P</span> Participle</div>
+                            <div class="morph-item"><span>N</span> Infinitive</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="location.reload()" class="btn-secondary mt-4 mx-auto block">
                 Start New Analysis
             </button>
         </div>
@@ -349,9 +420,8 @@
         
         // --- 1. TOOLTIP SYSTEM ---
         let tooltip;
-        
-        // This will now hold an index-based lookup for every word in the sequence
         let interlinearData = []; 
+        let currentPassageRef = ""; // Store for context
 
         function createTooltip() {
             tooltip = document.createElement('div');
@@ -367,22 +437,23 @@
                 z-index: 10000;
                 max-width: 320px;
                 box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-                pointer-events: none; 
             `;
             document.body.appendChild(tooltip);
         }
 
-        // Updated to use the Index ID of the word, not just the string
         function showMorphology(element, event) {
             const index = element.dataset.index;
             const data = interlinearData[index];
-            
             if (!data) return;
             
+            // Added the "Run Deep Study" Button
             tooltip.innerHTML = `
                 <div style="font-size: 1.5rem; color: #d4a574; font-family: 'EB Garamond', serif;">${data.g}</div>
                 <div style="font-size: 0.85rem; color: rgba(212,165,116,0.8); font-weight:bold;">${data.m}</div>
                 <div class="mt-1"><strong>Gloss:</strong> ${data.d}</div>
+                <button class="tooltip-btn" onclick="triggerDeepStudy('${data.g}', '${data.d}', this)">
+                    Run Deep Study 🔍
+                </button>
             `;
             
             const rect = element.getBoundingClientRect();
@@ -391,7 +462,7 @@
             
             if (left < 10) left = 10;
             if (left + 320 > window.innerWidth - 10) left = window.innerWidth - 330;
-            if (top + 150 > window.innerHeight) top = rect.top - 150 - 8; 
+            if (top + 180 > window.innerHeight) top = rect.top - 180 - 8; 
             
             tooltip.style.left = left + 'px';
             tooltip.style.top = top + 'px';
@@ -402,7 +473,88 @@
             if(tooltip) tooltip.style.display = 'none';
         }
 
-        // --- 2. LENS NAVIGATION ---
+        // --- 2. DEEP STUDY LOGIC ---
+        async function triggerDeepStudy(greekWord, definition, btnElement) {
+            // UI Feedback
+            btnElement.textContent = "Analyzing...";
+            btnElement.disabled = true;
+
+            try {
+                // Call API for specific word
+                const newStudy = await generateWordStudy(greekWord, definition);
+                
+                // Add to List
+                addWordStudyCard(newStudy);
+                
+                // Switch Tab
+                document.querySelector('.lens-tab[data-lens="words"]').click();
+                
+                // Close Tooltip
+                hideTooltip();
+
+            } catch (error) {
+                btnElement.textContent = "Error";
+                console.error(error);
+            }
+        }
+
+        async function generateWordStudy(word, def) {
+            const prompt = `Perform a theological word study on the Greek word "${word}" (${def}) in the context of ${currentPassageRef}.
+            Return JSON only:
+            {
+                "greek": "${word}",
+                "transliteration": "Transliteration",
+                "gloss": "${def}",
+                "semantic_range": "Range of meaning",
+                "usage_note": "Specific usage in this passage",
+                "theological_weight": "Theological significance"
+            }`;
+
+            const response = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        contents: [{ role: "user", parts: [{ text: prompt }] }],
+                        generationConfig: { responseMimeType: "application/json" }
+                    })
+                }
+            );
+
+            const data = await response.json();
+            let rawText = data.candidates[0].content.parts[0].text;
+            rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+            return JSON.parse(rawText);
+        }
+
+        function addWordStudyCard(w) {
+            const container = document.querySelector('.lens-content[data-lens-content="words"] .dark-card');
+            
+            const html = `
+            <div class="word-study-card" style="border-left-color: #059669; animation: fadeIn 0.5s;">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <div class="greek-word text-3xl mb-2">${w.greek}</div>
+                        <div class="font-medium mb-4" style="color:var(--muted-gold)">${w.transliteration} • "${w.gloss}"</div>
+                    </div>
+                    <span class="text-xs bg-green-900 text-green-100 px-2 py-1 rounded">New</span>
+                </div>
+                <div class="space-y-3">
+                    <div><h4 class="font-semibold mb-1" style="color:var(--primary-gold)">Semantic Range</h4><p class="text-sm">${w.semantic_range}</p></div>
+                    <div><h4 class="font-semibold mb-1" style="color:var(--primary-gold)">Usage</h4><p class="text-sm">${w.usage_note}</p></div>
+                    <div><h4 class="font-semibold mb-1" style="color:var(--primary-gold)">Significance</h4><p class="text-sm">${w.theological_weight}</p></div>
+                </div>
+            </div>`;
+            
+            // Insert after the title
+            container.insertAdjacentHTML('beforeend', html);
+            
+            // Scroll to bottom of container to see new card
+            container.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }
+
+        // --- 3. LENS NAVIGATION ---
         function setupLensNavigation() {
             const tabs = document.querySelectorAll('.lens-tab');
             tabs.forEach(tab => {
@@ -423,7 +575,7 @@
             });
         }
         
-        // --- 3. VALIDATION ---
+        // --- 4. VALIDATION ---
         function validatePassage(book, reference) {
             if (!book || !reference) return { valid: false, message: "Please select a book and enter a reference." };
             
@@ -460,7 +612,7 @@
             return { valid: false, message: "Invalid reference format." };
         }
         
-        // --- 4. MAIN ACTION ---
+        // --- 5. MAIN ACTION ---
         async function analyzePassage() {
             const book = document.getElementById('bookSelect').value;
             const referenceInput = document.getElementById('referenceInput').value;
@@ -473,6 +625,7 @@
             
             const finalRef = validation.cleanedRef;
             const passageRef = `${book} ${finalRef}`;
+            currentPassageRef = passageRef; // Store for Deep Study context
             
             document.getElementById('passageDisplay').textContent = passageRef;
             document.getElementById('inputSection').style.display = 'none';
@@ -483,7 +636,6 @@
                 updateLoadingStatus('Generating full interlinear analysis...');
                 const analysis = await generateAnalysis(passageRef);
                 
-                // Store the Full Interlinear Array
                 interlinearData = analysis.text_parsing.interlinear;
 
                 renderResults(analysis);
@@ -512,9 +664,8 @@
             errorDiv.style.display = 'block';
         }
         
-        // --- 5. AI GENERATION (UPDATED FOR FULL INTERLINEAR) ---
+        // --- 6. AI GENERATION ---
         async function generateAnalysis(passageRef) {
-            // Updated Prompt to ask for ALL words
             const systemPrompt = `You are a biblical scholar. Analyze ${passageRef}.
             
             CRITICAL INSTRUCTION: For 'text_parsing', do NOT provide a block of text. 
@@ -527,7 +678,6 @@
                 "interlinear": [
                     { "g": "GreekWord", "m": "MorphCode", "d": "ShortDef" },
                     { "g": "NextWord", "m": "MorphCode", "d": "ShortDef" }
-                    ... for every word in passage
                 ]
             },
             "logical_flow": {
@@ -566,7 +716,7 @@
             return JSON.parse(rawText);
         }
         
-        // --- 6. RENDERERS ---
+        // --- 7. RENDERERS ---
         function renderResults(analysis) {
             const container = document.getElementById('lensContainer');
             container.innerHTML = `
@@ -579,14 +729,8 @@
             attachGreekListeners();
         }
 
-        // Updated to Render from the Interlinear Array
         function renderTextParsing(data) {
-            // Build the HTML by looping through the full array
-            // We attach the INDEX to the data attribute so we can look it up later
             const processedGreek = data.interlinear.map((item, index) => {
-                // Check if it's punctuation (simple logic: punctuation usually has no definition or morph)
-                // But AI usually separates punctuation as its own token or attached. 
-                // We will render everything as a span.
                 return `<span class="greek-interactive" data-index="${index}">${item.g}</span>`;
             }).join(' ');
 
@@ -601,7 +745,7 @@
                     
                     <div class="dark-card mb-6">
                         <h2 class="text-xl font-bold mb-4">Greek Text (Full Interlinear)</h2>
-                        <p class="text-sm text-gray-400 mb-2">Tap ANY word for morphology.</p>
+                        <p class="text-sm text-gray-400 mb-2">Tap ANY word for morphology and tools.</p>
                         <div class="biblical-text greek-text" style="color: var(--cream-text);">
                             ${processedGreek}
                         </div>
@@ -617,27 +761,40 @@
                 
                 if (!isTouch) {
                     span.addEventListener('mouseenter', (e) => showMorphology(span, e));
-                    span.addEventListener('mouseleave', () => hideTooltip());
+                    // Check if mouse moves to tooltip or away
+                    span.addEventListener('mouseleave', (e) => {
+                       // We don't hide immediately to allow clicking the button? 
+                       // Actually, if we use the button, we need the tooltip to persist.
+                       // For desktop, we might want "Click to Lock" logic?
+                       // For now, let's keep hover-only for viewing, but CLICK to Interact/Lock.
+                       
+                       // Current logic: Hover shows data. If you move mouse away, it disappears.
+                       // This makes clicking the button inside hard! 
+                       // FIX: Let's make click lock it on desktop too.
+                       hideTooltip(); 
+                    });
                 }
 
                 span.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    if (isTouch) {
-                        const currentIndex = span.dataset.index;
-                        const activeIndex = tooltip.dataset.activeIndex;
+                    // On desktop AND mobile, click toggles "Lock" mode
+                    const currentIndex = span.dataset.index;
+                    const activeIndex = tooltip.dataset.activeIndex;
 
-                        if (tooltip.style.display === 'block' && activeIndex === currentIndex) {
-                            hideTooltip();
-                            tooltip.dataset.activeIndex = ''; 
-                        } else {
-                            showMorphology(span, e);
-                            tooltip.dataset.activeIndex = currentIndex;
-                        }
+                    if (tooltip.style.display === 'block' && activeIndex === currentIndex) {
+                        hideTooltip();
+                        tooltip.dataset.activeIndex = ''; 
+                    } else {
+                        showMorphology(span, e);
+                        tooltip.dataset.activeIndex = currentIndex;
                     }
                 });
             });
 
-            document.addEventListener('click', () => {
+            document.addEventListener('click', (e) => {
+                // Don't close if clicking inside the tooltip
+                if (tooltip && tooltip.contains(e.target)) return;
+                
                 hideTooltip();
                 if(tooltip) tooltip.dataset.activeIndex = '';
             });
