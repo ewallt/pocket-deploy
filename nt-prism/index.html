@@ -7,238 +7,238 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=EB+Garamond:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=EB+Garamond:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            /* Premium Palette */
-            --gold-primary: #c5a065;
-            --gold-dim: #8a7042;
-            --slate-dark: #0f172a;
-            --slate-medium: #1e293b;
-            --slate-light: #334155;
-            --bg-offwhite: #f8fafc;
-            --text-main: #1e293b;
-            --action-green: #059669;
+            --primary-gold: #d4a574;
+            --dark-bg: #1a1815;
+            --cream-text: #faf8f3;
+            --muted-gold: rgba(212, 165, 116, 0.8);
+            --neutral-bg: #f8fafc;
+            --border-color: #cbd5e1;
+            --slate-800: #1e293b;
+            --action-green: #059669; 
             --action-green-hover: #047857;
         }
         
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f1f5f9;
-            color: var(--text-main);
-            background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
-            background-size: 24px 24px;
+            background: var(--neutral-bg);
+            color: var(--slate-800);
         }
         
-        /* HEADER STYLING */
-        header {
-            background: linear-gradient(135deg, var(--slate-dark) 0%, var(--slate-medium) 100%);
-            border-bottom: 3px solid var(--gold-primary);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        
-        h1 {
+        .biblical-text {
             font-family: 'EB Garamond', serif;
-            letter-spacing: 0.02em;
+            font-size: 1.125rem;
+            line-height: 1.8;
+        }
+        
+        .dark-card {
+            background-color: var(--dark-bg);
+            color: var(--cream-text);
+            border-left: 4px solid var(--primary-gold);
+            border-radius: 10px;
+            padding: 1.5rem;
+        }
+        
+        .dark-card h2, .dark-card h3 {
+            color: var(--primary-gold);
+        }
+        
+        /* TABS STYLING */
+        .tabs-container {
+            position: relative;
+            background-color: var(--dark-bg);
+            border-bottom: 1px solid var(--muted-gold);
         }
 
-        /* INPUT SECTION */
-        .input-card {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-            border: 1px solid white;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .input-card::before {
+        .tabs-container::after {
             content: '';
             position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 6px;
-            background: linear-gradient(to right, var(--gold-dim), var(--gold-primary));
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 40px;
+            background: linear-gradient(to right, transparent, var(--dark-bg));
+            pointer-events: none;
         }
 
-        label {
-            color: var(--slate-light);
+        .lens-tab {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+            font-weight: 500;
+            color: var(--muted-gold);
+            white-space: nowrap; 
+        }
+        
+        .lens-tab:hover {
+            color: var(--cream-text);
+            background: rgba(212, 165, 116, 0.1);
+        }
+        
+        .lens-tab.active {
+            color: var(--primary-gold);
+            border-bottom-color: var(--primary-gold);
+            background: rgba(212, 165, 116, 0.15);
+        }
+        
+        .lens-content {
+            display: none;
+        }
+        
+        .lens-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .greek-word {
+            font-family: 'EB Garamond', serif;
+            font-size: 1.25rem;
+            color: var(--cream-text);
+            font-weight: 600;
+        }
+
+        .greek-interactive {
+            cursor: pointer;
+            transition: all 0.1s;
+            display: inline-block;
+            border-radius: 3px;
+            padding: 0 2px;
+        }
+
+        .greek-interactive:hover {
+            color: var(--primary-gold);
+            background: rgba(212, 165, 116, 0.15);
+        }
+        
+        /* TOOLTIP BUTTON STYLE */
+        .tooltip-btn {
+            background: var(--dark-bg);
+            border: 1px solid var(--primary-gold);
+            color: var(--primary-gold);
             font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            font-weight: 700;
+            padding: 4px 8px;
+            margin-top: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+            transition: all 0.2s;
         }
-
+        .tooltip-btn:hover {
+            background: var(--primary-gold);
+            color: var(--dark-bg);
+        }
+        
+        .word-study-card {
+            background: var(--dark-bg);
+            color: var(--cream-text);
+            border: 1px solid var(--muted-gold);
+            border-left: 4px solid var(--primary-gold);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .word-study-card h3 {
+            color: var(--primary-gold);
+        }
+        
+        /* MORPHOLOGY KEY STYLES */
+        .morph-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+            font-size: 0.8rem;
+        }
+        .morph-item span {
+            color: var(--primary-gold);
+            font-weight: bold;
+            margin-right: 4px;
+        }
+        
+        .loading-spinner {
+            border: 3px solid rgba(212, 165, 116, 0.3);
+            border-top: 3px solid var(--primary-gold);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .input-section {
+            background: white;
+            border: 2px solid var(--primary-gold);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
         input, select {
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
             padding: 0.75rem 1rem;
             font-family: 'Inter', sans-serif;
             font-size: 1rem;
-            transition: all 0.2s;
-            background-color: #f8fafc;
         }
         
         input:focus, select:focus {
             outline: none;
-            border-color: var(--gold-primary);
-            background-color: white;
-            box-shadow: 0 0 0 3px rgba(197, 160, 101, 0.2);
+            border-color: var(--primary-gold);
         }
-
-        /* BUTTONS */
+        
         button#analyzeBtn {
             background: var(--action-green);
-            color: white;
-            font-weight: 700;
+            color: white; 
+            font-weight: 800;
             font-size: 1.1rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            padding: 1rem;
+            padding: 1rem 2rem;
             border-radius: 8px;
             border: none;
             cursor: pointer;
             transition: all 0.2s;
-            box-shadow: 0 4px 6px rgba(5, 150, 105, 0.2);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
             width: 100%;
-            height: 3.25rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            height: 3.5rem;
         }
         
         button#analyzeBtn:hover {
             background: var(--action-green-hover);
             transform: translateY(-2px);
-            box-shadow: 0 10px 15px rgba(5, 150, 105, 0.3);
-        }
-
-        /* RESULT CARDS */
-        .dark-card {
-            background-color: var(--slate-dark);
-            color: #f1f5f9;
-            border-left: 4px solid var(--gold-primary);
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
         }
         
-        .dark-card h2 {
-            color: var(--gold-primary);
-            font-family: 'EB Garamond', serif;
-            letter-spacing: 0.02em;
+        button:disabled {
+            background: #ccc !important;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
         }
         
-        .dark-card h3 {
-            color: var(--gold-primary);
-        }
-
-        /* GREEK TEXT STYLING */
-        .biblical-text {
-            font-family: 'EB Garamond', serif;
-            font-size: 1.35rem; 
-            line-height: 1.9;
-        }
-
-        .greek-interactive {
+        .btn-secondary {
+            background: var(--dark-bg); 
+            border: 1px solid var(--primary-gold); 
+            color: var(--primary-gold);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
             cursor: pointer;
-            transition: background 0.1s;
-            display: inline-block;
-            border-radius: 4px;
-            padding: 0 3px;
-            margin: 0 1px;
         }
-
-        .greek-interactive:hover {
-            background: rgba(197, 160, 101, 0.25);
-            color: var(--gold-primary);
-        }
-
-        /* TABS */
-        .tabs-container {
-            background: var(--slate-dark);
-            border-bottom: 1px solid var(--slate-light);
-            border-radius: 12px 12px 0 0;
-            margin-top: 2rem;
-        }
-
-        .lens-tab {
-            padding: 1rem 1.5rem;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            transition: all 0.2s;
-            font-weight: 500;
-            color: #94a3b8;
-            white-space: nowrap; 
-        }
-        
-        .lens-tab:hover {
-            color: white;
-            background: rgba(255,255,255,0.05);
-        }
-        
-        .lens-tab.active {
-            color: var(--gold-primary);
-            border-bottom-color: var(--gold-primary);
-            background: rgba(197, 160, 101, 0.1);
-        }
-
-        .lens-content { display: none; }
-        .lens-content.active { display: block; animation: fadeIn 0.3s ease-in; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* TOOLTIP & BUTTONS */
-        #greekTooltip {
-            background: var(--slate-medium) !important;
-            border: 1px solid var(--gold-primary) !important;
-            box-shadow: 0 10px 15px rgba(0,0,0,0.5) !important;
-        }
-
-        .tooltip-btn {
-            background: transparent;
-            border: 1px solid var(--gold-primary);
-            color: var(--gold-primary);
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            padding: 6px 12px;
-            margin-top: 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-            transition: all 0.2s;
-        }
-        .tooltip-btn:hover {
-            background: var(--gold-primary);
-            color: var(--slate-dark);
-            font-weight: bold;
-        }
-
-        /* WORD STUDY CARD */
-        .word-study-card {
-            background: rgba(30, 41, 59, 0.6);
-            border: 1px solid var(--slate-light);
-            border-left: 4px solid var(--gold-primary);
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        /* UTILITIES */
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        .morph-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; font-size: 0.8rem; }
-        .morph-item span { color: var(--gold-primary); font-weight: bold; margin-right: 4px; }
-        
-        .loading-spinner {
-            border: 3px solid rgba(197, 160, 101, 0.3);
-            border-top: 3px solid var(--gold-primary);
-            border-radius: 50%;
-            width: 40px; height: 40px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
         .error-card {
             background: rgba(220, 38, 38, 0.1);
@@ -247,36 +247,44 @@
             padding: 1.5rem;
             color: #991b1b;
         }
+
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
     </style>
 </head>
-<body class="min-h-screen pb-12">
+<body>
     
-    <header class="sticky top-0 z-50">
-        <div class="max-w-5xl mx-auto px-6 py-4">
-            <div class="flex items-center justify-between text-white">
+    <header class="border-b sticky top-0 z-50 shadow-sm" style="background-color: var(--dark-bg); border-color: var(--muted-gold);">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
                 <div>
-                    <h1 class="text-2xl md:text-3xl font-bold text-[#c5a065]">Exegetical Prism</h1>
-                    <p class="text-xs md:text-sm text-slate-400 mt-1">AI-Powered New Testament Analysis</p>
+                    <h1 class="text-2xl font-bold" style="color: var(--primary-gold);">Exegetical Prism</h1>
+                    <p class="text-sm mt-1" style="color: var(--muted-gold);">New Testament • AI-Powered Analysis</p>
                 </div>
-                <div class="text-right hidden md:block">
-                    <div class="text-sm font-semibold text-slate-200" id="passageDisplay">Ready to Analyze</div>
-                    <div class="text-xs text-[#c5a065]">Multi-Lens Interlinear</div>
+                <div class="text-right">
+                    <div class="text-sm font-semibold" style="color: var(--cream-text);" id="passageDisplay">Enter a passage below</div>
+                    <div class="text-xs" style="color: var(--muted-gold);">Multi-Lens Biblical Analysis</div>
                 </div>
             </div>
         </div>
     </header>
 
-    <main class="max-w-5xl mx-auto px-4 md:px-6 py-8">
+    <main class="max-w-7xl mx-auto px-6 py-8">
         
-        <div class="input-card p-6 md:p-8 mb-8" id="inputSection">
-            <h2 class="text-2xl font-bold mb-2 text-slate-800 font-serif">Analyze a Passage</h2>
-            <p class="text-sm text-slate-500 mb-6">Select a book and reference to generate a comprehensive 5-lens analysis.</p>
+        <div class="input-section" id="inputSection">
+            <h2 class="text-2xl font-bold mb-2" style="color: var(--dark-bg);">Analyze a New Testament Passage</h2>
+            <p class="text-sm text-gray-600 mb-6">Enter a passage reference below to generate a comprehensive multi-lens analysis</p>
             
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-6">
-                <div class="md:col-span-4">
-                    <label class="block mb-2">Book</label>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div class="md:col-span-1">
+                    <label class="block text-sm font-semibold mb-2" style="color: var(--dark-bg);">Book *</label>
                     <select id="bookSelect" class="w-full">
-                        <option value="">Select...</option>
+                        <option value="">Select Book...</option>
                         <option value="Matthew">Matthew</option>
                         <option value="Mark">Mark</option>
                         <option value="Luke">Luke</option>
@@ -307,21 +315,26 @@
                     </select>
                 </div>
                 
-                <div class="md:col-span-5">
-                    <label class="block mb-2">Reference</label>
-                    <input type="text" id="referenceInput" class="w-full" placeholder="e.g. 3:16 or 2:1-10">
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-semibold mb-2" style="color: var(--dark-bg);">Reference *</label>
+                    <input type="text" id="referenceInput" class="w-full" placeholder="e.g., 3:16 or 2:1-10 or 2">
                 </div>
                 
-                <div class="md:col-span-3 flex items-end">
-                    <button id="analyzeBtn">
-                        Analyze 🚀
+                <div class="md:col-span-1 flex items-end">
+                    <button id="analyzeBtn" class="w-full">
+                        Run Analysis 🚀
                     </button>
                 </div>
             </div>
             
-            <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
-                <div class="text-xs text-blue-800">
-                    <strong>💡 Pro Tip:</strong> Enter a specific range like <code>3:16</code> or <code>1:1-10</code>. Whole chapters (e.g. <code>2</code>) are allowed if they are under 20 verses.
+            <div class="p-4 rounded-lg" style="background: rgba(212, 165, 116, 0.1); border: 1px solid var(--primary-gold);">
+                <div class="text-sm" style="color: var(--dark-bg);">
+                    <strong>📖 Format Examples:</strong> 
+                    <ul class="list-disc ml-4 mt-1 space-y-1">
+                        <li><code>3:16</code> (Single verse)</li>
+                        <li><code>2:1-10</code> (Passage range) <span class="text-red-600 italic">- Note: Ranges longer than 20 verses will be automatically shortened to the first 20.</span></li>
+                        <li><code>2</code> (Whole chapter) <span class="italic">- Allowed for short chapters.</span></li>
+                    </ul>
                 </div>
             </div>
             
@@ -329,37 +342,38 @@
         </div>
         
         <div id="loadingSection" style="display: none;">
-            <div class="dark-card text-center py-12">
-                <div class="loading-spinner mx-auto mb-6"></div>
-                <h3 class="text-xl font-semibold mb-2 text-white">Consulting the Scholars...</h3>
-                <p class="text-sm text-[#8a7042]" id="loadingStatus">Constructing interlinear data...</p>
+            <div class="dark-card text-center">
+                <div class="loading-spinner mx-auto mb-4"></div>
+                <h3 class="text-lg font-semibold mb-2">Generating Analysis...</h3>
+                <p class="text-sm" style="color: var(--muted-gold);" id="loadingStatus">Preparing passage...</p>
+                <div id="debugInfo" style="display:none;"></div> 
             </div>
         </div>
         
         <div id="resultsSection" style="display: none;">
             
-            <nav class="tabs-container sticky top-[80px] z-40">
-                <div class="flex space-x-1 overflow-x-auto hide-scrollbar px-2"> 
+            <nav class="sticky top-[73px] z-40 mb-2 tabs-container">
+                <div class="flex space-x-1 overflow-x-auto hide-scrollbar pr-8"> 
                     <div class="lens-tab active" data-lens="text">📖 Text & Parsing</div>
                     <div class="lens-tab" data-lens="logic">🧩 Logical Flow</div>
-                    <div class="lens-tab" data-lens="context">📜 Context</div>
-                    <div class="lens-tab" data-lens="theology">⛪ Theology</div>
+                    <div class="lens-tab" data-lens="context">📜 Historical Context</div>
+                    <div class="lens-tab" data-lens="theology">⛪ Theological Traditions</div>
                     <div class="lens-tab" data-lens="words">🔍 Word Studies</div>
                 </div>
             </nav>
             
-            <div class="md:hidden text-[10px] uppercase tracking-widest text-center my-4 font-bold text-slate-400">
-                Swipe for more lenses &rarr;
+            <div class="md:hidden text-xs text-center mb-6 font-semibold" style="color: var(--muted-gold); opacity: 0.8;">
+                ← Swipe to explore all 5 lenses →
             </div>
             
             <div id="lensContainer"></div>
             
-            <div id="morphKeyContainer" class="mt-8 mb-6">
-                <div class="dark-card p-6">
-                    <h3 class="text-xs font-bold uppercase tracking-widest mb-4 text-center text-[#8a7042] border-b border-[#8a7042] pb-2">Morphology Key</h3>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-xs">
+            <div id="morphKeyContainer" class="max-w-7xl mx-auto mt-8 mb-6">
+                <div class="dark-card p-4">
+                    <h3 class="text-sm font-bold uppercase tracking-wider mb-3 text-center" style="border-bottom: 1px solid var(--muted-gold); padding-bottom: 8px;">Morphology Reference Guide</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
                         <div>
-                            <div class="font-bold mb-2 text-white border-b border-gray-700 pb-1">Parts of Speech</div>
+                            <div class="font-bold mb-1 text-white">Parts of Speech</div>
                             <div class="morph-item"><span>N</span> Noun</div>
                             <div class="morph-item"><span>V</span> Verb</div>
                             <div class="morph-item"><span>A</span> Adjective</div>
@@ -368,7 +382,7 @@
                             <div class="morph-item"><span>C</span> Conjunction</div>
                         </div>
                         <div>
-                            <div class="font-bold mb-2 text-white border-b border-gray-700 pb-1">Case</div>
+                            <div class="font-bold mb-1 text-white">Case</div>
                             <div class="morph-item"><span>N</span> Nominative</div>
                             <div class="morph-item"><span>G</span> Genitive</div>
                             <div class="morph-item"><span>D</span> Dative</div>
@@ -376,7 +390,7 @@
                             <div class="morph-item"><span>V</span> Vocative</div>
                         </div>
                         <div>
-                            <div class="font-bold mb-2 text-white border-b border-gray-700 pb-1">Tense</div>
+                            <div class="font-bold mb-1 text-white">Tense</div>
                             <div class="morph-item"><span>P</span> Present</div>
                             <div class="morph-item"><span>I</span> Imperfect</div>
                             <div class="morph-item"><span>A</span> Aorist</div>
@@ -384,7 +398,7 @@
                             <div class="morph-item"><span>R</span> Perfect</div>
                         </div>
                         <div>
-                            <div class="font-bold mb-2 text-white border-b border-gray-700 pb-1">Mood</div>
+                            <div class="font-bold mb-1 text-white">Mood</div>
                             <div class="morph-item"><span>I</span> Indicative</div>
                             <div class="morph-item"><span>M</span> Imperative</div>
                             <div class="morph-item"><span>S</span> Subjunctive</div>
@@ -395,7 +409,7 @@
                 </div>
             </div>
 
-            <button onclick="location.reload()" class="bg-slate-200 text-slate-700 font-bold py-3 px-6 rounded-lg mx-auto block hover:bg-slate-300 transition-colors mt-8">
+            <button onclick="location.reload()" class="btn-secondary mt-4 mx-auto block">
                 Start New Analysis
             </button>
         </div>
@@ -414,20 +428,20 @@
             tooltip.id = 'greekTooltip';
             tooltip.style.cssText = `
                 position: fixed;
-                background: var(--slate-medium);
+                background: #1a1815;
                 color: #faf8f3;
-                border: 1px solid var(--gold-primary);
+                border: 2px solid #d4a574;
                 border-radius: 8px;
-                padding: 16px;
+                padding: 12px 16px;
                 display: none;
                 z-index: 10000;
-                max-width: 280px;
-                box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-                font-family: 'Inter', sans-serif;
+                max-width: 320px;
+                box-shadow: 0 8px 24px rgba(0,0,0,0.4);
             `;
             document.body.appendChild(tooltip);
         }
 
+        // Updated for Safe Data Passing
         function showMorphology(element, event) {
             const index = element.dataset.index;
             const data = interlinearData[index];
@@ -436,15 +450,11 @@
             const safeGreek = encodeURIComponent(data.g);
             const safeDef = encodeURIComponent(data.d);
             const safeMorph = encodeURIComponent(data.m); 
-            const derivatives = data.e || "None";
 
             tooltip.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:4px;">
-                    <div style="font-size: 1.6rem; color: var(--gold-primary); font-family: 'EB Garamond', serif; line-height:1;">${data.g}</div>
-                    <div style="font-size: 0.75rem; color: #94a3b8; font-weight:bold; background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px;">${data.m}</div>
-                </div>
-                <div class="mt-2 text-sm text-white"><strong>Def:</strong> ${data.d}</div>
-                <div class="mt-1 text-xs text-slate-400 italic"><strong>Deriv:</strong> ${derivatives}</div>
+                <div style="font-size: 1.5rem; color: #d4a574; font-family: 'EB Garamond', serif;">${data.g}</div>
+                <div style="font-size: 0.85rem; color: rgba(212,165,116,0.8); font-weight:bold;">${data.m}</div>
+                <div class="mt-1"><strong>Definition:</strong> ${data.d}</div>
                 
                 <button class="tooltip-btn" 
                     data-greek="${safeGreek}" 
@@ -456,12 +466,12 @@
             `;
             
             const rect = element.getBoundingClientRect();
-            let left = rect.left + (rect.width / 2) - 140; 
-            let top = rect.bottom + 10;
+            let left = rect.left + (rect.width / 2) - 160; 
+            let top = rect.bottom + 8;
             
             if (left < 10) left = 10;
-            if (left + 280 > window.innerWidth - 10) left = window.innerWidth - 290;
-            if (top + 200 > window.innerHeight) top = rect.top - 200 - 10; 
+            if (left + 320 > window.innerWidth - 10) left = window.innerWidth - 330;
+            if (top + 180 > window.innerHeight) top = rect.top - 180 - 8; 
             
             tooltip.style.left = left + 'px';
             tooltip.style.top = top + 'px';
@@ -482,33 +492,38 @@
 
         async function triggerDeepStudy(greekWord, definition, morphCode, btnElement) {
             btnElement.textContent = "Analyzing...";
-            btnElement.style.opacity = "0.7";
             btnElement.disabled = true;
 
             try {
                 const newStudy = await generateWordStudy(greekWord, definition);
+                
+                // Un-wrap if array
                 const studyData = Array.isArray(newStudy) ? newStudy[0] : newStudy;
+
+                // Pass the morphCode from tooltip (or AI fallback) to the card creator
                 const finalMorph = morphCode || studyData.morphology || "";
                 
                 addWordStudyCard(studyData, finalMorph);
+                
                 document.querySelector('.lens-tab[data-lens="words"]').click();
                 hideTooltip();
 
             } catch (error) {
                 btnElement.textContent = "Error";
                 console.error(error);
-                alert("Failed. Check connection.");
+                alert("Failed to generate study. Please try again.");
             }
         }
 
         async function generateWordStudy(word, def) {
-            // PROMPT: Deep Study with safety settings
+            // PROMPT UPDATED: Sensible Derivative Logic + Explicit Morphology Request
             const prompt = `Perform a theological word study on the Greek word "${word}" (${def}) in the context of ${currentPassageRef}.
             Return JSON only:
             {
                 "greek": "${word}",
                 "transliteration": "Transliteration",
                 "gloss": "${def}",
+                "morphology": "MorphCode (e.g. N-NSM or V-PAI-3S)",
                 "english_derivatives": "List clear English derivatives (e.g. logos -> logic). If none exist, return 'None'.",
                 "semantic_range": "Range of meaning",
                 "usage_note": "Specific usage in this passage",
@@ -522,19 +537,12 @@
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         contents: [{ role: "user", parts: [{ text: prompt }] }],
-                        generationConfig: { responseMimeType: "application/json" },
-                        safetySettings: [
-                            { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
-                            { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
-                            { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
-                            { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
-                        ]
+                        generationConfig: { responseMimeType: "application/json" }
                     })
                 }
             );
 
             const data = await response.json();
-            if (!data.candidates || data.candidates.length === 0) throw new Error("AI returned no data.");
             let rawText = data.candidates[0].content.parts[0].text;
             rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
             return JSON.parse(rawText);
@@ -547,32 +555,31 @@
             const trans = w.transliteration || "N/A";
             const gloss = w.gloss || "N/A";
             const derivatives = w.english_derivatives || "None";
-            const morphologyDisplay = morphCode ? `<span class="ml-2 px-2 py-0.5 rounded bg-gray-700 text-xs text-[#c5a065]" title="Morphology">${morphCode}</span>` : "";
+            
+            const morphologyDisplay = morphCode ? `<span class="ml-2 px-2 py-0.5 rounded bg-gray-700 text-xs text-primary-gold" title="Morphology">${morphCode}</span>` : "";
 
             const html = `
-            <div class="word-study-card mt-6 border-l-[4px] border-[#059669] bg-slate-800/50 animate-[fadeIn_0.5s_ease-in]">
+            <div class="word-study-card mt-4" style="border-left-color: #059669; animation: fadeIn 0.5s;">
                 <div class="flex justify-between items-start">
                     <div>
-                        <div class="greek-word text-3xl mb-2 flex items-center gap-2 text-white">
+                        <div class="greek-word text-3xl mb-2 flex items-center gap-2">
                             ${w.greek}
                             ${morphologyDisplay}
                         </div>
-                        <div class="font-medium mb-4 text-[#8a7042]">${trans} • "${gloss}"</div>
+                        <div class="font-medium mb-4" style="color:var(--muted-gold)">${trans} • "${gloss}"</div>
                     </div>
-                    <span class="text-[10px] font-bold uppercase tracking-wider bg-[#059669] text-white px-2 py-1 rounded">New</span>
+                    <span class="text-xs bg-green-900 text-green-100 px-2 py-1 rounded">New</span>
                 </div>
-                <div class="space-y-4 text-sm text-slate-200">
-                    <div><h4 class="font-bold mb-1 text-[#c5a065]">English Derivatives</h4><p class="italic text-slate-400">${derivatives}</p></div>
-                    <div><h4 class="font-bold mb-1 text-[#c5a065]">Semantic Range</h4><p>${w.semantic_range}</p></div>
-                    <div><h4 class="font-bold mb-1 text-[#c5a065]">Usage</h4><p>${w.usage_note}</p></div>
-                    <div><h4 class="font-bold mb-1 text-[#c5a065]">Significance</h4><p>${w.theological_weight}</p></div>
+                <div class="space-y-3">
+                    <div><h4 class="font-semibold mb-1" style="color:var(--primary-gold)">English Derivatives</h4><p class="text-sm italic">${derivatives}</p></div>
+                    <div><h4 class="font-semibold mb-1" style="color:var(--primary-gold)">Semantic Range</h4><p class="text-sm">${w.semantic_range}</p></div>
+                    <div><h4 class="font-semibold mb-1" style="color:var(--primary-gold)">Usage</h4><p class="text-sm">${w.usage_note}</p></div>
+                    <div><h4 class="font-semibold mb-1" style="color:var(--primary-gold)">Significance</h4><p class="text-sm">${w.theological_weight}</p></div>
                 </div>
             </div>`;
             
             titleElement.insertAdjacentHTML('afterend', html);
-            setTimeout(() => {
-                container.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 100);
+            container.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         // --- 3. LENS NAVIGATION ---
@@ -612,22 +619,32 @@
             if (reference.includes(':')) {
                 const parts = reference.split(':');
                 if (parts.length !== 2) return { valid: false, message: "Invalid format. Use Chapter:Verses (e.g., 3:16)" };
+                
                 const chapter = parseInt(parts[0]);
                 const versePart = parts[1];
-                if (isNaN(chapter)) return { valid: false, message: "Invalid chapter." };
+                
+                if (isNaN(chapter)) return { valid: false, message: "Invalid chapter number." };
                 
                 if (versePart.includes('-')) {
                     const [start, end] = versePart.split('-').map(v => parseInt(v));
-                    if (isNaN(start) || isNaN(end)) return { valid: false, message: "Invalid range." };
+                    if (isNaN(start) || isNaN(end)) return { valid: false, message: "Invalid verse range." };
+                    
                     if ((end - start + 1) > 20) {
                         const newEnd = start + 19;
-                        return { valid: true, cleanedRef: `${chapter}:${start}-${newEnd}`, wasTruncated: true };
+                        return { 
+                            valid: true, 
+                            cleanedRef: `${chapter}:${start}-${newEnd}`, 
+                            wasTruncated: true 
+                        };
                     }
                 }
                 return { valid: true, cleanedRef: `${chapter}:${versePart}`, wasTruncated: false };
             } 
+            
             const chapterOnly = parseInt(reference);
-            if (!isNaN(chapterOnly)) return { valid: true, cleanedRef: `${chapterOnly}`, wasTruncated: false };
+            if (!isNaN(chapterOnly)) {
+                return { valid: true, cleanedRef: `${chapterOnly}`, wasTruncated: false };
+            }
             
             return { valid: false, message: "Invalid reference format." };
         }
@@ -653,7 +670,7 @@
             document.getElementById('errorDisplay').style.display = 'none';
             
             try {
-                // updateLoadingStatus('Generating full interlinear analysis...');
+                updateLoadingStatus('Generating full interlinear analysis...');
                 const analysis = await generateAnalysis(passageRef);
                 
                 interlinearData = analysis.text_parsing.interlinear;
@@ -662,6 +679,8 @@
                 
                 document.getElementById('loadingSection').style.display = 'none';
                 document.getElementById('resultsSection').style.display = 'block';
+                
+                // Re-init Key visibility for Text Tab (Default)
                 document.getElementById('morphKeyContainer').style.display = 'block';
 
                 createTooltip();
@@ -671,8 +690,12 @@
                 console.error(error);
                 document.getElementById('loadingSection').style.display = 'none';
                 document.getElementById('inputSection').style.display = 'block';
-                showError(error.message || "An unknown error occurred.");
+                showError(error.message);
             }
+        }
+        
+        function updateLoadingStatus(message) {
+            document.getElementById('loadingStatus').textContent = message;
         }
         
         function showError(message) {
@@ -683,7 +706,7 @@
         
         // --- 6. AI GENERATION ---
         async function generateAnalysis(passageRef) {
-            // Updated Prompt to include 'e' (Derivatives) in Interlinear
+            // PROMPT UPDATED: Sensible Derivative Logic + Explicit Morphology Request
             const systemPrompt = `You are a biblical scholar. Analyze ${passageRef}.
             
             CRITICAL INSTRUCTION: For 'text_parsing', do NOT provide a block of text. 
@@ -694,13 +717,8 @@
             "text_parsing": {
                 "english_text": "Full ESV text here...",
                 "interlinear": [
-                    { 
-                      "g": "GreekWord", 
-                      "m": "MorphCode", 
-                      "d": "ShortDef",
-                      "e": "Derivative (e.g. logos->logic) or 'None'"
-                    },
-                    { "g": "NextWord", "m": "MorphCode", "d": "ShortDef", "e": "..." }
+                    { "g": "GreekWord", "m": "MorphCode", "d": "ShortDef" },
+                    { "g": "NextWord", "m": "MorphCode", "d": "ShortDef" }
                 ]
             },
             "logical_flow": {
@@ -719,7 +737,7 @@
                     "transliteration": "Trans", 
                     "gloss": "Definition", 
                     "morphology": "MorphCode (e.g. N-NSM)", 
-                    "english_derivatives": "List clear English derivatives. If none exist, return 'None'.", 
+                    "english_derivatives": "List clear English derivatives (e.g. logos -> logic). If none exist, return 'None'.", 
                     "semantic_range": "Range", 
                     "usage_note": "Usage", 
                     "theological_weight": "Significance" 
@@ -736,30 +754,13 @@
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         contents: [{ role: "user", parts: [{ text: systemPrompt }] }],
-                        generationConfig: { responseMimeType: "application/json" },
-                        // ADD SAFETY SETTINGS TO PREVENT RANDOM BLOCKS
-                        safetySettings: [
-                            { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
-                            { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
-                            { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
-                            { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
-                        ]
+                        generationConfig: { responseMimeType: "application/json" }
                     })
                 }
             );
 
-            if (!response.ok) throw new Error("API Error: " + response.statusText);
+            if (!response.ok) throw new Error("API Error");
             const data = await response.json();
-            
-            // Check if candidates exist
-            if (!data.candidates || data.candidates.length === 0) {
-                // Check if prompt was blocked
-                if (data.promptFeedback && data.promptFeedback.blockReason) {
-                    throw new Error("AI Blocked Request: " + data.promptFeedback.blockReason);
-                }
-                throw new Error("AI returned empty response (Safety Filter). Try a different passage.");
-            }
-
             let rawText = data.candidates[0].content.parts[0].text;
             rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
             return JSON.parse(rawText);
@@ -786,16 +787,16 @@
             return `
                 <section class="lens-content active" data-lens-content="text">
                     <div class="dark-card mb-6">
-                        <h2 class="text-xl font-bold mb-4 text-[#c5a065]">English Text (ESV)</h2>
-                        <div class="biblical-text text-white/90">
+                        <h2 class="text-xl font-bold mb-4">English Text (ESV)</h2>
+                        <div class="biblical-text" style="color: var(--cream-text);">
                             ${data.english_text}
                         </div>
                     </div>
                     
                     <div class="dark-card mb-6">
-                        <h2 class="text-xl font-bold mb-2 text-[#c5a065]">Greek Text (Full Interlinear)</h2>
-                        <p class="text-sm text-slate-400 mb-4">Tap any word for details.</p>
-                        <div class="biblical-text greek-text text-white/95 leading-loose">
+                        <h2 class="text-xl font-bold mb-4">Greek Text (Full Interlinear)</h2>
+                        <p class="text-sm text-gray-400 mb-2">Tap ANY word for morphology and tools.</p>
+                        <div class="biblical-text greek-text" style="color: var(--cream-text);">
                             ${processedGreek}
                         </div>
                     </div>
@@ -807,14 +808,19 @@
             const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 
             document.querySelectorAll('.greek-interactive').forEach(span => {
+                
                 if (!isTouch) {
                     span.addEventListener('mouseenter', (e) => showMorphology(span, e));
-                    span.addEventListener('mouseleave', (e) => { hideTooltip(); });
+                    span.addEventListener('mouseleave', (e) => {
+                       hideTooltip(); 
+                    });
                 }
+
                 span.addEventListener('click', (e) => {
                     e.stopPropagation();
                     const currentIndex = span.dataset.index;
                     const activeIndex = tooltip.dataset.activeIndex;
+
                     if (tooltip.style.display === 'block' && activeIndex === currentIndex) {
                         hideTooltip();
                         tooltip.dataset.activeIndex = ''; 
@@ -834,48 +840,45 @@
         
         function renderLogicalFlow(data) {
             const html = data.structure.map(n => `
-                <div class="p-4 mb-4 rounded-lg border-l-4 border-[#c5a065] bg-slate-800/50">
-                    <div class="text-xs font-bold mb-2 text-[#c5a065] uppercase tracking-wide">${n.label} (${n.verse_ref})</div>
-                    <div class="text-slate-200 text-sm leading-relaxed">${n.content}</div>
+                <div class="p-4 mb-4 rounded-lg border-l-4" style="background:var(--dark-bg); border-color:#d4a574; color:var(--cream-text);">
+                    <div class="text-xs font-semibold mb-2" style="color:#d4a574;">${n.label} (${n.verse_ref})</div>
+                    <div>${n.content}</div>
                 </div>`).join('');
             return `<section class="lens-content" data-lens-content="logic">
                 <div class="dark-card"><h2 class="text-xl font-bold mb-4">Argument Structure</h2>${html}
-                <div class="mt-8 pt-6 border-t border-slate-700"><h3 class="text-lg font-bold mb-2">Rhetorical Strategy</h3><p class="text-slate-300 text-sm leading-relaxed">${data.key_insight}</p></div></div></section>`;
+                <div class="mt-6"><h3 class="text-lg font-bold" style="color:var(--primary-gold)">Rhetorical Strategy</h3><p>${data.key_insight}</p></div></div></section>`;
         }
         
         function renderHistoricalContext(data) {
             return `<section class="lens-content" data-lens-content="context"><div class="dark-card"><h2 class="text-xl font-bold mb-6">Historical Context</h2>
-            ${data.notes.map(n => `<div class="word-study-card"><h3 class="font-bold mb-2 text-[#c5a065]">${n.title}</h3><p class="text-sm text-slate-300">${n.content}</p></div>`).join('')}</div></section>`;
+            ${data.notes.map(n => `<div class="word-study-card"><h3 class="font-bold mb-2">${n.title}</h3><p class="text-sm">${n.content}</p></div>`).join('')}</div></section>`;
         }
         
         function renderTheologicalTraditions(data) {
             return `<section class="lens-content" data-lens-content="theology"><div class="dark-card"><h2 class="text-xl font-bold mb-6">Traditions</h2>
-            ${data.concepts.map(c => `<div class="word-study-card"><h3 class="text-lg font-bold mb-4 text-[#c5a065]">${c.title}</h3>
-            ${c.traditions.map(t => `<div class="mb-4 last:mb-0"><h4 class="font-semibold text-xs uppercase tracking-wide mb-1 text-slate-400">${t.name}</h4><div class="text-sm text-slate-200">${t.view}</div></div>`).join('')}</div>`).join('')}</div></section>`;
+            ${data.concepts.map(c => `<div class="word-study-card"><h3 class="text-lg font-bold mb-3">${c.title}</h3>
+            ${c.traditions.map(t => `<div class="mb-3"><h4 class="font-semibold text-sm mb-1" style="color:var(--muted-gold)">${t.name}</h4><div class="text-sm">${t.view}</div></div>`).join('')}</div>`).join('')}</div></section>`;
         }
         
+        // Updated Renderer for Initial Studies (adds Morph & Derivatives)
         function renderWordStudies(data) {
             return `<section class="lens-content" data-lens-content="words"><div class="dark-card"><h2 class="text-xl font-bold mb-6">Word Studies</h2>
             ${data.words.map(w => {
                 const morphCode = w.morphology || "";
-                const morphologyDisplay = morphCode ? `<span class="ml-2 px-2 py-0.5 rounded bg-gray-700 text-xs text-[#c5a065] font-sans" title="Morphology">${morphCode}</span>` : "";
+                const morphologyDisplay = morphCode ? `<span class="ml-2 px-2 py-0.5 rounded bg-gray-700 text-xs text-primary-gold" title="Morphology">${morphCode}</span>` : "";
                 const derivatives = w.english_derivatives || "None";
 
                 return `<div class="word-study-card">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <div class="greek-word text-3xl mb-2 flex items-center gap-2 text-white">
-                                ${w.greek}
-                                ${morphologyDisplay}
-                            </div>
-                            <div class="font-medium mb-4 text-[#8a7042]">${w.transliteration} • "${w.gloss}"</div>
-                        </div>
+                    <div class="greek-word text-3xl mb-2 flex items-center gap-2">
+                        ${w.greek}
+                        ${morphologyDisplay}
                     </div>
-                    <div class="space-y-4 text-sm text-slate-200">
-                        <div><h4 class="font-bold mb-1 text-[#c5a065]">English Derivatives</h4><p class="italic text-slate-400">${derivatives}</p></div>
-                        <div><h4 class="font-bold mb-1 text-[#c5a065]">Semantic Range</h4><p>${w.semantic_range}</p></div>
-                        <div><h4 class="font-bold mb-1 text-[#c5a065]">Usage</h4><p>${w.usage_note}</p></div>
-                        <div><h4 class="font-bold mb-1 text-[#c5a065]">Significance</h4><p>${w.theological_weight}</p></div>
+                    <div class="font-medium mb-4" style="color:var(--muted-gold)">${w.transliteration} • "${w.gloss}"</div>
+                    <div class="space-y-3">
+                        <div><h4 class="font-semibold mb-1" style="color:var(--primary-gold)">English Derivatives</h4><p class="text-sm italic">${derivatives}</p></div>
+                        <div><h4 class="font-semibold mb-1" style="color:var(--primary-gold)">Semantic Range</h4><p class="text-sm">${w.semantic_range}</p></div>
+                        <div><h4 class="font-semibold mb-1" style="color:var(--primary-gold)">Usage</h4><p class="text-sm">${w.usage_note}</p></div>
+                        <div><h4 class="font-semibold mb-1" style="color:var(--primary-gold)">Significance</h4><p class="text-sm">${w.theological_weight}</p></div>
                     </div>
                 </div>`;
             }).join('')}</div></section>`;
