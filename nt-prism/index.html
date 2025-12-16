@@ -47,7 +47,7 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
 
-        /* CARD STYLING */
+        /* CARD STYLING (Used for Input & Results) */
         .dark-card, .input-section {
             background-color: var(--dark-bg);
             color: var(--cream-text);
@@ -59,7 +59,7 @@
         
         h2, h3 { color: var(--primary-gold); }
         
-        /* INPUT FIELDS */
+        /* INPUT FIELDS (Dark Theme) */
         .input-group label {
             color: var(--primary-gold);
             font-size: 0.85rem;
@@ -590,7 +590,7 @@
                     
                     const targetLens = tab.dataset.lens;
                     
-                    if (targetLens === 'text') {
+                    if (targetLens === 'text' || targetLens === 'words') {
                         morphKey.style.display = 'block';
                     } else {
                         morphKey.style.display = 'none';
@@ -637,7 +637,6 @@
         
         // --- 5. MAIN ACTION & RESET ---
         
-        // Soft Reset function for "Start New Analysis"
         function resetApp() {
             document.getElementById('resultsSection').style.display = 'none';
             document.getElementById('loadingSection').style.display = 'none';
@@ -645,7 +644,6 @@
             document.getElementById('errorDisplay').style.display = 'none';
             document.getElementById('passageDisplay').textContent = "Ready to Analyze";
             
-            // Clear inputs if you want (optional, but usually better UX to clear)
             document.getElementById('referenceInput').value = "";
             
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -670,7 +668,6 @@
             document.getElementById('loadingSection').style.display = 'block';
             document.getElementById('errorDisplay').style.display = 'none';
             
-            // SCROLL TO TOP FIX
             window.scrollTo({ top: 0, behavior: 'smooth' });
             
             try {
@@ -682,6 +679,8 @@
                 
                 document.getElementById('loadingSection').style.display = 'none';
                 document.getElementById('resultsSection').style.display = 'block';
+                
+                // Show key for default tab (text)
                 document.getElementById('morphKeyContainer').style.display = 'block';
 
                 createTooltip();
@@ -703,7 +702,6 @@
         
         // --- 6. AI GENERATION ---
         async function generateAnalysis(passageRef) {
-            // PROMPT: Includes Matthew Henry Commentary request
             const systemPrompt = `You are a biblical scholar. Analyze ${passageRef}.
             
             CRITICAL INSTRUCTION: For 'text_parsing', do NOT provide a block of text. 
