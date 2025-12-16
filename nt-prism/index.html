@@ -368,7 +368,7 @@
             
             <div id="lensContainer"></div>
             
-            <div class="max-w-7xl mx-auto mt-8 mb-6">
+            <div id="morphKeyContainer" class="max-w-7xl mx-auto mt-8 mb-6">
                 <div class="dark-card p-4">
                     <h3 class="text-sm font-bold uppercase tracking-wider mb-3 text-center" style="border-bottom: 1px solid var(--muted-gold); padding-bottom: 8px;">Morphology Reference Guide</h3>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
@@ -441,25 +441,24 @@
             document.body.appendChild(tooltip);
         }
 
-        // Updated for Safe Data Passing
         function showMorphology(element, event) {
             const index = element.dataset.index;
             const data = interlinearData[index];
             if (!data) return;
             
-            // Create safe references for the button
-            // We use encodeURIComponent to handle special characters/quotes safely in the data attributes
             const safeGreek = encodeURIComponent(data.g);
             const safeDef = encodeURIComponent(data.d);
+            const safeMorph = encodeURIComponent(data.m); // Capture Morphology Code
 
             tooltip.innerHTML = `
                 <div style="font-size: 1.5rem; color: #d4a574; font-family: 'EB Garamond', serif;">${data.g}</div>
                 <div style="font-size: 0.85rem; color: rgba(212,165,116,0.8); font-weight:bold;">${data.m}</div>
-                <div class="mt-1"><strong>Gloss:</strong> ${data.d}</div>
+                <div class="mt-1"><strong>Definition:</strong> ${data.d}</div>
                 
                 <button class="tooltip-btn" 
                     data-greek="${safeGreek}" 
                     data-def="${safeDef}"
+                    data-morph="${safeMorph}"
                     onclick="handleDeepStudyClick(this)">
                     Run Deep Study 🔍
                 </button>
@@ -483,31 +482,32 @@
         }
 
         // --- 2. DEEP STUDY LOGIC ---
-        // Handles the click by decoding the safe data attributes
         function handleDeepStudyClick(btn) {
             const greek = decodeURIComponent(btn.dataset.greek);
             const def = decodeURIComponent(btn.dataset.def);
-            triggerDeepStudy(greek, def, btn);
+            const morph = decodeURIComponent(btn.dataset.morph); // Decode morph code
+            triggerDeepStudy(greek, def, morph, btn);
         }
 
-        async function triggerDeepStudy(greekWord, definition, btnElement) {
+        async function triggerDeepStudy(greekWord, definition, morphCode, btnElement) {
             btnElement.textContent = "Analyzing...";
             btnElement.disabled = true;
 
             try {
                 const newStudy = await generateWordStudy(greekWord, definition);
                 
-                // Safety check: Un-wrap array if AI returned an array
+                // Un-wrap if array
                 const studyData = Array.isArray(newStudy) ? newStudy[0] : newStudy;
 
-                addWordStudyCard(studyData);
+                // Pass the morphCode from tooltip to the card creator
+                addWordStudyCard(studyData, morphCode);
+                
                 document.querySelector('.lens-tab[data-lens="words"]').click();
                 hideTooltip();
 
             } catch (error) {
                 btnElement.textContent = "Error";
                 console.error(error);
-                // Optionally alert the user
                 alert("Failed to generate study. Please try again.");
             }
         }
@@ -542,45 +542,62 @@
             return JSON.parse(rawText);
         }
 
-        function addWordStudyCard(w) {
+        function addWordStudyCard(w, morphCode) {
             const container = document.querySelector('.lens-content[data-lens-content="words"] .dark-card');
+            // Insert AFTER the header (which is an h2)
+            const titleElement = container.querySelector('h2');
             
-            // Fallbacks in case fields are missing
             const trans = w.transliteration || "N/A";
             const gloss = w.gloss || "N/A";
-            const range = w.semantic_range || "N/A";
-            const usage = w.usage_note || "N/A";
-            const weight = w.theological_weight || "N/A";
+            
+            // Use passed morph code or fallback
+            const morphologyDisplay = morphCode ? `<span class="ml-2 px-2 py-0.5 rounded bg-gray-700 text-xs text-primary-gold">${morphCode}</span>` : "";
 
             const html = `
-            <div class="word-study-card" style="border-left-color: #059669; animation: fadeIn 0.5s;">
+            <div class="word-study-card mt-4" style="border-left-color: #059669; animation: fadeIn 0.5s;">
                 <div class="flex justify-between items-start">
                     <div>
-                        <div class="greek-word text-3xl mb-2">${w.greek}</div>
+                        <div class="greek-word text-3xl mb-2 flex items-center gap-2">
+                            ${w.greek}
+                            ${morphologyDisplay}
+                        </div>
                         <div class="font-medium mb-4" style="color:var(--muted-gold)">${trans} • "${gloss}"</div>
                     </div>
                     <span class="text-xs bg-green-900 text-green-100 px-2 py-1 rounded">New</span>
                 </div>
                 <div class="space-y-3">
-                    <div><h4 class="font-semibold mb-1" style="color:var(--primary-gold)">Semantic Range</h4><p class="text-sm">${range}</p></div>
-                    <div><h4 class="font-semibold mb-1" style="color:var(--primary-gold)">Usage</h4><p class="text-sm">${usage}</p></div>
-                    <div><h4 class="font-semibold mb-1" style="color:var(--primary-gold)">Significance</h4><p class="text-sm">${weight}</p></div>
+                    <div><h4 class="font-semibold mb-1" style="color:var(--primary-gold)">Semantic Range</h4><p class="text-sm">${w.semantic_range}</p></div>
+                    <div><h4 class="font-semibold mb-1" style="color:var(--primary-gold)">Usage</h4><p class="text-sm">${w.usage_note}</p></div>
+                    <div><h4 class="font-semibold mb-1" style="color:var(--primary-gold)">Significance</h4><p class="text-sm">${w.theological_weight}</p></div>
                 </div>
             </div>`;
             
-            container.insertAdjacentHTML('beforeend', html);
-            container.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            // Insert immediately after the title
+            titleElement.insertAdjacentHTML('afterend', html);
+            
+            // Scroll to the top of the container (since new card is at top)
+            container.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         // --- 3. LENS NAVIGATION ---
         function setupLensNavigation() {
             const tabs = document.querySelectorAll('.lens-tab');
+            const morphKey = document.getElementById('morphKeyContainer');
+
             tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
                     tabs.forEach(t => t.classList.remove('active'));
                     tab.classList.add('active');
                     
                     const targetLens = tab.dataset.lens;
+                    
+                    // TOGGLE MORPH KEY VISIBILITY
+                    if (targetLens === 'text') {
+                        morphKey.style.display = 'block';
+                    } else {
+                        morphKey.style.display = 'none';
+                    }
+
                     const contents = document.querySelectorAll('.lens-content');
                     contents.forEach(content => {
                         content.classList.remove('active');
@@ -661,6 +678,9 @@
                 document.getElementById('loadingSection').style.display = 'none';
                 document.getElementById('resultsSection').style.display = 'block';
                 
+                // Re-init Key visibility for Text Tab (Default)
+                document.getElementById('morphKeyContainer').style.display = 'block';
+
                 createTooltip();
                 setupLensNavigation();
                 
@@ -709,7 +729,7 @@
                 "concepts": [ { "title": "Concept", "traditions": [ { "name": "Tradition", "view": "Viewpoint" } ] } ]
             },
             "word_studies": {
-                "words": [ { "greek": "Word", "transliteration": "Trans", "gloss": "Meanings", "semantic_range": "Range", "usage_note": "Usage", "theological_weight": "Significance" } ]
+                "words": [ { "greek": "Word", "transliteration": "Trans", "gloss": "Definition", "semantic_range": "Range", "usage_note": "Usage", "theological_weight": "Significance" } ]
             }
             }
             
