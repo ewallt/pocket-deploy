@@ -47,7 +47,7 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
 
-        /* CARD STYLING (Used for Input & Results) */
+        /* CARD STYLING */
         .dark-card, .input-section {
             background-color: var(--dark-bg);
             color: var(--cream-text);
@@ -59,7 +59,7 @@
         
         h2, h3 { color: var(--primary-gold); }
         
-        /* INPUT FIELDS (Dark Theme) */
+        /* INPUT FIELDS */
         .input-group label {
             color: var(--primary-gold);
             font-size: 0.85rem;
@@ -119,7 +119,7 @@
             box-shadow: none !important;
         }
         
-        /* UPDATED SECONDARY BUTTON STYLE */
+        /* SECONDARY BUTTON STYLE */
         .btn-secondary {
             background: var(--dark-bg); 
             border: 1px solid var(--primary-gold); 
@@ -398,7 +398,7 @@
                 </div>
             </div>
 
-            <button onclick="location.reload()" class="btn-secondary mt-8 mx-auto block">
+            <button onclick="resetApp()" class="btn-secondary mt-8 mx-auto block">
                 Start New Analysis
             </button>
         </div>
@@ -635,7 +635,22 @@
             return { valid: false, message: "Invalid reference format." };
         }
         
-        // --- 5. MAIN ACTION ---
+        // --- 5. MAIN ACTION & RESET ---
+        
+        // Soft Reset function for "Start New Analysis"
+        function resetApp() {
+            document.getElementById('resultsSection').style.display = 'none';
+            document.getElementById('loadingSection').style.display = 'none';
+            document.getElementById('inputSection').style.display = 'block';
+            document.getElementById('errorDisplay').style.display = 'none';
+            document.getElementById('passageDisplay').textContent = "Ready to Analyze";
+            
+            // Clear inputs if you want (optional, but usually better UX to clear)
+            document.getElementById('referenceInput').value = "";
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
         async function analyzePassage() {
             const book = document.getElementById('bookSelect').value;
             const referenceInput = document.getElementById('referenceInput').value;
@@ -654,6 +669,9 @@
             document.getElementById('inputSection').style.display = 'none';
             document.getElementById('loadingSection').style.display = 'block';
             document.getElementById('errorDisplay').style.display = 'none';
+            
+            // SCROLL TO TOP FIX
+            window.scrollTo({ top: 0, behavior: 'smooth' });
             
             try {
                 const analysis = await generateAnalysis(passageRef);
