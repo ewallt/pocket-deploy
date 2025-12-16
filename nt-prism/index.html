@@ -421,7 +421,7 @@
         // --- 1. TOOLTIP SYSTEM ---
         let tooltip;
         let interlinearData = []; 
-        let currentPassageRef = ""; // Store for context
+        let currentPassageRef = ""; 
 
         function createTooltip() {
             tooltip = document.createElement('div');
@@ -441,17 +441,26 @@
             document.body.appendChild(tooltip);
         }
 
+        // Updated for Safe Data Passing
         function showMorphology(element, event) {
             const index = element.dataset.index;
             const data = interlinearData[index];
             if (!data) return;
             
-            // Added the "Run Deep Study" Button
+            // Create safe references for the button
+            // We use encodeURIComponent to handle special characters/quotes safely in the data attributes
+            const safeGreek = encodeURIComponent(data.g);
+            const safeDef = encodeURIComponent(data.d);
+
             tooltip.innerHTML = `
                 <div style="font-size: 1.5rem; color: #d4a574; font-family: 'EB Garamond', serif;">${data.g}</div>
                 <div style="font-size: 0.85rem; color: rgba(212,165,116,0.8); font-weight:bold;">${data.m}</div>
                 <div class="mt-1"><strong>Gloss:</strong> ${data.d}</div>
-                <button class="tooltip-btn" onclick="triggerDeepStudy('${data.g}', '${data.d}', this)">
+                
+                <button class="tooltip-btn" 
+                    data-greek="${safeGreek}" 
+                    data-def="${safeDef}"
+                    onclick="handleDeepStudyClick(this)">
                     Run Deep Study 🔍
                 </button>
             `;
@@ -474,27 +483,32 @@
         }
 
         // --- 2. DEEP STUDY LOGIC ---
+        // Handles the click by decoding the safe data attributes
+        function handleDeepStudyClick(btn) {
+            const greek = decodeURIComponent(btn.dataset.greek);
+            const def = decodeURIComponent(btn.dataset.def);
+            triggerDeepStudy(greek, def, btn);
+        }
+
         async function triggerDeepStudy(greekWord, definition, btnElement) {
-            // UI Feedback
             btnElement.textContent = "Analyzing...";
             btnElement.disabled = true;
 
             try {
-                // Call API for specific word
                 const newStudy = await generateWordStudy(greekWord, definition);
                 
-                // Add to List
-                addWordStudyCard(newStudy);
-                
-                // Switch Tab
+                // Safety check: Un-wrap array if AI returned an array
+                const studyData = Array.isArray(newStudy) ? newStudy[0] : newStudy;
+
+                addWordStudyCard(studyData);
                 document.querySelector('.lens-tab[data-lens="words"]').click();
-                
-                // Close Tooltip
                 hideTooltip();
 
             } catch (error) {
                 btnElement.textContent = "Error";
                 console.error(error);
+                // Optionally alert the user
+                alert("Failed to generate study. Please try again.");
             }
         }
 
@@ -531,26 +545,30 @@
         function addWordStudyCard(w) {
             const container = document.querySelector('.lens-content[data-lens-content="words"] .dark-card');
             
+            // Fallbacks in case fields are missing
+            const trans = w.transliteration || "N/A";
+            const gloss = w.gloss || "N/A";
+            const range = w.semantic_range || "N/A";
+            const usage = w.usage_note || "N/A";
+            const weight = w.theological_weight || "N/A";
+
             const html = `
             <div class="word-study-card" style="border-left-color: #059669; animation: fadeIn 0.5s;">
                 <div class="flex justify-between items-start">
                     <div>
                         <div class="greek-word text-3xl mb-2">${w.greek}</div>
-                        <div class="font-medium mb-4" style="color:var(--muted-gold)">${w.transliteration} • "${w.gloss}"</div>
+                        <div class="font-medium mb-4" style="color:var(--muted-gold)">${trans} • "${gloss}"</div>
                     </div>
                     <span class="text-xs bg-green-900 text-green-100 px-2 py-1 rounded">New</span>
                 </div>
                 <div class="space-y-3">
-                    <div><h4 class="font-semibold mb-1" style="color:var(--primary-gold)">Semantic Range</h4><p class="text-sm">${w.semantic_range}</p></div>
-                    <div><h4 class="font-semibold mb-1" style="color:var(--primary-gold)">Usage</h4><p class="text-sm">${w.usage_note}</p></div>
-                    <div><h4 class="font-semibold mb-1" style="color:var(--primary-gold)">Significance</h4><p class="text-sm">${w.theological_weight}</p></div>
+                    <div><h4 class="font-semibold mb-1" style="color:var(--primary-gold)">Semantic Range</h4><p class="text-sm">${range}</p></div>
+                    <div><h4 class="font-semibold mb-1" style="color:var(--primary-gold)">Usage</h4><p class="text-sm">${usage}</p></div>
+                    <div><h4 class="font-semibold mb-1" style="color:var(--primary-gold)">Significance</h4><p class="text-sm">${weight}</p></div>
                 </div>
             </div>`;
             
-            // Insert after the title
             container.insertAdjacentHTML('beforeend', html);
-            
-            // Scroll to bottom of container to see new card
             container.scrollIntoView({ behavior: 'smooth', block: 'end' });
         }
 
@@ -625,7 +643,7 @@
             
             const finalRef = validation.cleanedRef;
             const passageRef = `${book} ${finalRef}`;
-            currentPassageRef = passageRef; // Store for Deep Study context
+            currentPassageRef = passageRef; 
             
             document.getElementById('passageDisplay').textContent = passageRef;
             document.getElementById('inputSection').style.display = 'none';
@@ -761,23 +779,13 @@
                 
                 if (!isTouch) {
                     span.addEventListener('mouseenter', (e) => showMorphology(span, e));
-                    // Check if mouse moves to tooltip or away
                     span.addEventListener('mouseleave', (e) => {
-                       // We don't hide immediately to allow clicking the button? 
-                       // Actually, if we use the button, we need the tooltip to persist.
-                       // For desktop, we might want "Click to Lock" logic?
-                       // For now, let's keep hover-only for viewing, but CLICK to Interact/Lock.
-                       
-                       // Current logic: Hover shows data. If you move mouse away, it disappears.
-                       // This makes clicking the button inside hard! 
-                       // FIX: Let's make click lock it on desktop too.
                        hideTooltip(); 
                     });
                 }
 
                 span.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    // On desktop AND mobile, click toggles "Lock" mode
                     const currentIndex = span.dataset.index;
                     const activeIndex = tooltip.dataset.activeIndex;
 
@@ -792,9 +800,7 @@
             });
 
             document.addEventListener('click', (e) => {
-                // Don't close if clicking inside the tooltip
                 if (tooltip && tooltip.contains(e.target)) return;
-                
                 hideTooltip();
                 if(tooltip) tooltip.dataset.activeIndex = '';
             });
