@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Biblical Prism</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=EB+Garamond:wght@400;600&family=Noto+Serif+Hebrew:wght@700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* Shared Premium Palette */
+            --primary-gold: #d4a574;
+            --muted-gold: rgba(212, 165, 116, 0.5);
+            --dark-bg: #1a1815; 
+            --card-bg: #262420;
+            --cream-text: #faf8f3;
+            --neutral-bg: #EAE0C8; 
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--neutral-bg);
+            color: #1e293b;
+            background-image: radial-gradient(#d1c7b0 1px, transparent 1px);
+            background-size: 20px 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1, h2, .serif-font { font-family: 'EB Garamond', serif; }
+        .hebrew-display { font-family: 'Noto Serif Hebrew', serif; }
+        
+        /* CARD STYLING */
+        .choice-card {
+            background-color: var(--dark-bg);
+            color: var(--cream-text);
+            border: 1px solid #44403c;
+            border-radius: 16px;
+            padding: 2.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            text-decoration: none;
+        }
+
+        .choice-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-gold);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+        }
+
+        .choice-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 6px;
+            background: var(--primary-gold);
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+
+        .choice-card:hover::before { opacity: 1; }
+
+        .icon-display {
+            font-size: 4rem;
+            color: var(--primary-gold);
+            opacity: 0.2;
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            pointer-events: none;
+            transition: all 0.5s ease;
+        }
+
+        .choice-card:hover .icon-display {
+            opacity: 0.4;
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .btn-enter {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 1rem;
+            margin-top: 2rem;
+            background: transparent;
+            border: 1px solid var(--primary-gold);
+            color: var(--primary-gold);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .choice-card:hover .btn-enter {
+            background: var(--primary-gold);
+            color: var(--dark-bg);
+        }
+
+        footer {
+            margin-top: auto;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            padding: 2rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #57534e;
+        }
+    </style>
+</head>
+<body>
+
+    <main class="flex-grow flex items-center justify-center p-6">
+        <div class="max-w-5xl w-full">
+            
+            <div class="text-center mb-12 animate-[fadeIn_0.5s_ease-out]">
+                <h1 class="text-4xl md:text-5xl font-bold text-[#1a1815] mb-4">The Biblical Prism</h1>
+                <p class="text-lg text-[#57534e] serif-font italic">Select your testament to begin analysis.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <a href="ot-prism/index.html" class="block group">
+                    <div class="choice-card">
+                        <div class="hebrew-display icon-display">א</div>
+                        <div class="relative z-10">
+                            <h2 class="text-3xl font-bold mb-2 text-[#d4a574]">Old Testament</h2>
+                            <p class="text-xs font-bold uppercase tracking-widest text-gray-500 mb-6">Hebrew • Masoretic Text</p>
+                            
+                            <ul class="space-y-3 text-gray-300 text-sm">
+                                <li class="flex items-start gap-2">
+                                    <span class="text-[#d4a574] mt-1">✓</span>
+                                    <span><strong>Keil & Delitzsch</strong> Commentary</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-[#d4a574] mt-1">✓</span>
+                                    <span><strong>ANE Context</strong> (Ancient Near East)</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-[#d4a574] mt-1">✓</span>
+                                    <span><strong>Morphology</strong> (Stems & Roots)</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-[#d4a574] mt-1">✓</span>
+                                    <span><strong>NT Connections</strong> & Typology</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="btn-enter">Enter Hebrew Study &rarr;</div>
+                    </div>
+                </a>
+
+                <a href="nt-prism/index.html" class="block group">
+                    <div class="choice-card">
+                        <div class="serif-font icon-display">Ω</div>
+                        <div class="relative z-10">
+                            <h2 class="text-3xl font-bold mb-2 text-[#d4a574]">New Testament</h2>
+                            <p class="text-xs font-bold uppercase tracking-widest text-gray-500 mb-6">Greek • NA28 Text</p>
+                            
+                            <ul class="space-y-3 text-gray-300 text-sm">
+                                <li class="flex items-start gap-2">
+                                    <span class="text-[#d4a574] mt-1">✓</span>
+                                    <span><strong>Matthew Henry</strong> Commentary</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-[#d4a574] mt-1">✓</span>
+                                    <span><strong>Greco-Roman</strong> Context</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-[#d4a574] mt-1">✓</span>
+                                    <span><strong>Full Parsing</strong> (Case, Voice, Mood)</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-[#d4a574] mt-1">✓</span>
+                                    <span><strong>Logical Flow</strong> & Rhetoric</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="btn-enter">Enter Greek Study &rarr;</div>
+                    </div>
+                </a>
+
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        <p class="mb-2"><strong>The Biblical Prism</strong></p>
+        <p class="opacity-70">AI-Powered Exegetical Suite • Local-First Architecture</p>
+    </footer>
+
+</body>
+</html>
