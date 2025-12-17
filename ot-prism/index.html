@@ -1,3 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OT Exegetical Prism - Progressive</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=EB+Garamond:wght@400;600&family=Noto+Serif+Hebrew:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-gold: #d4a574;
+            --muted-gold: rgba(212, 165, 116, 0.5);
+            --dark-bg: #1a1815; 
+            --input-bg: #262420; 
+            --cream-text: #faf8f3;
+            --neutral-bg: #EAE0C8; 
+            --action-green: #059669; 
+            --action-green-hover: #047857;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--neutral-bg);
+            color: #1e293b;
+            background-image: radial-gradient(#d1c7b0 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        
+        /* HEBREW TYPOGRAPHY */
+        .biblical-text {
+            font-family: 'Noto Serif Hebrew', serif;
+            font-size: 1.5rem;
+            line-height: 2.2;
+            direction: rtl;
+            text-align: right;
+        }
+        
+        .english-text-display {
+            font-family: 'EB Garamond', serif;
+            font-size: 1.15rem;
+            line-height: 1.8;
+            direction: ltr;
+            text-align: left;
+        }
+        
+        /* HEADER */
+        header {
+            background-color: var(--dark-bg);
+            border-bottom: 3px solid var(--primary-gold);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .dark-card, .input-section {
+            background-color: var(--dark-bg);
+            color: var(--cream-text);
+            border-left: 4px solid var(--primary-gold);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+        }
+        
+        h2, h3 { color: var(--primary-gold); }
+        
+        .input-group label {
+            color: var(--primary-gold);
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        input, select {
+            background-color: var(--input-bg);
+            border: 1px solid #44403c;
+            color: white;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            width: 100%;
+            transition: all 0.2s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-gold);
+            box-shadow: 0 0 0 2px rgba(212, 165, 116, 0.2);
+        }
+
+        button.primary-btn {
+            background: var(--action-green);
+            color: white; 
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            width: 100%;
+        }
+        
+        button.primary-btn:hover {
+            background: var(--action-green-hover);
+            transform: translateY(-2px);
+        }
+
+        button.primary-btn:disabled {
+            background: #57534e !important;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        
+        .btn-secondary {
+            background: var(--dark-bg); 
+            border: 1px solid var(--primary-gold); 
+            color: var(--primary-gold);
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.2s;
+        }
+        .btn-secondary:hover { 
+            background: var(--primary-gold); 
+            color: var(--dark-bg);
+        }
+
+        /* TABS */
+        .tabs-container {
+            position: relative;
+            background-color: var(--dark-bg);
+            border-bottom: 1px solid var(--muted-gold);
+            border-radius: 12px 12px 0 0;
+            margin-top: 2rem;
+        }
+        
+        .lens-tab {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+            font-weight: 500;
+            color: rgba(250, 248, 243, 0.6);
+            white-space: nowrap; 
+        }
+        
+        .lens-tab.active {
+            color: var(--primary-gold);
+            border-bottom-color: var(--primary-gold);
+            background: rgba(212, 165, 116, 0.15);
+        }
+        
+        .lens-content { display: none; }
+        .lens-content.active { display: block; animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        /* HEBREW INTERACTION */
+        .hebrew-word { font-family: 'Noto Serif Hebrew', serif; font-weight: 600; }
+
+        .hebrew-interactive {
+            cursor: pointer;
+            transition: all 0.1s;
+            display: inline-block;
+            border-radius: 3px;
+            padding: 2px 4px;
+            margin-left: 2px;
+        }
+        .hebrew-interactive:hover {
+            color: var(--primary-gold);
+            background: rgba(212, 165, 116, 0.15);
+        }
+        
+        /* TOOLTIP */
+        #hebrewTooltip {
+            background: var(--dark-bg) !important;
+            border: 1px solid var(--primary-gold) !important;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6) !important;
+            direction: ltr; /* Tooltip text is English */
+            text-align: left;
+        }
+
+        .tooltip-btn {
+            background: transparent;
+            border: 1px solid var(--primary-gold);
+            color: var(--primary-gold);
+            font-size: 0.75rem;
+            padding: 6px 10px;
+            margin-top: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .tooltip-btn:hover { background: var(--primary-gold); color: var(--dark-bg); font-weight: bold; }
+        
+        .word-study-card {
+            background: #262420;
+            color: var(--cream-text);
+            border: 1px solid var(--muted-gold);
+            border-left: 4px solid var(--primary-gold);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* UTILS */
+        .loading-spinner {
+            border: 3px solid rgba(212, 165, 116, 0.3);
+            border-top: 3px solid var(--primary-gold);
+            border-radius: 50%;
+            width: 40px; height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .error-card {
+            background: #fef2f2;
+            border: 2px solid #ef4444;
+            border-radius: 10px;
+            padding: 1.5rem;
+            color: #991b1b;
+        }
+        
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="min-h-screen pb-12">
+    
+    <header class="sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold" style="color: var(--primary-gold);">OT Exegetical Prism</h1>
+                    <p class="text-xs text-gray-400 mt-1">Progressive Analysis Engine</p>
+                </div>
+                <div class="text-right hidden md:block">
+                    <div class="text-sm font-semibold text-gray-200" id="passageDisplay">Ready to Analyze</div>
+                    <div class="text-xs text-gray-500">Hebrew Interlinear (BHS)</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 md:px-6 py-8">
+        
+        <div class="input-section mb-8" id="inputSection">
+            <h2 class="text-2xl font-bold mb-2">Analyze a Passage</h2>
+            <p class="text-sm text-gray-400 mb-6">Select an OT book and reference.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-6">
+                <div class="md:col-span-4 input-group">
+                    <label>Book</label>
+                    <select id="bookSelect">
+                        <option value="">Select...</option>
+                        <option value="Genesis">Genesis</option>
+                        <option value="Exodus">Exodus</option>
+                        <option value="Leviticus">Leviticus</option>
+                        <option value="Numbers">Numbers</option>
+                        <option value="Deuteronomy">Deuteronomy</option>
+                        <option value="Joshua">Joshua</option>
+                        <option value="Judges">Judges</option>
+                        <option value="Ruth">Ruth</option>
+                        <option value="1 Samuel">1 Samuel</option>
+                        <option value="2 Samuel">2 Samuel</option>
+                        <option value="1 Kings">1 Kings</option>
+                        <option value="2 Kings">2 Kings</option>
+                        <option value="1 Chronicles">1 Chronicles</option>
+                        <option value="2 Chronicles">2 Chronicles</option>
+                        <option value="Ezra">Ezra</option>
+                        <option value="Nehemiah">Nehemiah</option>
+                        <option value="Esther">Esther</option>
+                        <option value="Job">Job</option>
+                        <option value="Psalms">Psalms</option>
+                        <option value="Proverbs">Proverbs</option>
+                        <option value="Ecclesiastes">Ecclesiastes</option>
+                        <option value="Song of Solomon">Song of Solomon</option>
+                        <option value="Isaiah">Isaiah</option>
+                        <option value="Jeremiah">Jeremiah</option>
+                        <option value="Lamentations">Lamentations</option>
+                        <option value="Ezekiel">Ezekiel</option>
+                        <option value="Daniel">Daniel</option>
+                        <option value="Hosea">Hosea</option>
+                        <option value="Joel">Joel</option>
+                        <option value="Amos">Amos</option>
+                        <option value="Obadiah">Obadiah</option>
+                        <option value="Jonah">Jonah</option>
+                        <option value="Micah">Micah</option>
+                        <option value="Nahum">Nahum</option>
+                        <option value="Habakkuk">Habakkuk</option>
+                        <option value="Zephaniah">Zephaniah</option>
+                        <option value="Haggai">Haggai</option>
+                        <option value="Zechariah">Zechariah</option>
+                        <option value="Malachi">Malachi</option>
+                    </select>
+                </div>
+                
+                <div class="md:col-span-5 input-group">
+                    <label>Reference</label>
+                    <input type="text" id="referenceInput" placeholder="e.g. 1:1 or 23:1-6">
+                </div>
+                
+                <div class="md:col-span-3 flex items-end">
+                    <button id="analyzeBtn" class="primary-btn h-12">
+                        Analyze 🚀
+                    </button>
+                </div>
+            </div>
+            
+            <div id="errorDisplay" class="mt-4" style="display: none;"></div>
+        </div>
+        
+        <div id="loadingSection" style="display: none;">
+            <div class="dark-card text-center py-12">
+                <div class="loading-spinner mx-auto mb-6"></div>
+                <h3 class="text-xl font-semibold mb-2">Consulting the Scholars...</h3>
+                <p class="text-sm text-gray-400" id="loadingStatus">Constructing analysis...</p>
+            </div>
+        </div>
+        
+        <div id="resultsSection" style="display: none;">
+            
+            <nav class="tabs-container sticky top-[80px] z-40">
+                <div class="flex space-x-1 overflow-x-auto hide-scrollbar px-2"> 
+                    <div class="lens-tab active" data-lens="text">📖 Text</div>
+                    <div class="lens-tab" data-lens="commentary">📜 Keil & Delitzsch</div>
+                    <div class="lens-tab" data-lens="ntconnect">✝️ NT Connections</div>
+                    <div class="lens-tab" data-lens="context">🏺 ANE Context</div>
+                    <div class="lens-tab" data-lens="theology">⛪ Theology</div>
+                    <div class="lens-tab" data-lens="words">🔍 Word Studies</div>
+                </div>
+            </nav>
+            
+            <div class="md:hidden text-[10px] uppercase tracking-widest text-center my-4 font-bold text-gray-500">
+                ← Swipe for more lenses →
+            </div>
+            
+            <div id="lensContainer"></div>
+            
+            <div id="morphKeyContainer" class="mt-8 mb-6" style="display: none;">
+                <div class="dark-card p-6">
+                    <h3 class="text-xs font-bold uppercase tracking-widest mb-4 text-center text-[#8a7042] border-b border-[#8a7042] pb-2">Hebrew Morphology Key</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-xs">
+                        <div>
+                            <div class="font-bold mb-2 text-white border-b border-gray-700 pb-1">Stems</div>
+                            <div class="morph-item"><span>Qal</span> Simple</div>
+                            <div class="morph-item"><span>Pie</span> Piel (Intensive)</div>
+                            <div class="morph-item"><span>Hip</span> Hiphil (Causative)</div>
+                        </div>
+                        <div>
+                            <div class="font-bold mb-2 text-white border-b border-gray-700 pb-1">Tense</div>
+                            <div class="morph-item"><span>Perf</span> Perfect</div>
+                            <div class="morph-item"><span>Imp</span> Imperfect</div>
+                            <div class="morph-item"><span>Wayy</span> Waw Consec.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="resetApp()" class="btn-secondary mt-8 mx-auto block">
+                Start New Analysis
+            </button>
+        </div>
+    </main>
+
     <script>
         const API_KEY = "AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A"; 
         
@@ -390,3 +768,5 @@
             document.getElementById('analyzeBtn').addEventListener('click', analyzePassage);
         });
     </script>
+</body>
+</html>
