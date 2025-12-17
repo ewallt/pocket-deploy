@@ -343,7 +343,7 @@
             <nav class="tabs-container sticky top-[80px] z-40">
                 <div class="flex space-x-1 overflow-x-auto hide-scrollbar px-2"> 
                     <div class="lens-tab active" data-lens="text">📖 Text & Parsing</div>
-                    <div class="lens-tab" data-lens="commentary">✍️ Commentary</div>
+                    <div class="lens-tab" data-lens="commentary">✍️ Cambridge Bible</div>
                     <div class="lens-tab" data-lens="logic">🧩 Logical Flow</div>
                     <div class="lens-tab" data-lens="context">📜 Context</div>
                     <div class="lens-tab" data-lens="theology">⛪ Theology</div>
@@ -715,15 +715,15 @@
                     { 
                       "g": "GreekWord", 
                       "m": "MorphCode", 
-                      "d": "ShortDef",
+                      "d": "ShortDef", 
                       "e": "Derivative (e.g. logos->logic) or 'None'"
                     }
                 ]
             },
-            "matthew_henry": {
-                "summary": "2-3 sentence summary of Matthew Henry's main thought on this passage.",
+            "cambridge_bible": {
+                "summary": "2-3 sentence summary of The Cambridge Bible for Schools and Colleges' main thought on this passage.",
                 "insights": [
-                    { "title": "Point Title", "content": "Insight from Henry's commentary..." }
+                    { "title": "Point Title", "content": "Insight from The Cambridge Bible commentary..." }
                 ]
             },
             "logical_flow": {
@@ -790,7 +790,7 @@
             const container = document.getElementById('lensContainer');
             container.innerHTML = `
                 ${renderTextParsing(analysis.text_parsing)}
-                ${renderMatthewHenry(analysis.matthew_henry)}
+                ${renderCambridgeBible(analysis.cambridge_bible)}
                 ${renderLogicalFlow(analysis.logical_flow)}
                 ${renderHistoricalContext(analysis.historical_context)}
                 ${renderTheologicalTraditions(analysis.theological_traditions)}
@@ -799,8 +799,8 @@
             attachGreekListeners();
         }
 
-        // NEW RENDERER: Matthew Henry
-        function renderMatthewHenry(data) {
+        // NEW RENDERER: Cambridge Bible
+        function renderCambridgeBible(data) {
             if (!data) return '';
             const insightsHtml = data.insights.map(i => `
                 <div class="mb-4 last:mb-0 border-l-2 border-[#8a7042] pl-4">
@@ -812,7 +812,7 @@
             return `
             <section class="lens-content" data-lens-content="commentary">
                 <div class="dark-card">
-                    <h2 class="text-xl font-bold mb-4 text-[#c5a065]">Matthew Henry's Commentary</h2>
+                    <h2 class="text-xl font-bold mb-4 text-[#c5a065]">The Cambridge Bible</h2>
                     <div class="bg-[#262420] p-4 rounded-lg mb-6 text-gray-200 italic text-sm border border-[#44403c]">
                         "${data.summary}"
                     </div>
