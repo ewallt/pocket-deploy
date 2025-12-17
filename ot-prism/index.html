@@ -234,6 +234,17 @@
             color: #991b1b;
         }
         
+        .warning-badge {
+            background: rgba(212, 165, 116, 0.15);
+            border: 1px solid var(--primary-gold);
+            color: var(--primary-gold);
+            font-size: 0.8rem;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+        }
+        
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
@@ -333,6 +344,10 @@
         
         <div id="resultsSection" style="display: none;">
             
+            <div id="truncationWarning" class="text-center" style="display: none;">
+                <div class="warning-badge">⚠️ Analysis limited to first 20 verses</div>
+            </div>
+
             <nav class="tabs-container sticky top-[80px] z-40">
                 <div class="flex space-x-1 overflow-x-auto hide-scrollbar px-2"> 
                     <div class="lens-tab active" data-lens="text">📖 Text</div>
@@ -345,7 +360,7 @@
             </nav>
             
             <div class="md:hidden text-[10px] uppercase tracking-widest text-center my-4 font-bold text-gray-500">
-                ← Swipe for more lenses →
+                ← Swipe for more tabs →
             </div>
             
             <div id="lensContainer"></div>
@@ -447,9 +462,39 @@
             if(tooltip) tooltip.style.display = 'none';
         }
 
-        // --- 2. DATA FETCHING (2-STEP) ---
+        // --- 2. VALIDATION & 20 VERSE CAP ---
+        function validatePassage(book, reference) {
+            if (!book || !reference) return { valid: false, message: "Please select a book and enter a reference." };
+            
+            let finalRef = reference;
+            let truncated = false;
+
+            // Handle: "119" (Chapter only)
+            if (!reference.includes(':')) {
+                const chapter = parseInt(reference);
+                if (!isNaN(chapter)) {
+                    finalRef = `${chapter}:1-20`;
+                    truncated = true; // Technically assuming > 20 verses, but safer to warn.
+                }
+            } else {
+                // Handle: "119:1-176" (Range)
+                const parts = reference.split(':');
+                if (parts.length === 2 && parts[1].includes('-')) {
+                    const [start, end] = parts[1].split('-').map(Number);
+                    if (!isNaN(start) && !isNaN(end)) {
+                        if (end - start + 1 > 20) {
+                            finalRef = `${parts[0]}:${start}-${start + 19}`;
+                            truncated = true;
+                        }
+                    }
+                }
+            }
+
+            return { valid: true, cleanedRef: finalRef, wasTruncated: truncated };
+        }
+
+        // --- 3. DATA FETCHING (2-STEP) ---
         
-        // STEP 1: Main Analysis (Fast, Plain Text)
         async function generateAnalysis(passageRef) {
             const systemPrompt = `You are an expert Old Testament scholar. Analyze ${passageRef}.
             
@@ -513,7 +558,6 @@
             return JSON.parse(rawText);
         }
 
-        // STEP 2: Interlinear Hydration (Heavy, Optional)
         async function fetchInterlinearData() {
             const btn = document.getElementById('interlinearBtn');
             const spinner = document.getElementById('interlinearSpinner');
@@ -571,7 +615,7 @@
             document.getElementById('interlinearSpinner').style.display = 'none';
         }
 
-        // --- 3. DEEP STUDY LOGIC (FIXED) ---
+        // --- 4. DEEP STUDY LOGIC ---
         function handleDeepStudyClick(btn) {
             const hebrew = decodeURIComponent(btn.dataset.hebrew);
             const def = decodeURIComponent(btn.dataset.def);
@@ -599,7 +643,6 @@
                 const data = await response.json();
                 let text = data.candidates[0].content.parts[0].text.replace(/```json/g, '').replace(/```/g, '').trim();
                 
-                // FIX: HANDLE ARRAY OR OBJECT
                 const parsed = JSON.parse(text);
                 const studyData = Array.isArray(parsed) ? parsed[0] : parsed;
                 
@@ -619,7 +662,6 @@
             const titleElement = container.querySelector('h2');
             const morphologyDisplay = morphCode ? `<span class="ml-2 px-2 py-0.5 rounded bg-gray-700 text-xs text-[#c5a065] font-sans">${morphCode}</span>` : "";
 
-            // FIX: ADDED DEFAULTS TO PREVENT UNDEFINED
             const html = `
             <div class="word-study-card mt-6 border-l-[4px] border-[#059669] bg-[#262420] animate-[fadeIn_0.5s_ease-in]">
                 <div class="flex justify-between items-start">
@@ -639,7 +681,7 @@
             titleElement.insertAdjacentHTML('afterend', html);
         }
 
-        // --- 4. RENDERERS ---
+        // --- 5. RENDERERS ---
         function renderResults(analysis) {
             const container = document.getElementById('lensContainer');
             
@@ -722,7 +764,7 @@
             document.addEventListener('click', (e) => { if (tooltip && !tooltip.contains(e.target)) hideTooltip(); });
         }
 
-        // --- 5. MAIN ACTION ---
+        // --- 6. MAIN ACTION ---
         function resetApp() {
             document.getElementById('resultsSection').style.display = 'none';
             document.getElementById('loadingSection').style.display = 'none';
@@ -731,22 +773,32 @@
             document.getElementById('passageDisplay').textContent = "Ready to Analyze";
             document.getElementById('referenceInput').value = "";
             interlinearData = [];
+            document.getElementById('truncationWarning').style.display = 'none';
             document.getElementById('morphKeyContainer').style.display = 'none';
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         async function analyzePassage() {
             const book = document.getElementById('bookSelect').value;
-            const ref = document.getElementById('referenceInput').value;
-            if(!book || !ref) { alert("Please enter a reference"); return; }
+            const refInput = document.getElementById('referenceInput').value;
             
-            currentPassageRef = `${book} ${ref}`;
-            document.getElementById('passageDisplay').textContent = currentPassageRef;
+            // VALIDATION
+            const validation = validatePassage(book, refInput);
+            if (!validation.valid) {
+                alert(validation.message);
+                return;
+            }
             
+            const finalRef = `${book} ${validation.cleanedRef}`;
+            currentPassageRef = finalRef;
+            document.getElementById('passageDisplay').textContent = finalRef;
+            
+            // SHOW/HIDE WARNING
+            document.getElementById('truncationWarning').style.display = validation.wasTruncated ? 'block' : 'none';
+
             document.getElementById('inputSection').style.display = 'none';
             document.getElementById('loadingSection').style.display = 'block';
             
-            // ADDED SCROLL TO TOP
             window.scrollTo({ top: 0, behavior: 'smooth' });
 
             try {
