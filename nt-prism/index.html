@@ -3,94 +3,586 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API Response Diagnostics</title>
+    <title>NT Exegetical Prism - Dual Mode</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=EB+Garamond:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
+        :root {
+            --primary-gold: #d4a574;
+            --muted-gold: rgba(212, 165, 116, 0.5);
+            --dark-bg: #1a1815;
+            --input-bg: #262420;
+            --cream-text: #faf8f3;
+            --neutral-bg: #EAE0C8;
+            --action-green: #059669;
+            --action-green-hover: #047857;
+        }
+        
         body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 2rem;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--neutral-bg);
+            color: #1e293b;
+            background-image: radial-gradient(#d1c7b0 1px, transparent 1px);
+            background-size: 20px 20px;
         }
-        .card {
-            background: white;
-            border-radius: 1rem;
-            padding: 2rem;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            max-width: 900px;
-            margin: 0 auto;
+        
+        .biblical-text {
+            font-family: 'EB Garamond', serif;
+            font-size: 1.15rem;
+            line-height: 1.8;
         }
-        .btn {
-            background: #667eea;
+        
+        header {
+            background-color: var(--dark-bg);
+            border-bottom: 3px solid var(--primary-gold);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .dark-card, .input-section {
+            background-color: var(--dark-bg);
+            color: var(--cream-text);
+            border-left: 4px solid var(--primary-gold);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+        }
+        
+        h2, h3 { color: var(--primary-gold); }
+        
+        .input-group label {
+            color: var(--primary-gold);
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        input, select {
+            background-color: var(--input-bg);
+            border: 1px solid #44403c;
             color: white;
-            padding: 1rem 2rem;
-            border-radius: 0.5rem;
-            border: none;
-            font-weight: 700;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            width: 100%;
+            transition: all 0.2s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-gold);
+            box-shadow: 0 0 0 2px rgba(212, 165, 116, 0.2);
+        }
+
+        .mode-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .mode-card {
+            background: var(--input-bg);
+            border: 2px solid #44403c;
+            border-radius: 12px;
+            padding: 1.5rem;
             cursor: pointer;
             transition: all 0.2s;
-            width: 100%;
         }
-        .btn:hover {
-            background: #5568d3;
+
+        .mode-card:hover {
+            border-color: var(--primary-gold);
+            transform: translateY(-2px);
         }
-        .btn:disabled {
-            background: #cbd5e1;
-            cursor: not-allowed;
+
+        .mode-card.active {
+            border-color: var(--primary-gold);
+            background: rgba(212, 165, 116, 0.1);
         }
-        pre {
-            background: #1e293b;
-            color: #10b981;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            overflow-x: auto;
-            font-size: 0.85rem;
-            max-height: 500px;
-            overflow-y: auto;
+
+        .mode-title {
+            color: var(--primary-gold);
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
         }
-        .status {
-            padding: 1rem;
-            border-radius: 0.5rem;
+
+        .mode-desc {
+            color: var(--cream-text);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .mode-stats {
+            display: flex;
+            gap: 1rem;
             margin-top: 1rem;
-            font-weight: 600;
+            padding-top: 1rem;
+            border-top: 1px solid #44403c;
         }
-        .loading { background: #dbeafe; color: #1e40af; }
-        .success { background: #d1fae5; color: #065f46; }
-        .error { background: #fee2e2; color: #991b1b; }
+
+        .stat {
+            flex: 1;
+            text-align: center;
+        }
+
+        .stat-label {
+            color: var(--muted-gold);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-value {
+            color: var(--cream-text);
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        button#analyzeBtn {
+            background: var(--action-green);
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            width: 100%;
+            height: 3rem;
+        }
+        
+        button#analyzeBtn:hover {
+            background: var(--action-green-hover);
+            transform: translateY(-2px);
+        }
+        
+        button:disabled {
+            background: #57534e !important;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        
+        .btn-secondary {
+            background: var(--dark-bg);
+            border: 1px solid var(--primary-gold);
+            color: var(--primary-gold);
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.2s;
+        }
+        .btn-secondary:hover {
+            background: var(--primary-gold);
+            color: var(--dark-bg);
+        }
+
+        .tabs-container {
+            position: relative;
+            background-color: var(--dark-bg);
+            border-bottom: 1px solid var(--muted-gold);
+            border-radius: 12px 12px 0 0;
+            margin-top: 2rem;
+        }
+
+        .lens-tab {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+            font-weight: 500;
+            color: rgba(250, 248, 243, 0.6);
+            white-space: nowrap;
+        }
+        
+        .lens-tab:hover { color: var(--cream-text); }
+        
+        .lens-tab.active {
+            color: var(--primary-gold);
+            border-bottom-color: var(--primary-gold);
+            background: rgba(212, 165, 116, 0.15);
+        }
+        
+        .lens-content { display: none; }
+        .lens-content.active { display: block; animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .greek-interactive {
+            cursor: pointer;
+            transition: all 0.1s;
+            display: inline-block;
+            border-radius: 3px;
+            padding: 0 2px;
+        }
+        .greek-interactive:hover {
+            color: var(--primary-gold);
+            background: rgba(212, 165, 116, 0.15);
+        }
+
+        #greekTooltip {
+            background: var(--dark-bg) !important;
+            border: 1px solid var(--primary-gold) !important;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6) !important;
+        }
+
+        .word-study-card {
+            background: #262420;
+            color: var(--cream-text);
+            border: 1px solid var(--muted-gold);
+            border-left: 4px solid var(--primary-gold);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .loading-spinner {
+            border: 3px solid rgba(212, 165, 116, 0.3);
+            border-top: 3px solid var(--primary-gold);
+            border-radius: 50%;
+            width: 40px; height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .error-card {
+            background: #fef2f2;
+            border: 2px solid #ef4444;
+            border-radius: 10px;
+            padding: 1.5rem;
+            color: #991b1b;
+        }
+
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .morph-item span { color: var(--primary-gold); font-weight: bold; margin-right: 4px; }
     </style>
 </head>
-<body>
-    <div class="card">
-        <h1 class="text-3xl font-bold text-center mb-4">🔍 API Response Diagnostics</h1>
-        <p class="text-center text-gray-600 mb-6">Test Romans 5:12-18 and see the raw API response</p>
+<body class="min-h-screen pb-12">
+    
+    <header class="sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold" style="color: var(--primary-gold);">NT Exegetical Prism</h1>
+                    <p class="text-xs text-gray-400 mt-1">Dual-Mode Analysis System</p>
+                </div>
+                <div class="text-right hidden md:block">
+                    <div class="text-sm font-semibold text-gray-200" id="passageDisplay">Ready</div>
+                    <div class="text-xs text-gray-500" id="modeDisplay">Select Mode</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 md:px-6 py-8">
         
-        <button id="testBtn" class="btn" onclick="runDiagnostic()">
-            🚀 Test Romans 5:12-18
-        </button>
+        <div class="input-section mb-8" id="inputSection">
+            <h2 class="text-2xl font-bold mb-4">Choose Study Mode</h2>
+            
+            <div class="mode-selector">
+                <div class="mode-card active" data-mode="quick" onclick="selectMode('quick')">
+                    <div class="mode-title">⚡ Quick Study</div>
+                    <div class="mode-desc">Fast overview of a passage with essential commentary</div>
+                    <div class="mode-stats">
+                        <div class="stat">
+                            <div class="stat-label">Max Verses</div>
+                            <div class="stat-value">3</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Lenses</div>
+                            <div class="stat-value">3</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Speed</div>
+                            <div class="stat-value">~15s</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mode-card" data-mode="deep" onclick="selectMode('deep')">
+                    <div class="mode-title">🔬 Deep Study</div>
+                    <div class="mode-desc">Comprehensive analysis with full interlinear and word studies</div>
+                    <div class="mode-stats">
+                        <div class="stat">
+                            <div class="stat-label">Max Verses</div>
+                            <div class="stat-value">1</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Lenses</div>
+                            <div class="stat-value">6</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Speed</div>
+                            <div class="stat-value">~30s</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-6">
+                <div class="md:col-span-4 input-group">
+                    <label>Book</label>
+                    <select id="bookSelect">
+                        <option value="">Select...</option>
+                        <option value="Matthew">Matthew</option>
+                        <option value="Mark">Mark</option>
+                        <option value="Luke">Luke</option>
+                        <option value="John">John</option>
+                        <option value="Acts">Acts</option>
+                        <option value="Romans">Romans</option>
+                        <option value="1 Corinthians">1 Corinthians</option>
+                        <option value="2 Corinthians">2 Corinthians</option>
+                        <option value="Galatians">Galatians</option>
+                        <option value="Ephesians">Ephesians</option>
+                        <option value="Philippians">Philippians</option>
+                        <option value="Colossians">Colossians</option>
+                        <option value="1 Thessalonians">1 Thessalonians</option>
+                        <option value="2 Thessalonians">2 Thessalonians</option>
+                        <option value="1 Timothy">1 Timothy</option>
+                        <option value="2 Timothy">2 Timothy</option>
+                        <option value="Titus">Titus</option>
+                        <option value="Philemon">Philemon</option>
+                        <option value="Hebrews">Hebrews</option>
+                        <option value="James">James</option>
+                        <option value="1 Peter">1 Peter</option>
+                        <option value="2 Peter">2 Peter</option>
+                        <option value="1 John">1 John</option>
+                        <option value="2 John">2 John</option>
+                        <option value="3 John">3 John</option>
+                        <option value="Jude">Jude</option>
+                        <option value="Revelation">Revelation</option>
+                    </select>
+                </div>
+                
+                <div class="md:col-span-5 input-group">
+                    <label>Reference</label>
+                    <input type="text" id="referenceInput" placeholder="e.g. 3:16 or 2:1-3">
+                </div>
+                
+                <div class="md:col-span-3 flex items-end">
+                    <button id="analyzeBtn">Analyze 🚀</button>
+                </div>
+            </div>
+            
+            <div id="modeInfo" class="p-4 rounded-lg border border-[#8a7042] bg-[rgba(212,165,116,0.1)]">
+                <div class="text-xs text-[#d4a574]">
+                    <strong>⚡ Quick Study:</strong> 3 verses max • Text + Commentary + Context
+                </div>
+            </div>
+            
+            <div id="errorDisplay" class="mt-4" style="display: none;"></div>
+        </div>
         
-        <div id="status"></div>
-        <div id="output"></div>
-    </div>
+        <div id="loadingSection" style="display: none;">
+            <div class="dark-card text-center py-12">
+                <div class="loading-spinner mx-auto mb-6"></div>
+                <h3 class="text-xl font-semibold mb-2">Loading...</h3>
+                <p class="text-sm text-gray-400" id="loadingTime">Elapsed: 0.0s</p>
+            </div>
+        </div>
+        
+        <div id="resultsSection" style="display: none;">
+            
+            <div class="text-center mb-4">
+                <div class="inline-block bg-green-100 border-2 border-green-500 text-green-800 px-4 py-2 rounded-lg font-bold">
+                    ⚡ Loaded in <span id="totalTime">0.0</span>s
+                </div>
+            </div>
+
+            <nav class="tabs-container sticky top-[80px] z-40">
+                <div class="flex space-x-1 overflow-x-auto hide-scrollbar px-2" id="tabsContainer">
+                    <!-- Tabs will be inserted here dynamically -->
+                </div>
+            </nav>
+            
+            <div id="lensContainer"></div>
+
+            <div id="morphKeyContainer" class="mt-8 mb-6" style="display:none;">
+                <div class="dark-card p-6">
+                    <h3 class="text-xs font-bold uppercase tracking-widest mb-4 text-center text-[#8a7042] border-b border-[#8a7042] pb-2">Morphology Key</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-xs">
+                        <div>
+                            <div class="font-bold mb-2 text-white border-b border-gray-700 pb-1">Parts</div>
+                            <div class="morph-item"><span>N</span> Noun</div>
+                            <div class="morph-item"><span>V</span> Verb</div>
+                        </div>
+                        <div>
+                            <div class="font-bold mb-2 text-white border-b border-gray-700 pb-1">Case</div>
+                            <div class="morph-item"><span>N</span> Nominative</div>
+                            <div class="morph-item"><span>G</span> Genitive</div>
+                        </div>
+                        <div>
+                            <div class="font-bold mb-2 text-white border-b border-gray-700 pb-1">Tense</div>
+                            <div class="morph-item"><span>P</span> Present</div>
+                            <div class="morph-item"><span>A</span> Aorist</div>
+                        </div>
+                        <div>
+                            <div class="font-bold mb-2 text-white border-b border-gray-700 pb-1">Mood</div>
+                            <div class="morph-item"><span>I</span> Indicative</div>
+                            <div class="morph-item"><span>M</span> Imperative</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="resetApp()" class="btn-secondary mt-8 mx-auto block">New Analysis</button>
+        </div>
+    </main>
 
     <script>
         const API_KEY = "AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A";
+        
+        let currentMode = 'quick';
+        let currentPassageRef = "";
+        let rawGreekText = "";
+        let interlinearData = [];
+        let tooltip;
+        let startTime, timerInterval;
 
-        async function runDiagnostic() {
-            const btn = document.getElementById('testBtn');
-            const statusDiv = document.getElementById('status');
-            const outputDiv = document.getElementById('output');
+        function selectMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.mode-card').forEach(card => card.classList.remove('active'));
+            document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
             
-            btn.disabled = true;
-            btn.textContent = 'Testing...';
-            statusDiv.innerHTML = '<div class="status loading">⏳ Calling API...</div>';
-            outputDiv.innerHTML = '';
+            const modeInfo = document.getElementById('modeInfo');
+            const modeDisplay = document.getElementById('modeDisplay');
+            
+            if (mode === 'quick') {
+                modeInfo.innerHTML = '<div class="text-xs text-[#d4a574]"><strong>⚡ Quick Study:</strong> 3 verses max • Text + Commentary + Context</div>';
+                modeDisplay.textContent = 'Quick Study Mode';
+            } else {
+                modeInfo.innerHTML = '<div class="text-xs text-[#d4a574]"><strong>🔬 Deep Study:</strong> 1 verse only • All 6 lenses + Interlinear</div>';
+                modeDisplay.textContent = 'Deep Study Mode';
+            }
+        }
 
-            const startTime = Date.now();
+        function updateLoadingTime() {
+            const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+            document.getElementById('loadingTime').textContent = `Elapsed: ${elapsed}s`;
+        }
 
-            try {
-                const systemPrompt = `You are a biblical scholar. Analyze Romans 5:12-18.
+        function validatePassage(book, reference) {
+            if (!book || !reference) return { valid: false, message: "Please select a book and enter a reference." };
+            
+            const maxVerses = currentMode === 'quick' ? 3 : 1;
+            
+            if (reference.includes(':')) {
+                const parts = reference.split(':');
+                if (parts.length !== 2) return { valid: false, message: "Invalid format." };
+                const chapter = parseInt(parts[0]);
+                const versePart = parts[1];
+                if (isNaN(chapter)) return { valid: false, message: "Invalid chapter." };
                 
-                Return JSON only with these 3 sections (MINIMAL DATA):
+                if (versePart.includes('-')) {
+                    const [start, end] = versePart.split('-').map(v => parseInt(v));
+                    if (isNaN(start) || isNaN(end)) return { valid: false, message: "Invalid range." };
+                    if ((end - start + 1) > maxVerses) {
+                        return { valid: true, cleanedRef: `${chapter}:${start}-${start + maxVerses - 1}`, wasTruncated: true };
+                    }
+                } else {
+                    // Single verse
+                    return { valid: true, cleanedRef: `${chapter}:${versePart}`, wasTruncated: false };
+                }
+                return { valid: true, cleanedRef: `${chapter}:${versePart}`, wasTruncated: false };
+            }
+            const chapterOnly = parseInt(reference);
+            if (!isNaN(chapterOnly)) return { valid: true, cleanedRef: `${chapterOnly}:1`, wasTruncated: false };
+            
+            return { valid: false, message: "Invalid reference format." };
+        }
+        
+        function resetApp() {
+            document.getElementById('resultsSection').style.display = 'none';
+            document.getElementById('loadingSection').style.display = 'none';
+            document.getElementById('inputSection').style.display = 'block';
+            document.getElementById('errorDisplay').style.display = 'none';
+            document.getElementById('passageDisplay').textContent = "Ready";
+            document.getElementById('referenceInput').value = "";
+            interlinearData = [];
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        async function analyzePassage() {
+            const book = document.getElementById('bookSelect').value;
+            const referenceInput = document.getElementById('referenceInput').value;
+            
+            const validation = validatePassage(book, referenceInput);
+            if (!validation.valid) {
+                showError(validation.message);
+                return;
+            }
+            
+            const finalRef = validation.cleanedRef;
+            const passageRef = `${book} ${finalRef}`;
+            currentPassageRef = passageRef;
+            
+            document.getElementById('passageDisplay').textContent = passageRef;
+            document.getElementById('inputSection').style.display = 'none';
+            document.getElementById('loadingSection').style.display = 'block';
+            
+            startTime = Date.now();
+            timerInterval = setInterval(updateLoadingTime, 100);
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            try {
+                const analysis = await generateAnalysis(passageRef);
+                const endTime = Date.now();
+                const duration = ((endTime - startTime) / 1000).toFixed(1);
+                
+                clearInterval(timerInterval);
+                
+                if (currentMode === 'deep') {
+                    rawGreekText = analysis.text_parsing.greek_text;
+                }
+                
+                renderResults(analysis);
+                
+                document.getElementById('totalTime').textContent = duration;
+                document.getElementById('loadingSection').style.display = 'none';
+                document.getElementById('resultsSection').style.display = 'block';
+
+                if (currentMode === 'deep') {
+                    createTooltip();
+                }
+                setupLensNavigation();
+                
+            } catch (error) {
+                clearInterval(timerInterval);
+                console.error(error);
+                document.getElementById('loadingSection').style.display = 'none';
+                document.getElementById('inputSection').style.display = 'block';
+                showError(error.message || "An unknown error occurred.");
+            }
+        }
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('errorDisplay');
+            errorDiv.innerHTML = `<div class="error-card"><strong>⚠️ Error:</strong> ${message}</div>`;
+            errorDiv.style.display = 'block';
+        }
+        
+        async function generateAnalysis(passageRef) {
+            let systemPrompt;
+            
+            if (currentMode === 'quick') {
+                systemPrompt = `You are a biblical scholar. Analyze ${passageRef}.
+                
+                Return JSON only:
                 {
                 "text_parsing": {
                     "english_text": "ESV text...",
@@ -104,77 +596,263 @@
                     "notes": [{ "title": "Context Point", "content": "Explanation" }]
                 }
                 }`;
-
-                const response = await fetch(
-                    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
-                    {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            contents: [{ role: "user", parts: [{ text: systemPrompt }] }],
-                            generationConfig: { responseMimeType: "application/json" },
-                            safetySettings: [
-                                { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
-                                { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
-                                { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
-                                { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
-                            ]
-                        })
-                    }
-                );
-
-                const endTime = Date.now();
-                const duration = ((endTime - startTime) / 1000).toFixed(1);
-
-                statusDiv.innerHTML = `<div class="status loading">✅ Response received in ${duration}s. Parsing...</div>`;
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+            } else {
+                // Deep mode - all lenses
+                systemPrompt = `You are a biblical scholar. Analyze ${passageRef}.
+                
+                Return JSON only:
+                {
+                "text_parsing": {
+                    "english_text": "ESV text...",
+                    "greek_text": "Greek text as single string..."
+                },
+                "matthew_henry": {
+                    "summary": "2-3 sentence summary.",
+                    "insights": [{ "title": "Point", "content": "Insight..." }]
+                },
+                "logical_flow": {
+                    "structure": [{ "type": "premise|contrast", "label": "Label", "content": "Explanation", "verse_ref": "v.1" }],
+                    "key_insight": "Rhetorical strategy"
+                },
+                "historical_context": {
+                    "notes": [{ "title": "Context Point", "content": "Explanation" }]
+                },
+                "theological_traditions": {
+                    "concepts": [{ "title": "Concept", "traditions": [{ "name": "Tradition", "view": "View" }] }]
+                },
+                "word_studies": {
+                    "words": [{ "greek": "Word", "transliteration": "Trans", "gloss": "Def", "morphology": "Code", "semantic_range": "Range", "usage_note": "Usage", "theological_weight": "Significance" }]
                 }
+                }`;
+            }
 
-                const data = await response.json();
+            const response = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        contents: [{ role: "user", parts: [{ text: systemPrompt }] }],
+                        generationConfig: { responseMimeType: "application/json" },
+                        safetySettings: [
+                            { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+                        ]
+                    })
+                }
+            );
 
-                // Show full response structure
-                outputDiv.innerHTML = `
-                    <h3 class="text-xl font-bold mt-6 mb-2">📊 Full API Response Structure:</h3>
-                    <pre>${JSON.stringify(data, null, 2)}</pre>
-                    
-                    <h3 class="text-xl font-bold mt-6 mb-2">🔍 Analysis:</h3>
-                    <div class="bg-gray-50 p-4 rounded-lg text-sm">
-                        <p><strong>Has candidates?</strong> ${data.candidates ? 'Yes ✅' : 'No ❌'}</p>
-                        <p><strong>Candidates count:</strong> ${data.candidates ? data.candidates.length : 0}</p>
-                        ${data.candidates && data.candidates[0] ? `
-                            <p><strong>Has content?</strong> ${data.candidates[0].content ? 'Yes ✅' : 'No ❌'}</p>
-                            ${data.candidates[0].content ? `
-                                <p><strong>Has parts?</strong> ${data.candidates[0].content.parts ? 'Yes ✅' : 'No ❌'}</p>
-                                ${data.candidates[0].content.parts ? `
-                                    <p><strong>Parts count:</strong> ${data.candidates[0].content.parts.length}</p>
-                                    ${data.candidates[0].content.parts[0] ? `
-                                        <p><strong>Has text?</strong> ${data.candidates[0].content.parts[0].text ? 'Yes ✅' : 'No ❌'}</p>
-                                        ${data.candidates[0].content.parts[0].text ? `
-                                            <p><strong>Text length:</strong> ${data.candidates[0].content.parts[0].text.length} characters</p>
-                                        ` : ''}
-                                    ` : '<p class="text-red-600">❌ No parts[0]</p>'}
-                                ` : ''}
-                            ` : ''}
-                        ` : '<p class="text-red-600">❌ No candidates[0]</p>'}
-                        ${data.promptFeedback ? `
-                            <p class="mt-2 text-red-600"><strong>Prompt Feedback:</strong> ${JSON.stringify(data.promptFeedback)}</p>
-                        ` : ''}
-                    </div>
+            if (!response.ok) throw new Error("API Error: " + response.statusText);
+            const data = await response.json();
+            
+            if (!data.candidates || data.candidates.length === 0) {
+                throw new Error("AI returned empty response.");
+            }
+            
+            if (!data.candidates[0].content || !data.candidates[0].content.parts) {
+                throw new Error("Response structure invalid - try fewer verses");
+            }
+
+            let rawText = data.candidates[0].content.parts[0].text.replace(/```json/g, '').replace(/```/g, '').trim();
+            return JSON.parse(rawText);
+        }
+        
+        function renderResults(analysis) {
+            const tabsContainer = document.getElementById('tabsContainer');
+            const lensContainer = document.getElementById('lensContainer');
+            
+            if (currentMode === 'quick') {
+                tabsContainer.innerHTML = `
+                    <div class="lens-tab active" data-lens="text">📖 Text</div>
+                    <div class="lens-tab" data-lens="commentary">✍️ Commentary</div>
+                    <div class="lens-tab" data-lens="context">📜 Context</div>
                 `;
-
-                statusDiv.innerHTML = `<div class="status success">✅ Diagnostic complete in ${duration}s</div>`;
-
-            } catch (error) {
-                statusDiv.innerHTML = `<div class="status error">❌ Error: ${error.message}</div>`;
-                outputDiv.innerHTML = `<pre>${error.stack}</pre>`;
-            } finally {
-                btn.disabled = false;
-                btn.textContent = '🚀 Test Romans 5:12-18';
+                
+                lensContainer.innerHTML = `
+                    ${renderTextParsing(analysis.text_parsing, false)}
+                    ${renderMatthewHenry(analysis.matthew_henry)}
+                    ${renderHistoricalContext(analysis.historical_context)}
+                `;
+            } else {
+                tabsContainer.innerHTML = `
+                    <div class="lens-tab active" data-lens="text">📖 Text</div>
+                    <div class="lens-tab" data-lens="commentary">✍️ Commentary</div>
+                    <div class="lens-tab" data-lens="logic">🧩 Logic</div>
+                    <div class="lens-tab" data-lens="context">📜 Context</div>
+                    <div class="lens-tab" data-lens="theology">⛪ Theology</div>
+                    <div class="lens-tab" data-lens="words">🔍 Words</div>
+                `;
+                
+                lensContainer.innerHTML = `
+                    ${renderTextParsing(analysis.text_parsing, true)}
+                    ${renderMatthewHenry(analysis.matthew_henry)}
+                    ${renderLogicalFlow(analysis.logical_flow)}
+                    ${renderHistoricalContext(analysis.historical_context)}
+                    ${renderTheologicalTraditions(analysis.theological_traditions)}
+                    ${renderWordStudies(analysis.word_studies)}
+                `;
             }
         }
+
+        function renderMatthewHenry(data) {
+            const insightsHtml = data.insights.map(i => `
+                <div class="mb-4 border-l-2 border-[#8a7042] pl-4">
+                    <h4 class="font-bold text-[#c5a065] mb-1">${i.title}</h4>
+                    <p class="text-sm text-gray-300">${i.content}</p>
+                </div>
+            `).join('');
+
+            return `
+            <section class="lens-content" data-lens-content="commentary">
+                <div class="dark-card">
+                    <h2 class="text-xl font-bold mb-4">Commentary</h2>
+                    <div class="bg-[#262420] p-4 rounded-lg mb-6 text-gray-200 italic text-sm">"${data.summary}"</div>
+                    ${insightsHtml}
+                </div>
+            </section>`;
+        }
+
+        function renderTextParsing(data, includeButton) {
+            const buttonHtml = includeButton ? `
+                <div class="border-t border-gray-700 pt-4 text-center">
+                    <button id="interlinearBtn" onclick="fetchInterlinearData()" class="btn-secondary w-full md:w-auto">
+                        🔓 Unlock Interlinear
+                    </button>
+                    <div id="interlinearSpinner" style="display:none;" class="text-sm text-[#d4a574] mt-4">
+                        Parsing... <span class="loading-spinner inline-block w-4 h-4 ml-2"></span>
+                    </div>
+                </div>
+            ` : '';
+            
+            return `
+                <section class="lens-content active" data-lens-content="text">
+                    <div class="dark-card mb-6">
+                        <h2 class="text-xl font-bold mb-4">English (ESV)</h2>
+                        <div class="biblical-text text-white/90">${data.english_text}</div>
+                    </div>
+                    
+                    <div class="dark-card mb-6">
+                        <h2 class="text-xl font-bold mb-2">Greek (NA28)</h2>
+                        <div id="greekTextContainer" class="biblical-text text-white/95 leading-loose mb-6">
+                            ${data.greek_text}
+                        </div>
+                        ${buttonHtml}
+                    </div>
+                </section>
+            `;
+        }
+
+        function renderHistoricalContext(data) {
+            return `<section class="lens-content" data-lens-content="context"><div class="dark-card"><h2 class="text-xl font-bold mb-6">Context</h2>
+            ${data.notes.map(n => `<div class="bg-[#262420] border border-[#44403c] rounded-lg p-4 mb-4"><h3 class="font-bold mb-2 text-[#c5a065]">${n.title}</h3><p class="text-sm text-gray-300">${n.content}</p></div>`).join('')}</div></section>`;
+        }
+
+        function renderLogicalFlow(data) {
+            const html = data.structure.map(n => `
+                <div class="p-4 mb-4 rounded-lg border-l-4 border-[#c5a065] bg-[#262420]">
+                    <div class="text-xs font-bold mb-2 text-[#c5a065] uppercase">${n.label} (${n.verse_ref})</div>
+                    <div class="text-gray-200 text-sm">${n.content}</div>
+                </div>`).join('');
+            return `<section class="lens-content" data-lens-content="logic">
+                <div class="dark-card"><h2 class="text-xl font-bold mb-4">Logic</h2>${html}
+                <div class="mt-6 pt-4 border-t border-gray-700"><p class="text-gray-300 text-sm">${data.key_insight}</p></div></div></section>`;
+        }
+
+        function renderTheologicalTraditions(data) {
+            return `<section class="lens-content" data-lens-content="theology"><div class="dark-card"><h2 class="text-xl font-bold mb-6">Theology</h2>
+            ${data.concepts.map(c => `<div class="word-study-card"><h3 class="text-lg font-bold mb-4 text-[#c5a065]">${c.title}</h3>
+            ${c.traditions.map(t => `<div class="mb-4"><h4 class="font-semibold text-xs uppercase mb-1 text-gray-400">${t.name}</h4><div class="text-sm text-gray-200">${t.view}</div></div>`).join('')}</div>`).join('')}</div></section>`;
+        }
+
+        function renderWordStudies(data) {
+            return `<section class="lens-content" data-lens-content="words"><div class="dark-card"><h2 class="text-xl font-bold mb-6">Words</h2>
+            ${data.words.map(w => `<div class="word-study-card">
+                <div class="text-3xl mb-2 text-white">${w.greek} <span class="ml-2 px-2 py-0.5 rounded bg-gray-700 text-xs text-[#c5a065]">${w.morphology}</span></div>
+                <div class="font-medium mb-4 text-[#8a7042]">${w.transliteration} • "${w.gloss}"</div>
+                <div class="space-y-3 text-sm text-gray-200">
+                    <div><h4 class="font-bold text-[#c5a065]">Range</h4><p>${w.semantic_range}</p></div>
+                    <div><h4 class="font-bold text-[#c5a065]">Usage</h4><p>${w.usage_note}</p></div>
+                    <div><h4 class="font-bold text-[#c5a065]">Significance</h4><p>${w.theological_weight}</p></div>
+                </div>
+            </div>`).join('')}</div></section>`;
+        }
+
+        // Interlinear functions (Deep mode only)
+        function createTooltip() {
+            if (document.getElementById('greekTooltip')) return;
+            tooltip = document.createElement('div');
+            tooltip.id = 'greekTooltip';
+            tooltip.style.cssText = `position: fixed; background: var(--dark-bg); color: #faf8f3; border: 1px solid var(--primary-gold); border-radius: 8px; padding: 16px; display: none; z-index: 10000; max-width: 280px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);`;
+            document.body.appendChild(tooltip);
+        }
+
+        async function fetchInterlinearData() {
+            const btn = document.getElementById('interlinearBtn');
+            const spinner = document.getElementById('interlinearSpinner');
+            btn.style.display = 'none';
+            spinner.style.display = 'block';
+
+            try {
+                const prompt = `Parse this Greek: "${rawGreekText}". Return JSON: {"interlinear": [{"g": "Word", "m": "Morph", "d": "Def"}]}`;
+                const response = await fetch(
+                    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
+                    { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json" } }) }
+                );
+                const data = await response.json();
+                let text = data.candidates[0].content.parts[0].text.replace(/```json/g, '').replace(/```/g, '').trim();
+                const json = JSON.parse(text);
+                interlinearData = json.interlinear;
+                
+                const container = document.getElementById('greekTextContainer');
+                container.innerHTML = interlinearData.map((item, i) => `<span class="greek-interactive" data-index="${i}">${item.g}</span>`).join(' ');
+                attachGreekListeners();
+                document.getElementById('morphKeyContainer').style.display = 'block';
+                spinner.style.display = 'none';
+            } catch (e) {
+                alert("Could not load interlinear");
+                btn.style.display = 'block';
+                spinner.style.display = 'none';
+            }
+        }
+
+        function attachGreekListeners() {
+            document.querySelectorAll('.greek-interactive').forEach(span => {
+                span.addEventListener('click', (e) => {
+                    const index = span.dataset.index;
+                    const data = interlinearData[index];
+                    if (!data) return;
+                    tooltip.innerHTML = `<div style="font-size:1.6rem;color:var(--primary-gold)">${data.g}</div><div style="font-size:0.75rem;color:#9ca3af">${data.m}</div><div class="mt-2 text-sm">${data.d}</div>`;
+                    const rect = span.getBoundingClientRect();
+                    tooltip.style.left = (rect.left + rect.width/2 - 140) + 'px';
+                    tooltip.style.top = (rect.bottom + 10) + 'px';
+                    tooltip.style.display = 'block';
+                });
+            });
+            document.addEventListener('click', (e) => { if (tooltip && !tooltip.contains(e.target)) tooltip.style.display = 'none'; });
+        }
+
+        function setupLensNavigation() {
+            const tabs = document.querySelectorAll('.lens-tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    const targetLens = tab.dataset.lens;
+                    document.querySelectorAll('.lens-content').forEach(content => {
+                        content.classList.remove('active');
+                        if (content.dataset.lensContent === targetLens) {
+                            content.classList.add('active');
+                        }
+                    });
+                });
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('analyzeBtn').addEventListener('click', analyzePassage);
+        });
     </script>
 </body>
 </html>
