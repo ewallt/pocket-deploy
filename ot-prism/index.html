@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OT Exegetical Prism - Progressive</title>
+    <title>OT Exegetical Prism - Dual Commentary</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -131,6 +131,7 @@
             text-transform: uppercase;
             letter-spacing: 0.05em;
             transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         .btn-secondary:hover { 
             background: var(--primary-gold); 
@@ -256,7 +257,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <h1 class="text-2xl font-bold" style="color: var(--primary-gold);">OT Exegetical Prism</h1>
-                    <p class="text-xs text-gray-400 mt-1">Progressive Analysis Engine</p>
+                    <p class="text-xs text-gray-400 mt-1">Dual-Commentary Engine</p>
                 </div>
                 <div class="text-right hidden md:block">
                     <div class="text-sm font-semibold text-gray-200" id="passageDisplay">Ready to Analyze</div>
@@ -338,7 +339,7 @@
             <div class="dark-card text-center py-12">
                 <div class="loading-spinner mx-auto mb-6"></div>
                 <h3 class="text-xl font-semibold mb-2">Consulting the Scholars...</h3>
-                <p class="text-sm text-gray-400" id="loadingStatus">Constructing analysis...</p>
+                <p class="text-sm text-gray-400" id="loadingStatus">Constructing dual analysis...</p>
             </div>
         </div>
         
@@ -351,7 +352,8 @@
             <nav class="tabs-container sticky top-[80px] z-40">
                 <div class="flex space-x-1 overflow-x-auto hide-scrollbar px-2"> 
                     <div class="lens-tab active" data-lens="text">📖 Text</div>
-                    <div class="lens-tab" data-lens="commentary">📜 Keil & Delitzsch</div>
+                    <div class="lens-tab" data-lens="devotional">✝️ Devotional</div>
+                    <div class="lens-tab" data-lens="scholarly">🎓 Scholarly</div>
                     <div class="lens-tab" data-lens="ntconnect">✝️ NT Connections</div>
                     <div class="lens-tab" data-lens="context">🏺 ANE Context</div>
                     <div class="lens-tab" data-lens="theology">⛪ Theology</div>
@@ -474,7 +476,7 @@
                 const chapter = parseInt(reference);
                 if (!isNaN(chapter)) {
                     finalRef = `${chapter}:1-20`;
-                    truncated = true; // Technically assuming > 20 verses, but safer to warn.
+                    truncated = true; 
                 }
             } else {
                 // Handle: "119:1-176" (Range)
@@ -500,7 +502,9 @@
             
             CRITICAL: 
             1. Provide the Hebrew text as a SINGLE STRING (Masoretic Text). DO NOT parse every word yet.
-            2. Use Keil & Delitzsch for commentary.
+            2. Generate TWO commentaries:
+               - "matthew_henry": Devotional summary & insights.
+               - "jfb_commentary": Scholarly analysis using 'Jamieson, Fausset, and Brown'.
             3. Find ANE context and NT Connections.
             4. Select 3-4 KEY Hebrew words for 'word_studies'.
             
@@ -510,9 +514,13 @@
                     "english_text": "ESV text...",
                     "hebrew_text": "PLAIN HEBREW STRING HERE"
                 },
-                "keil_delitzsch": {
-                    "summary": "Summary...",
+                "matthew_henry": {
+                    "summary": "Devotional Summary...",
                     "insights": [{ "title": "Point", "content": "Insight" }]
+                },
+                "jfb_commentary": {
+                    "summary": "Critical/Exegetical Summary...",
+                    "insights": [{ "title": "Critical Point", "content": "Detailed insight..." }]
                 },
                 "nt_connections": {
                     "connections": [{ "type": "Type", "nt_ref": "Ref", "explanation": "Exp" }],
@@ -689,7 +697,8 @@
             
             container.innerHTML = `
                 ${renderTextParsing(analysis.text_parsing)}
-                ${renderKeilDelitzsch(analysis.keil_delitzsch)}
+                ${renderMatthewHenry(analysis.matthew_henry)}
+                ${renderJFB(analysis.jfb_commentary)}
                 ${renderNTConnections(analysis.nt_connections)}
                 ${renderHistoricalContext(analysis.historical_context)}
                 ${renderTheologicalTraditions(analysis.theological_traditions)}
@@ -736,11 +745,18 @@
             `;
         }
         
-        function renderKeilDelitzsch(data) {
+        function renderMatthewHenry(data) {
             if(!data) return '';
             const html = data.insights.map(i => `<div class="mb-4 border-l-2 border-[#8a7042] pl-4"><h4 class="font-bold text-[#c5a065]">${i.title}</h4><p class="text-sm text-gray-300">${i.content}</p></div>`).join('');
-            return `<section class="lens-content" data-lens-content="commentary"><div class="dark-card"><h2 class="text-xl font-bold mb-4 text-[#c5a065]">Keil & Delitzsch</h2><div class="bg-[#262420] p-4 rounded mb-6 text-sm italic border border-[#44403c] text-gray-200">"${data.summary}"</div>${html}</div></section>`;
+            return `<section class="lens-content" data-lens-content="devotional"><div class="dark-card"><h2 class="text-xl font-bold mb-4 text-[#c5a065]">Matthew Henry's Commentary</h2><div class="bg-[#262420] p-4 rounded mb-6 text-sm italic border border-[#44403c] text-gray-200">"${data.summary}"</div>${html}</div></section>`;
         }
+
+        function renderJFB(data) {
+            if(!data) return '';
+            const html = data.insights.map(i => `<div class="mb-4 border-l-2 border-[#8a7042] pl-4"><h4 class="font-bold text-[#c5a065]">${i.title}</h4><p class="text-sm text-gray-300">${i.content}</p></div>`).join('');
+            return `<section class="lens-content" data-lens-content="scholarly"><div class="dark-card"><h2 class="text-xl font-bold mb-4 text-[#c5a065]">JFB Critical Commentary</h2><p class="text-sm text-gray-400 mb-6">Jamieson, Fausset, and Brown (1871).</p><div class="bg-[#262420] p-4 rounded mb-6 text-sm italic border border-[#44403c] text-gray-200">"${data.summary}"</div>${html}</div></section>`;
+        }
+
         function renderNTConnections(data) {
              const html = data.connections.map(n => `<div class="p-4 mb-4 rounded border-l-4 border-[#c5a065] bg-[#262420]"><div class="flex justify-between mb-2"><div class="text-xs font-bold text-[#c5a065] uppercase">${n.type}</div><div class="text-xs font-bold text-white bg-gray-700 px-2 rounded">${n.nt_ref}</div></div><div class="text-gray-200 text-sm">${n.explanation}</div></div>`).join('');
             return `<section class="lens-content" data-lens-content="ntconnect"><div class="dark-card"><h2 class="text-xl font-bold mb-4">NT Connections</h2><div class="mb-6 text-sm text-gray-300 italic border-b border-gray-700 pb-4">${data.summary}</div>${html}</div></section>`;
