@@ -656,12 +656,31 @@
             }
 
             let rawText = data.candidates[0].content.parts[0].text.replace(/```json/g, '').replace(/```/g, '').trim();
-            return JSON.parse(rawText);
+            const parsed = JSON.parse(rawText);
+            
+            console.log("Parsed response:", parsed);
+            
+            // Validate required fields
+            if (currentMode === 'quick') {
+                if (!parsed.text_parsing || !parsed.matthew_henry || !parsed.historical_context) {
+                    console.error("Missing required fields:", parsed);
+                    throw new Error("API response incomplete - try fewer verses");
+                }
+            } else {
+                if (!parsed.text_parsing || !parsed.matthew_henry) {
+                    console.error("Missing required fields:", parsed);
+                    throw new Error("API response incomplete - try fewer verses");
+                }
+            }
+            
+            return parsed;
         }
         
         function renderResults(analysis) {
             const tabsContainer = document.getElementById('tabsContainer');
             const lensContainer = document.getElementById('lensContainer');
+            
+            console.log("Rendering analysis:", analysis);
             
             if (currentMode === 'quick') {
                 tabsContainer.innerHTML = `
@@ -671,9 +690,9 @@
                 `;
                 
                 lensContainer.innerHTML = `
-                    ${renderTextParsing(analysis.text_parsing, false)}
-                    ${renderMatthewHenry(analysis.matthew_henry)}
-                    ${renderHistoricalContext(analysis.historical_context)}
+                    ${analysis.text_parsing ? renderTextParsing(analysis.text_parsing, false) : '<div class="dark-card"><p class="text-red-400">Text parsing missing</p></div>'}
+                    ${analysis.matthew_henry ? renderMatthewHenry(analysis.matthew_henry) : '<div class="dark-card"><p class="text-red-400">Commentary missing</p></div>'}
+                    ${analysis.historical_context ? renderHistoricalContext(analysis.historical_context) : '<div class="dark-card"><p class="text-red-400">Context missing</p></div>'}
                 `;
             } else {
                 tabsContainer.innerHTML = `
