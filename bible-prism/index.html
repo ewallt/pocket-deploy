@@ -3,22 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OT Exegetical Prism - Stable</title>
+    <title>The Biblical Prism</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=EB+Garamond:wght@400;600&family=Noto+Serif+Hebrew:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=EB+Garamond:wght@400;600&family=Noto+Serif+Hebrew:wght@700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
         :root {
+            /* Shared Premium Palette */
             --primary-gold: #d4a574;
             --muted-gold: rgba(212, 165, 116, 0.5);
             --dark-bg: #1a1815; 
-            --input-bg: #262420; 
+            --card-bg: #262420;
             --cream-text: #faf8f3;
             --neutral-bg: #EAE0C8; 
-            --action-green: #059669; 
-            --action-green-hover: #047857;
         }
         
         body {
@@ -27,814 +26,178 @@
             color: #1e293b;
             background-image: radial-gradient(#d1c7b0 1px, transparent 1px);
             background-size: 20px 20px;
-        }
-        
-        /* HEBREW TYPOGRAPHY */
-        .biblical-text {
-            font-family: 'Noto Serif Hebrew', serif;
-            font-size: 1.5rem;
-            line-height: 2.2;
-            direction: rtl;
-            text-align: right;
-        }
-        
-        .english-text-display {
-            font-family: 'EB Garamond', serif;
-            font-size: 1.15rem;
-            line-height: 1.8;
-            direction: ltr;
-            text-align: left;
-        }
-        
-        /* HEADER */
-        header {
-            background-color: var(--dark-bg);
-            border-bottom: 3px solid var(--primary-gold);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
-        .dark-card, .input-section {
+        h1, h2, .serif-font { font-family: 'EB Garamond', serif; }
+        .hebrew-display { font-family: 'Noto Serif Hebrew', serif; }
+        
+        /* CARD STYLING */
+        .choice-card {
             background-color: var(--dark-bg);
             color: var(--cream-text);
-            border-left: 4px solid var(--primary-gold);
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
-        }
-        
-        h2, h3 { color: var(--primary-gold); }
-        
-        .input-group label {
-            color: var(--primary-gold);
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            display: block;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        input, select {
-            background-color: var(--input-bg);
             border: 1px solid #44403c;
-            color: white;
-            border-radius: 8px;
-            padding: 0.75rem 1rem;
-            font-family: 'Inter', sans-serif;
-            font-size: 1rem;
-            width: 100%;
-            transition: all 0.2s;
-        }
-        
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--primary-gold);
-            box-shadow: 0 0 0 2px rgba(212, 165, 116, 0.2);
-        }
-
-        button.primary-btn {
-            background: var(--action-green);
-            color: white; 
-            font-weight: 700;
-            font-size: 1.1rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            padding: 0.75rem 2rem;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            width: 100%;
-        }
-        
-        button.primary-btn:hover {
-            background: var(--action-green-hover);
-            transform: translateY(-2px);
-        }
-
-        button.primary-btn:disabled {
-            background: #57534e !important;
-            cursor: not-allowed;
-            transform: none !important;
-            box-shadow: none !important;
-        }
-        
-        .btn-secondary {
-            background: var(--dark-bg); 
-            border: 1px solid var(--primary-gold); 
-            color: var(--primary-gold);
-            padding: 0.75rem 2rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            transition: all 0.2s;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .btn-secondary:hover { 
-            background: var(--primary-gold); 
-            color: var(--dark-bg);
-        }
-
-        /* TABS */
-        .tabs-container {
+            border-radius: 16px;
+            padding: 2.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
-            background-color: var(--dark-bg);
-            border-bottom: 1px solid var(--muted-gold);
-            border-radius: 12px 12px 0 0;
+            overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            text-decoration: none;
+        }
+
+        .choice-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-gold);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+        }
+
+        .choice-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 6px;
+            background: var(--primary-gold);
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+
+        .choice-card:hover::before { opacity: 1; }
+
+        .icon-display {
+            font-size: 4rem;
+            color: var(--primary-gold);
+            opacity: 0.2;
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            pointer-events: none;
+            transition: all 0.5s ease;
+        }
+
+        .choice-card:hover .icon-display {
+            opacity: 0.4;
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .btn-enter {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 1rem;
             margin-top: 2rem;
-        }
-        
-        .lens-tab {
-            padding: 1rem 1.5rem;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            transition: all 0.2s;
-            font-weight: 500;
-            color: rgba(250, 248, 243, 0.6);
-            white-space: nowrap; 
-        }
-        
-        .lens-tab.active {
-            color: var(--primary-gold);
-            border-bottom-color: var(--primary-gold);
-            background: rgba(212, 165, 116, 0.15);
-        }
-        
-        .lens-content { display: none; }
-        .lens-content.active { display: block; animation: fadeIn 0.3s ease-in; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        
-        /* HEBREW INTERACTION */
-        .hebrew-word { font-family: 'Noto Serif Hebrew', serif; font-weight: 600; }
-
-        .hebrew-interactive {
-            cursor: pointer;
-            transition: all 0.1s;
-            display: inline-block;
-            border-radius: 3px;
-            padding: 2px 4px;
-            margin-left: 2px;
-        }
-        .hebrew-interactive:hover {
-            color: var(--primary-gold);
-            background: rgba(212, 165, 116, 0.15);
-        }
-        
-        /* TOOLTIP */
-        #hebrewTooltip {
-            background: var(--dark-bg) !important;
-            border: 1px solid var(--primary-gold) !important;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.6) !important;
-            direction: ltr; /* Tooltip text is English */
-            text-align: left;
-        }
-
-        .tooltip-btn {
             background: transparent;
             border: 1px solid var(--primary-gold);
             color: var(--primary-gold);
-            font-size: 0.75rem;
-            padding: 6px 10px;
-            margin-top: 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-            text-align: center;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-radius: 8px;
             transition: all 0.2s;
         }
-        .tooltip-btn:hover { background: var(--primary-gold); color: var(--dark-bg); font-weight: bold; }
-        
-        .word-study-card {
-            background: #262420;
-            color: var(--cream-text);
-            border: 1px solid var(--muted-gold);
-            border-left: 4px solid var(--primary-gold);
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
+
+        .choice-card:hover .btn-enter {
+            background: var(--primary-gold);
+            color: var(--dark-bg);
         }
-        
-        /* UTILS */
-        .loading-spinner {
-            border: 3px solid rgba(212, 165, 116, 0.3);
-            border-top: 3px solid var(--primary-gold);
-            border-radius: 50%;
-            width: 40px; height: 40px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        .error-card {
-            background: #fef2f2;
-            border: 2px solid #ef4444;
-            border-radius: 10px;
-            padding: 1.5rem;
-            color: #991b1b;
-        }
-        
-        .warning-badge {
-            background: rgba(212, 165, 116, 0.15);
-            border: 1px solid var(--primary-gold);
-            color: var(--primary-gold);
+
+        footer {
+            margin-top: auto;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            padding: 2rem;
+            text-align: center;
             font-size: 0.8rem;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            margin-bottom: 1.5rem;
-            display: inline-block;
+            color: #57534e;
         }
-        
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="min-h-screen pb-12">
-    
-    <header class="sticky top-0 z-50">
-        <div class="max-w-5xl mx-auto px-6 py-4">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h1 class="text-2xl font-bold" style="color: var(--primary-gold);">OT Exegetical Prism</h1>
-                    <p class="text-xs text-gray-400 mt-1">Dual-Commentary Engine</p>
-                </div>
-                <div class="text-right hidden md:block">
-                    <div class="text-sm font-semibold text-gray-200" id="passageDisplay">Ready to Analyze</div>
-                    <div class="text-xs text-gray-500">Hebrew Interlinear (BHS)</div>
-                </div>
-            </div>
-        </div>
-    </header>
+<body>
 
-    <main class="max-w-5xl mx-auto px-4 md:px-6 py-8">
-        
-        <div class="input-section mb-8" id="inputSection">
-            <h2 class="text-2xl font-bold mb-2">Analyze a Passage</h2>
-            <p class="text-sm text-gray-400 mb-6">Select an OT book and reference.</p>
+    <main class="flex-grow flex items-center justify-center p-6">
+        <div class="max-w-5xl w-full">
             
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-6">
-                <div class="md:col-span-4 input-group">
-                    <label>Book</label>
-                    <select id="bookSelect">
-                        <option value="">Select...</option>
-                        <option value="Genesis">Genesis</option>
-                        <option value="Exodus">Exodus</option>
-                        <option value="Leviticus">Leviticus</option>
-                        <option value="Numbers">Numbers</option>
-                        <option value="Deuteronomy">Deuteronomy</option>
-                        <option value="Joshua">Joshua</option>
-                        <option value="Judges">Judges</option>
-                        <option value="Ruth">Ruth</option>
-                        <option value="1 Samuel">1 Samuel</option>
-                        <option value="2 Samuel">2 Samuel</option>
-                        <option value="1 Kings">1 Kings</option>
-                        <option value="2 Kings">2 Kings</option>
-                        <option value="1 Chronicles">1 Chronicles</option>
-                        <option value="2 Chronicles">2 Chronicles</option>
-                        <option value="Ezra">Ezra</option>
-                        <option value="Nehemiah">Nehemiah</option>
-                        <option value="Esther">Esther</option>
-                        <option value="Job">Job</option>
-                        <option value="Psalms">Psalms</option>
-                        <option value="Proverbs">Proverbs</option>
-                        <option value="Ecclesiastes">Ecclesiastes</option>
-                        <option value="Song of Solomon">Song of Solomon</option>
-                        <option value="Isaiah">Isaiah</option>
-                        <option value="Jeremiah">Jeremiah</option>
-                        <option value="Lamentations">Lamentations</option>
-                        <option value="Ezekiel">Ezekiel</option>
-                        <option value="Daniel">Daniel</option>
-                        <option value="Hosea">Hosea</option>
-                        <option value="Joel">Joel</option>
-                        <option value="Amos">Amos</option>
-                        <option value="Obadiah">Obadiah</option>
-                        <option value="Jonah">Jonah</option>
-                        <option value="Micah">Micah</option>
-                        <option value="Nahum">Nahum</option>
-                        <option value="Habakkuk">Habakkuk</option>
-                        <option value="Zephaniah">Zephaniah</option>
-                        <option value="Haggai">Haggai</option>
-                        <option value="Zechariah">Zechariah</option>
-                        <option value="Malachi">Malachi</option>
-                    </select>
-                </div>
-                
-                <div class="md:col-span-5 input-group">
-                    <label>Reference</label>
-                    <input type="text" id="referenceInput" placeholder="e.g. 1:1 or 23:1-6">
-                </div>
-                
-                <div class="md:col-span-3 flex items-end">
-                    <button id="analyzeBtn" class="primary-btn h-12">
-                        Analyze 🚀
-                    </button>
-                </div>
-            </div>
-            
-            <div id="errorDisplay" class="mt-4" style="display: none;"></div>
-        </div>
-        
-        <div id="loadingSection" style="display: none;">
-            <div class="dark-card text-center py-12">
-                <div class="loading-spinner mx-auto mb-6"></div>
-                <h3 class="text-xl font-semibold mb-2">Consulting the Scholars...</h3>
-                <p class="text-sm text-gray-400" id="loadingStatus">Constructing dual analysis...</p>
-            </div>
-        </div>
-        
-        <div id="resultsSection" style="display: none;">
-            
-            <div id="truncationWarning" class="text-center" style="display: none;">
-                <div class="warning-badge">⚠️ Analysis limited to first 20 verses</div>
+            <div class="text-center mb-12 animate-[fadeIn_0.5s_ease-out]">
+                <h1 class="text-4xl md:text-5xl font-bold text-[#1a1815] mb-4">The Biblical Prism</h1>
+                <p class="text-lg text-[#57534e] serif-font italic">Select your testament to begin analysis.</p>
             </div>
 
-            <nav class="tabs-container sticky top-[80px] z-40">
-                <div class="flex space-x-1 overflow-x-auto hide-scrollbar px-2"> 
-                    <div class="lens-tab active" data-lens="text">📖 Text</div>
-                    <div class="lens-tab" data-lens="devotional">✝️ Devotional</div>
-                    <div class="lens-tab" data-lens="scholarly">🎓 Scholarly</div>
-                    <div class="lens-tab" data-lens="ntconnect">✝️ NT Connections</div>
-                    <div class="lens-tab" data-lens="context">🏺 ANE Context</div>
-                    <div class="lens-tab" data-lens="theology">⛪ Theology</div>
-                    <div class="lens-tab" data-lens="words">🔍 Word Studies</div>
-                </div>
-            </nav>
-            
-            <div class="md:hidden text-[10px] uppercase tracking-widest text-center my-4 font-bold text-gray-500">
-                ← Swipe for more tabs →
-            </div>
-            
-            <div id="lensContainer"></div>
-            
-            <div id="morphKeyContainer" class="mt-8 mb-6" style="display: none;">
-                <div class="dark-card p-6">
-                    <h3 class="text-xs font-bold uppercase tracking-widest mb-4 text-center text-[#8a7042] border-b border-[#8a7042] pb-2">Hebrew Morphology Key</h3>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-xs">
-                        <div>
-                            <div class="font-bold mb-2 text-white border-b border-gray-700 pb-1">Stems</div>
-                            <div class="morph-item"><span>Qal</span> Simple</div>
-                            <div class="morph-item"><span>Pie</span> Piel (Intensive)</div>
-                            <div class="morph-item"><span>Hip</span> Hiphil (Causative)</div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <a href="https://ewallt.github.io/pocket-deploy/ot-prism/index.html" class="block group">
+                    <div class="choice-card">
+                        <div class="hebrew-display icon-display">א</div>
+                        <div class="relative z-10">
+                            <h2 class="text-3xl font-bold mb-2 text-[#d4a574]">Old Testament</h2>
+                            <p class="text-xs font-bold uppercase tracking-widest text-gray-500 mb-6">Hebrew • Masoretic Text</p>
+                            
+                            <ul class="space-y-3 text-gray-300 text-sm">
+                                <li class="flex items-start gap-2">
+                                    <span class="text-[#d4a574] mt-1">✓</span>
+                                    <span><strong>Keil & Delitzsch</strong> Commentary</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-[#d4a574] mt-1">✓</span>
+                                    <span><strong>ANE Context</strong> (Ancient Near East)</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-[#d4a574] mt-1">✓</span>
+                                    <span><strong>Morphology</strong> (Stems & Roots)</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-[#d4a574] mt-1">✓</span>
+                                    <span><strong>NT Connections</strong> & Typology</span>
+                                </li>
+                            </ul>
                         </div>
-                        <div>
-                            <div class="font-bold mb-2 text-white border-b border-gray-700 pb-1">Tense</div>
-                            <div class="morph-item"><span>Perf</span> Perfect</div>
-                            <div class="morph-item"><span>Imp</span> Imperfect</div>
-                            <div class="morph-item"><span>Wayy</span> Waw Consec.</div>
-                        </div>
+                        <div class="btn-enter">Enter Hebrew Study &rarr;</div>
                     </div>
-                </div>
+                </a>
+
+                <a href="https://ewallt.github.io/pocket-deploy/nt-prism/index.html" class="block group">
+                    <div class="choice-card">
+                        <div class="serif-font icon-display">Ω</div>
+                        <div class="relative z-10">
+                            <h2 class="text-3xl font-bold mb-2 text-[#d4a574]">New Testament</h2>
+                            <p class="text-xs font-bold uppercase tracking-widest text-gray-500 mb-6">Greek • NA28 Text</p>
+                            
+                            <ul class="space-y-3 text-gray-300 text-sm">
+                                <li class="flex items-start gap-2">
+                                    <span class="text-[#d4a574] mt-1">✓</span>
+                                    <span><strong>Cambridge Bible</strong> Commentary</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-[#d4a574] mt-1">✓</span>
+                                    <span><strong>Greco-Roman</strong> Context</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-[#d4a574] mt-1">✓</span>
+                                    <span><strong>Full Parsing</strong> (Case, Voice, Mood)</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-[#d4a574] mt-1">✓</span>
+                                    <span><strong>Logical Flow</strong> & Rhetoric</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="btn-enter">Enter Greek Study &rarr;</div>
+                    </div>
+                </a>
+
             </div>
 
-            <button onclick="resetApp()" class="btn-secondary mt-8 mx-auto block">
-                Start New Analysis
-            </button>
         </div>
     </main>
 
-    <script>
-        const API_KEY = "AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A"; 
-        
-        let tooltip;
-        let interlinearData = []; 
-        let currentPassageRef = ""; 
-        let rawHebrewText = ""; 
+    <footer>
+        <p class="mb-2"><strong>The Biblical Prism</strong></p>
+        <p class="opacity-70">AI-Powered Exegetical Suite • Local-First Architecture</p>
+    </footer>
 
-        // --- 1. TOOLTIP SYSTEM ---
-        function createTooltip() {
-            if(document.getElementById('hebrewTooltip')) return;
-            tooltip = document.createElement('div');
-            tooltip.id = 'hebrewTooltip';
-            tooltip.style.cssText = `
-                position: fixed;
-                background: var(--dark-bg);
-                color: #faf8f3;
-                border: 1px solid var(--primary-gold);
-                border-radius: 8px;
-                padding: 16px;
-                display: none;
-                z-index: 10000;
-                max-width: 280px;
-                box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-                font-family: 'Inter', sans-serif;
-            `;
-            document.body.appendChild(tooltip);
-        }
-
-        function showMorphology(element, event) {
-            const index = element.dataset.index;
-            const data = interlinearData[index];
-            if (!data) return;
-            
-            const safeHebrew = encodeURIComponent(data.h);
-            const safeDef = encodeURIComponent(data.d);
-            const safeMorph = encodeURIComponent(data.m); 
-
-            tooltip.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:4px; direction: ltr;">
-                    <div style="font-size: 1.8rem; color: var(--primary-gold); font-family: 'Noto Serif Hebrew', serif; line-height:1;">${data.h}</div>
-                    <div style="font-size: 0.75rem; color: #9ca3af; font-weight:bold; background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px;">${data.m}</div>
-                </div>
-                <div class="mt-2 text-sm text-white" style="direction: ltr;"><strong>Def:</strong> ${data.d}</div>
-                
-                <button class="tooltip-btn" 
-                    data-hebrew="${safeHebrew}" 
-                    data-def="${safeDef}"
-                    data-morph="${safeMorph}"
-                    onclick="handleDeepStudyClick(this)">
-                    Run Deep Study 🔍
-                </button>
-            `;
-            
-            const rect = element.getBoundingClientRect();
-            let left = rect.left + (rect.width / 2) - 140; 
-            let top = rect.bottom + 10;
-            
-            if (left < 10) left = 10;
-            if (left + 280 > window.innerWidth - 10) left = window.innerWidth - 290;
-            if (top + 200 > window.innerHeight) top = rect.top - 200 - 10; 
-            
-            tooltip.style.left = left + 'px';
-            tooltip.style.top = top + 'px';
-            tooltip.style.display = 'block';
-        }
-
-        function hideTooltip() {
-            if(tooltip) tooltip.style.display = 'none';
-        }
-
-        // --- 2. VALIDATION & 20 VERSE CAP ---
-        function validatePassage(book, reference) {
-            if (!book || !reference) return { valid: false, message: "Please select a book and enter a reference." };
-            
-            let finalRef = reference;
-            let truncated = false;
-
-            // Handle: "119" (Chapter only)
-            if (!reference.includes(':')) {
-                const chapter = parseInt(reference);
-                if (!isNaN(chapter)) {
-                    finalRef = `${chapter}:1-20`;
-                    truncated = true; 
-                }
-            } else {
-                // Handle: "119:1-176" (Range)
-                const parts = reference.split(':');
-                if (parts.length === 2 && parts[1].includes('-')) {
-                    const [start, end] = parts[1].split('-').map(Number);
-                    if (!isNaN(start) && !isNaN(end)) {
-                        if (end - start + 1 > 20) {
-                            finalRef = `${parts[0]}:${start}-${start + 19}`;
-                            truncated = true;
-                        }
-                    }
-                }
-            }
-
-            return { valid: true, cleanedRef: finalRef, wasTruncated: truncated };
-        }
-
-        // --- 3. DATA FETCHING (2-STEP) ---
-        
-        async function generateAnalysis(passageRef) {
-            const systemPrompt = `You are an expert Old Testament scholar. Analyze ${passageRef}.
-            
-            CRITICAL: 
-            1. Provide the Hebrew text as a SINGLE STRING (Masoretic Text). DO NOT parse every word yet.
-            2. Generate TWO commentaries:
-               - "matthew_henry": Devotional summary & insights.
-               - "jfb_commentary": Scholarly analysis using 'Jamieson, Fausset, and Brown'.
-            3. Find ANE context and NT Connections.
-            4. Select 3-4 KEY Hebrew words for 'word_studies'.
-            
-            Return JSON only:
-            {
-                "text_parsing": {
-                    "english_text": "ESV text...",
-                    "hebrew_text": "PLAIN HEBREW STRING HERE"
-                },
-                "matthew_henry": {
-                    "summary": "Devotional Summary...",
-                    "insights": [{ "title": "Point", "content": "Insight" }]
-                },
-                "jfb_commentary": {
-                    "summary": "Critical/Exegetical Summary...",
-                    "insights": [{ "title": "Critical Point", "content": "Detailed insight..." }]
-                },
-                "nt_connections": {
-                    "connections": [{ "type": "Type", "nt_ref": "Ref", "explanation": "Exp" }],
-                    "summary": "Summary"
-                },
-                "historical_context": {
-                    "notes": [{ "title": "Title", "content": "Content" }]
-                },
-                "theological_traditions": {
-                    "concepts": [{ "title": "Concept", "traditions": [{ "name": "Trad", "view": "View" }] }]
-                },
-                "word_studies": {
-                    "words": [{ 
-                        "hebrew": "Word", 
-                        "transliteration": "Trans", 
-                        "gloss": "Def", 
-                        "morphology": "Morph", 
-                        "root": "Root",
-                        "stem_significance": "Why?",
-                        "semantic_range": "Range", 
-                        "usage_note": "Usage", 
-                        "theological_weight": "Significance" 
-                    }]
-                }
-            }`;
-
-            const response = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        contents: [{ role: "user", parts: [{ text: systemPrompt }] }],
-                        generationConfig: { responseMimeType: "application/json" },
-                        safetySettings: [ { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" } ]
-                    })
-                }
-            );
-
-            const data = await response.json();
-            let rawText = data.candidates[0].content.parts[0].text;
-            rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
-            return JSON.parse(rawText);
-        }
-
-        async function fetchInterlinearData() {
-            const btn = document.getElementById('interlinearBtn');
-            const spinner = document.getElementById('interlinearSpinner');
-            btn.style.display = 'none';
-            spinner.style.display = 'block';
-
-            const prompt = `Break down this Hebrew text into an interlinear array for ${currentPassageRef}.
-            Text: "${rawHebrewText}"
-            
-            Return JSON only:
-            {
-                "interlinear": [
-                    { "h": "Word", "m": "MorphCode (e.g. Qal Perf)", "d": "ShortDef" }
-                ]
-            }`;
-
-            try {
-                const response = await fetch(
-                    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
-                    {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            contents: [{ role: "user", parts: [{ text: prompt }] }],
-                            generationConfig: { responseMimeType: "application/json" }
-                        })
-                    }
-                );
-
-                const data = await response.json();
-                let text = data.candidates[0].content.parts[0].text.replace(/```json/g, '').replace(/```/g, '').trim();
-                const json = JSON.parse(text);
-                
-                interlinearData = json.interlinear;
-                hydrateHebrewText();
-                
-                document.getElementById('morphKeyContainer').style.display = 'block';
-
-            } catch (e) {
-                console.error(e);
-                alert("Could not load interlinear data.");
-                btn.style.display = 'block';
-                spinner.style.display = 'none';
-            }
-        }
-
-        function hydrateHebrewText() {
-            const container = document.getElementById('hebrewTextContainer');
-            const processedHebrew = interlinearData.map((item, index) => {
-                return `<span class="hebrew-interactive" data-index="${index}">${item.h}</span>`;
-            }).join(' ');
-            
-            container.innerHTML = processedHebrew;
-            attachHebrewListeners();
-            document.getElementById('interlinearSpinner').style.display = 'none';
-        }
-
-        // --- 4. DEEP STUDY LOGIC ---
-        function handleDeepStudyClick(btn) {
-            const hebrew = decodeURIComponent(btn.dataset.hebrew);
-            const def = decodeURIComponent(btn.dataset.def);
-            const morph = decodeURIComponent(btn.dataset.morph); 
-            triggerDeepStudy(hebrew, def, morph, btn);
-        }
-
-        async function triggerDeepStudy(word, definition, morphCode, btnElement) {
-            btnElement.textContent = "Analyzing...";
-            btnElement.disabled = true;
-
-            try {
-                const prompt = `Perform a theological word study on the Hebrew word "${word}" (${definition}) in context of ${currentPassageRef}.
-                Return JSON only: { "hebrew": "${word}", "transliteration": "T", "gloss": "${definition}", "root": "Root", "stem_significance": "Why?", "semantic_range": "Range", "usage_note": "Usage", "theological_weight": "Weight" }`;
-
-                const response = await fetch(
-                    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
-                    {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json" } })
-                    }
-                );
-                
-                const data = await response.json();
-                let text = data.candidates[0].content.parts[0].text.replace(/```json/g, '').replace(/```/g, '').trim();
-                
-                const parsed = JSON.parse(text);
-                const studyData = Array.isArray(parsed) ? parsed[0] : parsed;
-                
-                addWordStudyCard(studyData, morphCode);
-                document.querySelector('.lens-tab[data-lens="words"]').click();
-                hideTooltip();
-
-            } catch (error) {
-                console.error(error);
-                btnElement.textContent = "Error";
-                alert("AI Error: Failed to generate study.");
-            }
-        }
-
-        function addWordStudyCard(w, morphCode) {
-            const container = document.querySelector('.lens-content[data-lens-content="words"] .dark-card');
-            const titleElement = container.querySelector('h2');
-            const morphologyDisplay = morphCode ? `<span class="ml-2 px-2 py-0.5 rounded bg-gray-700 text-xs text-[#c5a065] font-sans">${morphCode}</span>` : "";
-
-            const html = `
-            <div class="word-study-card mt-6 border-l-[4px] border-[#059669] bg-[#262420] animate-[fadeIn_0.5s_ease-in]">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <div class="hebrew-word text-3xl mb-2 flex items-center gap-2 text-white" style="direction: rtl;">${w.hebrew || '...'}</div>
-                        <div class="flex items-center gap-2 mt-1">${morphologyDisplay}<span class="text-sm text-gray-400">Root: ${w.root || 'N/A'}</span></div>
-                        <div class="font-medium mt-2 mb-4 text-[#8a7042]">${w.transliteration || ''} • "${w.gloss || ''}"</div>
-                    </div>
-                    <span class="text-[10px] font-bold uppercase tracking-wider bg-[#059669] text-white px-2 py-1 rounded">New</span>
-                </div>
-                <div class="space-y-4 text-sm text-gray-200">
-                    <div><h4 class="font-bold mb-1 text-[#c5a065]">Stem Significance</h4><p>${w.stem_significance || 'N/A'}</p></div>
-                    <div><h4 class="font-bold mb-1 text-[#c5a065]">Usage</h4><p>${w.usage_note || 'N/A'}</p></div>
-                    <div><h4 class="font-bold mb-1 text-[#c5a065]">Significance</h4><p>${w.theological_weight || 'N/A'}</p></div>
-                </div>
-            </div>`;
-            titleElement.insertAdjacentHTML('afterend', html);
-        }
-
-        // --- 5. RENDERERS ---
-        function renderResults(analysis) {
-            const container = document.getElementById('lensContainer');
-            
-            rawHebrewText = analysis.text_parsing.hebrew_text;
-            
-            container.innerHTML = `
-                ${renderTextParsing(analysis.text_parsing)}
-                ${renderMatthewHenry(analysis.matthew_henry)}
-                ${renderJFB(analysis.jfb_commentary)}
-                ${renderNTConnections(analysis.nt_connections)}
-                ${renderHistoricalContext(analysis.historical_context)}
-                ${renderTheologicalTraditions(analysis.theological_traditions)}
-                ${renderWordStudies(analysis.word_studies)}
-            `;
-            
-            const tabs = document.querySelectorAll('.lens-tab');
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    tabs.forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-                    const target = tab.dataset.lens;
-                    document.querySelectorAll('.lens-content').forEach(c => {
-                        c.classList.remove('active');
-                        if(c.dataset.lensContent === target) c.classList.add('active');
-                    });
-                });
-            });
-        }
-
-        function renderTextParsing(data) {
-            return `
-                <section class="lens-content active" data-lens-content="text">
-                    <div class="dark-card mb-6">
-                        <h2 class="text-xl font-bold mb-4 text-[#c5a065]">English Text (ESV)</h2>
-                        <div class="english-text-display text-white/90">${data.english_text}</div>
-                    </div>
-                    <div class="dark-card mb-6">
-                        <h2 class="text-xl font-bold mb-2 text-[#c5a065]">Hebrew Text (BHS)</h2>
-                        <div id="hebrewTextContainer" class="biblical-text text-white/95 leading-loose mb-6">
-                            ${data.hebrew_text}
-                        </div>
-                        
-                        <div class="border-t border-gray-700 pt-4 text-center">
-                            <button id="interlinearBtn" onclick="fetchInterlinearData()" class="btn-secondary w-full md:w-auto text-sm">
-                                🔓 Unlock Interlinear (Parsing)
-                            </button>
-                            <div id="interlinearSpinner" style="display:none;" class="text-sm text-[#d4a574]">
-                                Parsing morphology... <span class="loading-spinner inline-block w-4 h-4 ml-2 border-2"></span>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            `;
-        }
-        
-        function renderMatthewHenry(data) {
-            if(!data) return '';
-            const html = data.insights.map(i => `<div class="mb-4 border-l-2 border-[#8a7042] pl-4"><h4 class="font-bold text-[#c5a065]">${i.title}</h4><p class="text-sm text-gray-300">${i.content}</p></div>`).join('');
-            return `<section class="lens-content" data-lens-content="devotional"><div class="dark-card"><h2 class="text-xl font-bold mb-4 text-[#c5a065]">Matthew Henry's Commentary</h2><div class="bg-[#262420] p-4 rounded mb-6 text-sm italic border border-[#44403c] text-gray-200">"${data.summary}"</div>${html}</div></section>`;
-        }
-
-        function renderJFB(data) {
-            if(!data) return '';
-            const html = data.insights.map(i => `<div class="mb-4 border-l-2 border-[#8a7042] pl-4"><h4 class="font-bold text-[#c5a065]">${i.title}</h4><p class="text-sm text-gray-300">${i.content}</p></div>`).join('');
-            return `<section class="lens-content" data-lens-content="scholarly"><div class="dark-card"><h2 class="text-xl font-bold mb-4 text-[#c5a065]">JFB Critical Commentary</h2><p class="text-sm text-gray-400 mb-6">Jamieson, Fausset, and Brown (1871).</p><div class="bg-[#262420] p-4 rounded mb-6 text-sm italic border border-[#44403c] text-gray-200">"${data.summary}"</div>${html}</div></section>`;
-        }
-
-        function renderNTConnections(data) {
-             const html = data.connections.map(n => `<div class="p-4 mb-4 rounded border-l-4 border-[#c5a065] bg-[#262420]"><div class="flex justify-between mb-2"><div class="text-xs font-bold text-[#c5a065] uppercase">${n.type}</div><div class="text-xs font-bold text-white bg-gray-700 px-2 rounded">${n.nt_ref}</div></div><div class="text-gray-200 text-sm">${n.explanation}</div></div>`).join('');
-            return `<section class="lens-content" data-lens-content="ntconnect"><div class="dark-card"><h2 class="text-xl font-bold mb-4">NT Connections</h2><div class="mb-6 text-sm text-gray-300 italic border-b border-gray-700 pb-4">${data.summary}</div>${html}</div></section>`;
-        }
-        function renderHistoricalContext(data) {
-             return `<section class="lens-content" data-lens-content="context"><div class="dark-card"><h2 class="text-xl font-bold mb-6">ANE Context</h2>${data.notes.map(n => `<div class="word-study-card"><h3 class="font-bold mb-2 text-[#c5a065]">${n.title}</h3><p class="text-sm text-gray-300">${n.content}</p></div>`).join('')}</div></section>`;
-        }
-        function renderTheologicalTraditions(data) {
-            return `<section class="lens-content" data-lens-content="theology"><div class="dark-card"><h2 class="text-xl font-bold mb-6">Traditions</h2>${data.concepts.map(c => `<div class="word-study-card"><h3 class="text-lg font-bold mb-4 text-[#c5a065]">${c.title}</h3>${c.traditions.map(t => `<div class="mb-4"><h4 class="font-semibold text-xs uppercase mb-1 text-gray-400">${t.name}</h4><div class="text-sm text-gray-200">${t.view}</div></div>`).join('')}</div>`).join('')}</div></section>`;
-        }
-        function renderWordStudies(data) {
-            return `<section class="lens-content" data-lens-content="words"><div class="dark-card"><h2 class="text-xl font-bold mb-6">Selected Word Studies</h2>${data.words.map(w => `<div class="word-study-card"><div class="hebrew-word text-3xl mb-2 text-white" style="direction:rtl;">${w.hebrew}</div><div class="font-medium mb-4 text-[#8a7042]">${w.transliteration} • "${w.gloss}"</div><div class="space-y-4 text-sm text-gray-200"><div><h4 class="font-bold text-[#c5a065]">Significance</h4><p>${w.theological_weight}</p></div></div></div>`).join('')}</div></section>`;
-        }
-
-        function attachHebrewListeners() {
-            const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-            document.querySelectorAll('.hebrew-interactive').forEach(span => {
-                if (!isTouch) span.addEventListener('mouseenter', (e) => showMorphology(span, e));
-                span.addEventListener('click', (e) => { e.stopPropagation(); showMorphology(span, e); });
-            });
-            document.addEventListener('click', (e) => { if (tooltip && !tooltip.contains(e.target)) hideTooltip(); });
-        }
-
-        // --- 6. MAIN ACTION ---
-        function resetApp() {
-            document.getElementById('resultsSection').style.display = 'none';
-            document.getElementById('loadingSection').style.display = 'none';
-            document.getElementById('inputSection').style.display = 'block';
-            document.getElementById('errorDisplay').style.display = 'none';
-            document.getElementById('passageDisplay').textContent = "Ready to Analyze";
-            document.getElementById('referenceInput').value = "";
-            interlinearData = [];
-            document.getElementById('truncationWarning').style.display = 'none';
-            document.getElementById('morphKeyContainer').style.display = 'none';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        async function analyzePassage() {
-            const book = document.getElementById('bookSelect').value;
-            const refInput = document.getElementById('referenceInput').value;
-            
-            // VALIDATION
-            const validation = validatePassage(book, refInput);
-            if (!validation.valid) {
-                alert(validation.message);
-                return;
-            }
-            
-            const finalRef = `${book} ${validation.cleanedRef}`;
-            currentPassageRef = finalRef;
-            document.getElementById('passageDisplay').textContent = finalRef;
-            
-            // SHOW/HIDE WARNING
-            document.getElementById('truncationWarning').style.display = validation.wasTruncated ? 'block' : 'none';
-
-            document.getElementById('inputSection').style.display = 'none';
-            document.getElementById('loadingSection').style.display = 'block';
-            
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-
-            try {
-                const analysis = await generateAnalysis(currentPassageRef);
-                renderResults(analysis);
-                document.getElementById('loadingSection').style.display = 'none';
-                document.getElementById('resultsSection').style.display = 'block';
-                createTooltip();
-            } catch (e) {
-                console.error(e);
-                document.getElementById('errorDisplay').innerText = e.message;
-                document.getElementById('errorDisplay').style.display = 'block';
-                document.getElementById('loadingSection').style.display = 'none';
-                document.getElementById('inputSection').style.display = 'block';
-            }
-        }
-        
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('analyzeBtn').addEventListener('click', analyzePassage);
-        });
-    </script>
 </body>
 </html>
