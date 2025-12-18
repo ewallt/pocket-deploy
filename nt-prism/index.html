@@ -405,9 +405,7 @@
     </main>
 
     <script>
-        // --- CONFIGURATION ---
-        // Configured for OpenAI GPT-4.1 Nano
-        const API_KEY = "nsk-proj-1bBUZIJfZso8-IvYTxS0M4QBx9oWwzsYagTJ2AdvzBSBoENPdqQDJ4SyM_UoLKAb_tf4j0h-ooT3BlbkFJJkLxhvxdgtJOOzYJpA60hNHCn1P_Yvftrh-dGL1yEx7r9jfAzKydL58gkaeH-cBGWsSvbf86sA"; 
+        const API_KEY = "AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A";
         
         // --- 1. TOOLTIP SYSTEM ---
         let tooltip;
@@ -477,7 +475,7 @@
             if(tooltip) tooltip.style.display = 'none';
         }
 
-        // --- 2. DEEP STUDY LOGIC (OPENAI VERSION) ---
+        // --- 2. DEEP STUDY LOGIC ---
         function handleDeepStudyClick(btn) {
             const greek = decodeURIComponent(btn.dataset.greek);
             const def = decodeURIComponent(btn.dataset.def);
@@ -492,7 +490,6 @@
 
             try {
                 const newStudy = await generateWordStudy(greekWord, definition);
-                // AI can sometimes return array or single object
                 const studyData = Array.isArray(newStudy) ? newStudy[0] : newStudy;
                 const finalMorph = morphCode || studyData.morphology || "";
                 
@@ -503,11 +500,12 @@
             } catch (error) {
                 btnElement.textContent = "Error";
                 console.error(error);
-                alert("Failed. Check connection or Key.");
+                alert("Failed. Check connection.");
             }
         }
 
         async function generateWordStudy(word, def) {
+            // PROMPT: Deep Study with safety settings
             const prompt = `Perform a theological word study on the Greek word "${word}" (${def}) in the context of ${currentPassageRef}.
             Return JSON only:
             {
@@ -520,30 +518,28 @@
                 "theological_weight": "Theological significance"
             }`;
 
-            // OPENAI FETCH
-            const response = await fetch("https://api.openai.com/v1/chat/completions", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${API_KEY}`
-                },
-                body: JSON.stringify({
-                    model: "gpt-4.1-nano", 
-                    messages: [
-                        { role: "system", content: "You are a helpful biblical scholar. Output valid JSON only." },
-                        { role: "user", content: prompt }
-                    ],
-                    response_format: { type: "json_object" }
-                })
-            });
-
-            if (!response.ok) {
-                const err = await response.text();
-                throw new Error("OpenAI API Error: " + err);
-            }
+            const response = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        contents: [{ role: "user", parts: [{ text: prompt }] }],
+                        generationConfig: { responseMimeType: "application/json" },
+                        safetySettings: [
+                            { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+                        ]
+                    })
+                }
+            );
 
             const data = await response.json();
-            const rawText = data.choices[0].message.content;
+            if (!data.candidates || data.candidates.length === 0) throw new Error("AI returned no data.");
+            let rawText = data.candidates[0].content.parts[0].text;
+            rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
             return JSON.parse(rawText);
         }
 
@@ -640,13 +636,16 @@
         }
         
         // --- 5. MAIN ACTION & RESET ---
+        
         function resetApp() {
             document.getElementById('resultsSection').style.display = 'none';
             document.getElementById('loadingSection').style.display = 'none';
             document.getElementById('inputSection').style.display = 'block';
             document.getElementById('errorDisplay').style.display = 'none';
             document.getElementById('passageDisplay').textContent = "Ready to Analyze";
+            
             document.getElementById('referenceInput').value = "";
+            
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -673,13 +672,20 @@
             
             try {
                 const analysis = await generateAnalysis(passageRef);
+                
                 interlinearData = analysis.text_parsing.interlinear;
+
                 renderResults(analysis);
+                
                 document.getElementById('loadingSection').style.display = 'none';
                 document.getElementById('resultsSection').style.display = 'block';
+                
+                // Show key for default tab (text)
                 document.getElementById('morphKeyContainer').style.display = 'block';
+
                 createTooltip();
                 setupLensNavigation();
+                
             } catch (error) {
                 console.error(error);
                 document.getElementById('loadingSection').style.display = 'none';
@@ -694,14 +700,14 @@
             errorDiv.style.display = 'block';
         }
         
-        // --- 6. AI GENERATION (OPENAI VERSION) ---
+        // --- 6. AI GENERATION ---
         async function generateAnalysis(passageRef) {
             const systemPrompt = `You are a biblical scholar. Analyze ${passageRef}.
             
             CRITICAL INSTRUCTION: For 'text_parsing', do NOT provide a block of text. 
             Provide a complete 'interlinear' array containing EVERY word in the Greek text (NA28) in order.
             
-            Return JSON only. Structure:
+            Return JSON only:
             {
             "text_parsing": {
                 "english_text": "Full ESV text here...",
@@ -715,15 +721,17 @@
                 ]
             },
             "matthew_henry": {
-                "summary": "Summary...",
-                "insights": [ { "title": "Title", "content": "Content" } ]
+                "summary": "2-3 sentence summary of Matthew Henry's main thought on this passage.",
+                "insights": [
+                    { "title": "Point Title", "content": "Insight from Henry's commentary..." }
+                ]
             },
             "logical_flow": {
                 "structure": [ { "type": "premise|contrast|conclusion", "label": "Label", "content": "Explanation", "verse_ref": "v.1" } ],
-                "key_insight": "Insight"
+                "key_insight": "Rhetorical strategy summary"
             },
             "historical_context": {
-                "notes": [ { "title": "Point", "content": "Explanation" } ]
+                "notes": [ { "title": "Context Point", "content": "Explanation" } ]
             },
             "theological_traditions": {
                 "concepts": [ { "title": "Concept", "traditions": [ { "name": "Tradition", "view": "Viewpoint" } ] } ]
@@ -733,40 +741,47 @@
                     "greek": "Word", 
                     "transliteration": "Trans", 
                     "gloss": "Definition", 
-                    "morphology": "MorphCode", 
-                    "english_derivatives": "Derivatives", 
+                    "morphology": "MorphCode (e.g. N-NSM)", 
+                    "english_derivatives": "MANDATORY: List 1-3 English words derived from this Greek root. If no direct derivative, provide a shared etymological root or mnemonic. Do not return 'None'.", 
                     "semantic_range": "Range", 
                     "usage_note": "Usage", 
                     "theological_weight": "Significance" 
                 } ]
             }
             }
-            Maintain exact word order.`;
+            
+            Maintain the exact word order of the NA28 text in the 'interlinear' array.`;
 
-            // OPENAI FETCH
-            const response = await fetch("https://api.openai.com/v1/chat/completions", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${API_KEY}`
-                },
-                body: JSON.stringify({
-                    model: "gpt-4.1-nano",
-                    messages: [
-                        { role: "system", content: "You are a helpful biblical scholar. Output valid JSON only." },
-                        { role: "user", content: systemPrompt }
-                    ],
-                    response_format: { type: "json_object" }
-                })
-            });
+            const response = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        contents: [{ role: "user", parts: [{ text: systemPrompt }] }],
+                        generationConfig: { responseMimeType: "application/json" },
+                        safetySettings: [
+                            { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+                        ]
+                    })
+                }
+            );
 
-            if (!response.ok) {
-                const errText = await response.text();
-                throw new Error("OpenAI API Error: " + errText);
+            if (!response.ok) throw new Error("API Error: " + response.statusText);
+            const data = await response.json();
+            
+            if (!data.candidates || data.candidates.length === 0) {
+                if (data.promptFeedback && data.promptFeedback.blockReason) {
+                    throw new Error("AI Blocked Request: " + data.promptFeedback.blockReason);
+                }
+                throw new Error("AI returned empty response (Safety Filter). Try a different passage.");
             }
 
-            const data = await response.json();
-            const rawText = data.choices[0].message.content;
+            let rawText = data.candidates[0].content.parts[0].text;
+            rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
             return JSON.parse(rawText);
         }
         
@@ -784,6 +799,7 @@
             attachGreekListeners();
         }
 
+        // NEW RENDERER: Matthew Henry
         function renderMatthewHenry(data) {
             if (!data) return '';
             const insightsHtml = data.insights.map(i => `
