@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exegetical Prism - NT (Stable)</title>
+    <title>Exegetical Prism - New Testament AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,13 +11,16 @@
 
     <style>
         :root {
-            /* Palette: Dark Slate & Gold */
+            /* Premium Palette: Dark Slate & Gold */
             --primary-gold: #d4a574;
             --muted-gold: rgba(212, 165, 116, 0.5);
-            --dark-bg: #1a1815; 
-            --input-bg: #262420; 
+            --dark-bg: #1a1815; /* Deep warm black/slate */
+            --input-bg: #262420; /* Slightly lighter for inputs */
             --cream-text: #faf8f3;
+            
+            /* UPDATED BACKGROUND COLOR: Light Tan Parchment */
             --neutral-bg: #EAE0C8; 
+            
             --action-green: #059669; 
             --action-green-hover: #047857;
         }
@@ -26,13 +29,14 @@
             font-family: 'Inter', sans-serif;
             background-color: var(--neutral-bg);
             color: #1e293b;
+            /* Subtle texture */
             background-image: radial-gradient(#d1c7b0 1px, transparent 1px);
             background-size: 20px 20px;
         }
         
         .biblical-text {
             font-family: 'EB Garamond', serif;
-            font-size: 1.25rem;
+            font-size: 1.15rem;
             line-height: 1.8;
         }
         
@@ -43,7 +47,7 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
 
-        /* CARD STYLING */
+        /* CARD STYLING (Used for Input & Results) */
         .dark-card, .input-section {
             background-color: var(--dark-bg);
             color: var(--cream-text);
@@ -51,12 +55,11 @@
             border-radius: 12px;
             padding: 2rem;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
-            transition: opacity 0.3s ease;
         }
         
         h2, h3 { color: var(--primary-gold); }
         
-        /* INPUT FIELDS */
+        /* INPUT FIELDS (Dark Theme) */
         .input-group label {
             color: var(--primary-gold);
             font-size: 0.85rem;
@@ -145,6 +148,14 @@
             margin-top: 2rem;
         }
 
+        .tabs-container::after {
+            content: '';
+            position: absolute;
+            top: 0; right: 0; bottom: 0; width: 40px;
+            background: linear-gradient(to right, transparent, var(--dark-bg));
+            pointer-events: none;
+        }
+
         .lens-tab {
             padding: 1rem 1.5rem;
             cursor: pointer;
@@ -153,7 +164,6 @@
             font-weight: 500;
             color: rgba(250, 248, 243, 0.6);
             white-space: nowrap; 
-            position: relative;
         }
         
         .lens-tab:hover { color: var(--cream-text); background: rgba(255, 255, 255, 0.05); }
@@ -162,26 +172,6 @@
             color: var(--primary-gold);
             border-bottom-color: var(--primary-gold);
             background: rgba(212, 165, 116, 0.15);
-            opacity: 1;
-        }
-
-        /* Loading Animation for Tabs */
-        .lens-tab.loading {
-            cursor: wait;
-            opacity: 0.7;
-        }
-        .lens-tab.loading::after {
-            content: "";
-            position: absolute;
-            right: 8px;
-            top: 50%;
-            width: 12px;
-            height: 12px;
-            margin-top: -6px;
-            border: 2px solid var(--primary-gold);
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
         }
         
         .lens-content { display: none; }
@@ -203,7 +193,7 @@
             background: rgba(212, 165, 116, 0.15);
         }
         
-        /* TOOLTIP */
+        /* TOOLTIP & BUTTONS */
         #greekTooltip {
             background: var(--dark-bg) !important;
             border: 1px solid var(--primary-gold) !important;
@@ -226,7 +216,7 @@
         .tooltip-btn:hover { background: var(--primary-gold); color: var(--dark-bg); font-weight: bold; }
         
         .word-study-card {
-            background: #262420;
+            background: #262420; /* Slightly lighter than dark-bg */
             color: var(--cream-text);
             border: 1px solid var(--muted-gold);
             border-left: 4px solid var(--primary-gold);
@@ -258,19 +248,6 @@
 
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        /* SKELETON LOADING */
-        .skeleton-text {
-            height: 1rem;
-            background: rgba(255,255,255,0.1);
-            border-radius: 4px;
-            margin-bottom: 0.5rem;
-            width: 100%;
-            animation: pulse 2s infinite;
-        }
-        .skeleton-text.w-75 { width: 75%; }
-        .skeleton-text.w-50 { width: 50%; }
-        @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 0.7; } 100% { opacity: 0.4; } }
     </style>
 </head>
 <body class="min-h-screen pb-12">
@@ -365,12 +342,12 @@
             
             <nav class="tabs-container sticky top-[80px] z-40">
                 <div class="flex space-x-1 overflow-x-auto hide-scrollbar px-2"> 
-                    <div class="lens-tab active" data-lens="text" id="tabText">📖 Text & Parsing</div>
-                    <div class="lens-tab" data-lens="commentary" id="tabCommentary">✍️ Commentary</div>
-                    <div class="lens-tab" data-lens="logic" id="tabLogic">🧩 Logical Flow</div>
-                    <div class="lens-tab" data-lens="context" id="tabContext">📜 Context</div>
-                    <div class="lens-tab" data-lens="theology" id="tabTheology">⛪ Theology</div>
-                    <div class="lens-tab" data-lens="words" id="tabWords">🔍 Word Studies</div>
+                    <div class="lens-tab active" data-lens="text">📖 Text & Parsing</div>
+                    <div class="lens-tab" data-lens="commentary">✍️ Commentary</div>
+                    <div class="lens-tab" data-lens="logic">🧩 Logical Flow</div>
+                    <div class="lens-tab" data-lens="context">📜 Context</div>
+                    <div class="lens-tab" data-lens="theology">⛪ Theology</div>
+                    <div class="lens-tab" data-lens="words">🔍 Word Studies</div>
                 </div>
             </nav>
             
@@ -378,33 +355,7 @@
                 ← Swipe for more lenses →
             </div>
             
-            <div id="lensContainer">
-                <section class="lens-content active" data-lens-content="text" id="contentText">
-                    </section>
-
-                <section class="lens-content" data-lens-content="commentary" id="contentCommentary">
-                    <div class="dark-card">
-                        <div class="skeleton-text w-75"></div><div class="skeleton-text w-50"></div>
-                        <p class="text-center text-gray-500 mt-4">Generating commentary...</p>
-                    </div>
-                </section>
-
-                <section class="lens-content" data-lens-content="logic" id="contentLogic">
-                     <div class="dark-card"><p class="text-center text-gray-500">Tracing logic flow...</p></div>
-                </section>
-
-                <section class="lens-content" data-lens-content="context" id="contentContext">
-                     <div class="dark-card"><p class="text-center text-gray-500">Digging into history...</p></div>
-                </section>
-
-                <section class="lens-content" data-lens-content="theology" id="contentTheology">
-                     <div class="dark-card"><p class="text-center text-gray-500">Consulting traditions...</p></div>
-                </section>
-
-                <section class="lens-content" data-lens-content="words" id="contentWords">
-                     <div class="dark-card"><p class="text-center text-gray-500">Select a word from the text to begin.</p></div>
-                </section>
-            </div>
+            <div id="lensContainer"></div>
             
             <div id="morphKeyContainer" class="mt-8 mb-6">
                 <div class="dark-card p-6">
@@ -462,7 +413,6 @@
         let currentPassageRef = ""; 
 
         function createTooltip() {
-            if(document.getElementById('greekTooltip')) return;
             tooltip = document.createElement('div');
             tooltip.id = 'greekTooltip';
             tooltip.style.cssText = `
@@ -539,29 +489,171 @@
             btnElement.disabled = true;
 
             try {
-                // Switch to Words tab
-                document.querySelector('.lens-tab[data-lens="words"]').click();
-                const newStudy = await fetchWordStudy(greekWord, definition, currentPassageRef);
+                const newStudy = await generateWordStudy(greekWord, definition);
                 const studyData = Array.isArray(newStudy) ? newStudy[0] : newStudy;
                 const finalMorph = morphCode || studyData.morphology || "";
                 
                 addWordStudyCard(studyData, finalMorph);
+                document.querySelector('.lens-tab[data-lens="words"]').click();
                 hideTooltip();
 
             } catch (error) {
-                console.error(error);
                 btnElement.textContent = "Error";
+                console.error(error);
                 alert("Failed. Check connection.");
             }
         }
 
-        // --- 3. MAIN WATERFALL LOGIC (New Architecture) ---
+        async function generateWordStudy(word, def) {
+            // PROMPT: Deep Study with safety settings
+            const prompt = `Perform a theological word study on the Greek word "${word}" (${def}) in the context of ${currentPassageRef}.
+            Return JSON only:
+            {
+                "greek": "${word}",
+                "transliteration": "Transliteration",
+                "gloss": "${def}",
+                "english_derivatives": "MANDATORY: List 1-3 English words derived from this Greek root. If no direct derivative, provide a shared etymological root or mnemonic. Do not return 'None'.",
+                "semantic_range": "Range of meaning",
+                "usage_note": "Specific usage in this passage",
+                "theological_weight": "Theological significance"
+            }`;
+
+            const response = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        contents: [{ role: "user", parts: [{ text: prompt }] }],
+                        generationConfig: { responseMimeType: "application/json" },
+                        safetySettings: [
+                            { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+                        ]
+                    })
+                }
+            );
+
+            const data = await response.json();
+            if (!data.candidates || data.candidates.length === 0) throw new Error("AI returned no data.");
+            let rawText = data.candidates[0].content.parts[0].text;
+            rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+            return JSON.parse(rawText);
+        }
+
+        function addWordStudyCard(w, morphCode) {
+            const container = document.querySelector('.lens-content[data-lens-content="words"] .dark-card');
+            const titleElement = container.querySelector('h2');
+            
+            const trans = w.transliteration || "N/A";
+            const gloss = w.gloss || "N/A";
+            const derivatives = w.english_derivatives || "None";
+            const morphologyDisplay = morphCode ? `<span class="ml-2 px-2 py-0.5 rounded bg-gray-700 text-xs text-[#c5a065]" title="Morphology">${morphCode}</span>` : "";
+
+            const html = `
+            <div class="word-study-card mt-6 border-l-[4px] border-[#059669] bg-[#262420] animate-[fadeIn_0.5s_ease-in]">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <div class="greek-word text-3xl mb-2 flex items-center gap-2 text-white">
+                            ${w.greek}
+                            ${morphologyDisplay}
+                        </div>
+                        <div class="font-medium mb-4 text-[#8a7042]">${trans} • "${gloss}"</div>
+                    </div>
+                    <span class="text-[10px] font-bold uppercase tracking-wider bg-[#059669] text-white px-2 py-1 rounded">New</span>
+                </div>
+                <div class="space-y-4 text-sm text-gray-200">
+                    <div><h4 class="font-bold mb-1 text-[#c5a065]">English Derivation</h4><p class="italic text-gray-400">${derivatives}</p></div>
+                    <div><h4 class="font-bold mb-1 text-[#c5a065]">Semantic Range</h4><p>${w.semantic_range}</p></div>
+                    <div><h4 class="font-bold mb-1 text-[#c5a065]">Usage</h4><p>${w.usage_note}</p></div>
+                    <div><h4 class="font-bold mb-1 text-[#c5a065]">Significance</h4><p>${w.theological_weight}</p></div>
+                </div>
+            </div>`;
+            
+            titleElement.insertAdjacentHTML('afterend', html);
+            setTimeout(() => {
+                container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
+
+        // --- 3. LENS NAVIGATION ---
+        function setupLensNavigation() {
+            const tabs = document.querySelectorAll('.lens-tab');
+            const morphKey = document.getElementById('morphKeyContainer');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    const targetLens = tab.dataset.lens;
+                    
+                    if (targetLens === 'text' || targetLens === 'words') {
+                        morphKey.style.display = 'block';
+                    } else {
+                        morphKey.style.display = 'none';
+                    }
+
+                    const contents = document.querySelectorAll('.lens-content');
+                    contents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.dataset.lensContent === targetLens) {
+                            content.classList.add('active');
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }
+                    });
+                });
+            });
+        }
         
+        // --- 4. VALIDATION ---
+        function validatePassage(book, reference) {
+            if (!book || !reference) return { valid: false, message: "Please select a book and enter a reference." };
+            
+            if (reference.includes(':')) {
+                const parts = reference.split(':');
+                if (parts.length !== 2) return { valid: false, message: "Invalid format. Use Chapter:Verses (e.g., 3:16)" };
+                const chapter = parseInt(parts[0]);
+                const versePart = parts[1];
+                if (isNaN(chapter)) return { valid: false, message: "Invalid chapter." };
+                
+                if (versePart.includes('-')) {
+                    const [start, end] = versePart.split('-').map(v => parseInt(v));
+                    if (isNaN(start) || isNaN(end)) return { valid: false, message: "Invalid range." };
+                    if ((end - start + 1) > 20) {
+                        const newEnd = start + 19;
+                        return { valid: true, cleanedRef: `${chapter}:${start}-${newEnd}`, wasTruncated: true };
+                    }
+                }
+                return { valid: true, cleanedRef: `${chapter}:${versePart}`, wasTruncated: false };
+            } 
+            const chapterOnly = parseInt(reference);
+            if (!isNaN(chapterOnly)) return { valid: true, cleanedRef: `${chapterOnly}`, wasTruncated: false };
+            
+            return { valid: false, message: "Invalid reference format." };
+        }
+        
+        // --- 5. MAIN ACTION & RESET ---
+        
+        function resetApp() {
+            document.getElementById('resultsSection').style.display = 'none';
+            document.getElementById('loadingSection').style.display = 'none';
+            document.getElementById('inputSection').style.display = 'block';
+            document.getElementById('errorDisplay').style.display = 'none';
+            document.getElementById('passageDisplay').textContent = "Ready to Analyze";
+            
+            document.getElementById('referenceInput').value = "";
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
         async function analyzePassage() {
             const book = document.getElementById('bookSelect').value;
-            const ref = document.getElementById('referenceInput').value;
+            const referenceInput = document.getElementById('referenceInput').value;
             
-            const validation = validatePassage(book, ref);
+            const validation = validatePassage(book, referenceInput);
             if (!validation.valid) {
                 showError(validation.message);
                 return;
@@ -574,33 +666,25 @@
             document.getElementById('passageDisplay').textContent = passageRef;
             document.getElementById('inputSection').style.display = 'none';
             document.getElementById('loadingSection').style.display = 'block';
-            document.getElementById('resultsSection').style.display = 'none';
             document.getElementById('errorDisplay').style.display = 'none';
             
-            // Clear content
-            document.getElementById('contentText').innerHTML = '';
-            document.getElementById('contentCommentary').innerHTML = '<div class="dark-card"><div class="skeleton-text w-75"></div><div class="skeleton-text w-50"></div><p class="text-center text-gray-500 mt-4">Generating commentary...</p></div>';
-            document.getElementById('contentLogic').innerHTML = '<div class="dark-card"><p class="text-center text-gray-500">Tracing logic flow...</p></div>';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
             
-            createTooltip();
-
             try {
-                // STEP 1: Fast Fetch (Text & Interlinear ONLY)
-                const analysis = await fetchTextParsing(passageRef);
-                interlinearData = analysis.text_parsing.interlinear;
+                const analysis = await generateAnalysis(passageRef);
                 
-                // Render Text immediately
-                renderTextLens(analysis.text_parsing);
+                interlinearData = analysis.text_parsing.interlinear;
+
+                renderResults(analysis);
+                
                 document.getElementById('loadingSection').style.display = 'none';
                 document.getElementById('resultsSection').style.display = 'block';
-                document.getElementById('morphKeyContainer').style.display = 'block';
-                setupLensNavigation();
                 
-                // STEP 2: Background Fetches (Waterfall)
-                loadCommentary(passageRef);
-                loadLogic(passageRef);
-                loadContext(passageRef);
-                loadTheology(passageRef);
+                // Show key for default tab (text)
+                document.getElementById('morphKeyContainer').style.display = 'block';
+
+                createTooltip();
+                setupLensNavigation();
                 
             } catch (error) {
                 console.error(error);
@@ -609,267 +693,243 @@
                 showError(error.message || "An unknown error occurred.");
             }
         }
-
-        // --- 4. DECOMPOSED API CALLS ---
-
-        async function fetchTextParsing(ref) {
-            const prompt = `Analyze ${ref}.
-            Return JSON only:
-            {
-            "text_parsing": {
-                "english_text": "Full ESV text here...",
-                "interlinear": [
-                    { "g": "GreekWord", "m": "MorphCode", "d": "ShortDef", "e": "Derivative" }
-                ]
-            }
-            }
-            Provide the 'interlinear' array containing EVERY word in the Greek text (NA28).`;
-            return await callGemini(prompt);
-        }
-
-        async function loadCommentary(ref) {
-            setTabLoading('tabCommentary', true);
-            const prompt = `Act as Matthew Henry. Provide a commentary on ${ref}.
-            Return JSON: { "summary": "Main thought", "insights": [ { "title": "Point", "content": "Insight" } ] }`;
-            try {
-                const data = await callGemini(prompt);
-                renderMatthewHenry(data);
-            } catch(e) { console.error(e); }
-            setTabLoading('tabCommentary', false);
-        }
-
-        async function loadLogic(ref) {
-            setTabLoading('tabLogic', true);
-            const prompt = `Analyze logic of ${ref}.
-            Return JSON: { "structure": [ { "label": "Premise/Contrast", "verse_ref": "v1", "content": "Explanation" } ], "key_insight": "Summary" }`;
-            try {
-                const data = await callGemini(prompt);
-                renderLogic(data);
-            } catch(e) { console.error(e); }
-            setTabLoading('tabLogic', false);
-        }
-
-        async function loadContext(ref) {
-            setTabLoading('tabContext', true);
-            const prompt = `Historical context for ${ref}.
-            Return JSON: { "notes": [ { "title": "Point", "content": "Explanation" } ] }`;
-            try {
-                const data = await callGemini(prompt);
-                renderContext(data);
-            } catch(e) { console.error(e); }
-            setTabLoading('tabContext', false);
-        }
-
-        async function loadTheology(ref) {
-            setTabLoading('tabTheology', true);
-            const prompt = `Theological traditions on ${ref}.
-            Return JSON: { "concepts": [ { "title": "Concept", "traditions": [ { "name": "Tradition", "view": "Viewpoint" } ] } ] }`;
-            try {
-                const data = await callGemini(prompt);
-                renderTheology(data);
-            } catch(e) { console.error(e); }
-            setTabLoading('tabTheology', false);
-        }
-
-        async function fetchWordStudy(word, def, ref) {
-            const prompt = `Word study on Greek "${word}" (${def}) in ${ref}.
-            Return JSON: {
-                "greek": "${word}",
-                "transliteration": "Transliteration",
-                "gloss": "${def}",
-                "english_derivatives": "Derivatives",
-                "semantic_range": "Range",
-                "usage_note": "Usage",
-                "theological_weight": "Significance"
-            }`;
-            return await callGemini(prompt);
-        }
-
-        // --- 5. GENERIC API HELPER (v1.5 Flash) ---
-        async function callGemini(systemPrompt) {
-            const response = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`,
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        contents: [{ role: "user", parts: [{ text: systemPrompt }] }],
-                        generationConfig: { responseMimeType: "application/json" }
-                    })
-                }
-            );
-            if (!response.ok) throw new Error("API Error: " + response.statusText);
-            const data = await response.json();
-            let rawText = data.candidates[0].content.parts[0].text;
-            rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
-            return JSON.parse(rawText);
-        }
-
-        // --- 6. RENDERERS ---
-        function renderTextLens(data) {
-            const processedGreek = data.interlinear.map((item, index) => {
-                return `<span class="greek-interactive" data-index="${index}">${item.g}</span>`;
-            }).join(' ');
-
-            const html = `
-                <div class="dark-card mb-6">
-                    <h2 class="text-xl font-bold mb-4 text-[#c5a065]">English Text (ESV)</h2>
-                    <div class="biblical-text text-white/90">${data.english_text}</div>
-                </div>
-                <div class="dark-card mb-6">
-                    <h2 class="text-xl font-bold mb-2 text-[#c5a065]">Greek Text (Full Interlinear)</h2>
-                    <p class="text-sm text-gray-400 mb-4">Tap any word for details.</p>
-                    <div class="biblical-text greek-text text-white/95 leading-loose">${processedGreek}</div>
-                </div>`;
-            document.getElementById('contentText').innerHTML = html;
-            attachGreekListeners();
-        }
-
-        function renderMatthewHenry(data) {
-            const html = `
-                <div class="dark-card">
-                    <h2 class="text-xl font-bold mb-4 text-[#c5a065]">Matthew Henry's Commentary</h2>
-                    <div class="bg-[#262420] p-4 rounded-lg mb-6 text-gray-200 italic text-sm border border-[#44403c]">${data.summary}</div>
-                    <div class="space-y-4">
-                        ${data.insights.map(i => `
-                            <div class="mb-4 border-l-2 border-[#8a7042] pl-4">
-                                <h4 class="font-bold text-[#c5a065] mb-1">${i.title}</h4>
-                                <p class="text-sm text-gray-300 leading-relaxed">${i.content}</p>
-                            </div>`).join('')}
-                    </div>
-                </div>`;
-            document.getElementById('contentCommentary').innerHTML = html;
-        }
-
-        function renderLogic(data) {
-            const html = `
-                <div class="dark-card"><h2 class="text-xl font-bold mb-4">Argument Structure</h2>
-                ${data.structure.map(n => `
-                    <div class="p-4 mb-4 rounded-lg border-l-4 border-[#c5a065] bg-[#262420]">
-                        <div class="text-xs font-bold mb-2 text-[#c5a065] uppercase tracking-wide">${n.label} (${n.verse_ref})</div>
-                        <div class="text-gray-200 text-sm leading-relaxed">${n.content}</div>
-                    </div>`).join('')}
-                <div class="mt-8 pt-6 border-t border-gray-700"><h3 class="text-lg font-bold mb-2">Rhetorical Strategy</h3><p class="text-gray-300 text-sm leading-relaxed">${data.key_insight}</p></div></div>`;
-            document.getElementById('contentLogic').innerHTML = html;
-        }
         
-        function renderContext(data) {
-             const html = `<div class="dark-card"><h2 class="text-xl font-bold mb-6">Historical Context</h2>
-            ${data.notes.map(n => `<div class="word-study-card"><h3 class="font-bold mb-2 text-[#c5a065]">${n.title}</h3><p class="text-sm text-gray-300">${n.content}</p></div>`).join('')}</div>`;
-            document.getElementById('contentContext').innerHTML = html;
-        }
-
-        function renderTheology(data) {
-            const html = `<div class="dark-card"><h2 class="text-xl font-bold mb-6">Traditions</h2>
-                ${data.concepts.map(c => `<div class="word-study-card"><h3 class="text-lg font-bold mb-4 text-[#c5a065]">${c.title}</h3>
-                ${c.traditions.map(t => `<div class="mb-4 last:mb-0"><h4 class="font-semibold text-xs uppercase tracking-wide mb-1 text-gray-400">${t.name}</h4><div class="text-sm text-gray-200">${t.view}</div></div>`).join('')}</div>`).join('')}</div>`;
-            document.getElementById('contentTheology').innerHTML = html;
-        }
-
-        function addWordStudyCard(w, morphCode) {
-            const container = document.querySelector('.lens-content[data-lens-content="words"] .dark-card');
-            if(container.querySelector('p.text-center')) container.innerHTML = '<h2 class="text-xl font-bold mb-6">Word Studies</h2>';
-            
-            const html = `
-            <div class="word-study-card mt-6 border-l-[4px] border-[#059669] bg-[#262420] animate-[fadeIn_0.5s_ease-in]">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <div class="greek-word text-3xl mb-2 flex items-center gap-2 text-white">${w.greek}</div>
-                        <div class="font-medium mb-4 text-[#8a7042]">${w.transliteration} • "${w.gloss}"</div>
-                    </div>
-                </div>
-                <div class="space-y-4 text-sm text-gray-200">
-                    <div><h4 class="font-bold mb-1 text-[#c5a065]">Derivation</h4><p class="italic text-gray-400">${w.english_derivatives}</p></div>
-                    <div><h4 class="font-bold mb-1 text-[#c5a065]">Semantic Range</h4><p>${w.semantic_range}</p></div>
-                    <div><h4 class="font-bold mb-1 text-[#c5a065]">Usage</h4><p>${w.usage_note}</p></div>
-                    <div><h4 class="font-bold mb-1 text-[#c5a065]">Significance</h4><p>${w.theological_weight}</p></div>
-                </div>
-            </div>`;
-            container.insertAdjacentHTML('beforeend', html);
-        }
-
-        // --- 7. UTILS ---
-        
-        function setTabLoading(tabId, isLoading) {
-            const tab = document.getElementById(tabId);
-            if(isLoading) tab.classList.add('loading');
-            else tab.classList.remove('loading');
-        }
-
-        function setupLensNavigation() {
-            const tabs = document.querySelectorAll('.lens-tab');
-            const morphKey = document.getElementById('morphKeyContainer');
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    tabs.forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-                    const target = tab.dataset.lens;
-                    morphKey.style.display = (target === 'text' || target === 'words') ? 'block' : 'none';
-                    document.querySelectorAll('.lens-content').forEach(c => {
-                        c.classList.remove('active');
-                        if(c.dataset.lensContent === target) c.classList.add('active');
-                    });
-                });
-            });
-        }
-
-        function attachGreekListeners() {
-            const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-            document.querySelectorAll('.greek-interactive').forEach(span => {
-                if (!isTouch) {
-                    span.addEventListener('mouseenter', (e) => showMorphology(span, e));
-                    span.addEventListener('mouseleave', () => hideTooltip());
-                }
-                span.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    showMorphology(span, e);
-                });
-            });
-            document.addEventListener('click', (e) => {
-                if (tooltip && tooltip.contains(e.target)) return;
-                hideTooltip();
-            });
-        }
-        
-        function validatePassage(book, reference) {
-            if (!book || !reference) return { valid: false, message: "Please select a book and enter a reference." };
-            if (reference.includes(':')) {
-                const parts = reference.split(':');
-                if (parts.length !== 2) return { valid: false, message: "Invalid format. Use Chapter:Verses (e.g., 3:16)" };
-                const chapter = parseInt(parts[0]);
-                const versePart = parts[1];
-                if (isNaN(chapter)) return { valid: false, message: "Invalid chapter." };
-                if (versePart.includes('-')) {
-                    const [start, end] = versePart.split('-').map(v => parseInt(v));
-                    if (isNaN(start) || isNaN(end)) return { valid: false, message: "Invalid range." };
-                    if ((end - start + 1) > 20) {
-                        return { valid: true, cleanedRef: `${chapter}:${start}-${start + 19}`, wasTruncated: true };
-                    }
-                }
-                return { valid: true, cleanedRef: `${chapter}:${versePart}`, wasTruncated: false };
-            } 
-            const chapterOnly = parseInt(reference);
-            if (!isNaN(chapterOnly)) return { valid: true, cleanedRef: `${chapterOnly}`, wasTruncated: false };
-            return { valid: false, message: "Invalid reference format." };
-        }
-
         function showError(message) {
             const errorDiv = document.getElementById('errorDisplay');
             errorDiv.innerHTML = `<div class="error-card"><strong>⚠️ Error:</strong> ${message}</div>`;
             errorDiv.style.display = 'block';
         }
         
-        function resetApp() {
-            document.getElementById('resultsSection').style.display = 'none';
-            document.getElementById('loadingSection').style.display = 'none';
-            document.getElementById('inputSection').style.display = 'block';
-            document.getElementById('errorDisplay').style.display = 'none';
-            document.getElementById('passageDisplay').textContent = "Ready to Analyze";
-            document.getElementById('referenceInput').value = "";
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+        // --- 6. AI GENERATION ---
+        async function generateAnalysis(passageRef) {
+            const systemPrompt = `You are a biblical scholar. Analyze ${passageRef}.
+            
+            CRITICAL INSTRUCTION: For 'text_parsing', do NOT provide a block of text. 
+            Provide a complete 'interlinear' array containing EVERY word in the Greek text (NA28) in order.
+            
+            Return JSON only:
+            {
+            "text_parsing": {
+                "english_text": "Full ESV text here...",
+                "interlinear": [
+                    { 
+                      "g": "GreekWord", 
+                      "m": "MorphCode", 
+                      "d": "ShortDef",
+                      "e": "Derivative (e.g. logos->logic) or 'None'"
+                    }
+                ]
+            },
+            "matthew_henry": {
+                "summary": "2-3 sentence summary of Matthew Henry's main thought on this passage.",
+                "insights": [
+                    { "title": "Point Title", "content": "Insight from Henry's commentary..." }
+                ]
+            },
+            "logical_flow": {
+                "structure": [ { "type": "premise|contrast|conclusion", "label": "Label", "content": "Explanation", "verse_ref": "v.1" } ],
+                "key_insight": "Rhetorical strategy summary"
+            },
+            "historical_context": {
+                "notes": [ { "title": "Context Point", "content": "Explanation" } ]
+            },
+            "theological_traditions": {
+                "concepts": [ { "title": "Concept", "traditions": [ { "name": "Tradition", "view": "Viewpoint" } ] } ]
+            },
+            "word_studies": {
+                "words": [ { 
+                    "greek": "Word", 
+                    "transliteration": "Trans", 
+                    "gloss": "Definition", 
+                    "morphology": "MorphCode (e.g. N-NSM)", 
+                    "english_derivatives": "MANDATORY: List 1-3 English words derived from this Greek root. If no direct derivative, provide a shared etymological root or mnemonic. Do not return 'None'.", 
+                    "semantic_range": "Range", 
+                    "usage_note": "Usage", 
+                    "theological_weight": "Significance" 
+                } ]
+            }
+            }
+            
+            Maintain the exact word order of the NA28 text in the 'interlinear' array.`;
+
+            const response = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        contents: [{ role: "user", parts: [{ text: systemPrompt }] }],
+                        generationConfig: { responseMimeType: "application/json" },
+                        safetySettings: [
+                            { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+                        ]
+                    })
+                }
+            );
+
+            if (!response.ok) throw new Error("API Error: " + response.statusText);
+            const data = await response.json();
+            
+            if (!data.candidates || data.candidates.length === 0) {
+                if (data.promptFeedback && data.promptFeedback.blockReason) {
+                    throw new Error("AI Blocked Request: " + data.promptFeedback.blockReason);
+                }
+                throw new Error("AI returned empty response (Safety Filter). Try a different passage.");
+            }
+
+            let rawText = data.candidates[0].content.parts[0].text;
+            rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+            return JSON.parse(rawText);
+        }
+        
+        // --- 7. RENDERERS ---
+        function renderResults(analysis) {
+            const container = document.getElementById('lensContainer');
+            container.innerHTML = `
+                ${renderTextParsing(analysis.text_parsing)}
+                ${renderMatthewHenry(analysis.matthew_henry)}
+                ${renderLogicalFlow(analysis.logical_flow)}
+                ${renderHistoricalContext(analysis.historical_context)}
+                ${renderTheologicalTraditions(analysis.theological_traditions)}
+                ${renderWordStudies(analysis.word_studies)}
+            `;
+            attachGreekListeners();
         }
 
-        document.getElementById('analyzeBtn').addEventListener('click', analyzePassage);
+        // NEW RENDERER: Matthew Henry
+        function renderMatthewHenry(data) {
+            if (!data) return '';
+            const insightsHtml = data.insights.map(i => `
+                <div class="mb-4 last:mb-0 border-l-2 border-[#8a7042] pl-4">
+                    <h4 class="font-bold text-[#c5a065] mb-1">${i.title}</h4>
+                    <p class="text-sm text-gray-300 leading-relaxed">${i.content}</p>
+                </div>
+            `).join('');
+
+            return `
+            <section class="lens-content" data-lens-content="commentary">
+                <div class="dark-card">
+                    <h2 class="text-xl font-bold mb-4 text-[#c5a065]">Matthew Henry's Commentary</h2>
+                    <div class="bg-[#262420] p-4 rounded-lg mb-6 text-gray-200 italic text-sm border border-[#44403c]">
+                        "${data.summary}"
+                    </div>
+                    <div class="space-y-4">
+                        ${insightsHtml}
+                    </div>
+                </div>
+            </section>`;
+        }
+
+        function renderTextParsing(data) {
+            const processedGreek = data.interlinear.map((item, index) => {
+                return `<span class="greek-interactive" data-index="${index}">${item.g}</span>`;
+            }).join(' ');
+
+            return `
+                <section class="lens-content active" data-lens-content="text">
+                    <div class="dark-card mb-6">
+                        <h2 class="text-xl font-bold mb-4 text-[#c5a065]">English Text (ESV)</h2>
+                        <div class="biblical-text text-white/90">
+                            ${data.english_text}
+                        </div>
+                    </div>
+                    
+                    <div class="dark-card mb-6">
+                        <h2 class="text-xl font-bold mb-2 text-[#c5a065]">Greek Text (Full Interlinear)</h2>
+                        <p class="text-sm text-gray-400 mb-4">Tap any word for details.</p>
+                        <div class="biblical-text greek-text text-white/95 leading-loose">
+                            ${processedGreek}
+                        </div>
+                    </div>
+                </section>
+            `;
+        }
+
+        function attachGreekListeners() {
+            const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
+            document.querySelectorAll('.greek-interactive').forEach(span => {
+                if (!isTouch) {
+                    span.addEventListener('mouseenter', (e) => showMorphology(span, e));
+                    span.addEventListener('mouseleave', (e) => { hideTooltip(); });
+                }
+                span.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const currentIndex = span.dataset.index;
+                    const activeIndex = tooltip.dataset.activeIndex;
+                    if (tooltip.style.display === 'block' && activeIndex === currentIndex) {
+                        hideTooltip();
+                        tooltip.dataset.activeIndex = ''; 
+                    } else {
+                        showMorphology(span, e);
+                        tooltip.dataset.activeIndex = currentIndex;
+                    }
+                });
+            });
+
+            document.addEventListener('click', (e) => {
+                if (tooltip && tooltip.contains(e.target)) return;
+                hideTooltip();
+                if(tooltip) tooltip.dataset.activeIndex = '';
+            });
+        }
+        
+        function renderLogicalFlow(data) {
+            const html = data.structure.map(n => `
+                <div class="p-4 mb-4 rounded-lg border-l-4 border-[#c5a065] bg-[#262420]">
+                    <div class="text-xs font-bold mb-2 text-[#c5a065] uppercase tracking-wide">${n.label} (${n.verse_ref})</div>
+                    <div class="text-gray-200 text-sm leading-relaxed">${n.content}</div>
+                </div>`).join('');
+            return `<section class="lens-content" data-lens-content="logic">
+                <div class="dark-card"><h2 class="text-xl font-bold mb-4">Argument Structure</h2>${html}
+                <div class="mt-8 pt-6 border-t border-gray-700"><h3 class="text-lg font-bold mb-2">Rhetorical Strategy</h3><p class="text-gray-300 text-sm leading-relaxed">${data.key_insight}</p></div></div></section>`;
+        }
+        
+        function renderHistoricalContext(data) {
+            return `<section class="lens-content" data-lens-content="context"><div class="dark-card"><h2 class="text-xl font-bold mb-6">Historical Context</h2>
+            ${data.notes.map(n => `<div class="word-study-card"><h3 class="font-bold mb-2 text-[#c5a065]">${n.title}</h3><p class="text-sm text-gray-300">${n.content}</p></div>`).join('')}</div></section>`;
+        }
+        
+        function renderTheologicalTraditions(data) {
+            return `<section class="lens-content" data-lens-content="theology"><div class="dark-card"><h2 class="text-xl font-bold mb-6">Traditions</h2>
+            ${data.concepts.map(c => `<div class="word-study-card"><h3 class="text-lg font-bold mb-4 text-[#c5a065]">${c.title}</h3>
+            ${c.traditions.map(t => `<div class="mb-4 last:mb-0"><h4 class="font-semibold text-xs uppercase tracking-wide mb-1 text-gray-400">${t.name}</h4><div class="text-sm text-gray-200">${t.view}</div></div>`).join('')}</div>`).join('')}</div></section>`;
+        }
+        
+        function renderWordStudies(data) {
+            return `<section class="lens-content" data-lens-content="words"><div class="dark-card"><h2 class="text-xl font-bold mb-6">Word Studies</h2>
+            ${data.words.map(w => {
+                const morphCode = w.morphology || "";
+                const morphologyDisplay = morphCode ? `<span class="ml-2 px-2 py-0.5 rounded bg-gray-700 text-xs text-[#c5a065] font-sans" title="Morphology">${morphCode}</span>` : "";
+                const derivatives = w.english_derivatives || "None";
+
+                return `<div class="word-study-card">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <div class="greek-word text-3xl mb-2 flex items-center gap-2 text-white">
+                                ${w.greek}
+                                ${morphologyDisplay}
+                            </div>
+                            <div class="font-medium mb-4 text-[#8a7042]">${w.transliteration} • "${w.gloss}"</div>
+                        </div>
+                    </div>
+                    <div class="space-y-4 text-sm text-gray-200">
+                        <div><h4 class="font-bold mb-1 text-[#c5a065]">English Derivation</h4><p class="italic text-gray-400">${derivatives}</p></div>
+                        <div><h4 class="font-bold mb-1 text-[#c5a065]">Semantic Range</h4><p>${w.semantic_range}</p></div>
+                        <div><h4 class="font-bold mb-1 text-[#c5a065]">Usage</h4><p>${w.usage_note}</p></div>
+                        <div><h4 class="font-bold mb-1 text-[#c5a065]">Significance</h4><p>${w.theological_weight}</p></div>
+                    </div>
+                </div>`;
+            }).join('')}</div></section>`;
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('analyzeBtn').addEventListener('click', analyzePassage);
+        });
     </script>
 </body>
 </html>
+
