@@ -48,7 +48,7 @@
             border-bottom: none;
         }
 
-        .tab-button:hover {
+        .tab-button:hover:not(.disabled) {
             background-color: #cbd5e1;
             color: var(--primary-gold);
         }
@@ -60,6 +60,11 @@
             border-bottom: 1px solid white;
             position: relative;
             top: 1px;
+        }
+
+        .tab-button.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
         }
 
         .tab-button.loading {
@@ -82,6 +87,16 @@
             animation: fadeIn 0.3s ease;
         }
 
+        .input-group {
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-end;
+        }
+
+        .input-wrapper {
+            flex: 1;
+        }
+
         .generator-input {
             width: 100%;
             padding: 1rem;
@@ -97,15 +112,49 @@
             border-color: var(--primary-gold);
         }
 
+        .ok-button {
+            padding: 1rem 2rem;
+            background-color: var(--primary-gold);
+            color: var(--dark-bg);
+            font-weight: 600;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-family: 'Crimson Text', Georgia, serif;
+            font-size: 1rem;
+            white-space: nowrap;
+        }
+
+        .ok-button:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .ok-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
         .passage-display {
             background-color: var(--dark-bg);
             color: var(--cream-text);
             padding: 1.5rem;
             border-radius: 10px;
             border-left: 4px solid var(--primary-gold);
-            font-style: italic;
             line-height: 1.8;
-            margin-bottom: 2rem;
+            margin-top: 1rem;
+        }
+
+        .passage-reference {
+            color: var(--primary-gold);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .passage-text {
+            font-style: italic;
         }
 
         .reference-step {
@@ -187,13 +236,19 @@
         <div class="max-w-2xl mx-auto mb-8">
             <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
                 <label class="block text-sm font-bold mb-2" style="color: var(--dark-bg);">Enter Bible Passage</label>
-                <input type="text" id="passageInput" class="generator-input" placeholder="E.g., John 3:16 or Romans 8:28-39" onkeypress="if(event.key==='Enter') switchTab('cross-refs')">
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <input type="text" id="passageInput" class="generator-input" placeholder="E.g., John 3:16 or Romans 8:28-39" onkeypress="if(event.key==='Enter') fetchPassage()">
+                    </div>
+                    <button id="okButton" class="ok-button" onclick="fetchPassage()">OK</button>
+                </div>
+                <div id="passageDisplay"></div>
             </div>
         </div>
 
         <nav id="mainNav" class="mb-6 border-b border-gray-300 flex flex-wrap">
-            <button class="tab-button" data-tab="cross-refs">Cross References</button>
-            <button class="tab-button" data-tab="about">About</button>
+            <button class="tab-button disabled" data-tab="cross-refs" id="crossRefsTab">Cross References</button>
+            <button class="tab-button active" data-tab="about" id="aboutTab">About</button>
         </nav>
 
         <main>
@@ -201,7 +256,7 @@
             <section id="cross-refsContent" class="tab-content">
                 <div id="referencesOutput">
                     <div class="flex items-center justify-center h-64 text-gray-400 italic">
-                        <p>Enter a passage above and click this tab to explore cross-references.</p>
+                        <p>Cross-references will appear here.</p>
                     </div>
                 </div>
             </section>
@@ -216,8 +271,8 @@
                         <h3 style="color: var(--primary-gold); margin-top: 2rem;">How It Works</h3>
                         <ol style="color: var(--cream-text); line-height: 1.8;">
                             <li>Enter a Bible passage (e.g., "John 3:16" or "Romans 8:28-39")</li>
-                            <li>Click the "Cross References" tab</li>
-                            <li>Explore 6-8 passages that connect through shared themes, language, or theology</li>
+                            <li>Click OK to retrieve the passage text</li>
+                            <li>Click the "Cross References" tab to explore connections</li>
                         </ol>
                         
                         <h3 style="color: var(--primary-gold); margin-top: 2rem;">What You'll Find</h3>
@@ -242,47 +297,126 @@
     <script>
         const API_KEY = "AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A";
         let currentPassage = "";
+        let passageText = "";
         let crossRefsCache = null;
 
         document.addEventListener('DOMContentLoaded', () => {
             const mainNav = document.getElementById('mainNav');
-            const tabContents = document.querySelectorAll('.tab-content');
 
             mainNav.addEventListener('click', (e) => {
-                if (e.target.classList.contains('tab-button') && !e.target.classList.contains('loading')) {
+                if (e.target.classList.contains('tab-button') && 
+                    !e.target.classList.contains('loading') && 
+                    !e.target.classList.contains('disabled')) {
                     const tabId = e.target.dataset.tab;
                     switchTab(tabId, e.target);
                 }
             });
         });
 
+        async function fetchPassage() {
+            const passage = document.getElementById('passageInput').value.trim();
+            const okButton = document.getElementById('okButton');
+            const passageDisplay = document.getElementById('passageDisplay');
+
+            if (!passage) {
+                alert("Please enter a Bible passage.");
+                return;
+            }
+
+            // Show loading state
+            okButton.disabled = true;
+            okButton.innerHTML = '<div class="spinner"></div>';
+            passageDisplay.innerHTML = '<div class="passage-display"><div class="flex justify-center"><div class="spinner"></div></div></div>';
+
+            try {
+                const systemPrompt = `
+                    You are a biblical scholar. 
+                    Task: Retrieve the exact text of the requested Bible passage.
+                    
+                    Return ONLY valid JSON with no markdown formatting.
+                    Schema:
+                    {
+                        "reference": "The properly formatted reference (e.g., 'John 3:16-17')",
+                        "text": "The full text of the passage"
+                    }
+                    
+                    Use a standard English translation (ESV or similar).
+                `;
+
+                const userPrompt = `Passage: ${passage}`;
+
+                const payload = {
+                    contents: [{
+                        role: "user",
+                        parts: [{ text: systemPrompt + "\n\n" + userPrompt }]
+                    }],
+                    generationConfig: { 
+                        responseMimeType: "application/json",
+                        temperature: 0.3
+                    }
+                };
+
+                const response = await fetch(
+                    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
+                    {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                if (data.error) throw new Error(data.error.message);
+                if (!data.candidates || !data.candidates[0]) throw new Error("No response generated.");
+
+                let rawText = data.candidates[0].content.parts[0].text;
+                rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+
+                const result = JSON.parse(rawText);
+                
+                // Store passage info
+                currentPassage = result.reference;
+                passageText = result.text;
+
+                // Display the passage
+                passageDisplay.innerHTML = `
+                    <div class="passage-display">
+                        <div class="passage-reference">${result.reference}</div>
+                        <div class="passage-text">"${result.text}"</div>
+                    </div>
+                `;
+
+                // Enable tabs
+                document.getElementById('crossRefsTab').classList.remove('disabled');
+
+            } catch (e) {
+                passageDisplay.innerHTML = `<div class="p-4 bg-red-50 text-red-600 border border-red-200 rounded mt-4">Error: ${e.message}</div>`;
+            } finally {
+                okButton.disabled = false;
+                okButton.textContent = 'OK';
+            }
+        }
+
         async function switchTab(tabId, button = null) {
             const tabButton = button || document.querySelector(`[data-tab="${tabId}"]`);
             const tabContents = document.querySelectorAll('.tab-content');
             
             // If switching to cross-refs tab, trigger the API call
-            if (tabId === 'cross-refs') {
-                const passage = document.getElementById('passageInput').value.trim();
+            if (tabId === 'cross-refs' && !crossRefsCache) {
+                // Show loading state
+                tabButton.classList.add('loading');
+                tabButton.innerHTML = 'Cross References<span class="spinner"></span>';
                 
-                if (!passage) {
-                    alert("Please enter a Bible passage first.");
-                    return;
-                }
+                await exploreCrossReferences();
                 
-                // If passage changed or no cache, fetch new data
-                if (passage !== currentPassage || !crossRefsCache) {
-                    currentPassage = passage;
-                    
-                    // Show loading state
-                    tabButton.classList.add('loading');
-                    tabButton.innerHTML = 'Cross References<span class="spinner"></span>';
-                    
-                    await exploreCrossReferences();
-                    
-                    // Remove loading state
-                    tabButton.classList.remove('loading');
-                    tabButton.textContent = 'Cross References';
-                }
+                // Remove loading state
+                tabButton.classList.remove('loading');
+                tabButton.textContent = 'Cross References';
             }
             
             // Switch tabs
@@ -298,7 +432,6 @@
         }
 
         async function exploreCrossReferences() {
-            const passage = currentPassage;
             const output = document.getElementById('referencesOutput');
 
             output.innerHTML = '<div class="flex justify-center items-center h-64"><div class="spinner" style="width: 48px; height: 48px; border-width: 4px;"></div></div>';
@@ -313,32 +446,27 @@
                     2. A clear explanation of how it connects to the original passage
                     3. The actual text of the verse
                     
-                    IMPORTANT: Also provide the full text of the original passage being analyzed.
-                    
                     Focus on references that:
                     - Share the same theological theme
                     - Use similar language or imagery
                     - Provide context or background
                     - Show fulfillment or echo (OT/NT connections)
                     
-                    Format: Return ONLY valid JSON with no markdown formatting.
+                    Format: Return ONLY valid JSON array with no markdown formatting.
                     Schema: 
-                    {
-                        "originalText": "Full text of the passage being analyzed",
-                        "references": [
-                            {
-                                "reference": "Romans 5:8",
-                                "connection": "Both passages emphasize God's love demonstrated while we were still sinners...",
-                                "text": "But God shows his love for us in that while we were still sinners, Christ died for us."
-                            },
-                            ...
-                        ]
-                    }
+                    [
+                        {
+                            "reference": "Romans 5:8",
+                            "connection": "Both passages emphasize God's love demonstrated while we were still sinners...",
+                            "text": "But God shows his love for us in that while we were still sinners, Christ died for us."
+                        },
+                        ...
+                    ]
                     
                     Be specific about the connection. Don't just say "similar theme" - explain HOW they connect.
                 `;
 
-                const userPrompt = `Passage: ${passage}`;
+                const userPrompt = `Passage: ${currentPassage}\nText: ${passageText}`;
 
                 const payload = {
                     contents: [{
@@ -374,22 +502,18 @@
 
                 const result = JSON.parse(rawText);
                 crossRefsCache = result;
-                renderReferences(passage, result);
+                renderReferences(result);
 
             } catch (e) {
                 output.innerHTML = `<div class="p-4 bg-red-50 text-red-600 border border-red-200 rounded">Error: ${e.message}</div>`;
             }
         }
 
-        function renderReferences(originalPassage, data) {
+        function renderReferences(references) {
             const output = document.getElementById('referencesOutput');
-            let html = `<h3 class="text-2xl font-bold mb-2 text-center" style="color: var(--primary-gold);">Cross References for ${originalPassage}</h3>`;
-            html += `<p class="text-center text-gray-600 mb-6">Passages that illuminate and connect</p>`;
+            let html = `<h3 class="text-2xl font-bold mb-6 text-center" style="color: var(--primary-gold);">Cross References for ${currentPassage}</h3>`;
             
-            // Display the original passage text
-            html += `<div class="passage-display">"${data.originalText}"</div>`;
-            
-            data.references.forEach((ref, index) => {
+            references.forEach((ref, index) => {
                 html += `
                     <div class="reference-step">
                         <div class="step-marker">${index + 1}</div>
