@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cross References Explorer</title>
+    <title>NT Threads</title>
     <script>
         // Suppress Tailwind production warning
         window.process = { env: { NODE_ENV: 'production' } };
@@ -35,6 +35,53 @@
         h1 { font-size: clamp(2rem, 5vw, 2.75rem); }
         h2 { font-size: clamp(1.5rem, 4vw, 2rem); }
 
+        .tab-button {
+            padding: 1rem 1.5rem;
+            margin-right: 0.5rem;
+            border-radius: 0.375rem 0.375rem 0 0;
+            background-color: #e2e8f0;
+            color: #64748b;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+            border-bottom: none;
+        }
+
+        .tab-button:hover {
+            background-color: #cbd5e1;
+            color: var(--primary-gold);
+        }
+
+        .tab-button.active {
+            background-color: white;
+            color: var(--primary-gold);
+            border-color: var(--border-color);
+            border-bottom: 1px solid white;
+            position: relative;
+            top: 1px;
+        }
+
+        .tab-button.loading {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .tab-content {
+            display: none;
+            background-color: white;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            border-top: none;
+            border-radius: 0 0 0.375rem 0.375rem;
+            min-height: 500px;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
         .generator-input {
             width: 100%;
             padding: 1rem;
@@ -50,19 +97,15 @@
             border-color: var(--primary-gold);
         }
 
-        .example-prompt {
-            background-color: #f1f5f9;
-            padding: 0.75rem 1rem;
-            border-radius: 0.5rem;
-            border-left: 3px solid var(--primary-gold);
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 0.95rem;
-        }
-
-        .example-prompt:hover {
-            background-color: #e2e8f0;
-            transform: translateX(4px);
+        .passage-display {
+            background-color: var(--dark-bg);
+            color: var(--cream-text);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary-gold);
+            font-style: italic;
+            line-height: 1.8;
+            margin-bottom: 2rem;
         }
 
         .reference-step {
@@ -115,12 +158,18 @@
 
         .spinner {
             display: inline-block;
-            width: 24px;
-            height: 24px;
-            border: 3px solid rgba(255,255,255,0.3);
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(212, 165, 116, 0.3);
             border-radius: 50%;
-            border-top-color: #fff;
+            border-top-color: var(--primary-gold);
             animation: spin 1s ease-in-out infinite;
+            margin-left: 0.5rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         @keyframes spin {
@@ -129,68 +178,130 @@
     </style>
 </head>
 <body class="min-h-screen antialiased">
-    <div class="container mx-auto p-4 md:p-6 lg:p-8 max-w-4xl">
+    <div class="container mx-auto p-4 md:p-6 lg:p-8 max-w-6xl">
         <header class="text-center py-8 mb-6">
-            <h1 class="font-bold" style="color: var(--dark-bg);">Cross References Explorer</h1>
+            <h1 class="font-bold" style="color: var(--dark-bg);">NT Threads</h1>
             <p class="text-xl mt-2" style="color: #64748b;">Discover Biblical Connections</p>
         </header>
 
+        <div class="max-w-2xl mx-auto mb-8">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                <label class="block text-sm font-bold mb-2" style="color: var(--dark-bg);">Enter Bible Passage</label>
+                <input type="text" id="passageInput" class="generator-input" placeholder="E.g., John 3:16 or Romans 8:28-39" onkeypress="if(event.key==='Enter') switchTab('cross-refs')">
+            </div>
+        </div>
+
+        <nav id="mainNav" class="mb-6 border-b border-gray-300 flex flex-wrap">
+            <button class="tab-button" data-tab="cross-refs">Cross References</button>
+            <button class="tab-button" data-tab="about">About</button>
+        </nav>
+
         <main>
-            <div class="max-w-3xl mx-auto">
-                <div class="text-center mb-10">
-                    <h2 class="font-bold" style="color: var(--primary-gold);">Explore Connections</h2>
-                    <p class="text-gray-600 mt-2">Enter a Bible passage to discover related verses and their connections.</p>
-                </div>
-
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-8">
-                    <div class="grid gap-6">
-                        <div>
-                            <label class="block text-sm font-bold mb-2" style="color: var(--dark-bg);">Bible Passage</label>
-                            <input type="text" id="passageInput" class="generator-input" placeholder="E.g., John 3:16 or Romans 8:28-39">
-                        </div>
-
-                        <div>
-                            <p class="text-sm font-bold mb-3" style="color: var(--dark-bg);">Example Passages:</p>
-                            <div class="grid gap-2">
-                                <div class="example-prompt" onclick="useExample(this)">John 3:16</div>
-                                <div class="example-prompt" onclick="useExample(this)">Romans 8:28-39</div>
-                                <div class="example-prompt" onclick="useExample(this)">Psalm 23</div>
-                                <div class="example-prompt" onclick="useExample(this)">1 Corinthians 13:4-8</div>
-                            </div>
-                        </div>
-
-                        <button onclick="exploreCrossReferences()" id="exploreBtn" class="font-bold py-3 px-6 rounded-lg transition-colors shadow-md flex justify-center items-center" style="background-color: var(--primary-gold); color: var(--dark-bg);">
-                            <span>Find Cross References</span>
-                        </button>
+            <!-- CROSS REFERENCES TAB -->
+            <section id="cross-refsContent" class="tab-content">
+                <div id="referencesOutput">
+                    <div class="flex items-center justify-center h-64 text-gray-400 italic">
+                        <p>Enter a passage above and click this tab to explore cross-references.</p>
                     </div>
                 </div>
+            </section>
 
-                <div id="referencesOutput" class="space-y-4"></div>
-            </div>
+            <!-- ABOUT TAB -->
+            <section id="aboutContent" class="tab-content active">
+                <div class="max-w-4xl mx-auto prose prose-lg">
+                    <div style="background-color: var(--dark-bg); color: var(--cream-text); padding: 2rem; border-radius: 10px; border-left: 4px solid var(--primary-gold);">
+                        <h2 style="color: var(--primary-gold);">About NT Threads</h2>
+                        <p>NT Threads helps you discover how Scripture weaves together. Enter any Bible passage and explore meaningful cross-references that illuminate its themes, language, and theology.</p>
+                        
+                        <h3 style="color: var(--primary-gold); margin-top: 2rem;">How It Works</h3>
+                        <ol style="color: var(--cream-text); line-height: 1.8;">
+                            <li>Enter a Bible passage (e.g., "John 3:16" or "Romans 8:28-39")</li>
+                            <li>Click the "Cross References" tab</li>
+                            <li>Explore 6-8 passages that connect through shared themes, language, or theology</li>
+                        </ol>
+                        
+                        <h3 style="color: var(--primary-gold); margin-top: 2rem;">What You'll Find</h3>
+                        <p>Each cross-reference includes:</p>
+                        <ul style="color: var(--cream-text); line-height: 1.8;">
+                            <li><strong>The reference</strong> - Book, chapter, and verse</li>
+                            <li><strong>The connection</strong> - How it relates to your passage</li>
+                            <li><strong>The text</strong> - The actual verse for context</li>
+                        </ul>
+                        
+                        <p style="margin-top: 2rem; font-style: italic;">Version 1.0 - Built for sermon prep, Bible study, and deeper understanding of Scripture's interconnected nature.</p>
+                    </div>
+                </div>
+            </section>
         </main>
 
         <footer class="text-center mt-12 py-6 border-t border-gray-300">
-            <p class="text-sm text-gray-500">Cross References Explorer v1.0</p>
+            <p class="text-sm text-gray-500">NT Threads v1.0</p>
         </footer>
     </div>
 
     <script>
         const API_KEY = "AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A";
+        let currentPassage = "";
+        let crossRefsCache = null;
 
-        function useExample(element) {
-            document.getElementById('passageInput').value = element.textContent;
+        document.addEventListener('DOMContentLoaded', () => {
+            const mainNav = document.getElementById('mainNav');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            mainNav.addEventListener('click', (e) => {
+                if (e.target.classList.contains('tab-button') && !e.target.classList.contains('loading')) {
+                    const tabId = e.target.dataset.tab;
+                    switchTab(tabId, e.target);
+                }
+            });
+        });
+
+        async function switchTab(tabId, button = null) {
+            const tabButton = button || document.querySelector(`[data-tab="${tabId}"]`);
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            // If switching to cross-refs tab, trigger the API call
+            if (tabId === 'cross-refs') {
+                const passage = document.getElementById('passageInput').value.trim();
+                
+                if (!passage) {
+                    alert("Please enter a Bible passage first.");
+                    return;
+                }
+                
+                // If passage changed or no cache, fetch new data
+                if (passage !== currentPassage || !crossRefsCache) {
+                    currentPassage = passage;
+                    
+                    // Show loading state
+                    tabButton.classList.add('loading');
+                    tabButton.innerHTML = 'Cross References<span class="spinner"></span>';
+                    
+                    await exploreCrossReferences();
+                    
+                    // Remove loading state
+                    tabButton.classList.remove('loading');
+                    tabButton.textContent = 'Cross References';
+                }
+            }
+            
+            // Switch tabs
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            tabButton.classList.add('active');
+            
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+                if (content.id === `${tabId}Content`) {
+                    content.classList.add('active');
+                }
+            });
         }
 
         async function exploreCrossReferences() {
-            const passage = document.getElementById('passageInput').value;
-            const btn = document.getElementById('exploreBtn');
+            const passage = currentPassage;
             const output = document.getElementById('referencesOutput');
 
-            if (!passage.trim()) return alert("Please enter a Bible passage.");
-
-            btn.innerHTML = '<div class="spinner"></div>';
-            btn.disabled = true;
-            output.innerHTML = '';
+            output.innerHTML = '<div class="flex justify-center items-center h-64"><div class="spinner" style="width: 48px; height: 48px; border-width: 4px;"></div></div>';
 
             try {
                 const systemPrompt = `
@@ -202,22 +313,27 @@
                     2. A clear explanation of how it connects to the original passage
                     3. The actual text of the verse
                     
+                    IMPORTANT: Also provide the full text of the original passage being analyzed.
+                    
                     Focus on references that:
                     - Share the same theological theme
                     - Use similar language or imagery
                     - Provide context or background
                     - Show fulfillment or echo (OT/NT connections)
                     
-                    Format: Return ONLY valid JSON array with no markdown formatting.
+                    Format: Return ONLY valid JSON with no markdown formatting.
                     Schema: 
-                    [
-                        {
-                            "reference": "Romans 5:8",
-                            "connection": "Both passages emphasize God's love demonstrated while we were still sinners...",
-                            "text": "But God shows his love for us in that while we were still sinners, Christ died for us."
-                        },
-                        ...
-                    ]
+                    {
+                        "originalText": "Full text of the passage being analyzed",
+                        "references": [
+                            {
+                                "reference": "Romans 5:8",
+                                "connection": "Both passages emphasize God's love demonstrated while we were still sinners...",
+                                "text": "But God shows his love for us in that while we were still sinners, Christ died for us."
+                            },
+                            ...
+                        ]
+                    }
                     
                     Be specific about the connection. Don't just say "similar theme" - explain HOW they connect.
                 `;
@@ -257,22 +373,23 @@
                 rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
 
                 const result = JSON.parse(rawText);
+                crossRefsCache = result;
                 renderReferences(passage, result);
 
             } catch (e) {
                 output.innerHTML = `<div class="p-4 bg-red-50 text-red-600 border border-red-200 rounded">Error: ${e.message}</div>`;
-            } finally {
-                btn.innerHTML = '<span>Find Cross References</span>';
-                btn.disabled = false;
             }
         }
 
-        function renderReferences(originalPassage, references) {
+        function renderReferences(originalPassage, data) {
             const output = document.getElementById('referencesOutput');
             let html = `<h3 class="text-2xl font-bold mb-2 text-center" style="color: var(--primary-gold);">Cross References for ${originalPassage}</h3>`;
-            html += `<p class="text-center text-gray-600 mb-8">Passages that illuminate and connect</p>`;
+            html += `<p class="text-center text-gray-600 mb-6">Passages that illuminate and connect</p>`;
             
-            references.forEach((ref, index) => {
+            // Display the original passage text
+            html += `<div class="passage-display">"${data.originalText}"</div>`;
+            
+            data.references.forEach((ref, index) => {
                 html += `
                     <div class="reference-step">
                         <div class="step-marker">${index + 1}</div>
