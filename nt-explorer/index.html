@@ -114,6 +114,22 @@
             border-color: var(--primary-gold);
         }
 
+        .verse-select {
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-family: 'Crimson Text', Georgia, serif;
+            background-color: white;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .verse-select:focus {
+            outline: none;
+            border-color: var(--primary-gold);
+        }
+
         .ok-button {
             padding: 1rem 2rem;
             background-color: var(--primary-gold);
@@ -134,6 +150,29 @@
         }
 
         .ok-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .analyze-button {
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary-gold);
+            color: var(--dark-bg);
+            font-weight: 600;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-family: 'Crimson Text', Georgia, serif;
+            font-size: 0.95rem;
+        }
+
+        .analyze-button:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .analyze-button:disabled {
             opacity: 0.6;
             cursor: not-allowed;
         }
@@ -176,6 +215,43 @@
 
         .content-card p {
             line-height: 1.8;
+        }
+
+        .word-card {
+            background-color: var(--dark-bg);
+            color: var(--cream-text);
+            padding: 1.25rem;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary-gold);
+            margin-bottom: 1rem;
+        }
+
+        .word-card .greek-word {
+            color: var(--primary-gold);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .word-card .transliteration {
+            color: var(--muted-gold);
+            font-style: italic;
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .word-card .definition {
+            line-height: 1.8;
+            margin-bottom: 0.5rem;
+        }
+
+        .word-card .usage {
+            color: var(--muted-gold);
+            font-style: italic;
+            font-size: 0.95rem;
+            padding-left: 1rem;
+            border-left: 2px solid var(--muted-gold);
+            margin-top: 0.75rem;
         }
 
         .commentary-card {
@@ -248,6 +324,14 @@
             font-weight: 600;
         }
 
+        .verse-selector-container {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
         .spinner {
             display: inline-block;
             width: 20px;
@@ -294,6 +378,7 @@
             <button class="tab-button disabled" data-tab="themes" id="themesTab">Theological Themes</button>
             <button class="tab-button disabled" data-tab="context" id="contextTab">Historical Context</button>
             <button class="tab-button disabled" data-tab="structure" id="structureTab">Literary Structure</button>
+            <button class="tab-button disabled" data-tab="greek" id="greekTab">Greek Lexicon</button>
             <button class="tab-button disabled" data-tab="jfb" id="jfbTab">JFB Commentary</button>
             <button class="tab-button active" data-tab="about" id="aboutTab">About</button>
         </nav>
@@ -335,6 +420,24 @@
                 </div>
             </section>
 
+            <!-- GREEK LEXICON TAB -->
+            <section id="greekContent" class="tab-content">
+                <div class="verse-selector-container">
+                    <label class="block text-sm font-bold mb-2" style="color: var(--dark-bg);">Select Verse to Analyze</label>
+                    <div class="input-group">
+                        <select id="verseSelect" class="verse-select" style="flex: 1;">
+                            <option value="">Choose a verse...</option>
+                        </select>
+                        <button id="analyzeButton" class="analyze-button" onclick="analyzeVerse()">Analyze</button>
+                    </div>
+                </div>
+                <div id="greekOutput">
+                    <div class="flex items-center justify-center h-64 text-gray-400 italic">
+                        <p>Select a verse and click Analyze to see Greek words.</p>
+                    </div>
+                </div>
+            </section>
+
             <!-- JFB COMMENTARY TAB -->
             <section id="jfbContent" class="tab-content">
                 <div id="jfbOutput">
@@ -364,6 +467,7 @@
                             <li><strong>Theological Themes</strong> - Major doctrines present in the text</li>
                             <li><strong>Historical Context</strong> - Background that illuminates meaning</li>
                             <li><strong>Literary Structure</strong> - How the passage is organized</li>
+                            <li><strong>Greek Lexicon</strong> - Word-by-word Greek analysis</li>
                             <li><strong>JFB Commentary</strong> - Insights from Jamieson-Fausset-Brown</li>
                         </ul>
                         
@@ -382,6 +486,7 @@
         const API_KEY = "AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A";
         let currentPassage = "";
         let passageText = "";
+        let verseData = {}; // Store verse breakdown
         
         // Cache for each tab's content
         let caches = {
@@ -389,6 +494,7 @@
             themes: null,
             context: null,
             structure: null,
+            greek: {},  // Will cache by verse
             jfb: null
         };
 
@@ -423,13 +529,17 @@
             try {
                 const systemPrompt = `
                     You are a biblical scholar. 
-                    Task: Retrieve the exact text of the requested Bible passage.
+                    Task: Retrieve the exact text of the requested Bible passage and break it down by verse.
                     
                     Return ONLY valid JSON with no markdown formatting.
                     Schema:
                     {
                         "reference": "The properly formatted reference (e.g., 'John 3:16-17')",
-                        "text": "The full text of the passage"
+                        "text": "The full text of the passage",
+                        "verses": [
+                            {"verse": "16", "text": "For God so loved..."},
+                            {"verse": "17", "text": "For God did not send..."}
+                        ]
                     }
                     
                     Use a standard English translation (ESV or similar).
@@ -479,6 +589,7 @@
                 // Store passage info
                 currentPassage = result.reference;
                 passageText = result.text;
+                verseData = result.verses || [];
 
                 // Display the passage
                 passageDisplay.innerHTML = `
@@ -488,11 +599,15 @@
                     </div>
                 `;
 
+                // Populate verse selector
+                populateVerseSelector();
+
                 // Enable all tabs
                 document.getElementById('crossRefsTab').classList.remove('disabled');
                 document.getElementById('themesTab').classList.remove('disabled');
                 document.getElementById('contextTab').classList.remove('disabled');
                 document.getElementById('structureTab').classList.remove('disabled');
+                document.getElementById('greekTab').classList.remove('disabled');
                 document.getElementById('jfbTab').classList.remove('disabled');
 
                 // Clear all caches for new passage
@@ -501,6 +616,7 @@
                     themes: null,
                     context: null,
                     structure: null,
+                    greek: {},
                     jfb: null
                 };
 
@@ -510,6 +626,117 @@
             } finally {
                 okButton.disabled = false;
                 okButton.textContent = 'OK';
+            }
+        }
+
+        function populateVerseSelector() {
+            const select = document.getElementById('verseSelect');
+            select.innerHTML = '<option value="">Choose a verse...</option>';
+            
+            verseData.forEach((v) => {
+                const option = document.createElement('option');
+                option.value = v.verse;
+                option.textContent = `Verse ${v.verse}`;
+                select.appendChild(option);
+            });
+        }
+
+        async function analyzeVerse() {
+            const verseSelect = document.getElementById('verseSelect');
+            const selectedVerse = verseSelect.value;
+            
+            if (!selectedVerse) {
+                alert("Please select a verse to analyze.");
+                return;
+            }
+
+            // Check cache first
+            if (caches.greek[selectedVerse]) {
+                renderGreek(caches.greek[selectedVerse], selectedVerse);
+                return;
+            }
+
+            const analyzeButton = document.getElementById('analyzeButton');
+            const output = document.getElementById('greekOutput');
+
+            analyzeButton.disabled = true;
+            analyzeButton.innerHTML = 'Analyzing... <div class="spinner"></div>';
+            output.innerHTML = '<div class="flex justify-center items-center h-64"><div class="spinner" style="width: 48px; height: 48px; border-width: 4px;"></div></div>';
+
+            try {
+                const verseObj = verseData.find(v => v.verse === selectedVerse);
+                if (!verseObj) throw new Error("Verse not found");
+
+                const systemPrompt = `
+                    You are a biblical Greek scholar.
+                    Task: Provide a complete Greek lexicon analysis for EVERY word in the given verse.
+                    
+                    For each Greek word (including articles, particles, conjunctions), provide:
+                    1. The Greek word in Unicode
+                    2. Transliteration
+                    3. Strong's number (if available)
+                    4. Part of speech
+                    5. Definition/meaning
+                    6. How it's used in this specific context
+                    
+                    Include EVERY word in the verse in the order they appear in Greek.
+                    
+                    Format: Return ONLY valid JSON array with no markdown formatting.
+                    Schema:
+                    [
+                        {
+                            "greek": "Οὕτως",
+                            "transliteration": "houtōs",
+                            "strongs": "G3779",
+                            "part_of_speech": "adverb",
+                            "definition": "in this manner, thus, so",
+                            "usage": "Emphasizes the manner of God's love"
+                        },
+                        ...
+                    ]
+                `;
+
+                const userPrompt = `Verse: ${currentPassage.split('-')[0]}:${selectedVerse}\nText: ${verseObj.text}`;
+
+                const payload = {
+                    contents: [{
+                        role: "user",
+                        parts: [{ text: systemPrompt + "\n\n" + userPrompt }]
+                    }],
+                    generationConfig: { 
+                        responseMimeType: "application/json",
+                        temperature: 0.7
+                    }
+                };
+
+                const response = await fetch(
+                    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
+                    {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    }
+                );
+
+                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+
+                const data = await response.json();
+                
+                if (data.error) throw new Error(data.error.message);
+                if (!data.candidates || !data.candidates[0]) throw new Error("No response generated.");
+
+                let rawText = data.candidates[0].content.parts[0].text;
+                rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+
+                const result = JSON.parse(rawText);
+                caches.greek[selectedVerse] = result;
+                renderGreek(result, selectedVerse);
+
+            } catch (e) {
+                output.innerHTML = `<div class="p-4 bg-red-50 text-red-600 border border-red-200 rounded">Error: ${e.message}</div>`;
+            } finally {
+                analyzeButton.disabled = false;
+                analyzeButton.innerHTML = 'Analyze';
             }
         }
 
@@ -549,6 +776,7 @@
                 tabButton.classList.remove('loading');
                 tabButton.textContent = 'JFB Commentary';
             }
+            // Greek tab doesn't auto-load, user selects verse
             
             // Switch tabs
             document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
@@ -995,6 +1223,29 @@
                     <p>${structure.significance}</p>
                 </div>
             `;
+
+            output.innerHTML = html;
+        }
+
+        function renderGreek(words, verse) {
+            const output = document.getElementById('greekOutput');
+            const book = currentPassage.split(' ')[0];
+            const chapter = currentPassage.match(/\d+/)[0];
+            
+            let html = `<h3 class="text-2xl font-bold mb-6 text-center section-heading">Greek Lexicon for ${book} ${chapter}:${verse}</h3>`;
+            
+            words.forEach((word) => {
+                html += `
+                    <div class="word-card">
+                        <div class="greek-word">${word.greek}</div>
+                        <div class="transliteration">${word.transliteration}${word.strongs ? ' (' + word.strongs + ')' : ''}</div>
+                        <div class="definition">
+                            <strong>${word.part_of_speech}:</strong> ${word.definition}
+                        </div>
+                        <div class="usage">${word.usage}</div>
+                    </div>
+                `;
+            });
 
             output.innerHTML = html;
         }
