@@ -542,6 +542,7 @@
                         ]
                     }
                     
+                    IMPORTANT: Always include the verses array with each verse broken out separately.
                     Use a standard English translation (ESV or similar).
                 `;
 
@@ -589,7 +590,15 @@
                 // Store passage info
                 currentPassage = result.reference;
                 passageText = result.text;
-                verseData = result.verses || [];
+                
+                // Handle verses array - ensure it exists and has valid structure
+                if (result.verses && Array.isArray(result.verses) && result.verses.length > 0) {
+                    verseData = result.verses;
+                } else {
+                    // Fallback: create a simple verse array from the passage
+                    console.warn("Verses not provided by AI, creating fallback");
+                    verseData = [{verse: "1", text: result.text}];
+                }
 
                 // Display the passage
                 passageDisplay.innerHTML = `
