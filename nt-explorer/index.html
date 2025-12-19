@@ -159,6 +159,25 @@
             font-style: italic;
         }
 
+        .content-card {
+            background-color: var(--dark-bg);
+            color: var(--cream-text);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary-gold);
+            margin-bottom: 1.5rem;
+        }
+
+        .content-card h4 {
+            color: var(--primary-gold);
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .content-card p {
+            line-height: 1.8;
+        }
+
         .reference-step {
             position: relative;
             padding-left: 3rem;
@@ -255,6 +274,9 @@
 
         <nav id="mainNav" class="mb-6 flex flex-wrap">
             <button class="tab-button disabled" data-tab="cross-refs" id="crossRefsTab">Cross References</button>
+            <button class="tab-button disabled" data-tab="themes" id="themesTab">Theological Themes</button>
+            <button class="tab-button disabled" data-tab="context" id="contextTab">Historical Context</button>
+            <button class="tab-button disabled" data-tab="structure" id="structureTab">Literary Structure</button>
             <button class="tab-button active" data-tab="about" id="aboutTab">About</button>
         </nav>
 
@@ -264,6 +286,33 @@
                 <div id="referencesOutput">
                     <div class="flex items-center justify-center h-64 text-gray-400 italic">
                         <p>Cross-references will appear here.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- THEOLOGICAL THEMES TAB -->
+            <section id="themesContent" class="tab-content">
+                <div id="themesOutput">
+                    <div class="flex items-center justify-center h-64 text-gray-400 italic">
+                        <p>Theological themes will appear here.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- HISTORICAL CONTEXT TAB -->
+            <section id="contextContent" class="tab-content">
+                <div id="contextOutput">
+                    <div class="flex items-center justify-center h-64 text-gray-400 italic">
+                        <p>Historical context will appear here.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LITERARY STRUCTURE TAB -->
+            <section id="structureContent" class="tab-content">
+                <div id="structureOutput">
+                    <div class="flex items-center justify-center h-64 text-gray-400 italic">
+                        <p>Literary structure will appear here.</p>
                     </div>
                 </div>
             </section>
@@ -279,15 +328,15 @@
                         <ol style="color: var(--cream-text); line-height: 1.8;">
                             <li>Enter a Bible passage (e.g., "John 3:16" or "Romans 8:28-39")</li>
                             <li>Click OK to retrieve the passage text</li>
-                            <li>Click the "Cross References" tab to explore connections</li>
+                            <li>Click any tab to explore different aspects of the passage</li>
                         </ol>
                         
                         <h3 style="color: var(--primary-gold); margin-top: 2rem;">What You'll Find</h3>
-                        <p>Each cross-reference includes:</p>
                         <ul style="color: var(--cream-text); line-height: 1.8;">
-                            <li><strong>The reference</strong> - Book, chapter, and verse</li>
-                            <li><strong>The connection</strong> - How it relates to your passage</li>
-                            <li><strong>The text</strong> - The actual verse for context</li>
+                            <li><strong>Cross References</strong> - Related passages with connections explained</li>
+                            <li><strong>Theological Themes</strong> - Major doctrines present in the text</li>
+                            <li><strong>Historical Context</strong> - Background that illuminates meaning</li>
+                            <li><strong>Literary Structure</strong> - How the passage is organized</li>
                         </ul>
                         
                         <p style="margin-top: 2rem; font-style: italic;">Version 1.0 - Built for sermon prep, Bible study, and deeper understanding of Scripture's interconnected nature.</p>
@@ -305,7 +354,14 @@
         const API_KEY = "AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A";
         let currentPassage = "";
         let passageText = "";
-        let crossRefsCache = null;
+        
+        // Cache for each tab's content
+        let caches = {
+            crossRefs: null,
+            themes: null,
+            context: null,
+            structure: null
+        };
 
         document.addEventListener('DOMContentLoaded', () => {
             const mainNav = document.getElementById('mainNav');
@@ -403,8 +459,19 @@
                     </div>
                 `;
 
-                // Enable tabs
+                // Enable all tabs
                 document.getElementById('crossRefsTab').classList.remove('disabled');
+                document.getElementById('themesTab').classList.remove('disabled');
+                document.getElementById('contextTab').classList.remove('disabled');
+                document.getElementById('structureTab').classList.remove('disabled');
+
+                // Clear all caches for new passage
+                caches = {
+                    crossRefs: null,
+                    themes: null,
+                    context: null,
+                    structure: null
+                };
 
             } catch (e) {
                 console.error('Fetch error:', e);
@@ -419,17 +486,31 @@
             const tabButton = button || document.querySelector(`[data-tab="${tabId}"]`);
             const tabContents = document.querySelectorAll('.tab-content');
             
-            // If switching to cross-refs tab, trigger the API call
-            if (tabId === 'cross-refs' && !crossRefsCache) {
-                // Show loading state
+            // Handle tab-specific logic
+            if (tabId === 'cross-refs' && !caches.crossRefs) {
                 tabButton.classList.add('loading');
                 tabButton.innerHTML = 'Cross References<span class="spinner"></span>';
-                
                 await exploreCrossReferences();
-                
-                // Remove loading state
                 tabButton.classList.remove('loading');
                 tabButton.textContent = 'Cross References';
+            } else if (tabId === 'themes' && !caches.themes) {
+                tabButton.classList.add('loading');
+                tabButton.innerHTML = 'Theological Themes<span class="spinner"></span>';
+                await exploreThemes();
+                tabButton.classList.remove('loading');
+                tabButton.textContent = 'Theological Themes';
+            } else if (tabId === 'context' && !caches.context) {
+                tabButton.classList.add('loading');
+                tabButton.innerHTML = 'Historical Context<span class="spinner"></span>';
+                await exploreContext();
+                tabButton.classList.remove('loading');
+                tabButton.textContent = 'Historical Context';
+            } else if (tabId === 'structure' && !caches.structure) {
+                tabButton.classList.add('loading');
+                tabButton.innerHTML = 'Literary Structure<span class="spinner"></span>';
+                await exploreStructure();
+                tabButton.classList.remove('loading');
+                tabButton.textContent = 'Literary Structure';
             }
             
             // Switch tabs
@@ -446,7 +527,6 @@
 
         async function exploreCrossReferences() {
             const output = document.getElementById('referencesOutput');
-
             output.innerHTML = '<div class="flex justify-center items-center h-64"><div class="spinner" style="width: 48px; height: 48px; border-width: 4px;"></div></div>';
 
             try {
@@ -501,9 +581,7 @@
                     }
                 );
 
-                if (!response.ok) {
-                    throw new Error(`API Error: ${response.status}`);
-                }
+                if (!response.ok) throw new Error(`API Error: ${response.status}`);
 
                 const data = await response.json();
                 
@@ -514,8 +592,208 @@
                 rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
 
                 const result = JSON.parse(rawText);
-                crossRefsCache = result;
+                caches.crossRefs = result;
                 renderReferences(result);
+
+            } catch (e) {
+                output.innerHTML = `<div class="p-4 bg-red-50 text-red-600 border border-red-200 rounded">Error: ${e.message}</div>`;
+            }
+        }
+
+        async function exploreThemes() {
+            const output = document.getElementById('themesOutput');
+            output.innerHTML = '<div class="flex justify-center items-center h-64"><div class="spinner" style="width: 48px; height: 48px; border-width: 4px;"></div></div>';
+
+            try {
+                const systemPrompt = `
+                    You are a biblical scholar with expertise in systematic theology.
+                    Task: Identify 3-5 major theological themes present in the given Bible passage.
+                    
+                    For each theme, provide:
+                    1. The theme name (e.g., "Substitutionary Atonement")
+                    2. A clear explanation of how it appears in this passage
+                    3. Its significance in broader biblical theology
+                    
+                    Format: Return ONLY valid JSON array with no markdown formatting.
+                    Schema:
+                    [
+                        {
+                            "theme": "Substitutionary Atonement",
+                            "explanation": "This passage presents Christ's death as a substitutionary sacrifice...",
+                            "significance": "This is central to understanding how God reconciles humanity to Himself..."
+                        },
+                        ...
+                    ]
+                `;
+
+                const userPrompt = `Passage: ${currentPassage}\nText: ${passageText}`;
+
+                const payload = {
+                    contents: [{
+                        role: "user",
+                        parts: [{ text: systemPrompt + "\n\n" + userPrompt }]
+                    }],
+                    generationConfig: { 
+                        responseMimeType: "application/json",
+                        temperature: 0.7
+                    }
+                };
+
+                const response = await fetch(
+                    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
+                    {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    }
+                );
+
+                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+
+                const data = await response.json();
+                
+                if (data.error) throw new Error(data.error.message);
+                if (!data.candidates || !data.candidates[0]) throw new Error("No response generated.");
+
+                let rawText = data.candidates[0].content.parts[0].text;
+                rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+
+                const result = JSON.parse(rawText);
+                caches.themes = result;
+                renderThemes(result);
+
+            } catch (e) {
+                output.innerHTML = `<div class="p-4 bg-red-50 text-red-600 border border-red-200 rounded">Error: ${e.message}</div>`;
+            }
+        }
+
+        async function exploreContext() {
+            const output = document.getElementById('contextOutput');
+            output.innerHTML = '<div class="flex justify-center items-center h-64"><div class="spinner" style="width: 48px; height: 48px; border-width: 4px;"></div></div>';
+
+            try {
+                const systemPrompt = `
+                    You are a biblical scholar with expertise in historical context and backgrounds.
+                    Task: Provide historical context for the given Bible passage.
+                    
+                    Include:
+                    1. Author and date (if known)
+                    2. Original audience
+                    3. Historical situation that prompted the writing
+                    4. Cultural/geographical details that illuminate the passage
+                    
+                    Format: Return ONLY valid JSON with no markdown formatting.
+                    Schema:
+                    {
+                        "author": "Information about authorship",
+                        "audience": "Who was this written to/for",
+                        "situation": "What circumstances prompted this text",
+                        "cultural_details": "Relevant cultural/geographical background"
+                    }
+                `;
+
+                const userPrompt = `Passage: ${currentPassage}\nText: ${passageText}`;
+
+                const payload = {
+                    contents: [{
+                        role: "user",
+                        parts: [{ text: systemPrompt + "\n\n" + userPrompt }]
+                    }],
+                    generationConfig: { 
+                        responseMimeType: "application/json",
+                        temperature: 0.7
+                    }
+                };
+
+                const response = await fetch(
+                    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
+                    {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    }
+                );
+
+                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+
+                const data = await response.json();
+                
+                if (data.error) throw new Error(data.error.message);
+                if (!data.candidates || !data.candidates[0]) throw new Error("No response generated.");
+
+                let rawText = data.candidates[0].content.parts[0].text;
+                rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+
+                const result = JSON.parse(rawText);
+                caches.context = result;
+                renderContext(result);
+
+            } catch (e) {
+                output.innerHTML = `<div class="p-4 bg-red-50 text-red-600 border border-red-200 rounded">Error: ${e.message}</div>`;
+            }
+        }
+
+        async function exploreStructure() {
+            const output = document.getElementById('structureOutput');
+            output.innerHTML = '<div class="flex justify-center items-center h-64"><div class="spinner" style="width: 48px; height: 48px; border-width: 4px;"></div></div>';
+
+            try {
+                const systemPrompt = `
+                    You are a biblical scholar with expertise in literary analysis.
+                    Task: Analyze the literary structure of the given Bible passage.
+                    
+                    Provide:
+                    1. An outline showing the flow of thought (2-4 main points)
+                    2. Literary devices used (parallelism, chiasm, metaphor, etc.)
+                    3. How the structure serves the passage's message
+                    
+                    Format: Return ONLY valid JSON with no markdown formatting.
+                    Schema:
+                    {
+                        "outline": [
+                            {"point": "Main Point 1", "description": "Brief explanation"},
+                            {"point": "Main Point 2", "description": "Brief explanation"}
+                        ],
+                        "literary_devices": "Description of key literary techniques",
+                        "significance": "How the structure reinforces the message"
+                    }
+                `;
+
+                const userPrompt = `Passage: ${currentPassage}\nText: ${passageText}`;
+
+                const payload = {
+                    contents: [{
+                        role: "user",
+                        parts: [{ text: systemPrompt + "\n\n" + userPrompt }]
+                    }],
+                    generationConfig: { 
+                        responseMimeType: "application/json",
+                        temperature: 0.7
+                    }
+                };
+
+                const response = await fetch(
+                    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
+                    {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    }
+                );
+
+                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+
+                const data = await response.json();
+                
+                if (data.error) throw new Error(data.error.message);
+                if (!data.candidates || !data.candidates[0]) throw new Error("No response generated.");
+
+                let rawText = data.candidates[0].content.parts[0].text;
+                rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+
+                const result = JSON.parse(rawText);
+                caches.structure = result;
+                renderStructure(result);
 
             } catch (e) {
                 output.innerHTML = `<div class="p-4 bg-red-50 text-red-600 border border-red-200 rounded">Error: ${e.message}</div>`;
@@ -538,6 +816,73 @@
                     </div>
                 `;
             });
+
+            output.innerHTML = html;
+        }
+
+        function renderThemes(themes) {
+            const output = document.getElementById('themesOutput');
+            let html = `<h3 class="text-2xl font-bold mb-6 text-center section-heading">Theological Themes in ${currentPassage}</h3>`;
+            
+            themes.forEach((theme) => {
+                html += `
+                    <div class="content-card">
+                        <h4>${theme.theme}</h4>
+                        <p class="mb-3">${theme.explanation}</p>
+                        <p style="color: var(--muted-gold); font-style: italic;"><strong>Significance:</strong> ${theme.significance}</p>
+                    </div>
+                `;
+            });
+
+            output.innerHTML = html;
+        }
+
+        function renderContext(context) {
+            const output = document.getElementById('contextOutput');
+            let html = `<h3 class="text-2xl font-bold mb-6 text-center section-heading">Historical Context of ${currentPassage}</h3>`;
+            
+            html += `
+                <div class="content-card">
+                    <h4>Author & Date</h4>
+                    <p>${context.author}</p>
+                </div>
+                <div class="content-card">
+                    <h4>Original Audience</h4>
+                    <p>${context.audience}</p>
+                </div>
+                <div class="content-card">
+                    <h4>Historical Situation</h4>
+                    <p>${context.situation}</p>
+                </div>
+                <div class="content-card">
+                    <h4>Cultural & Geographical Details</h4>
+                    <p>${context.cultural_details}</p>
+                </div>
+            `;
+
+            output.innerHTML = html;
+        }
+
+        function renderStructure(structure) {
+            const output = document.getElementById('structureOutput');
+            let html = `<h3 class="text-2xl font-bold mb-6 text-center section-heading">Literary Structure of ${currentPassage}</h3>`;
+            
+            html += `<div class="content-card"><h4>Outline</h4>`;
+            structure.outline.forEach((item, index) => {
+                html += `<p class="mb-2"><strong>${index + 1}. ${item.point}</strong> - ${item.description}</p>`;
+            });
+            html += `</div>`;
+
+            html += `
+                <div class="content-card">
+                    <h4>Literary Devices</h4>
+                    <p>${structure.literary_devices}</p>
+                </div>
+                <div class="content-card">
+                    <h4>Structural Significance</h4>
+                    <p>${structure.significance}</p>
+                </div>
+            `;
 
             output.innerHTML = html;
         }
