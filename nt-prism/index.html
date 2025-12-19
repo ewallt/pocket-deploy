@@ -257,7 +257,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <h1 class="text-2xl font-bold" style="color: var(--primary-gold);">Exegetical Prism</h1>
-                    <p class="text-xs text-gray-400 mt-1">AI-Powered New Testament Analysis (Stable Gemini 1.5)</p>
+                    <p class="text-xs text-gray-400 mt-1">AI-Powered New Testament Analysis</p>
                 </div>
                 <div class="text-right hidden md:block">
                     <div class="text-sm font-semibold text-gray-200" id="passageDisplay">Ready to Analyze</div>
@@ -505,7 +505,7 @@
         }
 
         async function generateWordStudy(word, def) {
-            // PROMPT: Deep Study with safety settings - USING STABLE GEMINI 1.5 FLASH
+            // PROMPT: Deep Study with safety settings
             const prompt = `Perform a theological word study on the Greek word "${word}" (${def}) in the context of ${currentPassageRef}.
             Return JSON only:
             {
@@ -519,7 +519,7 @@
             }`;
 
             const response = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-exp-1206:generateContent?key=${API_KEY}`,
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -700,7 +700,7 @@
             errorDiv.style.display = 'block';
         }
         
-        // --- 6. AI GENERATION - USING STABLE GEMINI 1.5 FLASH ---
+        // --- 6. AI GENERATION ---
         async function generateAnalysis(passageRef) {
             const systemPrompt = `You are a biblical scholar. Analyze ${passageRef}.
             
@@ -753,7 +753,7 @@
             Maintain the exact word order of the NA28 text in the 'interlinear' array.`;
 
             const response = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-exp-1206:generateContent?key=${API_KEY}`,
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -932,3 +932,4 @@
     </script>
 </body>
 </html>
+
