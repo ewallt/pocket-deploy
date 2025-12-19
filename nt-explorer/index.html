@@ -187,6 +187,14 @@
             line-height: 1.9;
         }
 
+        .commentary-card p {
+            margin-bottom: 1.25rem;
+        }
+
+        .commentary-card p:last-child {
+            margin-bottom: 0;
+        }
+
         .reference-step {
             position: relative;
             padding-left: 3rem;
@@ -847,12 +855,20 @@
                     - Reformed theological perspective
                     
                     Provide detailed commentary that captures the depth and style of JFB's work.
+                    Break your commentary into natural paragraphs (typically one paragraph per verse or thought unit).
                     
                     Format: Return ONLY valid JSON with no markdown formatting.
                     Schema:
                     {
-                        "commentary": "Full commentary text in JFB style"
+                        "commentary": [
+                            "First paragraph of commentary addressing the opening verse(s)...",
+                            "Second paragraph continuing the exposition...",
+                            "Third paragraph with deeper analysis...",
+                            "etc."
+                        ]
                     }
+                    
+                    Each paragraph should be substantial (3-6 sentences) and provide meaningful insight.
                 `;
 
                 const userPrompt = `Passage: ${currentPassage}\nText: ${passageText}`;
@@ -987,11 +1003,14 @@
             const output = document.getElementById('jfbOutput');
             let html = `<h3 class="text-2xl font-bold mb-6 text-center section-heading">JFB Commentary on ${currentPassage}</h3>`;
             
-            html += `
-                <div class="commentary-card">
-                    ${data.commentary.replace(/\n/g, '<br><br>')}
-                </div>
-            `;
+            html += `<div class="commentary-card">`;
+            
+            // Loop through array of paragraphs
+            data.commentary.forEach((paragraph) => {
+                html += `<p>${paragraph}</p>`;
+            });
+            
+            html += `</div>`;
 
             output.innerHTML = html;
         }
