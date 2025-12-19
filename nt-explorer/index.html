@@ -178,6 +178,15 @@
             line-height: 1.8;
         }
 
+        .commentary-card {
+            background-color: var(--dark-bg);
+            color: var(--cream-text);
+            padding: 2rem;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary-gold);
+            line-height: 1.9;
+        }
+
         .reference-step {
             position: relative;
             padding-left: 3rem;
@@ -277,6 +286,7 @@
             <button class="tab-button disabled" data-tab="themes" id="themesTab">Theological Themes</button>
             <button class="tab-button disabled" data-tab="context" id="contextTab">Historical Context</button>
             <button class="tab-button disabled" data-tab="structure" id="structureTab">Literary Structure</button>
+            <button class="tab-button disabled" data-tab="jfb" id="jfbTab">JFB Commentary</button>
             <button class="tab-button active" data-tab="about" id="aboutTab">About</button>
         </nav>
 
@@ -317,6 +327,15 @@
                 </div>
             </section>
 
+            <!-- JFB COMMENTARY TAB -->
+            <section id="jfbContent" class="tab-content">
+                <div id="jfbOutput">
+                    <div class="flex items-center justify-center h-64 text-gray-400 italic">
+                        <p>JFB Commentary will appear here.</p>
+                    </div>
+                </div>
+            </section>
+
             <!-- ABOUT TAB -->
             <section id="aboutContent" class="tab-content active">
                 <div class="max-w-4xl mx-auto prose prose-lg">
@@ -337,6 +356,7 @@
                             <li><strong>Theological Themes</strong> - Major doctrines present in the text</li>
                             <li><strong>Historical Context</strong> - Background that illuminates meaning</li>
                             <li><strong>Literary Structure</strong> - How the passage is organized</li>
+                            <li><strong>JFB Commentary</strong> - Insights from Jamieson-Fausset-Brown</li>
                         </ul>
                         
                         <p style="margin-top: 2rem; font-style: italic;">Version 1.0 - Built for sermon prep, Bible study, and deeper understanding of Scripture's interconnected nature.</p>
@@ -360,7 +380,8 @@
             crossRefs: null,
             themes: null,
             context: null,
-            structure: null
+            structure: null,
+            jfb: null
         };
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -464,13 +485,15 @@
                 document.getElementById('themesTab').classList.remove('disabled');
                 document.getElementById('contextTab').classList.remove('disabled');
                 document.getElementById('structureTab').classList.remove('disabled');
+                document.getElementById('jfbTab').classList.remove('disabled');
 
                 // Clear all caches for new passage
                 caches = {
                     crossRefs: null,
                     themes: null,
                     context: null,
-                    structure: null
+                    structure: null,
+                    jfb: null
                 };
 
             } catch (e) {
@@ -511,6 +534,12 @@
                 await exploreStructure();
                 tabButton.classList.remove('loading');
                 tabButton.textContent = 'Literary Structure';
+            } else if (tabId === 'jfb' && !caches.jfb) {
+                tabButton.classList.add('loading');
+                tabButton.innerHTML = 'JFB Commentary<span class="spinner"></span>';
+                await exploreJFB();
+                tabButton.classList.remove('loading');
+                tabButton.textContent = 'JFB Commentary';
             }
             
             // Switch tabs
@@ -800,6 +829,73 @@
             }
         }
 
+        async function exploreJFB() {
+            const output = document.getElementById('jfbOutput');
+            output.innerHTML = '<div class="flex justify-center items-center h-64"><div class="spinner" style="width: 48px; height: 48px; border-width: 4px;"></div></div>';
+
+            try {
+                const systemPrompt = `
+                    You are a biblical scholar deeply familiar with the Jamieson-Fausset-Brown (JFB) Bible Commentary.
+                    Task: Provide commentary in the style and substance of JFB for the given passage.
+                    
+                    The JFB commentary is known for:
+                    - Verse-by-verse exposition
+                    - Attention to original languages (Greek/Hebrew)
+                    - Historical and cultural context
+                    - Cross-references to related passages
+                    - Practical application
+                    - Reformed theological perspective
+                    
+                    Provide detailed commentary that captures the depth and style of JFB's work.
+                    
+                    Format: Return ONLY valid JSON with no markdown formatting.
+                    Schema:
+                    {
+                        "commentary": "Full commentary text in JFB style"
+                    }
+                `;
+
+                const userPrompt = `Passage: ${currentPassage}\nText: ${passageText}`;
+
+                const payload = {
+                    contents: [{
+                        role: "user",
+                        parts: [{ text: systemPrompt + "\n\n" + userPrompt }]
+                    }],
+                    generationConfig: { 
+                        responseMimeType: "application/json",
+                        temperature: 0.7
+                    }
+                };
+
+                const response = await fetch(
+                    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
+                    {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    }
+                );
+
+                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+
+                const data = await response.json();
+                
+                if (data.error) throw new Error(data.error.message);
+                if (!data.candidates || !data.candidates[0]) throw new Error("No response generated.");
+
+                let rawText = data.candidates[0].content.parts[0].text;
+                rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+
+                const result = JSON.parse(rawText);
+                caches.jfb = result;
+                renderJFB(result);
+
+            } catch (e) {
+                output.innerHTML = `<div class="p-4 bg-red-50 text-red-600 border border-red-200 rounded">Error: ${e.message}</div>`;
+            }
+        }
+
         function renderReferences(references) {
             const output = document.getElementById('referencesOutput');
             let html = `<h3 class="text-2xl font-bold mb-6 text-center section-heading">Cross References for ${currentPassage}</h3>`;
@@ -881,6 +977,19 @@
                 <div class="content-card">
                     <h4>Structural Significance</h4>
                     <p>${structure.significance}</p>
+                </div>
+            `;
+
+            output.innerHTML = html;
+        }
+
+        function renderJFB(data) {
+            const output = document.getElementById('jfbOutput');
+            let html = `<h3 class="text-2xl font-bold mb-6 text-center section-heading">JFB Commentary on ${currentPassage}</h3>`;
+            
+            html += `
+                <div class="commentary-card">
+                    ${data.commentary.replace(/\n/g, '<br><br>')}
                 </div>
             `;
 
