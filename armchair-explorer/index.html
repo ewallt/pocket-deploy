@@ -663,7 +663,21 @@
                     systemPrompt = `You are an urban historian. Describe how ${currentCity} has transformed over time in 4-5 paragraphs. Cover: major changes (demolished/built landmarks, neighborhood transformations, what's been lost, what's been gained), compare past to present. Return JSON: {"paragraphs": ["...", "..."]}`;
                     break;
                 case 'photos':
-                    systemPrompt = `You are a photography curator. Generate 5 evocative captions for photos that would capture different aspects of ${currentCity}. Captions should cover: landmarks, street scenes, natural features, cultural elements, atmospheric views. Return JSON: {"captions": ["2-4 word caption", "..."]}`;
+                    systemPrompt = `You are a photography curator with web search capabilities. 
+                    
+                    Task: Search the web for ONE high-quality photograph of ${currentCity}. Find an iconic, beautiful image that captures the essence of the city.
+                    
+                    Search for something like "${currentCity} iconic landmark" or "${currentCity} cityscape" or "${currentCity} famous view".
+                    
+                    Return the direct URL to the image and a caption.
+                    
+                    Return JSON: {
+                        "imageUrl": "direct URL to the image file (must be a direct link to .jpg, .png, or similar)",
+                        "caption": "Brief evocative caption (3-6 words)",
+                        "credit": "Source/attribution if known"
+                    }
+                    
+                    Make sure the imageUrl is a direct link to an actual image file that can be displayed in an <img> tag.`;
                     break;
             }
 
@@ -740,19 +754,17 @@
 
         if (tabId === 'photos') {
             html = `<h3 class="text-2xl font-bold mb-6 text-center section-heading">Scenes from ${currentCity}</h3>`;
-            html += `<div class="photo-grid">`;
             
-            data.captions.forEach((caption, index) => {
-                const imageUrl = `https://picsum.photos/seed/${encodeURIComponent(currentCity)}-${index}/800/600`;
-                html += `
-                    <div class="photo-item">
-                        <img src="${imageUrl}" alt="${caption}" loading="lazy">
-                        <div class="photo-caption">${caption}</div>
+            // Single photo display
+            html += `
+                <div style="max-width: 800px; margin: 0 auto;">
+                    <div class="photo-item" style="border-width: 4px;">
+                        <img src="${data.imageUrl}" alt="${data.caption}" loading="lazy" style="height: 400px;" onerror="this.parentElement.innerHTML='<div style=padding:2rem;text-align:center;color:var(--muted-gold);>Image could not be loaded</div>'">
+                        <div class="photo-caption" style="font-size: 1.1rem; padding: 1.5rem;">${data.caption}</div>
+                        ${data.credit ? `<div class="photo-credit" style="padding-bottom: 1rem;">Source: ${data.credit}</div>` : ''}
                     </div>
-                `;
-            });
-            
-            html += `</div>`;
+                </div>
+            `;
         } else if (tabId === 'hidden') {
             const titles = {
                 'hidden': 'Hidden Stories'
