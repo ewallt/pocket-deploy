@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>City Explorer v4 - Picsum</title>
+    <title>City Explorer - Tiered</title>
     <script>
         // Suppress Tailwind production warning
         window.process = { env: { NODE_ENV: 'production' } };
@@ -43,6 +43,34 @@
         color: #5a5041;
     }
 
+    /* Tier tabs (top level) */
+    .tier-button {
+        padding: 1rem 1.5rem;
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+        border-radius: 0.375rem;
+        background-color: #b8904d;
+        color: var(--cream-text);
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .tier-button:hover {
+        background-color: #a57d3f;
+        transform: translateY(-1px);
+    }
+
+    .tier-button.active {
+        background-color: var(--primary-gold);
+        color: var(--dark-bg);
+    }
+
+    /* Sub-tabs (content tabs within tiers) */
     .tab-button {
         padding: 1rem 1.5rem;
         margin-right: 0.5rem;
@@ -75,6 +103,16 @@
     .tab-button.loading {
         opacity: 0.6;
         cursor: not-allowed;
+    }
+
+    .tier-tabs {
+        display: none;
+        margin-top: 1rem;
+    }
+
+    .tier-tabs.active {
+        display: flex;
+        flex-wrap: wrap;
     }
 
     .tab-content {
@@ -246,7 +284,7 @@
 <body class="min-h-screen antialiased">
     <div class="container mx-auto p-4 md:p-6 lg:p-8 max-w-6xl">
         <header class="text-center py-8 mb-6">
-            <h1 class="font-bold">City Explorer v4 - Picsum</h1>
+            <h1 class="font-bold">City Explorer</h1>
             <p class="text-xl mt-2" style="color: #5a5041;">Armchair Travel at Its Finest</p>
         </header>
 
@@ -264,82 +302,134 @@
         </div>
     </div>
 
-    <nav id="mainNav" class="mb-6 flex flex-wrap">
-        <button class="tab-button disabled" data-tab="history" id="historyTab">History</button>
-        <button class="tab-button disabled" data-tab="photos" id="photosTab">Photos</button>
-        <button class="tab-button active" data-tab="about" id="aboutTab">About</button>
+    <!-- TIER NAVIGATION -->
+    <nav id="tierNav" class="mb-4 flex flex-wrap">
+        <button class="tier-button" data-tier="foundations" onclick="switchTier('foundations')">Foundations</button>
+        <button class="tier-button" data-tier="life" onclick="switchTier('life')">Life</button>
+        <button class="tier-button" data-tier="legacy" onclick="switchTier('legacy')">Legacy</button>
+        <button class="tier-button" data-tier="discovery" onclick="switchTier('discovery')">Discovery</button>
+        <button class="tier-button active" data-tier="about" onclick="switchTier('about')">About</button>
     </nav>
 
-    <main>
-        <!-- HISTORY TAB -->
-        <section id="historyContent" class="tab-content">
-            <div id="historyOutput">
-                <div class="flex items-center justify-center h-64 text-gray-400 italic">
-                    <p>Historical overview will appear here.</p>
-                </div>
-            </div>
-        </section>
+    <!-- SUB-TAB NAVIGATION FOR EACH TIER -->
+    <div id="foundationsTabs" class="tier-tabs">
+        <button class="tab-button disabled" data-tab="history" id="historyTab">History</button>
+        <button class="tab-button disabled" data-tab="geography" id="geographyTab">Geography</button>
+        <button class="tab-button disabled" data-tab="architecture" id="architectureTab">Architecture</button>
+    </div>
 
-        <!-- PHOTOS TAB -->
-        <section id="photosContent" class="tab-content">
-            <div id="photosOutput">
-                <div class="flex items-center justify-center h-64 text-gray-400 italic">
-                    <p>Photos will appear here.</p>
-                </div>
-            </div>
-        </section>
+    <div id="lifeTabs" class="tier-tabs">
+        <button class="tab-button disabled" data-tab="food" id="foodTab">Food Culture</button>
+        <button class="tab-button disabled" data-tab="neighborhoods" id="neighborhoodsTab">Neighborhoods</button>
+        <button class="tab-button disabled" data-tab="customs" id="customsTab">Daily Life</button>
+    </div>
+
+    <div id="legacyTabs" class="tier-tabs">
+        <button class="tab-button disabled" data-tab="arts" id="artsTab">Arts & Museums</button>
+        <button class="tab-button disabled" data-tab="music" id="musicTab">Music</button>
+        <button class="tab-button disabled" data-tab="literary" id="literaryTab">Literary Connections</button>
+    </div>
+
+    <div id="discoveryTabs" class="tier-tabs">
+        <button class="tab-button disabled" data-tab="hidden" id="hiddenTab">Hidden Stories</button>
+        <button class="tab-button disabled" data-tab="thennow" id="thennowTab">Then & Now</button>
+        <button class="tab-button disabled" data-tab="symbols" id="symbolsTab">Symbols & Icons</button>
+    </div>
+
+    <main>
+        <!-- FOUNDATIONS TIER CONTENT -->
+        <section id="historyContent" class="tab-content"></section>
+        <section id="geographyContent" class="tab-content"></section>
+        <section id="architectureContent" class="tab-content"></section>
+
+        <!-- LIFE TIER CONTENT -->
+        <section id="foodContent" class="tab-content"></section>
+        <section id="neighborhoodsContent" class="tab-content"></section>
+        <section id="customsContent" class="tab-content"></section>
+
+        <!-- LEGACY TIER CONTENT -->
+        <section id="artsContent" class="tab-content"></section>
+        <section id="musicContent" class="tab-content"></section>
+        <section id="literaryContent" class="tab-content"></section>
+
+        <!-- DISCOVERY TIER CONTENT -->
+        <section id="hiddenContent" class="tab-content"></section>
+        <section id="thennowContent" class="tab-content"></section>
+        <section id="symbolsContent" class="tab-content"></section>
 
         <!-- ABOUT TAB -->
         <section id="aboutContent" class="tab-content active">
             <div class="max-w-4xl mx-auto prose prose-lg">
                 <div style="background-color: var(--dark-bg); color: var(--cream-text); padding: 2rem; border-radius: 10px; border-left: 4px solid var(--primary-gold);">
-                    <h2 style="color: var(--primary-gold);">About City Explorer v4</h2>
-                    <p>This version uses Lorem Picsum for placeholder images - random beautiful photos that work without any API setup.</p>
+                    <h2 style="color: var(--primary-gold);">About City Explorer</h2>
+                    <p>City Explorer is designed for armchair travelers—people who love learning about cities without necessarily planning a trip. Discover the stories, history, and visual beauty of cities around the world from the comfort of your chair.</p>
                     
                     <h3 style="color: var(--primary-gold); margin-top: 2rem;">How It Works</h3>
                     <ol style="color: var(--cream-text); line-height: 1.8;">
                         <li>Enter any city name (e.g., "Paris", "Kyoto", "Istanbul")</li>
                         <li>Click OK to load the city</li>
-                        <li>Explore different aspects through the tabs</li>
+                        <li>Choose a tier to explore different aspects</li>
+                        <li>Click any tab within that tier to dive deeper</li>
                     </ol>
                     
-                    <h3 style="color: var(--primary-gold); margin-top: 2rem;">What You'll Find</h3>
+                    <h3 style="color: var(--primary-gold); margin-top: 2rem;">Exploration Tiers</h3>
                     <ul style="color: var(--cream-text); line-height: 1.8;">
-                        <li><strong>History</strong> - Key historical moments and how the city evolved</li>
-                        <li><strong>Photos</strong> - Beautiful curated imagery (using placeholder service)</li>
+                        <li><strong>Foundations</strong> - What is this place? History and architecture</li>
+                        <li><strong>Life</strong> - How do people live here? Food and daily customs</li>
+                        <li><strong>Legacy</strong> - What has this place created? Arts and literature</li>
+                        <li><strong>Discovery</strong> - What's hidden or unique? Secrets and scenes</li>
                     </ul>
                     
-                    <p style="margin-top: 2rem; font-style: italic;">Version 4 - Using Lorem Picsum for simple image delivery</p>
+                    <p style="margin-top: 2rem; font-style: italic;">Version 2.0 - Tiered navigation for organized exploration</p>
                 </div>
             </div>
         </section>
     </main>
 
     <footer class="text-center mt-12 py-6 border-t" style="border-color: var(--border-color);">
-        <p class="text-sm" style="color: #5a5041;">City Explorer v4 - Picsum</p>
+        <p class="text-sm" style="color: #5a5041;">City Explorer v2.0</p>
     </footer>
 </div>
 
 <script>
-    const GEMINI_API_KEY = "AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A";
+    const API_KEY = "AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A";
     let currentCity = "";
+    let currentTier = "about";
     
     // Cache for each tab's content
     let caches = {
         history: null,
-        photos: null
+        geography: null,
+        architecture: null,
+        food: null,
+        neighborhoods: null,
+        customs: null,
+        arts: null,
+        music: null,
+        literary: null,
+        hidden: null,
+        thennow: null,
+        symbols: null
+    };
+
+    // Tier to tabs mapping
+    const tierTabs = {
+        foundations: ['history', 'geography', 'architecture'],
+        life: ['food', 'neighborhoods', 'customs'],
+        legacy: ['arts', 'music', 'literary'],
+        discovery: ['hidden', 'thennow', 'symbols'],
+        about: []
     };
 
     document.addEventListener('DOMContentLoaded', () => {
-        const mainNav = document.getElementById('mainNav');
-
-        mainNav.addEventListener('click', (e) => {
-            if (e.target.classList.contains('tab-button') && 
-                !e.target.classList.contains('loading') && 
-                !e.target.classList.contains('disabled')) {
-                const tabId = e.target.dataset.tab;
-                switchTab(tabId, e.target);
-            }
+        // Add click handlers to all sub-tabs
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', (e) => {
+                if (!e.target.classList.contains('disabled') && !e.target.classList.contains('loading')) {
+                    const tabId = e.target.dataset.tab;
+                    switchTab(tabId, e.target);
+                }
+            });
         });
     });
 
@@ -385,7 +475,7 @@
             };
 
             const response = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`,
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -421,12 +511,23 @@
                 </div>
             `;
 
-            document.getElementById('historyTab').classList.remove('disabled');
-            document.getElementById('photosTab').classList.remove('disabled');
+            // Enable all tabs
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('disabled'));
 
+            // Clear all caches for new city
             caches = {
                 history: null,
-                photos: null
+                geography: null,
+                architecture: null,
+                food: null,
+                neighborhoods: null,
+                customs: null,
+                arts: null,
+                music: null,
+                literary: null,
+                hidden: null,
+                thennow: null,
+                symbols: null
             };
 
         } catch (e) {
@@ -438,72 +539,138 @@
         }
     }
 
-    async function switchTab(tabId, button = null) {
-        const tabButton = button || document.querySelector(`[data-tab="${tabId}"]`);
-        const tabContents = document.querySelectorAll('.tab-content');
+    function switchTier(tierId) {
+        currentTier = tierId;
         
-        if (tabId === 'history' && !caches.history) {
-            tabButton.classList.add('loading');
-            tabButton.innerHTML = 'History<span class="spinner"></span>';
-            await exploreHistory();
-            tabButton.classList.remove('loading');
-            tabButton.textContent = 'History';
-        } else if (tabId === 'photos' && !caches.photos) {
-            tabButton.classList.add('loading');
-            tabButton.innerHTML = 'Photos<span class="spinner"></span>';
-            await explorePhotos();
-            tabButton.classList.remove('loading');
-            tabButton.textContent = 'Photos';
-        }
-        
-        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-        tabButton.classList.add('active');
-        
-        tabContents.forEach(content => {
-            content.classList.remove('active');
-            if (content.id === `${tabId}Content`) {
-                content.classList.add('active');
+        // Update tier button states
+        document.querySelectorAll('.tier-button').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.dataset.tier === tierId) {
+                btn.classList.add('active');
             }
         });
+
+        // Hide all tier tab groups
+        document.querySelectorAll('.tier-tabs').forEach(tabs => {
+            tabs.classList.remove('active');
+        });
+
+        // Deactivate all sub-tabs
+        document.querySelectorAll('.tab-button').forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        // Hide all content sections
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+        });
+
+        // Handle About specially
+        if (tierId === 'about') {
+            document.getElementById('aboutContent').classList.add('active');
+            return;
+        }
+
+        // Show the selected tier's tab group (but don't auto-load any tab)
+        const tierTabsEl = document.getElementById(`${tierId}Tabs`);
+        if (tierTabsEl) {
+            tierTabsEl.classList.add('active');
+        }
     }
 
-    async function exploreHistory() {
-        const output = document.getElementById('historyOutput');
+    async function switchTab(tabId, button = null) {
+        const tabButton = button || document.getElementById(`${tabId}Tab`);
+        
+        // Deactivate all tabs in current tier
+        const tierTabsEl = document.getElementById(`${currentTier}Tabs`);
+        if (tierTabsEl) {
+            tierTabsEl.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+        }
+        
+        // Activate clicked tab
+        if (tabButton) {
+            tabButton.classList.add('active');
+        }
+
+        // Hide all content
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+        });
+
+        // Load content if not cached
+        if (!caches[tabId]) {
+            let originalText = '';
+            if (tabButton) {
+                tabButton.classList.add('loading');
+                originalText = tabButton.textContent;
+                tabButton.innerHTML = `${originalText}<span class="spinner"></span>`;
+            }
+            
+            await loadTabContent(tabId);
+            
+            if (tabButton) {
+                tabButton.classList.remove('loading');
+                tabButton.textContent = originalText;
+            }
+        }
+
+        // Show content
+        const contentEl = document.getElementById(`${tabId}Content`);
+        if (contentEl) {
+            contentEl.classList.add('active');
+        }
+    }
+
+    async function loadTabContent(tabId) {
+        const output = document.getElementById(`${tabId}Content`);
         output.innerHTML = '<div class="flex justify-center items-center h-64"><div class="spinner" style="width: 48px; height: 48px; border-width: 4px;"></div></div>';
 
         try {
-            const systemPrompt = `
-                You are a historian and cultural expert specializing in urban history.
-                Task: Provide a compelling historical overview of the given city.
-                
-                Write 4-6 paragraphs covering:
-                1. Ancient/founding period (if applicable)
-                2. Medieval/early modern development
-                3. Modern era transformations
-                4. Contemporary significance
-                
-                Make it engaging and narrative, not a dry timeline. Focus on the most fascinating aspects.
-                Include specific dates, events, and figures where relevant.
-                
-                Format: Return ONLY valid JSON with no markdown formatting.
-                Schema:
-                {
-                    "paragraphs": [
-                        "First paragraph about the city's origins...",
-                        "Second paragraph continuing the story...",
-                        "etc."
-                    ]
-                }
-                
-                Each paragraph should be 4-6 sentences and tell part of the city's story.
-            `;
-
-            const userPrompt = `City: ${currentCity}`;
+            let systemPrompt = '';
+            
+            switch(tabId) {
+                case 'history':
+                    systemPrompt = `You are a historian specializing in urban history. Provide a compelling historical overview of ${currentCity} in 4-6 paragraphs. Cover: founding, medieval/early modern development, modern transformations, contemporary significance. Make it engaging and narrative. Return JSON: {"paragraphs": ["...", "..."]}`;
+                    break;
+                case 'geography':
+                    systemPrompt = `You are a geographer. Describe the geography and setting of ${currentCity} in 4-5 paragraphs. Cover: physical location, climate, natural features (rivers, mountains, etc.), how geography shaped the city's development. Return JSON: {"paragraphs": ["...", "..."]}`;
+                    break;
+                case 'architecture':
+                    systemPrompt = `You are an architecture expert. Describe the architectural character of ${currentCity} in 4-5 paragraphs. Cover: signature styles, iconic buildings, urban planning, what makes the cityscape unique. Return JSON: {"paragraphs": ["...", "..."]}`;
+                    break;
+                case 'food':
+                    systemPrompt = `You are a culinary historian. Describe the food culture of ${currentCity} in 4-5 paragraphs. Cover: signature dishes, culinary traditions, historical influences, what makes the cuisine unique. Return JSON: {"paragraphs": ["...", "..."]}`;
+                    break;
+                case 'neighborhoods':
+                    systemPrompt = `You are an urban cultural expert. Describe the distinct neighborhoods of ${currentCity} in 4-5 paragraphs or as distinct sections. Cover: 3-5 major neighborhoods, their character, what makes each unique, how they differ from each other. Return JSON: {"paragraphs": ["...", "..."]}`;
+                    break;
+                case 'customs':
+                    systemPrompt = `You are a cultural anthropologist. Describe daily life and customs in ${currentCity} in 4-5 paragraphs. Cover: social norms, traditions, how people spend their day, what makes local life distinctive. Return JSON: {"paragraphs": ["...", "..."]}`;
+                    break;
+                case 'arts':
+                    systemPrompt = `You are an art historian. Describe the arts and museums of ${currentCity} in 4-5 paragraphs. Cover: major museums, art movements born there, famous artists connected to the city, cultural institutions. Return JSON: {"paragraphs": ["...", "..."]}`;
+                    break;
+                case 'music':
+                    systemPrompt = `You are a music historian. Describe the musical heritage of ${currentCity} in 4-5 paragraphs. Cover: musical traditions, famous composers or musicians from there, genres born or popularized there, important venues or institutions. Return JSON: {"paragraphs": ["...", "..."]}`;
+                    break;
+                case 'literary':
+                    systemPrompt = `You are a literary scholar. Describe the literary connections to ${currentCity} in 4-5 paragraphs. Cover: famous writers who lived there, books set in the city, literary movements, how literature has portrayed it. Return JSON: {"paragraphs": ["...", "..."]}`;
+                    break;
+                case 'hidden':
+                    systemPrompt = `You are a local historian and storyteller. Share 3-4 hidden stories, urban legends, or lesser-known fascinating details about ${currentCity}. Make them intriguing and specific. Return JSON: {"stories": [{"title": "...", "story": "2-3 paragraph narrative"}]}`;
+                    break;
+                case 'thennow':
+                    systemPrompt = `You are an urban historian. Describe how ${currentCity} has transformed over time in 4-5 paragraphs. Cover: major changes (demolished/built landmarks, neighborhood transformations, what's been lost, what's been gained), compare past to present. Return JSON: {"paragraphs": ["...", "..."]}`;
+                    break;
+                case 'symbols':
+                    systemPrompt = `You are a cultural symbolism expert. Describe 4-6 symbols and icons that define ${currentCity}. These could be: coat of arms, flags, symbolic animals, iconic objects, colors, patron saints, emblems, or other visual/cultural symbols that represent the city's identity. For each symbol, explain its meaning and significance. Return JSON: {"symbols": [{"name": "Symbol name", "description": "2-3 sentence explanation of its meaning and significance"}]}`;
+                    break;
+            }
 
             const payload = {
                 contents: [{
                     role: "user",
-                    parts: [{ text: systemPrompt + "\n\n" + userPrompt }]
+                    parts: [{ text: systemPrompt }]
                 }],
                 generationConfig: { 
                     responseMimeType: "application/json",
@@ -512,7 +679,7 @@
             };
 
             const response = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`,
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -531,119 +698,102 @@
             rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
 
             const result = JSON.parse(rawText);
-            caches.history = result;
-            renderHistory(result);
+            caches[tabId] = result;
+            renderContent(tabId, result);
 
         } catch (e) {
             output.innerHTML = `<div class="p-4 bg-red-50 text-red-600 border border-red-200 rounded">Error: ${e.message}</div>`;
         }
     }
 
-    async function explorePhotos() {
-        const output = document.getElementById('photosOutput');
-        output.innerHTML = '<div class="flex justify-center items-center h-64"><div class="spinner" style="width: 48px; height: 48px; border-width: 4px;"></div></div>';
+    function renderContent(tabId, data) {
+        const output = document.getElementById(`${tabId}Content`);
+        let html = '';
 
-        try {
-            const systemPrompt = `
-                You are a photography curator and travel expert.
-                Task: Generate 5 evocative captions for photos that would capture different aspects of the given city.
-                
-                Captions should cover:
-                - Iconic landmarks/architecture
-                - Street scenes/daily life
-                - Natural features (if applicable)
-                - Cultural elements
-                - Atmospheric views
-                
-                Return ONLY valid JSON with no markdown formatting.
-                Schema:
-                {
-                    "captions": [
-                        "The Iron Lady at Dusk",
-                        "Cobblestone Cafes",
-                        "Seine Reflections",
-                        "Art Nouveau Facades",
-                        "Montmartre Morning"
-                    ]
-                }
-                
-                Each caption should be 2-4 words, evocative and specific to the city.
-            `;
-
-            const userPrompt = `City: ${currentCity}`;
-
-            const payload = {
-                contents: [{
-                    role: "user",
-                    parts: [{ text: systemPrompt + "\n\n" + userPrompt }]
-                }],
-                generationConfig: { 
-                    responseMimeType: "application/json",
-                    temperature: 0.7
-                }
-            };
-
-            const response = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`,
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                }
-            );
-
-            if (!response.ok) throw new Error(`API Error: ${response.status}`);
-
-            const data = await response.json();
+        // Helper function to split paragraphs for mobile
+        function formatParagraph(text) {
+            // Check if we're on mobile (screen width < 768px)
+            const isMobile = window.innerWidth < 768;
             
-            if (data.error) throw new Error(data.error.message);
-            if (!data.candidates || !data.candidates[0]) throw new Error("No response generated.");
-
-            let rawText = data.candidates[0].content.parts[0].text;
-            rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
-
-            const result = JSON.parse(rawText);
-            caches.photos = result;
-            renderPhotos(result);
-
-        } catch (e) {
-            output.innerHTML = `<div class="p-4 bg-red-50 text-red-600 border border-red-200 rounded">Error: ${e.message}</div>`;
+            if (!isMobile) {
+                return `<p>${text}</p>`;
+            }
+            
+            // On mobile, split into smaller chunks (roughly every 2-3 sentences)
+            const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+            let chunks = [];
+            let currentChunk = [];
+            
+            sentences.forEach((sentence, index) => {
+                currentChunk.push(sentence.trim());
+                
+                // Create a new chunk every 2 sentences, or if this is the last sentence
+                if (currentChunk.length >= 2 || index === sentences.length - 1) {
+                    chunks.push(currentChunk.join(' '));
+                    currentChunk = [];
+                }
+            });
+            
+            // Return each chunk as a separate paragraph
+            return chunks.map(chunk => `<p>${chunk}</p>`).join('');
         }
-    }
 
-    function renderHistory(data) {
-        const output = document.getElementById('historyOutput');
-        let html = `<h3 class="text-2xl font-bold mb-6 text-center section-heading">History of ${currentCity}</h3>`;
-        
-        html += `<div class="content-card">`;
-        
-        data.paragraphs.forEach((paragraph) => {
-            html += `<p>${paragraph}</p>`;
-        });
-        
-        html += `</div>`;
-
-        output.innerHTML = html;
-    }
-
-    function renderPhotos(data) {
-        const output = document.getElementById('photosOutput');
-        let html = `<h3 class="text-2xl font-bold mb-6 text-center section-heading">Scenes from ${currentCity}</h3>`;
-        
-        html += `<div class="photo-grid">`;
-        
-        // Use Lorem Picsum with different seed values for variety
-        data.captions.forEach((caption, index) => {
-            const imageUrl = `https://picsum.photos/seed/${encodeURIComponent(currentCity)}-${index}/800/600`;
-            html += `
-                <div class="photo-item">
-                    <img src="${imageUrl}" alt="${caption}" loading="lazy">
-                    <div class="photo-caption">${caption}</div>
-                </div>
-            `;
-        });
-        
-        html += `</div>`;
+        if (tabId === 'hidden') {
+            const titles = {
+                'hidden': 'Hidden Stories'
+            };
+            html = `<h3 class="text-2xl font-bold mb-6 text-center section-heading">${titles[tabId]} of ${currentCity}</h3>`;
+            
+            data.stories.forEach((item) => {
+                html += `<div class="content-card">`;
+                html += `<h4>${item.title}</h4>`;
+                html += formatParagraph(item.story);
+                html += `</div>`;
+            });
+        } else if (tabId === 'symbols') {
+            html = `<h3 class="text-2xl font-bold mb-6 text-center section-heading">Symbols & Icons of ${currentCity}</h3>`;
+            
+            data.symbols.forEach((item) => {
+                html += `<div class="content-card">`;
+                html += `<h4>${item.name}</h4>`;
+                html += `<p>${item.description}</p>`;
+                html += `</div>`;
+            });
+        } else {
+            const titles = {
+                'hidden': 'Hidden Stories'
+            };
+            html = `<h3 class="text-2xl font-bold mb-6 text-center section-heading">${titles[tabId]} of ${currentCity}</h3>`;
+            
+            data.stories.forEach((item) => {
+                html += `<div class="content-card">`;
+                html += `<h4>${item.title}</h4>`;
+                html += formatParagraph(item.story);
+                html += `</div>`;
+            });
+        } else {
+            const titles = {
+                'history': 'History',
+                'geography': 'Geography & Setting',
+                'architecture': 'Architecture',
+                'food': 'Food Culture',
+                'neighborhoods': 'Neighborhoods',
+                'customs': 'Daily Life & Customs',
+                'arts': 'Arts & Museums',
+                'music': 'Musical Heritage',
+                'literary': 'Literary Connections',
+                'thennow': 'Then & Now'
+            };
+            
+            html = `<h3 class="text-2xl font-bold mb-6 text-center section-heading">${titles[tabId]} of ${currentCity}</h3>`;
+            html += `<div class="content-card">`;
+            
+            data.paragraphs.forEach((paragraph) => {
+                html += formatParagraph(paragraph);
+            });
+            
+            html += `</div>`;
+        }
 
         output.innerHTML = html;
     }
