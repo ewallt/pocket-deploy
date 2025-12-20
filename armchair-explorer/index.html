@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>City Explorer</title>
+    <title>City Explorer v2 - Pexels</title>
     <script>
         // Suppress Tailwind production warning
         window.process = { env: { NODE_ENV: 'production' } };
@@ -215,6 +215,13 @@
         font-style: italic;
     }
 
+    .photo-credit {
+        padding: 0 1rem 1rem 1rem;
+        color: var(--muted-gold);
+        font-size: 0.75rem;
+        text-align: center;
+    }
+
     .section-heading {
         color: #b8904d;
         font-weight: 600;
@@ -246,7 +253,7 @@
 <body class="min-h-screen antialiased">
     <div class="container mx-auto p-4 md:p-6 lg:p-8 max-w-6xl">
         <header class="text-center py-8 mb-6">
-            <h1 class="font-bold">City Explorer</h1>
+            <h1 class="font-bold">City Explorer v2 - Pexels</h1>
             <p class="text-xl mt-2" style="color: #5a5041;">Armchair Travel at Its Finest</p>
         </header>
 
@@ -293,8 +300,8 @@
         <section id="aboutContent" class="tab-content active">
             <div class="max-w-4xl mx-auto prose prose-lg">
                 <div style="background-color: var(--dark-bg); color: var(--cream-text); padding: 2rem; border-radius: 10px; border-left: 4px solid var(--primary-gold);">
-                    <h2 style="color: var(--primary-gold);">About City Explorer</h2>
-                    <p>City Explorer is designed for armchair travelers—people who love learning about cities without necessarily planning a trip. Discover the stories, history, and visual beauty of cities around the world from the comfort of your chair.</p>
+                    <h2 style="color: var(--primary-gold);">About City Explorer v2</h2>
+                    <p>This version uses the Pexels API for photos. Pexels is a free stock photo service with high-quality images.</p>
                     
                     <h3 style="color: var(--primary-gold); margin-top: 2rem;">How It Works</h3>
                     <ol style="color: var(--cream-text); line-height: 1.8;">
@@ -306,22 +313,23 @@
                     <h3 style="color: var(--primary-gold); margin-top: 2rem;">What You'll Find</h3>
                     <ul style="color: var(--cream-text); line-height: 1.8;">
                         <li><strong>History</strong> - Key historical moments and how the city evolved</li>
-                        <li><strong>Photos</strong> - Beautiful imagery showcasing the city's character</li>
+                        <li><strong>Photos</strong> - Beautiful imagery from Pexels showcasing the city</li>
                     </ul>
                     
-                    <p style="margin-top: 2rem; font-style: italic;">Version 1.0 - Built for curious minds who want to explore the world one city at a time.</p>
+                    <p style="margin-top: 2rem; font-style: italic;">Version 2 - Testing Pexels API integration</p>
                 </div>
             </div>
         </section>
     </main>
 
     <footer class="text-center mt-12 py-6 border-t" style="border-color: var(--border-color);">
-        <p class="text-sm" style="color: #5a5041;">City Explorer v1.0</p>
+        <p class="text-sm" style="color: #5a5041;">City Explorer v2 - Pexels</p>
     </footer>
 </div>
 
 <script>
-    const API_KEY = "AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A";
+    const GEMINI_API_KEY = "AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A";
+    const PEXELS_API_KEY = "y33JawSlW4yXzzHBZlxUWN3rnDSYC8i6pSWqQ4a1SnGPSPCWS21vRW1B";
     let currentCity = "";
     
     // Cache for each tab's content
@@ -353,7 +361,6 @@
             return;
         }
 
-        // Show loading state
         okButton.disabled = true;
         okButton.innerHTML = '<div class="spinner"></div>';
         cityDisplay.innerHTML = '<div class="city-display"><div class="flex justify-center"><div class="spinner"></div></div></div>';
@@ -386,7 +393,7 @@
             };
 
             const response = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`,
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -406,7 +413,6 @@
 
             let rawText = data.candidates[0].content.parts[0].text;
             
-            // Try to extract JSON from response
             const jsonMatch = rawText.match(/\{[\s\S]*\}/);
             if (jsonMatch) {
                 rawText = jsonMatch[0];
@@ -414,10 +420,8 @@
 
             const result = JSON.parse(rawText);
             
-            // Store city info
             currentCity = result.city;
 
-            // Display the city
             cityDisplay.innerHTML = `
                 <div class="city-display">
                     <div class="city-name">${result.city}</div>
@@ -425,11 +429,9 @@
                 </div>
             `;
 
-            // Enable all tabs
             document.getElementById('historyTab').classList.remove('disabled');
             document.getElementById('photosTab').classList.remove('disabled');
 
-            // Clear all caches for new city
             caches = {
                 history: null,
                 photos: null
@@ -448,7 +450,6 @@
         const tabButton = button || document.querySelector(`[data-tab="${tabId}"]`);
         const tabContents = document.querySelectorAll('.tab-content');
         
-        // Handle tab-specific logic
         if (tabId === 'history' && !caches.history) {
             tabButton.classList.add('loading');
             tabButton.innerHTML = 'History<span class="spinner"></span>';
@@ -463,7 +464,6 @@
             tabButton.textContent = 'Photos';
         }
         
-        // Switch tabs
         document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
         tabButton.classList.add('active');
         
@@ -520,7 +520,7 @@
             };
 
             const response = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`,
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -552,66 +552,29 @@
         output.innerHTML = '<div class="flex justify-center items-center h-64"><div class="spinner" style="width: 48px; height: 48px; border-width: 4px;"></div></div>';
 
         try {
-            const systemPrompt = `
-                You are a photography curator and travel expert.
-                Task: Generate 5 diverse search terms that would capture different aspects of the given city.
-                
-                Terms should cover:
-                - Iconic landmarks/architecture
-                - Street scenes/daily life
-                - Natural features (if applicable)
-                - Cultural elements
-                - Atmospheric views (sunset, night, etc.)
-                
-                Return ONLY valid JSON with no markdown formatting.
-                Schema:
-                {
-                    "searches": [
-                        {"term": "paris eiffel tower", "caption": "The Iron Lady"},
-                        {"term": "paris cafe street", "caption": "Parisian Cafe Culture"},
-                        ...
-                    ]
-                }
-                
-                Each search term should be 2-4 words, focused and specific.
-                Each caption should be 2-5 words describing what the photo shows.
-            `;
-
-            const userPrompt = `City: ${currentCity}`;
-
-            const payload = {
-                contents: [{
-                    role: "user",
-                    parts: [{ text: systemPrompt + "\n\n" + userPrompt }]
-                }],
-                generationConfig: { 
-                    responseMimeType: "application/json",
-                    temperature: 0.7
-                }
-            };
-
+            // Extract just the city name for search (remove country if present)
+            const cityName = currentCity.split(',')[0].trim();
+            
+            // Search Pexels for city photos
             const response = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
+                `https://api.pexels.com/v1/search?query=${encodeURIComponent(cityName + ' city')}&per_page=5&orientation=landscape`,
                 {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
+                    headers: {
+                        'Authorization': PEXELS_API_KEY
+                    }
                 }
             );
 
-            if (!response.ok) throw new Error(`API Error: ${response.status}`);
+            if (!response.ok) throw new Error(`Pexels API Error: ${response.status}`);
 
             const data = await response.json();
             
-            if (data.error) throw new Error(data.error.message);
-            if (!data.candidates || !data.candidates[0]) throw new Error("No response generated.");
+            if (!data.photos || data.photos.length === 0) {
+                throw new Error("No photos found for this city.");
+            }
 
-            let rawText = data.candidates[0].content.parts[0].text;
-            rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
-
-            const result = JSON.parse(rawText);
-            caches.photos = result;
-            renderPhotos(result);
+            caches.photos = data.photos;
+            renderPhotos(data.photos);
 
         } catch (e) {
             output.innerHTML = `<div class="p-4 bg-red-50 text-red-600 border border-red-200 rounded">Error: ${e.message}</div>`;
@@ -633,18 +596,18 @@
         output.innerHTML = html;
     }
 
-    function renderPhotos(data) {
+    function renderPhotos(photos) {
         const output = document.getElementById('photosOutput');
         let html = `<h3 class="text-2xl font-bold mb-6 text-center section-heading">Scenes from ${currentCity}</h3>`;
         
         html += `<div class="photo-grid">`;
         
-        data.searches.forEach((search) => {
-            const imageUrl = `https://source.unsplash.com/800x600/?${encodeURIComponent(search.term)}`;
+        photos.forEach((photo) => {
             html += `
                 <div class="photo-item">
-                    <img src="${imageUrl}" alt="${search.caption}" loading="lazy">
-                    <div class="photo-caption">${search.caption}</div>
+                    <img src="${photo.src.large}" alt="${photo.alt || 'City scene'}" loading="lazy">
+                    <div class="photo-caption">${photo.alt || 'City View'}</div>
+                    <div class="photo-credit">Photo by ${photo.photographer}</div>
                 </div>
             `;
         });
