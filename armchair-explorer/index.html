@@ -314,39 +314,47 @@
     <!-- SUB-TAB NAVIGATION FOR EACH TIER -->
     <div id="foundationsTabs" class="tier-tabs">
         <button class="tab-button disabled" data-tab="history" id="historyTab">History</button>
+        <button class="tab-button disabled" data-tab="geography" id="geographyTab">Geography</button>
         <button class="tab-button disabled" data-tab="architecture" id="architectureTab">Architecture</button>
     </div>
 
     <div id="lifeTabs" class="tier-tabs">
         <button class="tab-button disabled" data-tab="food" id="foodTab">Food Culture</button>
+        <button class="tab-button disabled" data-tab="neighborhoods" id="neighborhoodsTab">Neighborhoods</button>
         <button class="tab-button disabled" data-tab="customs" id="customsTab">Daily Life</button>
     </div>
 
     <div id="legacyTabs" class="tier-tabs">
         <button class="tab-button disabled" data-tab="arts" id="artsTab">Arts & Museums</button>
+        <button class="tab-button disabled" data-tab="music" id="musicTab">Music</button>
         <button class="tab-button disabled" data-tab="literary" id="literaryTab">Literary Connections</button>
     </div>
 
     <div id="discoveryTabs" class="tier-tabs">
         <button class="tab-button disabled" data-tab="hidden" id="hiddenTab">Hidden Stories</button>
+        <button class="tab-button disabled" data-tab="thennow" id="thennowTab">Then & Now</button>
         <button class="tab-button disabled" data-tab="photos" id="photosTab">Photos</button>
     </div>
 
     <main>
         <!-- FOUNDATIONS TIER CONTENT -->
         <section id="historyContent" class="tab-content"></section>
+        <section id="geographyContent" class="tab-content"></section>
         <section id="architectureContent" class="tab-content"></section>
 
         <!-- LIFE TIER CONTENT -->
         <section id="foodContent" class="tab-content"></section>
+        <section id="neighborhoodsContent" class="tab-content"></section>
         <section id="customsContent" class="tab-content"></section>
 
         <!-- LEGACY TIER CONTENT -->
         <section id="artsContent" class="tab-content"></section>
+        <section id="musicContent" class="tab-content"></section>
         <section id="literaryContent" class="tab-content"></section>
 
         <!-- DISCOVERY TIER CONTENT -->
         <section id="hiddenContent" class="tab-content"></section>
+        <section id="thennowContent" class="tab-content"></section>
         <section id="photosContent" class="tab-content"></section>
 
         <!-- ABOUT TAB -->
@@ -391,21 +399,25 @@
     // Cache for each tab's content
     let caches = {
         history: null,
+        geography: null,
         architecture: null,
         food: null,
+        neighborhoods: null,
         customs: null,
         arts: null,
+        music: null,
         literary: null,
         hidden: null,
+        thennow: null,
         photos: null
     };
 
     // Tier to tabs mapping
     const tierTabs = {
-        foundations: ['history', 'architecture'],
-        life: ['food', 'customs'],
-        legacy: ['arts', 'literary'],
-        discovery: ['hidden', 'photos'],
+        foundations: ['history', 'geography', 'architecture'],
+        life: ['food', 'neighborhoods', 'customs'],
+        legacy: ['arts', 'music', 'literary'],
+        discovery: ['hidden', 'thennow', 'photos'],
         about: []
     };
 
@@ -505,12 +517,16 @@
             // Clear all caches for new city
             caches = {
                 history: null,
+                geography: null,
                 architecture: null,
                 food: null,
+                neighborhoods: null,
                 customs: null,
                 arts: null,
+                music: null,
                 literary: null,
                 hidden: null,
+                thennow: null,
                 photos: null
             };
 
@@ -616,11 +632,17 @@
                 case 'history':
                     systemPrompt = `You are a historian specializing in urban history. Provide a compelling historical overview of ${currentCity} in 4-6 paragraphs. Cover: founding, medieval/early modern development, modern transformations, contemporary significance. Make it engaging and narrative. Return JSON: {"paragraphs": ["...", "..."]}`;
                     break;
+                case 'geography':
+                    systemPrompt = `You are a geographer. Describe the geography and setting of ${currentCity} in 4-5 paragraphs. Cover: physical location, climate, natural features (rivers, mountains, etc.), how geography shaped the city's development. Return JSON: {"paragraphs": ["...", "..."]}`;
+                    break;
                 case 'architecture':
                     systemPrompt = `You are an architecture expert. Describe the architectural character of ${currentCity} in 4-5 paragraphs. Cover: signature styles, iconic buildings, urban planning, what makes the cityscape unique. Return JSON: {"paragraphs": ["...", "..."]}`;
                     break;
                 case 'food':
                     systemPrompt = `You are a culinary historian. Describe the food culture of ${currentCity} in 4-5 paragraphs. Cover: signature dishes, culinary traditions, historical influences, what makes the cuisine unique. Return JSON: {"paragraphs": ["...", "..."]}`;
+                    break;
+                case 'neighborhoods':
+                    systemPrompt = `You are an urban cultural expert. Describe the distinct neighborhoods of ${currentCity} in 4-5 paragraphs or as distinct sections. Cover: 3-5 major neighborhoods, their character, what makes each unique, how they differ from each other. Return JSON: {"paragraphs": ["...", "..."]}`;
                     break;
                 case 'customs':
                     systemPrompt = `You are a cultural anthropologist. Describe daily life and customs in ${currentCity} in 4-5 paragraphs. Cover: social norms, traditions, how people spend their day, what makes local life distinctive. Return JSON: {"paragraphs": ["...", "..."]}`;
@@ -628,11 +650,17 @@
                 case 'arts':
                     systemPrompt = `You are an art historian. Describe the arts and museums of ${currentCity} in 4-5 paragraphs. Cover: major museums, art movements born there, famous artists connected to the city, cultural institutions. Return JSON: {"paragraphs": ["...", "..."]}`;
                     break;
+                case 'music':
+                    systemPrompt = `You are a music historian. Describe the musical heritage of ${currentCity} in 4-5 paragraphs. Cover: musical traditions, famous composers or musicians from there, genres born or popularized there, important venues or institutions. Return JSON: {"paragraphs": ["...", "..."]}`;
+                    break;
                 case 'literary':
                     systemPrompt = `You are a literary scholar. Describe the literary connections to ${currentCity} in 4-5 paragraphs. Cover: famous writers who lived there, books set in the city, literary movements, how literature has portrayed it. Return JSON: {"paragraphs": ["...", "..."]}`;
                     break;
                 case 'hidden':
                     systemPrompt = `You are a local historian and storyteller. Share 3-4 hidden stories, urban legends, or lesser-known fascinating details about ${currentCity}. Make them intriguing and specific. Return JSON: {"stories": [{"title": "...", "story": "2-3 paragraph narrative"}]}`;
+                    break;
+                case 'thennow':
+                    systemPrompt = `You are an urban historian. Describe how ${currentCity} has transformed over time in 4-5 paragraphs. Cover: major changes (demolished/built landmarks, neighborhood transformations, what's been lost, what's been gained), compare past to present. Return JSON: {"paragraphs": ["...", "..."]}`;
                     break;
                 case 'photos':
                     systemPrompt = `You are a photography curator. Generate 5 evocative captions for photos that would capture different aspects of ${currentCity}. Captions should cover: landmarks, street scenes, natural features, cultural elements, atmospheric views. Return JSON: {"captions": ["2-4 word caption", "..."]}`;
@@ -712,11 +740,15 @@
         } else {
             const titles = {
                 'history': 'History',
+                'geography': 'Geography & Setting',
                 'architecture': 'Architecture',
                 'food': 'Food Culture',
+                'neighborhoods': 'Neighborhoods',
                 'customs': 'Daily Life & Customs',
                 'arts': 'Arts & Museums',
-                'literary': 'Literary Connections'
+                'music': 'Musical Heritage',
+                'literary': 'Literary Connections',
+                'thennow': 'Then & Now'
             };
             
             html = `<h3 class="text-2xl font-bold mb-6 text-center section-heading">${titles[tabId]} of ${currentCity}</h3>`;
