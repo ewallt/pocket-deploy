@@ -190,7 +190,6 @@
         <header class="text-center py-8 mb-6">
             <h1 class="font-bold">City Explorer</h1>
             <p class="text-xl mt-2" style="color: #5a5041;">Armchair Travel at Its Finest</p>
-            <p class="text-sm mt-1" style="color: #8a7a6a;">v2.0</p>
         </header>
 
 ```
@@ -266,6 +265,8 @@
                         <li><strong>Legacy</strong> - What has this place created? Arts, music, literature</li>
                         <li><strong>Discovery</strong> - What's hidden? Secrets, transformations, symbols</li>
                     </ul>
+                    
+                    <p style="margin-top: 2rem; font-style: italic; color: var(--muted-gold);">Version 2.0</p>
                 </div>
             </div>
         </section>
@@ -464,7 +465,13 @@
         const output = document.getElementById(`${tabId}Content`);
         const isMobile = window.innerWidth < 768;
         
+        function cleanText(text) {
+            // Remove backticks that sometimes appear in AI responses
+            return text.replace(/`/g, '');
+        }
+        
         function formatParagraph(text) {
+            text = cleanText(text);
             if (!isMobile) return `<p>${text}</p>`;
             
             const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
@@ -493,12 +500,12 @@
         if (tabId === 'hidden') {
             html = `<h3 class="text-2xl font-bold mb-6 text-center section-heading">Hidden Stories of ${currentCity}</h3>`;
             data.stories.forEach((item) => {
-                html += `<div class="content-card"><h4>${item.title}</h4>${formatParagraph(item.story)}</div>`;
+                html += `<div class="content-card"><h4>${cleanText(item.title)}</h4>${formatParagraph(item.story)}</div>`;
             });
         } else if (tabId === 'symbols') {
             html = `<h3 class="text-2xl font-bold mb-6 text-center section-heading">Symbols & Icons of ${currentCity}</h3>`;
             data.symbols.forEach((item) => {
-                html += `<div class="content-card"><h4>${item.name}</h4><p>${item.description}</p></div>`;
+                html += `<div class="content-card"><h4>${cleanText(item.name)}</h4><p>${cleanText(item.description)}</p></div>`;
             });
         } else {
             html = `<h3 class="text-2xl font-bold mb-6 text-center section-heading">${titles[tabId]} of ${currentCity}</h3>`;
