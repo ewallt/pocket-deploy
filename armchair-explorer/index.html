@@ -539,6 +539,11 @@
             tabs.classList.remove('active');
         });
 
+        // Deactivate all sub-tabs
+        document.querySelectorAll('.tab-button').forEach(btn => {
+            btn.classList.remove('active');
+        });
+
         // Hide all content sections
         document.querySelectorAll('.tab-content').forEach(content => {
             content.classList.remove('active');
@@ -550,17 +555,10 @@
             return;
         }
 
-        // Show the selected tier's tab group
+        // Show the selected tier's tab group (but don't auto-load any tab)
         const tierTabsEl = document.getElementById(`${tierId}Tabs`);
         if (tierTabsEl) {
             tierTabsEl.classList.add('active');
-            
-            // Activate first tab in this tier
-            const firstTab = tierTabs[tierId][0];
-            const firstTabButton = document.getElementById(`${firstTab}Tab`);
-            if (firstTabButton && !firstTabButton.classList.contains('disabled')) {
-                switchTab(firstTab, firstTabButton);
-            }
         }
     }
 
