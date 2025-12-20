@@ -333,7 +333,7 @@
     <div id="discoveryTabs" class="tier-tabs">
         <button class="tab-button disabled" data-tab="hidden" id="hiddenTab">Hidden Stories</button>
         <button class="tab-button disabled" data-tab="thennow" id="thennowTab">Then & Now</button>
-        <button class="tab-button disabled" data-tab="photos" id="photosTab">Photos</button>
+        <button class="tab-button disabled" data-tab="symbols" id="symbolsTab">Symbols & Icons</button>
     </div>
 
     <main>
@@ -355,7 +355,7 @@
         <!-- DISCOVERY TIER CONTENT -->
         <section id="hiddenContent" class="tab-content"></section>
         <section id="thennowContent" class="tab-content"></section>
-        <section id="photosContent" class="tab-content"></section>
+        <section id="symbolsContent" class="tab-content"></section>
 
         <!-- ABOUT TAB -->
         <section id="aboutContent" class="tab-content active">
@@ -409,7 +409,7 @@
         literary: null,
         hidden: null,
         thennow: null,
-        photos: null
+        symbols: null
     };
 
     // Tier to tabs mapping
@@ -417,7 +417,7 @@
         foundations: ['history', 'geography', 'architecture'],
         life: ['food', 'neighborhoods', 'customs'],
         legacy: ['arts', 'music', 'literary'],
-        discovery: ['hidden', 'thennow', 'photos'],
+        discovery: ['hidden', 'thennow', 'symbols'],
         about: []
     };
 
@@ -527,7 +527,7 @@
                 literary: null,
                 hidden: null,
                 thennow: null,
-                photos: null
+                symbols: null
             };
 
         } catch (e) {
@@ -662,22 +662,8 @@
                 case 'thennow':
                     systemPrompt = `You are an urban historian. Describe how ${currentCity} has transformed over time in 4-5 paragraphs. Cover: major changes (demolished/built landmarks, neighborhood transformations, what's been lost, what's been gained), compare past to present. Return JSON: {"paragraphs": ["...", "..."]}`;
                     break;
-                case 'photos':
-                    systemPrompt = `You are a photography curator with web search capabilities. 
-                    
-                    Task: Search the web for ONE high-quality photograph of ${currentCity}. Find an iconic, beautiful image that captures the essence of the city.
-                    
-                    Search for something like "${currentCity} iconic landmark" or "${currentCity} cityscape" or "${currentCity} famous view".
-                    
-                    Return the direct URL to the image and a caption.
-                    
-                    Return JSON: {
-                        "imageUrl": "direct URL to the image file (must be a direct link to .jpg, .png, or similar)",
-                        "caption": "Brief evocative caption (3-6 words)",
-                        "credit": "Source/attribution if known"
-                    }
-                    
-                    Make sure the imageUrl is a direct link to an actual image file that can be displayed in an <img> tag.`;
+                case 'symbols':
+                    systemPrompt = `You are a cultural symbolism expert. Describe 4-6 symbols and icons that define ${currentCity}. These could be: coat of arms, flags, symbolic animals, iconic objects, colors, patron saints, emblems, or other visual/cultural symbols that represent the city's identity. For each symbol, explain its meaning and significance. Return JSON: {"symbols": [{"name": "Symbol name", "description": "2-3 sentence explanation of its meaning and significance"}]}`;
                     break;
             }
 
@@ -752,20 +738,28 @@
             return chunks.map(chunk => `<p>${chunk}</p>`).join('');
         }
 
-        if (tabId === 'photos') {
-            html = `<h3 class="text-2xl font-bold mb-6 text-center section-heading">Scenes from ${currentCity}</h3>`;
+        if (tabId === 'hidden') {
+            const titles = {
+                'hidden': 'Hidden Stories'
+            };
+            html = `<h3 class="text-2xl font-bold mb-6 text-center section-heading">${titles[tabId]} of ${currentCity}</h3>`;
             
-            // Single photo display
-            html += `
-                <div style="max-width: 800px; margin: 0 auto;">
-                    <div class="photo-item" style="border-width: 4px;">
-                        <img src="${data.imageUrl}" alt="${data.caption}" loading="lazy" style="height: 400px;" onerror="this.parentElement.innerHTML='<div style=padding:2rem;text-align:center;color:var(--muted-gold);>Image could not be loaded</div>'">
-                        <div class="photo-caption" style="font-size: 1.1rem; padding: 1.5rem;">${data.caption}</div>
-                        ${data.credit ? `<div class="photo-credit" style="padding-bottom: 1rem;">Source: ${data.credit}</div>` : ''}
-                    </div>
-                </div>
-            `;
-        } else if (tabId === 'hidden') {
+            data.stories.forEach((item) => {
+                html += `<div class="content-card">`;
+                html += `<h4>${item.title}</h4>`;
+                html += formatParagraph(item.story);
+                html += `</div>`;
+            });
+        } else if (tabId === 'symbols') {
+            html = `<h3 class="text-2xl font-bold mb-6 text-center section-heading">Symbols & Icons of ${currentCity}</h3>`;
+            
+            data.symbols.forEach((item) => {
+                html += `<div class="content-card">`;
+                html += `<h4>${item.name}</h4>`;
+                html += `<p>${item.description}</p>`;
+                html += `</div>`;
+            });
+        } else {
             const titles = {
                 'hidden': 'Hidden Stories'
             };
