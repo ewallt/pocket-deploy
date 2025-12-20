@@ -710,6 +710,34 @@
         const output = document.getElementById(`${tabId}Content`);
         let html = '';
 
+        // Helper function to split paragraphs for mobile
+        function formatParagraph(text) {
+            // Check if we're on mobile (screen width < 768px)
+            const isMobile = window.innerWidth < 768;
+            
+            if (!isMobile) {
+                return `<p>${text}</p>`;
+            }
+            
+            // On mobile, split into smaller chunks (roughly every 2-3 sentences)
+            const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+            let chunks = [];
+            let currentChunk = [];
+            
+            sentences.forEach((sentence, index) => {
+                currentChunk.push(sentence.trim());
+                
+                // Create a new chunk every 2 sentences, or if this is the last sentence
+                if (currentChunk.length >= 2 || index === sentences.length - 1) {
+                    chunks.push(currentChunk.join(' '));
+                    currentChunk = [];
+                }
+            });
+            
+            // Return each chunk as a separate paragraph
+            return chunks.map(chunk => `<p>${chunk}</p>`).join('');
+        }
+
         if (tabId === 'photos') {
             html = `<h3 class="text-2xl font-bold mb-6 text-center section-heading">Scenes from ${currentCity}</h3>`;
             html += `<div class="photo-grid">`;
@@ -734,7 +762,7 @@
             data.stories.forEach((item) => {
                 html += `<div class="content-card">`;
                 html += `<h4>${item.title}</h4>`;
-                html += `<p>${item.story}</p>`;
+                html += formatParagraph(item.story);
                 html += `</div>`;
             });
         } else {
@@ -755,7 +783,7 @@
             html += `<div class="content-card">`;
             
             data.paragraphs.forEach((paragraph) => {
-                html += `<p>${paragraph}</p>`;
+                html += formatParagraph(paragraph);
             });
             
             html += `</div>`;
