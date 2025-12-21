@@ -319,6 +319,20 @@ h1 {
             );
 
             const data = await response.json();
+            
+            // Debug: Log the full response
+            console.log('Full API response:', JSON.stringify(data, null, 2));
+            
+            // Check if response has error
+            if (data.error) {
+                throw new Error(`API Error: ${data.error.message}`);
+            }
+            
+            // Check if response has the expected structure
+            if (!data.candidates || data.candidates.length === 0) {
+                throw new Error(`No candidates in response. Full response: ${JSON.stringify(data)}`);
+            }
+            
             let rawText = data.candidates[0].content.parts[0].text;
             const jsonMatch = rawText.match(/\{[\s\S]*\}/);
             if (jsonMatch) rawText = jsonMatch[0];
