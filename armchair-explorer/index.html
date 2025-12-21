@@ -272,7 +272,7 @@
                     </button>
                     <div id="modelList" style="background-color: rgba(0,0,0,0.2); padding: 1rem; border-radius: 0.5rem; font-family: monospace; font-size: 0.85rem; display: none; max-height: 300px; overflow-y: auto;"></div>
                     
-                    <p style="margin-top: 2rem; font-style: italic; color: var(--muted-gold);">Version 2.5 - Powered by Gemini 2.0 Flash</p>
+                    <p style="margin-top: 2rem; font-style: italic; color: var(--muted-gold);">Version 2.6 - Powered by Gemini 2.0 Flash</p>
                 </div>
             </div>
         </section>
@@ -553,11 +553,14 @@
             if (flashModels.length === 0) {
                 html += '<div>No flash models found.</div>';
             } else {
-                flashModels.forEach(m => {
+                flashModels.forEach((m, idx) => {
                     const modelId = m.name.replace("models/", "");
                     html += `<div style="margin-bottom: 0.75rem; padding: 0.5rem; background-color: rgba(0,0,0,0.2); border-radius: 0.25rem;">`;
                     html += `<div style="color: var(--primary-gold);">Display Name: ${m.displayName}</div>`;
-                    html += `<div style="color: var(--cream-text); user-select: text; cursor: text;">Model ID: <span style="background-color: rgba(255,255,255,0.1); padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-family: monospace;">${modelId}</span></div>`;
+                    html += `<div style="color: var(--cream-text); display: flex; align-items: center; gap: 0.5rem;">`;
+                    html += `<span style="user-select: text; cursor: text;">Model ID: <code style="background-color: rgba(255,255,255,0.1); padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-family: monospace;">${modelId}</code></span>`;
+                    html += `<button onclick="copyModelId('${modelId}')" style="padding: 0.25rem 0.5rem; background-color: var(--primary-gold); color: var(--dark-bg); border: none; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem; font-family: 'Crimson Text', Georgia, serif;">Copy</button>`;
+                    html += `</div>`;
                     html += `</div>`;
                 });
             }
@@ -567,6 +570,18 @@
         } catch (e) {
             modelList.innerHTML = `Network Error: ${e.message}`;
         }
+    }
+
+    function copyModelId(modelId) {
+        navigator.clipboard.writeText(modelId).then(() => {
+            // Visual feedback
+            event.target.textContent = 'Copied!';
+            setTimeout(() => {
+                event.target.textContent = 'Copy';
+            }, 2000);
+        }).catch(err => {
+            alert('Failed to copy: ' + err);
+        });
     }
 </script>
 ```
