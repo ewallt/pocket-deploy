@@ -20,7 +20,6 @@
             --border-color: #c4b5a0;
         }
 
-```
     body {
         font-family: 'Crimson Text', Georgia, serif;
         background-color: var(--neutral-bg);
@@ -182,7 +181,6 @@
         to { transform: rotate(360deg); }
     }
 </style>
-```
 
 </head>
 <body class="min-h-screen antialiased">
@@ -190,10 +188,9 @@
         <header class="text-center py-8 mb-6">
             <h1 class="font-bold">City Explorer</h1>
             <p class="text-xl mt-2" style="color: #5a5041;">Armchair Travel at Its Finest</p>
-            <p class="text-sm mt-1" style="color: #8a7a6a;">v2.0</p>
+            <p class="text-sm mt-1" style="color: #8a7a6a;">v2.1 - Neighborhoods Test</p>
         </header>
 
-```
     <div class="max-w-2xl mx-auto mb-8">
         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
             <label class="block text-sm font-bold mb-2" style="color: var(--dark-bg);">Enter a City</label>
@@ -208,64 +205,43 @@
     </div>
 
     <nav class="mb-4 flex flex-wrap">
-        <button class="tier-button" onclick="switchTier('foundations')">Foundations</button>
-        <button class="tier-button" onclick="switchTier('life')">Life</button>
-        <button class="tier-button" onclick="switchTier('legacy')">Legacy</button>
-        <button class="tier-button" onclick="switchTier('discovery')">Discovery</button>
+        <button class="tier-button" onclick="switchTier('neighborhoods')">Neighborhoods</button>
         <button class="tier-button active" onclick="switchTier('about')">About</button>
     </nav>
 
-    <div id="foundationsTabs" class="tier-tabs">
-        <button class="tab-button disabled" onclick="loadTab('history')">History</button>
-        <button class="tab-button disabled" onclick="loadTab('geography')">Geography</button>
-        <button class="tab-button disabled" onclick="loadTab('architecture')">Architecture</button>
-    </div>
-
-    <div id="lifeTabs" class="tier-tabs">
-        <button class="tab-button disabled" onclick="loadTab('food')">Food Culture</button>
-        <button class="tab-button disabled" onclick="loadTab('neighborhoods')">Neighborhoods</button>
-        <button class="tab-button disabled" onclick="loadTab('customs')">Daily Life</button>
-    </div>
-
-    <div id="legacyTabs" class="tier-tabs">
-        <button class="tab-button disabled" onclick="loadTab('arts')">Arts & Museums</button>
-        <button class="tab-button disabled" onclick="loadTab('music')">Music</button>
-        <button class="tab-button disabled" onclick="loadTab('literary')">Literary</button>
-    </div>
-
-    <div id="discoveryTabs" class="tier-tabs">
-        <button class="tab-button disabled" onclick="loadTab('hidden')">Hidden Stories</button>
-        <button class="tab-button disabled" onclick="loadTab('thennow')">Then & Now</button>
-        <button class="tab-button disabled" onclick="loadTab('symbols')">Symbols</button>
+    <div id="neighborhoodsTabs" class="tier-tabs">
+        <div style="max-width: 500px; margin-bottom: 1rem;">
+            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--dark-bg);">Select a Neighborhood:</label>
+            <select id="neighborhoodDropdown" onchange="selectNeighborhood()" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 0.5rem; font-family: 'Crimson Text', Georgia, serif; font-size: 1rem; background-color: white;">
+                <option value="">-- Select a neighborhood --</option>
+            </select>
+        </div>
+        <div id="neighborhoodTabButtons" style="display: none; flex-wrap: wrap;">
+            <button class="tab-button" onclick="loadNeighborhoodTab('nbh-history')">History</button>
+            <button class="tab-button" onclick="loadNeighborhoodTab('nbh-food')">Food</button>
+            <button class="tab-button" onclick="loadNeighborhoodTab('nbh-character')">Character</button>
+        </div>
     </div>
 
     <main>
-        <section id="historyContent" class="tab-content"></section>
-        <section id="geographyContent" class="tab-content"></section>
-        <section id="architectureContent" class="tab-content"></section>
-        <section id="foodContent" class="tab-content"></section>
-        <section id="neighborhoodsContent" class="tab-content"></section>
-        <section id="customsContent" class="tab-content"></section>
-        <section id="artsContent" class="tab-content"></section>
-        <section id="musicContent" class="tab-content"></section>
-        <section id="literaryContent" class="tab-content"></section>
-        <section id="hiddenContent" class="tab-content"></section>
-        <section id="thennowContent" class="tab-content"></section>
-        <section id="symbolsContent" class="tab-content"></section>
+        <section id="nbh-historyContent" class="tab-content"></section>
+        <section id="nbh-foodContent" class="tab-content"></section>
+        <section id="nbh-characterContent" class="tab-content"></section>
 
         <section id="aboutContent" class="tab-content active">
             <div class="max-w-4xl mx-auto">
                 <div style="background-color: var(--dark-bg); color: var(--cream-text); padding: 2rem; border-radius: 10px; border-left: 4px solid var(--primary-gold);">
-                    <h2 style="color: var(--primary-gold);">About City Explorer</h2>
-                    <p>City Explorer is designed for armchair travelers—people who love learning about cities without necessarily planning a trip.</p>
+                    <h2 style="color: var(--primary-gold);">About City Explorer - Neighborhoods Test</h2>
+                    <p>This version tests the neighborhood exploration feature.</p>
                     
-                    <h3 style="color: var(--primary-gold); margin-top: 2rem;">Exploration Tiers</h3>
-                    <ul style="color: var(--cream-text); line-height: 1.8;">
-                        <li><strong>Foundations</strong> - What is this place? History, geography, architecture</li>
-                        <li><strong>Life</strong> - How do people live? Food, neighborhoods, customs</li>
-                        <li><strong>Legacy</strong> - What has this place created? Arts, music, literature</li>
-                        <li><strong>Discovery</strong> - What's hidden? Secrets, transformations, symbols</li>
-                    </ul>
+                    <h3 style="color: var(--primary-gold); margin-top: 2rem;">How to Use</h3>
+                    <ol style="color: var(--cream-text); line-height: 1.8;">
+                        <li>Enter a city name and click OK</li>
+                        <li>Click the "Neighborhoods" button</li>
+                        <li>Wait for the neighborhood list to load</li>
+                        <li>Select a neighborhood from the dropdown</li>
+                        <li>Explore using the History, Food, and Character tabs</li>
+                    </ol>
                 </div>
             </div>
         </section>
@@ -276,7 +252,9 @@
     const API_KEY = "AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A";
     let currentCity = "";
     let currentTier = "about";
-    let caches = {};
+    let neighborhoods = [];
+    let currentNeighborhood = "";
+    let neighborhoodCaches = {};
 
     async function fetchCity() {
         const city = document.getElementById('cityInput').value.trim();
@@ -323,8 +301,9 @@
                 </div>
             `;
 
-            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('disabled'));
-            caches = {};
+            // Reset neighborhoods
+            neighborhoods = [];
+            document.getElementById('neighborhoodDropdown').innerHTML = '<option value="">-- Select a neighborhood --</option>';
 
         } catch (e) {
             cityDisplay.innerHTML = `<div class="p-4 bg-red-50 text-red-600 border border-red-200 rounded mt-4">Error: ${e.message}</div>`;
@@ -348,37 +327,136 @@
 
         if (tierId === 'about') {
             document.getElementById('aboutContent').classList.add('active');
-        } else {
-            const tierTabsEl = document.getElementById(`${tierId}Tabs`);
+        } else if (tierId === 'neighborhoods') {
+            const tierTabsEl = document.getElementById('neighborhoodsTabs');
             if (tierTabsEl) {
                 tierTabsEl.classList.add('active');
+                // Load neighborhoods if not already loaded
+                if (neighborhoods.length === 0 && currentCity) {
+                    loadNeighborhoods();
+                }
             }
         }
     }
 
-    async function loadTab(tabId) {
-        const clickedButton = event ? event.target : document.querySelector(`[onclick="loadTab('${tabId}')"]`);
-        
-        if (!clickedButton || clickedButton.classList.contains('disabled')) {
-            console.log('Tab is disabled or button not found');
-            return;
+    async function loadNeighborhoods() {
+        const dropdown = document.getElementById('neighborhoodDropdown');
+        dropdown.innerHTML = '<option value="">Loading neighborhoods...</option>';
+        dropdown.disabled = true;
+
+        console.log('loadNeighborhoods called for city:', currentCity);
+
+        try {
+            console.log('Making API call for neighborhoods...');
+            const response = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        contents: [{
+                            role: "user",
+                            parts: [{ text: `List ALL neighborhoods in ${currentCity}. Include major districts, famous areas, and well-known neighborhoods. Return ONLY valid JSON: {"neighborhoods": ["name1", "name2", ...]}` }]
+                        }],
+                        generationConfig: { 
+                            responseMimeType: "application/json",
+                            temperature: 0.7
+                        }
+                    })
+                }
+            );
+
+            console.log('API response status:', response.status);
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error('API error response:', errorData);
+                throw new Error(`API Error: ${response.status} - ${JSON.stringify(errorData)}`);
+            }
+
+            const data = await response.json();
+            console.log('API response data:', data);
+            
+            if (data.error) {
+                throw new Error(data.error.message);
+            }
+            
+            if (!data.candidates || !data.candidates[0]) {
+                throw new Error("No response generated");
+            }
+            
+            let rawText = data.candidates[0].content.parts[0].text;
+            console.log('Raw text:', rawText);
+            rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+            
+            const result = JSON.parse(rawText);
+            console.log('Parsed result:', result);
+            neighborhoods = result.neighborhoods || [];
+            console.log('Neighborhoods array:', neighborhoods);
+
+            // Populate dropdown
+            dropdown.innerHTML = '<option value="">-- Select a neighborhood --</option>';
+            neighborhoods.forEach(nbh => {
+                const option = document.createElement('option');
+                option.value = nbh;
+                option.textContent = nbh;
+                dropdown.appendChild(option);
+            });
+            dropdown.disabled = false;
+            console.log('Dropdown populated with', neighborhoods.length, 'neighborhoods');
+
+        } catch (e) {
+            dropdown.innerHTML = '<option value="">Error loading neighborhoods</option>';
+            console.error('Error loading neighborhoods:', e);
         }
+    }
 
-        console.log('Loading tab:', tabId);
+    function selectNeighborhood() {
+        const dropdown = document.getElementById('neighborhoodDropdown');
+        const tabButtons = document.getElementById('neighborhoodTabButtons');
+        
+        currentNeighborhood = dropdown.value;
+        
+        if (currentNeighborhood) {
+            tabButtons.style.display = 'flex';
+            // Clear previous neighborhood content
+            document.querySelectorAll('[id^="nbh-"]').forEach(section => {
+                if (section.id.endsWith('Content')) {
+                    section.classList.remove('active');
+                }
+            });
+            document.querySelectorAll('#neighborhoodTabButtons .tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            // Clear caches for new neighborhood
+            neighborhoodCaches = {};
+        } else {
+            tabButtons.style.display = 'none';
+        }
+    }
 
-        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+    async function loadNeighborhoodTab(tabId) {
+        const clickedButton = event ? event.target : document.querySelector(`[onclick="loadNeighborhoodTab('${tabId}')"]`);
+        
+        console.log('Loading neighborhood tab:', tabId);
+
+        document.querySelectorAll('#neighborhoodTabButtons .tab-button').forEach(btn => btn.classList.remove('active'));
         clickedButton.classList.add('active');
 
-        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        document.querySelectorAll('[id^="nbh-"]').forEach(content => {
+            if (content.id.endsWith('Content')) {
+                content.classList.remove('active');
+            }
+        });
 
-        if (!caches[tabId]) {
+        if (!neighborhoodCaches[tabId]) {
             const originalText = clickedButton.textContent;
             clickedButton.innerHTML = `${originalText}<span class="spinner"></span>`;
             
             try {
-                await loadContent(tabId);
+                await loadNeighborhoodContent(tabId);
             } catch (e) {
-                console.error('Error loading tab:', e);
+                console.error('Error loading neighborhood tab:', e);
             }
             
             clickedButton.textContent = originalText;
@@ -387,29 +465,17 @@
         document.getElementById(`${tabId}Content`).classList.add('active');
     }
 
-    async function loadContent(tabId) {
+    async function loadNeighborhoodContent(tabId) {
         const output = document.getElementById(`${tabId}Content`);
         output.innerHTML = '<div style="text-align: center; padding: 4rem;"><div class="spinner" style="width: 48px; height: 48px; border-width: 4px;"></div></div>';
 
         const prompts = {
-            history: `Provide 4-5 engaging paragraphs about the history of ${currentCity}. Cover founding, development, modern era, and contemporary significance. Return JSON: {"paragraphs": ["...", "..."]}`,
-            geography: `Describe the geography and setting of ${currentCity} in 4-5 paragraphs. Cover location, climate, natural features, how geography shaped development. Return JSON: {"paragraphs": ["...", "..."]}`,
-            architecture: `Describe the architectural character of ${currentCity} in 4-5 paragraphs. Cover signature styles, iconic buildings, urban planning. Return JSON: {"paragraphs": ["...", "..."]}`,
-            food: `Describe the food culture of ${currentCity} in 4-5 paragraphs. Cover signature dishes, traditions, influences. Return JSON: {"paragraphs": ["...", "..."]}`,
-            neighborhoods: `Describe 3-5 major neighborhoods of ${currentCity} in 4-5 paragraphs. What makes each unique? Return JSON: {"paragraphs": ["...", "..."]}`,
-            customs: `Describe daily life and customs in ${currentCity} in 4-5 paragraphs. Social norms, traditions, distinctive local life. Return JSON: {"paragraphs": ["...", "..."]}`,
-            arts: `Describe arts and museums of ${currentCity} in 4-5 paragraphs. Major museums, art movements, famous artists. Return JSON: {"paragraphs": ["...", "..."]}`,
-            music: `Describe musical heritage of ${currentCity} in 4-5 paragraphs. Musical traditions, famous musicians, genres, venues. Return JSON: {"paragraphs": ["...", "..."]}`,
-            literary: `Describe literary connections to ${currentCity} in 4-5 paragraphs. Famous writers, books set here, literary movements. Return JSON: {"paragraphs": ["...", "..."]}`,
-            hidden: `Share 3-4 hidden stories or urban legends about ${currentCity}. Return JSON: {"stories": [{"title": "...", "story": "2-3 paragraphs"}]}`,
-            thennow: `Describe how ${currentCity} has transformed over time in 4-5 paragraphs. Major changes, what's lost, what's gained. Return JSON: {"paragraphs": ["...", "..."]}`,
-            symbols: `Describe 4-6 symbols and icons that define ${currentCity} (coat of arms, flags, animals, emblems, colors). Return JSON: {"symbols": [{"name": "...", "description": "2-3 sentences"}]}`
+            'nbh-history': `Provide 3-4 engaging paragraphs about the history of the ${currentNeighborhood} neighborhood in ${currentCity}. Cover its origins, development, and how it has evolved. Return JSON: {"paragraphs": ["...", "...", "..."]}`,
+            'nbh-food': `Describe the food culture and dining scene of the ${currentNeighborhood} neighborhood in ${currentCity}. Cover signature dishes, popular restaurants or food traditions, what makes it unique. Return JSON: {"paragraphs": ["...", "...", "..."]}`,
+            'nbh-character': `Describe what makes the ${currentNeighborhood} neighborhood in ${currentCity} unique and distinctive. Cover its atmosphere, who lives there, what it's known for, and its character. Return JSON: {"paragraphs": ["...", "...", "..."]}`
         };
 
         try {
-            console.log('Fetching content for:', tabId);
-            console.log('Using prompt:', prompts[tabId]);
-            
             const response = await fetch(
                 `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
                 {
@@ -428,14 +494,11 @@
                 }
             );
 
-            console.log('Response status:', response.status);
-
             if (!response.ok) {
                 throw new Error(`API Error: ${response.status}`);
             }
 
             const data = await response.json();
-            console.log('API response:', data);
             
             if (data.error) {
                 throw new Error(data.error.message);
@@ -448,19 +511,17 @@
             let rawText = data.candidates[0].content.parts[0].text;
             rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
 
-            console.log('Parsed text:', rawText);
-
             const result = JSON.parse(rawText);
-            caches[tabId] = result;
-            renderContent(tabId, result);
+            neighborhoodCaches[tabId] = result;
+            renderNeighborhoodContent(tabId, result);
 
         } catch (e) {
-            console.error('Load content error:', e);
+            console.error('Load neighborhood content error:', e);
             output.innerHTML = `<div class="p-4 bg-red-50 text-red-600 border border-red-200 rounded">Error: ${e.message}</div>`;
         }
     }
 
-    function renderContent(tabId, data) {
+    function renderNeighborhoodContent(tabId, data) {
         const output = document.getElementById(`${tabId}Content`);
         const isMobile = window.innerWidth < 768;
         
@@ -482,38 +543,22 @@
             return chunks.map(chunk => `<p>${chunk}</p>`).join('');
         }
 
-        let html = '';
         const titles = {
-            history: 'History', geography: 'Geography', architecture: 'Architecture',
-            food: 'Food Culture', neighborhoods: 'Neighborhoods', customs: 'Daily Life',
-            arts: 'Arts & Museums', music: 'Music', literary: 'Literary Connections',
-            thennow: 'Then & Now'
+            'nbh-history': 'History',
+            'nbh-food': 'Food & Dining',
+            'nbh-character': 'Character & Atmosphere'
         };
 
-        if (tabId === 'hidden') {
-            html = `<h3 class="text-2xl font-bold mb-6 text-center section-heading">Hidden Stories of ${currentCity}</h3>`;
-            data.stories.forEach((item) => {
-                html += `<div class="content-card"><h4>${item.title}</h4>${formatParagraph(item.story)}</div>`;
-            });
-        } else if (tabId === 'symbols') {
-            html = `<h3 class="text-2xl font-bold mb-6 text-center section-heading">Symbols & Icons of ${currentCity}</h3>`;
-            data.symbols.forEach((item) => {
-                html += `<div class="content-card"><h4>${item.name}</h4><p>${item.description}</p></div>`;
-            });
-        } else {
-            html = `<h3 class="text-2xl font-bold mb-6 text-center section-heading">${titles[tabId]} of ${currentCity}</h3>`;
-            html += `<div class="content-card">`;
-            data.paragraphs.forEach((paragraph) => {
-                html += formatParagraph(paragraph);
-            });
-            html += `</div>`;
-        }
+        let html = `<h3 class="text-2xl font-bold mb-6 text-center section-heading">${titles[tabId]} of ${currentNeighborhood}</h3>`;
+        html += `<div class="content-card">`;
+        data.paragraphs.forEach((paragraph) => {
+            html += formatParagraph(paragraph);
+        });
+        html += `</div>`;
 
         output.innerHTML = html;
     }
 </script>
-```
 
 </body>
 </html>
-
