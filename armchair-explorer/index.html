@@ -20,6 +20,7 @@
             --border-color: #c4b5a0;
         }
 
+```
     body {
         font-family: 'Crimson Text', Georgia, serif;
         background-color: var(--neutral-bg);
@@ -181,6 +182,7 @@
         to { transform: rotate(360deg); }
     }
 </style>
+```
 
 </head>
 <body class="min-h-screen antialiased">
@@ -188,8 +190,10 @@
         <header class="text-center py-8 mb-6">
             <h1 class="font-bold">City Explorer</h1>
             <p class="text-xl mt-2" style="color: #5a5041;">Armchair Travel at Its Finest</p>
+            <p class="text-sm mt-1" style="color: #8a7a6a;">v2.0</p>
         </header>
 
+```
     <div class="max-w-2xl mx-auto mb-8">
         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
             <label class="block text-sm font-bold mb-2" style="color: var(--dark-bg);">Enter a City</label>
@@ -208,7 +212,6 @@
         <button class="tier-button" onclick="switchTier('life')">Life</button>
         <button class="tier-button" onclick="switchTier('legacy')">Legacy</button>
         <button class="tier-button" onclick="switchTier('discovery')">Discovery</button>
-        <button class="tier-button" onclick="switchTier('neighborhoods')">Neighborhoods</button>
         <button class="tier-button active" onclick="switchTier('about')">About</button>
     </nav>
 
@@ -236,20 +239,6 @@
         <button class="tab-button disabled" onclick="loadTab('symbols')">Symbols</button>
     </div>
 
-    <div id="neighborhoodsTabs" class="tier-tabs">
-        <div style="max-width: 500px; margin-bottom: 1rem;">
-            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--dark-bg);">Select a Neighborhood:</label>
-            <select id="neighborhoodDropdown" onchange="selectNeighborhood()" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 0.5rem; font-family: 'Crimson Text', Georgia, serif; font-size: 1rem; background-color: white;">
-                <option value="">Loading neighborhoods...</option>
-            </select>
-        </div>
-        <div id="neighborhoodTabButtons" style="display: none;">
-            <button class="tab-button" onclick="loadNeighborhoodTab('nbh-history')">History</button>
-            <button class="tab-button" onclick="loadNeighborhoodTab('nbh-food')">Food</button>
-            <button class="tab-button" onclick="loadNeighborhoodTab('nbh-character')">Character</button>
-        </div>
-    </div>
-
     <main>
         <section id="historyContent" class="tab-content"></section>
         <section id="geographyContent" class="tab-content"></section>
@@ -264,10 +253,6 @@
         <section id="thennowContent" class="tab-content"></section>
         <section id="symbolsContent" class="tab-content"></section>
 
-        <section id="nbh-historyContent" class="tab-content"></section>
-        <section id="nbh-foodContent" class="tab-content"></section>
-        <section id="nbh-characterContent" class="tab-content"></section>
-
         <section id="aboutContent" class="tab-content active">
             <div class="max-w-4xl mx-auto">
                 <div style="background-color: var(--dark-bg); color: var(--cream-text); padding: 2rem; border-radius: 10px; border-left: 4px solid var(--primary-gold);">
@@ -281,14 +266,6 @@
                         <li><strong>Legacy</strong> - What has this place created? Arts, music, literature</li>
                         <li><strong>Discovery</strong> - What's hidden? Secrets, transformations, symbols</li>
                     </ul>
-                    
-                    <h3 style="color: var(--primary-gold); margin-top: 2rem;">Developer Tools</h3>
-                    <button onclick="checkAvailableModels()" style="padding: 0.75rem 1.5rem; background-color: var(--primary-gold); color: var(--dark-bg); font-weight: 600; border-radius: 0.5rem; cursor: pointer; border: none; font-family: 'Crimson Text', Georgia, serif; margin-bottom: 1rem;">
-                        Check Available Models
-                    </button>
-                    <div id="modelList" style="background-color: rgba(0,0,0,0.2); padding: 1rem; border-radius: 0.5rem; font-family: monospace; font-size: 0.85rem; display: none; max-height: 300px; overflow-y: auto;"></div>
-                    
-                    <p style="margin-top: 2rem; font-style: italic; color: var(--muted-gold);">Version 3.1 - Powered by Gemini 2.5 Flash</p>
                 </div>
             </div>
         </section>
@@ -300,9 +277,6 @@
     let currentCity = "";
     let currentTier = "about";
     let caches = {};
-    let neighborhoods = [];
-    let currentNeighborhood = "";
-    let neighborhoodCaches = {};
 
     async function fetchCity() {
         const city = document.getElementById('cityInput').value.trim();
@@ -320,35 +294,21 @@
 
         try {
             const response = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`,
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         contents: [{
-                            parts: [{
-                                text: `You are a travel expert. Return ONLY valid JSON: {"city": "properly formatted city name with country", "tagline": "one compelling sentence about the city"}. City: ${city}`
-                            }]
-                        }]
+                            role: "user",
+                            parts: [{ text: `You are a travel expert. Return ONLY valid JSON: {"city": "properly formatted city name with country", "tagline": "one compelling sentence about the city"}. City: ${city}` }]
+                        }],
+                        generationConfig: { temperature: 0.7 }
                     })
                 }
             );
 
             const data = await response.json();
-            
-            // Debug: Log the full response
-            console.log('Full API response:', JSON.stringify(data, null, 2));
-            
-            // Check if response has error
-            if (data.error) {
-                throw new Error(`API Error: ${data.error.message}`);
-            }
-            
-            // Check if response has the expected structure
-            if (!data.candidates || data.candidates.length === 0) {
-                throw new Error(`No candidates in response. Full response: ${JSON.stringify(data)}`);
-            }
-            
             let rawText = data.candidates[0].content.parts[0].text;
             const jsonMatch = rawText.match(/\{[\s\S]*\}/);
             if (jsonMatch) rawText = jsonMatch[0];
@@ -363,13 +323,7 @@
                 </div>
             `;
 
-            console.log('Enabling all tabs...');
-            const tabButtons = document.querySelectorAll('.tab-button');
-            console.log('Found tab buttons:', tabButtons.length);
-            tabButtons.forEach(btn => {
-                console.log('Enabling button:', btn.textContent);
-                btn.classList.remove('disabled');
-            });
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('disabled'));
             caches = {};
 
         } catch (e) {
@@ -394,15 +348,6 @@
 
         if (tierId === 'about') {
             document.getElementById('aboutContent').classList.add('active');
-        } else if (tierId === 'neighborhoods') {
-            const tierTabsEl = document.getElementById('neighborhoodsTabs');
-            if (tierTabsEl) {
-                tierTabsEl.classList.add('active');
-                // Load neighborhoods if not already loaded
-                if (neighborhoods.length === 0 && currentCity) {
-                    loadNeighborhoods();
-                }
-            }
         } else {
             const tierTabsEl = document.getElementById(`${tierId}Tabs`);
             if (tierTabsEl) {
@@ -466,16 +411,19 @@
             console.log('Using prompt:', prompts[tabId]);
             
             const response = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`,
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         contents: [{
-                            parts: [{
-                                text: prompts[tabId]
-                            }]
-                        }]
+                            role: "user",
+                            parts: [{ text: prompts[tabId] }]
+                        }],
+                        generationConfig: { 
+                            responseMimeType: "application/json",
+                            temperature: 0.7
+                        }
                     })
                 }
             );
@@ -516,16 +464,7 @@
         const output = document.getElementById(`${tabId}Content`);
         const isMobile = window.innerWidth < 768;
         
-        function cleanText(text) {
-            // Remove backticks, markdown code blocks, and extra formatting
-            return text.replace(/```[a-z]*\n?/g, '') // Remove code block markers
-                      .replace(/`/g, '')              // Remove all backticks
-                      .replace(/\*\*/g, '')           // Remove bold markdown
-                      .trim();
-        }
-        
         function formatParagraph(text) {
-            text = cleanText(text);
             if (!isMobile) return `<p>${text}</p>`;
             
             const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
@@ -554,12 +493,12 @@
         if (tabId === 'hidden') {
             html = `<h3 class="text-2xl font-bold mb-6 text-center section-heading">Hidden Stories of ${currentCity}</h3>`;
             data.stories.forEach((item) => {
-                html += `<div class="content-card"><h4>${cleanText(item.title)}</h4>${formatParagraph(item.story)}</div>`;
+                html += `<div class="content-card"><h4>${item.title}</h4>${formatParagraph(item.story)}</div>`;
             });
         } else if (tabId === 'symbols') {
             html = `<h3 class="text-2xl font-bold mb-6 text-center section-heading">Symbols & Icons of ${currentCity}</h3>`;
             data.symbols.forEach((item) => {
-                html += `<div class="content-card"><h4>${cleanText(item.name)}</h4><p>${cleanText(item.description)}</p></div>`;
+                html += `<div class="content-card"><h4>${item.name}</h4><p>${item.description}</p></div>`;
             });
         } else {
             html = `<h3 class="text-2xl font-bold mb-6 text-center section-heading">${titles[tabId]} of ${currentCity}</h3>`;
@@ -572,273 +511,9 @@
 
         output.innerHTML = html;
     }
-
-    async function loadNeighborhoods() {
-        const dropdown = document.getElementById('neighborhoodDropdown');
-        dropdown.innerHTML = '<option value="">Loading neighborhoods...</option>';
-        dropdown.disabled = true;
-
-        console.log('loadNeighborhoods called for city:', currentCity);
-
-        try {
-            console.log('Making API call for neighborhoods...');
-            const response = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        contents: [{
-                            role: "user",
-                            parts: [{ text: `List ALL neighborhoods in ${currentCity}. Include major districts, famous areas, and well-known neighborhoods. Return ONLY valid JSON: {"neighborhoods": ["name1", "name2", ...]}` }]
-                        }],
-                        generationConfig: { 
-                            responseMimeType: "application/json",
-                            temperature: 0.7
-                        }
-                    })
-                }
-            );
-
-            console.log('API response status:', response.status);
-            const data = await response.json();
-            console.log('API response data:', data);
-            
-            let rawText = data.candidates[0].content.parts[0].text;
-            console.log('Raw text:', rawText);
-            rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
-            
-            const result = JSON.parse(rawText);
-            console.log('Parsed result:', result);
-            neighborhoods = result.neighborhoods || [];
-            console.log('Neighborhoods array:', neighborhoods);
-
-            // Populate dropdown
-            dropdown.innerHTML = '<option value="">-- Select a neighborhood --</option>';
-            neighborhoods.forEach(nbh => {
-                const option = document.createElement('option');
-                option.value = nbh;
-                option.textContent = nbh;
-                dropdown.appendChild(option);
-            });
-            dropdown.disabled = false;
-            console.log('Dropdown populated with', neighborhoods.length, 'neighborhoods');
-
-        } catch (e) {
-            dropdown.innerHTML = '<option value="">Error loading neighborhoods</option>';
-            console.error('Error loading neighborhoods:', e);
-        }
-    }
-
-    function selectNeighborhood() {
-        const dropdown = document.getElementById('neighborhoodDropdown');
-        const tabButtons = document.getElementById('neighborhoodTabButtons');
-        
-        currentNeighborhood = dropdown.value;
-        
-        if (currentNeighborhood) {
-            tabButtons.style.display = 'flex';
-            // Clear previous neighborhood content
-            document.querySelectorAll('[id^="nbh-"]').forEach(section => {
-                if (section.id.endsWith('Content')) {
-                    section.classList.remove('active');
-                }
-            });
-            // Clear caches for new neighborhood
-            neighborhoodCaches = {};
-        } else {
-            tabButtons.style.display = 'none';
-        }
-    }
-
-    async function loadNeighborhoodTab(tabId) {
-        const clickedButton = event ? event.target : document.querySelector(`[onclick="loadNeighborhoodTab('${tabId}')"]`);
-        
-        console.log('Loading neighborhood tab:', tabId);
-
-        document.querySelectorAll('#neighborhoodTabButtons .tab-button').forEach(btn => btn.classList.remove('active'));
-        clickedButton.classList.add('active');
-
-        document.querySelectorAll('[id^="nbh-"]').forEach(content => {
-            if (content.id.endsWith('Content')) {
-                content.classList.remove('active');
-            }
-        });
-
-        if (!neighborhoodCaches[tabId]) {
-            const originalText = clickedButton.textContent;
-            clickedButton.innerHTML = `${originalText}<span class="spinner"></span>`;
-            
-            try {
-                await loadNeighborhoodContent(tabId);
-            } catch (e) {
-                console.error('Error loading neighborhood tab:', e);
-            }
-            
-            clickedButton.textContent = originalText;
-        }
-
-        document.getElementById(`${tabId}Content`).classList.add('active');
-    }
-
-    async function loadNeighborhoodContent(tabId) {
-        const output = document.getElementById(`${tabId}Content`);
-        output.innerHTML = '<div style="text-align: center; padding: 4rem;"><div class="spinner" style="width: 48px; height: 48px; border-width: 4px;"></div></div>';
-
-        const prompts = {
-            'nbh-history': `Provide 3-4 engaging paragraphs about the history of the ${currentNeighborhood} neighborhood in ${currentCity}. Cover its origins, development, and how it has evolved. Return JSON: {"paragraphs": ["...", "...", "..."]}`,
-            'nbh-food': `Describe the food culture and dining scene of the ${currentNeighborhood} neighborhood in ${currentCity}. Cover signature dishes, popular restaurants or food traditions, what makes it unique. Return JSON: {"paragraphs": ["...", "...", "..."]}`,
-            'nbh-character': `Describe what makes the ${currentNeighborhood} neighborhood in ${currentCity} unique and distinctive. Cover its atmosphere, who lives there, what it's known for, and its character. Return JSON: {"paragraphs": ["...", "...", "..."]}`
-        };
-
-        try {
-            const response = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        contents: [{
-                            role: "user",
-                            parts: [{ text: prompts[tabId] }]
-                        }],
-                        generationConfig: { 
-                            responseMimeType: "application/json",
-                            temperature: 0.7
-                        }
-                    })
-                }
-            );
-
-            if (!response.ok) {
-                throw new Error(`API Error: ${response.status}`);
-            }
-
-            const data = await response.json();
-            
-            if (data.error) {
-                throw new Error(data.error.message);
-            }
-            
-            if (!data.candidates || !data.candidates[0]) {
-                throw new Error("No response generated");
-            }
-            
-            let rawText = data.candidates[0].content.parts[0].text;
-            rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
-
-            const result = JSON.parse(rawText);
-            neighborhoodCaches[tabId] = result;
-            renderNeighborhoodContent(tabId, result);
-
-        } catch (e) {
-            console.error('Load neighborhood content error:', e);
-            output.innerHTML = `<div class="p-4 bg-red-50 text-red-600 border border-red-200 rounded">Error: ${e.message}</div>`;
-        }
-    }
-
-    function renderNeighborhoodContent(tabId, data) {
-        const output = document.getElementById(`${tabId}Content`);
-        const isMobile = window.innerWidth < 768;
-        
-        function formatParagraph(text) {
-            if (!isMobile) return `<p>${text}</p>`;
-            
-            const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
-            let chunks = [];
-            let currentChunk = [];
-            
-            sentences.forEach((sentence, index) => {
-                currentChunk.push(sentence.trim());
-                if (currentChunk.length >= 2 || index === sentences.length - 1) {
-                    chunks.push(currentChunk.join(' '));
-                    currentChunk = [];
-                }
-            });
-            
-            return chunks.map(chunk => `<p>${chunk}</p>`).join('');
-        }
-
-        const titles = {
-            'nbh-history': 'History',
-            'nbh-food': 'Food & Dining',
-            'nbh-character': 'Character & Atmosphere'
-        };
-
-        let html = `<h3 class="text-2xl font-bold mb-6 text-center section-heading">${titles[tabId]} of ${currentNeighborhood}</h3>`;
-        html += `<div class="content-card">`;
-        data.paragraphs.forEach((paragraph) => {
-            html += formatParagraph(paragraph);
-        });
-        html += `</div>`;
-
-        output.innerHTML = html;
-    }
-
-    async function checkAvailableModels() {
-        const modelList = document.getElementById('modelList');
-        modelList.style.display = 'block';
-        modelList.innerHTML = 'Checking available models...';
-        
-        const url = `https://generativelanguage.googleapis.com/v1beta/models?key=${API_KEY}`;
-        
-        try {
-            const response = await fetch(url);
-            const data = await response.json();
-            
-            if (data.error) {
-                modelList.innerHTML = `Error: ${data.error.message}`;
-                return;
-            }
-
-            const flashModels = data.models.filter(m => m.name.includes("flash"));
-            
-            if (flashModels.length === 0) {
-                modelList.innerHTML = '<div>No flash models found.</div>';
-                return;
-            }
-
-            // Store model IDs for copying
-            window.availableModelIds = flashModels.map(m => m.name.replace("models/", ""));
-            
-            let html = '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">';
-            html += '<div style="color: var(--primary-gold); font-weight: 600;">AVAILABLE FLASH MODELS:</div>';
-            html += '<button onclick="copyAllModels()" style="padding: 0.5rem 1rem; background-color: var(--primary-gold); color: var(--dark-bg); border: none; border-radius: 0.25rem; cursor: pointer; font-size: 0.85rem; font-family: \'Crimson Text\', Georgia, serif; font-weight: 600;">Copy All</button>';
-            html += '</div>';
-            
-            flashModels.forEach(m => {
-                const modelId = m.name.replace("models/", "");
-                html += `<div style="margin-bottom: 0.5rem; padding: 0.5rem; background-color: rgba(0,0,0,0.2); border-radius: 0.25rem;">`;
-                html += `<div style="color: var(--primary-gold); font-size: 0.9rem;">${m.displayName}</div>`;
-                html += `<div style="color: var(--cream-text); font-size: 0.8rem; font-family: monospace;">${modelId}</div>`;
-                html += `</div>`;
-            });
-            
-            modelList.innerHTML = html;
-            
-        } catch (e) {
-            modelList.innerHTML = `Network Error: ${e.message}`;
-        }
-    }
-
-    function copyAllModels() {
-        if (!window.availableModelIds || window.availableModelIds.length === 0) {
-            alert('No models to copy');
-            return;
-        }
-        
-        const modelText = window.availableModelIds.join('\n');
-        
-        navigator.clipboard.writeText(modelText).then(() => {
-            event.target.textContent = 'Copied!';
-            setTimeout(() => {
-                event.target.textContent = 'Copy All';
-            }, 2000);
-        }).catch(err => {
-            alert('Failed to copy: ' + err);
-        });
-    }
 </script>
+```
 
 </body>
 </html>
+
