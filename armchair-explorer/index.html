@@ -285,7 +285,7 @@ h1 {
         <div class="max-w-4xl mx-auto">
             <div style="background-color: var(--dark-bg); color: var(--cream-text); padding: 2rem; border-radius: 10px; border-left: 4px solid var(--primary-gold);">
                 <h2 style="color: var(--primary-gold);">About City Explorer</h2>
-                <p style="font-size: 0.85rem; color: var(--muted-gold); font-style: italic; margin-bottom: 1rem;">Build #8</p>
+                <p style="font-size: 0.85rem; color: var(--muted-gold); font-style: italic; margin-bottom: 1rem;">Build #9</p>
                 <p>Tests neighborhood exploration with accordion-style content.</p>
                 
                 <h3 style="color: var(--primary-gold); margin-top: 2rem;">How to Use</h3>
@@ -587,13 +587,14 @@ h1 {
         data.sections.forEach((section, index) => {
             const cleanHeader = cleanText(section.header);
             const cleanContent = cleanText(section.content);
+            const uniqueId = `${tabId}-accordion-${index}`;
             
             html += `<div class="accordion-item">`;
-            html += `<div class="accordion-header" onclick="toggleAccordion(${index})">`;
+            html += `<div class="accordion-header" onclick="toggleAccordion('${uniqueId}')">`;
             html += `<span>${cleanHeader}</span>`;
             html += `<span class="accordion-icon">▼</span>`;
             html += `</div>`;
-            html += `<div class="accordion-content" id="accordion-${index}">`;
+            html += `<div class="accordion-content" id="${uniqueId}">`;
             html += `<p>${cleanContent}</p>`;
             html += `</div>`;
             html += `</div>`;
@@ -603,17 +604,20 @@ h1 {
         output.innerHTML = html;
     }
 
-    function toggleAccordion(index) {
-        const content = document.getElementById(`accordion-${index}`);
+    function toggleAccordion(uniqueId) {
+        const content = document.getElementById(uniqueId);
         const header = event.target.closest('.accordion-header');
         
         if (content.classList.contains('open')) {
             content.classList.remove('open');
             header.classList.remove('active');
         } else {
-            document.querySelectorAll('.accordion-content').forEach(c => c.classList.remove('open'));
-            document.querySelectorAll('.accordion-header').forEach(h => h.classList.remove('active'));
+            // Close all accordions in current tab only
+            const currentTabContent = content.closest('.tab-content');
+            currentTabContent.querySelectorAll('.accordion-content').forEach(c => c.classList.remove('open'));
+            currentTabContent.querySelectorAll('.accordion-header').forEach(h => h.classList.remove('active'));
             
+            // Open this one
             content.classList.add('open');
             header.classList.add('active');
         }
