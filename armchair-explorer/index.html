@@ -8,10 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* THEME MAPPING SYSTEM
-               We map generic role-based names (e.g., --app-bg) to specific colors.
-               Default: "Explorer" (The Present Theme)
-            */
+            /* THEME MAPPING SYSTEM */
             --app-bg: #e8dcc8;           /* Wall Background */
             --card-bg: #1a1815;          /* Card/Panel Background */
             --input-bg: #26231f;         /* Input/Select Background */
@@ -31,7 +28,11 @@
         }
 
         /* --- HEADER & GEAR --- */
-        header { position: relative; }
+        header {
+            position: relative;
+            /* Add padding to the right so centered text doesn't hit the gear */
+            padding-right: 40px;
+        }
         
         .theme-gear {
             position: absolute;
@@ -40,13 +41,13 @@
             background: transparent;
             border: none;
             cursor: pointer;
-            color: var(--border); /* Subtle by default */
+            color: var(--border);
             padding: 0.5rem;
             transition: transform 0.4s ease, color 0.2s;
         }
         
         .theme-gear:hover {
-            color: var(--text-body); /* Pop on hover */
+            color: var(--text-body);
             transform: rotate(90deg);
         }
 
@@ -92,7 +93,7 @@
         /* --- BUTTONS --- */
         .action-button {
             background-color: var(--brand);
-            color: var(--card-bg); /* Contrast text against brand color */
+            color: var(--card-bg);
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
@@ -248,7 +249,7 @@
         
         <header class="text-center mb-8">
             <h1 class="text-4xl md:text-5xl font-bold mb-2 text-[var(--text-body)]">Knowledge Explorer</h1>
-            <p class="text-xl italic text-[var(--border)]">Universal Shell v2.0</p>
+            <p class="text-xl italic text-[var(--border)]">Universal Shell v2.1</p>
             
             <button onclick="cycleTheme()" class="theme-gear" title="Switch Theme">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -317,7 +318,7 @@
                     </p>
 
                     <div class="mt-8 pt-4 border-t border-[var(--border)]">
-                        <p class="text-xs text-[var(--border)] font-mono">System Status: Ready | v2.0</p>
+                        <p class="text-xs text-[var(--border)] font-mono">System Status: Ready | v2.1</p>
                         <div id="debugLog" class="hidden"></div>
                     </div>
                 </div>
@@ -375,9 +376,6 @@
         for (const [key, value] of Object.entries(colors)) {
             document.documentElement.style.setProperty(key, value);
         }
-        
-        // Visual feedback (optional)
-        console.log(`Switched to theme: ${newTheme}`);
     }
 
     // --- STATE MANAGEMENT ---
