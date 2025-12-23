@@ -651,6 +651,16 @@ h1 {
             rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
 
             const result = JSON.parse(rawText);
+            
+            // Handle both old format (paragraphs) and new format (sections)
+            if (!result.sections && result.paragraphs) {
+                // Convert old format to new format
+                result.sections = result.paragraphs.map((para, i) => ({
+                    header: `Section ${i + 1}`,
+                    content: para
+                }));
+            }
+            
             neighborhoodCaches[tabId] = result;
             renderNeighborhoodContent(tabId, result);
 
