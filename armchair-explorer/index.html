@@ -89,6 +89,12 @@ h1 {
     font-weight: 600;
 }
 
+.tab-button.loading {
+    background-color: #a57d3f;
+    color: var(--cream-text);
+    font-weight: 600;
+}
+
 .tab-button.disabled {
     opacity: 0.4;
     cursor: not-allowed;
@@ -180,6 +186,127 @@ h1 {
 
 @keyframes spin {
     to { transform: rotate(360deg); }
+}
+
+/* Read More/Less styles */
+.read-more-btn {
+    background-color: var(--primary-gold);
+    color: var(--dark-bg);
+    padding: 0.5rem 1.5rem;
+    border-radius: 0.375rem;
+    border: none;
+    font-family: 'Crimson Text', Georgia, serif;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: all 0.2s ease;
+}
+
+.read-more-btn:hover {
+    background-color: #c4a574;
+    transform: translateY(-1px);
+}
+
+.content-hidden {
+    display: none;
+}
+
+/* Card flip styles */
+.flip-card {
+    perspective: 1000px;
+    min-height: 300px;
+    margin-bottom: 1.5rem;
+}
+
+.flip-card-inner {
+    position: relative;
+    width: 100%;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+}
+
+.flip-card.flipped .flip-card-inner {
+    transform: rotateY(180deg);
+}
+
+.flip-card-front, .flip-card-back {
+    position: absolute;
+    width: 100%;
+    backface-visibility: hidden;
+    background-color: var(--dark-bg);
+    color: var(--cream-text);
+    padding: 2rem;
+    border-radius: 10px;
+    border-left: 4px solid var(--primary-gold);
+}
+
+.flip-card-back {
+    transform: rotateY(180deg);
+}
+
+.flip-btn {
+    background-color: var(--primary-gold);
+    color: var(--dark-bg);
+    padding: 0.5rem 1.5rem;
+    border-radius: 0.375rem;
+    border: none;
+    font-family: 'Crimson Text', Georgia, serif;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: all 0.2s ease;
+}
+
+.flip-btn:hover {
+    background-color: #c4a574;
+    transform: translateY(-1px);
+}
+
+/* Accordion styles */
+.accordion-item {
+    margin-bottom: 0.75rem;
+}
+
+.accordion-header {
+    background-color: rgba(212, 165, 116, 0.3);
+    color: var(--cream-text);
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.accordion-header:hover {
+    background-color: rgba(212, 165, 116, 0.5);
+}
+
+.accordion-header.active {
+    background-color: var(--primary-gold);
+    color: var(--dark-bg);
+}
+
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    padding: 0 1.5rem;
+}
+
+.accordion-content.open {
+    max-height: 1000px;
+    padding: 1rem 1.5rem;
+}
+
+.accordion-icon {
+    transition: transform 0.3s ease;
+}
+
+.accordion-header.active .accordion-icon {
+    transform: rotate(180deg);
 }
 ```
 
@@ -446,7 +573,10 @@ h1 {
         
         console.log('Loading neighborhood tab:', tabId);
 
-        document.querySelectorAll('#neighborhoodTabButtons .tab-button').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('#neighborhoodTabButtons .tab-button').forEach(btn => {
+            btn.classList.remove('active');
+            btn.classList.remove('loading');
+        });
         clickedButton.classList.add('active');
 
         document.querySelectorAll('[id^="nbh-"]').forEach(content => {
@@ -457,6 +587,7 @@ h1 {
 
         if (!neighborhoodCaches[tabId]) {
             const originalText = clickedButton.textContent;
+            clickedButton.classList.add('loading');
             clickedButton.innerHTML = `${originalText}<span class="spinner"></span>`;
             
             try {
@@ -465,6 +596,7 @@ h1 {
                 console.error('Error loading neighborhood tab:', e);
             }
             
+            clickedButton.classList.remove('loading');
             clickedButton.textContent = originalText;
         }
 
@@ -531,7 +663,16 @@ h1 {
         const output = document.getElementById(`${tabId}Content`);
         const isMobile = window.innerWidth < 768;
         
+        function cleanText(text) {
+            // Remove backticks, markdown code blocks, and extra formatting
+            return text.replace(/```[a-z]*\n?/g, '') // Remove code block markers
+                      .replace(/`/g, '')              // Remove all backticks
+                      .replace(/\*\*/g, '')           // Remove bold markdown
+                      .trim();
+        }
+        
         function formatParagraph(text) {
+            text = cleanText(text);
             if (!isMobile) return `<p>${text}</p>`;
             
             const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
@@ -556,13 +697,115 @@ h1 {
         };
 
         let html = `<h3 class="text-2xl font-bold mb-6 text-center section-heading">${titles[tabId]} of ${currentNeighborhood}</h3>`;
-        html += `<div class="content-card">`;
-        data.paragraphs.forEach((paragraph) => {
-            html += formatParagraph(paragraph);
-        });
-        html += `</div>`;
+
+        // PATTERN 1: Read More/Less (History tab)
+        if (tabId === 'nbh-history') {
+            html += `<div class="content-card">`;
+            // Show first 2 paragraphs
+            html += formatParagraph(data.paragraphs[0]);
+            if (data.paragraphs.length > 1) {
+                html += formatParagraph(data.paragraphs[1]);
+            }
+            
+            // Hidden content
+            if (data.paragraphs.length > 2) {
+                html += `<div class="content-hidden" id="history-more">`;
+                for (let i = 2; i < data.paragraphs.length; i++) {
+                    html += formatParagraph(data.paragraphs[i]);
+                }
+                html += `</div>`;
+                html += `<button class="read-more-btn" onclick="toggleReadMore()">Read More</button>`;
+            }
+            html += `</div>`;
+        }
+        
+        // PATTERN 2: Card Flip (Food tab)
+        else if (tabId === 'nbh-food') {
+            // Create summary from first few sentences
+            const firstPara = cleanText(data.paragraphs[0]);
+            const sentences = firstPara.match(/[^.!?]+[.!?]+/g) || [firstPara];
+            const summary = sentences.slice(0, 2).join(' ');
+            
+            html += `<div class="flip-card" id="food-card">`;
+            html += `<div class="flip-card-inner">`;
+            
+            // Front
+            html += `<div class="flip-card-front">`;
+            html += `<h4 style="color: var(--primary-gold); margin-bottom: 1rem;">Quick Overview</h4>`;
+            html += `<p>${summary}</p>`;
+            html += `<button class="flip-btn" onclick="flipCard()">Read Full Story →</button>`;
+            html += `</div>`;
+            
+            // Back
+            html += `<div class="flip-card-back">`;
+            html += `<h4 style="color: var(--primary-gold); margin-bottom: 1rem;">Full Story</h4>`;
+            data.paragraphs.forEach((paragraph) => {
+                html += formatParagraph(paragraph);
+            });
+            html += `<button class="flip-btn" onclick="flipCard()">← Back to Summary</button>`;
+            html += `</div>`;
+            
+            html += `</div></div>`;
+        }
+        
+        // PATTERN 3: Accordion (Character tab)
+        else if (tabId === 'nbh-character') {
+            html += `<div class="content-card">`;
+            data.paragraphs.forEach((paragraph, index) => {
+                const cleanPara = cleanText(paragraph);
+                const firstSentence = (cleanPara.match(/[^.!?]+[.!?]+/) || [cleanPara])[0];
+                
+                html += `<div class="accordion-item">`;
+                html += `<div class="accordion-header" onclick="toggleAccordion(${index})">`;
+                html += `<span>Section ${index + 1}: ${firstSentence.substring(0, 50)}...</span>`;
+                html += `<span class="accordion-icon">▼</span>`;
+                html += `</div>`;
+                html += `<div class="accordion-content" id="accordion-${index}">`;
+                html += formatParagraph(paragraph);
+                html += `</div>`;
+                html += `</div>`;
+            });
+            html += `</div>`;
+        }
 
         output.innerHTML = html;
+    }
+
+    // Interactive functions for different patterns
+    function toggleReadMore() {
+        const moreContent = document.getElementById('history-more');
+        const button = event.target;
+        
+        if (moreContent.classList.contains('content-hidden')) {
+            moreContent.classList.remove('content-hidden');
+            button.textContent = 'Read Less';
+        } else {
+            moreContent.classList.add('content-hidden');
+            button.textContent = 'Read More';
+        }
+    }
+
+    function flipCard() {
+        const card = document.getElementById('food-card');
+        card.classList.toggle('flipped');
+    }
+
+    function toggleAccordion(index) {
+        const content = document.getElementById(`accordion-${index}`);
+        const header = event.target.closest('.accordion-header');
+        
+        if (content.classList.contains('open')) {
+            content.classList.remove('open');
+            header.classList.remove('active');
+        } else {
+            // Close all others
+            document.querySelectorAll('.accordion-content').forEach(c => c.classList.remove('open'));
+            document.querySelectorAll('.accordion-header').forEach(h => h.classList.remove('active'));
+            
+            // Open this one
+            content.classList.add('open');
+            header.classList.add('active');
+        }
     }
 </script>
 
