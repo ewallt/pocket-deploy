@@ -220,7 +220,7 @@
         
         <header class="text-center mb-8">
             <h1 class="text-4xl md:text-5xl font-bold mb-2 text-[#1a1815]">Knowledge Explorer</h1>
-            <p class="text-xl italic text-[#5a5041]">The "Shell" Architecture v1.1</p>
+            <p class="text-xl italic text-[#5a5041]">The "Shell" Architecture v1.2</p>
         </header>
 
         <div class="dark-card">
@@ -275,13 +275,13 @@
             <section id="aboutContent" class="tab-content active">
                 <div class="dark-card">
                     <h2>About the Shell</h2>
-                    <p class="text-[#d1cdc7] italic mb-4">Build #12: Hardened Parser Edition</p>
+                    <p class="text-[#d1cdc7] italic mb-4">Build #12: Parser Fixed</p>
                     
                     <h3 class="mt-6 mb-2">Architectural Notes</h3>
                     <ul class="list-disc list-inside text-[#d1cdc7] space-y-2">
-                        <li><strong>Hardened JSON Parser:</strong> Now robustly handles conversational filler and markdown blocks.</li>
+                        <li><strong>Safe Separators:</strong> AI now uses "||" to separate paragraphs instead of newlines, preventing JSON crashes.</li>
+                        <li><strong>Hardened Parser:</strong> Robustly extracts JSON objects from conversational text.</li>
                         <li><strong>Inverted Card Scheme:</strong> All functional modules are dark cards floating on a neutral wall.</li>
-                        <li><strong>Micro-Paragraphs:</strong> Text is programmatically split for mobile readability.</li>
                     </ul>
 
                     <h3 class="mt-6 mb-2">Debug Log</h3>
@@ -320,6 +320,8 @@
 
     // --- HARDENED JSON PARSER ---
     function parseGeminiResponse(rawText) {
+        log("Raw response length: " + rawText.length);
+        
         // 1. Remove Markdown code blocks
         let cleanText = rawText.replace(/```json/g, '').replace(/```/g, '');
         
@@ -340,7 +342,7 @@
                 const fixedText = cleanText.replace(/,\s*}/g, '}');
                 return JSON.parse(fixedText);
             } catch (e2) {
-                log("CRITICAL PARSE ERROR. Check Console.");
+                log("CRITICAL PARSE ERROR: " + e.message);
                 throw new Error("AI returned invalid JSON structure.");
             }
         }
@@ -472,14 +474,19 @@
             'lens-3': 'Analysis, Cultural Impact, or Significance'
         };
 
+        // FIXED PROMPT: We explicitly ask for || separator instead of newlines
+        // This prevents the AI from breaking JSON with literal line breaks
         const prompt = `
             Topic: ${state.topic}, Sub-Category: ${state.currentCategory}.
             Focus: ${lensMap[lensId]}.
             Create 3 distinct sections. 
             CRITICAL FORMATTING RULES:
             1. "header": A short, catchy title (max 6 words).
-            2. "content": Write for a mobile app. Use SHORT paragraphs (max 2-3 sentences each). separate logic thoughts with newlines.
-            Return raw JSON only (no markdown): {"sections": [{"header": "...", "content": "..."}]}
+            2. "content": Write for a mobile app. 
+               - Use the string "||" to separate paragraphs.
+               - DO NOT use literal newlines in the content. 
+               - Keep it punchy.
+            Return raw JSON only (no markdown): {"sections": [{"header": "...", "content": "Para 1 || Para 2"}]}
         `;
 
         try {
@@ -501,8 +508,9 @@
         `;
 
         sections.forEach((sec, idx) => {
+            // FIXED PARSER: Split by the safe "||" separator instead of newlines
             const paragraphs = sec.content
-                .split('\n')
+                .split('||')
                 .filter(txt => txt.trim().length > 0)
                 .map(txt => `<p class="paragraph-spacing">${txt.trim()}</p>`)
                 .join('');
