@@ -220,7 +220,7 @@
         
         <header class="text-center mb-8">
             <h1 class="text-4xl md:text-5xl font-bold mb-2 text-[#1a1815]">Knowledge Explorer</h1>
-            <p class="text-xl italic text-[#5a5041]">The "Shell" Architecture v1.3</p>
+            <p class="text-xl italic text-[#5a5041]">The "Shell" Architecture v1.4</p>
         </header>
 
         <div class="dark-card">
@@ -275,13 +275,13 @@
             <section id="aboutContent" class="tab-content active">
                 <div class="dark-card">
                     <h2>About the Shell</h2>
-                    <p class="text-[#d1cdc7] italic mb-4">Build #13: Array Architecture</p>
+                    <p class="text-[#d1cdc7] italic mb-4">Build #14: Quote-Safe Edition</p>
                     
                     <h3 class="mt-6 mb-2">Architectural Notes</h3>
                     <ul class="list-disc list-inside text-[#d1cdc7] space-y-2">
-                        <li><strong>Array-Based Output:</strong> AI now returns content as a JSON array ["p1", "p2"] instead of a single string. This eliminates separator/newline bugs.</li>
-                        <li><strong>Robust Rendering:</strong> The content renderer iterates over the array to build micro-paragraphs safely.</li>
-                        <li><strong>Hardened Parser:</strong> Maintains the robust regex stripper for Markdown.</li>
+                        <li><strong>Safe Quotes:</strong> Prompt explicitly forbids double quotes within text to prevent JSON breakage.</li>
+                        <li><strong>Array-Based Output:</strong> AI returns content as JSON array ["p1", "p2"].</li>
+                        <li><strong>Hardened Parser:</strong> Robust regex stripper for Markdown.</li>
                     </ul>
 
                     <h3 class="mt-6 mb-2">Debug Log</h3>
@@ -471,7 +471,7 @@
             'lens-3': 'Analysis, Cultural Impact, or Significance'
         };
 
-        // FIXED PROMPT: Request Arrays instead of Strings
+        // FIXED PROMPT: Enforcing Single Quotes to prevent JSON syntax errors
         const prompt = `
             Topic: ${state.topic}, Sub-Category: ${state.currentCategory}.
             Focus: ${lensMap[lensId]}.
@@ -479,6 +479,7 @@
             CRITICAL FORMATTING RULES:
             1. "header": A short, catchy title (max 6 words).
             2. "content": Return an ARRAY of strings. Each string is 1 short paragraph.
+            3. QUOTES: Do NOT use double quotes (") inside the text. Use single quotes (') for emphasis.
             Return raw JSON only (no markdown): {"sections": [{"header": "...", "content": ["Para 1", "Para 2"]}]}
         `;
 
@@ -501,7 +502,6 @@
         `;
 
         sections.forEach((sec, idx) => {
-            // FIXED LOGIC: Handle content as an Array
             let paragraphs = "";
             
             if (Array.isArray(sec.content)) {
@@ -509,7 +509,6 @@
                     .map(txt => `<p class="paragraph-spacing">${txt}</p>`)
                     .join('');
             } else {
-                // Fallback for string content (backward compatibility)
                 paragraphs = `<p class="paragraph-spacing">${sec.content}</p>`;
             }
 
