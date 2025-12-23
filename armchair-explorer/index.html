@@ -285,7 +285,7 @@ h1 {
         <div class="max-w-4xl mx-auto">
             <div style="background-color: var(--dark-bg); color: var(--cream-text); padding: 2rem; border-radius: 10px; border-left: 4px solid var(--primary-gold);">
                 <h2 style="color: var(--primary-gold);">About City Explorer</h2>
-                <p style="font-size: 0.85rem; color: var(--muted-gold); font-style: italic; margin-bottom: 1rem;">Build #6</p>
+                <p style="font-size: 0.85rem; color: var(--muted-gold); font-style: italic; margin-bottom: 1rem;">Build #8</p>
                 <p>Tests neighborhood exploration with accordion-style content.</p>
                 
                 <h3 style="color: var(--primary-gold); margin-top: 2rem;">How to Use</h3>
@@ -295,6 +295,9 @@ h1 {
                     <li>Select a neighborhood from dropdown</li>
                     <li>Click accordion headers to expand content</li>
                 </ol>
+                
+                <h3 style="color: var(--primary-gold); margin-top: 2rem;">Debug Log</h3>
+                <div id="debugLog" style="background-color: rgba(0,0,0,0.3); padding: 1rem; border-radius: 0.5rem; font-family: monospace; font-size: 0.75rem; max-height: 200px; overflow-y: auto; color: var(--cream-text);"></div>
             </div>
         </div>
     </section>
@@ -310,6 +313,16 @@ h1 {
     let neighborhoods = [];
     let currentNeighborhood = "";
     let neighborhoodCaches = {};
+
+    function log(message) {
+        const debugLog = document.getElementById('debugLog');
+        if (debugLog) {
+            const timestamp = new Date().toLocaleTimeString();
+            debugLog.innerHTML += `[${timestamp}] ${message}<br>`;
+            debugLog.scrollTop = debugLog.scrollHeight;
+        }
+        console.log(message);
+    }
 
     async function fetchCity() {
         const city = document.getElementById('cityInput').value.trim();
@@ -434,7 +447,7 @@ h1 {
 
         } catch (e) {
             dropdown.innerHTML = '<option value="">Error loading neighborhoods</option>';
-            console.error('Error loading neighborhoods:', e);
+            log('Error loading neighborhoods: ' + e.message);
         }
     }
 
@@ -483,7 +496,7 @@ h1 {
             try {
                 await loadNeighborhoodContent(tabId);
             } catch (e) {
-                console.error('Error loading neighborhood tab:', e);
+                log('Error loading tab ' + tabId + ': ' + e.message);
             }
             
             clickedButton.classList.remove('loading');
@@ -523,23 +536,31 @@ h1 {
             );
 
             const data = await response.json();
+            log('API response for ' + tabId + ': ' + JSON.stringify(data).substring(0, 100));
+            
             let rawText = data.candidates[0].content.parts[0].text;
+            log('Raw text for ' + tabId + ': ' + rawText.substring(0, 100));
+            
             rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
 
             const result = JSON.parse(rawText);
+            log('Parsed ' + tabId + ' - has sections: ' + !!result.sections + ', has paragraphs: ' + !!result.paragraphs);
             
             if (!result.sections && result.paragraphs) {
+                log('Converting paragraphs to sections for ' + tabId);
                 result.sections = result.paragraphs.map((para, i) => ({
                     header: `Section ${i + 1}`,
                     content: para
                 }));
             }
             
+            log('Rendering ' + tabId + ' with ' + result.sections.length + ' sections');
+            
             neighborhoodCaches[tabId] = result;
             renderNeighborhoodContent(tabId, result);
 
         } catch (e) {
-            console.error('Load neighborhood content error:', e);
+            log('Load error for ' + tabId + ': ' + e.message);
             output.innerHTML = `<div class="p-4 bg-red-50 text-red-600 border border-red-200 rounded">Error: ${e.message}</div>`;
         }
     }
