@@ -132,7 +132,7 @@
         
         <header class="text-center mb-8">
             <h1 class="text-4xl md:text-5xl font-bold mb-2 text-[var(--text-body)]">Knowledge Explorer</h1>
-            <p class="text-xl italic text-[var(--border)]">Universal Shell v2.3</p>
+            <p class="text-xl italic text-[var(--border)]">Universal Shell v2.4</p>
             
             <button onclick="cycleTheme()" class="theme-gear" title="Switch Theme">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -145,7 +145,7 @@
         <div class="dark-card">
             <label class="block text-sm font-bold mb-2 uppercase tracking-wide">Enter Topic</label>
             <div class="flex gap-3">
-                <input type="text" id="topicInput" placeholder="E.g., Paris, Battle of Midway, Cognitive Dissonance">
+                <input type="text" id="topicInput" placeholder="Try 'Topic' or 'Topic: Category' (e.g., Paris: Museums)">
                 <button id="okButton" onclick="fetchTopic()" class="action-button">Explore</button>
             </div>
             <div id="topicDisplay" class="mt-4 hidden border-t border-[var(--border)] pt-4"></div>
@@ -179,11 +179,19 @@
             <section id="aboutContent" class="tab-content active">
                 <div class="dark-card">
                     <h2 class="text-2xl font-bold mb-4">How to Use the Explorer</h2>
+                    
+                    <h3 class="text-xl font-bold mt-6 mb-2">Power User Tip: The Colon Filter</h3>
                     <p class="paragraph-spacing">
-                        This application is a <strong>Universal Context Engine</strong>. Enter a topic to explore its details, context, and analysis.
+                        You can force specific categories by using a colon in your search:
                     </p>
+                    <ul class="list-disc list-inside mb-4 pl-2 text-[var(--text-muted)]">
+                        <li><code>São Paulo: Neighborhoods</code> → Lists only neighborhoods.</li>
+                        <li><code>WWII: Battles</code> → Lists only battles.</li>
+                        <li><code>Beatles: Albums</code> → Lists only albums.</li>
+                    </ul>
+
                     <div class="mt-8 pt-4 border-t border-[var(--border)]">
-                        <p class="text-xs text-[var(--border)] font-mono">System Status: Ready | v2.3 (Logic Fixed)</p>
+                        <p class="text-xs text-[var(--border)] font-mono">System Status: Ready | v2.4 (Filter Logic)</p>
                     </div>
                 </div>
             </section>
@@ -227,6 +235,7 @@
     // --- STATE & UTILS ---
     let state = {
         topic: "",
+        constraint: null, // New Field for the Colon Filter
         currentTier: "about",
         currentCategory: "",
         caches: { categories: [], content: {} }
@@ -268,20 +277,26 @@
         const input = document.getElementById('topicInput');
         const btn = document.getElementById('okButton');
         const display = document.getElementById('topicDisplay');
-        const topic = input.value.trim();
-        if(!topic) return alert("Please enter a topic.");
+        const rawInput = input.value.trim();
+
+        if(!rawInput) return alert("Please enter a topic.");
 
         btn.disabled = true;
         btn.innerHTML = 'Thinking...';
-        state.topic = topic;
+        
+        // --- PARSE COLON FILTER ---
+        // "São Paulo: Neighborhoods" -> Topic: "São Paulo", Constraint: "Neighborhoods"
+        if(rawInput.includes(':')) {
+            const parts = rawInput.split(':');
+            state.topic = parts[0].trim();
+            state.constraint = parts[1].trim();
+        } else {
+            state.topic = rawInput;
+            state.constraint = null;
+        }
         
         try {
-            // LOGIC FIX: Explicitly instruct AI to treat plural inputs as a single conceptual topic
-            const prompt = `
-                Topic: "${topic}".
-                INSTRUCTION: Treat this topic as a single entity or location (e.g., if "Paris Neighborhoods", treat as "Paris").
-                Return raw JSON only: {"title": "Formal Name", "summary": "One compelling sentence defining this topic."}
-            `;
+            const prompt = `Topic: "${state.topic}". Return raw JSON only: {"title": "Formal Name", "summary": "One compelling sentence defining this topic."}`;
             
             const data = await callGemini(prompt);
             const result = parseGeminiJSON(data);
@@ -325,8 +340,15 @@
         dropdown.disabled = true;
         dropdown.innerHTML = '<option>Loading...</option>';
 
-        const prompt = `For the topic "${state.topic}", list ALL important sub-categories (e.g., Neighborhoods, Key Battles, Theories). 
-                        Return raw JSON only: {"items": ["Name 1", "Name 2"]}`;
+        // DYNAMIC PROMPT: If constraint exists, force the specific list.
+        let prompt = "";
+        if(state.constraint) {
+            prompt = `For the topic "${state.topic}", list ONLY the "${state.constraint}". 
+                      Example format: {"items": ["Item A", "Item B"]}. Return raw JSON only.`;
+        } else {
+            prompt = `For the topic "${state.topic}", list ALL important sub-categories (e.g., Neighborhoods, Key Battles, Theories). 
+                      Return raw JSON only: {"items": ["Name 1", "Name 2"]}`;
+        }
 
         try {
             const data = await callGemini(prompt);
