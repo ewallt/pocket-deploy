@@ -132,7 +132,7 @@
         
         <header class="text-center mb-8">
             <h1 class="text-4xl md:text-5xl font-bold mb-2 text-[var(--text-body)]">Knowledge Explorer</h1>
-            <p class="text-xl italic text-[var(--border)]">Universal Shell v2.7</p>
+            <p class="text-xl italic text-[var(--border)]">Universal Shell v2.8</p>
             
             <button onclick="cycleTheme()" class="theme-gear" title="Switch Theme">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -191,7 +191,7 @@
                     </ul>
 
                     <div class="mt-8 pt-4 border-t border-[var(--border)]">
-                        <p class="text-xs text-[var(--border)] font-mono">System Status: Ready | v2.7 (Crash Protection)</p>
+                        <p class="text-xs text-[var(--border)] font-mono">System Status: Ready | v2.8 (Iron-Clad Parser)</p>
                     </div>
                 </div>
             </section>
@@ -241,12 +241,26 @@
         caches: { categories: [], content: {} }
     };
 
+    // --- FIXED: RESILIENT PARSER ---
+    // If the AI sends bad JSON, we catch it and return a safety object instead of crashing.
     function parseGeminiJSON(rawText) {
-        let cleanText = rawText.replace(/```json/g, '').replace(/```/g, '');
-        const firstBrace = cleanText.indexOf('{');
-        const lastBrace = cleanText.lastIndexOf('}');
-        if (firstBrace !== -1 && lastBrace !== -1) cleanText = cleanText.substring(firstBrace, lastBrace + 1);
-        return JSON.parse(cleanText);
+        try {
+            let cleanText = rawText.replace(/```json/g, '').replace(/```/g, '');
+            const firstBrace = cleanText.indexOf('{');
+            const lastBrace = cleanText.lastIndexOf('}');
+            if (firstBrace !== -1 && lastBrace !== -1) {
+                cleanText = cleanText.substring(firstBrace, lastBrace + 1);
+            }
+            return JSON.parse(cleanText);
+        } catch (e) {
+            console.error("JSON Parse Failed for text:", rawText);
+            // Return a "Safety Object" so the app keeps running
+            return {
+                title: state.topic || "Topic",
+                summary: "The AI response could not be formatted. Please try a simpler query.",
+                items: [] // Safety for lists
+            };
+        }
     }
 
     function parseDelimitedText(rawText) {
@@ -295,7 +309,6 @@
         }
         
         try {
-            // UPDATED PROMPT: STRICT NEGATIVE CONSTRAINT
             const prompt = `
                 Topic: "${state.topic}".
                 Goal: Define the subject.
@@ -304,7 +317,7 @@
             `;
             
             const data = await callGemini(prompt);
-            const result = parseGeminiJSON(data);
+            const result = parseGeminiJSON(data); // Now safe from crashing
 
             display.classList.remove('hidden');
             display.innerHTML = `
@@ -357,7 +370,7 @@
 
         try {
             const data = await callGemini(prompt);
-            const result = parseGeminiJSON(data);
+            const result = parseGeminiJSON(data); // Now safe from crashing
             
             // --- SMART ARRAY HUNTER ---
             let items = result.items;
@@ -365,7 +378,8 @@
                 const values = Object.values(result);
                 items = values.find(v => Array.isArray(v));
             }
-            if (!items) throw new Error("AI did not return a valid list.");
+            // Fallback for empty list
+            if (!items) items = [];
 
             items = items.sort();
             state.caches.categories = items;
