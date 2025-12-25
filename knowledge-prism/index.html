@@ -46,6 +46,7 @@
             border-left: 4px solid var(--brand);
             box-shadow: 0 4px 6px rgba(0,0,0,0.2);
             margin-bottom: 1.5rem;
+            position: relative; /* For absolute positioning contexts */
         }
         
         .dark-card label { 
@@ -65,6 +66,30 @@
             padding: 0.75rem; width: 100%; font-family: inherit; font-size: 1rem;
         }
         input:focus, select:focus { outline: 2px solid var(--brand); border-color: transparent; }
+
+        .input-wrapper { position: relative; }
+        
+        .suggestion-btn {
+            position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+            background: none; border: none; color: var(--brand); cursor: pointer;
+            opacity: 0.7; transition: opacity 0.2s; padding: 4px;
+        }
+        .suggestion-btn:hover { opacity: 1; }
+
+        .suggestion-popup {
+            position: absolute; top: 100%; left: 0; right: 0;
+            background-color: var(--input-bg); border: 1px solid var(--brand);
+            border-radius: 0.375rem; padding: 0.75rem; z-index: 20;
+            margin-top: 4px; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .suggestion-popup.active { display: block; animation: fadeIn 0.2s; }
+
+        .suggestion-chip {
+            display: inline-block; font-size: 0.85rem; padding: 2px 8px;
+            margin: 2px; border: 1px solid var(--border); border-radius: 4px;
+            cursor: pointer; background-color: rgba(0,0,0,0.2); transition: all 0.2s;
+        }
+        .suggestion-chip:hover { border-color: var(--brand); color: var(--brand); }
 
         .action-button {
             background-color: var(--brand); color: var(--card-bg);
@@ -145,7 +170,7 @@
         
         <header class="text-center mb-8 pr-12">
             <h1 class="text-4xl md:text-5xl mb-2">Context Navigator</h1>
-            <p class="text-xl italic text-[var(--border)]">Analysis & Strategy <span class="text-red-500 font-bold">Build #36</span></p>
+            <p class="text-xl italic text-[var(--border)]">Analysis & Strategy <span class="text-red-500 font-bold">Build #37</span></p>
             
             <button onclick="cycleTheme()" class="theme-gear" title="Switch Theme">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -163,9 +188,23 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <input type="text" id="filterInput" placeholder="Focus (Optional, e.g. Battles, Neighborhoods)">
-                    <p class="helper-text">Leave empty for standard categories.</p>
+                
+                <div class="input-wrapper">
+                    <input type="text" id="filterInput" placeholder="Focus (Optional, e.g. Battles)">
+                    
+                    <button class="suggestion-btn" onclick="fetchSuggestions()" title="Get Focus Ideas">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"></path><path d="M9 21h6"></path></svg>
+                    </button>
+
+                    <div id="suggestionPopup" class="suggestion-popup">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs font-bold text-[var(--brand)] uppercase">AI Suggestions</span>
+                            <span onclick="closeSuggestions()" class="text-xs cursor-pointer opacity-50 hover:opacity-100">✕</span>
+                        </div>
+                        <div id="suggestionList" class="text-sm"></div>
+                    </div>
+                    
+                    <p class="helper-text">Leave empty for standard categories. Click 💡 for ideas.</p>
                 </div>
                 
                 <div class="flex gap-2">
@@ -215,14 +254,10 @@
                         This tool is designed to break down complex topics into structured, navigable layers.
                     </p>
                     
-                    <h3 class="text-xl font-bold mt-6 mb-2 text-[var(--brand)]">New Strategy Modes</h3>
-                    <ul class="list-disc list-inside text-[var(--text-muted)]">
-                        <li class="mb-2"><strong>Smart List:</strong> The AI intelligently selects 8-12 key categories.</li>
-                        <li class="mb-2"><strong>Top 3:</strong> The ultra-short "Elevator Pitch" list.</li>
-                        <li class="mb-2"><strong>Core 5:</strong> The essential foundational pillars.</li>
-                        <li class="mb-2"><strong>Top 10 Ranked:</strong> Forces a strict ranking order.</li>
-                        <li class="mb-2"><strong>Comprehensive:</strong> Deep dive (up to 30 items).</li>
-                    </ul>
+                    <h3 class="text-xl font-bold mt-6 mb-2 text-[var(--brand)]">New Feature: Focus Suggestions</h3>
+                    <p class="paragraph-spacing">
+                        Click the lightbulb icon inside the "Focus" input to get AI-powered suggestions for interesting ways to filter your topic.
+                    </p>
                 </div>
             </section>
         </main>
@@ -239,14 +274,9 @@
             '--text-muted': 'rgba(212, 165, 116, 0.6)', '--border': '#5a5041'
         },
         'archives': {
-            '--app-bg': '#f5f5f4',       
-            '--card-bg': '#e7e5e4',      
-            '--input-bg': '#d6d3d1',     
-            '--brand': '#0f766e',        
-            '--text-body': '#292524',    
-            '--text-card': '#292524',    
-            '--text-muted': '#57534e',   
-            '--border': '#d6d3d1'
+            '--app-bg': '#f5f5f4', '--card-bg': '#e7e5e4', '--input-bg': '#d6d3d1',     
+            '--brand': '#0f766e', '--text-body': '#292524', '--text-card': '#292524',    
+            '--text-muted': '#57534e', '--border': '#d6d3d1'
         },
         'high-command': {
             '--app-bg': '#022c22', '--card-bg': '#064e3b', '--input-bg': '#065f46',
@@ -282,16 +312,12 @@
     };
 
     // --- PARSERS ---
-    
-    // 1. Basic JSON Parser
     function parseGeminiJSON(rawText) {
         try {
             let cleanText = rawText.replace(/```json/g, '').replace(/```/g, '');
             const firstBrace = cleanText.indexOf('{');
             const lastBrace = cleanText.lastIndexOf('}');
-            if (firstBrace !== -1 && lastBrace !== -1) {
-                cleanText = cleanText.substring(firstBrace, lastBrace + 1);
-            }
+            if (firstBrace !== -1 && lastBrace !== -1) cleanText = cleanText.substring(firstBrace, lastBrace + 1);
             return JSON.parse(cleanText);
         } catch (e) {
             console.warn("JSON Parse Failed", e);
@@ -299,7 +325,6 @@
         }
     }
 
-    // 2. Delimited Text Parser (Sections)
     function parseDelimitedText(rawText) {
         let cleanText = rawText.replace(/\*\*/g, '').replace(/```/g, '');
         const rawSections = cleanText.split('###').filter(s => s.trim().length > 0);
@@ -323,9 +348,7 @@
         });
     }
 
-    // 3. Resilient List Parser (The "Universal" Fix)
     function parseResilientList(rawText) {
-        // Try Standard JSON First
         try {
             const cleanText = rawText.replace(/```json/g, '').replace(/```/g, '');
             const firstBrace = cleanText.indexOf('{');
@@ -338,20 +361,51 @@
                 const foundArray = values.find(v => Array.isArray(v));
                 if (foundArray) return foundArray;
             }
-        } catch (e) {
-            console.log("JSON List Parse failed, switching to Text Fallback");
-        }
-
-        // Text Fallback (Splits by newlines, cleans up bullets/numbers)
+        } catch (e) { console.log("JSON List Parse failed, switching to Text Fallback"); }
         return rawText.split('\n')
             .map(line => line.trim())
-            .filter(line => line.length > 0)
-            .filter(line => !line.startsWith('{') && !line.startsWith('}') && !line.startsWith(']')) 
+            .filter(line => line.length > 0 && !line.startsWith('{') && !line.startsWith('}') && !line.startsWith(']')) 
             .map(line => line.replace(/^[\d-]+\.\s*/, '').replace(/^-\s*/, '').replace(/^\*\s*/, '')) 
             .filter(line => line.length > 2); 
     }
 
-    // --- LOGIC ---
+    // --- SUGGESTION WIDGET LOGIC ---
+    async function fetchSuggestions() {
+        const topicIn = document.getElementById('topicInput').value.trim();
+        const popup = document.getElementById('suggestionPopup');
+        const list = document.getElementById('suggestionList');
+        
+        if(!topicIn) return alert("Please enter a Main Topic first.");
+        
+        list.innerHTML = `<span class="italic opacity-70">Thinking...</span>`;
+        popup.classList.add('active');
+
+        try {
+            const prompt = `Topic: "${topicIn}". Suggest 5 interesting, distinct sub-category types (Focus areas) for a list. Return JSON: {"items": ["Type 1", "Type 2"]}`;
+            const data = await callGemini(prompt);
+            const items = parseResilientList(data).slice(0, 5); // Ensure max 5
+            
+            list.innerHTML = '';
+            items.forEach(item => {
+                const chip = document.createElement('span');
+                chip.className = 'suggestion-chip';
+                chip.textContent = item;
+                chip.onclick = () => {
+                    document.getElementById('filterInput').value = item;
+                    popup.classList.remove('active');
+                };
+                list.appendChild(chip);
+            });
+        } catch(e) {
+            list.innerHTML = `<span class="text-red-400">Error generating ideas.</span>`;
+        }
+    }
+
+    function closeSuggestions() {
+        document.getElementById('suggestionPopup').classList.remove('active');
+    }
+
+    // --- CORE APP LOGIC ---
     async function fetchTopic() {
         const input = document.getElementById('topicInput');
         const filterIn = document.getElementById('filterInput');
@@ -361,6 +415,9 @@
 
         const rawInput = input.value.trim();
         if(!rawInput) return alert("Please enter a topic.");
+
+        // Close suggestions if open
+        closeSuggestions();
 
         btn.disabled = true;
         btn.innerHTML = '<div class="spinner"></div>';
@@ -387,7 +444,6 @@
                 <p class="italic text-[var(--text-muted)]">${result.summary}</p>
             `;
 
-            // Reset Sub-systems
             state.caches.categories = [];
             state.caches.content = {};
             document.getElementById('categoryDropdown').innerHTML = '<option>-- Select Category --</option>';
@@ -414,56 +470,30 @@
         let instruction = "";
         switch(state.listMode) {
             case 'top3':
-                instruction = `
-                    List exactly the Top 3 most important ${state.filter || "sub-categories"} for this topic.
-                    Rank them 1-3.
-                    Return a simple JSON list: {"items": ["Item 1", "Item 2"]}
-                `;
+                instruction = `List exactly the Top 3 most important ${state.filter || "sub-categories"}. Rank 1-3. Simple JSON list.`;
                 break;
             case 'core5':
-                instruction = `
-                    List exactly the 5 absolute pillars or foundational ${state.filter || "sub-categories"} for this topic.
-                    No more, no less.
-                    Return a simple JSON list: {"items": ["Item 1", "Item 2"]}
-                `;
+                instruction = `List exactly the 5 absolute pillars/foundational ${state.filter || "sub-categories"}. No more, no less. Simple JSON list.`;
                 break;
             case 'top10':
-                instruction = `
-                    List exactly the Top 10 most important ${state.filter || "sub-categories"} for this topic. 
-                    Rank them 1-10.
-                    Return a simple JSON list: {"items": ["Item 1", "Item 2"]}
-                `;
+                instruction = `List exactly the Top 10 most important ${state.filter || "sub-categories"}. Rank 1-10. Simple JSON list.`;
                 break;
             case 'comprehensive':
-                instruction = `
-                    Generate a comprehensive list of ${state.filter || "sub-categories"} (aim for 25-30 items).
-                    Cover all aspects.
-                    Return a simple JSON list: {"items": ["Item 1", "Item 2"]}
-                `;
+                instruction = `Generate a comprehensive list of ${state.filter || "sub-categories"} (aim for 25-30 items). Simple JSON list.`;
                 break;
             default: // smart
-                instruction = `
-                    List 8-12 most relevant ${state.filter || "sub-categories"}.
-                    Return a simple JSON list: {"items": ["Item 1", "Item 2"]}
-                `;
+                instruction = `List 8-12 most relevant ${state.filter || "sub-categories"}. Simple JSON list.`;
                 break;
         }
 
-        const prompt = `${promptContext}\n${instruction}`;
+        const prompt = `${promptContext}\n${instruction}\nReturn raw JSON: {"items": ["Item 1", "Item 2"]}`;
 
         try {
             const data = await callGemini(prompt);
-            
-            // Use the new Resilient Parser
             let items = parseResilientList(data);
-            
             if (items.length === 0) throw new Error("No categories found");
 
-            // Sort only if NOT ranked (Top Lists should stay in rank order)
-            if(!state.listMode.startsWith('top') && state.listMode !== 'core5') {
-                 items.sort();
-            }
-            
+            if(!state.listMode.startsWith('top') && state.listMode !== 'core5') items.sort();
             state.caches.categories = items;
 
             dropdown.innerHTML = '<option value="">-- Select Category --</option>';
@@ -483,14 +513,10 @@
 
     function switchTier(tier) {
         state.currentTier = tier;
-        
-        // Update Nav Buttons
         document.querySelectorAll('.tier-button').forEach(b => {
             if(b.textContent.toLowerCase().includes(tier)) b.classList.add('active');
             else b.classList.remove('active');
         });
-
-        // Hide all areas first
         document.getElementById('aboutContent').classList.remove('active');
         document.getElementById('category-tier').classList.remove('active');
         
@@ -498,9 +524,7 @@
             document.getElementById('aboutContent').classList.add('active');
         } else {
             document.getElementById('category-tier').classList.add('active');
-            if(state.caches.categories.length === 0 && state.topic) {
-                loadCategories();
-            }
+            if(state.caches.categories.length === 0 && state.topic) loadCategories();
         }
     }
 
@@ -511,15 +535,13 @@
         
         const lensGroup = document.getElementById(`lensButtons`);
         lensGroup.classList.remove('hidden');
-        lensGroup.style.display = 'flex'; // Force flex layout
+        lensGroup.style.display = 'flex'; 
         
-        // Reset Lens View
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
     }
 
     async function loadLens(lensId, btnElement) {
-        // UI Updates
         document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
         if(btnElement) btnElement.classList.add('active');
         
@@ -527,7 +549,6 @@
         const contentDiv = document.getElementById(`${lensId}Content`);
         contentDiv.classList.add('active');
 
-        // Cache Check
         const cacheKey = `${state.currentCategory}-${lensId}`;
         if(state.caches.content[cacheKey]) {
             contentDiv.innerHTML = state.caches.content[cacheKey];
@@ -597,16 +618,10 @@
         if(!el) return;
         const header = el.previousElementSibling;
         const isOpen = el.classList.contains('open');
-        
-        // Close siblings
         const parent = el.closest('.dark-card');
         parent.querySelectorAll('.accordion-content').forEach(c => c.classList.remove('open'));
         parent.querySelectorAll('.accordion-header').forEach(h => h.classList.remove('active'));
-        
-        if(!isOpen) {
-            el.classList.add('open');
-            header.classList.add('active');
-        }
+        if(!isOpen) { el.classList.add('open'); header.classList.add('active'); }
     }
 
     async function callGemini(promptText) {
