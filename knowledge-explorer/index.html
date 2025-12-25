@@ -132,7 +132,7 @@
         
         <header class="text-center mb-8">
             <h1 class="text-4xl md:text-5xl font-bold mb-2 text-[var(--text-body)]">Knowledge Explorer</h1>
-            <p class="text-xl italic text-[var(--border)]">Universal Shell v2.4</p>
+            <p class="text-xl italic text-[var(--border)]">Universal Shell v2.6</p>
             
             <button onclick="cycleTheme()" class="theme-gear" title="Switch Theme">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -145,7 +145,7 @@
         <div class="dark-card">
             <label class="block text-sm font-bold mb-2 uppercase tracking-wide">Enter Topic</label>
             <div class="flex gap-3">
-                <input type="text" id="topicInput" placeholder="Try 'Topic' or 'Topic: Category' (e.g., Paris: Museums)">
+                <input type="text" id="topicInput" placeholder="Try 'Topic' or 'Topic: Category' (e.g., São Paulo: Neighborhoods)">
                 <button id="okButton" onclick="fetchTopic()" class="action-button">Explore</button>
             </div>
             <div id="topicDisplay" class="mt-4 hidden border-t border-[var(--border)] pt-4"></div>
@@ -191,7 +191,7 @@
                     </ul>
 
                     <div class="mt-8 pt-4 border-t border-[var(--border)]">
-                        <p class="text-xs text-[var(--border)] font-mono">System Status: Ready | v2.4 (Filter Logic)</p>
+                        <p class="text-xs text-[var(--border)] font-mono">System Status: Ready | v2.6 (Smart Array Hunter)</p>
                     </div>
                 </div>
             </section>
@@ -235,7 +235,7 @@
     // --- STATE & UTILS ---
     let state = {
         topic: "",
-        constraint: null, // New Field for the Colon Filter
+        constraint: null,
         currentTier: "about",
         currentCategory: "",
         caches: { categories: [], content: {} }
@@ -285,7 +285,6 @@
         btn.innerHTML = 'Thinking...';
         
         // --- PARSE COLON FILTER ---
-        // "São Paulo: Neighborhoods" -> Topic: "São Paulo", Constraint: "Neighborhoods"
         if(rawInput.includes(':')) {
             const parts = rawInput.split(':');
             state.topic = parts[0].trim();
@@ -340,11 +339,11 @@
         dropdown.disabled = true;
         dropdown.innerHTML = '<option>Loading...</option>';
 
-        // DYNAMIC PROMPT: If constraint exists, force the specific list.
+        // DYNAMIC PROMPT
         let prompt = "";
         if(state.constraint) {
-            prompt = `For the topic "${state.topic}", list ONLY the "${state.constraint}". 
-                      Example format: {"items": ["Item A", "Item B"]}. Return raw JSON only.`;
+            prompt = `Topic: "${state.topic}". List 10 important "${state.constraint}". 
+                      Return raw JSON with exact key "items": {"items": ["Name 1", "Name 2"]}`;
         } else {
             prompt = `For the topic "${state.topic}", list ALL important sub-categories (e.g., Neighborhoods, Key Battles, Theories). 
                       Return raw JSON only: {"items": ["Name 1", "Name 2"]}`;
@@ -353,7 +352,21 @@
         try {
             const data = await callGemini(prompt);
             const result = parseGeminiJSON(data);
-            const items = result.items.sort();
+            
+            // --- SMART ARRAY HUNTER ---
+            // 1. Try standard 'items' key
+            let items = result.items;
+            
+            // 2. If missing, look for ANY array in the object
+            if (!items || !Array.isArray(items)) {
+                const values = Object.values(result);
+                items = values.find(v => Array.isArray(v));
+            }
+            
+            // 3. If still nothing, throw error
+            if (!items) throw new Error("AI did not return a valid list.");
+
+            items = items.sort();
             state.caches.categories = items;
 
             dropdown.innerHTML = '<option value="">-- Select Category --</option>';
