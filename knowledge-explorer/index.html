@@ -132,7 +132,7 @@
         
         <header class="text-center mb-8">
             <h1 class="text-4xl md:text-5xl font-bold mb-2 text-[var(--text-body)]">Knowledge Explorer</h1>
-            <p class="text-xl italic text-[var(--border)]">Universal Shell v2.6</p>
+            <p class="text-xl italic text-[var(--border)]">Universal Shell v2.7</p>
             
             <button onclick="cycleTheme()" class="theme-gear" title="Switch Theme">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -191,7 +191,7 @@
                     </ul>
 
                     <div class="mt-8 pt-4 border-t border-[var(--border)]">
-                        <p class="text-xs text-[var(--border)] font-mono">System Status: Ready | v2.6 (Smart Array Hunter)</p>
+                        <p class="text-xs text-[var(--border)] font-mono">System Status: Ready | v2.7 (Crash Protection)</p>
                     </div>
                 </div>
             </section>
@@ -295,7 +295,13 @@
         }
         
         try {
-            const prompt = `Topic: "${state.topic}". Return raw JSON only: {"title": "Formal Name", "summary": "One compelling sentence defining this topic."}`;
+            // UPDATED PROMPT: STRICT NEGATIVE CONSTRAINT
+            const prompt = `
+                Topic: "${state.topic}".
+                Goal: Define the subject.
+                CONSTRAINT: DO NOT return a list of items. Only return a definition.
+                Return raw JSON only: {"title": "Formal Name", "summary": "One compelling sentence defining this topic."}
+            `;
             
             const data = await callGemini(prompt);
             const result = parseGeminiJSON(data);
@@ -354,16 +360,11 @@
             const result = parseGeminiJSON(data);
             
             // --- SMART ARRAY HUNTER ---
-            // 1. Try standard 'items' key
             let items = result.items;
-            
-            // 2. If missing, look for ANY array in the object
             if (!items || !Array.isArray(items)) {
                 const values = Object.values(result);
                 items = values.find(v => Array.isArray(v));
             }
-            
-            // 3. If still nothing, throw error
             if (!items) throw new Error("AI did not return a valid list.");
 
             items = items.sort();
