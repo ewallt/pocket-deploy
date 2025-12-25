@@ -170,7 +170,7 @@
         
         <header class="text-center mb-8 pr-12">
             <h1 class="text-4xl md:text-5xl mb-2">Context Navigator</h1>
-            <p class="text-xl italic text-[var(--border)]">Analysis & Strategy <span class="text-red-500 font-bold">Build #37</span></p>
+            <p class="text-xl italic text-[var(--border)]">Analysis & Strategy <span class="text-red-500 font-bold">Build #38</span></p>
             
             <button onclick="cycleTheme()" class="theme-gear" title="Switch Theme">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -198,7 +198,7 @@
 
                     <div id="suggestionPopup" class="suggestion-popup">
                         <div class="flex justify-between items-center mb-2">
-                            <span class="text-xs font-bold text-[var(--brand)] uppercase">AI Suggestions</span>
+                            <span class="text-xs font-bold text-[var(--brand)] uppercase">Popular Searches</span>
                             <span onclick="closeSuggestions()" class="text-xs cursor-pointer opacity-50 hover:opacity-100">✕</span>
                         </div>
                         <div id="suggestionList" class="text-sm"></div>
@@ -256,7 +256,8 @@
                     
                     <h3 class="text-xl font-bold mt-6 mb-2 text-[var(--brand)]">New Feature: Focus Suggestions</h3>
                     <p class="paragraph-spacing">
-                        Click the lightbulb icon inside the "Focus" input to get AI-powered suggestions for interesting ways to filter your topic.
+                        Click the lightbulb icon inside the "Focus" input to get AI-powered suggestions. 
+                        It now prioritizes high-interest, "Googled" categories (e.g., Foods, Neighborhoods, Landmarks) over abstract concepts.
                     </p>
                 </div>
             </section>
@@ -369,7 +370,7 @@
             .filter(line => line.length > 2); 
     }
 
-    // --- SUGGESTION WIDGET LOGIC ---
+    // --- SUGGESTION WIDGET LOGIC (UPDATED) ---
     async function fetchSuggestions() {
         const topicIn = document.getElementById('topicInput').value.trim();
         const popup = document.getElementById('suggestionPopup');
@@ -381,7 +382,15 @@
         popup.classList.add('active');
 
         try {
-            const prompt = `Topic: "${topicIn}". Suggest 5 interesting, distinct sub-category types (Focus areas) for a list. Return JSON: {"items": ["Type 1", "Type 2"]}`;
+            // UPDATED PROMPT: Prioritizes Search Volume / Tangible Lists
+            const prompt = `
+                Topic: "${topicIn}". 
+                Suggest 5 specific Focus Areas (plural nouns) for a list. 
+                Criteria: Select the 5 sub-categories most likely to be searched for by people interested in this topic (High Popularity/Google Search Volume). 
+                Focus on tangible, interesting lists (e.g., if City: 'Foods', 'Neighborhoods', 'Museums' -- NOT 'Context' or 'History').
+                Return JSON: {"items": ["Type 1", "Type 2"]}
+            `;
+            
             const data = await callGemini(prompt);
             const items = parseResilientList(data).slice(0, 5); // Ensure max 5
             
@@ -397,6 +406,7 @@
                 list.appendChild(chip);
             });
         } catch(e) {
+            console.error(e);
             list.innerHTML = `<span class="text-red-400">Error generating ideas.</span>`;
         }
     }
