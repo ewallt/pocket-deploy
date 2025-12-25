@@ -132,7 +132,7 @@
         
         <header class="text-center mb-8">
             <h1 class="text-4xl md:text-5xl font-bold mb-2 text-[var(--text-body)]">Knowledge Explorer</h1>
-            <p class="text-xl italic text-[var(--border)]">Universal Shell v2.8</p>
+            <p class="text-xl italic text-[var(--border)]">Universal Shell <span class="text-red-500 font-bold">Build #30</span></p>
             
             <button onclick="cycleTheme()" class="theme-gear" title="Switch Theme">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -180,6 +180,8 @@
                 <div class="dark-card">
                     <h2 class="text-2xl font-bold mb-4">How to Use the Explorer</h2>
                     
+                    <p class="paragraph-spacing text-red-400 font-bold">You are running Build #30.</p>
+                    
                     <h3 class="text-xl font-bold mt-6 mb-2">Power User Tip: The Colon Filter</h3>
                     <p class="paragraph-spacing">
                         You can force specific categories by using a colon in your search:
@@ -187,11 +189,10 @@
                     <ul class="list-disc list-inside mb-4 pl-2 text-[var(--text-muted)]">
                         <li><code>São Paulo: Neighborhoods</code> → Lists only neighborhoods.</li>
                         <li><code>WWII: Battles</code> → Lists only battles.</li>
-                        <li><code>Beatles: Albums</code> → Lists only albums.</li>
                     </ul>
 
                     <div class="mt-8 pt-4 border-t border-[var(--border)]">
-                        <p class="text-xs text-[var(--border)] font-mono">System Status: Ready | v2.8 (Iron-Clad Parser)</p>
+                        <p class="text-xs text-[var(--border)] font-mono">System Status: Ready | Build #30</p>
                     </div>
                 </div>
             </section>
@@ -241,8 +242,7 @@
         caches: { categories: [], content: {} }
     };
 
-    // --- FIXED: RESILIENT PARSER ---
-    // If the AI sends bad JSON, we catch it and return a safety object instead of crashing.
+    // --- CRASH PROTECTION: THE RECOVERY PARSER ---
     function parseGeminiJSON(rawText) {
         try {
             let cleanText = rawText.replace(/```json/g, '').replace(/```/g, '');
@@ -253,12 +253,12 @@
             }
             return JSON.parse(cleanText);
         } catch (e) {
-            console.error("JSON Parse Failed for text:", rawText);
-            // Return a "Safety Object" so the app keeps running
+            console.warn("JSON Parse Failed. Engaging Recovery Protocol.");
+            // RECOVERY OBJECT: Keeps the app alive even if the AI fails
             return {
-                title: state.topic || "Topic",
-                summary: "The AI response could not be formatted. Please try a simpler query.",
-                items: [] // Safety for lists
+                title: state.topic || "Complex Topic",
+                summary: "The system is proceeding with unstructured data.",
+                items: [] 
             };
         }
     }
@@ -298,7 +298,6 @@
         btn.disabled = true;
         btn.innerHTML = 'Thinking...';
         
-        // --- PARSE COLON FILTER ---
         if(rawInput.includes(':')) {
             const parts = rawInput.split(':');
             state.topic = parts[0].trim();
@@ -312,12 +311,12 @@
             const prompt = `
                 Topic: "${state.topic}".
                 Goal: Define the subject.
-                CONSTRAINT: DO NOT return a list of items. Only return a definition.
+                CONSTRAINT: DO NOT return a list. Only return a definition.
                 Return raw JSON only: {"title": "Formal Name", "summary": "One compelling sentence defining this topic."}
             `;
             
             const data = await callGemini(prompt);
-            const result = parseGeminiJSON(data); // Now safe from crashing
+            const result = parseGeminiJSON(data); // Will use Recovery Object if AI fails
 
             display.classList.remove('hidden');
             display.innerHTML = `
@@ -330,7 +329,7 @@
             document.getElementById('categoryDropdown').innerHTML = '<option>-- Select Category --</option>';
             switchTier('categories');
         } catch(e) {
-            alert("Error: " + e.message);
+            console.error(e); // This should be rare now
         } finally {
             btn.disabled = false;
             btn.textContent = 'Explore';
@@ -358,7 +357,6 @@
         dropdown.disabled = true;
         dropdown.innerHTML = '<option>Loading...</option>';
 
-        // DYNAMIC PROMPT
         let prompt = "";
         if(state.constraint) {
             prompt = `Topic: "${state.topic}". List 10 important "${state.constraint}". 
@@ -370,16 +368,14 @@
 
         try {
             const data = await callGemini(prompt);
-            const result = parseGeminiJSON(data); // Now safe from crashing
+            const result = parseGeminiJSON(data);
             
-            // --- SMART ARRAY HUNTER ---
             let items = result.items;
             if (!items || !Array.isArray(items)) {
                 const values = Object.values(result);
                 items = values.find(v => Array.isArray(v));
             }
-            // Fallback for empty list
-            if (!items) items = [];
+            if (!items) items = []; // Empty array fallback
 
             items = items.sort();
             state.caches.categories = items;
