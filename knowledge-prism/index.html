@@ -173,7 +173,7 @@
         
         <header class="text-center mb-8 pr-12">
             <h1 id="appTitle" class="text-4xl md:text-5xl mb-2">Context Navigator</h1>
-            <p class="text-xl italic text-[var(--border)]">Analysis & Strategy <span class="text-red-500 font-bold">Build #44</span></p>
+            <p class="text-xl italic text-[var(--border)]">Analysis & Strategy <span class="text-red-500 font-bold">Build #45</span></p>
             
             <button onclick="cycleTheme()" class="theme-gear" title="Switch Theme">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -455,13 +455,28 @@
     // --- LOGIC ---
     function switchDomain() {
         if(APP_CONFIG.lockedDomain) return;
+
+        // 1. Update State
         state.domain = document.getElementById('domainSelect').value;
-        applyDomainProfile();
-        // Reset Logic
+        state.topic = "";
+        state.filter = "";
+        state.currentCategory = "";
         state.caches = { categories: [], content: {} };
+
+        // 2. Clear Inputs
+        document.getElementById('topicInput').value = "";
+        document.getElementById('filterInput').value = "";
+
+        // 3. Reset UI Elements
         document.getElementById('topicDisplay').classList.add('hidden');
+        document.getElementById('topicDisplay').innerHTML = "";
         document.getElementById('categoryDropdown').innerHTML = '<option>-- Select Category --</option>';
         document.getElementById('lensButtons').classList.add('hidden');
+
+        // 4. Re-Apply Profile (New Buttons/Persona)
+        applyDomainProfile();
+
+        // 5. Go to Home
         switchTier('about');
     }
 
