@@ -173,7 +173,7 @@
         
         <header class="text-center mb-8 pr-12">
             <h1 id="appTitle" class="text-4xl md:text-5xl mb-2">Context Navigator</h1>
-            <p class="text-xl italic text-[var(--border)]">Master Edition <span class="text-red-500 font-bold">Build #49</span></p>
+            <p class="text-xl italic text-[var(--border)]">Master Edition <span class="text-red-500 font-bold">Build #50</span></p>
             
             <button onclick="cycleTheme()" class="theme-gear" title="Switch Theme">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -192,6 +192,8 @@
                         <option value="general">General Explorer</option>
                         <option value="bible">Bible Scholar</option>
                         <option value="medical">Medical Consultant</option>
+                        <option value="art">Art Historian</option>
+                        <option value="music">Musicologist</option>
                     </select>
                 </div>
             </div>
@@ -266,7 +268,7 @@
 
     // ==========================================
     // CONFIGURATION FLAG
-    // Set lockedDomain to 'bible', 'medical', or null (Master Mode)
+    // Set lockedDomain to a specific key to lock, null for Master Mode
     // ==========================================
     const APP_CONFIG = {
         lockedDomain: null 
@@ -296,8 +298,6 @@
 
                 <h3 class="text-lg font-bold text-[var(--brand)] mt-4 mb-2">The "Drill Down" Technique</h3>
                 <p class="paragraph-spacing">You can make any sub-category your new Main Topic. For example, enter "Montmartre" as the topic, click <span class="text-[var(--brand)]">💡</span>, and select "Restaurants" or "Landmarks" to dig deeper.</p>
-
-                <p class="paragraph-spacing text-sm italic">This works for <strong>History</strong> too (e.g., Topic: "WWII" &rarr; Focus: "Battles") or <strong>Biographies</strong>.</p>
             `
         },
         'bible': {
@@ -335,6 +335,30 @@
                 </ul>
                 <p class="text-xs text-red-400 mt-4"><strong>Disclaimer:</strong> For educational and research purposes only. Not for direct patient care.</p>
             `
+        },
+        'art': {
+            title: 'Art History Explorer',
+            lenses: [
+                { id: 'lens-1', label: 'Composition', prompt: 'Formal Analysis: Composition, Color Theory, Line, Shape, Balance, Light/Shadow and Visual Path.' },
+                { id: 'lens-2', label: 'Symbolism', prompt: 'Iconography: Decoding symbols, allegory, hidden meanings, cultural metaphors, and historical significance.' },
+                { id: 'lens-3', label: 'Technique', prompt: 'Technical Analysis: Medium, materials used, brushwork/chiseling, craftsmanship, and the physical creation process.' }
+            ],
+            persona: 'Expert Art Historian and Museum Curator',
+            suggestionLogic: 'Select the 5 most relevant plural groups (e.g., Paintings, Artists, Movements, Museums, Key Works).',
+            inputPlaceholder: 'Enter Artist, Movement, or Work (e.g. Impressionism, Van Gogh)',
+            aboutHtml: `<p><strong>Art History Explorer.</strong> Analyze visual arts through the lenses of Composition (what you see), Symbolism (what it means), and Technique (how it was made).</p>`
+        },
+        'music': {
+            title: 'Musicology Analyzer',
+            lenses: [
+                { id: 'lens-1', label: 'Theory', prompt: 'Music Theory: Harmony, Chord Progressions, Key Signatures, Time Signatures, Tempo, and Structural Form (e.g. Sonata, Verse-Chorus).' },
+                { id: 'lens-2', label: 'Timbre', prompt: 'Instrumentation & Texture: The sonic palette, specific instruments used, orchestration, vocal timbre, and production quality.' },
+                { id: 'lens-3', label: 'Meaning', prompt: 'Lyrical & Emotional Arc: The narrative content (if lyrical), thematic development, tension/release, and emotional atmosphere.' }
+            ],
+            persona: 'Expert Musicologist and Composer',
+            suggestionLogic: 'Select the 5 most relevant plural groups (e.g., Albums, Songs, Composers, Genres, Instruments).',
+            inputPlaceholder: 'Enter Artist, Genre, or Song (e.g. Jazz, Pink Floyd)',
+            aboutHtml: `<p><strong>Musicology Analyzer.</strong> Deconstruct audio works through Theory (Structure), Timbre (Sound), and Meaning (Emotion/Lyrics).</p>`
         }
     };
 
