@@ -170,7 +170,7 @@
         
         <header class="text-center mb-8 pr-12">
             <h1 class="text-4xl md:text-5xl mb-2">Context Navigator</h1>
-            <p class="text-xl italic text-[var(--border)]">Universal Shell <span class="text-red-500 font-bold">Build #39</span></p>
+            <p class="text-xl italic text-[var(--border)]">Universal Shell <span class="text-red-500 font-bold">Build #40</span></p>
             
             <button onclick="cycleTheme()" class="theme-gear" title="Switch Theme">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -586,14 +586,26 @@
             if(b.textContent.toLowerCase().includes(tier)) b.classList.add('active');
             else b.classList.remove('active');
         });
-        document.getElementById('aboutContent').classList.remove('active');
+        
+        // Hide EVERYTHING content-related first
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
         document.getElementById('category-tier').classList.remove('active');
         
         if(tier === 'about') {
             document.getElementById('aboutContent').classList.add('active');
         } else {
             document.getElementById('category-tier').classList.add('active');
+            
             if(state.caches.categories.length === 0 && state.topic) loadCategories();
+            
+            // Optional: If a category is selected, ensure lens buttons are visible
+             if(state.currentCategory) {
+                 document.getElementById('lensButtons').classList.remove('hidden');
+                 document.getElementById('lensButtons').style.display = 'flex';
+                 // Restore the last active lens or default? 
+                 // For simplicity, we don't auto-open a lens content, forcing user to click one, 
+                 // OR we could check if one was previously cached.
+             }
         }
     }
 
