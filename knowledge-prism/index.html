@@ -46,7 +46,7 @@
             border-left: 4px solid var(--brand);
             box-shadow: 0 4px 6px rgba(0,0,0,0.2);
             margin-bottom: 1.5rem;
-            position: relative; /* For absolute positioning contexts */
+            position: relative; 
         }
         
         .dark-card label { 
@@ -170,7 +170,7 @@
         
         <header class="text-center mb-8 pr-12">
             <h1 class="text-4xl md:text-5xl mb-2">Context Navigator</h1>
-            <p class="text-xl italic text-[var(--border)]">Analysis & Strategy <span class="text-red-500 font-bold">Build #38</span></p>
+            <p class="text-xl italic text-[var(--border)]">Universal Shell <span class="text-red-500 font-bold">Build #39</span></p>
             
             <button onclick="cycleTheme()" class="theme-gear" title="Switch Theme">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -181,16 +181,25 @@
         </header>
 
         <div class="dark-card">
-            <label>Navigation Controls</label>
+            
+            <div class="flex justify-between items-center mb-2">
+                <label class="mb-0">Navigation Controls</label>
+                <div class="w-48">
+                    <select id="domainSelect" onchange="switchDomain()" class="py-1 px-2 text-sm">
+                        <option value="general">General Explorer</option>
+                        <option value="bible">Bible Scholar</option>
+                    </select>
+                </div>
+            </div>
             
             <div class="mb-4">
-                <input type="text" id="topicInput" placeholder="Enter Main Topic (e.g., WWII, São Paulo, Stoicism)">
+                <input type="text" id="topicInput" placeholder="Enter Main Topic (e.g., WWII, Grace, Rome)">
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 
                 <div class="input-wrapper">
-                    <input type="text" id="filterInput" placeholder="Focus (Optional, e.g. Battles)">
+                    <input type="text" id="filterInput" placeholder="Focus (Optional)">
                     
                     <button class="suggestion-btn" onclick="fetchSuggestions()" title="Get Focus Ideas">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"></path><path d="M9 21h6"></path></svg>
@@ -198,7 +207,7 @@
 
                     <div id="suggestionPopup" class="suggestion-popup">
                         <div class="flex justify-between items-center mb-2">
-                            <span class="text-xs font-bold text-[var(--brand)] uppercase">Popular Searches</span>
+                            <span class="text-xs font-bold text-[var(--brand)] uppercase">AI Suggestions</span>
                             <span onclick="closeSuggestions()" class="text-xs cursor-pointer opacity-50 hover:opacity-100">✕</span>
                         </div>
                         <div id="suggestionList" class="text-sm"></div>
@@ -235,9 +244,9 @@
                 </select>
                 
                 <div id="lensButtons" class="tab-group hidden">
-                    <button class="tab-button" onclick="loadLens('lens-1', this)">Context</button>
-                    <button class="tab-button" onclick="loadLens('lens-2', this)">Details</button>
-                    <button class="tab-button" onclick="loadLens('lens-3', this)">Analysis</button>
+                    <button id="btn-lens-1" class="tab-button" onclick="loadLens('lens-1', this)">Context</button>
+                    <button id="btn-lens-2" class="tab-button" onclick="loadLens('lens-2', this)">Details</button>
+                    <button id="btn-lens-3" class="tab-button" onclick="loadLens('lens-3', this)">Analysis</button>
                 </div>
             </div>
         </div>
@@ -251,13 +260,13 @@
                 <div class="dark-card">
                     <h2 class="text-2xl mb-4 text-[var(--brand)]">Welcome to Context Navigator</h2>
                     <p class="paragraph-spacing">
-                        This tool is designed to break down complex topics into structured, navigable layers.
+                        This tool breaks down complex topics into structured layers.
                     </p>
                     
-                    <h3 class="text-xl font-bold mt-6 mb-2 text-[var(--brand)]">New Feature: Focus Suggestions</h3>
+                    <h3 class="text-xl font-bold mt-6 mb-2 text-[var(--brand)]">New: Domain Profiles</h3>
                     <p class="paragraph-spacing">
-                        Click the lightbulb icon inside the "Focus" input to get AI-powered suggestions. 
-                        It now prioritizes high-interest, "Googled" categories (e.g., Foods, Neighborhoods, Landmarks) over abstract concepts.
+                        Use the dropdown at the top to switch between <strong>General Explorer</strong> and <strong>Bible Scholar</strong>. 
+                        This changes the AI's persona, the suggestion logic, and the analytical lenses used for deep dives.
                     </p>
                 </div>
             </section>
@@ -266,6 +275,30 @@
 
 <script>
     const API_KEY = "AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A"; 
+
+    // --- DOMAIN PROFILES ---
+    const domains = {
+        'general': {
+            label1: 'Context',
+            label2: 'Details',
+            label3: 'Analysis',
+            prompt1: 'Historical Context, Origins, or Background',
+            prompt2: 'Key Details, Notable Features, or Main Events',
+            prompt3: 'Analysis, Cultural Impact, or Significance',
+            persona: 'Objective Encyclopedia',
+            suggestionLogic: 'Select the 5 sub-categories most likely to be searched for by people (High Popularity/Google Search Volume). Focus on tangible lists.'
+        },
+        'bible': {
+            label1: 'History',
+            label2: 'Exegesis',
+            label3: 'Application',
+            prompt1: 'Historical & Cultural Context (Sitz im Leben), Authorship, Dating, and Background',
+            prompt2: 'Exegetical Analysis, Key Greek/Hebrew terms, Literary Structure, and Textual nuances',
+            prompt3: 'Theological and Pastoral Application, Modern Relevance, and Doctrinal Significance',
+            persona: 'Expert Biblical Scholar and Theologian',
+            suggestionLogic: 'Select the 5 most useful plural groups for a Bible student (e.g., Parables, Miracles, Doctrines, Key Characters, Greek Words). Avoid generic history.'
+        }
+    };
 
     // --- THEME ENGINE ---
     const themes = {
@@ -304,6 +337,7 @@
 
     // --- STATE ---
     let state = {
+        domain: 'general',
         topic: "",
         filter: "",
         listMode: "smart",
@@ -370,11 +404,33 @@
             .filter(line => line.length > 2); 
     }
 
-    // --- SUGGESTION WIDGET LOGIC (UPDATED) ---
+    // --- DOMAIN LOGIC ---
+    function switchDomain() {
+        state.domain = document.getElementById('domainSelect').value;
+        const profile = domains[state.domain];
+        
+        // Update Lens Buttons
+        document.getElementById('btn-lens-1').textContent = profile.label1;
+        document.getElementById('btn-lens-2').textContent = profile.label2;
+        document.getElementById('btn-lens-3').textContent = profile.label3;
+
+        // Clear State
+        state.caches = { categories: [], content: {} };
+        document.getElementById('topicDisplay').classList.add('hidden');
+        document.getElementById('categoryDropdown').innerHTML = '<option>-- Select Category --</option>';
+        document.getElementById('lensButtons').classList.add('hidden');
+        switchTier('about');
+        
+        // Visual feedback
+        document.getElementById('topicInput').placeholder = state.domain === 'bible' ? 
+            "Enter Topic (e.g. Grace, Romans 8, Paul)" : "Enter Main Topic (e.g., WWII, São Paulo)";
+    }
+
     async function fetchSuggestions() {
         const topicIn = document.getElementById('topicInput').value.trim();
         const popup = document.getElementById('suggestionPopup');
         const list = document.getElementById('suggestionList');
+        const profile = domains[state.domain];
         
         if(!topicIn) return alert("Please enter a Main Topic first.");
         
@@ -382,17 +438,16 @@
         popup.classList.add('active');
 
         try {
-            // UPDATED PROMPT: Prioritizes Search Volume / Tangible Lists
             const prompt = `
                 Topic: "${topicIn}". 
-                Suggest 5 specific Focus Areas (plural nouns) for a list. 
-                Criteria: Select the 5 sub-categories most likely to be searched for by people interested in this topic (High Popularity/Google Search Volume). 
-                Focus on tangible, interesting lists (e.g., if City: 'Foods', 'Neighborhoods', 'Museums' -- NOT 'Context' or 'History').
+                Role: ${profile.persona}.
+                Goal: Suggest 5 specific Focus Areas (plural nouns) for a list. 
+                Criteria: ${profile.suggestionLogic}
                 Return JSON: {"items": ["Type 1", "Type 2"]}
             `;
             
             const data = await callGemini(prompt);
-            const items = parseResilientList(data).slice(0, 5); // Ensure max 5
+            const items = parseResilientList(data).slice(0, 5); 
             
             list.innerHTML = '';
             items.forEach(item => {
@@ -422,11 +477,11 @@
         const modeIn = document.getElementById('listMode');
         const btn = document.getElementById('okButton');
         const display = document.getElementById('topicDisplay');
+        const profile = domains[state.domain];
 
         const rawInput = input.value.trim();
         if(!rawInput) return alert("Please enter a topic.");
 
-        // Close suggestions if open
         closeSuggestions();
 
         btn.disabled = true;
@@ -438,6 +493,7 @@
 
         try {
             const prompt = `
+                Role: ${profile.persona}.
                 Topic: "${state.topic}".
                 ${state.filter ? `Focus Area: "${state.filter}"` : ""}
                 Goal: Define the subject${state.filter ? " specifically regarding the focus area" : ""}.
@@ -496,7 +552,10 @@
                 break;
         }
 
-        const prompt = `${promptContext}\n${instruction}\nReturn raw JSON: {"items": ["Item 1", "Item 2"]}`;
+        const prompt = `
+            Role: ${domains[state.domain].persona}
+            ${promptContext}\n${instruction}\nReturn raw JSON: {"items": ["Item 1", "Item 2"]}
+        `;
 
         try {
             const data = await callGemini(prompt);
@@ -567,16 +626,18 @@
 
         contentDiv.innerHTML = '<div class="dark-card text-center"><div class="spinner"></div> Generating Analysis...</div>';
 
-        const lensMap = {
-            'lens-1': 'Historical Context, Origins, or Background',
-            'lens-2': 'Key Details, Notable Features, or Main Events',
-            'lens-3': 'Analysis, Cultural Impact, or Significance'
-        };
+        // DYNAMIC LENS LOOKUP
+        const profile = domains[state.domain];
+        let lensFocus = "";
+        if(lensId === 'lens-1') lensFocus = profile.prompt1;
+        if(lensId === 'lens-2') lensFocus = profile.prompt2;
+        if(lensId === 'lens-3') lensFocus = profile.prompt3;
 
         const prompt = `
+            Role: ${profile.persona}
             Topic: ${state.topic}, Sub-Category: ${state.currentCategory}.
             ${state.filter ? `Context: This is part of the "${state.filter}" aspect.` : ""}
-            Focus: ${lensMap[lensId]}.
+            Focus: ${lensFocus}.
             
             Write 3 distinct sections.
             FORMATTING RULES:
@@ -593,7 +654,8 @@
         try {
             const data = await callGemini(prompt);
             const sections = parseDelimitedText(data);
-            const html = renderAccordion(sections, lensMap[lensId], lensId);
+            const title = document.getElementById(`btn-${lensId}`).textContent;
+            const html = renderAccordion(sections, title, lensId);
             state.caches.content[cacheKey] = html;
             contentDiv.innerHTML = html;
         } catch(e) {
