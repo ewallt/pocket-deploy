@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Context Navigator</title>
+    <title>Clinical Context Explorer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
     <style>
@@ -116,12 +116,15 @@
         }
 
         /* --- TABS --- */
-        .tab-group { display: flex; gap: 0.5rem; margin-top: 1rem; }
+        .tab-group { 
+            display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap; 
+        }
         
         .tab-button {
             background-color: var(--input-bg); color: var(--text-muted);
             padding: 0.5rem 1rem; border-radius: 0.375rem; font-size: 0.9rem;
-            cursor: pointer; border: 1px solid var(--border); flex: 1; text-align: center;
+            cursor: pointer; border: 1px solid var(--border); flex: 1 1 30%; 
+            text-align: center; min-width: 100px;
             transition: all 0.2s;
         }
         .tab-button.active {
@@ -164,13 +167,13 @@
         @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="min-h-screen p-4 md:p-8">
+<body class="min-h-screen p-4 md:p-8" onload="initApp()">
 
     <div class="max-w-4xl mx-auto relative">
         
         <header class="text-center mb-8 pr-12">
-            <h1 class="text-4xl md:text-5xl mb-2">Context Navigator</h1>
-            <p class="text-xl italic text-[var(--border)]">Universal Shell <span class="text-red-500 font-bold">Build #40</span></p>
+            <h1 id="appTitle" class="text-4xl md:text-5xl mb-2">Context Navigator</h1>
+            <p class="text-xl italic text-[var(--border)]">Analysis & Strategy <span class="text-red-500 font-bold">Build #43</span></p>
             
             <button onclick="cycleTheme()" class="theme-gear" title="Switch Theme">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -182,18 +185,19 @@
 
         <div class="dark-card">
             
-            <div class="flex justify-between items-center mb-2">
+            <div id="domainControl" class="flex justify-between items-center mb-2">
                 <label class="mb-0">Navigation Controls</label>
                 <div class="w-48">
                     <select id="domainSelect" onchange="switchDomain()" class="py-1 px-2 text-sm">
                         <option value="general">General Explorer</option>
                         <option value="bible">Bible Scholar</option>
+                        <option value="medical">Medical Consultant</option>
                     </select>
                 </div>
             </div>
             
             <div class="mb-4">
-                <input type="text" id="topicInput" placeholder="Enter Main Topic (e.g., WWII, Grace, Rome)">
+                <input type="text" id="topicInput" placeholder="Enter Main Topic">
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -243,31 +247,15 @@
                     <option value="">-- Awaiting Selection --</option>
                 </select>
                 
-                <div id="lensButtons" class="tab-group hidden">
-                    <button id="btn-lens-1" class="tab-button" onclick="loadLens('lens-1', this)">Context</button>
-                    <button id="btn-lens-2" class="tab-button" onclick="loadLens('lens-2', this)">Details</button>
-                    <button id="btn-lens-3" class="tab-button" onclick="loadLens('lens-3', this)">Analysis</button>
-                </div>
+                <div id="lensButtons" class="tab-group hidden"></div>
             </div>
         </div>
 
-        <main>
-            <section id="lens-1Content" class="tab-content"></section>
-            <section id="lens-2Content" class="tab-content"></section>
-            <section id="lens-3Content" class="tab-content"></section>
-
+        <main id="contentArea">
             <section id="aboutContent" class="tab-content active">
                 <div class="dark-card">
-                    <h2 class="text-2xl mb-4 text-[var(--brand)]">Welcome to Context Navigator</h2>
-                    <p class="paragraph-spacing">
-                        This tool breaks down complex topics into structured layers.
-                    </p>
-                    
-                    <h3 class="text-xl font-bold mt-6 mb-2 text-[var(--brand)]">New: Domain Profiles</h3>
-                    <p class="paragraph-spacing">
-                        Use the dropdown at the top to switch between <strong>General Explorer</strong> and <strong>Bible Scholar</strong>. 
-                        This changes the AI's persona, the suggestion logic, and the analytical lenses used for deep dives.
-                    </p>
+                    <h2 class="text-2xl mb-4 text-[var(--brand)]">Welcome</h2>
+                    <div id="aboutDynamic"></div>
                 </div>
             </section>
         </main>
@@ -276,52 +264,71 @@
 <script>
     const API_KEY = "AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A"; 
 
-    // --- DOMAIN PROFILES ---
+    // ==========================================
+    // CONFIGURATION FLAG
+    // ==========================================
+    const APP_CONFIG = {
+        lockedDomain: 'medical' 
+    };
+
+    // --- DOMAIN PROFILES (DYNAMIC LENSES) ---
     const domains = {
         'general': {
-            label1: 'Context',
-            label2: 'Details',
-            label3: 'Analysis',
-            prompt1: 'Historical Context, Origins, or Background',
-            prompt2: 'Key Details, Notable Features, or Main Events',
-            prompt3: 'Analysis, Cultural Impact, or Significance',
+            title: 'Context Navigator',
+            lenses: [
+                { id: 'lens-1', label: 'Context', prompt: 'Historical Context, Origins, or Background' },
+                { id: 'lens-2', label: 'Details', prompt: 'Key Details, Notable Features, or Main Events' },
+                { id: 'lens-3', label: 'Analysis', prompt: 'Analysis, Cultural Impact, or Significance' }
+            ],
             persona: 'Objective Encyclopedia',
-            suggestionLogic: 'Select the 5 sub-categories most likely to be searched for by people (High Popularity/Google Search Volume). Focus on tangible lists.'
+            suggestionLogic: 'Select the 5 sub-categories most likely to be searched for by people (High Popularity). Focus on tangible lists.',
+            inputPlaceholder: 'Enter Main Topic (e.g., WWII, São Paulo)',
+            aboutHtml: `<p>This tool breaks down complex topics into structured layers. Select a category to explore Context, Details, and Analysis.</p>`
         },
         'bible': {
-            label1: 'History',
-            label2: 'Exegesis',
-            label3: 'Application',
-            prompt1: 'Historical & Cultural Context (Sitz im Leben), Authorship, Dating, and Background',
-            prompt2: 'Exegetical Analysis, Key Greek/Hebrew terms, Literary Structure, and Textual nuances',
-            prompt3: 'Theological and Pastoral Application, Modern Relevance, and Doctrinal Significance',
+            title: 'Biblical Context Explorer',
+            lenses: [
+                { id: 'lens-1', label: 'History', prompt: 'Historical & Cultural Context (Sitz im Leben), Authorship, Dating, and Background' },
+                { id: 'lens-2', label: 'Exegesis', prompt: 'Exegetical Analysis, Key Greek/Hebrew terms, Literary Structure, and Textual nuances' },
+                { id: 'lens-3', label: 'Application', prompt: 'Theological and Pastoral Application, Modern Relevance, and Doctrinal Significance' },
+                { id: 'lens-4', label: 'OT Connect', prompt: 'Old Testament Types, Shadows, Prophecies, and direct citations related to this topic.' },
+                { id: 'lens-5', label: 'Cross Refs', prompt: 'Key Parallel Passages, Systematic Theology Connections, and related biblical texts.' },
+                { id: 'lens-6', label: 'Alternatives', prompt: 'Alternative Theological Views, Historical Interpretations, and different Hermeneutical perspectives.' }
+            ],
             persona: 'Expert Biblical Scholar and Theologian',
-            suggestionLogic: 'Select the 5 most useful plural groups for a Bible student (e.g., Parables, Miracles, Doctrines, Key Characters, Greek Words). Avoid generic history.'
+            suggestionLogic: 'Select the 5 most useful plural groups for a Bible student (e.g., Parables, Miracles, Doctrines, Key Characters, Greek Words).',
+            inputPlaceholder: 'Enter Topic (e.g. Grace, Romans 8, Paul)',
+            aboutHtml: `<p><strong>Welcome to the Biblical Context Explorer.</strong> This specialized tool uses AI to function as a research assistant for deep Bible study. Features Exegesis, OT Connections, and more.</p>`
+        },
+        'medical': {
+            title: 'Clinical Context Explorer',
+            lenses: [
+                { id: 'lens-1', label: 'Pathology', prompt: 'Pathophysiology, Biological Mechanism of Action, Etiology, and what is happening at the cellular/systemic level.' },
+                { id: 'lens-2', label: 'Clinical', prompt: 'Clinical Presentation, Diagnosis Criteria, Standard of Care, Dosage/Administration, and Treatment Protocols.' },
+                { id: 'lens-3', label: 'Risk Profile', prompt: 'Contraindications, Black Box Warnings, Common & Serious Side Effects, Drug Interactions, and Prognostic red flags.' }
+            ],
+            persona: 'Senior Medical Educator and Clinical Consultant',
+            suggestionLogic: 'Select the 5 most clinically relevant plural groups (e.g., Symptoms, Drug Classes, Risk Factors, Differential Diagnoses, Anatomical Structures).',
+            inputPlaceholder: 'Enter Condition, Drug, or System (e.g. Hypertension, Insulin)',
+            aboutHtml: `
+                <p class="paragraph-spacing"><strong>Clinical Context Explorer</strong></p>
+                <p class="paragraph-spacing">A decision-support aid for medical concepts. It decomposes topics into three clinical lenses:</p>
+                <ul class="list-disc list-inside text-sm text-[var(--text-muted)] space-y-1 mb-4">
+                    <li><strong>Pathology:</strong> The biological "why" and "how".</li>
+                    <li><strong>Clinical:</strong> The standard of care and protocols.</li>
+                    <li><strong>Risk Profile:</strong> Safety, warnings, and interactions.</li>
+                </ul>
+                <p class="text-xs text-red-400 mt-4"><strong>Disclaimer:</strong> For educational and research purposes only. Not for direct patient care.</p>
+            `
         }
     };
 
     // --- THEME ENGINE ---
     const themes = {
-        'explorer': {
-            '--app-bg': '#e8dcc8', '--card-bg': '#1a1815', '--input-bg': '#26231f',
-            '--brand': '#d4a574', '--text-body': '#2c2416', '--text-card': '#faf8f3',
-            '--text-muted': 'rgba(212, 165, 116, 0.6)', '--border': '#5a5041'
-        },
-        'archives': {
-            '--app-bg': '#f5f5f4', '--card-bg': '#e7e5e4', '--input-bg': '#d6d3d1',     
-            '--brand': '#0f766e', '--text-body': '#292524', '--text-card': '#292524',    
-            '--text-muted': '#57534e', '--border': '#d6d3d1'
-        },
-        'high-command': {
-            '--app-bg': '#022c22', '--card-bg': '#064e3b', '--input-bg': '#065f46',
-            '--brand': '#fef08a', '--text-body': '#ecfdf5', '--text-card': '#ecfdf5',
-            '--text-muted': '#6ee7b7', '--border': '#065f46'
-        },
-        'navy': {
-            '--app-bg': '#0b1020', '--card-bg': '#111833', '--input-bg': '#1a2347',
-            '--brand': '#8bb9ff', '--text-body': '#e6ecff', '--text-card': '#e6ecff',
-            '--text-muted': '#a7b0cc', '--border': '#26325b'
-        }
+        'explorer': { '--app-bg': '#e8dcc8', '--card-bg': '#1a1815', '--input-bg': '#26231f', '--brand': '#d4a574', '--text-body': '#2c2416', '--text-card': '#faf8f3', '--text-muted': 'rgba(212, 165, 116, 0.6)', '--border': '#5a5041' },
+        'archives': { '--app-bg': '#f5f5f4', '--card-bg': '#e7e5e4', '--input-bg': '#d6d3d1', '--brand': '#0f766e', '--text-body': '#292524', '--text-card': '#292524', '--text-muted': '#57534e', '--border': '#d6d3d1' },
+        'high-command': { '--app-bg': '#022c22', '--card-bg': '#064e3b', '--input-bg': '#065f46', '--brand': '#fef08a', '--text-body': '#ecfdf5', '--text-card': '#ecfdf5', '--text-muted': '#6ee7b7', '--border': '#065f46' },
+        'navy': { '--app-bg': '#0b1020', '--card-bg': '#111833', '--input-bg': '#1a2347', '--brand': '#8bb9ff', '--text-body': '#e6ecff', '--text-card': '#e6ecff', '--text-muted': '#a7b0cc', '--border': '#26325b' }
     };
 
     let currentThemeIndex = 0;
@@ -330,9 +337,7 @@
     function cycleTheme() {
         currentThemeIndex = (currentThemeIndex + 1) % themeKeys.length;
         const colors = themes[themeKeys[currentThemeIndex]];
-        for (const [key, value] of Object.entries(colors)) {
-            document.documentElement.style.setProperty(key, value);
-        }
+        for (const [key, value] of Object.entries(colors)) { document.documentElement.style.setProperty(key, value); }
     }
 
     // --- STATE ---
@@ -346,6 +351,50 @@
         caches: { categories: [], content: {} }
     };
 
+    // --- INITIALIZATION ---
+    function initApp() {
+        if(APP_CONFIG.lockedDomain) {
+            state.domain = APP_CONFIG.lockedDomain;
+            document.getElementById('domainControl').style.display = 'none';
+        } else {
+            state.domain = 'general';
+        }
+        applyDomainProfile();
+    }
+
+    function applyDomainProfile() {
+        const profile = domains[state.domain];
+        
+        // Update Title and Inputs
+        document.getElementById('appTitle').textContent = profile.title;
+        document.getElementById('topicInput').placeholder = profile.inputPlaceholder;
+        document.getElementById('aboutDynamic').innerHTML = profile.aboutHtml;
+
+        // GENERATE DYNAMIC LENS BUTTONS
+        const btnContainer = document.getElementById('lensButtons');
+        const contentArea = document.getElementById('contentArea');
+        
+        btnContainer.innerHTML = ''; 
+        
+        document.querySelectorAll('.dynamic-lens-section').forEach(el => el.remove());
+
+        profile.lenses.forEach(lens => {
+            // Create Button
+            const btn = document.createElement('button');
+            btn.className = 'tab-button';
+            btn.id = `btn-${lens.id}`;
+            btn.textContent = lens.label;
+            btn.onclick = () => loadLens(lens.id, btn);
+            btnContainer.appendChild(btn);
+
+            // Create Content Section
+            const section = document.createElement('section');
+            section.id = `${lens.id}Content`;
+            section.className = 'tab-content dynamic-lens-section';
+            contentArea.insertBefore(section, document.getElementById('aboutContent'));
+        });
+    }
+
     // --- PARSERS ---
     function parseGeminiJSON(rawText) {
         try {
@@ -355,7 +404,6 @@
             if (firstBrace !== -1 && lastBrace !== -1) cleanText = cleanText.substring(firstBrace, lastBrace + 1);
             return JSON.parse(cleanText);
         } catch (e) {
-            console.warn("JSON Parse Failed", e);
             return { title: state.topic, summary: "Proceeding with unstructured data.", items: [] };
         }
     }
@@ -396,7 +444,7 @@
                 const foundArray = values.find(v => Array.isArray(v));
                 if (foundArray) return foundArray;
             }
-        } catch (e) { console.log("JSON List Parse failed, switching to Text Fallback"); }
+        } catch (e) { }
         return rawText.split('\n')
             .map(line => line.trim())
             .filter(line => line.length > 0 && !line.startsWith('{') && !line.startsWith('}') && !line.startsWith(']')) 
@@ -404,26 +452,17 @@
             .filter(line => line.length > 2); 
     }
 
-    // --- DOMAIN LOGIC ---
+    // --- LOGIC ---
     function switchDomain() {
+        if(APP_CONFIG.lockedDomain) return;
         state.domain = document.getElementById('domainSelect').value;
-        const profile = domains[state.domain];
-        
-        // Update Lens Buttons
-        document.getElementById('btn-lens-1').textContent = profile.label1;
-        document.getElementById('btn-lens-2').textContent = profile.label2;
-        document.getElementById('btn-lens-3').textContent = profile.label3;
-
-        // Clear State
+        applyDomainProfile();
+        // Reset Logic
         state.caches = { categories: [], content: {} };
         document.getElementById('topicDisplay').classList.add('hidden');
         document.getElementById('categoryDropdown').innerHTML = '<option>-- Select Category --</option>';
         document.getElementById('lensButtons').classList.add('hidden');
         switchTier('about');
-        
-        // Visual feedback
-        document.getElementById('topicInput').placeholder = state.domain === 'bible' ? 
-            "Enter Topic (e.g. Grace, Romans 8, Paul)" : "Enter Main Topic (e.g., WWII, São Paulo)";
     }
 
     async function fetchSuggestions() {
@@ -445,7 +484,6 @@
                 Criteria: ${profile.suggestionLogic}
                 Return JSON: {"items": ["Type 1", "Type 2"]}
             `;
-            
             const data = await callGemini(prompt);
             const items = parseResilientList(data).slice(0, 5); 
             
@@ -461,7 +499,6 @@
                 list.appendChild(chip);
             });
         } catch(e) {
-            console.error(e);
             list.innerHTML = `<span class="text-red-400">Error generating ideas.</span>`;
         }
     }
@@ -470,7 +507,6 @@
         document.getElementById('suggestionPopup').classList.remove('active');
     }
 
-    // --- CORE APP LOGIC ---
     async function fetchTopic() {
         const input = document.getElementById('topicInput');
         const filterIn = document.getElementById('filterInput');
@@ -483,7 +519,6 @@
         if(!rawInput) return alert("Please enter a topic.");
 
         closeSuggestions();
-
         btn.disabled = true;
         btn.innerHTML = '<div class="spinner"></div>';
         
@@ -535,27 +570,14 @@
 
         let instruction = "";
         switch(state.listMode) {
-            case 'top3':
-                instruction = `List exactly the Top 3 most important ${state.filter || "sub-categories"}. Rank 1-3. Simple JSON list.`;
-                break;
-            case 'core5':
-                instruction = `List exactly the 5 absolute pillars/foundational ${state.filter || "sub-categories"}. No more, no less. Simple JSON list.`;
-                break;
-            case 'top10':
-                instruction = `List exactly the Top 10 most important ${state.filter || "sub-categories"}. Rank 1-10. Simple JSON list.`;
-                break;
-            case 'comprehensive':
-                instruction = `Generate a comprehensive list of ${state.filter || "sub-categories"} (aim for 25-30 items). Simple JSON list.`;
-                break;
-            default: // smart
-                instruction = `List 8-12 most relevant ${state.filter || "sub-categories"}. Simple JSON list.`;
-                break;
+            case 'top3': instruction = `List exactly the Top 3 most important ${state.filter || "sub-categories"}. Rank 1-3. Simple JSON list.`; break;
+            case 'core5': instruction = `List exactly the 5 absolute pillars/foundational ${state.filter || "sub-categories"}. No more, no less. Simple JSON list.`; break;
+            case 'top10': instruction = `List exactly the Top 10 most important ${state.filter || "sub-categories"}. Rank 1-10. Simple JSON list.`; break;
+            case 'comprehensive': instruction = `Generate a comprehensive list of ${state.filter || "sub-categories"} (aim for 25-30 items). Simple JSON list.`; break;
+            default: instruction = `List 8-12 most relevant ${state.filter || "sub-categories"}. Simple JSON list.`; break;
         }
 
-        const prompt = `
-            Role: ${domains[state.domain].persona}
-            ${promptContext}\n${instruction}\nReturn raw JSON: {"items": ["Item 1", "Item 2"]}
-        `;
+        const prompt = `Role: ${domains[state.domain].persona}\n${promptContext}\n${instruction}\nReturn raw JSON: {"items": ["Item 1", "Item 2"]}`;
 
         try {
             const data = await callGemini(prompt);
@@ -573,7 +595,6 @@
                 dropdown.appendChild(opt);
             });
         } catch(e) {
-            console.error(e);
             dropdown.innerHTML = '<option>Error loading</option>';
         } finally {
             dropdown.disabled = false;
@@ -587,7 +608,6 @@
             else b.classList.remove('active');
         });
         
-        // Hide EVERYTHING content-related first
         document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
         document.getElementById('category-tier').classList.remove('active');
         
@@ -595,17 +615,11 @@
             document.getElementById('aboutContent').classList.add('active');
         } else {
             document.getElementById('category-tier').classList.add('active');
-            
             if(state.caches.categories.length === 0 && state.topic) loadCategories();
-            
-            // Optional: If a category is selected, ensure lens buttons are visible
-             if(state.currentCategory) {
+            if(state.currentCategory) {
                  document.getElementById('lensButtons').classList.remove('hidden');
                  document.getElementById('lensButtons').style.display = 'flex';
-                 // Restore the last active lens or default? 
-                 // For simplicity, we don't auto-open a lens content, forcing user to click one, 
-                 // OR we could check if one was previously cached.
-             }
+            }
         }
     }
 
@@ -640,10 +654,8 @@
 
         // DYNAMIC LENS LOOKUP
         const profile = domains[state.domain];
-        let lensFocus = "";
-        if(lensId === 'lens-1') lensFocus = profile.prompt1;
-        if(lensId === 'lens-2') lensFocus = profile.prompt2;
-        if(lensId === 'lens-3') lensFocus = profile.prompt3;
+        const lensObj = profile.lenses.find(l => l.id === lensId);
+        const lensFocus = lensObj ? lensObj.prompt : "General Context";
 
         const prompt = `
             Role: ${profile.persona}
@@ -657,10 +669,6 @@
             2. Separate paragraphs with "||".
             3. Do not use Markdown (bold/italic).
             4. Keep it concise.
-
-            Example:
-            ### Early History
-            Fact one. || Fact two.
         `;
 
         try {
@@ -671,7 +679,6 @@
             state.caches.content[cacheKey] = html;
             contentDiv.innerHTML = html;
         } catch(e) {
-            console.error(e);
             contentDiv.innerHTML = `<div class="dark-card text-red-400">Error: ${e.message}</div>`;
         }
     }
