@@ -167,8 +167,8 @@
 </style>
 
 </head>
-<body class="min-h-screen p-4 md:p-8" onload="initApp()">
-<div class="max-w-4xl mx-auto relative">
+<body>
+<div class="max-w-4xl mx-auto relative p-4 md:p-8">
     
     <header class="text-center mb-8 pr-12">
         <h1 id="appTitle" class="text-4xl md:text-5xl mb-2">Behold Your God</h1>
@@ -272,7 +272,7 @@ const KB = {
 { "id": "Q010", "question": "Why did God command Israel to destroy?", "answer": "Accommodation: limiting harm within a violent path He did not choose (Hunter Son analogy).", "tags": ["israel", "command", "violence"] }
 ]
 };
-const API_KEY = &quot;AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A&quot;; // User provided key
+const API_KEY = &quot;AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A&quot;; 
 
 // --- APP CONFIG ---
 const domains = {
@@ -317,36 +317,39 @@ function cycleTheme() {
 let state = {
     query: &quot;&quot;,
     context: &quot;&quot;,
-    retrievedContext: [], // Stores the P001/Q002 items found
+    retrievedContext: [], 
     cache: {}
 };
 
 function initApp() {
-    // Init UI
-    const profile = domains[&#39;byg&#39;];
-    document.getElementById(&#39;appTitle&#39;).textContent = profile.title;
-    document.getElementById(&#39;aboutDynamic&#39;).innerHTML = profile.aboutHtml;
+    try {
+        const profile = domains[&#39;byg&#39;];
+        document.getElementById(&#39;appTitle&#39;).textContent = profile.title;
+        document.getElementById(&#39;aboutDynamic&#39;).innerHTML = profile.aboutHtml;
 
-    // Init Lenses
-    const btnContainer = document.getElementById(&#39;lensButtons&#39;);
-    const contentArea = document.getElementById(&#39;contentArea&#39;);
-    btnContainer.innerHTML = &#39;&#39;;
-    
-    document.querySelectorAll(&#39;.dynamic-lens-section&#39;).forEach(el =&gt; el.remove());
+        const btnContainer = document.getElementById(&#39;lensButtons&#39;);
+        const contentArea = document.getElementById(&#39;contentArea&#39;);
+        if(!btnContainer || !contentArea) return;
 
-    profile.lenses.forEach(lens =&gt; {
-        const btn = document.createElement(&#39;button&#39;);
-        btn.className = &#39;tab-button&#39;;
-        btn.id = `btn-${lens.id}`;
-        btn.textContent = lens.label;
-        btn.onclick = () =&gt; loadLens(lens.id, btn);
-        btnContainer.appendChild(btn);
+        btnContainer.innerHTML = &#39;&#39;;
+        document.querySelectorAll(&#39;.dynamic-lens-section&#39;).forEach(el =&gt; el.remove());
 
-        const section = document.createElement(&#39;section&#39;);
-        section.id = `${lens.id}Content`;
-        section.className = &#39;tab-content dynamic-lens-section&#39;;
-        contentArea.insertBefore(section, document.getElementById(&#39;aboutContent&#39;));
-    });
+        profile.lenses.forEach(lens =&gt; {
+            const btn = document.createElement(&#39;button&#39;);
+            btn.className = &#39;tab-button&#39;;
+            btn.id = `btn-${lens.id}`;
+            btn.textContent = lens.label;
+            btn.onclick = () =&gt; loadLens(lens.id, btn);
+            btnContainer.appendChild(btn);
+
+            const section = document.createElement(&#39;section&#39;);
+            section.id = `${lens.id}Content`;
+            section.className = &#39;tab-content dynamic-lens-section&#39;;
+            contentArea.insertBefore(section, document.getElementById(&#39;aboutContent&#39;));
+        });
+    } catch(e) {
+        console.error(&quot;Init failed&quot;, e);
+    }
 }
 
 // --- SEARCH LOGIC (LOCAL RAG) ---
@@ -368,13 +371,15 @@ function fetchSuggestions() {
     popup.classList.add(&#39;active&#39;);
 }
 
-function closeSuggestions() { document.getElementById(&#39;suggestionPopup&#39;).classList.remove(&#39;active&#39;); }
+function closeSuggestions() { 
+    document.getElementById(&#39;suggestionPopup&#39;).classList.remove(&#39;active&#39;); 
+}
 
 // --- RETRIEVAL FUNCTION ---
 function retrieveContext(query) {
+    if(!query) return [];
     const qTerms = query.toLowerCase().split(&#39; &#39;);
     
-    // Score Principles
     const scoredPrinciples = KB.principles.map(p =&gt; {
         let score = 0;
         if (qTerms.some(t =&gt; p.title.toLowerCase().includes(t))) score += 5;
@@ -382,7 +387,6 @@ function retrieveContext(query) {
         return { item: p, score: score, type: &#39;Principle&#39; };
     }).sort((a,b) =&gt; b.score - a.score);
 
-    // Score Q&amp;A
     const scoredQA = KB.qa.map(q =&gt; {
         let score = 0;
         if (qTerms.some(t =&gt; q.question.toLowerCase().includes(t))) score += 10;
@@ -390,7 +394,6 @@ function retrieveContext(query) {
         return { item: q, score: score, type: &#39;Q&amp;A&#39; };
     }).sort((a,b) =&gt; b.score - a.score);
 
-    // Take Top 3 Principles + Top 1 Q&amp;A (if relevant)
     const topPrinciples = scoredPrinciples.filter(s =&gt; s.score &gt; 0).slice(0, 4);
     const topQA = scoredQA.filter(s =&gt; s.score &gt; 0).slice(0, 1);
 
@@ -398,43 +401,46 @@ function retrieveContext(query) {
 }
 
 async function processQuery() {
-    const input = document.getElementById(&#39;topicInput&#39;);
-    const filterIn = document.getElementById(&#39;filterInput&#39;);
-    const btn = document.getElementById(&#39;okButton&#39;);
-    const display = document.getElementById(&#39;topicDisplay&#39;);
+    try {
+        const input = document.getElementById(&#39;topicInput&#39;);
+        const filterIn = document.getElementById(&#39;filterInput&#39;);
+        const btn = document.getElementById(&#39;okButton&#39;);
+        const display = document.getElementById(&#39;topicDisplay&#39;);
 
-    const rawInput = input.value.trim();
-    if(!rawInput) return alert(&quot;Please ask a question.&quot;);
+        const rawInput = input.value.trim();
+        if(!rawInput) return alert(&quot;Please ask a question.&quot;);
 
-    closeSuggestions();
-    btn.disabled = true;
-    btn.innerHTML = &#39;&lt;div class=&quot;spinner&quot;&gt;&lt;/div&gt;&#39;;
-    
-    state.query = rawInput;
-    state.context = filterIn.value.trim();
-    
-    // 1. LOCAL RETRIEVAL
-    const hits = retrieveContext(state.query);
-    state.retrievedContext = hits.map(h =&gt; h.item); // Store for prompt
-    
-    // Display retrieval success
-    display.classList.remove(&#39;hidden&#39;);
-    display.innerHTML = `
-        &lt;h2 class=&quot;text-xl text-[var(--brand)]&quot;&gt;Analysis Active&lt;/h2&gt;
-        &lt;p class=&quot;text-sm text-[var(--text-muted)]&quot;&gt;Found ${hits.length} relevant entries in Knowledge Base.&lt;/p&gt;
-    `;
+        closeSuggestions();
+        btn.disabled = true;
+        btn.innerHTML = &#39;&lt;div class=&quot;spinner&quot;&gt;&lt;/div&gt;&#39;;
+        
+        state.query = rawInput;
+        state.context = filterIn.value.trim();
+        
+        const hits = retrieveContext(state.query);
+        state.retrievedContext = hits.map(h =&gt; h.item);
+        
+        display.classList.remove(&#39;hidden&#39;);
+        display.innerHTML = `
+            &lt;h2 class=&quot;text-xl text-[var(--brand)]&quot;&gt;Analysis Active&lt;/h2&gt;
+            &lt;p class=&quot;text-sm text-[var(--text-muted)]&quot;&gt;Found ${hits.length} relevant entries in Knowledge Base.&lt;/p&gt;
+        `;
 
-    state.cache = {}; // Clear cache
-    
-    // Switch to Result View
-    switchTier(&#39;response&#39;);
-    
-    // Auto-load first lens
-    const firstBtn = document.getElementById(&#39;btn-lens-1&#39;);
-    loadLens(&#39;lens-1&#39;, firstBtn);
+        state.cache = {}; 
+        
+        switchTier(&#39;response&#39;);
+        
+        const firstBtn = document.getElementById(&#39;btn-lens-1&#39;);
+        // Don&#39;t await here so UI updates immediately
+        loadLens(&#39;lens-1&#39;, firstBtn).catch(e =&gt; console.error(e));
 
-    btn.disabled = false;
-    btn.textContent = &#39;ANALYZE&#39;;
+        btn.disabled = false;
+        btn.textContent = &#39;ANALYZE&#39;;
+    } catch(e) {
+        alert(&quot;Error: &quot; + e.message);
+        document.getElementById(&#39;okButton&#39;).textContent = &#39;ANALYZE&#39;;
+        document.getElementById(&#39;okButton&#39;).disabled = false;
+    }
 }
 
 function switchTier(tier) {
@@ -455,11 +461,15 @@ function switchTier(tier) {
 }
 
 async function loadLens(lensId, btnElement) {
+    if(!btnElement) return;
+    
     document.querySelectorAll(&#39;.tab-button&#39;).forEach(b =&gt; b.classList.remove(&#39;active&#39;));
-    if(btnElement) btnElement.classList.add(&#39;active&#39;);
+    btnElement.classList.add(&#39;active&#39;);
     
     document.querySelectorAll(&#39;.tab-content&#39;).forEach(c =&gt; c.classList.remove(&#39;active&#39;));
     const contentDiv = document.getElementById(`${lensId}Content`);
+    if(!contentDiv) return;
+    
     contentDiv.classList.add(&#39;active&#39;);
 
     if(state.cache[lensId]) {
@@ -469,11 +479,9 @@ async function loadLens(lensId, btnElement) {
 
     contentDiv.innerHTML = &#39;&lt;div class=&quot;dark-card text-center&quot;&gt;&lt;div class=&quot;spinner&quot;&gt;&lt;/div&gt; Consulting Framework...&lt;/div&gt;&#39;;
 
-    // CONSTRUCT PROMPT WITH RETRIEVED DATA
     const profile = domains[&#39;byg&#39;];
     const lensObj = profile.lenses.find(l =&gt; l.id === lensId);
     
-    // Serialize retrieved context for the AI
     const contextString = state.retrievedContext.map(i =&gt; {
         if(i.statement) return `[PRINCIPLE ${i.id}] ${i.title}: ${i.statement}`;
         return `[Q&amp;A Match] Q: ${i.question} A: ${i.answer}`;
@@ -508,7 +516,7 @@ async function loadLens(lensId, btnElement) {
         state.cache[lensId] = html;
         contentDiv.innerHTML = html;
     } catch(e) {
-        contentDiv.innerHTML = `&lt;div class=&quot;dark-card text-red-400&quot;&gt;Error: ${e.message}&lt;/div&gt;`;
+        contentDiv.innerHTML = `&lt;div class=&quot;dark-card text-red-400&quot;&gt;Error connecting to AI: ${e.message}&lt;/div&gt;`;
     }
 }
 
@@ -567,8 +575,11 @@ async function callGemini(promptText) {
         }
     );
     const data = await response.json();
+    if (data.error) throw new Error(data.error.message);
     return data.candidates[0].content.parts[0].text;
 }
+
+window.addEventListener(&#39;DOMContentLoaded&#39;, initApp);
 
 </script>
 </body>
