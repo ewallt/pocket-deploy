@@ -1,571 +1,575 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Behold Your God (Interactive KB)</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-    <style>
-        /* --- THEME VARIABLES --- */
-        :root {
-            --app-bg: #e8dcc8;
-            --card-bg: #1a1815;
-            --input-bg: #26231f;
-            --brand: #d4a574;
-            --text-body: #2c2416;
-            --text-card: #faf8f3;
-            --text-muted: rgba(212, 165, 116, 0.6);
-            --border: #5a5041;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Behold Your God (Interactive KB)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* --- THEME VARIABLES --- */
+:root {
+--app-bg: #e8dcc8;
+--card-bg: #1a1815;
+--input-bg: #26231f;
+--brand: #d4a574;
+--text-body: #2c2416;
+--text-card: #faf8f3;
+--text-muted: rgba(212, 165, 116, 0.6);
+--border: #5a5041;
+}
+    body {
+        font-family: 'Crimson Text', Georgia, serif;
+        background-color: var(--app-bg);
+        color: var(--text-body);
+        line-height: 1.6;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
 
-        body {
-            font-family: 'Crimson Text', Georgia, serif;
-            background-color: var(--app-bg);
-            color: var(--text-body);
-            line-height: 1.6;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
+    /* --- LAYOUT & TYPOGRAPHY --- */
+    h1, h2, h3 { font-weight: 700; }
+    h1 { color: var(--text-body); }
+    
+    /* --- UI COMPONENTS --- */
+    .theme-gear {
+        position: absolute; top: 0; right: 0; z-index: 50;
+        background: transparent; border: none; cursor: pointer;
+        color: var(--border); padding: 0.5rem;
+        transition: transform 0.4s ease, color 0.2s;
+    }
+    .theme-gear:hover { color: var(--text-body); transform: rotate(90deg); }
 
-        /* --- LAYOUT & TYPOGRAPHY --- */
-        h1, h2, h3 { font-weight: 700; }
-        h1 { color: var(--text-body); }
-        
-        /* --- UI COMPONENTS --- */
-        .theme-gear {
-            position: absolute; top: 0; right: 0; z-index: 50;
-            background: transparent; border: none; cursor: pointer;
-            color: var(--border); padding: 0.5rem;
-            transition: transform 0.4s ease, color 0.2s;
-        }
-        .theme-gear:hover { color: var(--text-body); transform: rotate(90deg); }
+    .dark-card {
+        background-color: var(--card-bg); color: var(--text-card);
+        padding: 1.5rem; border-radius: 0.75rem;
+        border-left: 4px solid var(--brand);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        margin-bottom: 1.5rem;
+        position: relative; 
+    }
+    
+    .dark-card label { 
+        color: var(--brand); display: block; 
+        font-size: 0.85rem; font-weight: 700; 
+        text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;
+    }
+    
+    .helper-text {
+        font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;
+    }
 
-        .dark-card {
-            background-color: var(--card-bg); color: var(--text-card);
-            padding: 1.5rem; border-radius: 0.75rem;
-            border-left: 4px solid var(--brand);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-            margin-bottom: 1.5rem;
-            position: relative; 
-        }
-        
-        .dark-card label { 
-            color: var(--brand); display: block; 
-            font-size: 0.85rem; font-weight: 700; 
-            text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;
-        }
-        
-        .helper-text {
-            font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;
-        }
+    /* --- INPUTS & BUTTONS --- */
+    input[type="text"], select {
+        background-color: var(--input-bg); color: var(--text-card);
+        border: 1px solid var(--border); border-radius: 0.375rem;
+        padding: 0.75rem; width: 100%; font-family: inherit; font-size: 1rem;
+    }
+    input:focus, select:focus { outline: 2px solid var(--brand); border-color: transparent; }
 
-        /* --- INPUTS & BUTTONS --- */
-        input[type="text"], select {
-            background-color: var(--input-bg); color: var(--text-card);
-            border: 1px solid var(--border); border-radius: 0.375rem;
-            padding: 0.75rem; width: 100%; font-family: inherit; font-size: 1rem;
-        }
-        input:focus, select:focus { outline: 2px solid var(--brand); border-color: transparent; }
+    .input-wrapper { position: relative; }
+    
+    .suggestion-btn {
+        position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+        background: none; border: none; color: var(--brand); cursor: pointer;
+        opacity: 0.7; transition: opacity 0.2s; padding: 4px;
+    }
+    .suggestion-btn:hover { opacity: 1; }
 
-        .input-wrapper { position: relative; }
-        
-        .suggestion-btn {
-            position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
-            background: none; border: none; color: var(--brand); cursor: pointer;
-            opacity: 0.7; transition: opacity 0.2s; padding: 4px;
-        }
-        .suggestion-btn:hover { opacity: 1; }
+    .suggestion-popup {
+        position: absolute; top: 100%; left: 0; right: 0;
+        background-color: var(--input-bg); border: 1px solid var(--brand);
+        border-radius: 0.375rem; padding: 0.75rem; z-index: 20;
+        margin-top: 4px; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .suggestion-popup.active { display: block; animation: fadeIn 0.2s; }
 
-        .suggestion-popup {
-            position: absolute; top: 100%; left: 0; right: 0;
-            background-color: var(--input-bg); border: 1px solid var(--brand);
-            border-radius: 0.375rem; padding: 0.75rem; z-index: 20;
-            margin-top: 4px; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        }
-        .suggestion-popup.active { display: block; animation: fadeIn 0.2s; }
+    .suggestion-chip {
+        display: inline-block; font-size: 0.85rem; padding: 2px 8px;
+        margin: 2px; border: 1px solid var(--border); border-radius: 4px;
+        cursor: pointer; background-color: rgba(0,0,0,0.2); transition: all 0.2s;
+    }
+    .suggestion-chip:hover { border-color: var(--brand); color: var(--brand); }
 
-        .suggestion-chip {
-            display: inline-block; font-size: 0.85rem; padding: 2px 8px;
-            margin: 2px; border: 1px solid var(--border); border-radius: 4px;
-            cursor: pointer; background-color: rgba(0,0,0,0.2); transition: all 0.2s;
-        }
-        .suggestion-chip:hover { border-color: var(--brand); color: var(--brand); }
+    .action-button {
+        background-color: var(--brand); color: var(--card-bg);
+        font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+        padding: 0 1.5rem; border-radius: 0.375rem; border: none;
+        cursor: pointer; transition: all 0.2s;
+        display: flex; align-items: center; justify-content: center;
+    }
+    .action-button:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
+    .action-button:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .action-button {
-            background-color: var(--brand); color: var(--card-bg);
-            font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
-            padding: 0 1.5rem; border-radius: 0.375rem; border: none;
-            cursor: pointer; transition: all 0.2s;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .action-button:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
-        .action-button:disabled { opacity: 0.5; cursor: not-allowed; }
+    /* --- TIER NAVIGATION --- */
+    .tier-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+    
+    .tier-button {
+        background-color: var(--input-bg); color: var(--text-muted);
+        padding: 1rem; border-radius: 0.375rem; font-weight: 600;
+        border: 1px solid var(--border); cursor: pointer; text-align: center;
+        text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.2s;
+    }
+    .tier-button.active {
+        background-color: var(--brand); color: var(--card-bg);
+        border-color: var(--brand); font-weight: 700;
+    }
 
-        /* --- TIER NAVIGATION --- */
-        .tier-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
-        
-        .tier-button {
-            background-color: var(--input-bg); color: var(--text-muted);
-            padding: 1rem; border-radius: 0.375rem; font-weight: 600;
-            border: 1px solid var(--border); cursor: pointer; text-align: center;
-            text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.2s;
-        }
-        .tier-button.active {
-            background-color: var(--brand); color: var(--card-bg);
-            border-color: var(--brand); font-weight: 700;
-        }
+    /* --- TABS --- */
+    .tab-group { 
+        display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap; 
+    }
+    
+    .tab-button {
+        background-color: var(--input-bg); color: var(--text-muted);
+        padding: 0.5rem 1rem; border-radius: 0.375rem; font-size: 0.9rem;
+        cursor: pointer; border: 1px solid var(--border); flex: 1 1 30%; 
+        text-align: center; min-width: 100px;
+        transition: all 0.2s;
+    }
+    .tab-button.active {
+        background-color: var(--brand); color: var(--card-bg);
+        font-weight: 700; border-color: var(--brand);
+    }
 
-        /* --- TABS --- */
-        .tab-group { 
-            display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap; 
-        }
-        
-        .tab-button {
-            background-color: var(--input-bg); color: var(--text-muted);
-            padding: 0.5rem 1rem; border-radius: 0.375rem; font-size: 0.9rem;
-            cursor: pointer; border: 1px solid var(--border); flex: 1 1 30%; 
-            text-align: center; min-width: 100px;
-            transition: all 0.2s;
-        }
-        .tab-button.active {
-            background-color: var(--brand); color: var(--card-bg);
-            font-weight: 700; border-color: var(--brand);
-        }
+    /* --- ACCORDION --- */
+    .accordion-item { border-bottom: 1px solid var(--border); }
+    .accordion-item:last-child { border-bottom: none; }
+    
+    .accordion-header {
+        padding: 1.25rem 0; cursor: pointer; display: flex;
+        justify-content: space-between; align-items: center;
+        color: var(--text-card); font-weight: 600; font-size: 1.1rem;
+    }
+    .accordion-header.active { color: var(--brand); }
+    
+    .accordion-content {
+        max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out;
+        color: var(--text-muted);
+    }
+    .accordion-content.open { max-height: 2000px; padding-bottom: 1.5rem; }
+    .paragraph-spacing { margin-bottom: 1rem; }
 
-        /* --- ACCORDION --- */
-        .accordion-item { border-bottom: 1px solid var(--border); }
-        .accordion-item:last-child { border-bottom: none; }
-        
-        .accordion-header {
-            padding: 1.25rem 0; cursor: pointer; display: flex;
-            justify-content: space-between; align-items: center;
-            color: var(--text-card); font-weight: 600; font-size: 1.1rem;
-        }
-        .accordion-header.active { color: var(--brand); }
-        
-        .accordion-content {
-            max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out;
-            color: var(--text-muted);
-        }
-        .accordion-content.open { max-height: 2000px; padding-bottom: 1.5rem; }
-        .paragraph-spacing { margin-bottom: 1rem; }
+    /* --- UTILS --- */
+    .hidden { display: none !important; }
+    .tier-tabs { display: none; }
+    .tier-tabs.active { display: block; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
+    
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    
+    .spinner {
+        width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.1);
+        border-radius: 50%; border-top-color: var(--brand);
+        animation: spin 1s linear infinite; display: inline-block; vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+</style>
 
-        /* --- UTILS --- */
-        .hidden { display: none !important; }
-        .tier-tabs { display: none; }
-        .tier-tabs.active { display: block; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
-        
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .spinner {
-            width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.1);
-            border-radius: 50%; border-top-color: var(--brand);
-            animation: spin 1s linear infinite; display: inline-block; vertical-align: middle;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-    </style>
 </head>
 <body class="min-h-screen p-4 md:p-8" onload="initApp()">
-
-    <div class="max-w-4xl mx-auto relative">
+<div class="max-w-4xl mx-auto relative">
+    
+    <header class="text-center mb-8 pr-12">
+        <h1 id="appTitle" class="text-4xl md:text-5xl mb-2">Behold Your God</h1>
+        <p class="text-xl italic text-[var(--border)]">Interactive Knowledge Base <span class="text-[var(--brand)] font-bold">v0.1</span></p>
         
-        <header class="text-center mb-8 pr-12">
-            <h1 id="appTitle" class="text-4xl md:text-5xl mb-2">Behold Your God</h1>
-            <p class="text-xl italic text-[var(--border)]">Interactive Knowledge Base <span class="text-[var(--brand)] font-bold">v0.1</span></p>
-            
-            <button onclick="cycleTheme()" class="theme-gear" title="Switch Theme">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.74v-.47a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-            </button>
-        </header>
+        <button onclick="cycleTheme()" class="theme-gear" title="Switch Theme">
+            <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.74v-.47a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+        </button>
+    </header>
 
-        <div class="dark-card">
-            
-            <div id="domainControl" class="flex justify-between items-center mb-2 hidden">
-                <label class="mb-0">Context</label>
-                <div class="w-48">
-                    <select id="domainSelect" class="py-1 px-2 text-sm"><option value="byg">Behold Your God</option></select>
-                </div>
-            </div>
-            
-            <div class="mb-4">
-                <label>Ask a Question</label>
-                <input type="text" id="topicInput" placeholder="e.g., Why did God command destruction?">
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                
-                <div class="input-wrapper">
-                    <input type="text" id="filterInput" placeholder="Specific Context (e.g. Old Testament)">
-                    
-                    <button class="suggestion-btn" onclick="fetchSuggestions()" title="See Sample Questions">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"></path><path d="M9 21h6"></path></svg>
-                    </button>
-
-                    <div id="suggestionPopup" class="suggestion-popup">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-xs font-bold text-[var(--brand)] uppercase">Sample Questions</span>
-                            <span onclick="closeSuggestions()" class="text-xs cursor-pointer opacity-50 hover:opacity-100">✕</span>
-                        </div>
-                        <div id="suggestionList" class="text-sm"></div>
-                    </div>
-                </div>
-                
-                <div class="flex gap-2">
-                    <button id="okButton" onclick="processQuery()" class="action-button w-full">ANALYZE</button>
-                </div>
-            </div>
-            
-            <div id="topicDisplay" class="mt-4 hidden border-t border-[var(--border)] pt-4"></div>
-        </div>
-
-        <nav class="tier-nav">
-            <button class="tier-button" onclick="switchTier('response')">The Response</button>
-            <button class="tier-button active" onclick="switchTier('about')">About</button>
-        </nav>
-
-        <div id="response-tier" class="tier-tabs">
-            <div class="dark-card">
-                <div id="lensButtons" class="tab-group">
-                    </div>
+    <div class="dark-card">
+        
+        <div id="domainControl" class="flex justify-between items-center mb-2 hidden">
+            <label class="mb-0">Context</label>
+            <div class="w-48">
+                <select id="domainSelect" class="py-1 px-2 text-sm"><option value="byg">Behold Your God</option></select>
             </div>
         </div>
+        
+        <div class="mb-4">
+            <label>Ask a Question</label>
+            <input type="text" id="topicInput" placeholder="e.g., Why did God command destruction?">
+        </div>
 
-        <main id="contentArea">
-            <section id="aboutContent" class="tab-content active">
-                <div class="dark-card">
-                    <h2 class="text-2xl mb-4 text-[var(--brand)]">Welcome</h2>
-                    <div id="aboutDynamic"></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            
+            <div class="input-wrapper">
+                <input type="text" id="filterInput" placeholder="Specific Context (e.g. Old Testament)">
+                
+                <button class="suggestion-btn" onclick="fetchSuggestions()" title="See Sample Questions">
+                    <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"></path><path d="M9 21h6"></path></svg>
+                </button>
+
+                <div id="suggestionPopup" class="suggestion-popup">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-xs font-bold text-[var(--brand)] uppercase">Sample Questions</span>
+                        <span onclick="closeSuggestions()" class="text-xs cursor-pointer opacity-50 hover:opacity-100">✕</span>
+                    </div>
+                    <div id="suggestionList" class="text-sm"></div>
                 </div>
-            </section>
-        </main>
+            </div>
+            
+            <div class="flex gap-2">
+                <button id="okButton" onclick="processQuery()" class="action-button w-full">ANALYZE</button>
+            </div>
+        </div>
+        
+        <div id="topicDisplay" class="mt-4 hidden border-t border-[var(--border)] pt-4"></div>
     </div>
 
+    <nav class="tier-nav">
+        <button class="tier-button" onclick="switchTier('response')">The Response</button>
+        <button class="tier-button active" onclick="switchTier('about')">About</button>
+    </nav>
+
+    <div id="response-tier" class="tier-tabs">
+        <div class="dark-card">
+            <div id="lensButtons" class="tab-group">
+                </div>
+        </div>
+    </div>
+
+    <main id="contentArea">
+        <section id="aboutContent" class="tab-content active">
+            <div class="dark-card">
+                <h2 class="text-2xl mb-4 text-[var(--brand)]">Welcome</h2>
+                <div id="aboutDynamic"></div>
+            </div>
+        </section>
+    </main>
+</div>
+
 <script>
-    // --- DATA STORE (LOCAL KB) ---
-    const KB = {
-        "meta": { "title": "Behold Your God", "scope": "Core interpretive principles and Q&A." },
-        "principles": [
-            { "id": "P001", "title": "Jesus Reveals the Father", "statement": "To understand what God is like, we look at Jesus Christ; God is not different from Christ." },
-            { "id": "P002", "title": "Character, Not Power", "statement": "The controversy is about character. Truth must be seen and understood by free beings, not imposed." },
-            { "id": "P003", "title": "Permission Language", "statement": "Scripture often presents God as doing what He permits." },
-            { "id": "P004", "title": "God Sustains Life", "statement": "God sustains life; if rejected, He may allow people to experience separation from His sustaining presence." },
-            { "id": "P005", "title": "Wrath as Being Given Over", "statement": "God’s wrath is often expressed as turning people over to the natural results of their choices." },
-            { "id": "P006", "title": "Law as Transcript", "statement": "The law declares principles of life and safety; it is a transcript of God’s character, not a mechanism for coercion." },
-            { "id": "P007", "title": "The Cross Reveals All", "statement": "The cross reveals the lengths of selfishness (Satan) and the depths of self-sacrificing love (God)." },
-            { "id": "P008", "title": "Judgment as Truth", "statement": "In judgment, God reveals truth. Free beings respond to truth rather than being compelled." },
-            { "id": "P009", "title": "Separation is Death", "statement": "God is the source of life; separation brings death naturally, not as an arbitrary execution." },
-            { "id": "P010", "title": "Accommodation", "statement": "God may instruct within a chosen human path to limit harm without endorsing the path itself." },
-            { "id": "P011", "title": "Hunter Son Analogy", "statement": "Commands can be harm-limiting counsel within human-chosen violence, easily misread as God’s ideal." }
+// --- DATA STORE (LOCAL KB) ---
+const KB = {
+"meta": { "title": "Behold Your God", "scope": "Core interpretive principles and Q&A." },
+"principles": [
+{ "id": "P001", "title": "Jesus Reveals the Father", "statement": "To understand what God is like, we look at Jesus Christ; God is not different from Christ." },
+{ "id": "P002", "title": "Character, Not Power", "statement": "The controversy is about character. Truth must be seen and understood by free beings, not imposed." },
+{ "id": "P003", "title": "Permission Language", "statement": "Scripture often presents God as doing what He permits." },
+{ "id": "P004", "title": "God Sustains Life", "statement": "God sustains life; if rejected, He may allow people to experience separation from His sustaining presence." },
+{ "id": "P005", "title": "Wrath as Being Given Over", "statement": "God’s wrath is often expressed as turning people over to the natural results of their choices." },
+{ "id": "P006", "title": "Law as Transcript", "statement": "The law declares principles of life and safety; it is a transcript of God’s character, not a mechanism for coercion." },
+{ "id": "P007", "title": "The Cross Reveals All", "statement": "The cross reveals the lengths of selfishness (Satan) and the depths of self-sacrificing love (God)." },
+{ "id": "P008", "title": "Judgment as Truth", "statement": "In judgment, God reveals truth. Free beings respond to truth rather than being compelled." },
+{ "id": "P009", "title": "Separation is Death", "statement": "God is the source of life; separation brings death naturally, not as an arbitrary execution." },
+{ "id": "P010", "title": "Accommodation", "statement": "God may instruct within a chosen human path to limit harm without endorsing the path itself." },
+{ "id": "P011", "title": "Hunter Son Analogy", "statement": "Commands can be harm-limiting counsel within human-chosen violence, easily misread as God’s ideal." }
+],
+"qa": [
+{ "id": "Q001", "question": "What is the central claim of Behold Your God?", "answer": "God is exactly like Jesus.", "tags": ["central claim", "jesus"] },
+{ "id": "Q002", "question": "If God is love, why does He destroy?", "answer": "He often permits consequences; wrath is 'giving over'.", "tags": ["wrath", "destruction", "love"] },
+{ "id": "Q003", "question": "What does the cross reveal?", "answer": "It reveals the character of God (Love) and Satan (Selfishness).", "tags": ["cross", "revelation"] },
+{ "id": "Q004", "question": "Why didn't God end the conflict instantly?", "answer": "It is a war over character, not power. Evidence requires time.", "tags": ["conflict", "time", "power"] },
+{ "id": "Q005", "question": "What is the Law?", "answer": "A transcript of God's character designed for our safety.", "tags": ["law", "safety"] },
+{ "id": "Q006", "question": "Is God the executioner in Judgment?", "answer": "No, death is the natural result of separating from the Source of Life.", "tags": ["judgment", "executioner"] },
+{ "id": "Q007", "question": "Why does the Bible say 'God killed'?", "answer": "Hebrew idiom often attributes to God that which He permits.", "tags": ["language", "idiom", "killed"] },
+{ "id": "Q010", "question": "Why did God command Israel to destroy?", "answer": "Accommodation: limiting harm within a violent path He did not choose (Hunter Son analogy).", "tags": ["israel", "command", "violence"] }
+]
+};
+const API_KEY = &quot;AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A&quot;; // User provided key
+
+// --- APP CONFIG ---
+const domains = {
+    &#39;byg&#39;: {
+        title: &#39;Behold Your God&#39;,
+        lenses: [
+            { id: &#39;lens-1&#39;, label: &#39;The Answer&#39;, prompt: &#39;Direct Answer: Provide a clear, compassionate, and precise answer based strictly on the retrieved principles.&#39; },
+            { id: &#39;lens-2&#39;, label: &#39;The Framework&#39;, prompt: &#39;Underlying Principles: Explain WHICH specific principles (e.g. Permission Language, Accommodation) explain this and HOW they apply.&#39; },
+            { id: &#39;lens-3&#39;, label: &#39;Application&#39;, prompt: &#39;Pastoral Application: How does this view change how we trust God? Address the emotional/relational aspect.&#39; }
         ],
-        "qa": [
-            { "id": "Q001", "question": "What is the central claim of Behold Your God?", "answer": "God is exactly like Jesus.", "tags": ["central claim", "jesus"] },
-            { "id": "Q002", "question": "If God is love, why does He destroy?", "answer": "He often permits consequences; wrath is 'giving over'.", "tags": ["wrath", "destruction", "love"] },
-            { "id": "Q003", "question": "What does the cross reveal?", "answer": "It reveals the character of God (Love) and Satan (Selfishness).", "tags": ["cross", "revelation"] },
-            { "id": "Q004", "question": "Why didn't God end the conflict instantly?", "answer": "It is a war over character, not power. Evidence requires time.", "tags": ["conflict", "time", "power"] },
-            { "id": "Q005", "question": "What is the Law?", "answer": "A transcript of God's character designed for our safety.", "tags": ["law", "safety"] },
-            { "id": "Q006", "question": "Is God the executioner in Judgment?", "answer": "No, death is the natural result of separating from the Source of Life.", "tags": ["judgment", "executioner"] },
-            { "id": "Q007", "question": "Why does the Bible say 'God killed'?", "answer": "Hebrew idiom often attributes to God that which He permits.", "tags": ["language", "idiom", "killed"] },
-            { "id": "Q010", "question": "Why did God command Israel to destroy?", "answer": "Accommodation: limiting harm within a violent path He did not choose (Hunter Son analogy).", "tags": ["israel", "command", "violence"] }
-        ]
-    };
+        persona: &#39;You are an expert Theological Architect in the &quot;Behold Your God&quot; framework (Open Theism/Wright-style). Tone: Calm, Clear, Non-combative, Truth-forward.&#39;,
+        aboutHtml: `
+            &lt;p class=&quot;paragraph-spacing&quot;&gt;&lt;strong&gt;Welcome to the Knowledge Base.&lt;/strong&gt; This tool uses the &quot;Behold Your God&quot; framework to analyze difficult questions about God&#39;s character.&lt;/p&gt;
+            &lt;h3 class=&quot;text-lg font-bold text-[var(--brand)] mt-6 mb-2&quot;&gt;Core Axiom&lt;/h3&gt;
+            &lt;p class=&quot;paragraph-spacing text-xl italic&quot;&gt;&quot;God is exactly like Jesus.&quot;&lt;/p&gt;
+            &lt;ul class=&quot;list-disc list-inside text-[var(--text-muted)] space-y-2 mb-4&quot;&gt;
+                &lt;li&gt;&lt;strong&gt;Input:&lt;/strong&gt; Ask a question about wrath, judgment, or the Old Testament.&lt;/li&gt;
+                &lt;li&gt;&lt;strong&gt;Analysis:&lt;/strong&gt; The system retrieves core principles (e.g., Permission Language, Accommodation).&lt;/li&gt;
+                &lt;li&gt;&lt;strong&gt;Output:&lt;/strong&gt; You receive an answer grounded in the character of Christ.&lt;/li&gt;
+            &lt;/ul&gt;
+        `
+    }
+};
 
-    const API_KEY = "AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A"; // User provided key
+// --- THEME ENGINE ---
+const themes = {
+    &#39;parchment&#39;: { &#39;--app-bg&#39;: &#39;#e8dcc8&#39;, &#39;--card-bg&#39;: &#39;#1a1815&#39;, &#39;--input-bg&#39;: &#39;#26231f&#39;, &#39;--brand&#39;: &#39;#d4a574&#39;, &#39;--text-body&#39;: &#39;#2c2416&#39;, &#39;--text-card&#39;: &#39;#faf8f3&#39;, &#39;--text-muted&#39;: &#39;rgba(212, 165, 116, 0.6)&#39;, &#39;--border&#39;: &#39;#5a5041&#39; },
+    &#39;slate&#39;: { &#39;--app-bg&#39;: &#39;#f5f5f4&#39;, &#39;--card-bg&#39;: &#39;#e7e5e4&#39;, &#39;--input-bg&#39;: &#39;#d6d3d1&#39;, &#39;--brand&#39;: &#39;#0f766e&#39;, &#39;--text-body&#39;: &#39;#292524&#39;, &#39;--text-card&#39;: &#39;#292524&#39;, &#39;--text-muted&#39;: &#39;#57534e&#39;, &#39;--border&#39;: &#39;#d6d3d1&#39; },
+    &#39;midnight&#39;: { &#39;--app-bg&#39;: &#39;#0b1020&#39;, &#39;--card-bg&#39;: &#39;#111833&#39;, &#39;--input-bg&#39;: &#39;#1a2347&#39;, &#39;--brand&#39;: &#39;#8bb9ff&#39;, &#39;--text-body&#39;: &#39;#e6ecff&#39;, &#39;--text-card&#39;: &#39;#e6ecff&#39;, &#39;--text-muted&#39;: &#39;#a7b0cc&#39;, &#39;--border&#39;: &#39;#26325b&#39; }
+};
 
-    // --- APP CONFIG ---
-    const domains = {
-        'byg': {
-            title: 'Behold Your God',
-            lenses: [
-                { id: 'lens-1', label: 'The Answer', prompt: 'Direct Answer: Provide a clear, compassionate, and precise answer based strictly on the retrieved principles.' },
-                { id: 'lens-2', label: 'The Framework', prompt: 'Underlying Principles: Explain WHICH specific principles (e.g. Permission Language, Accommodation) explain this and HOW they apply.' },
-                { id: 'lens-3', label: 'Application', prompt: 'Pastoral Application: How does this view change how we trust God? Address the emotional/relational aspect.' }
-            ],
-            persona: 'You are an expert Theological Architect in the "Behold Your God" framework (Open Theism/Wright-style). Tone: Calm, Clear, Non-combative, Truth-forward.',
-            aboutHtml: `
-                <p class="paragraph-spacing"><strong>Welcome to the Knowledge Base.</strong> This tool uses the "Behold Your God" framework to analyze difficult questions about God's character.</p>
-                <h3 class="text-lg font-bold text-[var(--brand)] mt-6 mb-2">Core Axiom</h3>
-                <p class="paragraph-spacing text-xl italic">"God is exactly like Jesus."</p>
-                <ul class="list-disc list-inside text-[var(--text-muted)] space-y-2 mb-4">
-                    <li><strong>Input:</strong> Ask a question about wrath, judgment, or the Old Testament.</li>
-                    <li><strong>Analysis:</strong> The system retrieves core principles (e.g., Permission Language, Accommodation).</li>
-                    <li><strong>Output:</strong> You receive an answer grounded in the character of Christ.</li>
-                </ul>
-            `
-        }
-    };
+let currentThemeIndex = 0;
+const themeKeys = Object.keys(themes);
 
-    // --- THEME ENGINE ---
-    const themes = {
-        'parchment': { '--app-bg': '#e8dcc8', '--card-bg': '#1a1815', '--input-bg': '#26231f', '--brand': '#d4a574', '--text-body': '#2c2416', '--text-card': '#faf8f3', '--text-muted': 'rgba(212, 165, 116, 0.6)', '--border': '#5a5041' },
-        'slate': { '--app-bg': '#f5f5f4', '--card-bg': '#e7e5e4', '--input-bg': '#d6d3d1', '--brand': '#0f766e', '--text-body': '#292524', '--text-card': '#292524', '--text-muted': '#57534e', '--border': '#d6d3d1' },
-        'midnight': { '--app-bg': '#0b1020', '--card-bg': '#111833', '--input-bg': '#1a2347', '--brand': '#8bb9ff', '--text-body': '#e6ecff', '--text-card': '#e6ecff', '--text-muted': '#a7b0cc', '--border': '#26325b' }
-    };
+function cycleTheme() {
+    currentThemeIndex = (currentThemeIndex + 1) % themeKeys.length;
+    const colors = themes[themeKeys[currentThemeIndex]];
+    for (const [key, value] of Object.entries(colors)) { document.documentElement.style.setProperty(key, value); }
+}
 
-    let currentThemeIndex = 0;
-    const themeKeys = Object.keys(themes);
+// --- STATE ---
+let state = {
+    query: &quot;&quot;,
+    context: &quot;&quot;,
+    retrievedContext: [], // Stores the P001/Q002 items found
+    cache: {}
+};
 
-    function cycleTheme() {
-        currentThemeIndex = (currentThemeIndex + 1) % themeKeys.length;
-        const colors = themes[themeKeys[currentThemeIndex]];
-        for (const [key, value] of Object.entries(colors)) { document.documentElement.style.setProperty(key, value); }
+function initApp() {
+    // Init UI
+    const profile = domains[&#39;byg&#39;];
+    document.getElementById(&#39;appTitle&#39;).textContent = profile.title;
+    document.getElementById(&#39;aboutDynamic&#39;).innerHTML = profile.aboutHtml;
+
+    // Init Lenses
+    const btnContainer = document.getElementById(&#39;lensButtons&#39;);
+    const contentArea = document.getElementById(&#39;contentArea&#39;);
+    btnContainer.innerHTML = &#39;&#39;;
+    
+    document.querySelectorAll(&#39;.dynamic-lens-section&#39;).forEach(el =&gt; el.remove());
+
+    profile.lenses.forEach(lens =&gt; {
+        const btn = document.createElement(&#39;button&#39;);
+        btn.className = &#39;tab-button&#39;;
+        btn.id = `btn-${lens.id}`;
+        btn.textContent = lens.label;
+        btn.onclick = () =&gt; loadLens(lens.id, btn);
+        btnContainer.appendChild(btn);
+
+        const section = document.createElement(&#39;section&#39;);
+        section.id = `${lens.id}Content`;
+        section.className = &#39;tab-content dynamic-lens-section&#39;;
+        contentArea.insertBefore(section, document.getElementById(&#39;aboutContent&#39;));
+    });
+}
+
+// --- SEARCH LOGIC (LOCAL RAG) ---
+function fetchSuggestions() {
+    const popup = document.getElementById(&#39;suggestionPopup&#39;);
+    const list = document.getElementById(&#39;suggestionList&#39;);
+    
+    list.innerHTML = &#39;&#39;;
+    KB.qa.forEach(item =&gt; {
+        const chip = document.createElement(&#39;div&#39;);
+        chip.className = &#39;suggestion-chip block w-full text-left mb-1&#39;;
+        chip.textContent = item.question;
+        chip.onclick = () =&gt; {
+            document.getElementById(&#39;topicInput&#39;).value = item.question;
+            popup.classList.remove(&#39;active&#39;);
+        };
+        list.appendChild(chip);
+    });
+    popup.classList.add(&#39;active&#39;);
+}
+
+function closeSuggestions() { document.getElementById(&#39;suggestionPopup&#39;).classList.remove(&#39;active&#39;); }
+
+// --- RETRIEVAL FUNCTION ---
+function retrieveContext(query) {
+    const qTerms = query.toLowerCase().split(&#39; &#39;);
+    
+    // Score Principles
+    const scoredPrinciples = KB.principles.map(p =&gt; {
+        let score = 0;
+        if (qTerms.some(t =&gt; p.title.toLowerCase().includes(t))) score += 5;
+        if (qTerms.some(t =&gt; p.statement.toLowerCase().includes(t))) score += 2;
+        return { item: p, score: score, type: &#39;Principle&#39; };
+    }).sort((a,b) =&gt; b.score - a.score);
+
+    // Score Q&amp;A
+    const scoredQA = KB.qa.map(q =&gt; {
+        let score = 0;
+        if (qTerms.some(t =&gt; q.question.toLowerCase().includes(t))) score += 10;
+        if (q.tags.some(tag =&gt; qTerms.includes(tag))) score += 5;
+        return { item: q, score: score, type: &#39;Q&amp;A&#39; };
+    }).sort((a,b) =&gt; b.score - a.score);
+
+    // Take Top 3 Principles + Top 1 Q&amp;A (if relevant)
+    const topPrinciples = scoredPrinciples.filter(s =&gt; s.score &gt; 0).slice(0, 4);
+    const topQA = scoredQA.filter(s =&gt; s.score &gt; 0).slice(0, 1);
+
+    return [...topPrinciples, ...topQA];
+}
+
+async function processQuery() {
+    const input = document.getElementById(&#39;topicInput&#39;);
+    const filterIn = document.getElementById(&#39;filterInput&#39;);
+    const btn = document.getElementById(&#39;okButton&#39;);
+    const display = document.getElementById(&#39;topicDisplay&#39;);
+
+    const rawInput = input.value.trim();
+    if(!rawInput) return alert(&quot;Please ask a question.&quot;);
+
+    closeSuggestions();
+    btn.disabled = true;
+    btn.innerHTML = &#39;&lt;div class=&quot;spinner&quot;&gt;&lt;/div&gt;&#39;;
+    
+    state.query = rawInput;
+    state.context = filterIn.value.trim();
+    
+    // 1. LOCAL RETRIEVAL
+    const hits = retrieveContext(state.query);
+    state.retrievedContext = hits.map(h =&gt; h.item); // Store for prompt
+    
+    // Display retrieval success
+    display.classList.remove(&#39;hidden&#39;);
+    display.innerHTML = `
+        &lt;h2 class=&quot;text-xl text-[var(--brand)]&quot;&gt;Analysis Active&lt;/h2&gt;
+        &lt;p class=&quot;text-sm text-[var(--text-muted)]&quot;&gt;Found ${hits.length} relevant entries in Knowledge Base.&lt;/p&gt;
+    `;
+
+    state.cache = {}; // Clear cache
+    
+    // Switch to Result View
+    switchTier(&#39;response&#39;);
+    
+    // Auto-load first lens
+    const firstBtn = document.getElementById(&#39;btn-lens-1&#39;);
+    loadLens(&#39;lens-1&#39;, firstBtn);
+
+    btn.disabled = false;
+    btn.textContent = &#39;ANALYZE&#39;;
+}
+
+function switchTier(tier) {
+    document.querySelectorAll(&#39;.tier-button&#39;).forEach(b =&gt; {
+        if(b.textContent.toLowerCase().includes(tier.toLowerCase())) b.classList.add(&#39;active&#39;);
+        else b.classList.remove(&#39;active&#39;);
+    });
+    
+    document.querySelectorAll(&#39;.tab-content&#39;).forEach(el =&gt; el.classList.remove(&#39;active&#39;));
+    document.getElementById(&#39;response-tier&#39;).classList.remove(&#39;active&#39;);
+    
+    if(tier === &#39;about&#39;) {
+        document.getElementById(&#39;aboutContent&#39;).classList.add(&#39;active&#39;);
+    } else {
+        document.getElementById(&#39;response-tier&#39;).classList.add(&#39;active&#39;);
+        document.getElementById(&#39;lensButtons&#39;).classList.remove(&#39;hidden&#39;);
+    }
+}
+
+async function loadLens(lensId, btnElement) {
+    document.querySelectorAll(&#39;.tab-button&#39;).forEach(b =&gt; b.classList.remove(&#39;active&#39;));
+    if(btnElement) btnElement.classList.add(&#39;active&#39;);
+    
+    document.querySelectorAll(&#39;.tab-content&#39;).forEach(c =&gt; c.classList.remove(&#39;active&#39;));
+    const contentDiv = document.getElementById(`${lensId}Content`);
+    contentDiv.classList.add(&#39;active&#39;);
+
+    if(state.cache[lensId]) {
+        contentDiv.innerHTML = state.cache[lensId];
+        return;
     }
 
-    // --- STATE ---
-    let state = {
-        query: "",
-        context: "",
-        retrievedContext: [], // Stores the P001/Q002 items found
-        cache: {}
-    };
+    contentDiv.innerHTML = &#39;&lt;div class=&quot;dark-card text-center&quot;&gt;&lt;div class=&quot;spinner&quot;&gt;&lt;/div&gt; Consulting Framework...&lt;/div&gt;&#39;;
 
-    function initApp() {
-        // Init UI
-        const profile = domains['byg'];
-        document.getElementById('appTitle').textContent = profile.title;
-        document.getElementById('aboutDynamic').innerHTML = profile.aboutHtml;
+    // CONSTRUCT PROMPT WITH RETRIEVED DATA
+    const profile = domains[&#39;byg&#39;];
+    const lensObj = profile.lenses.find(l =&gt; l.id === lensId);
+    
+    // Serialize retrieved context for the AI
+    const contextString = state.retrievedContext.map(i =&gt; {
+        if(i.statement) return `[PRINCIPLE ${i.id}] ${i.title}: ${i.statement}`;
+        return `[Q&amp;A Match] Q: ${i.question} A: ${i.answer}`;
+    }).join(&#39;\n&#39;);
 
-        // Init Lenses
-        const btnContainer = document.getElementById('lensButtons');
-        const contentArea = document.getElementById('contentArea');
-        btnContainer.innerHTML = '';
+    const prompt = `
+        Role: ${profile.persona}
+        User Question: &quot;${state.query}&quot;
+        ${state.context ? `Specific Context: ${state.context}` : &quot;&quot;}
         
-        document.querySelectorAll('.dynamic-lens-section').forEach(el => el.remove());
+        STRICT SOURCE MATERIAL (Principles to weave in naturally):
+        ${contextString || &quot;No direct matches found. Use general BYG principles (Accommodation, Permission, Jesus reveals Father).&quot;}
 
-        profile.lenses.forEach(lens => {
-            const btn = document.createElement('button');
-            btn.className = 'tab-button';
-            btn.id = `btn-${lens.id}`;
-            btn.textContent = lens.label;
-            btn.onclick = () => loadLens(lens.id, btn);
-            btnContainer.appendChild(btn);
+        Task: Write content for the &quot;${lensObj.label}&quot; section.
+        Focus: ${lensObj.prompt}
+        
+        CRITICAL INSTRUCTIONS:
+        1. No Meta-Talk: Never say &quot;The knowledge base says&quot; or &quot;Based on the provided text&quot;. Speak with authority.
+        2. Scripture: Cite relevant Bible verses to support your points. Use KJV by default. If the KJV is archaic or unclear, use ESV.
+        3. Principles: Mention the specific principles (e.g. &quot;The Principle of Accommodation&quot;) naturally within the sentences, not as a bulleted list of &quot;Used Principles&quot;.
 
-            const section = document.createElement('section');
-            section.id = `${lens.id}Content`;
-            section.className = 'tab-content dynamic-lens-section';
-            contentArea.insertBefore(section, document.getElementById('aboutContent'));
-        });
+        FORMATTING:
+        1. Use &quot;### Header&quot; for sections.
+        2. Use &quot;||&quot; to separate paragraphs.
+        3. No Markdown bolding in body text.
+    `;
+
+    try {
+        const data = await callGemini(prompt);
+        const sections = parseDelimitedText(data);
+        const html = renderAccordion(sections, lensObj.label, lensId);
+        state.cache[lensId] = html;
+        contentDiv.innerHTML = html;
+    } catch(e) {
+        contentDiv.innerHTML = `&lt;div class=&quot;dark-card text-red-400&quot;&gt;Error: ${e.message}&lt;/div&gt;`;
     }
+}
 
-    // --- SEARCH LOGIC (LOCAL RAG) ---
-    function fetchSuggestions() {
-        const popup = document.getElementById('suggestionPopup');
-        const list = document.getElementById('suggestionList');
-        
-        list.innerHTML = '';
-        KB.qa.forEach(item => {
-            const chip = document.createElement('div');
-            chip.className = 'suggestion-chip block w-full text-left mb-1';
-            chip.textContent = item.question;
-            chip.onclick = () => {
-                document.getElementById('topicInput').value = item.question;
-                popup.classList.remove('active');
-            };
-            list.appendChild(chip);
-        });
-        popup.classList.add('active');
-    }
-
-    function closeSuggestions() { document.getElementById('suggestionPopup').classList.remove('active'); }
-
-    // --- RETRIEVAL FUNCTION ---
-    function retrieveContext(query) {
-        const qTerms = query.toLowerCase().split(' ');
-        
-        // Score Principles
-        const scoredPrinciples = KB.principles.map(p => {
-            let score = 0;
-            if (qTerms.some(t => p.title.toLowerCase().includes(t))) score += 5;
-            if (qTerms.some(t => p.statement.toLowerCase().includes(t))) score += 2;
-            return { item: p, score: score, type: 'Principle' };
-        }).sort((a,b) => b.score - a.score);
-
-        // Score Q&A
-        const scoredQA = KB.qa.map(q => {
-            let score = 0;
-            if (qTerms.some(t => q.question.toLowerCase().includes(t))) score += 10;
-            if (q.tags.some(tag => qTerms.includes(tag))) score += 5;
-            return { item: q, score: score, type: 'Q&A' };
-        }).sort((a,b) => b.score - a.score);
-
-        // Take Top 3 Principles + Top 1 Q&A (if relevant)
-        const topPrinciples = scoredPrinciples.filter(s => s.score > 0).slice(0, 4);
-        const topQA = scoredQA.filter(s => s.score > 0).slice(0, 1);
-
-        return [...topPrinciples, ...topQA];
-    }
-
-    async function processQuery() {
-        const input = document.getElementById('topicInput');
-        const filterIn = document.getElementById('filterInput');
-        const btn = document.getElementById('okButton');
-        const display = document.getElementById('topicDisplay');
-
-        const rawInput = input.value.trim();
-        if(!rawInput) return alert("Please ask a question.");
-
-        closeSuggestions();
-        btn.disabled = true;
-        btn.innerHTML = '<div class="spinner"></div>';
-        
-        state.query = rawInput;
-        state.context = filterIn.value.trim();
-        
-        // 1. LOCAL RETRIEVAL
-        const hits = retrieveContext(state.query);
-        state.retrievedContext = hits.map(h => h.item); // Store for prompt
-        
-        // Display retrieval success
-        display.classList.remove('hidden');
-        display.innerHTML = `
-            <h2 class="text-xl text-[var(--brand)]">Analysis Active</h2>
-            <p class="text-sm text-[var(--text-muted)]">Found ${hits.length} relevant entries in Knowledge Base.</p>
-        `;
-
-        state.cache = {}; // Clear cache
-        
-        // Switch to Result View
-        switchTier('response');
-        
-        // Auto-load first lens
-        const firstBtn = document.getElementById('btn-lens-1');
-        loadLens('lens-1', firstBtn);
-
-        btn.disabled = false;
-        btn.textContent = 'ANALYZE';
-    }
-
-    function switchTier(tier) {
-        document.querySelectorAll('.tier-button').forEach(b => {
-            if(b.textContent.toLowerCase().includes(tier.toLowerCase())) b.classList.add('active');
-            else b.classList.remove('active');
-        });
-        
-        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-        document.getElementById('response-tier').classList.remove('active');
-        
-        if(tier === 'about') {
-            document.getElementById('aboutContent').classList.add('active');
+function parseDelimitedText(rawText) {
+    let cleanText = rawText.replace(/\*\*/g, &#39;&#39;).replace(/```/g, &#39;&#39;);
+    const rawSections = cleanText.split(&#39;###&#39;).filter(s =&gt; s.trim().length &gt; 0);
+    return rawSections.map(sectionText =&gt; {
+        let text = sectionText.trim();
+        let splitIndex = text.search(/(\n|\|\|)/);
+        let header = &quot;&quot;, rest = &quot;&quot;;
+        if (splitIndex === -1) {
+            header = text; rest = &quot;&quot;;
         } else {
-            document.getElementById('response-tier').classList.add('active');
-            document.getElementById('lensButtons').classList.remove('hidden');
+            header = text.substring(0, splitIndex).trim();
+            rest = text.substring(splitIndex).trim();
         }
-    }
+        const paragraphs = rest.split(&#39;||&#39;).map(p =&gt; p.trim()).filter(p =&gt; p.length &gt; 0);
+        return { header: header, content: paragraphs };
+    });
+}
 
-    async function loadLens(lensId, btnElement) {
-        document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
-        if(btnElement) btnElement.classList.add('active');
-        
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        const contentDiv = document.getElementById(`${lensId}Content`);
-        contentDiv.classList.add('active');
+function renderAccordion(sections, title, lensId) {
+    let html = `&lt;div class=&quot;dark-card&quot;&gt;&lt;h3 class=&quot;text-2xl mb-6 text-center text-[var(--brand)]&quot;&gt;${title}&lt;/h3&gt;`;
+    sections.forEach((sec, idx) =&gt; {
+        const uniqueId = `${lensId}-acc-${idx}`;
+        let contentHtml = sec.content.map(txt =&gt; `&lt;p class=&quot;paragraph-spacing&quot;&gt;${txt}&lt;/p&gt;`).join(&#39;&#39;);
+        html += `
+            &lt;div class=&quot;accordion-item&quot;&gt;
+                &lt;div class=&quot;accordion-header open&quot; onclick=&quot;toggleAccordion(&#39;${uniqueId}&#39;)&quot;&gt;
+                    &lt;span&gt;${sec.header}&lt;/span&gt;
+                    &lt;span&gt;▼&lt;/span&gt;
+                &lt;/div&gt;
+                &lt;div id=&quot;${uniqueId}&quot; class=&quot;accordion-content open&quot;&gt;${contentHtml}&lt;/div&gt;
+            &lt;/div&gt;`;
+    });
+    html += `&lt;/div&gt;`;
+    return html;
+}
 
-        if(state.cache[lensId]) {
-            contentDiv.innerHTML = state.cache[lensId];
-            return;
+function toggleAccordion(id) {
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.classList.toggle(&#39;open&#39;);
+    el.previousElementSibling.classList.toggle(&#39;active&#39;);
+}
+
+async function callGemini(promptText) {
+    const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
+        {
+            method: &quot;POST&quot;, headers: { &quot;Content-Type&quot;: &quot;application/json&quot; },
+            body: JSON.stringify({
+                contents: [{ role: &quot;user&quot;, parts: [{ text: promptText }] }],
+                generationConfig: { responseMimeType: &quot;text/plain&quot;, temperature: 0.5 }
+            })
         }
+    );
+    const data = await response.json();
+    return data.candidates[0].content.parts[0].text;
+}
 
-        contentDiv.innerHTML = '<div class="dark-card text-center"><div class="spinner"></div> Consulting Framework...</div>';
-
-        // CONSTRUCT PROMPT WITH RETRIEVED DATA
-        const profile = domains['byg'];
-        const lensObj = profile.lenses.find(l => l.id === lensId);
-        
-        // Serialize retrieved context for the AI
-        const contextString = state.retrievedContext.map(i => {
-            if(i.statement) return `[PRINCIPLE ${i.id}] ${i.title}: ${i.statement}`;
-            return `[Q&A Match] Q: ${i.question} A: ${i.answer}`;
-        }).join('\n');
-
-        const prompt = `
-            Role: ${profile.persona}
-            User Question: "${state.query}"
-            ${state.context ? `Specific Context: ${state.context}` : ""}
-            
-            STRICT SOURCE MATERIAL (Do not contradict these):
-            ${contextString || "No direct matches found. Use general BYG principles (Accommodation, Permission, Jesus reveals Father)."}
-
-            Task: Write content for the "${lensObj.label}" section.
-            Focus: ${lensObj.prompt}
-            
-            FORMATTING:
-            1. Use "### Header" for sections.
-            2. Use "||" to separate paragraphs.
-            3. No Markdown bolding in body text.
-        `;
-
-        try {
-            const data = await callGemini(prompt);
-            const sections = parseDelimitedText(data);
-            const html = renderAccordion(sections, lensObj.label, lensId);
-            state.cache[lensId] = html;
-            contentDiv.innerHTML = html;
-        } catch(e) {
-            contentDiv.innerHTML = `<div class="dark-card text-red-400">Error: ${e.message}</div>`;
-        }
-    }
-
-    function parseDelimitedText(rawText) {
-        let cleanText = rawText.replace(/\*\*/g, '').replace(/```/g, '');
-        const rawSections = cleanText.split('###').filter(s => s.trim().length > 0);
-        return rawSections.map(sectionText => {
-            let text = sectionText.trim();
-            let splitIndex = text.search(/(\n|\|\|)/);
-            let header = "", rest = "";
-            if (splitIndex === -1) {
-                header = text; rest = "";
-            } else {
-                header = text.substring(0, splitIndex).trim();
-                rest = text.substring(splitIndex).trim();
-            }
-            const paragraphs = rest.split('||').map(p => p.trim()).filter(p => p.length > 0);
-            return { header: header, content: paragraphs };
-        });
-    }
-
-    function renderAccordion(sections, title, lensId) {
-        let html = `<div class="dark-card"><h3 class="text-2xl mb-6 text-center text-[var(--brand)]">${title}</h3>`;
-        sections.forEach((sec, idx) => {
-            const uniqueId = `${lensId}-acc-${idx}`;
-            let contentHtml = sec.content.map(txt => `<p class="paragraph-spacing">${txt}</p>`).join('');
-            html += `
-                <div class="accordion-item">
-                    <div class="accordion-header open" onclick="toggleAccordion('${uniqueId}')">
-                        <span>${sec.header}</span>
-                        <span>▼</span>
-                    </div>
-                    <div id="${uniqueId}" class="accordion-content open">${contentHtml}</div>
-                </div>`;
-        });
-        html += `</div>`;
-        return html;
-    }
-
-    function toggleAccordion(id) {
-        const el = document.getElementById(id);
-        if(!el) return;
-        el.classList.toggle('open');
-        el.previousElementSibling.classList.toggle('active');
-    }
-
-    async function callGemini(promptText) {
-        const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
-            {
-                method: "POST", headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    contents: [{ role: "user", parts: [{ text: promptText }] }],
-                    generationConfig: { responseMimeType: "text/plain", temperature: 0.5 }
-                })
-            }
-        );
-        const data = await response.json();
-        return data.candidates[0].content.parts[0].text;
-    }
 </script>
 </body>
 </html>
