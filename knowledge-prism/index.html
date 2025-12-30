@@ -15,7 +15,6 @@
             --brand: #d4a574;
             --text-body: #2c2416;
             --text-card: #faf8f3;
-            /* CONTRAST FIX: Darkened for Light Mode visibility */
             --text-muted: #665648; 
             --border: #5a5041;
         }
@@ -66,7 +65,6 @@
             border: 1px solid var(--border); border-radius: 0.375rem;
             padding: 0.75rem; width: 100%; font-family: inherit; font-size: 1rem;
         }
-        /* CONTRAST FIX: Ensure placeholders use the improved muted color */
         ::placeholder { color: var(--text-muted); opacity: 1; }
         
         input:focus, select:focus { outline: 2px solid var(--brand); border-color: transparent; }
@@ -180,7 +178,7 @@
         
         <header class="text-center mb-8 pr-12">
             <h1 id="appTitle" class="text-4xl md:text-5xl mb-2">Context Navigator</h1>
-            <p class="text-xl italic text-[var(--text-muted)]">Master Edition <span class="text-red-500 font-bold">Build #54</span></p>
+            <p class="text-xl italic text-[var(--text-muted)]">Master Edition <span class="text-red-500 font-bold">Build #55</span></p>
             
             <button onclick="cycleTheme()" class="theme-gear" title="Switch Theme">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -292,7 +290,8 @@
                 { id: 'lens-3', label: 'Analysis', prompt: 'Analysis, Cultural Impact, or Significance' }
             ],
             persona: 'Objective Encyclopedia',
-            suggestionLogic: 'Select the 5 sub-categories most likely to be searched for by people (High Popularity). Focus on tangible lists.',
+            // HYBRID SUGGESTION LOGIC (3 STANDARD + 2 STRUCTURAL)
+            suggestionLogic: 'Suggest 5 distinct Focus Areas. Rule: Provide exactly 3 standard categories (e.g. Key People, Locations, Events) AND 2 structural/argumentative categories (e.g. Arguments, Reasons, Axioms, Determinants) that reveal the underlying logic.',
             inputPlaceholder: 'Enter Main Topic (e.g., WWII, São Paulo)',
             aboutHtml: `
                 <p class="paragraph-spacing"><strong>Welcome to the Master Edition.</strong> Use this tool to explore history, travel destinations, biographies, and more through structured AI analysis.</p>
@@ -387,25 +386,25 @@
         'explorer': { 
             '--app-bg': '#e8dcc8', '--card-bg': '#1a1815', '--input-bg': '#26231f', '--brand': '#d4a574', 
             '--text-body': '#2c2416', '--text-card': '#faf8f3', 
-            '--text-muted': '#665648', // Darker brown for better visibility on light bg
+            '--text-muted': '#665648', 
             '--border': '#5a5041' 
         },
         'archives': { 
             '--app-bg': '#f5f5f4', '--card-bg': '#e7e5e4', '--input-bg': '#d6d3d1', '--brand': '#0f766e', 
             '--text-body': '#292524', '--text-card': '#292524', 
-            '--text-muted': '#4a4540', // Darker for visibility
+            '--text-muted': '#4a4540', 
             '--border': '#d6d3d1' 
         },
         'high-command': { 
             '--app-bg': '#022c22', '--card-bg': '#064e3b', '--input-bg': '#065f46', '--brand': '#fef08a', 
             '--text-body': '#ecfdf5', '--text-card': '#ecfdf5', 
-            '--text-muted': '#81eebb', // Light for visibility on dark bg
+            '--text-muted': '#81eebb', 
             '--border': '#065f46' 
         },
         'navy': { 
             '--app-bg': '#0b1020', '--card-bg': '#111833', '--input-bg': '#1a2347', '--brand': '#8bb9ff', 
             '--text-body': '#e6ecff', '--text-card': '#e6ecff', 
-            '--text-muted': '#bcc5e3', // Light for visibility on dark bg
+            '--text-muted': '#bcc5e3', 
             '--border': '#26325b' 
         }
     };
@@ -427,6 +426,7 @@
         listMode: "smart",
         currentTier: "about",
         currentCategory: "",
+        entityType: "Other", // 'Person', 'Work', 'Other'
         caches: { categories: [], content: {} }
     };
 
@@ -441,7 +441,7 @@
         applyDomainProfile();
     }
 
-    function applyDomainProfile() {
+    function applyDomainProfile(overrideLenses = null) {
         const profile = domains[state.domain];
         
         // Update Title and Inputs
@@ -449,15 +449,16 @@
         document.getElementById('topicInput').placeholder = profile.inputPlaceholder;
         document.getElementById('aboutDynamic').innerHTML = profile.aboutHtml;
 
-        // GENERATE DYNAMIC LENS BUTTONS
+        // GENERATE BUTTONS (Use Override if provided, else Native)
         const btnContainer = document.getElementById('lensButtons');
         const contentArea = document.getElementById('contentArea');
-        
+        const activeLenses = overrideLenses || profile.lenses;
+
         btnContainer.innerHTML = ''; 
         
         document.querySelectorAll('.dynamic-lens-section').forEach(el => el.remove());
 
-        profile.lenses.forEach(lens => {
+        activeLenses.forEach(lens => {
             // Create Button
             const btn = document.createElement('button');
             btn.className = 'tab-button';
@@ -474,6 +475,30 @@
         });
     }
 
+    // --- LOGIC: DOMAIN LOCK & ENTITY ROUTING ---
+    function resolveLenses(domainKey, entityType) {
+        // Priority 1: Specialized Domains (Hard Lock)
+        if (['bible', 'medical', 'art', 'music'].includes(domainKey)) {
+            return domains[domainKey].lenses; 
+        }
+
+        // Priority 2: Biographer (Semi-Lock)
+        if (domainKey === 'biography') {
+            // If it's a Person, stick to Bio. If drilled down to non-person, revert to General.
+            if (entityType === 'Person') return domains['biography'].lenses;
+            return domains['general'].lenses;
+        }
+
+        // Priority 3: General Router
+        if (domainKey === 'general') {
+            if (entityType === 'Person') return domains['biography'].lenses;
+            // Fallback for Works/Concepts -> General Lenses
+            return domains['general'].lenses;
+        }
+
+        return domains['general'].lenses;
+    }
+
     // --- PARSERS ---
     function parseGeminiJSON(rawText) {
         try {
@@ -483,7 +508,7 @@
             if (firstBrace !== -1 && lastBrace !== -1) cleanText = cleanText.substring(firstBrace, lastBrace + 1);
             return JSON.parse(cleanText);
         } catch (e) {
-            return { title: state.topic, summary: "Proceeding with unstructured data.", items: [] };
+            return { title: state.topic, summary: "Proceeding with unstructured data.", items: [], type: "Other" };
         }
     }
 
@@ -627,11 +652,19 @@
                 ${state.filter ? `Focus Area: "${state.filter}"` : ""}
                 Goal: Define the subject${state.filter ? " specifically regarding the focus area" : ""}.
                 CONSTRAINT: DO NOT return a list. Only return a definition.
-                Return raw JSON only: {"title": "Formal Name", "summary": "One compelling sentence defining this topic."}
+                Also classify the topic type as "Person", "Work" (Book/Art/Song), or "Other".
+                Return raw JSON only: {"title": "Formal Name", "summary": "One compelling sentence.", "type": "Person|Work|Other"}
             `;
             
             const data = await callGemini(prompt);
             const result = parseGeminiJSON(data);
+            
+            // Store Entity Type
+            state.entityType = result.type || "Other";
+
+            // Resolve Buttons based on Domain Lock Logic
+            const newLenses = resolveLenses(state.domain, state.entityType);
+            applyDomainProfile(newLenses);
 
             display.classList.remove('hidden');
             display.innerHTML = `
@@ -722,6 +755,15 @@
         if(!val) return;
         state.currentCategory = val;
         
+        // DRILL DOWN RE-EVALUATION LOGIC
+        // We consider the category the new "topic" for lens purposes, but keep the parent context.
+        // Simple Heuristic: Assume Drill Down is usually NOT a person unless explicit.
+        // For V1, we simply re-run resolution assuming "Other" (Concept/Work) unless we are in Bio/General.
+        // This triggers the "Snap Back" behavior.
+        
+        const newLenses = resolveLenses(state.domain, "Other"); // Revert to General/Native for drill-downs
+        applyDomainProfile(newLenses);
+        
         const lensGroup = document.getElementById(`lensButtons`);
         lensGroup.classList.remove('hidden');
         lensGroup.style.display = 'flex'; 
@@ -747,12 +789,19 @@
         contentDiv.innerHTML = '<div class="dark-card text-center"><div class="spinner"></div> Generating Analysis...</div>';
 
         // DYNAMIC LENS LOOKUP
-        const profile = domains[state.domain];
-        const lensObj = profile.lenses.find(l => l.id === lensId);
-        const lensFocus = lensObj ? lensObj.prompt : "General Context";
+        // We need to look up the lens in the CURRENTLY ACTIVE set, not just the profile default.
+        const currentButton = document.getElementById(`btn-${lensId}`);
+        const lensLabel = currentButton ? currentButton.textContent : "";
+        
+        // Find the prompt associated with this label by searching all domains (since lenses might be swapped)
+        let lensFocus = "General Context";
+        Object.values(domains).forEach(d => {
+            const found = d.lenses.find(l => l.id === lensId && l.label === lensLabel);
+            if(found) lensFocus = found.prompt;
+        });
 
         const prompt = `
-            Role: ${profile.persona}
+            Role: ${domains[state.domain].persona}
             Topic: ${state.topic}, Sub-Category: ${state.currentCategory}.
             ${state.filter ? `Context: This is part of the "${state.filter}" aspect.` : ""}
             Focus: ${lensFocus}.
