@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
     <style>
-        /* --- THEME VARIABLES --- */
+        /* --- THEME VARIABLES (Default: Explorer) --- */
         :root {
             --app-bg: #e8dcc8;
             --card-bg: #1a1815;
@@ -15,7 +15,8 @@
             --brand: #d4a574;
             --text-body: #2c2416;
             --text-card: #faf8f3;
-            --text-muted: rgba(212, 165, 116, 0.6);
+            /* CONTRAST FIX: Changed from rgba(212, 165, 116, 0.6) to solid lighter tan */
+            --text-muted: #c7a88b; 
             --border: #5a5041;
         }
 
@@ -65,6 +66,9 @@
             border: 1px solid var(--border); border-radius: 0.375rem;
             padding: 0.75rem; width: 100%; font-family: inherit; font-size: 1rem;
         }
+        /* CONTRAST FIX: Ensure placeholders use the improved muted color */
+        ::placeholder { color: var(--text-muted); opacity: 1; }
+        
         input:focus, select:focus { outline: 2px solid var(--brand); border-color: transparent; }
 
         .input-wrapper { position: relative; }
@@ -87,7 +91,11 @@
         .suggestion-chip {
             display: inline-block; font-size: 0.85rem; padding: 2px 8px;
             margin: 2px; border: 1px solid var(--border); border-radius: 4px;
-            cursor: pointer; background-color: rgba(0,0,0,0.2); transition: all 0.2s;
+            cursor: pointer; 
+            /* CONTRAST FIX: Removed dark background overlay, using border for definition */
+            background-color: transparent; 
+            color: var(--text-muted);
+            transition: all 0.2s;
         }
         .suggestion-chip:hover { border-color: var(--brand); color: var(--brand); }
 
@@ -173,7 +181,7 @@
         
         <header class="text-center mb-8 pr-12">
             <h1 id="appTitle" class="text-4xl md:text-5xl mb-2">Context Navigator</h1>
-            <p class="text-xl italic text-[var(--border)]">Master Edition <span class="text-red-500 font-bold">Build #52</span></p>
+            <p class="text-xl italic text-[var(--border)]">Master Edition <span class="text-red-500 font-bold">Build #53</span></p>
             
             <button onclick="cycleTheme()" class="theme-gear" title="Switch Theme">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -375,12 +383,32 @@
         }
     };
 
-    // --- THEME ENGINE ---
+    // --- THEME ENGINE (CONTRAST UPDATES) ---
     const themes = {
-        'explorer': { '--app-bg': '#e8dcc8', '--card-bg': '#1a1815', '--input-bg': '#26231f', '--brand': '#d4a574', '--text-body': '#2c2416', '--text-card': '#faf8f3', '--text-muted': 'rgba(212, 165, 116, 0.6)', '--border': '#5a5041' },
-        'archives': { '--app-bg': '#f5f5f4', '--card-bg': '#e7e5e4', '--input-bg': '#d6d3d1', '--brand': '#0f766e', '--text-body': '#292524', '--text-card': '#292524', '--text-muted': '#57534e', '--border': '#d6d3d1' },
-        'high-command': { '--app-bg': '#022c22', '--card-bg': '#064e3b', '--input-bg': '#065f46', '--brand': '#fef08a', '--text-body': '#ecfdf5', '--text-card': '#ecfdf5', '--text-muted': '#6ee7b7', '--border': '#065f46' },
-        'navy': { '--app-bg': '#0b1020', '--card-bg': '#111833', '--input-bg': '#1a2347', '--brand': '#8bb9ff', '--text-body': '#e6ecff', '--text-card': '#e6ecff', '--text-muted': '#a7b0cc', '--border': '#26325b' }
+        'explorer': { 
+            '--app-bg': '#e8dcc8', '--card-bg': '#1a1815', '--input-bg': '#26231f', '--brand': '#d4a574', 
+            '--text-body': '#2c2416', '--text-card': '#faf8f3', 
+            '--text-muted': '#c7a88b', // Changed from transparent to solid lighter tan
+            '--border': '#5a5041' 
+        },
+        'archives': { 
+            '--app-bg': '#f5f5f4', '--card-bg': '#e7e5e4', '--input-bg': '#d6d3d1', '--brand': '#0f766e', 
+            '--text-body': '#292524', '--text-card': '#292524', 
+            '--text-muted': '#4a4540', // Made slightly darker for better contrast on light bg
+            '--border': '#d6d3d1' 
+        },
+        'high-command': { 
+            '--app-bg': '#022c22', '--card-bg': '#064e3b', '--input-bg': '#065f46', '--brand': '#fef08a', 
+            '--text-body': '#ecfdf5', '--text-card': '#ecfdf5', 
+            '--text-muted': '#81eebb', // Made slightly brighter
+            '--border': '#065f46' 
+        },
+        'navy': { 
+            '--app-bg': '#0b1020', '--card-bg': '#111833', '--input-bg': '#1a2347', '--brand': '#8bb9ff', 
+            '--text-body': '#e6ecff', '--text-card': '#e6ecff', 
+            '--text-muted': '#bcc5e3', // Made slightly brighter
+            '--border': '#26325b' 
+        }
     };
 
     let currentThemeIndex = 0;
