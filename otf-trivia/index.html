@@ -315,10 +315,17 @@
         container.classList.add('active');
 
         try {
+            // UPDATED PROMPT: Prioritizes Mainstream/Popular over Niche
             const prompt = `
                 Role: Trivia Curator.
                 Context: The user selected the category "${category}".
-                Task: Suggest 7 specific, interesting sub-topics or niches for a trivia quiz within this category.
+                Task: Suggest 7 sub-topics for a trivia quiz.
+                
+                CRITICAL INSTRUCTIONS:
+                1. The first 5 suggestions MUST be "Mainstream" and "Popular" (e.g. Major Awards, Famous People, Best Sellers, Top Grossing, Foundational Knowledge).
+                2. The last 2 suggestions can be "Fun Categories" (e.g. specific decades or styles), but still accessible.
+                3. Avoid obscure or hyper-niche academic topics.
+                
                 Return RAW JSON ARRAY of strings only. Example: ["Topic A", "Topic B"]
             `;
             
@@ -331,6 +338,7 @@
                 throw new Error("No items parsed");
             }
         } catch(err) {
+            console.error(err);
             container.innerHTML = '<div class="text-sm text-red-400 p-2">Error generating ideas.</div>';
         }
     }
