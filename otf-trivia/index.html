@@ -58,14 +58,27 @@
             border: 1px solid var(--border); border-radius: 0.375rem;
             padding: 1rem; width: 100%; font-family: inherit; font-size: 1.1rem;
         }
+        
+        /* FIX: Add right padding so text doesn't go under the bulb */
+        input[type="text"] {
+            padding-right: 3.5rem; 
+        }
+
         input:focus, select:focus { outline: 2px solid var(--brand); border-color: transparent; }
 
         .input-wrapper { position: relative; margin-bottom: 1.5rem; }
         
+        /* FIX: Pin button to bottom to align with input, unrelated to label height */
         .suggestion-btn {
-            position: absolute; right: 10px; top: 32px; 
+            position: absolute; 
+            right: 8px; 
+            bottom: 4px; /* Aligns with the input field's bottom area */
+            height: 3rem; /* Matches input height roughly */
+            width: 3rem;
+            display: flex; align-items: center; justify-content: center;
             background: none; border: none; color: var(--brand); cursor: pointer;
             opacity: 0.7; transition: opacity 0.2s; padding: 4px;
+            z-index: 20;
         }
         .suggestion-btn:hover { opacity: 1; transform: scale(1.1); }
 
@@ -258,7 +271,7 @@
         }
     }
 
-    // --- API HELPERS (UNCHANGED) ---
+    // --- API HELPERS ---
     function parseGeminiJSON(rawText) {
         try {
             let cleanText = rawText.replace(/```json/g, '').replace(/```/g, '');
@@ -337,7 +350,7 @@
         container.classList.add('active');
 
         try {
-            // UPDATED PROMPT: INCLUDES DECADE CONTEXT
+            // PROMPT: Popular/Mainstream Focus + Decade Awareness
             const prompt = `
                 Role: Trivia Curator.
                 Context: The user selected the category "${category}" ${decade ? 'in the era: ' + decade : ''}.
@@ -385,7 +398,6 @@
         
         if (!category && !topic && !decade) return alert("Please enter a Category or Topic.");
 
-        // Construct a composite topic string for the prompt
         let mainSubject = topic ? `${topic} (Category: ${category})` : category;
         if(decade) mainSubject += ` [Time Period: ${decade}]`;
 
@@ -502,7 +514,6 @@
     }
 
     function resetApp() {
-        // Reset Inputs
         document.getElementById('topicInput').value = '';
         document.getElementById('catInput').value = '';
         document.getElementById('decadeSelect').value = '';
