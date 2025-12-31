@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Time Capsule v2.3 (1-8-8 config)</title>
+    <title>Time Capsule v2.4 (Auto-Scroll)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
@@ -177,13 +177,21 @@
         }
     }
 
+    function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
     // --- CORE LOGIC ---
     async function generateDigest() {
         const input = document.getElementById('dateInput').value.trim();
         if(!input) return alert("Please enter a date.");
 
+        // UI Updates
         document.getElementById('view-search').classList.add('hidden');
         document.getElementById('view-loading').classList.remove('hidden');
+        
+        // Scroll to top to see loading spinner
+        scrollToTop();
 
         // Logic check: Is it a 4-digit Year?
         const isYear = /^\d{4}$/.test(input);
@@ -305,6 +313,9 @@
 
         document.getElementById('view-loading').classList.add('hidden');
         document.getElementById('view-results').classList.remove('hidden');
+        
+        // Scroll to top to see the Lead Story
+        scrollToTop();
     }
 
     function resetApp() {
@@ -312,6 +323,7 @@
         document.getElementById('view-results').classList.add('hidden');
         document.getElementById('view-loading').classList.add('hidden');
         document.getElementById('view-search').classList.remove('hidden');
+        scrollToTop();
     }
 </script>
 </body>
