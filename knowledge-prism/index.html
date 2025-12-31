@@ -178,7 +178,7 @@
         
         <header class="text-center mb-8 pr-12">
             <h1 id="appTitle" class="text-4xl md:text-5xl mb-2">Context Navigator</h1>
-            <p class="text-xl italic text-[var(--text-muted)]">Master Edition <span class="text-red-500 font-bold">Build #55</span></p>
+            <p class="text-xl italic text-[var(--text-muted)]">Master Edition <span class="text-red-500 font-bold">Build #56</span></p>
             
             <button onclick="cycleTheme()" class="theme-gear" title="Switch Theme">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -290,8 +290,8 @@
                 { id: 'lens-3', label: 'Analysis', prompt: 'Analysis, Cultural Impact, or Significance' }
             ],
             persona: 'Objective Encyclopedia',
-            // HYBRID SUGGESTION LOGIC (3 STANDARD + 2 STRUCTURAL)
-            suggestionLogic: 'Suggest 5 distinct Focus Areas. Rule: Provide exactly 3 standard categories (e.g. Key People, Locations, Events) AND 2 structural/argumentative categories (e.g. Arguments, Reasons, Axioms, Determinants) that reveal the underlying logic.',
+            // HYBRID 7 SUGGESTION LOGIC (5 Popular + 2 Structural)
+            suggestionLogic: 'Suggest 7 distinct Focus Areas. The first 5 must be the sub-categories most likely to be searched for by people (High Popularity). The final 2 must be structural/argumentative categories (e.g. Arguments, Reasons, Axioms, Determinants) that reveal the underlying logic.',
             inputPlaceholder: 'Enter Main Topic (e.g., WWII, São Paulo)',
             aboutHtml: `
                 <p class="paragraph-spacing"><strong>Welcome to the Master Edition.</strong> Use this tool to explore history, travel destinations, biographies, and more through structured AI analysis.</p>
@@ -599,12 +599,12 @@
             const prompt = `
                 Topic: "${topicIn}". 
                 Role: ${profile.persona}.
-                Goal: Suggest 5 specific Focus Areas (plural nouns) for a list. 
+                Goal: Suggest specific Focus Areas (plural nouns) for a list. 
                 Criteria: ${profile.suggestionLogic}
                 Return JSON: {"items": ["Type 1", "Type 2"]}
             `;
             const data = await callGemini(prompt);
-            const items = parseResilientList(data).slice(0, 5); 
+            const items = parseResilientList(data).slice(0, 7); 
             
             list.innerHTML = '';
             items.forEach(item => {
