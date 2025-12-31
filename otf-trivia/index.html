@@ -1,389 +1,412 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Infinite Trivia</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-<style>
-/* --- THEME VARIABLES (Extracted from Context Navigator) --- */
-:root {
---app-bg: #e8dcc8;
---card-bg: #1a1815;
---input-bg: #26231f;
---brand: #d4a574;
---text-body: #2c2416;
---text-card: #faf8f3;
---text-muted: #665648;
---border: #5a5041;
-        --correct: #22c55e;
-        --wrong: #ef4444;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infinite Trivia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        /* --- THEME VARIABLES --- */
+        :root {
+            --app-bg: #e8dcc8;
+            --card-bg: #1a1815;
+            --input-bg: #26231f;
+            --brand: #d4a574;
+            --text-body: #2c2416;
+            --text-card: #faf8f3;
+            --text-muted: #665648; 
+            --border: #5a5041;
+            
+            --correct: #22c55e;
+            --wrong: #ef4444;
+        }
 
-    body {
-        font-family: 'Crimson Text', Georgia, serif;
-        background-color: var(--app-bg);
-        color: var(--text-body);
-        line-height: 1.6;
-        transition: background-color 0.3s ease, color 0.3s ease;
-    }
+        body {
+            font-family: 'Crimson Text', Georgia, serif;
+            background-color: var(--app-bg);
+            color: var(--text-body);
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
 
-    /* --- UI COMPONENTS --- */
-    h1, h2, h3 { font-weight: 700; }
-    
-    .theme-gear {
-        position: absolute; top: 1rem; right: 1rem; z-index: 50;
-        background: transparent; border: none; cursor: pointer;
-        color: var(--text-body); padding: 0.5rem;
-        transition: transform 0.4s ease;
-        opacity: 0.7;
-    }
-    .theme-gear:hover { opacity: 1; transform: rotate(90deg); }
+        /* --- UI COMPONENTS --- */
+        h1, h2, h3 { font-weight: 700; }
+        
+        .theme-gear {
+            position: absolute; top: 1rem; right: 1rem; 
+            z-index: 100; /* FIXED: Increased to ensure clickability over container */
+            background: transparent; border: none; cursor: pointer;
+            color: var(--text-body); padding: 0.5rem;
+            transition: transform 0.4s ease;
+            opacity: 0.7;
+        }
+        .theme-gear:hover { opacity: 1; transform: rotate(90deg); }
 
-    .dark-card {
-        background-color: var(--card-bg); color: var(--text-card);
-        padding: 2rem; border-radius: 0.75rem;
-        border-left: 4px solid var(--brand);
-        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
-        position: relative;
-    }
+        .dark-card {
+            background-color: var(--card-bg); color: var(--text-card);
+            padding: 2rem; border-radius: 0.75rem;
+            border-left: 4px solid var(--brand);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 10;
+        }
 
-    input[type="text"], select {
-        background-color: var(--input-bg); color: var(--text-card);
-        border: 1px solid var(--border); border-radius: 0.375rem;
-        padding: 1rem; width: 100%; font-family: inherit; font-size: 1.1rem;
-        margin-bottom: 1rem;
-    }
-    input:focus, select:focus { outline: 2px solid var(--brand); border-color: transparent; }
+        input[type="text"], select {
+            background-color: var(--input-bg); color: var(--text-card);
+            border: 1px solid var(--border); border-radius: 0.375rem;
+            padding: 1rem; width: 100%; font-family: inherit; font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+        input:focus, select:focus { outline: 2px solid var(--brand); border-color: transparent; }
 
-    .action-button {
-        background-color: var(--brand); color: var(--card-bg);
-        font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
-        padding: 1rem 2rem; border-radius: 0.375rem; border: none;
-        cursor: pointer; transition: all 0.2s; width: 100%; font-size: 1.1rem;
-    }
-    .action-button:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
-    .action-button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .action-button {
+            background-color: var(--brand); color: var(--card-bg);
+            font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+            padding: 1rem 2rem; border-radius: 0.375rem; border: none;
+            cursor: pointer; transition: all 0.2s; width: 100%; font-size: 1.1rem;
+        }
+        .action-button:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
+        .action-button:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* --- QUIZ SPECIFIC --- */
-    .option-btn {
-        background-color: var(--input-bg);
-        color: var(--text-card);
-        border: 1px solid var(--border);
-        padding: 1rem;
-        border-radius: 0.5rem;
-        text-align: left;
-        transition: all 0.2s;
-        position: relative;
-        font-size: 1.1rem;
-    }
-    .option-btn:hover:not(:disabled) {
-        border-color: var(--brand);
-        transform: translateX(5px);
-    }
-    .option-btn:disabled { cursor: default; }
-    
-    .option-btn.correct { background-color: rgba(34, 197, 94, 0.2); border-color: var(--correct); color: var(--correct); font-weight: bold; }
-    .option-btn.wrong { background-color: rgba(239, 68, 68, 0.2); border-color: var(--wrong); color: var(--wrong); opacity: 0.7; }
+        /* --- QUIZ SPECIFIC --- */
+        .option-btn {
+            background-color: var(--input-bg);
+            color: var(--text-card);
+            border: 1px solid var(--border);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: left;
+            transition: all 0.2s;
+            position: relative;
+            font-size: 1.1rem;
+        }
+        .option-btn:hover:not(:disabled) {
+            border-color: var(--brand);
+            transform: translateX(5px);
+        }
+        .option-btn:disabled { cursor: default; }
+        
+        .option-btn.correct { background-color: rgba(34, 197, 94, 0.2); border-color: var(--correct); color: var(--correct); font-weight: bold; }
+        .option-btn.wrong { background-color: rgba(239, 68, 68, 0.2); border-color: var(--wrong); color: var(--wrong); opacity: 0.7; }
 
-    .hidden { display: none !important; }
+        .hidden { display: none !important; }
 
-    .spinner {
-        width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1);
-        border-radius: 50%; border-top-color: var(--brand);
-        animation: spin 1s linear infinite; margin: 0 auto;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
+        .spinner {
+            width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1);
+            border-radius: 50%; border-top-color: var(--brand);
+            animation: spin 1s linear infinite; margin: 0 auto;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Animations */
-    .fade-in { animation: fadeIn 0.5s ease-out forwards; opacity: 0; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-</style>
-
+        /* Animations */
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; opacity: 0; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
-<button onclick="cycleTheme()" class="theme-gear" title="Switch Theme">
-    <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.74v-.47a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
-        <circle cx="12" cy="12" r="3"></circle>
-    </svg>
-</button>
 
-<div class="w-full max-w-2xl">
-    <header class="text-center mb-8">
-        <h1 class="text-5xl mb-2 text-[var(--brand)]" style="text-shadow: 2px 2px 0 var(--input-bg);">Infinite Trivia</h1>
-        <p class="text-xl italic opacity-80">Powered by Gemini AI</p>
-    </header>
+    <button onclick="cycleTheme()" class="theme-gear" title="Switch Theme">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.74v-.47a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+        </svg>
+    </button>
 
-    <div id="view-lobby" class="dark-card fade-in">
-        <h2 class="text-2xl mb-6 text-[var(--brand)] border-b border-[var(--border)] pb-2">New Game Configuration</h2>
-        
-        <label class="block text-sm font-bold uppercase tracking-wider text-[var(--brand)] mb-2">Topic</label>
-        <input type="text" id="topicInput" placeholder="e.g. 1980s Hair Metal, The History of Cheese, Quantum Physics" onkeypress="handleEnter(event)">
-        
-        <label class="block text-sm font-bold uppercase tracking-wider text-[var(--brand)] mb-2">Difficulty Mode</label>
-        <select id="difficultySelect">
-            <option value="Standard">Standard (Balanced)</option>
-            <option value="Easy">Easy (Beginner Friendly)</option>
-            <option value="Hard">Hard (Expert Level)</option>
-            <option value="Obscure">Obscure (Deep Cuts only)</option>
-            <option value="Chaos">Chaos (Anything goes)</option>
-        </select>
+    <div class="w-full max-w-2xl">
+        <header class="text-center mb-8">
+            <h1 class="text-5xl mb-2 text-[var(--brand)]" style="text-shadow: 2px 2px 0 var(--input-bg);">Infinite Trivia</h1>
+            <p class="text-xl italic opacity-80">Powered by Gemini AI</p>
+        </header>
 
-        <button onclick="startQuiz()" id="startBtn" class="action-button mt-4">Generate Quiz</button>
-    </div>
+        <div id="view-lobby" class="dark-card fade-in">
+            <h2 class="text-2xl mb-6 text-[var(--brand)] border-b border-[var(--border)] pb-2">New Game Configuration</h2>
+            
+            <label class="block text-sm font-bold uppercase tracking-wider text-[var(--brand)] mb-2">Topic</label>
+            <input type="text" id="topicInput" placeholder="e.g. 1980s Hair Metal, The History of Cheese, Quantum Physics" onkeypress="handleEnter(event)">
+            
+            <label class="block text-sm font-bold uppercase tracking-wider text-[var(--brand)] mb-2">Difficulty Mode</label>
+            <select id="difficultySelect">
+                <option value="Standard">Standard (Balanced)</option>
+                <option value="Easy">Easy (Beginner Friendly)</option>
+                <option value="Hard">Hard (Expert Level)</option>
+                <option value="Obscure">Obscure (Deep Cuts only)</option>
+                <option value="Chaos">Chaos (Anything goes)</option>
+            </select>
 
-    <div id="view-loading" class="dark-card hidden text-center py-12">
-        <div class="spinner mb-6"></div>
-        <h2 class="text-2xl animate-pulse">Consulting the Oracle...</h2>
-        <p class="text-[var(--text-muted)] mt-2 italic" id="loadingText">Constructing timeline...</p>
-    </div>
-
-    <div id="view-quiz" class="dark-card hidden">
-        <div class="flex justify-between items-center mb-6 border-b border-[var(--border)] pb-4">
-            <span class="text-[var(--brand)] font-bold uppercase tracking-widest text-sm">Question <span id="qCurrent">1</span> / <span id="qTotal">5</span></span>
-            <span class="text-[var(--text-card)] font-bold" id="scoreDisplay">Score: 0</span>
+            <button onclick="startQuiz()" id="startBtn" class="action-button mt-4">Generate Quiz</button>
         </div>
 
-        <div id="questionContainer" class="fade-in">
-            <h3 id="questionText" class="text-2xl font-serif mb-8 leading-snug"></h3>
-            
-            <div id="optionsGrid" class="grid grid-cols-1 gap-3 mb-6">
-                </div>
+        <div id="view-loading" class="dark-card hidden text-center py-12">
+            <div class="spinner mb-6"></div>
+            <h2 class="text-2xl animate-pulse">Consulting the Oracle...</h2>
+            <p class="text-[var(--text-muted)] mt-2 italic" id="loadingText">Constructing timeline...</p>
+        </div>
 
-            <div id="feedbackArea" class="hidden mt-6 bg-[var(--input-bg)] p-4 rounded border border-[var(--border)]">
-                <h4 id="feedbackTitle" class="font-bold text-lg mb-2"></h4>
-                <p id="feedbackText" class="text-[var(--text-muted)] italic"></p>
-                <button onclick="nextQuestion()" class="action-button mt-4 text-sm py-2">Next Question &rarr;</button>
+        <div id="view-quiz" class="dark-card hidden">
+            <div class="flex justify-between items-center mb-6 border-b border-[var(--border)] pb-4">
+                <span class="text-[var(--brand)] font-bold uppercase tracking-widest text-sm">Question <span id="qCurrent">1</span> / <span id="qTotal">5</span></span>
+                <span class="text-[var(--text-card)] font-bold" id="scoreDisplay">Score: 0</span>
+            </div>
+
+            <div id="questionContainer" class="fade-in">
+                <h3 id="questionText" class="text-2xl font-serif mb-8 leading-snug"></h3>
+                
+                <div id="optionsGrid" class="grid grid-cols-1 gap-3 mb-6">
+                    </div>
+
+                <div id="feedbackArea" class="hidden mt-6 bg-[var(--input-bg)] p-4 rounded border border-[var(--border)]">
+                    <h4 id="feedbackTitle" class="font-bold text-lg mb-2"></h4>
+                    <p id="feedbackText" class="text-[var(--text-muted)] italic"></p>
+                    <button onclick="nextQuestion()" class="action-button mt-4 text-sm py-2">Next Question &rarr;</button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div id="view-summary" class="dark-card hidden text-center py-8">
-        <h2 class="text-4xl text-[var(--brand)] mb-4">Quiz Complete</h2>
-        <div class="text-6xl font-bold mb-2" id="finalScore">0/5</div>
-        <p class="text-xl italic text-[var(--text-muted)] mb-8" id="finalMessage">Not bad.</p>
-        <button onclick="resetApp()" class="action-button">Play Again</button>
-    </div>
+        <div id="view-summary" class="dark-card hidden text-center py-8">
+            <h2 class="text-4xl text-[var(--brand)] mb-4">Quiz Complete</h2>
+            <div class="text-6xl font-bold mb-2" id="finalScore">0/5</div>
+            <p class="text-xl italic text-[var(--text-muted)] mb-8" id="finalMessage">Not bad.</p>
+            <button onclick="resetApp()" class="action-button">Play Again</button>
+        </div>
 
-</div>
+    </div>
 
 <script>
-const API_KEY = "AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A";
-// --- THEME ENGINE ---
-const themes = {
-    &#39;explorer&#39;: { 
-        &#39;--app-bg&#39;: &#39;#e8dcc8&#39;, &#39;--card-bg&#39;: &#39;#1a1815&#39;, &#39;--input-bg&#39;: &#39;#26231f&#39;, &#39;--brand&#39;: &#39;#d4a574&#39;, 
-        &#39;--text-body&#39;: &#39;#2c2416&#39;, &#39;--text-card&#39;: &#39;#faf8f3&#39;, &#39;--text-muted&#39;: &#39;#665648&#39;, &#39;--border&#39;: &#39;#5a5041&#39; 
-    },
-    &#39;archives&#39;: { 
-        &#39;--app-bg&#39;: &#39;#f5f5f4&#39;, &#39;--card-bg&#39;: &#39;#e7e5e4&#39;, &#39;--input-bg&#39;: &#39;#d6d3d1&#39;, &#39;--brand&#39;: &#39;#0f766e&#39;, 
-        &#39;--text-body&#39;: &#39;#292524&#39;, &#39;--text-card&#39;: &#39;#292524&#39;, &#39;--text-muted&#39;: &#39;#4a4540&#39;, &#39;--border&#39;: &#39;#d6d3d1&#39; 
-    },
-    &#39;high-command&#39;: { 
-        &#39;--app-bg&#39;: &#39;#022c22&#39;, &#39;--card-bg&#39;: &#39;#064e3b&#39;, &#39;--input-bg&#39;: &#39;#065f46&#39;, &#39;--brand&#39;: &#39;#fef08a&#39;, 
-        &#39;--text-body&#39;: &#39;#ecfdf5&#39;, &#39;--text-card&#39;: &#39;#ecfdf5&#39;, &#39;--text-muted&#39;: &#39;#81eebb&#39;, &#39;--border&#39;: &#39;#065f46&#39; 
-    },
-    &#39;navy&#39;: { 
-        &#39;--app-bg&#39;: &#39;#0b1020&#39;, &#39;--card-bg&#39;: &#39;#111833&#39;, &#39;--input-bg&#39;: &#39;#1a2347&#39;, &#39;--brand&#39;: &#39;#8bb9ff&#39;, 
-        &#39;--text-body&#39;: &#39;#e6ecff&#39;, &#39;--text-card&#39;: &#39;#e6ecff&#39;, &#39;--text-muted&#39;: &#39;#bcc5e3&#39;, &#39;--border&#39;: &#39;#26325b&#39; 
+    // --- API & THEME SETUP ---
+    const API_KEY = "AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A";
+
+    const themes = {
+        'explorer': { 
+            '--app-bg': '#e8dcc8', '--card-bg': '#1a1815', '--input-bg': '#26231f', '--brand': '#d4a574', 
+            '--text-body': '#2c2416', '--text-card': '#faf8f3', '--text-muted': '#665648', '--border': '#5a5041' 
+        },
+        'archives': { 
+            '--app-bg': '#f5f5f4', '--card-bg': '#e7e5e4', '--input-bg': '#d6d3d1', '--brand': '#0f766e', 
+            '--text-body': '#292524', '--text-card': '#292524', '--text-muted': '#4a4540', '--border': '#d6d3d1' 
+        },
+        'high-command': { 
+            '--app-bg': '#022c22', '--card-bg': '#064e3b', '--input-bg': '#065f46', '--brand': '#fef08a', 
+            '--text-body': '#ecfdf5', '--text-card': '#ecfdf5', '--text-muted': '#81eebb', '--border': '#065f46' 
+        },
+        'navy': { 
+            '--app-bg': '#0b1020', '--card-bg': '#111833', '--input-bg': '#1a2347', '--brand': '#8bb9ff', 
+            '--text-body': '#e6ecff', '--text-card': '#e6ecff', '--text-muted': '#bcc5e3', '--border': '#26325b' 
+        }
+    };
+
+    let currentThemeIndex = 0;
+    const themeKeys = Object.keys(themes);
+
+    function cycleTheme() {
+        currentThemeIndex = (currentThemeIndex + 1) % themeKeys.length;
+        const colors = themes[themeKeys[currentThemeIndex]];
+        for (const [key, value] of Object.entries(colors)) {
+            document.documentElement.style.setProperty(key, value);
+        }
     }
-};
 
-let currentThemeIndex = 0;
-const themeKeys = Object.keys(themes);
+    // --- HELPER: Exact Logic from Context Navigator ---
+    function parseGeminiJSON(rawText) {
+        try {
+            let cleanText = rawText.replace(/```json/g, '').replace(/```/g, '');
+            const firstBrace = cleanText.indexOf('['); // Look for array start
+            const lastBrace = cleanText.lastIndexOf(']'); // Look for array end
+            if (firstBrace !== -1 && lastBrace !== -1) {
+                cleanText = cleanText.substring(firstBrace, lastBrace + 1);
+            }
+            return JSON.parse(cleanText);
+        } catch (e) {
+            console.error("JSON Parse Error", e);
+            return [];
+        }
+    }
 
-function cycleTheme() {
-    currentThemeIndex = (currentThemeIndex + 1) % themeKeys.length;
-    const colors = themes[themeKeys[currentThemeIndex]];
-    for (const [key, value] of Object.entries(colors)) { document.documentElement.style.setProperty(key, value); }
-}
-
-// --- GAME STATE ---
-let gameState = {
-    questions: [],
-    currentIndex: 0,
-    score: 0,
-    isLocked: false // Prevents clicking multiple answers
-};
-
-function handleEnter(e) {
-    if(e.key === &#39;Enter&#39;) startQuiz();
-}
-
-function switchView(viewId) {
-    [&#39;view-lobby&#39;, &#39;view-loading&#39;, &#39;view-quiz&#39;, &#39;view-summary&#39;].forEach(id =&gt; {
-        document.getElementById(id).classList.add(&#39;hidden&#39;);
-    });
-    document.getElementById(viewId).classList.remove(&#39;hidden&#39;);
-}
-
-async function startQuiz() {
-    const topic = document.getElementById(&#39;topicInput&#39;).value.trim();
-    const difficulty = document.getElementById(&#39;difficultySelect&#39;).value;
-    
-    if (!topic) return alert(&quot;Please enter a topic.&quot;);
-
-    switchView(&#39;view-loading&#39;);
-    
-    const loadingMessages = [
-        `Scanning archives for &quot;${topic}&quot;...`,
-        &quot;Consulting the AI Historian...&quot;,
-        &quot;Fact-checking the multiverse...&quot;,
-        &quot;Generating clever wrong answers...&quot;
-    ];
-    let msgIdx = 0;
-    const msgInterval = setInterval(() =&gt; {
-        document.getElementById(&#39;loadingText&#39;).textContent = loadingMessages[msgIdx % loadingMessages.length];
-        msgIdx++;
-    }, 1500);
-
-    try {
-        const prompt = `
-            Generate 5 multiple choice trivia questions about &quot;${topic}&quot;.
-            Difficulty: ${difficulty}.
-            
-            RETURN RAW JSON ARRAY ONLY. Format:
-            [
-                {
-                    &quot;question&quot;: &quot;The question text?&quot;,
-                    &quot;options&quot;: [&quot;Wrong 1&quot;, &quot;Correct Answer&quot;, &quot;Wrong 2&quot;, &quot;Wrong 3&quot;],
-                    &quot;correctIndex&quot;: 1,
-                    &quot;fact&quot;: &quot;A 1-sentence interesting fact explaining the answer.&quot;
-                }
-            ]
-        `;
-
+    async function callGemini(promptText) {
+        // EXACT API LOGIC FROM CONTEXT NAVIGATOR
         const response = await fetch(
             `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
             {
-                method: &quot;POST&quot;,
-                headers: { &quot;Content-Type&quot;: &quot;application/json&quot; },
+                method: "POST", headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    contents: [{ role: &quot;user&quot;, parts: [{ text: prompt }] }],
-                    generationConfig: { responseMimeType: &quot;application/json&quot; }
+                    contents: [{ role: "user", parts: [{ text: promptText }] }],
+                    generationConfig: { responseMimeType: "text/plain", temperature: 0.7 }
                 })
             }
         );
-
         const data = await response.json();
-        const rawText = data.candidates[0].content.parts[0].text;
-        const cleanJson = rawText.replace(/```json/g, &#39;&#39;).replace(/```/g, &#39;&#39;).trim();
-        gameState.questions = JSON.parse(cleanJson);
-        gameState.currentIndex = 0;
-        gameState.score = 0;
-        gameState.isLocked = false;
-
-        clearInterval(msgInterval);
-        renderQuestion();
-        switchView(&#39;view-quiz&#39;);
-
-    } catch (e) {
-        clearInterval(msgInterval);
-        console.error(e);
-        alert(&quot;Error generating quiz. Please try a different topic.&quot;);
-        switchView(&#39;view-lobby&#39;);
+        return data.candidates[0].content.parts[0].text;
     }
-}
 
-function renderQuestion() {
-    const q = gameState.questions[gameState.currentIndex];
-    
-    // Update Stats
-    document.getElementById(&#39;qCurrent&#39;).textContent = gameState.currentIndex + 1;
-    document.getElementById(&#39;qTotal&#39;).textContent = gameState.questions.length;
-    document.getElementById(&#39;scoreDisplay&#39;).textContent = `Score: ${gameState.score}`;
+    // --- GAME STATE ---
+    let gameState = {
+        questions: [],
+        currentIndex: 0,
+        score: 0,
+        isLocked: false 
+    };
 
-    // Reset UI
-    document.getElementById(&#39;feedbackArea&#39;).classList.add(&#39;hidden&#39;);
-    document.getElementById(&#39;questionContainer&#39;).classList.remove(&#39;fade-in&#39;); // Reset anim
-    void document.getElementById(&#39;questionContainer&#39;).offsetWidth; // Trigger reflow
-    document.getElementById(&#39;questionContainer&#39;).classList.add(&#39;fade-in&#39;);
+    function handleEnter(e) {
+        if(e.key === 'Enter') startQuiz();
+    }
 
-    // Render Text
-    document.getElementById(&#39;questionText&#39;).textContent = q.question;
-    
-    // Render Options
-    const grid = document.getElementById(&#39;optionsGrid&#39;);
-    grid.innerHTML = &#39;&#39;;
-    
-    q.options.forEach((opt, idx) =&gt; {
-        const btn = document.createElement(&#39;button&#39;);
-        btn.className = &#39;option-btn w-full&#39;;
-        btn.textContent = opt;
-        btn.onclick = () =&gt; handleAnswer(idx, btn);
-        btn.dataset.idx = idx; // Store index for logic
-        grid.appendChild(btn);
-    });
+    function switchView(viewId) {
+        ['view-lobby', 'view-loading', 'view-quiz', 'view-summary'].forEach(id => {
+            const el = document.getElementById(id);
+            if(el) el.classList.add('hidden');
+        });
+        const target = document.getElementById(viewId);
+        if(target) target.classList.remove('hidden');
+    }
 
-    gameState.isLocked = false;
-}
+    async function startQuiz() {
+        const topic = document.getElementById('topicInput').value.trim();
+        const difficulty = document.getElementById('difficultySelect').value;
+        
+        if (!topic) return alert("Please enter a topic.");
 
-function handleAnswer(selectedIndex, btnElement) {
-    if (gameState.isLocked) return;
-    gameState.isLocked = true;
+        switchView('view-loading');
+        
+        const loadingMessages = [
+            `Scanning archives for "${topic}"...`,
+            "Consulting the AI Historian...",
+            "Fact-checking the multiverse...",
+            "Generating clever wrong answers..."
+        ];
+        let msgIdx = 0;
+        const msgInterval = setInterval(() => {
+            document.getElementById('loadingText').textContent = loadingMessages[msgIdx % loadingMessages.length];
+            msgIdx++;
+        }, 1500);
 
-    const q = gameState.questions[gameState.currentIndex];
-    const isCorrect = selectedIndex === q.correctIndex;
-    
-    // Visual Feedback
-    const allBtns = document.querySelectorAll(&#39;.option-btn&#39;);
-    allBtns.forEach(btn =&gt; {
-        btn.disabled = true; // Disable all
-        const idx = parseInt(btn.dataset.idx);
-        if (idx === q.correctIndex) {
-            btn.classList.add(&#39;correct&#39;); // Always highlight correct
-        } else if (idx === selectedIndex &amp;&amp; !isCorrect) {
-            btn.classList.add(&#39;wrong&#39;); // Highlight wrong selection
-        } else {
-            btn.style.opacity = &#39;0.5&#39;; // Dim others
+        try {
+            const prompt = `
+                Generate 5 multiple choice trivia questions about "${topic}".
+                Difficulty: ${difficulty}.
+                
+                RETURN RAW JSON ARRAY ONLY. Format:
+                [
+                    {
+                        "question": "The question text?",
+                        "options": ["Wrong 1", "Correct Answer", "Wrong 2", "Wrong 3"],
+                        "correctIndex": 1,
+                        "fact": "A 1-sentence interesting fact explaining the answer."
+                    }
+                ]
+            `;
+
+            const rawText = await callGemini(prompt);
+            const questions = parseGeminiJSON(rawText);
+
+            if (questions.length === 0) throw new Error("Could not parse AI response.");
+
+            gameState.questions = questions;
+            gameState.currentIndex = 0;
+            gameState.score = 0;
+            gameState.isLocked = false;
+
+            clearInterval(msgInterval);
+            renderQuestion();
+            switchView('view-quiz');
+
+        } catch (e) {
+            clearInterval(msgInterval);
+            console.error("Quiz Generation Failed:", e);
+            alert(`Error: ${e.message}\n\nPlease check console or try a different topic.`);
+            switchView('view-lobby');
         }
-    });
-
-    // Score Update
-    if (isCorrect) gameState.score++;
-    document.getElementById(&#39;scoreDisplay&#39;).textContent = `Score: ${gameState.score}`;
-
-    // Show Fact
-    const fbArea = document.getElementById(&#39;feedbackArea&#39;);
-    const fbTitle = document.getElementById(&#39;feedbackTitle&#39;);
-    const fbText = document.getElementById(&#39;feedbackText&#39;);
-    
-    fbArea.classList.remove(&#39;hidden&#39;);
-    fbTitle.textContent = isCorrect ? &quot;Correct!&quot; : &quot;Incorrect&quot;;
-    fbTitle.style.color = isCorrect ? &quot;var(--correct)&quot; : &quot;var(--wrong)&quot;;
-    fbText.textContent = q.fact;
-}
-
-function nextQuestion() {
-    gameState.currentIndex++;
-    if (gameState.currentIndex &lt; gameState.questions.length) {
-        renderQuestion();
-    } else {
-        showSummary();
     }
-}
 
-function showSummary() {
-    switchView(&#39;view-summary&#39;);
-    const final = document.getElementById(&#39;finalScore&#39;);
-    const msg = document.getElementById(&#39;finalMessage&#39;);
-    
-    final.textContent = `${gameState.score} / ${gameState.questions.length}`;
-    
-    const percentage = gameState.score / gameState.questions.length;
-    if (percentage === 1) msg.textContent = &quot;Perfect! You&#39;re an expert.&quot;;
-    else if (percentage &gt;= 0.8) msg.textContent = &quot;Great job!&quot;;
-    else if (percentage &gt;= 0.5) msg.textContent = &quot;Not bad, but room for improvement.&quot;;
-    else msg.textContent = &quot;Ouch. Better luck next time.&quot;;
-}
+    function renderQuestion() {
+        const q = gameState.questions[gameState.currentIndex];
+        
+        document.getElementById('qCurrent').textContent = gameState.currentIndex + 1;
+        document.getElementById('qTotal').textContent = gameState.questions.length;
+        document.getElementById('scoreDisplay').textContent = `Score: ${gameState.score}`;
 
-function resetApp() {
-    document.getElementById(&#39;topicInput&#39;).value = &#39;&#39;;
-    switchView(&#39;view-lobby&#39;);
-}
+        document.getElementById('feedbackArea').classList.add('hidden');
+        const container = document.getElementById('questionContainer');
+        container.classList.remove('fade-in'); 
+        void container.offsetWidth; 
+        container.classList.add('fade-in');
 
+        document.getElementById('questionText').textContent = q.question;
+        
+        const grid = document.getElementById('optionsGrid');
+        grid.innerHTML = '';
+        
+        q.options.forEach((opt, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn w-full';
+            btn.textContent = opt;
+            btn.onclick = () => handleAnswer(idx, btn);
+            btn.dataset.idx = idx; 
+            grid.appendChild(btn);
+        });
+
+        gameState.isLocked = false;
+    }
+
+    function handleAnswer(selectedIndex, btnElement) {
+        if (gameState.isLocked) return;
+        gameState.isLocked = true;
+
+        const q = gameState.questions[gameState.currentIndex];
+        const isCorrect = selectedIndex === q.correctIndex;
+        
+        const allBtns = document.querySelectorAll('.option-btn');
+        allBtns.forEach(btn => {
+            btn.disabled = true; 
+            const idx = parseInt(btn.dataset.idx);
+            if (idx === q.correctIndex) {
+                btn.classList.add('correct'); 
+            } else if (idx === selectedIndex && !isCorrect) {
+                btn.classList.add('wrong'); 
+            } else {
+                btn.style.opacity = '0.5'; 
+            }
+        });
+
+        if (isCorrect) gameState.score++;
+        document.getElementById('scoreDisplay').textContent = `Score: ${gameState.score}`;
+
+        const fbArea = document.getElementById('feedbackArea');
+        const fbTitle = document.getElementById('feedbackTitle');
+        const fbText = document.getElementById('feedbackText');
+        
+        fbArea.classList.remove('hidden');
+        fbTitle.textContent = isCorrect ? "Correct!" : "Incorrect";
+        fbTitle.style.color = isCorrect ? "var(--correct)" : "var(--wrong)";
+        fbText.textContent = q.fact;
+    }
+
+    function nextQuestion() {
+        gameState.currentIndex++;
+        if (gameState.currentIndex < gameState.questions.length) {
+            renderQuestion();
+        } else {
+            showSummary();
+        }
+    }
+
+    function showSummary() {
+        switchView('view-summary');
+        const final = document.getElementById('finalScore');
+        const msg = document.getElementById('finalMessage');
+        
+        final.textContent = `${gameState.score} / ${gameState.questions.length}`;
+        
+        const percentage = gameState.score / gameState.questions.length;
+        if (percentage === 1) msg.textContent = "Perfect! You're an expert.";
+        else if (percentage >= 0.8) msg.textContent = "Great job!";
+        else if (percentage >= 0.5) msg.textContent = "Not bad, but room for improvement.";
+        else msg.textContent = "Ouch. Better luck next time.";
+    }
+
+    function resetApp() {
+        document.getElementById('topicInput').value = '';
+        switchView('view-lobby');
+    }
 </script>
 </body>
 </html>
