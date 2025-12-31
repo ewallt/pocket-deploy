@@ -63,7 +63,7 @@
         .input-wrapper { position: relative; margin-bottom: 1.5rem; }
         
         .suggestion-btn {
-            position: absolute; right: 10px; top: 32px; /* Adjusted for label height */
+            position: absolute; right: 10px; top: 32px; 
             background: none; border: none; color: var(--brand); cursor: pointer;
             opacity: 0.7; transition: opacity 0.2s; padding: 4px;
         }
@@ -153,9 +153,30 @@
                 <div id="catPopup" class="suggestion-popup"></div>
             </div>
 
+            <div class="mb-6">
+                <label class="label-text">2. Time Period / Era (Optional)</label>
+                <select id="decadeSelect">
+                    <option value="">Any Time / Not Applicable</option>
+                    <option value="Pre-1900s">Pre-1900s (Ancient - 19th Century)</option>
+                    <option value="1900s">1900 - 1909</option>
+                    <option value="1910s">1910 - 1919</option>
+                    <option value="1920s">1920 - 1929</option>
+                    <option value="1930s">1930 - 1939</option>
+                    <option value="1940s">1940 - 1949</option>
+                    <option value="1950s">1950 - 1959</option>
+                    <option value="1960s">1960 - 1969</option>
+                    <option value="1970s">1970 - 1979</option>
+                    <option value="1980s">1980 - 1989</option>
+                    <option value="1990s">1990 - 1999</option>
+                    <option value="2000s">2000 - 2009</option>
+                    <option value="2010s">2010 - 2019</option>
+                    <option value="2020s">2020 - Present</option>
+                </select>
+            </div>
+
             <div class="input-wrapper">
-                <label class="label-text">2. Specific Topic</label>
-                <input type="text" id="topicInput" placeholder="e.g. The Roman Empire, Thermodynamics" onkeypress="handleEnter(event)" autocomplete="off">
+                <label class="label-text">3. Specific Topic (Optional)</label>
+                <input type="text" id="topicInput" placeholder="e.g. The Roman Empire, 80s Hair Metal" onkeypress="handleEnter(event)" autocomplete="off">
                 <button class="suggestion-btn" onclick="fetchAiSubTopics(event)" title="Get Sub-Topics">💡</button>
                 <div id="topicPopup" class="suggestion-popup"></div>
             </div>
@@ -307,6 +328,7 @@
     async function fetchAiSubTopics(e) {
         e.stopPropagation();
         const category = document.getElementById('catInput').value.trim();
+        const decade = document.getElementById('decadeSelect').value;
         const container = document.getElementById('topicPopup');
 
         if(!category) return alert("Please enter a Broad Category first.");
@@ -315,16 +337,16 @@
         container.classList.add('active');
 
         try {
-            // UPDATED PROMPT: Prioritizes Mainstream/Popular over Niche
+            // UPDATED PROMPT: INCLUDES DECADE CONTEXT
             const prompt = `
                 Role: Trivia Curator.
-                Context: The user selected the category "${category}".
+                Context: The user selected the category "${category}" ${decade ? 'in the era: ' + decade : ''}.
                 Task: Suggest 7 sub-topics for a trivia quiz.
                 
                 CRITICAL INSTRUCTIONS:
-                1. The first 5 suggestions MUST be "Mainstream" and "Popular" (e.g. Major Awards, Famous People, Best Sellers, Top Grossing, Foundational Knowledge).
-                2. The last 2 suggestions can be "Fun Categories" (e.g. specific decades or styles), but still accessible.
-                3. Avoid obscure or hyper-niche academic topics.
+                1. The first 5 suggestions MUST be "Mainstream" and "Popular" (e.g. Major Awards, Famous People, Best Sellers, Top Grossing).
+                2. The last 2 suggestions can be "Fun Categories", but still accessible.
+                3. If a decade is provided, ensuring all suggestions fit that time period.
                 
                 Return RAW JSON ARRAY of strings only. Example: ["Topic A", "Topic B"]
             `;
@@ -358,12 +380,14 @@
     async function startQuiz() {
         const category = document.getElementById('catInput').value.trim();
         const topic = document.getElementById('topicInput').value.trim();
+        const decade = document.getElementById('decadeSelect').value;
         const difficulty = document.getElementById('difficultySelect').value;
         
-        if (!category && !topic) return alert("Please enter a Category or Topic.");
+        if (!category && !topic && !decade) return alert("Please enter a Category or Topic.");
 
         // Construct a composite topic string for the prompt
-        const mainSubject = topic ? `${topic} (Category: ${category})` : category;
+        let mainSubject = topic ? `${topic} (Category: ${category})` : category;
+        if(decade) mainSubject += ` [Time Period: ${decade}]`;
 
         switchView('view-loading');
         
@@ -478,8 +502,10 @@
     }
 
     function resetApp() {
+        // Reset Inputs
         document.getElementById('topicInput').value = '';
         document.getElementById('catInput').value = '';
+        document.getElementById('decadeSelect').value = '';
         switchView('view-lobby');
     }
 </script>
