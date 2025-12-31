@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Time Capsule v2.0 (Year+Date)</title>
+    <title>Time Capsule v2.1 (Refined Logic)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
@@ -110,7 +110,7 @@
         
         <header class="text-center mb-10">
             <div class="inline-block border-b-4 border-[var(--brand)] px-6 pb-2">
-                <h1 class="text-5xl font-black tracking-tighter uppercase text-[var(--text-head)]">Daily Chronicle (v2)</h1>
+                <h1 class="text-5xl font-black tracking-tighter uppercase text-[var(--text-head)]">The Daily Chronicle</h1>
             </div>
             <p class="mt-3 text-[var(--text-muted)] font-serif italic">Curated history: Year & Date Mode</p>
         </header>
@@ -132,7 +132,7 @@
             
             <div class="flex justify-between items-center mb-6">
                 <span id="displayDate" class="font-sans font-bold text-xl uppercase tracking-widest text-[var(--text-muted)]"></span>
-                <button onclick="resetApp()" class="text-sm font-bold text-[var(--brand)] hover:underline uppercase font-sans">New Search</button>
+                <button onclick="resetApp()" class="text-sm font-bold text-[var(--brand)] hover:underline uppercase font-sans">Enter New Date or Year</button>
             </div>
 
             <div id="lead-container" class="card"></div>
@@ -181,12 +181,17 @@
         document.getElementById('view-search').classList.add('hidden');
         document.getElementById('view-loading').classList.remove('hidden');
 
-        // Logic check: Is it a 4-digit Year or a Date?
+        // Logic check: Is it a 4-digit Year?
         const isYear = /^\d{4}$/.test(input);
 
-        // Update Headers dynamically based on input type
-        document.getElementById('births-title').textContent = isYear ? `Born in ${input}` : "Born on this Day";
-        document.getElementById('timeline-title').textContent = isYear ? `Timeline of ${input}` : "Also in History";
+        // Update Headers dynamically
+        if (isYear) {
+            document.getElementById('births-title').textContent = `Born in ${input}`;
+            document.getElementById('timeline-title').textContent = `Events of ${input}`;
+        } else {
+            document.getElementById('births-title').textContent = "Born on this Day";
+            document.getElementById('timeline-title').textContent = "Also on this Date";
+        }
 
         try {
             let prompt;
