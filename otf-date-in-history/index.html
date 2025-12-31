@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Time Capsule v2.1 (Refined Logic)</title>
+    <title>Time Capsule v2.2 (Layout Fix)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
@@ -86,12 +86,18 @@
 
         /* --- TIMELINE FEED --- */
         .feed-item {
-            display: grid; grid-template-columns: 4rem 1fr; gap: 1.5rem;
-            padding: 1.5rem 0; border-bottom: 1px solid var(--border);
+            display: grid; 
+            /* Changed from 4rem to 6rem to accommodate long months like 'September' */
+            grid-template-columns: 6rem 1fr; 
+            gap: 1rem;
+            padding: 1.5rem 0; 
+            border-bottom: 1px solid var(--border);
         }
         .feed-year { 
             font-family: 'Inter', sans-serif; font-weight: 800; color: var(--text-head); 
             font-size: 1.1rem; text-align: right; margin-top: 4px;
+            /* Ensure text wraps if it is somehow still too long */
+            word-break: normal;
         }
         .feed-tag {
             display: inline-block; font-size: 0.7rem; font-family: 'Inter', sans-serif; font-weight: 700;
@@ -119,7 +125,7 @@
             <label class="block text-left font-bold text-[var(--brand)] uppercase text-sm mb-2 font-sans">Enter a Date or Year</label>
             <input type="text" id="dateInput" placeholder="e.g. December 31 or 1984" onkeypress="handleEnter(event)">
             <p class="text-left text-sm text-[var(--text-muted)] mt-2 mb-6">We will curate a Lead Story, Notable Births, and an Eclectic Timeline.</p>
-            <button onclick="generateDigest()" class="action-button">Build Edition</button>
+            <button onclick="generateDigest()" class="action-button">Build Chronicle</button>
         </div>
 
         <div id="view-loading" class="hidden text-center py-20">
