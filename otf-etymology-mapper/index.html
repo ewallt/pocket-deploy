@@ -7,19 +7,38 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        /* --- THEME VARIABLES --- */
+        /* ===================================
+           COLOR SCHEME CUSTOMIZATION
+           Edit these values to change colors
+           =================================== */
         :root {
-            --bg-paper: #f9f7f1;
-            --text-ink: #2b2926;
-            --accent-gold: #c5a059;
-            --accent-blue: #3b5c6b;
-            --border-faint: #e5e0d3;
-            --line-color: #d4cfc0;
+            /* Background Colors */
+            --bg-page: #f9f7f1;          /* Main page background */
+            --bg-card: #ffffff;          /* Card/container backgrounds */
+            
+            /* Text Colors */
+            --text-primary: #2b2926;     /* Main text color */
+            --text-secondary: #6b7280;   /* Secondary/muted text */
+            --text-light: rgba(107, 114, 128, 0.5); /* Very light text */
+            
+            /* Accent Colors */
+            --accent-primary: #c5a059;   /* Gold/primary accent */
+            --accent-secondary: #3b5c6b; /* Blue/secondary accent */
+            --accent-dark: #2a424d;      /* Darker version of secondary */
+            
+            /* Border & Line Colors */
+            --border-light: #e5e0d3;     /* Light borders */
+            --border-medium: #d4cfc0;    /* Medium borders/lines */
+            
+            /* Utility Colors */
+            --chip-bg: #f0f4f8;          /* Background for chips/tags */
+            --chip-border: #e1e8ed;      /* Border for chips/tags */
+            --shadow-color: rgba(0,0,0,0.03); /* Box shadow color */
         }
 
         body {
-            background-color: var(--bg-paper);
-            color: var(--text-ink);
+            background-color: var(--bg-page);
+            color: var(--text-primary);
             font-family: 'Lora', serif;
             line-height: 1.6;
         }
@@ -29,28 +48,28 @@
 
         /* --- UI COMPONENTS --- */
         .search-container {
-            background: #fff;
-            border: 1px solid var(--border-faint);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            box-shadow: 0 4px 20px var(--shadow-color);
             border-radius: 2px;
         }
 
         input[type="text"] {
             border: none;
-            border-bottom: 2px solid var(--border-faint);
+            border-bottom: 2px solid var(--border-light);
             font-family: 'Cinzel', serif;
             font-size: 1.5rem;
-            color: var(--accent-blue);
+            color: var(--accent-secondary);
             background: transparent;
             width: 100%;
             padding: 0.5rem 0;
             transition: border-color 0.3s;
         }
-        input:focus { outline: none; border-color: var(--accent-gold); }
+        input:focus { outline: none; border-color: var(--accent-primary); }
 
         .btn-dig {
-            background-color: var(--accent-blue);
-            color: #fff;
+            background-color: var(--accent-secondary);
+            color: var(--bg-card);
             font-family: 'Inter', sans-serif;
             text-transform: uppercase;
             letter-spacing: 0.1em;
@@ -61,12 +80,12 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        .btn-dig:hover { background-color: #2a424d; }
+        .btn-dig:hover { background-color: var(--accent-dark); }
 
         /* --- TREE VISUALIZATION --- */
         .root-node {
-            border: 2px solid var(--accent-gold);
-            background: #fff;
+            border: 2px solid var(--accent-primary);
+            background: var(--bg-card);
             padding: 1.5rem;
             text-align: center;
             position: relative;
@@ -75,14 +94,14 @@
         
         .timeline-connector {
             width: 2px;
-            background: var(--line-color);
+            background: var(--border-medium);
             height: 40px;
             margin: 0 auto;
         }
 
         .evolution-step {
-            background: white;
-            border: 1px solid var(--border-faint);
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
             padding: 1rem 1.5rem;
             margin: 0 auto;
             max-width: 500px;
@@ -95,41 +114,71 @@
             width: 0; height: 0; 
             border-left: 6px solid transparent;
             border-right: 6px solid transparent;
-            border-top: 6px solid var(--line-color);
+            border-top: 6px solid var(--border-medium);
             margin: 0 auto 10px auto;
         }
 
         .cousin-chip {
             display: inline-block;
-            background: #f0f4f8;
-            color: var(--accent-blue);
+            background: var(--chip-bg);
+            color: var(--accent-secondary);
             padding: 4px 12px;
             border-radius: 20px;
             font-family: 'Inter', sans-serif;
             font-size: 0.85rem;
             margin: 4px;
-            border: 1px solid #e1e8ed;
+            border: 1px solid var(--chip-border);
         }
+
+        .info-card {
+            background: var(--bg-card);
+            padding: 1.5rem;
+            border: 1px solid var(--border-light);
+        }
+
+        .modern-word-box {
+            background-color: var(--accent-secondary);
+            color: var(--bg-card);
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-radius: 2px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Color utility classes */
+        .text-accent-primary { color: var(--accent-primary); }
+        .text-accent-secondary { color: var(--accent-secondary); }
+        .text-secondary { color: var(--text-secondary); }
 
         .hidden { display: none; }
         .fade-in { animation: fadeIn 0.8s ease forwards; opacity: 0; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .spinner { width: 40px; height: 40px; border: 3px solid var(--border-faint); border-top-color: var(--accent-gold); border-radius: 50%; animation: spin 1s linear infinite; margin: 2rem auto; }
+        .spinner { 
+            width: 40px; 
+            height: 40px; 
+            border: 3px solid var(--border-light); 
+            border-top-color: var(--accent-primary); 
+            border-radius: 50%; 
+            animation: spin 1s linear infinite; 
+            margin: 2rem auto; 
+        }
         @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center py-12 px-4">
 
     <header class="text-center mb-10">
-        <div class="text-[var(--accent-gold)] text-4xl mb-2">✦</div>
-        <h1 class="text-4xl md:text-5xl font-bold tracking-widest uppercase text-[var(--accent-blue)]">Etymos</h1>
-        <p class="mt-4 text-[var(--text-ink)] italic opacity-70">Excavate the hidden history of words</p>
+        <div class="text-accent-primary text-4xl mb-2">✦</div>
+        <h1 class="text-4xl md:text-5xl font-bold tracking-widest uppercase text-accent-secondary">Etymos</h1>
+        <p class="mt-4 italic" style="color: var(--text-primary); opacity: 0.7;">Excavate the hidden history of words</p>
     </header>
 
     <div id="view-search" class="w-full max-w-lg">
         <div class="search-container p-8 text-center">
-            <label class="block text-left sans text-xs font-bold text-[var(--accent-gold)] uppercase tracking-widest mb-4">Target Word</label>
+            <label class="block text-left sans text-xs font-bold text-accent-primary uppercase tracking-widest mb-4">Target Word</label>
             <input type="text" id="wordInput" placeholder="e.g. Galaxy, Salary, Muscle" onkeypress="handleEnter(event)" autocomplete="off">
             <div class="h-8"></div>
             <button onclick="startExcavation()" class="btn-dig w-full">Start Excavation</button>
@@ -138,50 +187,48 @@
 
     <div id="view-loading" class="hidden text-center mt-8">
         <div class="spinner"></div>
-        <p class="sans text-sm tracking-widest text-[var(--accent-blue)] animate-pulse">TRACING LINEAGE...</p>
+        <p class="sans text-sm tracking-widest text-accent-secondary animate-pulse">TRACING LINEAGE...</p>
     </div>
 
     <div id="view-results" class="hidden w-full max-w-2xl mt-8 fade-in">
         
         <div class="text-center mb-2">
-            <span class="sans text-xs font-bold text-[var(--accent-gold)] tracking-[0.2em] uppercase">The Origin</span>
+            <span class="sans text-xs font-bold text-accent-primary tracking-[0.2em] uppercase">The Origin</span>
         </div>
         
         <div class="root-node shadow-lg rounded-sm">
-            <div id="root-lang" class="text-xs sans uppercase text-[var(--accent-blue)] mb-1">Proto-Indo-European</div>
+            <div id="root-lang" class="text-xs sans uppercase text-accent-secondary mb-1">Proto-Indo-European</div>
             <div id="root-term" class="text-3xl font-bold mb-1 font-serif">*Term</div>
-            <div id="root-meaning" class="text-sm italic text-gray-500">"Meaning"</div>
+            <div id="root-meaning" class="text-sm italic text-secondary">"Meaning"</div>
         </div>
 
-        <div id="evolution-chain">
-            </div>
+        <div id="evolution-chain"></div>
 
         <div class="timeline-connector"></div>
         <div class="arrow-down"></div>
         
-        <div class="bg-[var(--accent-blue)] text-white p-6 text-center shadow-lg rounded-sm relative z-10">
+        <div class="modern-word-box">
             <h2 id="modern-word" class="text-4xl font-bold classic-font mb-2">WORD</h2>
             <p id="modern-def" class="text-sm sans opacity-80 max-w-md mx-auto">Definition</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12">
             
-            <div class="bg-white p-6 border border-[var(--border-faint)]">
-                <h3 class="text-sm sans font-bold text-[var(--accent-gold)] uppercase tracking-widest mb-4">Linguistic Cousins</h3>
+            <div class="info-card">
+                <h3 class="text-sm sans font-bold text-accent-primary uppercase tracking-widest mb-4">Linguistic Cousins</h3>
                 <div id="cousins-container"></div>
-                <p class="text-xs text-gray-400 mt-4 italic">Words sharing the same ancient root.</p>
+                <p class="text-xs mt-4 italic" style="color: var(--text-light);">Words sharing the same ancient root.</p>
             </div>
 
-            <div class="bg-white p-6 border border-[var(--border-faint)]">
-                <h3 class="text-sm sans font-bold text-[var(--accent-gold)] uppercase tracking-widest mb-4">Excavator's Note</h3>
-                <p id="fun-fact" class="text-lg leading-relaxed font-serif text-[var(--text-ink)]">
-                    </p>
+            <div class="info-card">
+                <h3 class="text-sm sans font-bold text-accent-primary uppercase tracking-widest mb-4">Excavator's Note</h3>
+                <p id="fun-fact" class="text-lg leading-relaxed font-serif" style="color: var(--text-primary);"></p>
             </div>
 
         </div>
 
         <div class="text-center mt-12">
-            <button onclick="resetApp()" class="text-[var(--accent-blue)] sans text-xs font-bold uppercase tracking-widest hover:underline">Unearth Another</button>
+            <button onclick="resetApp()" class="text-accent-secondary sans text-xs font-bold uppercase tracking-widest hover:underline">Unearth Another</button>
         </div>
 
     </div>
@@ -260,9 +307,9 @@
                 <div class="timeline-connector"></div>
                 <div class="arrow-down"></div>
                 <div class="evolution-step">
-                    <div class="text-xs sans uppercase text-gray-400 mb-1">${step.lang}</div>
-                    <div class="text-xl font-bold text-[var(--text-ink)]">${step.term}</div>
-                    <div class="text-sm italic text-gray-500">"${step.meaning}"</div>
+                    <div class="text-xs sans uppercase text-secondary mb-1">${step.lang}</div>
+                    <div class="text-xl font-bold" style="color: var(--text-primary);">${step.term}</div>
+                    <div class="text-sm italic text-secondary">"${step.meaning}"</div>
                 </div>
             `;
         });
