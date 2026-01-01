@@ -5,43 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Etymology Explorer</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* --- DEFAULT THEME (Explorer Hybrid) --- */
+        /* --- THEME DEFINITIONS --- */
         :root {
-            /* Backgrounds */
+            /* Default: EXPLORER (Matches Screenshot) */
             --bg-page: #e8dcc8;
             --bg-card: #1a1815;
+            --bg-input: #26231f;
             
-            /* Text Levels (Refactored) */
-            --text-page: #4a3b2a;     /* Dark Brown (Visible on Tan Page) */
-            --text-card: #faf8f3;     /* White (Visible on Dark Card) */
-            --text-muted: #9ca3af;
+            --text-title: #d4a574;      /* Gold Title */
+            --title-shadow: 2px 2px 0 #26231f; /* Dark Shadow for Title pop */
             
-            /* Accents */
-            --accent-primary: #d4a574;   
-            --accent-secondary: #8c6b4a; /* Darker Gold for visibility on page */
-            --accent-dark: #5a4231;      
+            --text-page: #2c2416;       /* Dark text for page background */
+            --text-card: #faf8f3;       /* Light text for dark cards */
+            --text-muted: #665648;
             
-            /* Borders */
-            --border-light: #5a5041;
-            --border-medium: #5a5041;
+            --accent: #d4a574;          /* Brand Gold */
+            --accent-contrast: #1a1815; /* Text color on accent buttons */
             
-            /* Utils */
+            --border: #5a5041;
             --chip-bg: #26231f;
             --chip-border: #5a5041;
-            --shadow-color: rgba(0,0,0,0.3);
         }
 
         body {
             background-color: var(--bg-page);
-            color: var(--text-page); /* Apply Page Text Color */
-            font-family: 'Lora', serif;
+            color: var(--text-page);
+            font-family: 'Crimson Text', serif;
             line-height: 1.6;
             transition: background-color 0.5s ease, color 0.5s ease;
         }
 
-        h1, h2, h3, .classic-font { font-family: 'Cinzel', serif; }
+        h1, h2, h3 { font-weight: 700; }
         .sans { font-family: 'Inter', sans-serif; }
 
         /* --- THEME GEAR --- */
@@ -49,140 +45,136 @@
             position: absolute; top: 1rem; right: 1rem; 
             z-index: 100;
             background: transparent; border: none; cursor: pointer;
-            color: var(--accent-secondary); padding: 0.5rem;
-            transition: transform 0.4s ease, color 0.5s ease;
+            color: var(--text-page); padding: 0.5rem;
+            transition: transform 0.4s ease, opacity 0.2s;
             opacity: 0.7;
         }
         .theme-gear:hover { opacity: 1; transform: rotate(90deg); }
 
-        /* --- UI COMPONENTS --- */
-        /* Cards now use --text-card specifically */
-        .search-container {
-            background: var(--bg-card);
+        /* --- TYPOGRAPHY --- */
+        .app-title {
+            color: var(--text-title);
+            text-shadow: var(--title-shadow);
+            font-size: 3.5rem;
+            line-height: 1.1;
+            margin-bottom: 0.5rem;
+        }
+
+        /* --- CARDS & INPUTS --- */
+        .dark-card {
+            background-color: var(--bg-card);
             color: var(--text-card);
-            border: 1px solid var(--border-light);
-            box-shadow: 0 4px 20px var(--shadow-color);
-            border-radius: 2px;
+            border: 1px solid var(--border);
+            border-radius: 0.75rem; /* Rounded like screenshot */
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2);
+            padding: 2rem;
             transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease;
         }
 
+        /* Input styling matching the "History, Science..." input */
         input[type="text"] {
-            border: none;
-            border-bottom: 2px solid var(--border-light);
-            font-family: 'Cinzel', serif;
-            font-size: 1.5rem;
-            color: var(--accent-primary);
-            background: transparent;
+            background-color: var(--bg-input);
+            color: var(--text-card);
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+            padding: 1rem;
             width: 100%;
-            padding: 0.5rem 0;
-            transition: border-color 0.3s, color 0.5s ease;
+            font-family: 'Crimson Text', serif;
+            font-size: 1.25rem;
+            transition: border-color 0.3s;
         }
-        input:focus { outline: none; border-color: var(--accent-primary); }
+        input:focus { outline: none; border-color: var(--accent); }
+        input::placeholder { color: var(--text-muted); opacity: 0.7; font-style: italic; }
 
-        .btn-dig {
-            background-color: var(--accent-secondary);
-            color: var(--bg-page); /* Contrast against button */
+        /* --- BUTTONS --- */
+        .action-button {
+            background-color: var(--accent);
+            color: var(--accent-contrast);
             font-family: 'Inter', sans-serif;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
-            font-size: 0.85rem;
-            font-weight: 600;
+            letter-spacing: 0.05em;
             padding: 1rem 2rem;
+            border-radius: 0.375rem;
             border: none;
             cursor: pointer;
-            transition: all 0.2s, background-color 0.5s ease, color 0.5s ease;
+            width: 100%;
+            font-size: 1rem;
+            transition: opacity 0.2s, transform 0.2s;
         }
-        .btn-dig:hover { opacity: 0.9; transform: translateY(-1px); }
+        .action-button:hover { opacity: 0.9; transform: translateY(-1px); }
 
-        /* --- TREE VISUALIZATION --- */
+        /* --- TREE VISUALS --- */
         .root-node {
-            border: 2px solid var(--accent-primary);
-            background: var(--bg-card);
+            border: 2px solid var(--accent);
+            background-color: var(--bg-card);
             color: var(--text-card);
             padding: 1.5rem;
             text-align: center;
-            position: relative;
-            z-index: 10;
-            transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease;
+            border-radius: 0.5rem;
+            transition: all 0.5s ease;
         }
-        
+
         .timeline-connector {
             width: 2px;
-            background: var(--border-medium);
+            background: var(--border);
             height: 40px;
             margin: 0 auto;
             transition: background-color 0.5s ease;
         }
 
         .evolution-step {
-            background: var(--bg-card);
+            background-color: var(--bg-card);
             color: var(--text-card);
-            border: 1px solid var(--border-light);
+            border: 1px solid var(--border);
             padding: 1rem 1.5rem;
             margin: 0 auto;
             max-width: 500px;
-            position: relative;
             text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
-            transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease;
+            border-radius: 0.5rem;
+            transition: all 0.5s ease;
         }
-        
+
         .arrow-down {
             width: 0; height: 0; 
             border-left: 6px solid transparent;
             border-right: 6px solid transparent;
-            border-top: 6px solid var(--border-medium);
+            border-top: 6px solid var(--border);
             margin: 0 auto 10px auto;
             transition: border-top-color 0.5s ease;
+        }
+
+        .label-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: block;
+            margin-bottom: 0.5rem;
         }
 
         .cousin-chip {
             display: inline-block;
             background: var(--chip-bg);
-            color: var(--accent-primary);
+            color: var(--text-card);
+            border: 1px solid var(--border);
             padding: 4px 12px;
-            border-radius: 20px;
+            border-radius: 4px;
             font-family: 'Inter', sans-serif;
             font-size: 0.85rem;
             margin: 4px;
-            border: 1px solid var(--chip-border);
-            transition: all 0.5s ease;
         }
-
-        .info-card {
-            background: var(--bg-card);
-            color: var(--text-card);
-            padding: 1.5rem;
-            border: 1px solid var(--border-light);
-            transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease;
-        }
-
-        .modern-word-box {
-            background-color: var(--accent-secondary);
-            color: var(--bg-page);
-            padding: 1.5rem;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            border-radius: 2px;
-            position: relative;
-            z-index: 10;
-            transition: background-color 0.5s ease, color 0.5s ease;
-        }
-
-        /* Color utility classes - animated */
-        .text-accent-primary { color: var(--accent-primary); transition: color 0.5s ease; }
-        .text-accent-secondary { color: var(--accent-secondary); transition: color 0.5s ease; }
-        .text-secondary { color: var(--text-muted); }
 
         .hidden { display: none; }
         .fade-in { animation: fadeIn 0.8s ease forwards; opacity: 0; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .spinner { 
-            width: 40px; 
-            height: 40px; 
-            border: 3px solid var(--border-light); 
-            border-top-color: var(--accent-primary); 
+            width: 40px; height: 40px; 
+            border: 4px solid var(--bg-input); 
+            border-top-color: var(--accent); 
             border-radius: 50%; 
             animation: spin 1s linear infinite; 
             margin: 2rem auto; 
@@ -199,65 +191,66 @@
         </svg>
     </button>
 
-    <header class="text-center mb-10">
-        <div class="text-accent-primary text-4xl mb-2">✦</div>
-        <h1 class="text-4xl md:text-5xl font-bold tracking-widest uppercase text-accent-secondary">Etymos</h1>
-        <p class="mt-4 italic opacity-70">Excavate the hidden history of words</p>
+    <header class="text-center mb-8">
+        <h1 class="app-title">Etymology Explorer</h1>
+        <p class="text-xl italic opacity-80" style="color: var(--text-page)">Excavate the hidden history of words</p>
     </header>
 
-    <div id="view-search" class="w-full max-w-lg">
-        <div class="search-container p-8 text-center">
-            <label class="block text-left sans text-xs font-bold text-accent-primary uppercase tracking-widest mb-4">Target Word</label>
+    <div id="view-search" class="w-full max-w-lg dark-card">
+        <h2 class="text-2xl mb-6 text-[var(--accent)] border-b border-[var(--border)] pb-2">Start Excavation</h2>
+        
+        <div class="mb-6">
+            <label class="label-text">1. Target Word</label>
             <input type="text" id="wordInput" placeholder="e.g. Galaxy, Salary, Muscle" onkeypress="handleEnter(event)" autocomplete="off">
-            <div class="h-8"></div>
-            <button onclick="startExcavation()" class="btn-dig w-full">Start Excavation</button>
         </div>
+        
+        <button onclick="startExcavation()" class="action-button">Unearth Roots</button>
     </div>
 
     <div id="view-loading" class="hidden text-center mt-8">
         <div class="spinner"></div>
-        <p class="sans text-sm tracking-widest text-accent-secondary animate-pulse">TRACING LINEAGE...</p>
+        <p class="sans text-sm tracking-widest font-bold" style="color: var(--accent)">TRACING LINEAGE...</p>
     </div>
 
     <div id="view-results" class="hidden w-full max-w-2xl mt-8 fade-in">
         
-        <div class="text-center mb-2">
-            <span class="sans text-xs font-bold text-accent-primary tracking-[0.2em] uppercase">The Origin</span>
+        <div class="text-center mb-4">
+            <span class="label-text" style="font-size: 0.9rem;">The Origin</span>
         </div>
         
-        <div class="root-node shadow-lg rounded-sm">
-            <div id="root-lang" class="text-xs sans uppercase text-accent-secondary mb-1">Proto-Indo-European</div>
-            <div id="root-term" class="text-3xl font-bold mb-1 font-serif">*Term</div>
-            <div id="root-meaning" class="text-sm italic text-secondary">"Meaning"</div>
+        <div class="root-node shadow-lg">
+            <div id="root-lang" class="text-xs sans uppercase text-[var(--text-muted)] mb-1">Proto-Indo-European</div>
+            <div id="root-term" class="text-3xl font-bold mb-1 italic">*Term</div>
+            <div id="root-meaning" class="text-sm text-[var(--text-muted)]">"Meaning"</div>
         </div>
 
-        <div id="evolution-chain"></div>
+        <div id="evolution-chain" class="mt-0"></div>
 
         <div class="timeline-connector"></div>
         <div class="arrow-down"></div>
         
-        <div class="modern-word-box">
-            <h2 id="modern-word" class="text-4xl font-bold classic-font mb-2">WORD</h2>
-            <p id="modern-def" class="text-sm sans opacity-80 max-w-md mx-auto">Definition</p>
+        <div class="dark-card text-center" style="border-color: var(--accent);">
+            <h2 id="modern-word" class="text-4xl font-bold text-[var(--accent)] mb-2">WORD</h2>
+            <p id="modern-def" class="text-lg italic opacity-90">Definition</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12">
             
-            <div class="info-card">
-                <h3 class="text-sm sans font-bold text-accent-primary uppercase tracking-widest mb-4">Linguistic Cousins</h3>
+            <div class="dark-card p-6">
+                <h3 class="label-text">Linguistic Cousins</h3>
                 <div id="cousins-container"></div>
-                <p class="text-xs mt-4 italic opacity-80">Words sharing the same ancient root.</p>
+                <p class="text-xs mt-4 italic text-[var(--text-muted)]">Words sharing the same ancient root.</p>
             </div>
 
-            <div class="info-card">
-                <h3 class="text-sm sans font-bold text-accent-primary uppercase tracking-widest mb-4">Excavator's Note</h3>
+            <div class="dark-card p-6">
+                <h3 class="label-text">Excavator's Note</h3>
                 <p id="fun-fact" class="text-lg leading-relaxed font-serif"></p>
             </div>
 
         </div>
 
-        <div class="text-center mt-12">
-            <button onclick="resetApp()" class="text-accent-secondary sans text-xs font-bold uppercase tracking-widest hover:underline">Unearth Another</button>
+        <div class="text-center mt-12 mb-12">
+            <button onclick="resetApp()" class="sans text-sm font-bold uppercase tracking-widest hover:underline" style="color: var(--text-page)">Unearth Another</button>
         </div>
 
     </div>
@@ -266,35 +259,26 @@
     const API_KEY = "AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A";
 
     const themes = {
-        'explorer-hybrid': {
-            '--bg-page': '#e8dcc8', '--bg-card': '#1a1815',
-            '--text-page': '#4a3b2a', '--text-card': '#faf8f3', '--text-muted': '#9ca3af',
-            '--accent-primary': '#d4a574', '--accent-secondary': '#8c6b4a', '--accent-dark': '#5a4231',
-            '--border-light': '#5a5041', '--border-medium': '#5a5041', '--chip-bg': '#26231f', '--chip-border': '#5a5041', '--shadow-color': 'rgba(0,0,0,0.3)'
-        },
-        'explorer-light': {
-            '--bg-page': '#e8dcc8', '--bg-card': '#fdfbf7',
-            '--text-page': '#4a3b2a', '--text-card': '#26231f', '--text-muted': '#665648',
-            '--accent-primary': '#8c6b4a', '--accent-secondary': '#8c6b4a', '--accent-dark': '#5a4231',
-            '--border-light': '#8c6b4a', '--border-medium': '#8c6b4a', '--chip-bg': '#e8dcc8', '--chip-border': '#8c6b4a', '--shadow-color': 'rgba(0,0,0,0.1)'
-        },
-        'explorer-dark': {
-            '--bg-page': '#1a1815', '--bg-card': '#26231f',
-            '--text-page': '#faf8f3', '--text-card': '#faf8f3', '--text-muted': '#9ca3af',
-            '--accent-primary': '#d4a574', '--accent-secondary': '#d4a574', '--accent-dark': '#8c6b4a',
-            '--border-light': '#5a5041', '--border-medium': '#5a5041', '--chip-bg': '#1a1815', '--chip-border': '#5a5041', '--shadow-color': 'rgba(0,0,0,0.5)'
+        'explorer': {
+            '--bg-page': '#e8dcc8', '--bg-card': '#1a1815', '--bg-input': '#26231f',
+            '--text-title': '#d4a574', '--title-shadow': '2px 2px 0 #26231f',
+            '--text-page': '#2c2416', '--text-card': '#faf8f3', '--text-muted': '#665648',
+            '--accent': '#d4a574', '--accent-contrast': '#1a1815',
+            '--border': '#5a5041', '--chip-bg': '#26231f', '--chip-border': '#5a5041'
         },
         'high-command': {
-            '--bg-page': '#022c22', '--bg-card': '#064e3b',
+            '--bg-page': '#022c22', '--bg-card': '#064e3b', '--bg-input': '#065f46',
+            '--text-title': '#fef08a', '--title-shadow': 'none',
             '--text-page': '#ecfdf5', '--text-card': '#ecfdf5', '--text-muted': '#6ee7b7',
-            '--accent-primary': '#fef08a', '--accent-secondary': '#fef08a', '--accent-dark': '#facc15',
-            '--border-light': '#065f46', '--border-medium': '#065f46', '--chip-bg': '#065f46', '--chip-border': '#10b981', '--shadow-color': 'rgba(0,0,0,0.3)'
+            '--accent': '#fef08a', '--accent-contrast': '#022c22',
+            '--border': '#065f46', '--chip-bg': '#065f46', '--chip-border': '#10b981'
         },
         'navy': {
-            '--bg-page': '#0b1020', '--bg-card': '#111833',
+            '--bg-page': '#0b1020', '--bg-card': '#111833', '--bg-input': '#1a2347',
+            '--text-title': '#8bb9ff', '--title-shadow': 'none',
             '--text-page': '#e6ecff', '--text-card': '#e6ecff', '--text-muted': '#94a3b8',
-            '--accent-primary': '#8bb9ff', '--accent-secondary': '#8bb9ff', '--accent-dark': '#3b82f6',
-            '--border-light': '#26325b', '--border-medium': '#26325b', '--chip-bg': '#1e293b', '--chip-border': '#334155', '--shadow-color': 'rgba(0,0,0,0.3)'
+            '--accent': '#8bb9ff', '--accent-contrast': '#0b1020',
+            '--border': '#26325b', '--chip-bg': '#1e293b', '--chip-border': '#334155'
         }
     };
 
@@ -381,9 +365,9 @@
                 <div class="timeline-connector"></div>
                 <div class="arrow-down"></div>
                 <div class="evolution-step">
-                    <div class="text-xs sans uppercase text-secondary mb-1">${step.lang}</div>
-                    <div class="text-xl font-bold" style="color: var(--text-card);">${step.term}</div>
-                    <div class="text-sm italic text-secondary">"${step.meaning}"</div>
+                    <div class="text-xs sans uppercase text-[var(--text-muted)] mb-1">${step.lang}</div>
+                    <div class="text-xl font-bold">${step.term}</div>
+                    <div class="text-sm italic text-[var(--text-muted)]">"${step.meaning}"</div>
                 </div>
             `;
         });
