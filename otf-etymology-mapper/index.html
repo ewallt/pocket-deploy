@@ -156,6 +156,7 @@
             transition: color 0.5s ease;
         }
 
+        /* Updated Chip Styles */
         .cousin-chip {
             display: inline-block;
             background: var(--chip-bg);
@@ -166,7 +167,13 @@
             font-family: 'Inter', sans-serif;
             font-size: 0.85rem;
             margin: 4px;
-            transition: all 0.5s ease;
+            cursor: pointer; /* Clickable */
+            transition: all 0.2s ease;
+        }
+        .cousin-chip:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+            border-color: var(--accent);
         }
 
         .hidden { display: none; }
@@ -241,7 +248,7 @@
             <div class="dark-card p-6">
                 <h3 class="label-text">Linguistic Cousins</h3>
                 <div id="cousins-container"></div>
-                <p class="text-xs mt-4 italic text-[var(--text-muted)]">Words sharing the same ancient root.</p>
+                <p class="text-xs mt-4 italic text-[var(--text-muted)]">Click any word to excavate its history.</p>
             </div>
 
             <div class="dark-card p-6">
@@ -302,7 +309,9 @@
         const word = document.getElementById('wordInput').value.trim();
         if(!word) return;
 
+        // UI Updates
         document.getElementById('view-search').classList.add('hidden');
+        document.getElementById('view-results').classList.add('hidden'); // Hide previous results if active
         document.getElementById('view-loading').classList.remove('hidden');
 
         try {
@@ -378,13 +387,18 @@
         document.getElementById('modern-word').textContent = data.modern.word;
         document.getElementById('modern-def').textContent = data.modern.def;
 
-        // Cousins
+        // Cousins (Interactive Buttons)
         const cousinsContainer = document.getElementById('cousins-container');
         cousinsContainer.innerHTML = '';
         data.cousins.forEach(c => {
-            const chip = document.createElement('span');
+            const chip = document.createElement('button'); // Changed to button
             chip.className = 'cousin-chip';
             chip.textContent = c;
+            chip.onclick = () => {
+                document.getElementById('wordInput').value = c;
+                startExcavation();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            };
             cousinsContainer.appendChild(chip);
         });
 
@@ -400,6 +414,7 @@
         document.getElementById('wordInput').value = '';
         document.getElementById('view-results').classList.add('hidden');
         document.getElementById('view-search').classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 </script>
 </body>
