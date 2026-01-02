@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slang Time Machine</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Righteous&family=Roboto+Mono:wght@400;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- THEME DEFINITIONS --- */
+        :root {
+            /* Theme 1: FLUX (Doc Brown / 80s Sci-Fi) */
+            --bg-page: #d1d5db;        /* Light Gray Metal */
+            --bg-panel: #e5e7eb;       /* Stainless Steel */
+            --bg-screen: #000000;      /* LCD Background */
+            
+            --text-main: #1f2937;
+            --text-screen: #ef4444;    /* LED Red */
+            --text-muted: #4b5563;
+
+            --accent: #ef4444;         /* Red Cable */
+            --accent-glow: 0 0 10px rgba(239, 68, 68, 0.5);
+            
+            --border: #9ca3af;
+            --font-head: 'Righteous', cursive;
+            --font-mono: 'Roboto Mono', monospace;
+        }
+
+        body.theme-neon {
+            /* Theme 2: NEON (Vaporwave / Arcade) */
+            --bg-page: #11001c;        /* Deep Purple */
+            --bg-panel: #240046;       /* Dark Violet */
+            --bg-screen: #10002b;      /* Darker Violet */
+            
+            --text-main: #e0aaff;
+            --text-screen: #00f5d4;    /* Cyan */
+            --text-muted: #9d4edd;
+
+            --accent: #f15bb5;         /* Hot Pink */
+            --accent-glow: 0 0 15px rgba(241, 91, 181, 0.8);
+            
+            --border: #3c096c;
+        }
+
+        body.theme-parchment {
+            /* Theme 3: PARCHMENT (H.G. Wells / Steampunk) */
+            --bg-page: #f5f5dc;        /* Beige */
+            --bg-panel: #fdf6e3;       /* Paper */
+            --bg-screen: #eee8d5;      /* Darker Paper */
+            
+            --text-main: #433422;
+            --text-screen: #b58900;    /* Brass/Gold */
+            --text-muted: #836953;
+
+            --accent: #cb4b16;         /* Rust Red */
+            --accent-glow: none;
+            
+            --border: #d3c6b1;
+            --font-head: 'Courier Prime', monospace; /* Override header font if needed via JS, strictly CSS here */
+        }
+
+        body {
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        h1, h2, h3 { font-family: var(--font-head); }
+        .mono { font-family: var(--font-mono); }
+
+        /* --- UI COMPONENTS --- */
+        .panel {
+            background-color: var(--bg-panel);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+            padding: 2rem;
+            transition: all 0.5s ease;
+        }
+
+        .lcd-screen {
+            background-color: var(--bg-screen);
+            color: var(--text-screen);
+            font-family: var(--font-mono);
+            border: 4px inset var(--border);
+            border-radius: 4px;
+            padding: 1rem;
+            text-shadow: 0 0 5px currentColor;
+            transition: all 0.5s ease;
+        }
+
+        input[type="text"] {
+            background-color: var(--bg-screen);
+            color: var(--text-screen);
+            font-family: var(--font-mono);
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            width: 100%;
+            font-size: 1.25rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+        input:focus { border-color: var(--accent); box-shadow: var(--accent-glow); }
+
+        .time-btn {
+            background-color: var(--accent);
+            color: white;
+            font-family: var(--font-head);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 1.25rem;
+            padding: 1rem;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.1s, box-shadow 0.3s;
+            box-shadow: var(--accent-glow);
+            text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
+        }
+        .time-btn:hover { transform: translateY(-2px); }
+        .time-btn:active { transform: translateY(1px); }
+
+        /* --- RESULTS --- */
+        .era-card {
+            border-left: 4px solid var(--accent);
+            background-color: var(--bg-panel);
+            border-top: 1px solid var(--border);
+            border-right: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            border-radius: 0 8px 8px 0;
+            transition: all 0.5s ease;
+        }
+
+        .era-badge {
+            display: inline-block;
+            background-color: var(--bg-screen);
+            color: var(--text-screen);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .translation-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+        }
+
+        .context-text {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .copy-btn {
+            position: absolute; top: 1rem; right: 1rem;
+            background: transparent; border: none;
+            color: var(--text-muted); cursor: pointer;
+            opacity: 0.5; transition: opacity 0.2s;
+        }
+        .copy-btn:hover { opacity: 1; color: var(--accent); }
+
+        /* --- UTILS --- */
+        .theme-toggle {
+            position: absolute; top: 1rem; right: 1rem;
+            background: var(--bg-panel); border: 2px solid var(--border);
+            color: var(--text-main); padding: 0.5rem;
+            border-radius: 50%; cursor: pointer;
+            width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s;
+        }
+        .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+
+        .hidden { display: none; }
+        .fade-in { animation: fadeIn 0.6s ease forwards; opacity: 0; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .spinner { width: 40px; height: 40px; border: 4px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-12 px-4">
+
+    <button onclick="cycleTheme()" class="theme-toggle" title="Switch Timeline Style">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/></svg>
+    </button>
+
+    <header class="text-center mb-10">
+        <h1 class="text-5xl mb-2 tracking-tight" style="text-shadow: 2px 2px 0px rgba(0,0,0,0.1);">SLANG TIME MACHINE</h1>
+        <p class="mono text-sm opacity-70">TEMPORAL TRANSLATION ENGINE v1.0</p>
+    </header>
+
+    <div id="view-input" class="w-full max-w-xl panel">
+        <div class="mb-6">
+            <label class="block mono text-xs uppercase mb-2 opacity-70">Input Modern Phrase</label>
+            <input type="text" id="phraseInput" placeholder="e.g. Ghosting someone, The party was lit" onkeypress="handleEnter(event)">
+        </div>
+        <button onclick="engageTimeMachine()" class="time-btn">ENGAGE CIRCUITS</button>
+    </div>
+
+    <div id="view-loading" class="hidden text-center mt-12">
+        <div class="spinner mb-4"></div>
+        <div class="lcd-screen inline-block">
+            CALCULATING TEMPORAL FLUX...
+        </div>
+    </div>
+
+    <div id="view-results" class="hidden w-full max-w-2xl mt-12 fade-in">
+        
+        <div class="text-center mb-8">
+            <button onclick="resetApp()" class="mono text-xs hover:underline opacity-70">← ENTER NEW COORDINATES</button>
+        </div>
+
+        <div id="timeline-container">
+            </div>
+
+    </div>
+
+<script>
+    const API_KEY = "AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A";
+
+    const themes = ['', 'theme-neon', 'theme-parchment'];
+    let themeIndex = 0;
+
+    function cycleTheme() {
+        themeIndex = (themeIndex + 1) % themes.length;
+        document.body.className = "min-h-screen flex flex-col items-center py-12 px-4 " + themes[themeIndex];
+    }
+
+    function handleEnter(e) { if(e.key === 'Enter') engageTimeMachine(); }
+
+    async function engageTimeMachine() {
+        const phrase = document.getElementById('phraseInput').value.trim();
+        if(!phrase) return;
+
+        // UI State
+        document.getElementById('view-input').classList.add('hidden');
+        document.getElementById('view-loading').classList.remove('hidden');
+
+        try {
+            const prompt = `
+                Role: Linguistic Time Traveler.
+                Task: Translate the modern phrase "${phrase}" into the slang/idioms of 5 distinct historical eras.
+                
+                REQUIREMENTS:
+                1. Era 1: Elizabethan (Shakespearean)
+                2. Era 2: Victorian (Polite/Formal)
+                3. Era 3: The Roaring 20s (Jazz/Gangster slang)
+                4. Era 4: The 1970s (Disco/Funk)
+                5. Era 5: The 1990s (Grunge/Hip-hop)
+                
+                For each, provide:
+                - "translation": The translated phrase.
+                - "context": A very brief explanation of the terms used.
+
+                RETURN JSON ONLY:
+                [
+                    { "era": "Elizabethan", "translation": "...", "context": "..." },
+                    { "era": "Victorian", "translation": "...", "context": "..." }
+                ]
+            `;
+
+            const response = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
+                {
+                    method: "POST", headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        contents: [{ role: "user", parts: [{ text: prompt }] }],
+                        generationConfig: { responseMimeType: "text/plain" }
+                    })
+                }
+            );
+
+            const data = await response.json();
+            const text = data.candidates[0].content.parts[0].text;
+            const json = JSON.parse(text.replace(/```json/g, '').replace(/```/g, ''));
+            
+            renderTimeline(json);
+
+        } catch (e) {
+            console.error(e);
+            alert("Temporal Flux Error. Try again.");
+            resetApp();
+        }
+    }
+
+    function renderTimeline(data) {
+        const container = document.getElementById('timeline-container');
+        container.innerHTML = '';
+
+        data.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'era-card';
+            card.innerHTML = `
+                <div class="flex justify-between items-start">
+                    <span class="era-badge">${item.era}</span>
+                    <button class="copy-btn" onclick="copyText('${item.translation.replace(/'/g, "\\'")}')" title="Copy">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    </button>
+                </div>
+                <div class="translation-text">"${item.translation}"</div>
+                <div class="context-text">${item.context}</div>
+            `;
+            container.appendChild(card);
+        });
+
+        document.getElementById('view-loading').classList.add('hidden');
+        document.getElementById('view-results').classList.remove('hidden');
+    }
+
+    function copyText(text) {
+        navigator.clipboard.writeText(text);
+        alert("Translation copied to clipboard!");
+    }
+
+    function resetApp() {
+        document.getElementById('phraseInput').value = '';
+        document.getElementById('view-results').classList.add('hidden');
+        document.getElementById('view-loading').classList.add('hidden');
+        document.getElementById('view-input').classList.remove('hidden');
+    }
+</script>
+</body>
+</html>
