@@ -132,14 +132,22 @@
             border-top: 1px dashed var(--border);
         }
         
+        /* RESPONSIVE FILTER ROW */
         .filters-row {
             display: flex;
-            gap: 1rem;
+            flex-direction: column; /* Default: Stack vertically on phones */
+            gap: 0.75rem;
             margin-bottom: 1rem;
+        }
+        @media (min-width: 640px) { /* Tablet and up */
+            .filters-row {
+                flex-direction: row; /* Side by side on larger screens */
+            }
         }
         
         .cat-select {
             flex: 1;
+            width: 100%;
             background-color: var(--bg-screen);
             color: var(--text-screen);
             font-family: var(--font-mono);
@@ -265,13 +273,13 @@
 
     <header class="text-center mb-10">
         <h1 class="text-5xl mb-2 tracking-tight" style="text-shadow: 2px 2px 0px rgba(0,0,0,0.1);">SLANG TIME MACHINE</h1>
-        <p class="mono text-sm opacity-70">TEMPORAL TRANSLATION ENGINE v3.0</p>
+        <p class="mono text-sm opacity-70">TEMPORAL TRANSLATION ENGINE v3.1</p>
     </header>
 
     <div id="view-input" class="w-full max-w-xl panel">
         <div class="mb-6">
             <label class="block mono text-xs uppercase mb-2 opacity-70">Input Phrase</label>
-            <input type="text" id="phraseInput" placeholder="e.g. A lot of money, Cool car, Nice threads" onkeypress="handleEnter(event)">
+            <input type="text" id="phraseInput" placeholder="e.g. Dough, Hot rod, My old lady" onkeypress="handleEnter(event)">
         </div>
         
         <button onclick="engageTimeMachine()" class="time-btn mb-6">ENGAGE CIRCUITS</button>
@@ -290,11 +298,11 @@
 
                 <select id="categorySelect" class="cat-select" onchange="fetchSuggestions()">
                     <option value="" disabled selected>Select Topic...</option>
-                    <option value="Money & Wealth">💰 Money</option>
+                    <option value="Money">💰 Money</option>
                     <option value="Food & Drink">🍔 Food & Drink</option>
                     <option value="Cars & Traffic">🚗 Cars & Traffic</option>
                     <option value="Men & Women">👥 Men & Women</option>
-                    <option value="Sports & Games">⚾ Sports</option>
+                    <option value="Sports">⚾ Sports</option>
                 </select>
             </div>
             
@@ -351,10 +359,9 @@
                 Role: Cultural Historian.
                 Task: List 5 slang phrases from the era "${era}" related to the topic: "${category}".
                 
-                Note: 
-                - If Era is "Modern", use current vernacular (but avoid extremely niche TikTok slang).
-                - If Era is "1970s", use authentic 70s terms.
-                - Keep them common enough that they are recognizable.
+                CRITICAL:
+                - Keep phrases SHORT (1-2 words preferred).
+                - Use popular, recognizable slang from that specific era.
 
                 Strictly output a JSON array of strings only.
                 Example: ["Bread", "Dough", "Clams"]
@@ -416,6 +423,7 @@
                 CRITICAL INSTRUCTION: STRICT HISTORICAL ACCURACY.
                 - Do NOT use anachronistic terms.
                 - Ensure the slang used was popular in that specific decade.
+                - If the source phrase is short (1-2 words), keep the translations short (1-2 words) if possible.
                 
                 REQUIREMENTS:
                 1. Era 1: Elizabethan (Shakespearean)
