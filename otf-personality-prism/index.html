@@ -356,7 +356,6 @@
     }
 
     async function submitRadar() {
-        // Collect all 5 answers
         const answers = [];
         for(let i=1; i<=5; i++) {
             const val = document.getElementById(`radar-a${i}`).value.trim();
@@ -389,8 +388,9 @@
                 }
             `;
 
+            // REVERTED TO 2.0-FLASH-EXP
             const response = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`,
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
                 {
                     method: "POST", headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -426,10 +426,7 @@
         document.getElementById('radar-intro').classList.remove('hidden');
         
         document.getElementById('q1-container').classList.remove('hidden');
-        document.getElementById('q2-container').classList.add('hidden');
-        document.getElementById('q3-container').classList.add('hidden');
-        document.getElementById('q4-container').classList.add('hidden');
-        document.getElementById('q5-container').classList.add('hidden');
+        for(let i=2; i<=5; i++) document.getElementById(`q${i}-container`).classList.add('hidden');
     }
 
 
@@ -448,8 +445,9 @@
 
         try {
             const prompt = `Role: Psychologist. List 4 distinct scenarios for "${category}". Short (3-6 words). JSON Array only.`;
+            // REVERTED TO 2.0-FLASH-EXP
             const response = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`,
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
                 {
                     method: "POST", headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json" } })
@@ -498,8 +496,9 @@
                 }
             `;
 
+            // REVERTED TO 2.0-FLASH-EXP
             const response = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`,
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
                 {
                     method: "POST", headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
