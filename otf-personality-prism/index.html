@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personality Prism</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- THEME DEFINITIONS --- */
+        :root {
+            /* PRISM THEME */
+            --bg-page: #0f172a;        /* Deep Slate */
+            --bg-panel: #1e293b;       /* Lighter Slate */
+            
+            --bg-input: #334155;       
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            
+            --accent: #8b5cf6;         /* Violet */
+            --accent-hover: #7c3aed;
+            
+            --border: #334155;
+            --font-head: 'Outfit', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+
+            /* MBTI GROUP COLORS */
+            --color-analyst: #a855f7;  /* Purple */
+            --color-diplomat: #22c55e; /* Green */
+            --color-sentinel: #3b82f6; /* Blue */
+            --color-explorer: #eab308; /* Yellow */
+        }
+
+        body {
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            font-family: var(--font-head);
+            transition: background-color 0.5s ease;
+        }
+
+        h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; }
+        .mono { font-family: var(--font-mono); }
+
+        /* --- TABS --- */
+        .tab-nav {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1rem;
+        }
+        .tab-btn {
+            background: transparent;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.5rem 1rem;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            color: var(--text-main);
+            background-color: rgba(139, 92, 246, 0.1);
+            border-color: var(--accent);
+            font-weight: 700;
+        }
+
+        /* --- UI COMPONENTS --- */
+        .panel {
+            background-color: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+            padding: 2rem;
+            transition: all 0.5s ease;
+        }
+
+        input[type="text"], textarea {
+            background-color: var(--bg-input);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            width: 100%;
+            font-size: 1.1rem;
+            outline: none;
+            transition: all 0.3s;
+            font-family: var(--font-head);
+        }
+        input:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2); }
+        input::placeholder { color: var(--text-muted); opacity: 0.5; }
+
+        .action-btn {
+            background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+            color: white;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-size: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.1s, opacity 0.2s;
+            margin-bottom: 1.5rem;
+        }
+        .action-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+        .action-btn:active { transform: translateY(1px); }
+
+        /* --- RADAR (DIAGNOSTIC) UI --- */
+        .question-card {
+            animation: fadeIn 0.5s ease;
+        }
+        .progress-bar {
+            height: 4px;
+            background: var(--bg-input);
+            margin-bottom: 2rem;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            transition: width 0.5s ease;
+        }
+        .diagnosis-card {
+            border: 2px solid var(--accent);
+            background: rgba(139, 92, 246, 0.05);
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        /* --- PRISM (RESULTS) UI --- */
+        .type-card {
+            background-color: var(--bg-panel);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            border: 1px solid var(--border);
+            border-left-width: 6px; 
+            transition: all 0.3s ease;
+        }
+        .type-card:hover { transform: translateX(5px); }
+        
+        .border-analyst { border-left-color: var(--color-analyst); }
+        .border-diplomat { border-left-color: var(--color-diplomat); }
+        .border-sentinel { border-left-color: var(--color-sentinel); }
+        .border-explorer { border-left-color: var(--color-explorer); }
+
+        .type-badge {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            background-color: rgba(255,255,255,0.05);
+        }
+        
+        .text-analyst { color: var(--color-analyst); }
+        .text-diplomat { color: var(--color-diplomat); }
+        .text-sentinel { color: var(--color-sentinel); }
+        .text-explorer { color: var(--color-explorer); }
+
+        /* --- UTILS --- */
+        .hidden { display: none; }
+        .fade-in { animation: fadeIn 0.6s ease forwards; opacity: 0; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .spinner { width: 40px; height: 40px; border: 4px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Suggestions styling */
+        .suggestions-box { margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--border); }
+        .cat-select { width: 100%; background-color: var(--bg-input); color: var(--text-main); font-family: var(--font-head); border: 1px solid var(--border); padding: 0.75rem; border-radius: 8px; cursor: pointer; outline: none; }
+        .chip-container { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+        .suggestion-chip { background-color: var(--bg-input); color: var(--text-muted); border: 1px solid var(--border); font-size: 0.85rem; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; transition: all 0.2s; }
+        .suggestion-chip:hover { color: var(--text-main); border-color: var(--accent); background-color: var(--border); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-12 px-4">
+
+    <header class="text-center mb-10">
+        <h1 class="text-5xl mb-2 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">PERSONALITY PRISM</h1>
+        <p class="mono text-sm opacity-70 tracking-widest">COGNITIVE INFERENCE ENGINE</p>
+    </header>
+
+    <div class="tab-nav">
+        <button onclick="switchTab('radar')" id="tab-radar-btn" class="tab-btn active">Identity Radar</button>
+        <button onclick="switchTab('prism')" id="tab-prism-btn" class="tab-btn">Reaction Prism</button>
+    </div>
+
+    <div id="tab-radar" class="w-full max-w-xl">
+        
+        <div id="radar-intro" class="panel text-center fade-in">
+            <h2 class="text-2xl mb-4">Discover Your Type</h2>
+            <p class="text-[var(--text-muted)] mb-8 leading-relaxed">
+                Most quizzes rely on checkboxes. We use <strong>Cognitive Inference</strong>. 
+                Answer 3 open-ended questions, and the AI will analyze your language patterns to determine your cognitive stack.
+            </p>
+            <button onclick="startRadar()" class="action-btn">Begin Analysis</button>
+        </div>
+
+        <div id="radar-questions" class="panel hidden">
+            <div class="progress-bar"><div id="radar-progress" class="progress-fill" style="width: 33%"></div></div>
+            
+            <div id="q1-container" class="question-card">
+                <label class="block mono text-xs uppercase mb-2 text-[var(--accent)]">Question 1 of 3: Worldview</label>
+                <h3 class="text-xl mb-4">Describe your ideal weekend. Be specific about your preference for plans vs. spontaneity.</h3>
+                <textarea id="radar-a1" rows="4" class="mb-6" placeholder="I prefer to..."></textarea>
+                <button onclick="nextQuestion(1)" class="action-btn">Next</button>
+            </div>
+
+            <div id="q2-container" class="question-card hidden">
+                <label class="block mono text-xs uppercase mb-2 text-[var(--accent)]">Question 2 of 3: Conflict</label>
+                <h3 class="text-xl mb-4">You are in a heated argument where you know you are right, but the other person is getting emotional. What do you do?</h3>
+                <textarea id="radar-a2" rows="4" class="mb-6" placeholder="I would..."></textarea>
+                <button onclick="nextQuestion(2)" class="action-btn">Next</button>
+            </div>
+
+            <div id="q3-container" class="question-card hidden">
+                <label class="block mono text-xs uppercase mb-2 text-[var(--accent)]">Question 3 of 3: Focus</label>
+                <h3 class="text-xl mb-4">When learning something new, do you prefer to understand the abstract theory first, or jump in and try it immediately?</h3>
+                <textarea id="radar-a3" rows="4" class="mb-6" placeholder="I learn best by..."></textarea>
+                <button onclick="submitRadar()" class="action-btn">Analyze Identity</button>
+            </div>
+        </div>
+
+        <div id="radar-loading" class="hidden text-center mt-12">
+            <div class="spinner mb-4"></div>
+            <div class="mono text-sm tracking-widest text-[var(--accent)]">TRIANGULATING COGNITIVE STACK...</div>
+        </div>
+
+        <div id="radar-results" class="panel hidden fade-in">
+            <div class="diagnosis-card mb-8">
+                <div class="mono text-xs uppercase opacity-50 mb-2">Primary Match</div>
+                <h2 id="radar-type" class="text-6xl font-bold text-white mb-2">----</h2>
+                <div id="radar-title" class="text-xl text-[var(--accent)] font-bold">The Archetype</div>
+            </div>
+            
+            <h3 class="mono text-xs uppercase mb-4 opacity-70">Cognitive Analysis</h3>
+            <p id="radar-analysis" class="leading-relaxed text-[var(--text-muted)] mb-8"></p>
+            
+            <button onclick="resetRadar()" class="mono text-xs hover:text-[var(--accent)] opacity-70">RETAKE DIAGNOSTIC</button>
+        </div>
+
+    </div>
+
+    <div id="tab-prism" class="w-full max-w-xl hidden">
+        
+        <div id="prism-input" class="panel">
+            <div class="mb-6">
+                <label class="block mono text-xs uppercase mb-2 opacity-70">Describe a Scenario</label>
+                <input type="text" id="scenarioInput" placeholder="e.g. Flight cancelled, Surprise party" onkeypress="handlePrismEnter(event)">
+            </div>
+            
+            <button onclick="engagePrism()" class="action-btn">Simulate Reactions</button>
+
+            <div class="suggestions-box">
+                <label class="block mono text-xs uppercase mb-2 opacity-70">Suggestion Generator:</label>
+                <select id="categorySelect" class="cat-select" onchange="fetchSuggestions()">
+                    <option value="" disabled selected>Select Context...</option>
+                    <option value="Workplace Conflict">💼 Workplace Conflict</option>
+                    <option value="Romance & Dating">❤️ Romance & Dating</option>
+                    <option value="High Stress Crisis">🔥 High Stress Crisis</option>
+                    <option value="Social Gathering">🥂 Social Gathering</option>
+                </select>
+                <div id="suggestions-area" class="chip-container">
+                    <span class="mono text-xs opacity-50 italic">Select a context...</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="prism-loading" class="hidden text-center mt-12">
+            <div class="spinner mb-4"></div>
+            <div class="mono text-sm tracking-widest text-[var(--accent)]">SIMULATING PERSPECTIVES...</div>
+        </div>
+
+        <div id="prism-results" class="hidden fade-in mt-8">
+            <div class="text-center mb-8">
+                <button onclick="resetPrism()" class="mono text-xs hover:text-[var(--accent)] opacity-70">← NEW SCENARIO</button>
+            </div>
+            <div id="prism-container"></div>
+        </div>
+
+    </div>
+
+<script>
+    const API_KEY = "AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A";
+
+    // --- TAB LOGIC ---
+    function switchTab(tabId) {
+        // Hide all tabs
+        document.getElementById('tab-radar').classList.add('hidden');
+        document.getElementById('tab-prism').classList.add('hidden');
+        
+        // Deactivate buttons
+        document.getElementById('tab-radar-btn').classList.remove('active');
+        document.getElementById('tab-prism-btn').classList.remove('active');
+        
+        // Show selected
+        document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+        document.getElementById(`tab-${tabId}-btn`).classList.add('active');
+    }
+
+    // ==========================================
+    // LOGIC: IDENTITY RADAR
+    // ==========================================
+    
+    function startRadar() {
+        document.getElementById('radar-intro').classList.add('hidden');
+        document.getElementById('radar-questions').classList.remove('hidden');
+    }
+
+    function nextQuestion(current) {
+        const answer = document.getElementById(`radar-a${current}`).value.trim();
+        if(!answer) { alert("Please provide an answer."); return; }
+
+        document.getElementById(`q${current}-container`).classList.add('hidden');
+        
+        const next = current + 1;
+        document.getElementById(`q${next}-container`).classList.remove('hidden');
+        document.getElementById('radar-progress').style.width = `${next * 33}%`;
+    }
+
+    async function submitRadar() {
+        const a1 = document.getElementById('radar-a1').value;
+        const a2 = document.getElementById('radar-a2').value;
+        const a3 = document.getElementById('radar-a3').value; // Final answer
+
+        if(!a3.trim()) { alert("Please provide an answer."); return; }
+
+        document.getElementById('radar-questions').classList.add('hidden');
+        document.getElementById('radar-loading').classList.remove('hidden');
+
+        try {
+            const prompt = `
+                Role: Expert MBTI Typologist.
+                Task: Analyze these 3 survey responses to determine the user's likely MBTI type.
+                
+                Response 1 (Weekend/Structure): "${a1}"
+                Response 2 (Conflict/Emotion): "${a2}"
+                Response 3 (Learning/Theory): "${a3}"
+                
+                1. Analyze their language for Cognitive Functions (Ni vs Ne, Ti vs Te, etc).
+                2. Determine the most likely 4-letter type.
+                3. Provide a brief analysis of WHY.
+
+                RETURN JSON ONLY:
+                {
+                    "type": "INTJ",
+                    "title": "The Architect",
+                    "analysis": "User showed strong preference for..."
+                }
+            `;
+
+            const response = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
+                {
+                    method: "POST", headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        contents: [{ role: "user", parts: [{ text: prompt }] }],
+                        generationConfig: { responseMimeType: "application/json" }
+                    })
+                }
+            );
+
+            const data = await response.json();
+            const text = data.candidates[0].content.parts[0].text;
+            const result = JSON.parse(text);
+            
+            // Render Results
+            document.getElementById('radar-type').textContent = result.type;
+            document.getElementById('radar-title').textContent = result.title;
+            document.getElementById('radar-analysis').textContent = result.analysis;
+
+            document.getElementById('radar-loading').classList.add('hidden');
+            document.getElementById('radar-results').classList.remove('hidden');
+
+        } catch (e) {
+            console.error(e);
+            alert("Analysis failed. Please try again.");
+            resetRadar();
+        }
+    }
+
+    function resetRadar() {
+        document.getElementById('radar-a1').value = '';
+        document.getElementById('radar-a2').value = '';
+        document.getElementById('radar-a3').value = '';
+        document.getElementById('radar-progress').style.width = '33%';
+        
+        document.getElementById('radar-results').classList.add('hidden');
+        document.getElementById('radar-intro').classList.remove('hidden');
+        
+        // Reset question visibility
+        document.getElementById('q1-container').classList.remove('hidden');
+        document.getElementById('q2-container').classList.add('hidden');
+        document.getElementById('q3-container').classList.add('hidden');
+    }
+
+
+    // ==========================================
+    // LOGIC: REACTION PRISM
+    // ==========================================
+
+    function handlePrismEnter(e) { if(e.key === 'Enter') engagePrism(); }
+
+    async function fetchSuggestions() {
+        const category = document.getElementById('categorySelect').value;
+        const container = document.getElementById('suggestions-area');
+        if (!category) return;
+
+        container.innerHTML = '<span class="mini-loader">READING THE ROOM...</span>';
+
+        try {
+            const prompt = `
+                Role: Psychologist. Task: List 5 distinct scenarios for context "${category}". Short (3-6 words). JSON Array only.
+            `;
+            const response = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
+                {
+                    method: "POST", headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        contents: [{ role: "user", parts: [{ text: prompt }] }],
+                        generationConfig: { responseMimeType: "application/json" }
+                    })
+                }
+            );
+            const data = await response.json();
+            const suggestions = JSON.parse(data.candidates[0].content.parts[0].text);
+            
+            container.innerHTML = '';
+            suggestions.forEach(item => {
+                const chip = document.createElement('button');
+                chip.className = 'suggestion-chip';
+                chip.textContent = item;
+                chip.onclick = () => {
+                    document.getElementById('scenarioInput').value = item;
+                    engagePrism();
+                };
+                container.appendChild(chip);
+            });
+        } catch (e) { console.error(e); }
+    }
+
+    async function engagePrism() {
+        const scenario = document.getElementById('scenarioInput').value.trim();
+        if(!scenario) return;
+
+        document.getElementById('prism-input').classList.add('hidden');
+        document.getElementById('prism-loading').classList.remove('hidden');
+
+        try {
+            const prompt = `
+                Role: MBTI Expert. Task: Describe reactions of 4 types (Analyst, Diplomat, Sentinel, Explorer) to: "${scenario}".
+                RETURN JSON ONLY: [{ "type": "INTJ", "group": "Analyst", "reaction": "...", "analysis": "..." }]
+            `;
+
+            const response = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
+                {
+                    method: "POST", headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        contents: [{ role: "user", parts: [{ text: prompt }] }],
+                        generationConfig: { responseMimeType: "application/json" }
+                    })
+                }
+            );
+
+            const data = await response.json();
+            const results = JSON.parse(data.candidates[0].content.parts[0].text);
+            
+            const container = document.getElementById('prism-container');
+            container.innerHTML = '';
+
+            results.forEach(item => {
+                const groupClass = item.group.toLowerCase();
+                const card = document.createElement('div');
+                card.className = `type-card border-${groupClass}`;
+                card.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="type-badge text-${groupClass}">${item.group}</span>
+                            <h3 class="text-2xl font-bold mb-2 text-${groupClass}">${item.type}</h3>
+                        </div>
+                    </div>
+                    <div class="reaction-text">"${item.reaction}"</div>
+                    <div class="analysis-text">👉 ${item.analysis}</div>
+                `;
+                container.appendChild(card);
+            });
+
+            document.getElementById('prism-loading').classList.add('hidden');
+            document.getElementById('prism-results').classList.remove('hidden');
+
+        } catch (e) {
+            console.error(e);
+            alert("Error simulating. Try again.");
+            resetPrism();
+        }
+    }
+
+    function resetPrism() {
+        document.getElementById('scenarioInput').value = '';
+        document.getElementById('prism-results').classList.add('hidden');
+        document.getElementById('prism-loading').classList.add('hidden');
+        document.getElementById('prism-input').classList.remove('hidden');
+    }
+</script>
+</body>
+</html>
