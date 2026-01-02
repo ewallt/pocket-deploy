@@ -5,122 +5,121 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Personality Prism</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;700&family=Space+Grotesk:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        /* --- THEME DEFINITIONS --- */
+        /* --- THEME DEFINITIONS (NORDIC CLINICAL) --- */
         :root {
-            /* PRISM THEME */
-            --bg-page: #0f172a;        /* Deep Slate */
-            --bg-panel: #1e293b;       /* Lighter Slate */
+            --bg-page: #f0f4f8;        /* Soft Blue-Grey */
+            --bg-panel: #ffffff;       /* Pure White */
+            --bg-input: #f1f5f9;       /* Light Gray for inputs */
             
-            --bg-input: #334155;       
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
+            --text-main: #1e293b;      /* Deep Slate */
+            --text-muted: #64748b;     /* Muted Slate */
             
-            --accent: #8b5cf6;         /* Violet */
-            --accent-hover: #7c3aed;
+            --accent: #0d9488;         /* Teal */
+            --accent-hover: #0f766e;
             
-            --border: #334155;
-            --font-head: 'Outfit', sans-serif;
-            --font-mono: 'JetBrains Mono', monospace;
+            --border: #e2e8f0;
+            
+            --font-head: 'Space Grotesk', sans-serif;
+            --font-body: 'Manrope', sans-serif;
 
-            /* MBTI GROUP COLORS */
-            --color-analyst: #a855f7;  /* Purple */
-            --color-diplomat: #22c55e; /* Green */
-            --color-sentinel: #3b82f6; /* Blue */
-            --color-explorer: #eab308; /* Yellow */
+            /* GROUP COLORS (Muted for Light Theme) */
+            --color-analyst: #9333ea;  /* Purple */
+            --color-diplomat: #16a34a; /* Green */
+            --color-sentinel: #2563eb; /* Blue */
+            --color-explorer: #d97706; /* Amber */
         }
 
         body {
             background-color: var(--bg-page);
             color: var(--text-main);
-            font-family: var(--font-head);
+            font-family: var(--font-body);
             transition: background-color 0.5s ease;
         }
 
-        h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; }
-        .mono { font-family: var(--font-mono); }
-
+        h1, h2, h3 { font-family: var(--font-head); letter-spacing: -0.02em; }
+        
         /* --- TABS --- */
         .tab-nav {
             display: flex;
-            gap: 1rem;
+            gap: 0.5rem;
             margin-bottom: 2rem;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 1rem;
+            background: #e2e8f0;
+            padding: 0.5rem;
+            border-radius: 12px;
+            display: inline-flex;
         }
         .tab-btn {
             background: transparent;
             color: var(--text-muted);
-            font-family: var(--font-mono);
+            font-family: var(--font-head);
+            font-weight: 600;
             font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            padding: 0.5rem 1rem;
-            border: 1px solid transparent;
+            padding: 0.5rem 1.5rem;
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s;
         }
         .tab-btn.active {
-            color: var(--text-main);
-            background-color: rgba(139, 92, 246, 0.1);
-            border-color: var(--accent);
-            font-weight: 700;
+            background-color: white;
+            color: var(--accent);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
 
         /* --- UI COMPONENTS --- */
         .panel {
             background-color: var(--bg-panel);
             border: 1px solid var(--border);
-            border-radius: 16px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
-            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
+            padding: 2.5rem;
             transition: all 0.5s ease;
         }
 
-        input[type="text"], textarea {
+        input[type="text"], textarea, select {
             background-color: var(--bg-input);
             color: var(--text-main);
-            border: 1px solid var(--border);
-            border-radius: 8px;
+            border: 2px solid transparent;
+            border-radius: 10px;
             padding: 1rem;
             width: 100%;
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             outline: none;
             transition: all 0.3s;
-            font-family: var(--font-head);
+            font-family: var(--font-body);
         }
-        input:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2); }
-        input::placeholder { color: var(--text-muted); opacity: 0.5; }
-
+        input:focus, textarea:focus, select:focus { 
+            background-color: white;
+            border-color: var(--accent); 
+            box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.1); 
+        }
+        
         .action-btn {
-            background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+            background-color: var(--accent);
             color: white;
-            font-weight: 700;
+            font-family: var(--font-head);
+            font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             font-size: 1rem;
             padding: 1rem;
-            border-radius: 8px;
+            border-radius: 10px;
             border: none;
             cursor: pointer;
             width: 100%;
             transition: transform 0.1s, opacity 0.2s;
             margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(13, 148, 136, 0.3);
         }
-        .action-btn:hover { opacity: 0.9; transform: translateY(-1px); }
-        .action-btn:active { transform: translateY(1px); }
+        .action-btn:hover { background-color: var(--accent-hover); transform: translateY(-1px); }
 
-        /* --- RADAR (DIAGNOSTIC) UI --- */
-        .question-card {
-            animation: fadeIn 0.5s ease;
-        }
-        .progress-bar {
-            height: 4px;
-            background: var(--bg-input);
+        /* --- RADAR UI --- */
+        .progress-track {
+            height: 6px;
+            background: #e2e8f0;
             margin-bottom: 2rem;
-            border-radius: 2px;
+            border-radius: 3px;
             overflow: hidden;
         }
         .progress-fill {
@@ -128,70 +127,50 @@
             background: var(--accent);
             transition: width 0.5s ease;
         }
-        .diagnosis-card {
-            border: 2px solid var(--accent);
-            background: rgba(139, 92, 246, 0.05);
-            padding: 2rem;
-            border-radius: 12px;
-            text-align: center;
-        }
 
-        /* --- PRISM (RESULTS) UI --- */
-        .type-card {
-            background-color: var(--bg-panel);
-            border-radius: 12px;
+        /* --- PRISM RESULTS --- */
+        .result-card {
+            border-left: 5px solid var(--accent);
+            background: #f8fafc;
             padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            position: relative;
-            border: 1px solid var(--border);
-            border-left-width: 6px; 
-            transition: all 0.3s ease;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 1rem;
         }
-        .type-card:hover { transform: translateX(5px); }
-        
-        .border-analyst { border-left-color: var(--color-analyst); }
-        .border-diplomat { border-left-color: var(--color-diplomat); }
-        .border-sentinel { border-left-color: var(--color-sentinel); }
-        .border-explorer { border-left-color: var(--color-explorer); }
-
-        .type-badge {
-            display: inline-block;
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            padding: 2px 8px;
-            border-radius: 4px;
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-            font-weight: 700;
-            background-color: rgba(255,255,255,0.05);
+        .monologue {
+            font-style: italic;
+            color: var(--text-muted);
+            border-left: 2px solid #cbd5e1;
+            padding-left: 1rem;
+            margin: 1rem 0;
         }
-        
-        .text-analyst { color: var(--color-analyst); }
-        .text-diplomat { color: var(--color-diplomat); }
-        .text-sentinel { color: var(--color-sentinel); }
-        .text-explorer { color: var(--color-explorer); }
 
         /* --- UTILS --- */
         .hidden { display: none; }
         .fade-in { animation: fadeIn 0.6s ease forwards; opacity: 0; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        .spinner { width: 40px; height: 40px; border: 4px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto; }
+        .spinner { width: 40px; height: 40px; border: 4px solid #cbd5e1; border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Suggestions styling */
-        .suggestions-box { margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--border); }
-        .cat-select { width: 100%; background-color: var(--bg-input); color: var(--text-main); font-family: var(--font-head); border: 1px solid var(--border); padding: 0.75rem; border-radius: 8px; cursor: pointer; outline: none; }
-        .chip-container { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
-        .suggestion-chip { background-color: var(--bg-input); color: var(--text-muted); border: 1px solid var(--border); font-size: 0.85rem; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; transition: all 0.2s; }
-        .suggestion-chip:hover { color: var(--text-main); border-color: var(--accent); background-color: var(--border); }
+        /* Suggestions */
+        .suggestions-box { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px dashed var(--border); }
+        .chip-container { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
+        .suggestion-chip { 
+            background-color: white; 
+            color: var(--text-muted); 
+            border: 1px solid var(--border); 
+            font-size: 0.85rem; padding: 0.4rem 1rem; 
+            border-radius: 20px; cursor: pointer; transition: all 0.2s; 
+            font-weight: 500;
+        }
+        .suggestion-chip:hover { color: var(--accent); border-color: var(--accent); transform: translateY(-1px); }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center py-12 px-4">
 
-    <header class="text-center mb-10">
-        <h1 class="text-5xl mb-2 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">PERSONALITY PRISM</h1>
-        <p class="mono text-sm opacity-70 tracking-widest">COGNITIVE INFERENCE ENGINE</p>
+    <header class="text-center mb-8">
+        <h1 class="text-4xl mb-1 text-[var(--text-main)]">Personality Prism</h1>
+        <p class="text-sm font-bold text-[var(--accent)] tracking-widest uppercase">Analysis Suite v2.0</p>
     </header>
 
     <div class="tab-nav">
@@ -202,55 +181,71 @@
     <div id="tab-radar" class="w-full max-w-xl">
         
         <div id="radar-intro" class="panel text-center fade-in">
-            <h2 class="text-2xl mb-4">Discover Your Type</h2>
+            <h2 class="text-2xl mb-4">Cognitive Diagnostic</h2>
             <p class="text-[var(--text-muted)] mb-8 leading-relaxed">
-                Most quizzes rely on checkboxes. We use <strong>Cognitive Inference</strong>. 
-                Answer 3 open-ended questions, and the AI will analyze your language patterns to determine your cognitive stack.
+                This is not a checklist. It is a linguistic analysis engine.
+                By answering <strong>5 targeted questions</strong>, we can infer your cognitive stack based on <em>how</em> you structure your thoughts.
             </p>
-            <button onclick="startRadar()" class="action-btn">Begin Analysis</button>
+            <button onclick="startRadar()" class="action-btn">Start Assessment</button>
         </div>
 
         <div id="radar-questions" class="panel hidden">
-            <div class="progress-bar"><div id="radar-progress" class="progress-fill" style="width: 33%"></div></div>
+            <div class="progress-track"><div id="radar-progress" class="progress-fill" style="width: 20%"></div></div>
             
             <div id="q1-container" class="question-card">
-                <label class="block mono text-xs uppercase mb-2 text-[var(--accent)]">Question 1 of 3: Worldview</label>
-                <h3 class="text-xl mb-4">Describe your ideal weekend. Be specific about your preference for plans vs. spontaneity.</h3>
-                <textarea id="radar-a1" rows="4" class="mb-6" placeholder="I prefer to..."></textarea>
+                <label class="block font-bold text-xs uppercase mb-2 text-[var(--accent)]">Metric 1: Energy & Stimulation</label>
+                <h3 class="text-xl mb-4 font-bold">After a long, draining week, what is the specific activity that recharges you?</h3>
+                <textarea id="radar-a1" rows="3" class="mb-6" placeholder="I feel most restored when..."></textarea>
                 <button onclick="nextQuestion(1)" class="action-btn">Next</button>
             </div>
 
             <div id="q2-container" class="question-card hidden">
-                <label class="block mono text-xs uppercase mb-2 text-[var(--accent)]">Question 2 of 3: Conflict</label>
-                <h3 class="text-xl mb-4">You are in a heated argument where you know you are right, but the other person is getting emotional. What do you do?</h3>
-                <textarea id="radar-a2" rows="4" class="mb-6" placeholder="I would..."></textarea>
+                <label class="block font-bold text-xs uppercase mb-2 text-[var(--accent)]">Metric 2: Information Processing</label>
+                <h3 class="text-xl mb-4 font-bold">When you look at a painting or a complex photo, what do you notice first? The specific details and colors, or the meaning and mood?</h3>
+                <textarea id="radar-a2" rows="3" class="mb-6" placeholder="My eyes are drawn to..."></textarea>
                 <button onclick="nextQuestion(2)" class="action-btn">Next</button>
             </div>
 
             <div id="q3-container" class="question-card hidden">
-                <label class="block mono text-xs uppercase mb-2 text-[var(--accent)]">Question 3 of 3: Focus</label>
-                <h3 class="text-xl mb-4">When learning something new, do you prefer to understand the abstract theory first, or jump in and try it immediately?</h3>
-                <textarea id="radar-a3" rows="4" class="mb-6" placeholder="I learn best by..."></textarea>
-                <button onclick="submitRadar()" class="action-btn">Analyze Identity</button>
+                <label class="block font-bold text-xs uppercase mb-2 text-[var(--accent)]">Metric 3: Decision Making</label>
+                <h3 class="text-xl mb-4 font-bold">A friend asks for advice on a problem they caused themselves. Do you offer emotional support first, or a solution to fix it?</h3>
+                <textarea id="radar-a3" rows="3" class="mb-6" placeholder="My instinct is to..."></textarea>
+                <button onclick="nextQuestion(3)" class="action-btn">Next</button>
+            </div>
+
+            <div id="q4-container" class="question-card hidden">
+                <label class="block font-bold text-xs uppercase mb-2 text-[var(--accent)]">Metric 4: Structure</label>
+                <h3 class="text-xl mb-4 font-bold">You have a free day with zero obligations. Does this feel liberating or slightly chaotic/unsettling?</h3>
+                <textarea id="radar-a4" rows="3" class="mb-6" placeholder="I generally feel..."></textarea>
+                <button onclick="nextQuestion(4)" class="action-btn">Next</button>
+            </div>
+
+            <div id="q5-container" class="question-card hidden">
+                <label class="block font-bold text-xs uppercase mb-2 text-[var(--accent)]">Metric 5: The Synthesizer</label>
+                <h3 class="text-xl mb-4 font-bold">Describe your relationship with "Rules." Are they safety rails that protect society, or guidelines that often get in the way?</h3>
+                <textarea id="radar-a5" rows="3" class="mb-6" placeholder="To me, rules are..."></textarea>
+                <button onclick="submitRadar()" class="action-btn">Finalize Diagnosis</button>
             </div>
         </div>
 
         <div id="radar-loading" class="hidden text-center mt-12">
             <div class="spinner mb-4"></div>
-            <div class="mono text-sm tracking-widest text-[var(--accent)]">TRIANGULATING COGNITIVE STACK...</div>
+            <div class="text-sm font-bold tracking-widest text-[var(--accent)]">ANALYZING SYNTAX PATTERNS...</div>
         </div>
 
-        <div id="radar-results" class="panel hidden fade-in">
-            <div class="diagnosis-card mb-8">
-                <div class="mono text-xs uppercase opacity-50 mb-2">Primary Match</div>
-                <h2 id="radar-type" class="text-6xl font-bold text-white mb-2">----</h2>
-                <div id="radar-title" class="text-xl text-[var(--accent)] font-bold">The Archetype</div>
+        <div id="radar-results" class="panel hidden fade-in text-center">
+            <div class="mb-8">
+                <div class="text-xs uppercase font-bold text-[var(--text-muted)] mb-2">Calculated Archetype</div>
+                <h2 id="radar-type" class="text-6xl font-bold text-[var(--text-main)] mb-2">----</h2>
+                <div id="radar-title" class="text-xl text-[var(--accent)] font-bold">The Identity</div>
             </div>
             
-            <h3 class="mono text-xs uppercase mb-4 opacity-70">Cognitive Analysis</h3>
-            <p id="radar-analysis" class="leading-relaxed text-[var(--text-muted)] mb-8"></p>
+            <div class="text-left bg-[#f8fafc] p-6 rounded-xl border border-dashed border-[var(--border)]">
+                <h3 class="text-xs font-bold uppercase mb-4 text-[var(--text-muted)]">Analysis Report</h3>
+                <p id="radar-analysis" class="leading-relaxed text-[var(--text-main)]"></p>
+            </div>
             
-            <button onclick="resetRadar()" class="mono text-xs hover:text-[var(--accent)] opacity-70">RETAKE DIAGNOSTIC</button>
+            <button onclick="resetRadar()" class="mt-8 text-xs font-bold hover:text-[var(--accent)] text-[var(--text-muted)]">RETAKE DIAGNOSTIC</button>
         </div>
 
     </div>
@@ -258,36 +253,68 @@
     <div id="tab-prism" class="w-full max-w-xl hidden">
         
         <div id="prism-input" class="panel">
+            <div class="mb-4">
+                <label class="block font-bold text-xs uppercase mb-2 text-[var(--text-muted)]">Select Subject</label>
+                <select id="typeSelect">
+                    <option value="" disabled selected>Choose a Personality Type...</option>
+                    <optgroup label="Analysts (Logical/Strategic)">
+                        <option value="INTJ">INTJ - The Architect</option>
+                        <option value="INTP">INTP - The Logician</option>
+                        <option value="ENTJ">ENTJ - The Commander</option>
+                        <option value="ENTP">ENTP - The Debater</option>
+                    </optgroup>
+                    <optgroup label="Diplomats (Idealistic/Empathetic)">
+                        <option value="INFJ">INFJ - The Advocate</option>
+                        <option value="INFP">INFP - The Mediator</option>
+                        <option value="ENFJ">ENFJ - The Protagonist</option>
+                        <option value="ENFP">ENFP - The Campaigner</option>
+                    </optgroup>
+                    <optgroup label="Sentinels (Orderly/Practical)">
+                        <option value="ISTJ">ISTJ - The Logistician</option>
+                        <option value="ISFJ">ISFJ - The Defender</option>
+                        <option value="ESTJ">ESTJ - The Executive</option>
+                        <option value="ESFJ">ESFJ - The Consul</option>
+                    </optgroup>
+                    <optgroup label="Explorers (Spontaneous/Flexible)">
+                        <option value="ISTP">ISTP - The Virtuoso</option>
+                        <option value="ISFP">ISFP - The Adventurer</option>
+                        <option value="ESTP">ESTP - The Entrepreneur</option>
+                        <option value="ESFP">ESFP - The Entertainer</option>
+                    </optgroup>
+                </select>
+            </div>
+
             <div class="mb-6">
-                <label class="block mono text-xs uppercase mb-2 opacity-70">Describe a Scenario</label>
-                <input type="text" id="scenarioInput" placeholder="e.g. Flight cancelled, Surprise party" onkeypress="handlePrismEnter(event)">
+                <label class="block font-bold text-xs uppercase mb-2 text-[var(--text-muted)]">Input Scenario</label>
+                <input type="text" id="scenarioInput" placeholder="e.g. Being forced to attend a networking event" onkeypress="handlePrismEnter(event)">
             </div>
             
-            <button onclick="engagePrism()" class="action-btn">Simulate Reactions</button>
+            <button onclick="engagePrism()" class="action-btn">Run Simulation</button>
 
             <div class="suggestions-box">
-                <label class="block mono text-xs uppercase mb-2 opacity-70">Suggestion Generator:</label>
-                <select id="categorySelect" class="cat-select" onchange="fetchSuggestions()">
-                    <option value="" disabled selected>Select Context...</option>
-                    <option value="Workplace Conflict">💼 Workplace Conflict</option>
-                    <option value="Romance & Dating">❤️ Romance & Dating</option>
-                    <option value="High Stress Crisis">🔥 High Stress Crisis</option>
-                    <option value="Social Gathering">🥂 Social Gathering</option>
-                </select>
-                <div id="suggestions-area" class="chip-container">
-                    <span class="mono text-xs opacity-50 italic">Select a context...</span>
+                <label class="block font-bold text-xs uppercase mb-2 text-[var(--text-muted)]">Auto-Generate Context:</label>
+                <div class="flex gap-2 mb-2">
+                    <select id="categorySelect" class="flex-1 bg-white border border-[var(--border)] rounded-lg p-2 text-sm outline-none">
+                        <option value="" disabled selected>Select Theme...</option>
+                        <option value="Workplace Tension">💼 Workplace Tension</option>
+                        <option value="Romantic Dilemma">❤️ Romantic Dilemma</option>
+                        <option value="Social Crisis">🔥 Social Crisis</option>
+                        <option value="Moral Quandary">⚖️ Moral Quandary</option>
+                    </select>
+                    <button onclick="fetchSuggestions()" class="bg-[var(--bg-input)] text-[var(--text-muted)] px-4 rounded-lg font-bold text-sm hover:bg-[var(--border)]">Go</button>
                 </div>
+                <div id="suggestions-area" class="chip-container"></div>
             </div>
         </div>
 
         <div id="prism-loading" class="hidden text-center mt-12">
             <div class="spinner mb-4"></div>
-            <div class="mono text-sm tracking-widest text-[var(--accent)]">SIMULATING PERSPECTIVES...</div>
+            <div class="text-sm font-bold tracking-widest text-[var(--accent)]">SIMULATING NEURAL PATHWAYS...</div>
         </div>
 
         <div id="prism-results" class="hidden fade-in mt-8">
             <div class="text-center mb-8">
-                <button onclick="resetPrism()" class="mono text-xs hover:text-[var(--accent)] opacity-70">← NEW SCENARIO</button>
+                <button onclick="resetPrism()" class="text-xs font-bold hover:text-[var(--accent)] text-[var(--text-muted)]">← RESET SIMULATION</button>
             </div>
             <div id="prism-container"></div>
         </div>
@@ -299,21 +326,17 @@
 
     // --- TAB LOGIC ---
     function switchTab(tabId) {
-        // Hide all tabs
         document.getElementById('tab-radar').classList.add('hidden');
         document.getElementById('tab-prism').classList.add('hidden');
-        
-        // Deactivate buttons
         document.getElementById('tab-radar-btn').classList.remove('active');
         document.getElementById('tab-prism-btn').classList.remove('active');
         
-        // Show selected
         document.getElementById(`tab-${tabId}`).classList.remove('hidden');
         document.getElementById(`tab-${tabId}-btn`).classList.add('active');
     }
 
     // ==========================================
-    // LOGIC: IDENTITY RADAR
+    // LOGIC: IDENTITY RADAR (5 Questions)
     // ==========================================
     
     function startRadar() {
@@ -329,42 +352,45 @@
         
         const next = current + 1;
         document.getElementById(`q${next}-container`).classList.remove('hidden');
-        document.getElementById('radar-progress').style.width = `${next * 33}%`;
+        document.getElementById('radar-progress').style.width = `${next * 20}%`;
     }
 
     async function submitRadar() {
-        const a1 = document.getElementById('radar-a1').value;
-        const a2 = document.getElementById('radar-a2').value;
-        const a3 = document.getElementById('radar-a3').value; // Final answer
-
-        if(!a3.trim()) { alert("Please provide an answer."); return; }
+        // Collect all 5 answers
+        const answers = [];
+        for(let i=1; i<=5; i++) {
+            const val = document.getElementById(`radar-a${i}`).value.trim();
+            if(!val) { alert("Please complete all questions."); return; }
+            answers.push(`Q${i}: ${val}`);
+        }
 
         document.getElementById('radar-questions').classList.add('hidden');
         document.getElementById('radar-loading').classList.remove('hidden');
 
         try {
             const prompt = `
-                Role: Expert MBTI Typologist.
-                Task: Analyze these 3 survey responses to determine the user's likely MBTI type.
+                Role: Expert Psychometrician.
+                Task: Analyze these 5 responses to determine the user's MBTI type.
                 
-                Response 1 (Weekend/Structure): "${a1}"
-                Response 2 (Conflict/Emotion): "${a2}"
-                Response 3 (Learning/Theory): "${a3}"
+                ${answers.join('\n')}
                 
-                1. Analyze their language for Cognitive Functions (Ni vs Ne, Ti vs Te, etc).
-                2. Determine the most likely 4-letter type.
-                3. Provide a brief analysis of WHY.
+                Map specific cognitive functions:
+                - Q1 maps to E vs I (Energy source)
+                - Q2 maps to S vs N (Information gathering)
+                - Q3 maps to T vs F (Decision making)
+                - Q4 maps to J vs P (Structure)
+                - Q5 is the synthesizer (Relationship with rules/authority)
 
                 RETURN JSON ONLY:
                 {
                     "type": "INTJ",
                     "title": "The Architect",
-                    "analysis": "User showed strong preference for..."
+                    "analysis": "A concise paragraph explaining why, referencing their specific answers."
                 }
             `;
 
             const response = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`,
                 {
                     method: "POST", headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -378,7 +404,6 @@
             const text = data.candidates[0].content.parts[0].text;
             const result = JSON.parse(text);
             
-            // Render Results
             document.getElementById('radar-type').textContent = result.type;
             document.getElementById('radar-title').textContent = result.title;
             document.getElementById('radar-analysis').textContent = result.analysis;
@@ -394,23 +419,22 @@
     }
 
     function resetRadar() {
-        document.getElementById('radar-a1').value = '';
-        document.getElementById('radar-a2').value = '';
-        document.getElementById('radar-a3').value = '';
-        document.getElementById('radar-progress').style.width = '33%';
+        for(let i=1; i<=5; i++) document.getElementById(`radar-a${i}`).value = '';
+        document.getElementById('radar-progress').style.width = '20%';
         
         document.getElementById('radar-results').classList.add('hidden');
         document.getElementById('radar-intro').classList.remove('hidden');
         
-        // Reset question visibility
         document.getElementById('q1-container').classList.remove('hidden');
         document.getElementById('q2-container').classList.add('hidden');
         document.getElementById('q3-container').classList.add('hidden');
+        document.getElementById('q4-container').classList.add('hidden');
+        document.getElementById('q5-container').classList.add('hidden');
     }
 
 
     // ==========================================
-    // LOGIC: REACTION PRISM
+    // LOGIC: REACTION PRISM (16 Type Selector)
     // ==========================================
 
     function handlePrismEnter(e) { if(e.key === 'Enter') engagePrism(); }
@@ -420,20 +444,15 @@
         const container = document.getElementById('suggestions-area');
         if (!category) return;
 
-        container.innerHTML = '<span class="mini-loader">READING THE ROOM...</span>';
+        container.innerHTML = '<span class="text-xs text-[var(--accent)] animate-pulse">GENERATING...</span>';
 
         try {
-            const prompt = `
-                Role: Psychologist. Task: List 5 distinct scenarios for context "${category}". Short (3-6 words). JSON Array only.
-            `;
+            const prompt = `Role: Psychologist. List 4 distinct scenarios for "${category}". Short (3-6 words). JSON Array only.`;
             const response = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`,
                 {
                     method: "POST", headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        contents: [{ role: "user", parts: [{ text: prompt }] }],
-                        generationConfig: { responseMimeType: "application/json" }
-                    })
+                    body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json" } })
                 }
             );
             const data = await response.json();
@@ -444,30 +463,43 @@
                 const chip = document.createElement('button');
                 chip.className = 'suggestion-chip';
                 chip.textContent = item;
-                chip.onclick = () => {
-                    document.getElementById('scenarioInput').value = item;
-                    engagePrism();
-                };
+                chip.onclick = () => { document.getElementById('scenarioInput').value = item; };
                 container.appendChild(chip);
             });
         } catch (e) { console.error(e); }
     }
 
     async function engagePrism() {
+        const type = document.getElementById('typeSelect').value;
         const scenario = document.getElementById('scenarioInput').value.trim();
-        if(!scenario) return;
+        
+        if(!type) { alert("Please select a Personality Type."); return; }
+        if(!scenario) { alert("Please enter a scenario."); return; }
 
         document.getElementById('prism-input').classList.add('hidden');
         document.getElementById('prism-loading').classList.remove('hidden');
 
         try {
             const prompt = `
-                Role: MBTI Expert. Task: Describe reactions of 4 types (Analyst, Diplomat, Sentinel, Explorer) to: "${scenario}".
-                RETURN JSON ONLY: [{ "type": "INTJ", "group": "Analyst", "reaction": "...", "analysis": "..." }]
+                Role: MBTI Expert.
+                Task: Simulate the reaction of a specific MBTI type: ${type}.
+                Scenario: "${scenario}"
+                
+                Provide:
+                1. Internal Monologue: What are they thinking? (Use cognitive functions).
+                2. Visible Action: What do they actually DO?
+                3. Analysis: Brief explanation.
+
+                RETURN JSON ONLY:
+                {
+                    "monologue": "...",
+                    "action": "...",
+                    "analysis": "..."
+                }
             `;
 
             const response = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`,
                 {
                     method: "POST", headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -478,27 +510,29 @@
             );
 
             const data = await response.json();
-            const results = JSON.parse(data.candidates[0].content.parts[0].text);
+            const res = JSON.parse(data.candidates[0].content.parts[0].text);
             
             const container = document.getElementById('prism-container');
-            container.innerHTML = '';
-
-            results.forEach(item => {
-                const groupClass = item.group.toLowerCase();
-                const card = document.createElement('div');
-                card.className = `type-card border-${groupClass}`;
-                card.innerHTML = `
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <span class="type-badge text-${groupClass}">${item.group}</span>
-                            <h3 class="text-2xl font-bold mb-2 text-${groupClass}">${item.type}</h3>
-                        </div>
+            container.innerHTML = `
+                <div class="result-card">
+                    <h2 class="text-3xl font-bold text-[var(--text-main)] mb-1">${type}</h2>
+                    <div class="text-xs uppercase font-bold text-[var(--accent)] mb-4">Simulation Result</div>
+                    
+                    <div class="mb-4">
+                        <div class="text-xs font-bold uppercase text-[var(--text-muted)]">Internal Monologue</div>
+                        <div class="monologue">"${res.monologue}"</div>
                     </div>
-                    <div class="reaction-text">"${item.reaction}"</div>
-                    <div class="analysis-text">👉 ${item.analysis}</div>
-                `;
-                container.appendChild(card);
-            });
+                    
+                    <div class="mb-4">
+                        <div class="text-xs font-bold uppercase text-[var(--text-muted)]">Visible Action</div>
+                        <p class="font-bold text-lg">${res.action}</p>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-[var(--border)]">
+                        <p class="text-sm text-[var(--text-muted)]">${res.analysis}</p>
+                    </div>
+                </div>
+            `;
 
             document.getElementById('prism-loading').classList.add('hidden');
             document.getElementById('prism-results').classList.remove('hidden');
@@ -511,7 +545,6 @@
     }
 
     function resetPrism() {
-        document.getElementById('scenarioInput').value = '';
         document.getElementById('prism-results').classList.add('hidden');
         document.getElementById('prism-loading').classList.add('hidden');
         document.getElementById('prism-input').classList.remove('hidden');
