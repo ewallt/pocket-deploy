@@ -9,18 +9,17 @@
     <style>
         /* --- THEME DEFINITIONS --- */
         :root {
-            /* Theme 1: FLUX (Updated for Readability) */
-            --bg-page: #d1d5db;        /* Light Gray Metal */
-            --bg-panel: #e5e7eb;       /* Stainless Steel */
+            /* Theme 1: FLUX (High Contrast) */
+            --bg-page: #d1d5db;        
+            --bg-panel: #e5e7eb;       
             
-            /* CHANGED: Dark Slate bg + Bright Cyan text for high contrast */
-            --bg-screen: #111827;      
-            --text-screen: #22d3ee;    
+            --bg-screen: #111827;      /* Dark Slate */
+            --text-screen: #22d3ee;    /* Cyan Text */
             
             --text-main: #1f2937;
             --text-muted: #4b5563;
 
-            --accent: #ef4444;         /* Red Cable/Button */
+            --accent: #ef4444;         
             --accent-glow: 0 0 10px rgba(239, 68, 68, 0.5);
             
             --border: #9ca3af;
@@ -92,18 +91,13 @@
             transition: all 0.5s ease;
         }
 
-        .input-wrapper {
-            position: relative;
-            width: 100%;
-        }
-
         input[type="text"] {
             background-color: var(--bg-screen);
             color: var(--text-screen);
             font-family: var(--font-mono);
             border: 2px solid var(--border);
             border-radius: 6px;
-            padding: 1rem 3rem 1rem 1rem; /* Extra padding right for lightbulb */
+            padding: 1rem;
             width: 100%;
             font-size: 1.25rem;
             outline: none;
@@ -111,26 +105,6 @@
         }
         input:focus { border-color: var(--accent); box-shadow: var(--accent-glow); }
         input::placeholder { color: var(--text-screen); opacity: 0.3; }
-
-        /* Suggestion Button (Lightbulb) */
-        .suggest-btn {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: transparent;
-            border: none;
-            font-size: 1.2rem;
-            cursor: pointer;
-            opacity: 0.5;
-            transition: opacity 0.2s, transform 0.2s;
-            filter: grayscale(100%);
-        }
-        .suggest-btn:hover {
-            opacity: 1;
-            transform: translateY(-50%) scale(1.1);
-            filter: grayscale(0%);
-        }
 
         .time-btn {
             background-color: var(--accent);
@@ -150,6 +124,44 @@
         }
         .time-btn:hover { transform: translateY(-2px); }
         .time-btn:active { transform: translateY(1px); }
+
+        /* --- SUGGESTIONS BOX --- */
+        .suggestions-box {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px dashed var(--border);
+        }
+        .suggestion-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            opacity: 0.7;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        .chip-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .suggestion-chip {
+            background-color: var(--bg-screen);
+            color: var(--text-screen);
+            border: 1px solid var(--border);
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            opacity: 0.8;
+        }
+        .suggestion-chip:hover {
+            opacity: 1;
+            border-color: var(--accent);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
 
         /* --- RESULTS --- */
         .era-card {
@@ -226,17 +238,21 @@
 
     <header class="text-center mb-10">
         <h1 class="text-5xl mb-2 tracking-tight" style="text-shadow: 2px 2px 0px rgba(0,0,0,0.1);">SLANG TIME MACHINE</h1>
-        <p class="mono text-sm opacity-70">TEMPORAL TRANSLATION ENGINE v1.1</p>
+        <p class="mono text-sm opacity-70">TEMPORAL TRANSLATION ENGINE v1.2</p>
     </header>
 
     <div id="view-input" class="w-full max-w-xl panel">
         <div class="mb-6">
             <label class="block mono text-xs uppercase mb-2 opacity-70">Input Modern Phrase</label>
-            <div class="input-wrapper">
-                <input type="text" id="phraseInput" placeholder="e.g. Ghosting someone" onkeypress="handleEnter(event)">
-                <button onclick="suggestPhrase()" class="suggest-btn" title="Get a suggestion">💡</button>
-            </div>
+            <input type="text" id="phraseInput" placeholder="e.g. Ghosting someone" onkeypress="handleEnter(event)">
         </div>
+        
+        <div class="suggestions-box mb-6">
+            <span class="suggestion-label">Quick Inputs:</span>
+            <div class="chip-container" id="suggestions-container">
+                </div>
+        </div>
+
         <button onclick="engageTimeMachine()" class="time-btn">ENGAGE CIRCUITS</button>
     </div>
 
@@ -264,31 +280,27 @@
     const themes = ['', 'theme-neon', 'theme-parchment'];
     let themeIndex = 0;
 
-    const suggestions = [
-        "Ghosting someone",
-        "The party was lit",
-        "Sliding into DMs",
-        "It's giving... vibes",
-        "Touch grass",
-        "Main character energy",
-        "No cap, for real",
-        "Spilling the tea",
-        "Living rent-free in my head",
-        "That's cringe",
-        "Okay Boomer",
-        "Leaving him on read"
+    const phrases = [
+        "Ghosting", "Rizz", "Touch Grass", 
+        "It's Giving...", "Main Character", "No Cap"
     ];
+
+    // Initialize Suggestions
+    const container = document.getElementById('suggestions-container');
+    phrases.forEach(phrase => {
+        const chip = document.createElement('button');
+        chip.className = 'suggestion-chip';
+        chip.textContent = phrase;
+        chip.onclick = () => {
+            document.getElementById('phraseInput').value = phrase;
+            engageTimeMachine();
+        };
+        container.appendChild(chip);
+    });
 
     function cycleTheme() {
         themeIndex = (themeIndex + 1) % themes.length;
         document.body.className = "min-h-screen flex flex-col items-center py-12 px-4 " + themes[themeIndex];
-    }
-
-    function suggestPhrase() {
-        const random = suggestions[Math.floor(Math.random() * suggestions.length)];
-        const input = document.getElementById('phraseInput');
-        input.value = random;
-        input.focus();
     }
 
     function handleEnter(e) { if(e.key === 'Enter') engageTimeMachine(); }
