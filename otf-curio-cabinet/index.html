@@ -202,7 +202,7 @@
                 <option value="SPACE">🚀 Space & Physics</option>
                 <option value="HISTORY">🏛️ History & Culture</option>
                 <option value="NATURE">🌿 Nature & Biology</option>
-                <option value="ODDITIES">🔮 Oddities & Language</option>
+                <option value="ODDITIES">🔮 Oddities & Systems</option>
             </select>
             <button onclick="startGame()" id="btn-play" class="play-btn">Open Cabinet</button>
         </div>
@@ -234,45 +234,32 @@
 <script>
     const API_KEY = "AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A";
     
-    // EXTENDED SOURCE MAP (35+ Sources)
+    // EXTENDED SOURCE MAP - Focused on Perspective Shifts & Anomalies
     const SOURCE_ROULETTE = [
         // SPACE & PHYSICS
-        { category: "SPACE", label: "NASA Climate: Water & Oceans", promptContext: "NASA Climate Kids 'Water' section" },
-        { category: "SPACE", label: "NASA Climate: Energy & Tech", promptContext: "NASA Climate Kids 'Energy' section" },
-        { category: "SPACE", label: "NASA Climate: Atmosphere", promptContext: "NASA Climate Kids 'Atmosphere' section" },
-        { category: "SPACE", label: "NASA Climate: Weather vs Climate", promptContext: "NASA Climate Kids 'Weather' section" },
-        { category: "SPACE", label: "NASA Space Place: Solar System", promptContext: "NASA Space Place 'Solar System' facts" },
-        { category: "SPACE", label: "NASA Space Place: Black Holes", promptContext: "NASA Space Place 'Black Holes' facts" },
-        { category: "SPACE", label: "SciAm: Quantum Physics", promptContext: "Scientific American Physics & Quantum Mechanics" },
-        { category: "SPACE", label: "SciAm: Astrophysics", promptContext: "Scientific American Space & Cosmology" },
+        { category: "SPACE", label: "NASA Climate: Water", promptContext: "NASA Climate Kids 'Water' section: Statistics, Ratios, Scarcity" },
+        { category: "SPACE", label: "NASA Climate: Energy", promptContext: "NASA Climate Kids 'Energy' section: Scale, Usage, Physics" },
+        { category: "SPACE", label: "NASA Climate: Atmosphere", promptContext: "NASA Climate Kids 'Atmosphere': Composition, Layers, Invisible Forces" },
+        { category: "SPACE", label: "NASA Space Place: Solar System", promptContext: "NASA Space Place: Scale of Planets, Distances, Composition" },
+        { category: "SPACE", label: "SciAm: Physics Anomalies", promptContext: "Scientific American: Quantum oddities and Counter-intuitive Physics" },
         
         // HISTORY & CULTURE
-        { category: "HISTORY", label: "Smithsonian: Ancient Civilizations", promptContext: "Smithsonian Magazine Archaeology & Ancient History" },
-        { category: "HISTORY", label: "Smithsonian: American History", promptContext: "Smithsonian Magazine American History" },
-        { category: "HISTORY", label: "Smithsonian: Innovation", promptContext: "Smithsonian Magazine Innovation & Technology" },
-        { category: "HISTORY", label: "Mental Floss: Food History", promptContext: "Mental Floss Food History" },
-        { category: "HISTORY", label: "Britannica: The Victorian Era", promptContext: "Britannica Victorian Era History" },
-        { category: "HISTORY", label: "Britannica: The Middle Ages", promptContext: "Britannica Medieval History" },
-        { category: "HISTORY", label: "Britannica: World Mythology", promptContext: "Britannica Mythology & Folklore" },
-        { category: "HISTORY", label: "History Channel: Engineering Failures", promptContext: "History of Engineering Disasters" },
+        { category: "HISTORY", label: "Smithsonian: Ancient Engineering", promptContext: "Smithsonian: How things were actually built, lost technologies" },
+        { category: "HISTORY", label: "Smithsonian: Misconceptions", promptContext: "Smithsonian: Common Historical Myths Debunked" },
+        { category: "HISTORY", label: "Britannica: Pre-History", promptContext: "Britannica: Human Origins, Timelines that feel wrong (e.g. Cleopatra/Moon Landing)" },
+        { category: "HISTORY", label: "Mental Floss: Geography", promptContext: "Mental Floss: Borders, Enclaves, Map oddities" },
 
         // NATURE & BIOLOGY
-        { category: "NATURE", label: "NASA Climate: Plants & Animals", promptContext: "NASA Climate Kids 'Plants and Animals'" },
-        { category: "NATURE", label: "Britannica: Animal Kingdom", promptContext: "Britannica Zoology & Animal Behavior" },
-        { category: "NATURE", label: "Britannica: Human Anatomy", promptContext: "Britannica Human Anatomy & Health" },
-        { category: "NATURE", label: "SciAm: The Human Brain", promptContext: "Scientific American Mind & Neuroscience" },
-        { category: "NATURE", label: "SciAm: Evolution", promptContext: "Scientific American Evolution & Paleontology" },
-        { category: "NATURE", label: "NatGeo: Deep Sea", promptContext: "National Geographic Deep Sea & Oceans" },
-        { category: "NATURE", label: "NatGeo: Insects", promptContext: "National Geographic Insects & Bugs" },
-        { category: "NATURE", label: "Kew Gardens: Botany", promptContext: "Royal Botanic Gardens Plant Facts" },
+        { category: "NATURE", label: "Britannica: Extreme Biology", promptContext: "Britannica: Extremophiles, Deep Sea, Biological Immortality" },
+        { category: "NATURE", label: "SciAm: The Brain", promptContext: "Scientific American: Perception, Cognitive biases, Neuroscience stats" },
+        { category: "NATURE", label: "NatGeo: Insect Scale", promptContext: "National Geographic: Ant colonies, Swarms, Micro-ecosystem stats" },
+        { category: "NATURE", label: "Kew Gardens: Plant Defense", promptContext: "Botany: Poisons, Carnivorous plants, Communication" },
         
-        // ODDITIES & LANGUAGE
-        { category: "ODDITIES", label: "Mental Floss: Language Quirks", promptContext: "Mental Floss Linguistics & Word Origins" },
-        { category: "ODDITIES", label: "Mental Floss: Misconceptions", promptContext: "Mental Floss Common Misconceptions" },
-        { category: "ODDITIES", label: "Atlas Obscura: Hidden Places", promptContext: "Atlas Obscura Hidden Places" },
-        { category: "ODDITIES", label: "Atlas Obscura: Unusual Objects", promptContext: "Atlas Obscura Unusual Objects" },
-        { category: "ODDITIES", label: "Guinness: Absurd Records", promptContext: "Guinness World Records Bizarre Categories" },
-        { category: "ODDITIES", label: "Britannica: Psychology", promptContext: "Britannica Psychology & Human Behavior" }
+        // ODDITIES & SYSTEMS
+        { category: "ODDITIES", label: "Urban Systems", promptContext: "City Planning: Traffic lights, Sewers, Hidden Infrastructure stats" },
+        { category: "ODDITIES", label: "Economics & Trade", promptContext: "Global Supply Chains: Shipping containers, weird exports" },
+        { category: "ODDITIES", label: "Linguistics", promptContext: "Language families, isolated languages, weird grammar rules" },
+        { category: "ODDITIES", label: "Probability & Stats", promptContext: "Counter-intuitive statistics (Birthday Paradox style)" }
     ];
 
     let gameState = { gameOver: false, cardsData: [] };
@@ -288,15 +275,13 @@
         const topicBadge = document.getElementById('topic-badge');
         const loadingTopic = document.getElementById('loading-topic');
 
-        // Filter Sources based on User Selection
+        // Filter Sources
         const selectedDomain = selector.value;
         let pool = SOURCE_ROULETTE;
-        
         if (selectedDomain !== 'ALL') {
             pool = SOURCE_ROULETTE.filter(s => s.category === selectedDomain);
         }
 
-        // Pick Random Source from Pool
         const selection = pool[Math.floor(Math.random() * pool.length)];
         
         topicBadge.textContent = `Source: ${selection.label}`;
@@ -304,7 +289,7 @@
 
         // Reset UI
         btn.classList.add('hidden');
-        selector.classList.add('hidden'); // Hide selector during play
+        selector.classList.add('hidden'); 
         scoreDisplay.classList.remove('hidden');
         nextArea.classList.add('hidden');
         topicBadge.classList.add('hidden');
@@ -317,19 +302,30 @@
 
         try {
             const prompt = `
-                Role: The Trickster Curator.
-                Goal: Create a "Find the Fake" trivia round based on a specific source.
+                Role: The Curator of Perspective.
+                Goal: Create a "True or Fake" round based on specific source material.
                 Seed: ${Math.random()}
                 
                 SOURCE CONTEXT: "${selection.promptContext}"
                 
                 Task: Generate 4 facts suitable for this source.
-                - 3 MUST be TRUE facts that would be found in this specific section (Verifiable).
-                - 1 MUST be FAKE (A plausible hallucination that fits the theme).
+                - 3 MUST be TRUE.
+                - 1 MUST be FAKE (A plausible hallucination).
                 
-                CRITERIA:
-                - The True facts should be specific, concrete, and surprising.
-                - The Fake fact should use correct terminology to sound convincing.
+                CRITICAL INSTRUCTION FOR "INTERESTING":
+                Do not just give definition facts (e.g., "The sun is hot").
+                Look for:
+                1. SCALE & RATIOS: "Trees outnumber stars in the Milky Way." (Numbers that feel wrong).
+                2. INVISIBLE SYSTEMS: "Traffic buttons often do nothing." (Hidden mechanics).
+                3. COUNTER-INTUITIVE TIMELINES: "Nintendo was founded while the Ottomans still ruled."
+                4. STRUCTURAL ANOMALIES: "Wombats poop cubes."
+                
+                NEGATIVE CONSTRAINTS (DO NOT USE):
+                - No "Eiffel Tower grows in summer".
+                - No "Bananas are berries".
+                - No "Octopus has 3 hearts".
+                - No "Napoleon was short/tall".
+                - No "You eat 8 spiders in your sleep".
                 
                 RETURN JSON ONLY:
                 [
@@ -430,19 +426,6 @@
 
         document.getElementById('next-round-area').classList.remove('hidden');
     }
-
-    // Reset selector visibility on replay
-    function resetGame() {
-        document.getElementById('domain-select').classList.remove('hidden');
-        startGame();
-    }
-
-    // Modify the next button to restart properly
-    // Note: I bound the next button to startGame() in HTML, but we might want it to show the selector again?
-    // Current behavior: "Next Collection" keeps the SAME domain filter. 
-    // To let them change domain, we should show the start screen again.
-    // Let's modify the Next button behavior in the HTML above to show controls again?
-    // Actually, keeping the flow is faster. Let's keep it calling startGame().
     
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
