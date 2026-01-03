@@ -72,7 +72,7 @@
             outline: none;
             cursor: pointer;
             width: 100%;
-            max-width: 300px;
+            max-width: 350px;
             margin-bottom: 1rem;
             text-align: center;
         }
@@ -124,6 +124,16 @@
         }
         
         /* CONTENT STYLES */
+        .category-tag {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-gold);
+            opacity: 0.7;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
         .fact-text {
             font-size: 1.25rem;
             line-height: 1.4;
@@ -198,7 +208,7 @@
         
         <div id="controls" class="flex flex-col items-center">
             <select id="domain-select" class="domain-select">
-                <option value="ALL">✦ The Curator's Choice (Random)</option>
+                <option value="ECLECTIC">✦ The Eclectic Mix (Potpourri)</option>
                 <option value="SPACE">🚀 Space & Physics</option>
                 <option value="HISTORY">🏛️ History & Culture</option>
                 <option value="NATURE">🌿 Nature & Biology</option>
@@ -234,32 +244,32 @@
 <script>
     const API_KEY = "AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A";
     
-    // EXTENDED SOURCE MAP - Focused on Perspective Shifts & Anomalies
+    // EXTENDED SOURCE MAP
     const SOURCE_ROULETTE = [
         // SPACE & PHYSICS
-        { category: "SPACE", label: "NASA Climate: Water & Oceans", promptContext: "NASA Climate Kids 'Water' section: Statistics, Ratios, Scarcity" },
-        { category: "SPACE", label: "NASA Climate: Energy", promptContext: "NASA Climate Kids 'Energy' section: Scale, Usage, Physics" },
-        { category: "SPACE", label: "NASA Climate: Atmosphere", promptContext: "NASA Climate Kids 'Atmosphere': Composition, Layers, Invisible Forces" },
-        { category: "SPACE", label: "NASA Space Place: Solar System", promptContext: "NASA Space Place: Scale of Planets, Distances, Composition" },
-        { category: "SPACE", label: "SciAm: Physics Anomalies", promptContext: "Scientific American: Quantum oddities and Counter-intuitive Physics" },
+        { category: "SPACE", label: "NASA: Water & Oceans", promptContext: "NASA Climate Kids 'Water' section (Stats/Ratios)" },
+        { category: "SPACE", label: "NASA: Energy", promptContext: "NASA Climate Kids 'Energy' section" },
+        { category: "SPACE", label: "NASA: Atmosphere", promptContext: "NASA Climate Kids 'Atmosphere'" },
+        { category: "SPACE", label: "NASA Space Place", promptContext: "NASA Space Place: Solar System" },
+        { category: "SPACE", label: "SciAm: Physics", promptContext: "Scientific American: Quantum & Physics" },
         
         // HISTORY & CULTURE
-        { category: "HISTORY", label: "Smithsonian: Ancient Engineering", promptContext: "Smithsonian: How things were actually built, lost technologies" },
-        { category: "HISTORY", label: "Smithsonian: Misconceptions", promptContext: "Smithsonian: Common Historical Myths Debunked" },
-        { category: "HISTORY", label: "Britannica: Pre-History", promptContext: "Britannica: Human Origins, Timelines that feel wrong (e.g. Cleopatra/Moon Landing)" },
-        { category: "HISTORY", label: "Mental Floss: Geography", promptContext: "Mental Floss: Borders, Enclaves, Map oddities" },
+        { category: "HISTORY", label: "Smithsonian: Ancient Tech", promptContext: "Smithsonian: Ancient Technology" },
+        { category: "HISTORY", label: "Smithsonian: Myths", promptContext: "Smithsonian: Historical Myths" },
+        { category: "HISTORY", label: "Britannica: Pre-History", promptContext: "Britannica: Human Origins" },
+        { category: "HISTORY", label: "Mental Floss: Geography", promptContext: "Mental Floss: Geography Oddities" },
 
         // NATURE & BIOLOGY
-        { category: "NATURE", label: "Britannica: Extreme Biology", promptContext: "Britannica: Extremophiles, Deep Sea, Biological Immortality" },
-        { category: "NATURE", label: "SciAm: The Brain", promptContext: "Scientific American: Perception, Cognitive biases, Neuroscience stats" },
-        { category: "NATURE", label: "NatGeo: Insect Scale", promptContext: "National Geographic: Ant colonies, Swarms, Micro-ecosystem stats" },
-        { category: "NATURE", label: "Kew Gardens: Plant Defense", promptContext: "Botany: Poisons, Carnivorous plants, Communication" },
+        { category: "NATURE", label: "Britannica: Extreme Biology", promptContext: "Britannica: Extremophiles" },
+        { category: "NATURE", label: "SciAm: The Brain", promptContext: "Scientific American: Neuroscience" },
+        { category: "NATURE", label: "NatGeo: Insects", promptContext: "National Geographic: Insect Scale" },
+        { category: "NATURE", label: "Kew Gardens: Botany", promptContext: "Botany: Poisons & Carnivorous Plants" },
         
         // ODDITIES & SYSTEMS
-        { category: "ODDITIES", label: "Urban Systems", promptContext: "City Planning: Traffic lights, Sewers, Hidden Infrastructure stats" },
-        { category: "ODDITIES", label: "Economics & Trade", promptContext: "Global Supply Chains: Shipping containers, weird exports" },
-        { category: "ODDITIES", label: "Linguistics", promptContext: "Language families, isolated languages, weird grammar rules" },
-        { category: "ODDITIES", label: "Probability & Stats", promptContext: "Counter-intuitive statistics (Birthday Paradox style)" }
+        { category: "ODDITIES", label: "Urban Systems", promptContext: "City Planning & Hidden Infrastructure" },
+        { category: "ODDITIES", label: "Economics", promptContext: "Global Supply Chains & Weird Exports" },
+        { category: "ODDITIES", label: "Linguistics", promptContext: "Linguistics & Language Isolates" },
+        { category: "ODDITIES", label: "Statistics", promptContext: "Counter-intuitive Probability" }
     ];
 
     let gameState = { gameOver: false, cardsData: [] };
@@ -275,19 +285,47 @@
         const topicBadge = document.getElementById('topic-badge');
         const loadingTopic = document.getElementById('loading-topic');
 
-        // Filter Sources
+        // Logic for Eclectic vs Specific
         const selectedDomain = selector.value;
-        let pool = SOURCE_ROULETTE;
-        if (selectedDomain !== 'ALL') {
-            pool = SOURCE_ROULETTE.filter(s => s.category === selectedDomain);
+        let promptInstructions = "";
+        let displayLabel = "";
+
+        if (selectedDomain === "ECLECTIC") {
+            // Shuffle full list and pick 4 distinct ones
+            const shuffled = [...SOURCE_ROULETTE].sort(() => 0.5 - Math.random());
+            const selection = shuffled.slice(0, 4);
+            
+            displayLabel = "Eclectic Mix";
+            promptInstructions = `
+                Generate 4 facts, one for EACH of the following 4 contexts:
+                1. ${selection[0].promptContext}
+                2. ${selection[1].promptContext}
+                3. ${selection[2].promptContext}
+                4. ${selection[3].promptContext}
+                
+                CRITICAL: The resulting JSON array must have exactly 4 items.
+                Mix the order so the Fake isn't always last.
+                The JSON object for each fact must include a "category" field matching the source label (e.g., "Space", "History").
+            `;
+            loadingTopic.textContent = "Scanning Multiple Archives...";
+
+        } else {
+            // Standard Single-Domain Logic
+            let pool = SOURCE_ROULETTE.filter(s => s.category === selectedDomain);
+            const selection = pool[Math.floor(Math.random() * pool.length)];
+            
+            displayLabel = selection.label;
+            promptInstructions = `
+                SOURCE CONTEXT: "${selection.promptContext}"
+                Generate 4 facts suitable for this specific source.
+                The resulting JSON object should use the category "${selection.category}".
+            `;
+            loadingTopic.textContent = `Scanning: ${selection.label}`;
         }
-
-        const selection = pool[Math.floor(Math.random() * pool.length)];
         
-        topicBadge.textContent = `Source: ${selection.label}`;
-        loadingTopic.textContent = `Scanning: ${selection.label}`;
+        topicBadge.textContent = `Collection: ${displayLabel}`;
 
-        // Reset UI
+        // UI Reset
         btn.classList.add('hidden');
         selector.classList.add('hidden'); 
         scoreDisplay.classList.remove('hidden');
@@ -303,22 +341,21 @@
         try {
             const prompt = `
                 Role: The Curator of Perspective.
-                Goal: Create a "True or Fake" round based on specific source material.
+                Goal: Create a "True or Fake" round.
                 Seed: ${Math.random()}
                 
-                SOURCE CONTEXT: "${selection.promptContext}"
+                ${promptInstructions}
                 
-                Task: Generate 4 facts suitable for this source.
+                Task Requirements:
                 - 3 MUST be TRUE.
                 - 1 MUST be FAKE (A plausible hallucination).
                 
                 CRITICAL INSTRUCTION FOR "INTERESTING":
-                Do not just give definition facts (e.g., "The sun is hot").
                 Look for:
-                1. SCALE & RATIOS: "Trees outnumber stars in the Milky Way." (Numbers that feel wrong).
-                2. INVISIBLE SYSTEMS: "Traffic buttons often do nothing." (Hidden mechanics).
-                3. COUNTER-INTUITIVE TIMELINES: "Nintendo was founded while the Ottomans still ruled."
-                4. STRUCTURAL ANOMALIES: "Wombats poop cubes."
+                1. SCALE & RATIOS (Numbers that feel wrong).
+                2. INVISIBLE SYSTEMS (Hidden mechanics).
+                3. COUNTER-INTUITIVE TIMELINES.
+                4. STRUCTURAL ANOMALIES.
                 
                 NEGATIVE CONSTRAINTS (DO NOT USE):
                 - No "Eiffel Tower grows in summer".
@@ -332,6 +369,7 @@
                     {
                         "text": "Fact text...",
                         "type": "TRUE",
+                        "category": "Space", 
                         "explain": "Source: [Site Name]. Brief explanation."
                     }
                 ]
@@ -378,8 +416,12 @@
             card.className = 'artifact-card fade-in';
             card.style.animationDelay = `${index * 100}ms`;
             
+            // Fallback for category if AI misses it
+            const cat = fact.category || "General";
+            
             card.innerHTML = `
                 <div class="content-wrapper">
+                    <span class="category-tag">${cat}</span>
                     <p class="fact-text">"${fact.text}"</p>
                     
                     <div class="reveal-info">
@@ -426,8 +468,7 @@
 
         document.getElementById('next-round-area').classList.remove('hidden');
     }
-
-    // New Function to return to lobby
+    
     function resetGame() {
         document.getElementById('view-board').classList.add('hidden');
         document.getElementById('next-round-area').classList.add('hidden');
