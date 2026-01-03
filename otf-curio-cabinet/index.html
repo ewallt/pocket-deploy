@@ -87,13 +87,20 @@
         .artifact-card.revealed-true {
             border-color: var(--accent-green);
             background: rgba(21, 128, 61, 0.1);
+            opacity: 0.6; /* Dim the truths slightly when round ends */
             cursor: default;
         }
         .artifact-card.revealed-fake {
             border-color: var(--accent-gold);
-            background: rgba(212, 175, 55, 0.1);
+            background: rgba(212, 175, 55, 0.15);
             cursor: default;
             box-shadow: 0 0 30px rgba(212, 175, 55, 0.1);
+            z-index: 10;
+        }
+        /* Style for the card the user specifically clicked */
+        .artifact-card.user-selected {
+            opacity: 1 !important;
+            border-width: 2px;
         }
         
         /* CONTENT STYLES */
@@ -129,6 +136,15 @@
         .true-badge { color: var(--accent-green); }
         .fake-badge { color: var(--accent-gold); }
 
+        /* --- RESULT MESSAGE --- */
+        #result-message {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            min-height: 2rem;
+        }
+
         /* --- ANIMATIONS --- */
         .spinner {
             width: 40px; height: 40px; 
@@ -156,7 +172,7 @@
         </div>
         
         <div id="score-display" class="hidden mt-4 serif italic text-[var(--text-muted)]">
-            Find the fake to win the round.
+            One attempt only. Choose wisely.
         </div>
     </header>
 
@@ -171,7 +187,7 @@
             </div>
         
         <div id="next-round-area" class="text-center mt-12 hidden fade-in">
-            <h3 class="text-2xl serif italic text-[var(--accent-gold)] mb-4">You found the forgery.</h3>
+            <div id="result-message"></div>
             <button onclick="startGame()" class="play-btn text-sm py-3 px-8">Next Collection</button>
         </div>
     </div>
@@ -181,7 +197,7 @@
     
     let gameState = {
         gameOver: false,
-        cards: []
+        cardsData: [] // Store data to find the fake later
     };
 
     async function startGame() {
@@ -201,6 +217,7 @@
         board.classList.add('hidden');
         
         gameState.gameOver = false;
+        gameState.cardsData = [];
 
         try {
             const prompt = `
@@ -253,8 +270,9 @@
             const data = await response.json();
             let facts = JSON.parse(data.candidates[0].content.parts[0].text);
             
-            // Shuffle in JS to ensure the fake isn't always in the same JSON position
+            // Shuffle
             facts = shuffleArray(facts);
+            gameState.cardsData = facts; // Save state
             
             renderCards(facts);
 
@@ -276,6 +294,7 @@
         facts.forEach((fact, index) => {
             const card = document.createElement('div');
             card.className = 'artifact-card fade-in';
+            card.id = `card-${index}`; // ID for lookup
             card.style.animationDelay = `${index * 100}ms`;
             
             card.innerHTML = `
@@ -291,34 +310,47 @@
                 </div>
             `;
 
-            card.onclick = () => handleCardClick(card, fact);
+            card.onclick = () => handleCardClick(card, fact, index);
             grid.appendChild(card);
         });
     }
 
-    function handleCardClick(cardElement, factData) {
-        if (gameState.gameOver) return; // Round ended
-        if (cardElement.classList.contains('revealed-true')) return; // Already clicked
+    function handleCardClick(cardElement, factData, index) {
+        if (gameState.gameOver) return; // Prevent double clicks
 
-        if (factData.type === 'TRUE') {
-            // Player clicked a TRUE fact (keep playing)
-            cardElement.classList.add('revealed-true');
-        } else {
-            // Player clicked the FAKE (Win!)
-            cardElement.classList.add('revealed-fake');
-            endRound();
-        }
-    }
-
-    function endRound() {
         gameState.gameOver = true;
-        document.getElementById('next-round-area').classList.remove('hidden');
+        const msg = document.getElementById('result-message');
         
-        // Reveal all remaining cards nicely
+        // 1. Mark the card the user selected
+        cardElement.classList.add('user-selected');
+
+        if (factData.type === 'FAKE') {
+            // WIN CONDITION
+            msg.textContent = "Sharp eye. You caught the forgery.";
+            msg.style.color = "var(--accent-gold)";
+            cardElement.classList.add('revealed-fake');
+        } else {
+            // LOSE CONDITION
+            msg.textContent = "Deceived. This artifact is authentic.";
+            msg.style.color = "var(--text-muted)";
+            cardElement.classList.add('revealed-true');
+        }
+
+        // 2. REVEAL ALL OTHER CARDS
         const allCards = document.querySelectorAll('.artifact-card');
-        // Note: In a real game we might want to reveal them, but keeping them hidden 
-        // forces the user to wonder about the others, or we can auto-reveal.
-        // Let's leave them as-is to let the user click them if they want to read the source.
+        allCards.forEach((c, i) => {
+            const data = gameState.cardsData[i];
+            
+            // If it's the fake one (and wasn't clicked), highlight it so user sees what they missed
+            if (data.type === 'FAKE') {
+                c.classList.add('revealed-fake');
+            } else {
+                c.classList.add('revealed-true');
+            }
+        });
+
+        // 3. SHOW NEXT ROUND BTN
+        document.getElementById('next-round-area').classList.remove('hidden');
     }
 
     // Fisher-Yates Shuffle
