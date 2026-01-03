@@ -3,18 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Curio</title>
+    <title>The Curio Cabinet</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <style>
-        /* --- EDITORIAL THEME --- */
+        /* --- CABINET THEME --- */
         :root {
-            --bg-page: #fdfbf7;        /* Warm Paper */
-            --text-main: #1c1917;      /* Ink Black */
-            --text-muted: #57534e;     /* Stone */
-            --accent: #b91c1c;         /* Editorial Red */
-            --card-bg: #ffffff;
-            --border: #e7e5e4;
+            --bg-page: #1c1917;        /* Dark Wood/Shadow */
+            --bg-card: #292524;        /* Dark Stone */
+            --text-main: #e7e5e4;      /* Bone White */
+            --text-muted: #a8a29e;     /* Dust */
+            
+            --accent-gold: #d4af37;    /* Gold Leaf */
+            --accent-red: #9f1239;     /* Velvet Red */
+            --accent-green: #15803d;   /* Felt Green */
+            
+            --border: #44403c;
         }
 
         body {
@@ -25,166 +29,212 @@
         }
 
         h1, h2, h3, .serif { font-family: 'Playfair Display', serif; }
+        .display-font { font-family: 'Cinzel', serif; }
 
         /* --- UI COMPONENTS --- */
         .container-max {
-            max-width: 1000px;
+            max-width: 900px;
             margin: 0 auto;
         }
 
-        .dispatch-btn {
-            background-color: var(--text-main);
-            color: white;
-            font-family: 'Lato', sans-serif;
+        .play-btn {
+            background-color: transparent;
+            color: var(--accent-gold);
+            font-family: 'Cinzel', serif;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
-            padding: 1rem 2.5rem;
-            border-radius: 4px;
-            border: 2px solid var(--text-main);
+            letter-spacing: 0.15em;
+            padding: 1rem 3rem;
+            border: 2px solid var(--accent-gold);
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
         }
-        .dispatch-btn:hover {
-            background-color: transparent;
-            color: var(--text-main);
-            transform: translateY(-2px);
-            box-shadow: 6px 6px 0 rgba(0,0,0,0.1);
-        }
-        .dispatch-btn:active {
-            transform: translateY(1px);
-            box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+        .play-btn:hover {
+            background-color: var(--accent-gold);
+            color: var(--bg-page);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
         }
 
         /* --- CARD GRID --- */
-        .fact-grid {
+        .cabinet-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeInUp 0.8s ease forwards;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
         }
 
-        .fact-card {
-            background: var(--card-bg);
+        .artifact-card {
+            background: var(--bg-card);
             border: 1px solid var(--border);
             padding: 2rem;
             position: relative;
-            transition: all 0.3s ease;
-            border-top: 4px solid var(--text-main);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            min-height: 240px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
-        .fact-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
-            border-top-color: var(--accent);
+        
+        .artifact-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--text-muted);
         }
 
-        .tag-pill {
-            display: inline-block;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            font-weight: 700;
-            color: var(--accent);
-            border: 1px solid var(--border);
-            padding: 0.25rem 0.75rem;
-            border-radius: 100px;
+        /* STATES */
+        .artifact-card.revealed-true {
+            border-color: var(--accent-green);
+            background: rgba(21, 128, 61, 0.1);
+            cursor: default;
+        }
+        .artifact-card.revealed-fake {
+            border-color: var(--accent-gold);
+            background: rgba(212, 175, 55, 0.1);
+            cursor: default;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.1);
+        }
+        
+        /* CONTENT STYLES */
+        .fact-text {
+            font-size: 1.25rem;
+            line-height: 1.4;
+            font-family: 'Playfair Display', serif;
             margin-bottom: 1rem;
         }
 
-        .source-cite {
-            font-size: 0.75rem;
+        .reveal-text {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .explanation {
+            font-size: 0.9rem;
             color: var(--text-muted);
-            font-style: italic;
-            margin-top: 1.5rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            opacity: 0;
+            transition: opacity 0.5s ease 0.2s;
         }
 
+        /* Show content on reveal */
+        .revealed-true .reveal-text, .revealed-fake .reveal-text { opacity: 1; transform: translateY(0); }
+        .revealed-true .explanation, .revealed-fake .explanation { opacity: 1; }
+
+        .true-badge { color: var(--accent-green); }
+        .fake-badge { color: var(--accent-gold); }
+
         /* --- ANIMATIONS --- */
-        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
-        
         .spinner {
             width: 40px; height: 40px; 
-            border: 4px solid var(--border); 
-            border-top-color: var(--text-main); 
+            border: 2px solid var(--border); 
+            border-top-color: var(--accent-gold); 
             border-radius: 50%; 
             animation: spin 1s linear infinite; 
             margin: 0 auto;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
-
         .hidden { display: none; }
+        .fade-in { animation: fadeIn 0.8s ease forwards; opacity: 0; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
     </style>
 </head>
-<body class="min-h-screen py-12 px-6">
+<body class="min-h-screen py-12 px-6 flex flex-col items-center">
 
-    <header class="text-center mb-16 container-max">
-        <h1 class="text-6xl mb-4 font-bold tracking-tight">Curio.</h1>
-        <p class="text-xl serif italic text-[var(--text-muted)] mb-8">A curated feed of the verifiable, the specific, and the weird.</p>
+    <header class="text-center mb-10 container-max">
+        <h1 class="text-5xl mb-2 display-font text-[var(--accent-gold)]">The Curio Cabinet</h1>
+        <p class="text-sm uppercase tracking-[0.3em] text-[var(--text-muted)] mb-8">Identify the Fabrication</p>
         
-        <div class="flex justify-center gap-4">
-            <button onclick="fetchFacts()" id="btn-dispatch" class="dispatch-btn">Dispatch Scout</button>
+        <div id="controls">
+            <button onclick="startGame()" id="btn-play" class="play-btn">Open Cabinet</button>
+        </div>
+        
+        <div id="score-display" class="hidden mt-4 serif italic text-[var(--text-muted)]">
+            Find the fake to win the round.
         </div>
     </header>
 
     <div id="view-loading" class="hidden text-center my-20">
-        <div class="spinner mb-4"></div>
-        <p class="text-xs uppercase tracking-widest font-bold">Scanning Archives...</p>
-        <p class="text-xs text-[var(--text-muted)] mt-2">Checking Britannica • Smithsonian • NASA • Nature</p>
+        <div class="spinner mb-6"></div>
+        <p class="display-font text-xs tracking-widest text-[var(--accent-gold)]">Curating Artifacts...</p>
+        <p class="text-xs text-[var(--text-muted)] mt-2">Forging 1 fake • Verifying 3 truths</p>
     </div>
 
-    <div id="view-results" class="container-max">
-        <div id="fact-container" class="fact-grid">
+    <div id="view-board" class="container-max hidden">
+        <div id="card-grid" class="cabinet-grid">
             </div>
+        
+        <div id="next-round-area" class="text-center mt-12 hidden fade-in">
+            <h3 class="text-2xl serif italic text-[var(--accent-gold)] mb-4">You found the forgery.</h3>
+            <button onclick="startGame()" class="play-btn text-sm py-3 px-8">Next Collection</button>
+        </div>
     </div>
 
 <script>
     const API_KEY = "AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A";
+    
+    let gameState = {
+        gameOver: false,
+        cards: []
+    };
 
-    // Initial load
-    // fetchFacts(); // Optional: Auto-load on open? Let's wait for user click.
-
-    async function fetchFacts() {
-        const btn = document.getElementById('btn-dispatch');
+    async function startGame() {
+        const btn = document.getElementById('btn-play');
         const loader = document.getElementById('view-loading');
-        const grid = document.getElementById('fact-container');
+        const board = document.getElementById('view-board');
+        const grid = document.getElementById('card-grid');
+        const nextArea = document.getElementById('next-round-area');
+        const scoreDisplay = document.getElementById('score-display');
 
-        // UI State
-        btn.disabled = true;
-        btn.textContent = "Scouting...";
-        grid.innerHTML = ''; // Clear previous
+        // Reset UI
+        btn.classList.add('hidden');
+        scoreDisplay.classList.remove('hidden');
+        nextArea.classList.add('hidden');
+        grid.innerHTML = '';
         loader.classList.remove('hidden');
+        board.classList.add('hidden');
+        
+        gameState.gameOver = false;
 
         try {
             const prompt = `
-                You are an embedded "Interesting-Fact Scout."
+                Role: The Trickster Curator.
+                Goal: Create a "Find the Fake" trivia round.
                 
-                GOAL: Generate 10 "keeper" facts.
+                Task: Generate 4 facts.
+                - 3 MUST be TRUE (Verifiable, specific, reputable sources like Smithsonian/Britannica).
+                - 1 MUST be FAKE (A specific, plausible hallucination that sounds scientific/historical but is made up).
                 
                 CRITERIA:
-                1. Concrete & Specific (Not vague).
-                2. Surprising/Counterintuitive.
-                3. Verifiable (Simulate searching Britannica, Smithsonian, Scientific American, NASA).
+                - The True facts should sound surprising (counter-intuitive).
+                - The Fake fact should sound plausible (using real terminology).
+                - Topics: Mix of History, Science, Nature, Language.
                 
-                VARIETY RULES:
-                - Max 2 facts from the same domain (Space, History, Biology, etc).
-                - Include 1 "Absurd-Specific" fact.
-                - Include 1 "Everyday Counterintuitive" fact.
-
                 RETURN JSON ONLY:
-                A clean array of objects. No markdown formatting.
                 [
                     {
-                        "hook": "Wombat poop is cube-shaped.",
-                        "explain": "They are the only animal known to produce cubic feces, which prevents the droppings from rolling away on uneven terrain.",
-                        "source": "National Geographic",
-                        "tag": "Nature"
+                        "text": "The Eiffel Tower grows up to 6 inches in summer due to thermal expansion.",
+                        "type": "TRUE",
+                        "reveal": "Physics / Material Science",
+                        "explain": "Source: Smithsonian Mag. Iron expands when heated."
+                    },
+                    {
+                        "text": "Napoleon Bonaparte was attacked by a horde of bunnies.",
+                        "type": "TRUE",
+                        "reveal": "History",
+                        "explain": "Source: Mental Floss. He organized a rabbit hunt, but the tame rabbits swarmed him for food."
+                    },
+                    {
+                        "text": "The 'Quantum Dolphin' is the only mammal capable of photosynthesizing sunlight.",
+                        "type": "FAKE",
+                        "reveal": "COMPLETE FABRICATION",
+                        "explain": "This is a lie. No mammal can photosynthesize."
                     }
                 ]
             `;
@@ -201,44 +251,83 @@
             );
 
             const data = await response.json();
-            const facts = JSON.parse(data.candidates[0].content.parts[0].text);
+            let facts = JSON.parse(data.candidates[0].content.parts[0].text);
             
-            renderFacts(facts);
+            // Shuffle in JS to ensure the fake isn't always in the same JSON position
+            facts = shuffleArray(facts);
+            
+            renderCards(facts);
+
+            loader.classList.add('hidden');
+            board.classList.remove('hidden');
 
         } catch (e) {
             console.error(e);
-            grid.innerHTML = `<div class="col-span-full text-center text-red-800 p-4 border border-red-200 bg-red-50">
-                The Scout returned empty-handed. (API Error). Please try again.
-            </div>`;
-        } finally {
+            alert("The Curator dropped the artifacts. Please try again.");
             loader.classList.add('hidden');
-            btn.disabled = false;
-            btn.textContent = "Dispatch Scout";
+            btn.classList.remove('hidden');
         }
     }
 
-    function renderFacts(facts) {
-        const grid = document.getElementById('fact-container');
-        
-        // Clear and force reflow for animation
-        grid.style.animation = 'none';
-        grid.offsetHeight; /* trigger reflow */
-        grid.style.animation = 'fadeInUp 0.8s ease forwards';
+    function renderCards(facts) {
+        const grid = document.getElementById('card-grid');
+        grid.innerHTML = '';
 
-        facts.forEach(fact => {
-            const card = document.createElement('article');
-            card.className = 'fact-card';
+        facts.forEach((fact, index) => {
+            const card = document.createElement('div');
+            card.className = 'artifact-card fade-in';
+            card.style.animationDelay = `${index * 100}ms`;
+            
             card.innerHTML = `
-                <span class="tag-pill">${fact.tag}</span>
-                <h2 class="text-2xl font-bold serif mb-4 leading-tight">${fact.hook}</h2>
-                <p class="text-[var(--text-muted)] leading-relaxed mb-4">${fact.explain}</p>
-                <div class="source-cite">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-                    ${fact.source}
+                <div class="content-wrapper">
+                    <p class="fact-text">"${fact.text}"</p>
+                    
+                    <div class="reveal-info">
+                        <div class="reveal-text ${fact.type === 'TRUE' ? 'true-badge' : 'fake-badge'}">
+                            ${fact.type === 'TRUE' ? '✓ VERIFIED REAL' : '⚠ FORGERY DETECTED'}
+                        </div>
+                        <p class="explanation">${fact.explain}</p>
+                    </div>
                 </div>
             `;
+
+            card.onclick = () => handleCardClick(card, fact);
             grid.appendChild(card);
         });
+    }
+
+    function handleCardClick(cardElement, factData) {
+        if (gameState.gameOver) return; // Round ended
+        if (cardElement.classList.contains('revealed-true')) return; // Already clicked
+
+        if (factData.type === 'TRUE') {
+            // Player clicked a TRUE fact (keep playing)
+            cardElement.classList.add('revealed-true');
+        } else {
+            // Player clicked the FAKE (Win!)
+            cardElement.classList.add('revealed-fake');
+            endRound();
+        }
+    }
+
+    function endRound() {
+        gameState.gameOver = true;
+        document.getElementById('next-round-area').classList.remove('hidden');
+        
+        // Reveal all remaining cards nicely
+        const allCards = document.querySelectorAll('.artifact-card');
+        // Note: In a real game we might want to reveal them, but keeping them hidden 
+        // forces the user to wonder about the others, or we can auto-reveal.
+        // Let's leave them as-is to let the user click them if they want to read the source.
+    }
+
+    // Fisher-Yates Shuffle
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
     }
 </script>
 </body>
