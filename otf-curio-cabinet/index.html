@@ -227,7 +227,7 @@
         
         <div id="next-round-area" class="text-center mt-12 hidden fade-in">
             <div id="result-message"></div>
-            <button onclick="startGame()" class="play-btn text-sm py-3 px-8">Next Collection</button>
+            <button onclick="resetGame()" class="play-btn text-sm py-3 px-8">Next Collection</button>
         </div>
     </div>
 
@@ -237,7 +237,7 @@
     // EXTENDED SOURCE MAP - Focused on Perspective Shifts & Anomalies
     const SOURCE_ROULETTE = [
         // SPACE & PHYSICS
-        { category: "SPACE", label: "NASA Climate: Water", promptContext: "NASA Climate Kids 'Water' section: Statistics, Ratios, Scarcity" },
+        { category: "SPACE", label: "NASA Climate: Water & Oceans", promptContext: "NASA Climate Kids 'Water' section: Statistics, Ratios, Scarcity" },
         { category: "SPACE", label: "NASA Climate: Energy", promptContext: "NASA Climate Kids 'Energy' section: Scale, Usage, Physics" },
         { category: "SPACE", label: "NASA Climate: Atmosphere", promptContext: "NASA Climate Kids 'Atmosphere': Composition, Layers, Invisible Forces" },
         { category: "SPACE", label: "NASA Space Place: Solar System", promptContext: "NASA Space Place: Scale of Planets, Distances, Composition" },
@@ -425,6 +425,16 @@
         });
 
         document.getElementById('next-round-area').classList.remove('hidden');
+    }
+
+    // New Function to return to lobby
+    function resetGame() {
+        document.getElementById('view-board').classList.add('hidden');
+        document.getElementById('next-round-area').classList.add('hidden');
+        
+        document.getElementById('btn-play').classList.remove('hidden');
+        document.getElementById('domain-select').classList.remove('hidden');
+        document.getElementById('score-display').classList.add('hidden');
     }
     
     function shuffleArray(array) {
