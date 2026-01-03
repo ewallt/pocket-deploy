@@ -87,7 +87,7 @@
         .artifact-card.revealed-true {
             border-color: var(--accent-green);
             background: rgba(21, 128, 61, 0.1);
-            opacity: 0.6; /* Dim the truths slightly when round ends */
+            opacity: 0.6;
             cursor: default;
         }
         .artifact-card.revealed-fake {
@@ -97,7 +97,6 @@
             box-shadow: 0 0 30px rgba(212, 175, 55, 0.1);
             z-index: 10;
         }
-        /* Style for the card the user specifically clicked */
         .artifact-card.user-selected {
             opacity: 1 !important;
             border-width: 2px;
@@ -129,14 +128,12 @@
             transition: opacity 0.5s ease 0.2s;
         }
 
-        /* Show content on reveal */
         .revealed-true .reveal-text, .revealed-fake .reveal-text { opacity: 1; transform: translateY(0); }
         .revealed-true .explanation, .revealed-fake .explanation { opacity: 1; }
 
         .true-badge { color: var(--accent-green); }
         .fake-badge { color: var(--accent-gold); }
 
-        /* --- RESULT MESSAGE --- */
         #result-message {
             font-family: 'Playfair Display', serif;
             font-style: italic;
@@ -144,8 +141,19 @@
             margin-bottom: 1rem;
             min-height: 2rem;
         }
+        
+        #topic-badge {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
 
-        /* --- ANIMATIONS --- */
         .spinner {
             width: 40px; height: 40px; 
             border: 2px solid var(--border); 
@@ -178,13 +186,16 @@
 
     <div id="view-loading" class="hidden text-center my-20">
         <div class="spinner mb-6"></div>
-        <p class="display-font text-xs tracking-widest text-[var(--accent-gold)]">Curating Artifacts...</p>
-        <p class="text-xs text-[var(--text-muted)] mt-2">Forging 1 fake • Verifying 3 truths</p>
+        <p class="display-font text-xs tracking-widest text-[var(--accent-gold)]">Consulting Archives...</p>
+        <p id="loading-topic" class="text-xs text-[var(--text-muted)] mt-2">Loading...</p>
     </div>
 
     <div id="view-board" class="container-max hidden">
-        <div id="card-grid" class="cabinet-grid">
-            </div>
+        <div class="text-center">
+            <div id="topic-badge" class="hidden">Topic: Architecture</div>
+        </div>
+
+        <div id="card-grid" class="cabinet-grid"></div>
         
         <div id="next-round-area" class="text-center mt-12 hidden fade-in">
             <div id="result-message"></div>
@@ -195,10 +206,25 @@
 <script>
     const API_KEY = "AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A";
     
-    let gameState = {
-        gameOver: false,
-        cardsData: [] // Store data to find the fake later
-    };
+    // SOURCE MAP (Derived from real site categories)
+    const SOURCE_ROULETTE = [
+        { label: "NASA Climate: Water & Oceans", promptContext: "NASA Climate Kids 'Water' section" },
+        { label: "NASA Climate: Energy & Tech", promptContext: "NASA Climate Kids 'Energy' section" },
+        { label: "NASA Climate: Atmosphere", promptContext: "NASA Climate Kids 'Atmosphere' section" },
+        { label: "NASA Climate: Plants & Animals", promptContext: "NASA Climate Kids 'Plants and Animals' section" },
+        { label: "NASA Space Place: The Solar System", promptContext: "NASA Space Place 'Solar System' facts" },
+        { label: "Smithsonian: Ancient Civilizations", promptContext: "Smithsonian Magazine Archaeology & History" },
+        { label: "Smithsonian: American History", promptContext: "Smithsonian Magazine American History section" },
+        { label: "Smithsonian: Innovation", promptContext: "Smithsonian Magazine Innovation & Technology" },
+        { label: "Britannica: The Animal Kingdom", promptContext: "Britannica 'Animal' section oddities" },
+        { label: "Britannica: Human Body", promptContext: "Britannica Human Anatomy & Health facts" },
+        { label: "SciAm: The Human Brain", promptContext: "Scientific American Mind & Brain section" },
+        { label: "SciAm: Physics & Cosmos", promptContext: "Scientific American Space & Physics section" },
+        { label: "Mental Floss: Language Quirks", promptContext: "Mental Floss linguistics & word origins" },
+        { label: "Mental Floss: Food History", promptContext: "Mental Floss food history facts" }
+    ];
+
+    let gameState = { gameOver: false, cardsData: [] };
 
     async function startGame() {
         const btn = document.getElementById('btn-play');
@@ -207,11 +233,20 @@
         const grid = document.getElementById('card-grid');
         const nextArea = document.getElementById('next-round-area');
         const scoreDisplay = document.getElementById('score-display');
+        const topicBadge = document.getElementById('topic-badge');
+        const loadingTopic = document.getElementById('loading-topic');
+
+        // Pick Source Context
+        const selection = SOURCE_ROULETTE[Math.floor(Math.random() * SOURCE_ROULETTE.length)];
+        
+        topicBadge.textContent = `Source: ${selection.label}`;
+        loadingTopic.textContent = `Scanning: ${selection.label}`;
 
         // Reset UI
         btn.classList.add('hidden');
         scoreDisplay.classList.remove('hidden');
         nextArea.classList.add('hidden');
+        topicBadge.classList.add('hidden');
         grid.innerHTML = '';
         loader.classList.remove('hidden');
         board.classList.add('hidden');
@@ -222,36 +257,25 @@
         try {
             const prompt = `
                 Role: The Trickster Curator.
-                Goal: Create a "Find the Fake" trivia round.
+                Goal: Create a "Find the Fake" trivia round based on a specific source.
+                Seed: ${Math.random()}
                 
-                Task: Generate 4 facts.
-                - 3 MUST be TRUE (Verifiable, specific, reputable sources like Smithsonian/Britannica).
-                - 1 MUST be FAKE (A specific, plausible hallucination that sounds scientific/historical but is made up).
+                SOURCE CONTEXT: "${selection.promptContext}"
+                
+                Task: Generate 4 facts suitable for this source.
+                - 3 MUST be TRUE facts that would be found in this specific section (Verifiable).
+                - 1 MUST be FAKE (A plausible hallucination that fits the theme).
                 
                 CRITERIA:
-                - The True facts should sound surprising (counter-intuitive).
-                - The Fake fact should sound plausible (using real terminology).
-                - Topics: Mix of History, Science, Nature, Language.
+                - The True facts should be specific, concrete, and surprising.
+                - The Fake fact should use correct terminology to sound convincing.
                 
                 RETURN JSON ONLY:
                 [
                     {
-                        "text": "The Eiffel Tower grows up to 6 inches in summer due to thermal expansion.",
+                        "text": "Fact text...",
                         "type": "TRUE",
-                        "reveal": "Physics / Material Science",
-                        "explain": "Source: Smithsonian Mag. Iron expands when heated."
-                    },
-                    {
-                        "text": "Napoleon Bonaparte was attacked by a horde of bunnies.",
-                        "type": "TRUE",
-                        "reveal": "History",
-                        "explain": "Source: Mental Floss. He organized a rabbit hunt, but the tame rabbits swarmed him for food."
-                    },
-                    {
-                        "text": "The 'Quantum Dolphin' is the only mammal capable of photosynthesizing sunlight.",
-                        "type": "FAKE",
-                        "reveal": "COMPLETE FABRICATION",
-                        "explain": "This is a lie. No mammal can photosynthesize."
+                        "explain": "Source: [Site Name]. Brief explanation."
                     }
                 ]
             `;
@@ -270,14 +294,14 @@
             const data = await response.json();
             let facts = JSON.parse(data.candidates[0].content.parts[0].text);
             
-            // Shuffle
             facts = shuffleArray(facts);
-            gameState.cardsData = facts; // Save state
+            gameState.cardsData = facts;
             
             renderCards(facts);
 
             loader.classList.add('hidden');
             board.classList.remove('hidden');
+            topicBadge.classList.remove('hidden');
 
         } catch (e) {
             console.error(e);
@@ -294,7 +318,6 @@
         facts.forEach((fact, index) => {
             const card = document.createElement('div');
             card.className = 'artifact-card fade-in';
-            card.id = `card-${index}`; // ID for lookup
             card.style.animationDelay = `${index * 100}ms`;
             
             card.innerHTML = `
@@ -316,32 +339,26 @@
     }
 
     function handleCardClick(cardElement, factData, index) {
-        if (gameState.gameOver) return; // Prevent double clicks
+        if (gameState.gameOver) return; 
 
         gameState.gameOver = true;
         const msg = document.getElementById('result-message');
         
-        // 1. Mark the card the user selected
         cardElement.classList.add('user-selected');
 
         if (factData.type === 'FAKE') {
-            // WIN CONDITION
             msg.textContent = "Sharp eye. You caught the forgery.";
             msg.style.color = "var(--accent-gold)";
             cardElement.classList.add('revealed-fake');
         } else {
-            // LOSE CONDITION
             msg.textContent = "Deceived. This artifact is authentic.";
             msg.style.color = "var(--text-muted)";
             cardElement.classList.add('revealed-true');
         }
 
-        // 2. REVEAL ALL OTHER CARDS
         const allCards = document.querySelectorAll('.artifact-card');
         allCards.forEach((c, i) => {
             const data = gameState.cardsData[i];
-            
-            // If it's the fake one (and wasn't clicked), highlight it so user sees what they missed
             if (data.type === 'FAKE') {
                 c.classList.add('revealed-fake');
             } else {
@@ -349,11 +366,9 @@
             }
         });
 
-        // 3. SHOW NEXT ROUND BTN
         document.getElementById('next-round-area').classList.remove('hidden');
     }
 
-    // Fisher-Yates Shuffle
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
