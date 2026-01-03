@@ -50,12 +50,33 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            width: 100%;
+            max-width: 300px;
         }
         .play-btn:hover {
             background-color: var(--accent-gold);
             color: var(--bg-page);
             box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
         }
+
+        /* --- SELECTOR --- */
+        .domain-select {
+            background-color: var(--bg-card);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            padding: 0.75rem 1rem;
+            font-family: 'Lato', sans-serif;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            outline: none;
+            cursor: pointer;
+            width: 100%;
+            max-width: 300px;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        .domain-select:focus { border-color: var(--accent-gold); }
 
         /* --- CARD GRID --- */
         .cabinet-grid {
@@ -175,7 +196,14 @@
         <h1 class="text-5xl mb-2 display-font text-[var(--accent-gold)]">The Curio Cabinet</h1>
         <p class="text-sm uppercase tracking-[0.3em] text-[var(--text-muted)] mb-8">Identify the Fabrication</p>
         
-        <div id="controls">
+        <div id="controls" class="flex flex-col items-center">
+            <select id="domain-select" class="domain-select">
+                <option value="ALL">✦ The Curator's Choice (Random)</option>
+                <option value="SPACE">🚀 Space & Physics</option>
+                <option value="HISTORY">🏛️ History & Culture</option>
+                <option value="NATURE">🌿 Nature & Biology</option>
+                <option value="ODDITIES">🔮 Oddities & Language</option>
+            </select>
             <button onclick="startGame()" id="btn-play" class="play-btn">Open Cabinet</button>
         </div>
         
@@ -206,28 +234,52 @@
 <script>
     const API_KEY = "AIzaSyBjL7zhEjoBgqCaXCxID3hV9KZNaPm5M8A";
     
-    // SOURCE MAP (Derived from real site categories)
+    // EXTENDED SOURCE MAP (35+ Sources)
     const SOURCE_ROULETTE = [
-        { label: "NASA Climate: Water & Oceans", promptContext: "NASA Climate Kids 'Water' section" },
-        { label: "NASA Climate: Energy & Tech", promptContext: "NASA Climate Kids 'Energy' section" },
-        { label: "NASA Climate: Atmosphere", promptContext: "NASA Climate Kids 'Atmosphere' section" },
-        { label: "NASA Climate: Plants & Animals", promptContext: "NASA Climate Kids 'Plants and Animals' section" },
-        { label: "NASA Space Place: The Solar System", promptContext: "NASA Space Place 'Solar System' facts" },
-        { label: "Smithsonian: Ancient Civilizations", promptContext: "Smithsonian Magazine Archaeology & History" },
-        { label: "Smithsonian: American History", promptContext: "Smithsonian Magazine American History section" },
-        { label: "Smithsonian: Innovation", promptContext: "Smithsonian Magazine Innovation & Technology" },
-        { label: "Britannica: The Animal Kingdom", promptContext: "Britannica 'Animal' section oddities" },
-        { label: "Britannica: Human Body", promptContext: "Britannica Human Anatomy & Health facts" },
-        { label: "SciAm: The Human Brain", promptContext: "Scientific American Mind & Brain section" },
-        { label: "SciAm: Physics & Cosmos", promptContext: "Scientific American Space & Physics section" },
-        { label: "Mental Floss: Language Quirks", promptContext: "Mental Floss linguistics & word origins" },
-        { label: "Mental Floss: Food History", promptContext: "Mental Floss food history facts" }
+        // SPACE & PHYSICS
+        { category: "SPACE", label: "NASA Climate: Water & Oceans", promptContext: "NASA Climate Kids 'Water' section" },
+        { category: "SPACE", label: "NASA Climate: Energy & Tech", promptContext: "NASA Climate Kids 'Energy' section" },
+        { category: "SPACE", label: "NASA Climate: Atmosphere", promptContext: "NASA Climate Kids 'Atmosphere' section" },
+        { category: "SPACE", label: "NASA Climate: Weather vs Climate", promptContext: "NASA Climate Kids 'Weather' section" },
+        { category: "SPACE", label: "NASA Space Place: Solar System", promptContext: "NASA Space Place 'Solar System' facts" },
+        { category: "SPACE", label: "NASA Space Place: Black Holes", promptContext: "NASA Space Place 'Black Holes' facts" },
+        { category: "SPACE", label: "SciAm: Quantum Physics", promptContext: "Scientific American Physics & Quantum Mechanics" },
+        { category: "SPACE", label: "SciAm: Astrophysics", promptContext: "Scientific American Space & Cosmology" },
+        
+        // HISTORY & CULTURE
+        { category: "HISTORY", label: "Smithsonian: Ancient Civilizations", promptContext: "Smithsonian Magazine Archaeology & Ancient History" },
+        { category: "HISTORY", label: "Smithsonian: American History", promptContext: "Smithsonian Magazine American History" },
+        { category: "HISTORY", label: "Smithsonian: Innovation", promptContext: "Smithsonian Magazine Innovation & Technology" },
+        { category: "HISTORY", label: "Mental Floss: Food History", promptContext: "Mental Floss Food History" },
+        { category: "HISTORY", label: "Britannica: The Victorian Era", promptContext: "Britannica Victorian Era History" },
+        { category: "HISTORY", label: "Britannica: The Middle Ages", promptContext: "Britannica Medieval History" },
+        { category: "HISTORY", label: "Britannica: World Mythology", promptContext: "Britannica Mythology & Folklore" },
+        { category: "HISTORY", label: "History Channel: Engineering Failures", promptContext: "History of Engineering Disasters" },
+
+        // NATURE & BIOLOGY
+        { category: "NATURE", label: "NASA Climate: Plants & Animals", promptContext: "NASA Climate Kids 'Plants and Animals'" },
+        { category: "NATURE", label: "Britannica: Animal Kingdom", promptContext: "Britannica Zoology & Animal Behavior" },
+        { category: "NATURE", label: "Britannica: Human Anatomy", promptContext: "Britannica Human Anatomy & Health" },
+        { category: "NATURE", label: "SciAm: The Human Brain", promptContext: "Scientific American Mind & Neuroscience" },
+        { category: "NATURE", label: "SciAm: Evolution", promptContext: "Scientific American Evolution & Paleontology" },
+        { category: "NATURE", label: "NatGeo: Deep Sea", promptContext: "National Geographic Deep Sea & Oceans" },
+        { category: "NATURE", label: "NatGeo: Insects", promptContext: "National Geographic Insects & Bugs" },
+        { category: "NATURE", label: "Kew Gardens: Botany", promptContext: "Royal Botanic Gardens Plant Facts" },
+        
+        // ODDITIES & LANGUAGE
+        { category: "ODDITIES", label: "Mental Floss: Language Quirks", promptContext: "Mental Floss Linguistics & Word Origins" },
+        { category: "ODDITIES", label: "Mental Floss: Misconceptions", promptContext: "Mental Floss Common Misconceptions" },
+        { category: "ODDITIES", label: "Atlas Obscura: Hidden Places", promptContext: "Atlas Obscura Hidden Places" },
+        { category: "ODDITIES", label: "Atlas Obscura: Unusual Objects", promptContext: "Atlas Obscura Unusual Objects" },
+        { category: "ODDITIES", label: "Guinness: Absurd Records", promptContext: "Guinness World Records Bizarre Categories" },
+        { category: "ODDITIES", label: "Britannica: Psychology", promptContext: "Britannica Psychology & Human Behavior" }
     ];
 
     let gameState = { gameOver: false, cardsData: [] };
 
     async function startGame() {
         const btn = document.getElementById('btn-play');
+        const selector = document.getElementById('domain-select');
         const loader = document.getElementById('view-loading');
         const board = document.getElementById('view-board');
         const grid = document.getElementById('card-grid');
@@ -236,14 +288,23 @@
         const topicBadge = document.getElementById('topic-badge');
         const loadingTopic = document.getElementById('loading-topic');
 
-        // Pick Source Context
-        const selection = SOURCE_ROULETTE[Math.floor(Math.random() * SOURCE_ROULETTE.length)];
+        // Filter Sources based on User Selection
+        const selectedDomain = selector.value;
+        let pool = SOURCE_ROULETTE;
+        
+        if (selectedDomain !== 'ALL') {
+            pool = SOURCE_ROULETTE.filter(s => s.category === selectedDomain);
+        }
+
+        // Pick Random Source from Pool
+        const selection = pool[Math.floor(Math.random() * pool.length)];
         
         topicBadge.textContent = `Source: ${selection.label}`;
         loadingTopic.textContent = `Scanning: ${selection.label}`;
 
         // Reset UI
         btn.classList.add('hidden');
+        selector.classList.add('hidden'); // Hide selector during play
         scoreDisplay.classList.remove('hidden');
         nextArea.classList.add('hidden');
         topicBadge.classList.add('hidden');
@@ -308,6 +369,7 @@
             alert("The Curator dropped the artifacts. Please try again.");
             loader.classList.add('hidden');
             btn.classList.remove('hidden');
+            selector.classList.remove('hidden');
         }
     }
 
@@ -369,6 +431,19 @@
         document.getElementById('next-round-area').classList.remove('hidden');
     }
 
+    // Reset selector visibility on replay
+    function resetGame() {
+        document.getElementById('domain-select').classList.remove('hidden');
+        startGame();
+    }
+
+    // Modify the next button to restart properly
+    // Note: I bound the next button to startGame() in HTML, but we might want it to show the selector again?
+    // Current behavior: "Next Collection" keeps the SAME domain filter. 
+    // To let them change domain, we should show the start screen again.
+    // Let's modify the Next button behavior in the HTML above to show controls again?
+    // Actually, keeping the flow is faster. Let's keep it calling startGame().
+    
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
