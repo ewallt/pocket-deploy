@@ -31,6 +31,14 @@
         h1, h2, h3 { font-weight: 700; }
         h1 { color: var(--text-body); }
         
+        .context-breadcrumb {
+            display: inline-block;
+            font-size: 1rem;
+            opacity: 0.6;
+            font-weight: 400;
+            margin-left: 0.5rem;
+        }
+        
         /* --- UI COMPONENTS --- */
         .theme-gear {
             position: absolute; top: 0; right: 0; z-index: 50;
@@ -106,6 +114,22 @@
         .action-button:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
         .action-button:disabled { opacity: 0.5; cursor: not-allowed; }
 
+        .explore-btn {
+            font-size: 0.7rem;
+            color: var(--brand);
+            background: transparent;
+            border: 1px solid var(--brand);
+            border-radius: 4px;
+            padding: 2px 8px;
+            margin-left: 8px;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+        .explore-btn:hover {
+            opacity: 1;
+        }
+
         /* --- TIER NAVIGATION --- */
         .tier-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
         
@@ -135,6 +159,25 @@
         .tab-button.active {
             background-color: var(--brand); color: var(--card-bg);
             font-weight: 700; border-color: var(--brand);
+        }
+
+        /* --- DOMAIN TABS (Horizontal) --- */
+        #domainTabs {
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0;
+        }
+
+        #domainTabs .tab-button {
+            flex: 0 1 auto;
+            border-radius: 0.375rem 0.375rem 0 0;
+            border-bottom: none;
+            position: relative;
+            top: 2px;
+        }
+
+        #domainTabs .tab-button.active {
+            border-bottom: 2px solid var(--brand);
         }
 
         /* --- ACCORDION --- */
@@ -178,7 +221,7 @@
         
         <header class="text-center mb-8 pr-12">
             <h1 id="appTitle" class="text-4xl md:text-5xl mb-2">Context Navigator</h1>
-            <p class="text-xl italic text-[var(--text-muted)]">Master Edition <span class="text-red-500 font-bold">Build #56</span></p>
+            <p class="text-xl italic text-[var(--text-muted)]">Master Edition</p>
             
             <button onclick="cycleTheme()" class="theme-gear" title="Switch Theme">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -190,18 +233,13 @@
 
         <div class="dark-card">
             
-            <div id="domainControl" class="flex justify-between items-center mb-2">
-                <label class="mb-0">Navigation Controls</label>
-                <div class="w-48">
-                    <select id="domainSelect" onchange="switchDomain()" class="py-1 px-2 text-sm">
-                        <option value="general">General Explorer</option>
-                        <option value="biography">Biographer</option>
-                        <option value="bible">Bible Scholar</option>
-                        <option value="medical">Medical Consultant</option>
-                        <option value="art">Art Historian</option>
-                        <option value="music">Musicologist</option>
-                    </select>
-                </div>
+            <div id="domainTabs" class="tab-group mb-4">
+                <button class="tab-button active" onclick="switchDomainTab('general')">General</button>
+                <button class="tab-button" onclick="switchDomainTab('biography')">Biography</button>
+                <button class="tab-button" onclick="switchDomainTab('bible')">Bible</button>
+                <button class="tab-button" onclick="switchDomainTab('medical')">Medical</button>
+                <button class="tab-button" onclick="switchDomainTab('art')">Art</button>
+                <button class="tab-button" onclick="switchDomainTab('music')">Music</button>
             </div>
             
             <div class="mb-4">
@@ -285,12 +323,23 @@
         'general': {
             title: 'Context Navigator',
             lenses: [
-                { id: 'lens-1', label: 'Context', prompt: 'Historical Context, Origins, or Background' },
-                { id: 'lens-2', label: 'Details', prompt: 'Key Details, Notable Features, or Main Events' },
-                { id: 'lens-3', label: 'Analysis', prompt: 'Analysis, Cultural Impact, or Significance' }
+                { 
+                    id: 'lens-1', 
+                    label: 'What', 
+                    prompt: 'Essential Description: Core facts, defining characteristics, and key features that make this distinct.' 
+                },
+                { 
+                    id: 'lens-2', 
+                    label: 'Why', 
+                    prompt: 'Origins & Causation: Historical development, reasons for existence, formative events, and underlying factors that shaped this.' 
+                },
+                { 
+                    id: 'lens-3', 
+                    label: 'So What', 
+                    prompt: 'Significance & Impact: Cultural influence, lasting effects, why it matters, and relevance to broader context.' 
+                }
             ],
             persona: 'Objective Encyclopedia',
-            // HYBRID 7 SUGGESTION LOGIC (5 Popular + 2 Structural)
             suggestionLogic: 'Suggest 7 distinct Focus Areas. The first 5 must be the sub-categories most likely to be searched for by people (High Popularity). The final 2 must be structural/argumentative categories (e.g. Arguments, Reasons, Axioms, Determinants) that reveal the underlying logic.',
             inputPlaceholder: 'Enter Main Topic (e.g., WWII, São Paulo)',
             aboutHtml: `
@@ -426,7 +475,7 @@
         listMode: "smart",
         currentTier: "about",
         currentCategory: "",
-        entityType: "Other", // 'Person', 'Work', 'Other'
+        entityType: "Other",
         caches: { categories: [], content: {} }
     };
 
@@ -434,7 +483,7 @@
     function initApp() {
         if(APP_CONFIG.lockedDomain) {
             state.domain = APP_CONFIG.lockedDomain;
-            document.getElementById('domainControl').style.display = 'none';
+            document.getElementById('domainTabs').style.display = 'none';
         } else {
             state.domain = 'general';
         }
@@ -444,12 +493,10 @@
     function applyDomainProfile(overrideLenses = null) {
         const profile = domains[state.domain];
         
-        // Update Title and Inputs
-        document.getElementById('appTitle').textContent = profile.title;
+        document.getElementById('appTitle').innerHTML = profile.title;
         document.getElementById('topicInput').placeholder = profile.inputPlaceholder;
         document.getElementById('aboutDynamic').innerHTML = profile.aboutHtml;
 
-        // GENERATE BUTTONS (Use Override if provided, else Native)
         const btnContainer = document.getElementById('lensButtons');
         const contentArea = document.getElementById('contentArea');
         const activeLenses = overrideLenses || profile.lenses;
@@ -459,7 +506,6 @@
         document.querySelectorAll('.dynamic-lens-section').forEach(el => el.remove());
 
         activeLenses.forEach(lens => {
-            // Create Button
             const btn = document.createElement('button');
             btn.className = 'tab-button';
             btn.id = `btn-${lens.id}`;
@@ -467,7 +513,6 @@
             btn.onclick = () => loadLens(lens.id, btn);
             btnContainer.appendChild(btn);
 
-            // Create Content Section
             const section = document.createElement('section');
             section.id = `${lens.id}Content`;
             section.className = 'tab-content dynamic-lens-section';
@@ -477,22 +522,17 @@
 
     // --- LOGIC: DOMAIN LOCK & ENTITY ROUTING ---
     function resolveLenses(domainKey, entityType) {
-        // Priority 1: Specialized Domains (Hard Lock)
         if (['bible', 'medical', 'art', 'music'].includes(domainKey)) {
             return domains[domainKey].lenses; 
         }
 
-        // Priority 2: Biographer (Semi-Lock)
         if (domainKey === 'biography') {
-            // If it's a Person, stick to Bio. If drilled down to non-person, revert to General.
             if (entityType === 'Person') return domains['biography'].lenses;
             return domains['general'].lenses;
         }
 
-        // Priority 3: General Router
         if (domainKey === 'general') {
             if (entityType === 'Person') return domains['biography'].lenses;
-            // Fallback for Works/Concepts -> General Lenses
             return domains['general'].lenses;
         }
 
@@ -557,30 +597,29 @@
     }
 
     // --- LOGIC ---
-    function switchDomain() {
+    function switchDomainTab(domainKey) {
         if(APP_CONFIG.lockedDomain) return;
 
-        // 1. Update State
-        state.domain = document.getElementById('domainSelect').value;
+        document.querySelectorAll('#domainTabs .tab-button').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        event.target.classList.add('active');
+
+        state.domain = domainKey;
         state.topic = "";
         state.filter = "";
         state.currentCategory = "";
         state.caches = { categories: [], content: {} };
 
-        // 2. Clear Inputs
         document.getElementById('topicInput').value = "";
         document.getElementById('filterInput').value = "";
-
-        // 3. Reset UI Elements
         document.getElementById('topicDisplay').classList.add('hidden');
         document.getElementById('topicDisplay').innerHTML = "";
         document.getElementById('categoryDropdown').innerHTML = '<option>-- Select Category --</option>';
         document.getElementById('lensButtons').classList.add('hidden');
+        document.getElementById('appTitle').innerHTML = 'Context Navigator';
 
-        // 4. Re-Apply Profile (New Buttons/Persona)
         applyDomainProfile();
-
-        // 5. Go to Home
         switchTier('about');
     }
 
@@ -613,7 +652,12 @@
                 chip.textContent = item;
                 chip.onclick = () => {
                     document.getElementById('filterInput').value = item;
-                    popup.classList.remove('active');
+                    list.querySelectorAll('.suggestion-chip').forEach(c => {
+                        c.style.borderColor = 'var(--border)';
+                        c.style.fontWeight = '400';
+                    });
+                    chip.style.borderColor = 'var(--brand)';
+                    chip.style.fontWeight = '700';
                 };
                 list.appendChild(chip);
             });
@@ -659,12 +703,15 @@
             const data = await callGemini(prompt);
             const result = parseGeminiJSON(data);
             
-            // Store Entity Type
             state.entityType = result.type || "Other";
 
-            // Resolve Buttons based on Domain Lock Logic
             const newLenses = resolveLenses(state.domain, state.entityType);
             applyDomainProfile(newLenses);
+
+            document.getElementById('appTitle').innerHTML = `
+                Context Navigator 
+                <span class="context-breadcrumb">· ${result.title}</span>
+            `;
 
             display.classList.remove('hidden');
             display.innerHTML = `
@@ -721,11 +768,34 @@
                 opt.textContent = item;
                 dropdown.appendChild(opt);
             });
+
+            const existingHelper = dropdown.parentElement.querySelector('.helper-text');
+            if (existingHelper) existingHelper.remove();
+
+            const helper = document.createElement('p');
+            helper.className = 'helper-text mt-2';
+            helper.innerHTML = 'Select to analyze with lenses, or <button class="explore-btn" onclick="drillAsNewTopic()">🔄 Explore selected as new topic</button>';
+            dropdown.parentElement.appendChild(helper);
+
         } catch(e) {
             dropdown.innerHTML = '<option>Error loading</option>';
         } finally {
             dropdown.disabled = false;
         }
+    }
+
+    function drillAsNewTopic() {
+        const selected = document.getElementById('categoryDropdown').value;
+        if(!selected) return alert("Please select a category first.");
+        
+        document.getElementById('topicInput').value = selected;
+        document.getElementById('filterInput').value = '';
+        
+        const input = document.getElementById('topicInput');
+        input.style.borderColor = 'var(--brand)';
+        setTimeout(() => input.style.borderColor = '', 1000);
+        
+        window.scrollTo({top: 0, behavior: 'smooth'});
     }
 
     function switchTier(tier) {
@@ -755,13 +825,7 @@
         if(!val) return;
         state.currentCategory = val;
         
-        // DRILL DOWN RE-EVALUATION LOGIC
-        // We consider the category the new "topic" for lens purposes, but keep the parent context.
-        // Simple Heuristic: Assume Drill Down is usually NOT a person unless explicit.
-        // For V1, we simply re-run resolution assuming "Other" (Concept/Work) unless we are in Bio/General.
-        // This triggers the "Snap Back" behavior.
-        
-        const newLenses = resolveLenses(state.domain, "Other"); // Revert to General/Native for drill-downs
+        const newLenses = resolveLenses(state.domain, "Other");
         applyDomainProfile(newLenses);
         
         const lensGroup = document.getElementById(`lensButtons`);
@@ -788,12 +852,9 @@
 
         contentDiv.innerHTML = '<div class="dark-card text-center"><div class="spinner"></div> Generating Analysis...</div>';
 
-        // DYNAMIC LENS LOOKUP
-        // We need to look up the lens in the CURRENTLY ACTIVE set, not just the profile default.
         const currentButton = document.getElementById(`btn-${lensId}`);
         const lensLabel = currentButton ? currentButton.textContent : "";
         
-        // Find the prompt associated with this label by searching all domains (since lenses might be swapped)
         let lensFocus = "General Context";
         Object.values(domains).forEach(d => {
             const found = d.lenses.find(l => l.id === lensId && l.label === lensLabel);
@@ -837,8 +898,8 @@
             html += `
                 <div class="accordion-item">
                     <div class="accordion-header" onclick="toggleAccordion('${uniqueId}')">
-                        <span>${sec.header}</span>
-                        <span>▼</span>
+                        <span class="text-lg">${sec.header}</span>
+                        <span class="text-sm">▼</span>
                     </div>
                     <div id="${uniqueId}" class="accordion-content">${contentHtml}</div>
                 </div>`;
