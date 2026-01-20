@@ -14,11 +14,8 @@
       --brand: #d4a574;
       --text-body: #2c2416;
       --text-card: #faf8f3;
-
-      /* Improved contrast */
       --text-muted: rgba(212, 165, 116, 0.78);
       --text-soft: rgba(250, 248, 243, 0.88);
-
       --border: #5a5041;
     }
 
@@ -98,6 +95,22 @@
     }
     .action-button:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
     .action-button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .action-button-secondary {
+      background-color: transparent;
+      color: var(--brand);
+      border: 1px solid var(--brand);
+      font-weight: 600;
+      font-size: 0.85rem;
+      padding: 0.4rem 0.8rem;
+      border-radius: 0.375rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .action-button-secondary:hover { background-color: rgba(212, 165, 116, 0.1); }
 
     /* --- EXAMPLE QUESTIONS DRAWER --- */
     .examples-toggle {
@@ -184,6 +197,53 @@
       font-size: 0.88rem;
     }
 
+    /* --- PRINCIPLE TOOLTIPS --- */
+    .principle-hint {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      background: var(--brand);
+      color: var(--card-bg);
+      border-radius: 50%;
+      text-align: center;
+      line-height: 16px;
+      font-size: 0.7rem;
+      font-weight: 900;
+      cursor: help;
+      margin-left: 0.3rem;
+      position: relative;
+    }
+
+    .principle-hint:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--card-bg);
+      color: var(--text-card);
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      width: 250px;
+      font-size: 0.85rem;
+      font-weight: 400;
+      line-height: 1.4;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      z-index: 100;
+      border: 1px solid var(--brand);
+      white-space: normal;
+    }
+
+    /* --- FEEDBACK BUTTONS --- */
+    .feedback-bar {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: flex-end;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+
     /* --- TIER NAVIGATION --- */
     .tier-nav { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
 
@@ -261,6 +321,12 @@
 
     .paragraph-spacing { margin-bottom: 1rem; }
 
+    .principle-action {
+      margin-top: 0.75rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid rgba(212, 165, 116, 0.3);
+    }
+
     .hidden { display: none !important; }
     .tier-tabs { display: none; }
     .tier-tabs.active { display: block; }
@@ -291,7 +357,7 @@
     <header class="text-center mb-8 pr-12">
       <h1 id="appTitle" class="text-4xl md:text-5xl mb-2">Behold Your God</h1>
       <p class="text-xl italic text-[var(--border)]">
-        Interactive Study Tool <span class="text-[var(--brand)] font-bold">v0.2</span>
+        Interactive Study Tool <span class="text-[var(--brand)] font-bold">v0.3</span>
       </p>
 
       <button onclick="cycleTheme()" class="theme-gear" title="Switch Theme">
@@ -367,17 +433,40 @@
   </div>
 
 <script>
+  // --- SYNONYM MAPPING FOR BETTER RETRIEVAL ---
+  const SYNONYMS = {
+    "wrath": ["anger", "fury", "judgment", "giving over", "gave over"],
+    "destroyed": ["killed", "smote", "struck down", "judged", "slew", "slain"],
+    "flood": ["deluge", "waters", "noah", "drowned"],
+    "fire": ["brimstone", "sulfur", "burning", "consumed"],
+    "plague": ["pestilence", "disease", "epidemic", "sickness"],
+    "law": ["commandments", "statutes", "torah", "decree"],
+    "cross": ["calvary", "crucifixion", "sacrifice"],
+    "satan": ["devil", "adversary", "enemy", "lucifer"],
+    "permission": ["allowed", "permitted", "withdrew", "gave over"],
+    "accommodation": ["met them", "worked within", "harm-limiting"]
+  };
+
+  function expandQuery(query) {
+    let terms = query.toLowerCase().split(/\s+/).filter(Boolean);
+    let expanded = [...terms];
+    for (let term of terms) {
+      if (SYNONYMS[term]) expanded.push(...SYNONYMS[term]);
+    }
+    return [...new Set(expanded)]; // Dedupe
+  }
+
   // --- EXAMPLE QUESTIONS (USER-FACING) ---
   const EXAMPLE_QUESTIONS = [
     { q: "Did God destroy Sodom and Gomorrah, or was it something else?", note: "Genesis 18–19" },
     { q: "Was the Flood God drowning the world?", note: "Genesis 6–9" },
     { q: "Did God kill Ananias and Sapphira?", note: "Acts 5" },
-    { q: "King Herod — “an angel smote him” (Acts 12). What does that mean?", note: "Acts 12" },
-    { q: "What does “the wrath of God” mean in Romans 1?", note: "Romans 1" },
-    { q: "When Scripture says “God killed,” how should we read that language?", note: "Agency / idiom" },
+    { q: "King Herod — "an angel smote him" (Acts 12). What does that mean?", note: "Acts 12" },
+    { q: "What does "the wrath of God" mean in Romans 1?", note: "Romans 1" },
+    { q: "When Scripture says "God killed," how should we read that language?", note: "Agency / idiom" },
     { q: "Why did God command Israel to destroy the Canaanites?", note: "Deuteronomy / Joshua" },
     { q: "How does Jesus help us interpret violent Old Testament passages?", note: "Christ as the lens" },
-    { q: "When the Bible says “the LORD smote them with a plague,” how should we read that?", note: "Plague / pestilence" }
+    { q: "When the Bible says "the LORD smote them with a plague," how should we read that?", note: "Plague / pestilence" }
   ];
 
   function renderExamples() {
@@ -386,7 +475,8 @@
     EXAMPLE_QUESTIONS.forEach(item => {
       const div = document.createElement('div');
       div.className = 'example-item';
-      div.onclick = () => {
+      div.onclick = (e) => {
+        e.stopPropagation();
         document.getElementById('topicInput').value = item.q;
         closeExamples();
         document.getElementById('topicInput').focus();
@@ -434,49 +524,55 @@
       header: "1) The Core Axiom",
       content: [
         "Start here: God is exactly like Jesus.",
-        "That means God’s character is not split between “Old Testament severity” and “New Testament kindness.” The clearest picture of God is the life, teaching, and self-giving love of Christ.",
+        "That means God's character is not split between "Old Testament severity" and "New Testament kindness." The clearest picture of God is the life, teaching, and self-giving love of Christ.",
         "So when a passage seems to portray God as harsh, capricious, or violent, you do not lower Jesus to match the passage. You learn how to read the passage in a way that remains faithful to what Jesus reveals about the Father."
-      ]
+      ],
+      testQuestion: "When Scripture says "God killed," how should we read that language?"
     },
     {
       header: "2) Jesus Interprets Scripture",
       content: [
         "Jesus is not only a messenger; He is the interpretive center. He shows what God is like, and He also shows how to read.",
         "In the Gospels, Jesus corrects distorted instincts about God and exposes the difference between what people assumed and what God is actually like.",
-        "So the question is not only, “What happened?” It is also, “What is the text doing?” and “How does this cohere with the character revealed in Christ?”"
-      ]
+        "So the question is not only, "What happened?" It is also, "What is the text doing?" and "How does this cohere with the character revealed in Christ?""
+      ],
+      testQuestion: "How does Jesus help us interpret violent Old Testament passages?"
     },
     {
       header: "3) Permission Language",
       content: [
         "Scripture often speaks as though God directly did what He permitted within a broken world.",
-        "This is not wordplay. It is a normal biblical way of speaking about God’s governance, where God remains sovereign while allowing real creaturely agency and real consequences.",
+        "This is not wordplay. It is a normal biblical way of speaking about God's governance, where God remains sovereign while allowing real creaturely agency and real consequences.",
         "So a text can attribute an outcome to God while the underlying reality is that God is handing people over to what they insist on choosing, or allowing what they have insisted upon to run its course."
-      ]
+      ],
+      testQuestion: "Why does the Bible say 'God killed' Uzzah when he touched the ark?"
     },
     {
       header: "4) Accommodation",
       content: [
         "God meets people where they are and works within their chosen pathways to limit harm, redirect motives, and teach truth over time.",
         "Accommodation does not mean God endorses everything He regulates. Sometimes God restrains what people are determined to do, rather than instantly overruling them by raw power.",
-        "This is why certain commands or permissions can be easily misread as God’s ideal when they are actually harm-limiting counsel inside a world shaped by hardness of heart."
-      ]
+        "This is why certain commands or permissions can be easily misread as God's ideal when they are actually harm-limiting counsel inside a world shaped by hardness of heart."
+      ],
+      testQuestion: "Why did God command Israel to destroy the Canaanites?"
     },
     {
       header: "5) Judgment as Truth",
       content: [
         "In judgment, God reveals truth. The goal is clarity for free beings, not coercion through intimidation.",
-        "God’s judgments unmask reality: what sin is, what selfishness does, what trust restores, and what separation produces.",
+        "God's judgments unmask reality: what sin is, what selfishness does, what trust restores, and what separation produces.",
         "This reframes judgment away from arbitrary retribution and toward moral disclosure—God acting in the open to show what is true."
-      ]
+      ],
+      testQuestion: "Is God the executioner in Judgment?"
     },
     {
-      header: "6) Wrath as “Giving Over”",
+      header: "6) Wrath as "Giving Over"",
       content: [
         "Biblically, wrath is often expressed as God giving people over to what they insist on choosing.",
         "This is not God losing His temper. It is God honoring agency, withdrawing protection, and allowing consequences to teach what coercion cannot teach.",
         "When you read about wrath, ask: what is being revealed, what protection is being withdrawn, and what consequence is being permitted?"
-      ]
+      ],
+      testQuestion: "What does "the wrath of God" mean in Romans 1?"
     },
     {
       header: "7) Separation Is Death",
@@ -484,22 +580,24 @@
         "God is the source and sustainer of life. Life is not an independent possession that continues unaffected by separation from God.",
         "So destruction can be understood as the natural outcome of insisting on separation from the source of life, not as an arbitrary execution that contradicts the character of Christ.",
         "This helps explain why final destruction is portrayed as the inevitable end of a sustained refusal of life and truth."
-      ]
+      ],
+      testQuestion: "Why does separation from God result in death?"
     },
     {
       header: "8) The Cross Reveals All",
       content: [
-        "The cross is the clearest revelation of both God’s character and the nature of evil.",
-        "At the cross, we see the lengths of selfishness and violence, and we see the depths of God’s self-giving love that refuses to retaliate.",
+        "The cross is the clearest revelation of both God's character and the nature of evil.",
+        "At the cross, we see the lengths of selfishness and violence, and we see the depths of God's self-giving love that refuses to retaliate.",
         "So the cross becomes the interpretive anchor: when a passage is unclear, interpret it in a way that remains consistent with the God revealed at Calvary."
-      ]
+      ],
+      testQuestion: "What does the cross reveal about God's character?"
     },
     {
       header: "9) Putting It Together",
       content: [
         "A simple method: Start with Jesus, then read the passage through that lens.",
         "Identify which principles are active: Permission Language, Accommodation, Wrath as Giving Over, Separation as Death, Judgment as Truth, and the Cross as the clearest revelation.",
-        "Then ask: what does this reading reveal about God’s character, and how does it help you trust the God who is exactly like Jesus?"
+        "Then ask: what does this reading reveal about God's character, and how does it help you trust the God who is exactly like Jesus?"
       ]
     }
   ];
@@ -508,36 +606,34 @@
   const KB = {
     meta: { title: "Behold Your God", scope: "Core interpretive principles and Q&A." },
     principles: [
-      { id: "P001", title: "Jesus Reveals the Father", statement: "To understand what God is like, we look at Jesus Christ; God is not different from Christ." },
-      { id: "P002", title: "Character, Not Power", statement: "The controversy is about character. Truth must be seen and understood by free beings, not imposed." },
-      { id: "P003", title: "Permission Language", statement: "Scripture often presents God as doing what He permits." },
-      { id: "P004", title: "God Sustains Life", statement: "God sustains life; if rejected, He may allow people to experience separation from His sustaining presence." },
-      { id: "P005", title: "Wrath as Being Given Over", statement: "God’s wrath is often expressed as turning people over to the natural results of their choices." },
-      { id: "P006", title: "Law as Transcript", statement: "The law declares principles of life and safety; it is a transcript of God’s character, not a mechanism for coercion." },
-      { id: "P007", title: "The Cross Reveals All", statement: "The cross reveals the lengths of selfishness (Satan) and the depths of self-sacrificing love (God)." },
-      { id: "P008", title: "Judgment as Truth", statement: "In judgment, God reveals truth. Free beings respond to truth rather than being compelled." },
-      { id: "P009", title: "Separation is Death", statement: "God is the source of life; separation brings death naturally, not as an arbitrary execution." },
-      { id: "P010", title: "Accommodation", statement: "God may instruct within a chosen human path to limit harm without endorsing the path itself." },
-      { id: "P011", title: "Hunter Son Analogy", statement: "Commands can be harm-limiting counsel within human-chosen violence, easily misread as God’s ideal." },
-
-      { id: "P012", title: "Hedge Removed (Job Pattern)", statement: "God may withdraw protection (“remove the hedge”), and an enemy can exploit that space to destroy. Job shows permission/withdrawal can look like “God did it” unless the curtain is pulled back." },
-      { id: "P013", title: "Curtain Pulled Back (Hidden Agency)", statement: "In Job, the characters do not know Satan’s role and naturally misattribute calamity. The reader sees unseen conflict so we can learn how to read similar texts when the curtain is not pulled back." },
-      { id: "P014", title: "The Adversary’s Destructive Readiness", statement: "Job portrays Satan as able—when permitted—to unleash rapid, multi-modal destruction (storm, fire, collapse, disease). This reveals both capacity and character." },
-      { id: "P016", title: "Three Disaster Pathways", statement: "For calamity/pestilence, consider: (1) protection withdrawn → enemy exploits (Job), (2) sustainer-withdrawal collapse (creation not self-acting), (3) natural event + attribution language (narrative credits God as Governor without specifying secondary causes)." },
-      { id: "P017", title: "Don’t Stop at Principles", statement: "A BYG answer must preserve God’s character as revealed in Jesus and also offer disciplined plausible pathways for “what happened” without claiming certainty where the text is silent." }
+      { id: "P001", title: "Jesus Reveals the Father", statement: "To understand what God is like, we look at Jesus Christ; God is not different from Christ.", tooltip: "The central axiom: God's character is fully revealed in Jesus. No split personality between OT and NT." },
+      { id: "P002", title: "Character, Not Power", statement: "The controversy is about character. Truth must be seen and understood by free beings, not imposed.", tooltip: "The cosmic conflict is about what God is like, not about who is stronger. Evidence, not coercion." },
+      { id: "P003", title: "Permission Language", statement: "Scripture often presents God as doing what He permits.", tooltip: "Biblical idiom: God is credited as Governor for what happens under His sovereign governance, even when He permits it rather than directly causing it." },
+      { id: "P004", title: "God Sustains Life", statement: "God sustains life; if rejected, He may allow people to experience separation from His sustaining presence.", tooltip: "Life depends on God. Separation from the Life-Giver naturally results in death." },
+      { id: "P005", title: "Wrath as Being Given Over", statement: "God's wrath is often expressed as turning people over to the natural results of their choices.", tooltip: "Wrath = God stepping back and allowing consequences. See Romans 1: 'God gave them over.'" },
+      { id: "P006", title: "Law as Transcript", statement: "The law declares principles of life and safety; it is a transcript of God's character, not a mechanism for coercion.", tooltip: "The law reveals how reality works and what God is like. It's descriptive of God's character, not arbitrary rules." },
+      { id: "P007", title: "The Cross Reveals All", statement: "The cross reveals the lengths of selfishness (Satan) and the depths of self-sacrificing love (God).", tooltip: "Calvary is the clearest picture of both good and evil. God absorbs violence; Satan inflicts it." },
+      { id: "P008", title: "Judgment as Truth", statement: "In judgment, God reveals truth. Free beings respond to truth rather than being compelled.", tooltip: "Judgment unmasks reality. It's about transparency, not arbitrary punishment." },
+      { id: "P009", title: "Separation is Death", statement: "God is the source of life; separation brings death naturally, not as an arbitrary execution.", tooltip: "Death is the natural consequence of rejecting the Life-Giver, not God executing people." },
+      { id: "P010", title: "Accommodation", statement: "God may instruct within a chosen human path to limit harm without endorsing the path itself.", tooltip: "God works within broken systems to minimize harm. His instructions in a violent context don't mean He endorses violence." },
+      { id: "P011", title: "Hunter Son Analogy", statement: "Commands can be harm-limiting counsel within human-chosen violence, easily misread as God's ideal.", tooltip: "Like a father telling his violent son 'If you must hunt, at least use a safety,' God gives harm-limiting counsel in a violent world." },
+      { id: "P012", title: "Hedge Removed (Job Pattern)", statement: "God may withdraw protection ("remove the hedge"), and an enemy can exploit that space to destroy. Job shows permission/withdrawal can look like "God did it" unless the curtain is pulled back.", tooltip: "Job 1: Satan needed permission to harm Job. When protection is withdrawn, calamity follows. People often misattribute this to God." },
+      { id: "P013", title: "Curtain Pulled Back (Hidden Agency)", statement: "In Job, the characters do not know Satan's role and naturally misattribute calamity. The reader sees unseen conflict so we can learn how to read similar texts when the curtain is not pulled back.", tooltip: "Job teaches us to read other disaster texts carefully. Just because humans say 'God did it' doesn't mean that's the mechanism." },
+      { id: "P014", title: "The Adversary's Destructive Readiness", statement: "Job portrays Satan as able—when permitted—to unleash rapid, multi-modal destruction (storm, fire, collapse, disease). This reveals both capacity and character.", tooltip: "Satan has access to destructive forces when God permits. This explains how disasters can happen quickly when protection is withdrawn." },
+      { id: "P016", title: "Three Disaster Pathways", statement: "For calamity/pestilence, consider: (1) protection withdrawn → enemy exploits (Job), (2) sustainer-withdrawal collapse (creation not self-acting), (3) natural event + attribution language (narrative credits God as Governor without specifying secondary causes).", tooltip: "When reading disaster texts, these are three disciplined possibilities consistent with God's character." },
+      { id: "P017", title: "Don't Stop at Principles", statement: "A BYG answer must preserve God's character as revealed in Jesus and also offer disciplined plausible pathways for "what happened" without claiming certainty where the text is silent.", tooltip: "We must both defend God's character AND give reasonable explanations for events. Both matter." }
     ],
     qa: [
-      { id: "Q001", question: "What is the central claim of Behold Your God?", answer: "God is exactly like Jesus.", tags: ["central", "claim", "jesus"] },
-      { id: "Q002", question: "If God is love, why does He destroy?", answer: "He often permits consequences; wrath is 'giving over'.", tags: ["wrath", "destruction", "love"] },
-      { id: "Q003", question: "What does the cross reveal?", answer: "It reveals the character of God (Love) and Satan (Selfishness).", tags: ["cross", "revelation"] },
-      { id: "Q004", question: "Why didn't God end the conflict instantly?", answer: "It is a war over character, not power. Evidence requires time.", tags: ["conflict", "time", "power"] },
-      { id: "Q005", question: "What is the Law?", answer: "A transcript of God's character designed for our safety.", tags: ["law", "safety"] },
-      { id: "Q006", question: "Is God the executioner in Judgment?", answer: "No, death is the natural result of separating from the Source of Life.", tags: ["judgment", "executioner"] },
-      { id: "Q007", question: "Why does the Bible say 'God killed'?", answer: "Biblical idiom can attribute to God that which He permits under His governance.", tags: ["language", "idiom", "killed"] },
-      { id: "Q010", question: "Why did God command Israel to destroy?", answer: "Accommodation: limiting harm within a violent path He did not choose (Hunter Son analogy).", tags: ["israel", "command", "violence", "canaanites"] },
-
-      { id: "Q011", question: "When disaster strikes, did God do it?", answer: "Start with Jesus. Job shows calamity can be the work of an enemy when protection is withdrawn, and people often misattribute what they cannot see. Sometimes nature’s collapse or attribution language is also in view. The mechanism may be unstated; we give disciplined possibilities consistent with God’s character.", tags: ["disaster", "calamity", "job", "permission", "hedge", "storm", "plague", "flood"] },
-      { id: "Q012", question: "Why does Scripture sometimes say “God did it” when destruction happens?", answer: "Scripture often speaks covenantally: God is described as acting as Governor even when the mechanism includes permission, withdrawal, enemy agency, or natural consequence. Job trains us not to assume direct divine violence from surface wording alone.", tags: ["attribution", "language", "governance", "job", "permission", "destroyed"] }
+      { id: "Q001", question: "What is the central claim of Behold Your God?", answer: "God is exactly like Jesus.", tags: ["central", "claim", "jesus"], relatedPrinciples: ["P001"] },
+      { id: "Q002", question: "If God is love, why does He destroy?", answer: "He often permits consequences; wrath is 'giving over'.", tags: ["wrath", "destruction", "love"], relatedPrinciples: ["P005", "P009"] },
+      { id: "Q003", question: "What does the cross reveal?", answer: "It reveals the character of God (Love) and Satan (Selfishness).", tags: ["cross", "revelation"], relatedPrinciples: ["P007"] },
+      { id: "Q004", question: "Why didn't God end the conflict instantly?", answer: "It is a war over character, not power. Evidence requires time.", tags: ["conflict", "time", "power"], relatedPrinciples: ["P002"] },
+      { id: "Q005", question: "What is the Law?", answer: "A transcript of God's character designed for our safety.", tags: ["law", "safety"], relatedPrinciples: ["P006"] },
+      { id: "Q006", question: "Is God the executioner in Judgment?", answer: "No, death is the natural result of separating from the Source of Life.", tags: ["judgment", "executioner"], relatedPrinciples: ["P009", "P008"] },
+      { id: "Q007", question: "Why does the Bible say 'God killed'?", answer: "Biblical idiom can attribute to God that which He permits under His governance.", tags: ["language", "idiom", "killed"], relatedPrinciples: ["P003"] },
+      { id: "Q010", question: "Why did God command Israel to destroy?", answer: "Accommodation: limiting harm within a violent path He did not choose (Hunter Son analogy).", tags: ["israel", "command", "violence", "canaanites"], relatedPrinciples: ["P010", "P011"] },
+      { id: "Q011", question: "When disaster strikes, did God do it?", answer: "Start with Jesus. Job shows calamity can be the work of an enemy when protection is withdrawn, and people often misattribute what they cannot see. Sometimes nature's collapse or attribution language is also in view. The mechanism may be unstated; we give disciplined possibilities consistent with God's character.", tags: ["disaster", "calamity", "job", "permission", "hedge", "storm", "plague", "flood"], relatedPrinciples: ["P012", "P013", "P014", "P016"] },
+      { id: "Q012", question: "Why does Scripture sometimes say "God did it" when destruction happens?", answer: "Scripture often speaks covenantally: God is described as acting as Governor even when the mechanism includes permission, withdrawal, enemy agency, or natural consequence. Job trains us not to assume direct divine violence from surface wording alone.", tags: ["attribution", "language", "governance", "job", "permission", "destroyed"], relatedPrinciples: ["P003", "P012"] }
     ]
   };
 
@@ -665,27 +761,60 @@
       contentArea.insertBefore(section, document.getElementById('learnContent'));
     });
 
-    document.getElementById('learnDynamic').innerHTML = renderAccordion(LEARN_PATH, "Start Here", "learn-path");
+    document.getElementById('learnDynamic').innerHTML = renderLearnPath();
+  }
+
+  function renderLearnPath() {
+    let html = '';
+    LEARN_PATH.forEach((item, idx) => {
+      const uniqueId = `learn-path-${idx}`;
+      const contentHtml = item.content.map(txt => `<p class="paragraph-spacing">${escapeHtml(txt)}</p>`).join('');
+      
+      const actionHtml = item.testQuestion ? `
+        <div class="principle-action">
+          <button class="action-button-secondary" onclick="testPrinciple('${escapeHtml(item.testQuestion)}')">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            See this principle in action
+          </button>
+        </div>
+      ` : '';
+
+      html += `
+        <div class="accordion-item">
+          <div class="accordion-header ${idx === 0 ? 'active' : ''}" onclick="toggleAccordion('${uniqueId}')">
+            <span>${escapeHtml(item.header)}</span>
+            <span>▼</span>
+          </div>
+          <div id="${uniqueId}" class="accordion-content ${idx === 0 ? 'open' : ''}">
+            ${contentHtml}
+            ${actionHtml}
+          </div>
+        </div>
+      `;
+    });
+    return `<div class="dark-card">${html}</div>`;
+  }
+
+  function testPrinciple(question) {
+    document.getElementById('topicInput').value = question;
+    switchTier('response');
+    processQuery();
   }
 
   // --- CALAMITY TRIGGERS ---
   const CALAMITY_TRIGGERS = [
-    // Flood / deluge
     "flood", "deluge", "drown", "drowned", "waters prevailed", "fountains of the deep", "windows of heaven", "ark", "noah",
-    // Fire / from heaven
     "fire", "brimstone", "sulfur", "burning", "consumed", "devoured", "rained fire", "from heaven",
-    // Plague / pestilence
     "plague", "pestilence", "disease", "epidemic", "sickness", "boils", "sores", "outbreak", "infection",
-    // Storm / collapse
     "storm", "whirlwind", "wind", "tempest", "hail", "lightning", "thunder", "tornado", "hurricane",
     "collapsed", "fell on", "crushed", "destroyed by storm",
-    // Earthquake
     "earthquake", "quake", "trembling", "ground opened", "earth swallowed", "fissure",
-    // Angel “smote” language
     "angel smote", "smote", "struck down", "struck", "slain", "destroying angel",
-    // Mass-harm verbs
     "destroyed", "wiped out", "slew", "killed", "perished", "judgment fell", "wrath poured out",
-    // Named events
     "sodom", "gomorrah", "jericho", "canaanites"
   ];
 
@@ -694,28 +823,51 @@
     return CALAMITY_TRIGGERS.some(k => text.includes(k));
   }
 
-  // --- RETRIEVAL FUNCTION ---
+  // --- IMPROVED RETRIEVAL FUNCTION ---
   function retrieveContext(query) {
-    const qTerms = query.toLowerCase().split(/\s+/).filter(Boolean);
+    const qTerms = expandQuery(query);
 
     const scoredPrinciples = KB.principles.map(p => {
       let score = 0;
-      if (qTerms.some(t => p.title.toLowerCase().includes(t))) score += 5;
-      if (qTerms.some(t => p.statement.toLowerCase().includes(t))) score += 2;
-      return { item: p, score: score, type: 'Principle' };
+      const titleLower = p.title.toLowerCase();
+      const statementLower = p.statement.toLowerCase();
+      
+      // Exact title match
+      if (qTerms.some(t => titleLower === t)) score += 10;
+      // Title contains term
+      if (qTerms.some(t => titleLower.includes(t))) score += 5;
+      // Statement contains term
+      if (qTerms.some(t => statementLower.includes(t))) score += 2;
+      
+      return { item: p, score: score, type: 'Principle', relevance: score > 5 ? 'HIGH' : 'CONTEXT' };
     }).sort((a,b) => b.score - a.score);
 
     const scoredQA = KB.qa.map(q => {
       let score = 0;
-      if (qTerms.some(t => q.question.toLowerCase().includes(t))) score += 10;
+      const questionLower = q.question.toLowerCase();
+      
+      // Exact question match (very rare but possible)
+      if (qTerms.some(t => questionLower === query.toLowerCase())) score += 20;
+      // Question contains multiple terms
+      const matchCount = qTerms.filter(t => questionLower.includes(t)).length;
+      score += matchCount * 4;
+      // Tag matches
       if (q.tags && q.tags.some(tag => qTerms.includes(tag))) score += 6;
-      return { item: q, score: score, type: 'Q&A' };
+      // Related principles boost
+      if (q.relatedPrinciples) {
+        const relatedMatches = q.relatedPrinciples.filter(pid => 
+          scoredPrinciples.find(sp => sp.item.id === pid && sp.score > 0)
+        );
+        score += relatedMatches.length * 3;
+      }
+      
+      return { item: q, score: score, type: 'Q&A', relevance: score > 8 ? 'HIGH' : 'CONTEXT' };
     }).sort((a,b) => b.score - a.score);
 
-    const topPrinciples = scoredPrinciples.filter(s => s.score > 0).slice(0, 5);
+    const topPrinciples = scoredPrinciples.filter(s => s.score > 0).slice(0, 6);
     const topQA = scoredQA.filter(s => s.score > 0).slice(0, 2);
 
-    return [...topPrinciples, ...topQA];
+    return [...topQA, ...topPrinciples]; // QA first, then principles
   }
 
   async function processQuery() {
@@ -734,12 +886,12 @@
     state.query = rawInput;
 
     const hits = retrieveContext(state.query);
-    state.retrievedContext = hits.map(h => h.item);
+    state.retrievedContext = hits;
 
     display.classList.remove('hidden');
     display.innerHTML = `
       <h2 class="text-xl text-[var(--brand)]">Analysis Active</h2>
-      <p class="text-sm" style="color: var(--text-soft);">Prepared ${hits.length} relevant sources.</p>
+      <p class="text-sm" style="color: var(--text-soft);">Prepared ${hits.filter(h => h.relevance === 'HIGH').length} high-relevance sources + ${hits.filter(h => h.relevance === 'CONTEXT').length} contextual sources.</p>
     `;
 
     state.cache = {};
@@ -790,10 +942,12 @@
     const profile = domains.byg;
     const lensObj = profile.lenses.find(l => l.id === lensId);
 
-    const contextString = state.retrievedContext.map(i => {
-      if (i.statement) return `[${i.title}] ${i.statement}`;
-      return `[Related Q&A] Q: ${i.question} A: ${i.answer}`;
-    }).join('\n');
+    const contextString = state.retrievedContext.map((hit, idx) => {
+      const rank = hit.relevance === 'HIGH' ? "[HIGH RELEVANCE]" : "[CONTEXT]";
+      const i = hit.item;
+      if (i.statement) return `${rank} [Principle: ${i.title}] ${i.statement}`;
+      return `${rank} [Prior Answer] Q: ${i.question} A: ${i.answer}`;
+    }).join('\n\n');
 
     const calamityMode = isCalamityQuery(state.query);
     const calamityRules = (calamityMode && (lensId === 'lens-1' || lensId === 'lens-2')) ? `
@@ -899,7 +1053,22 @@ FORMATTING:
     let html = `<div class="dark-card"><h3 class="text-2xl mb-6 text-center text-[var(--brand)]">${escapeHtml(title)}</h3>`;
     sections.forEach((sec, idx) => {
       const uniqueId = `${lensId}-acc-${idx}`;
-      const contentHtml = (sec.content || []).map(txt => `<p class="paragraph-spacing">${escapeHtml(txt)}</p>`).join('');
+      let contentHtml = (sec.content || []).map(txt => {
+        let paragraph = escapeHtml(txt);
+        
+        // Add principle tooltips where principles are mentioned
+        KB.principles.forEach(p => {
+          const pattern = new RegExp(`\\b(${p.title})\\b`, 'gi');
+          if (pattern.test(paragraph)) {
+            paragraph = paragraph.replace(pattern, 
+              `$1<span class="principle-hint" data-tooltip="${escapeHtml(p.tooltip || p.statement)}">?</span>`
+            );
+          }
+        });
+        
+        return `<p class="paragraph-spacing">${paragraph}</p>`;
+      }).join('');
+      
       html += `
         <div class="accordion-item">
           <div class="accordion-header ${idx === 0 ? 'active' : ''}" onclick="toggleAccordion('${uniqueId}')">
@@ -909,8 +1078,48 @@ FORMATTING:
           <div id="${uniqueId}" class="accordion-content ${idx === 0 ? 'open' : ''}">${contentHtml}</div>
         </div>`;
     });
+    
+    // Add feedback bar
+    html += `
+      <div class="feedback-bar">
+        <button class="action-button-secondary" onclick="regenerateLens('${lensId}')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+          </svg>
+          Try Again
+        </button>
+        <button class="action-button-secondary" onclick="flagIssue('${lensId}')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+          Flag Issue
+        </button>
+      </div>
+    `;
+    
     html += `</div>`;
     return html;
+  }
+
+  function regenerateLens(lensId) {
+    delete state.cache[lensId];
+    const btn = document.getElementById(`btn-${lensId}`);
+    loadLens(lensId, btn);
+  }
+
+  function flagIssue(lensId) {
+    const log = JSON.parse(localStorage.getItem('byg-flagged') || '[]');
+    log.push({ 
+      query: state.query, 
+      lens: lensId, 
+      timestamp: new Date().toISOString(),
+      context: state.retrievedContext.map(h => h.item.id || h.item.question)
+    });
+    localStorage.setItem('byg-flagged', JSON.stringify(log));
+    alert("Flagged for review. Thank you for helping improve this tool!");
   }
 
   function toggleAccordion(id) {
