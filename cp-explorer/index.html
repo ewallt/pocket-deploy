@@ -270,7 +270,7 @@
             <div class="input-wrapper">
                 <input type="text" id="topicInput" placeholder="e.g., Moltmann, wrath, penal substitution, Apostle Paul">
 
-                <button class="suggestion-btn" onclick="fetchCategories()" title="Get Category Suggestions">
+                <button class="suggestion-btn" onclick="showBrowseOptions()" title="Browse Theologians & Topics">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"></path>
                         <path d="M9 21h6"></path>
@@ -278,14 +278,18 @@
                 </button>
 
                 <div id="suggestionPopup" class="suggestion-popup">
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="text-xs font-bold text-[var(--brand)] uppercase">AI Suggestions</span>
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-xs font-bold text-[var(--brand)] uppercase">Browse Available</span>
                         <span onclick="closeSuggestions()" class="text-xs cursor-pointer opacity-50 hover:opacity-100">✕</span>
                     </div>
                     <div id="suggestionList" class="text-sm"></div>
                 </div>
             </div>
-            <p class="helper-text">Explore theological perspectives on the cross. Click 💡 to get category suggestions.</p>
+            <p class="helper-text">Click 💡 to browse available theologians and topics, or type your own query.</p>
+
+            <div class="mt-3">
+                <button id="exploreButton" onclick="fetchCategories()" class="action-button w-full">EXPLORE</button>
+            </div>
 
             <div id="topicDisplay" class="mt-4 hidden border-t border-[var(--border)] pt-4"></div>
         </div>
@@ -487,23 +491,73 @@
         });
     }
 
-    // --- CATEGORY SUGGESTION ---
+    // --- BROWSE OPTIONS (LIGHTBULB) ---
+    async function showBrowseOptions() {
+        const popup = document.getElementById('suggestionPopup');
+        const list = document.getElementById('suggestionList');
+
+        list.innerHTML = `<span class="italic opacity-70">Loading options...</span>`;
+        popup.classList.add('active');
+
+        try {
+            // Get unique voices from database
+            const allInsights = await store.getAll();
+            const voices = [...new Set(allInsights.map(i => i.voice))].sort();
+            
+            // Get unique tags for topics
+            const allTags = allInsights.flatMap(i => i.tags || []);
+            const topics = [...new Set(allTags)].sort();
+
+            // Build the two-section display
+            let html = '';
+
+            // Theologians section
+            html += `<div class="mb-4">`;
+            html += `<div class="text-xs font-bold text-[var(--brand)] uppercase mb-2" style="opacity: 0.8;">Theologians:</div>`;
+            voices.forEach(voice => {
+                html += `<span class="suggestion-chip" onclick="selectFromBrowse('${escapeHtml(voice)}')">${escapeHtml(voice)}</span>`;
+            });
+            html += `</div>`;
+
+            // Topics section
+            html += `<div>`;
+            html += `<div class="text-xs font-bold text-[var(--brand)] uppercase mb-2" style="opacity: 0.8;">Topics:</div>`;
+            topics.forEach(topic => {
+                html += `<span class="suggestion-chip" onclick="selectFromBrowse('${escapeHtml(topic)}')">${escapeHtml(topic)}</span>`;
+            });
+            html += `</div>`;
+
+            list.innerHTML = html;
+
+        } catch(e) {
+            console.error(e);
+            list.innerHTML = `<span class="text-red-400">Error loading options</span>`;
+        }
+    }
+
+    function selectFromBrowse(term) {
+        document.getElementById('topicInput').value = term;
+        closeSuggestions();
+        
+        // Optional: auto-trigger explore
+        // fetchCategories();
+    }
+
+    // --- CATEGORY GENERATION (EXPLORE BUTTON) ---
     async function fetchCategories() {
         const input = document.getElementById('topicInput');
         const query = input.value.trim();
 
         if (!query) {
-            alert("Please enter a query first.");
+            alert("Please enter a query or select from browse options.");
             return;
         }
 
         state.query = query;
 
-        const popup = document.getElementById('suggestionPopup');
-        const list = document.getElementById('suggestionList');
-
-        list.innerHTML = `<span class="italic opacity-70">Analyzing knowledge base...</span>`;
-        popup.classList.add('active');
+        const btn = document.getElementById('exploreButton');
+        btn.disabled = true;
+        btn.innerHTML = '<div class="spinner"></div>';
 
         try {
             // Find relevant insights from the database
@@ -545,22 +599,7 @@ Query: "Apostle Paul" → ["Justification by Faith", "In Christ Theology", "The 
 
             state.categories = categories;
 
-            list.innerHTML = '';
-            categories.forEach(cat => {
-                const chip = document.createElement('span');
-                chip.className = 'suggestion-chip';
-                chip.textContent = cat;
-                chip.onclick = () => {
-                    document.getElementById('categoryDropdown').innerHTML = 
-                        '<option value="">-- Select a category --</option>' +
-                        categories.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
-                    closeSuggestions();
-                    switchTier('explore');
-                };
-                list.appendChild(chip);
-            });
-
-            // Auto-populate dropdown
+            // Populate dropdown
             const dropdown = document.getElementById('categoryDropdown');
             dropdown.innerHTML = '<option value="">-- Select a category --</option>' +
                 categories.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
@@ -571,7 +610,7 @@ Query: "Apostle Paul" → ["Justification by Faith", "In Christ Theology", "The 
             display.innerHTML = `
                 <h2 class="text-xl text-[var(--brand)]">Query: "${escapeHtml(query)}"</h2>
                 <p class="text-sm" style="color: var(--text-soft);">
-                    ${relevantInsights.length} relevant insights found in knowledge base
+                    ${relevantInsights.length} relevant insights found • ${categories.length} categories generated
                 </p>
             `;
 
@@ -579,7 +618,10 @@ Query: "Apostle Paul" → ["Justification by Faith", "In Christ Theology", "The 
 
         } catch(e) {
             console.error(e);
-            list.innerHTML = `<span class="text-red-400">Error generating categories: ${escapeHtml(e.message)}</span>`;
+            alert(`Error generating categories: ${e.message}`);
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'EXPLORE';
         }
     }
 
