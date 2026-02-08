@@ -221,7 +221,7 @@
         
         <header class="text-center mb-8 pr-12">
             <h1 id="appTitle" class="text-4xl md:text-5xl mb-2">Context Navigator</h1>
-            <p class="text-xl italic text-[var(--text-muted)]">Master Edition <span class="text-red-500 font-bold">Build #61 </span></p>
+            <p class="text-xl italic text-[var(--text-muted)]">Master Edition <span class="text-red-500 font-bold">Build #61a </span></p>
             
             <button onclick="cycleTheme()" class="theme-gear" title="Switch Theme">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -927,6 +927,13 @@
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         contents: [{ role: "user", parts: [{ text: promptText }] }],
+                        // --- NEW: Force the AI to answer sensitive topics ---
+                        safetySettings: [
+                            { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+                        ],
                         generationConfig: { 
                             responseMimeType: "text/plain", 
                             temperature: 0.7 
@@ -936,31 +943,29 @@
             );
 
             if (!response.ok) {
-                // If the server explicitly says "Error", handle it
-                throw new Error(`HTTP Error: ${response.status}`);
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error?.message || `HTTP Error: ${response.status}`);
             }
 
             const data = await response.json();
             
-            // --- THE CRITICAL FIX ---
-            // 1. check if 'candidates' is missing (Structure Issue)
-            // 2. check if the array is empty
-            // 3. check if the content part is missing
+            // Safety Check
             if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
-                console.warn("⚠️ API blocked the response (Safety/Other):", data);
-                throw new Error("The AI returned an empty response (likely Safety Filter).");
+                console.warn("⚠️ API blocked the response:", data);
+                // If it's still blocked, it's likely a hard policy violation (e.g. producing political misinformation)
+                throw new Error("The AI returned an empty response. (Even with filters off, this topic may be restricted).");
             }
 
             return data.candidates[0].content.parts[0].text;
 
         } catch (error) {
             console.error("Gemini Request Failed:", error);
-            
-            // Return a "Fake" JSON response so the app displays an error message 
-            // instead of freezing or showing nothing.
+            // Return a safe fallback to keep the app running
             return JSON.stringify({ 
-                title: "AI Response Blocked", 
-                summary: "The AI service connected but returned no content. This is usually due to a safety filter triggering on the topic.", 
+                error: true, 
+                title: "Content Blocked", 
+                summary: "The AI refused to discuss this topic. Please try a different subject.", 
+                items: ["Retry"],
                 type: "Other"
             });
         }
