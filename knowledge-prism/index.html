@@ -221,7 +221,7 @@
         
         <header class="text-center mb-8 pr-12">
             <h1 id="appTitle" class="text-4xl md:text-5xl mb-2">Context Navigator</h1>
-            <p class="text-xl italic text-[var(--text-muted)]">Master Edition <span class="text-red-500 font-bold">Build #62</span></p>
+            <p class="text-xl italic text-[var(--text-muted)]">Master Edition <span class="text-red-500 font-bold">Build #63</span></p>
             
             <button onclick="cycleTheme()" class="theme-gear" title="Switch Theme">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -557,20 +557,38 @@
         }
     }
 
+    // --- REFACTORED: Resilient List Parser ---
     function parseResilientList(rawText) {
+        // 1. Try JSON Array extraction using Regex (Most robust method)
         try {
-            const cleanText = rawText.replace(/```json/g, '').replace(/```/g, '');
+            const cleanText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+            // Look for patterns like ["Item 1", "Item 2"]
+            const firstBracket = cleanText.indexOf('[');
+            const lastBracket = cleanText.lastIndexOf(']');
+            
+            if (firstBracket !== -1 && lastBracket !== -1) {
+                const jsonArray = cleanText.substring(firstBracket, lastBracket + 1);
+                const parsed = JSON.parse(jsonArray);
+                if (Array.isArray(parsed)) return parsed;
+            }
+            
+            // Look for { "items": [...] }
             const firstBrace = cleanText.indexOf('{');
             const lastBrace = cleanText.lastIndexOf('}');
             if (firstBrace !== -1 && lastBrace !== -1) {
-                const jsonBlock = cleanText.substring(firstBrace, lastBrace + 1);
-                const obj = JSON.parse(jsonBlock);
+                const jsonObject = cleanText.substring(firstBrace, lastBrace + 1);
+                const obj = JSON.parse(jsonObject);
                 if (obj.items && Array.isArray(obj.items)) return obj.items;
+                // Last ditch: check values
                 const values = Object.values(obj);
                 const foundArray = values.find(v => Array.isArray(v));
                 if (foundArray) return foundArray;
             }
-        } catch (e) { }
+        } catch (e) { 
+            console.warn("JSON Parse failed, falling back to text splitting", e);
+        }
+
+        // 2. Fallback: Text line splitting
         return rawText.split('\n')
             .map(line => line.trim())
             .filter(line => line.length > 0 && !line.startsWith('{') && !line.startsWith('}') && !line.startsWith(']')) 
@@ -760,6 +778,7 @@
             dropdown.parentElement.appendChild(helper);
 
         } catch(e) {
+            console.error("Load Categories Error:", e);
             dropdown.innerHTML = '<option>Error loading</option>';
         } finally {
             dropdown.disabled = false;
