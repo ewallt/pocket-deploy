@@ -15,7 +15,7 @@
             --brand: #d4a574;
             --text-body: #2c2416;
             --text-card: #faf8f3;
-            --text-muted: #a89580; /* IMPROVED: Better contrast from #665648 */
+            --text-muted: #a89580;
             --border: #5a5041;
         }
 
@@ -198,6 +198,29 @@
         .accordion-content.open { max-height: 2000px; padding-bottom: 1.5rem; }
         .paragraph-spacing { margin-bottom: 1rem; }
 
+        /* --- DISTRACTION (LOADING) ANIMATIONS --- */
+        .distraction-container {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 4rem 2rem; color: var(--text-muted);
+            text-align: center;
+        }
+        .distraction-text {
+            font-family: 'Courier New', monospace; font-size: 0.9rem; margin-top: 1rem;
+            color: var(--brand); text-transform: uppercase; letter-spacing: 0.1em;
+            min-height: 1.5em; /* Prevent jump */
+        }
+        .scan-line {
+            width: 100%; height: 2px; background: var(--brand);
+            box-shadow: 0 0 10px var(--brand);
+            animation: scan 1.5s ease-in-out infinite;
+            margin-bottom: 1rem; opacity: 0.5;
+        }
+        @keyframes scan {
+            0% { transform: scaleX(0); opacity: 0; }
+            50% { transform: scaleX(1); opacity: 1; }
+            100% { transform: scaleX(0); opacity: 0; }
+        }
+
         /* --- UTILS --- */
         .hidden { display: none !important; }
         .tier-tabs { display: none; }
@@ -221,7 +244,7 @@
         
         <header class="text-center mb-8 pr-12">
             <h1 id="appTitle" class="text-4xl md:text-5xl mb-2">Context Navigator</h1>
-            <p class="text-xl italic text-[var(--text-muted)]">Master Edition <span class="text-red-500 font-bold">Build #64</span></p>
+            <p class="text-xl italic text-[var(--text-muted)]">Master Edition <span class="text-red-500 font-bold">Build #65</span></p>
             
             <button onclick="cycleTheme()" class="theme-gear" title="Switch Theme">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -304,6 +327,16 @@
                     <div id="aboutDynamic"></div>
                 </div>
             </section>
+            
+            <section id="loadingDistraction" class="tab-content hidden">
+                <div class="dark-card">
+                    <div class="distraction-container">
+                        <div class="scan-line"></div>
+                        <div class="spinner mb-4" style="width: 40px; height: 40px;"></div>
+                        <div id="distractionText" class="distraction-text">INITIALIZING...</div>
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
 
@@ -311,14 +344,12 @@
 
     // ==========================================
     // CONFIGURATION FLAG
-    // Set lockedDomain to a specific key to lock, null for Master Mode
     // ==========================================
     const APP_CONFIG = {
         lockedDomain: null 
     };
     
     // --- API CONFIGURATION ---
-    // Update this to point to your deployed Cloudflare Worker
     const API_URL = "https://gemini-proxy.ewalltom.workers.dev";
 
     // --- DOMAIN PROFILES (DYNAMIC LENSES) ---
@@ -433,31 +464,27 @@
         }
     };
 
-    // --- THEME ENGINE (CONTRAST UPDATES) ---
+    // --- THEME ENGINE ---
     const themes = {
         'explorer': { 
             '--app-bg': '#e8dcc8', '--card-bg': '#1a1815', '--input-bg': '#26231f', '--brand': '#d4a574', 
             '--text-body': '#2c2416', '--text-card': '#faf8f3', 
-            '--text-muted': '#a89580', 
-            '--border': '#5a5041' 
+            '--text-muted': '#a89580', '--border': '#5a5041' 
         },
         'archives': { 
             '--app-bg': '#f5f5f4', '--card-bg': '#e7e5e4', '--input-bg': '#d6d3d1', '--brand': '#0f766e', 
             '--text-body': '#292524', '--text-card': '#292524', 
-            '--text-muted': '#4a4540', 
-            '--border': '#d6d3d1' 
+            '--text-muted': '#4a4540', '--border': '#d6d3d1' 
         },
         'high-command': { 
             '--app-bg': '#022c22', '--card-bg': '#064e3b', '--input-bg': '#065f46', '--brand': '#fef08a', 
             '--text-body': '#ecfdf5', '--text-card': '#ecfdf5', 
-            '--text-muted': '#81eebb', 
-            '--border': '#065f46' 
+            '--text-muted': '#81eebb', '--border': '#065f46' 
         },
         'navy': { 
             '--app-bg': '#0b1020', '--card-bg': '#111833', '--input-bg': '#1a2347', '--brand': '#8bb9ff', 
             '--text-body': '#e6ecff', '--text-card': '#e6ecff', 
-            '--text-muted': '#bcc5e3', 
-            '--border': '#26325b' 
+            '--text-muted': '#bcc5e3', '--border': '#26325b' 
         }
     };
 
@@ -479,7 +506,8 @@
         currentTier: "about",
         currentCategory: "",
         entityType: "Other",
-        // caches.content is a key-value pair of "Category-LensID" -> HTML String
+        activeLensId: "lens-1", // Track which lens is viewed
+        isFetching: false, // Track if we are currently loading
         caches: { categories: [], content: {} }
     };
 
@@ -510,12 +538,13 @@
         document.querySelectorAll('.dynamic-lens-section').forEach(el => el.remove());
 
         // Rebuild lens buttons and content containers
-        activeLenses.forEach(lens => {
+        activeLenses.forEach((lens, index) => {
             const btn = document.createElement('button');
             btn.className = 'tab-button';
             btn.id = `btn-${lens.id}`;
             btn.textContent = lens.label;
-            btn.onclick = () => loadLens(lens.id, btn);
+            btn.onclick = () => switchLensView(lens.id);
+            if (index === 0) btn.classList.add('active'); // Default active visual
             btnContainer.appendChild(btn);
 
             const section = document.createElement('section');
@@ -523,24 +552,16 @@
             section.className = 'tab-content dynamic-lens-section';
             contentArea.insertBefore(section, document.getElementById('aboutContent'));
         });
+        
+        // Reset active lens to first one
+        if(activeLenses.length > 0) state.activeLensId = activeLenses[0].id;
     }
 
     // --- LOGIC: DOMAIN LOCK & ENTITY ROUTING ---
     function resolveLenses(domainKey, entityType) {
-        if (['bible', 'medical', 'art', 'music'].includes(domainKey)) {
-            return domains[domainKey].lenses; 
-        }
-
-        if (domainKey === 'biography') {
-            if (entityType === 'Person') return domains['biography'].lenses;
-            return domains['general'].lenses;
-        }
-
-        if (domainKey === 'general') {
-            if (entityType === 'Person') return domains['biography'].lenses;
-            return domains['general'].lenses;
-        }
-
+        if (['bible', 'medical', 'art', 'music'].includes(domainKey)) return domains[domainKey].lenses; 
+        if (domainKey === 'biography' && entityType === 'Person') return domains['biography'].lenses;
+        if (domainKey === 'general' && entityType === 'Person') return domains['biography'].lenses;
         return domains['general'].lenses;
     }
 
@@ -557,38 +578,27 @@
         }
     }
 
-    // --- REFACTORED: Resilient List Parser ---
     function parseResilientList(rawText) {
-        // 1. Try JSON Array extraction using Regex (Most robust method)
         try {
             const cleanText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
-            // Look for patterns like ["Item 1", "Item 2"]
             const firstBracket = cleanText.indexOf('[');
             const lastBracket = cleanText.lastIndexOf(']');
-            
             if (firstBracket !== -1 && lastBracket !== -1) {
                 const jsonArray = cleanText.substring(firstBracket, lastBracket + 1);
                 const parsed = JSON.parse(jsonArray);
                 if (Array.isArray(parsed)) return parsed;
             }
-            
-            // Look for { "items": [...] }
             const firstBrace = cleanText.indexOf('{');
             const lastBrace = cleanText.lastIndexOf('}');
             if (firstBrace !== -1 && lastBrace !== -1) {
                 const jsonObject = cleanText.substring(firstBrace, lastBrace + 1);
                 const obj = JSON.parse(jsonObject);
                 if (obj.items && Array.isArray(obj.items)) return obj.items;
-                // Last ditch: check values
                 const values = Object.values(obj);
                 const foundArray = values.find(v => Array.isArray(v));
                 if (foundArray) return foundArray;
             }
-        } catch (e) { 
-            console.warn("JSON Parse failed, falling back to text splitting", e);
-        }
-
-        // 2. Fallback: Text line splitting
+        } catch (e) { }
         return rawText.split('\n')
             .map(line => line.trim())
             .filter(line => line.length > 0 && !line.startsWith('{') && !line.startsWith('}') && !line.startsWith(']')) 
@@ -596,19 +606,14 @@
             .filter(line => line.length > 2); 
     }
 
-    // --- LOGIC ---
+    // --- MAIN NAVIGATION ---
     function switchDomainTab(domainKey) {
         if(APP_CONFIG.lockedDomain) return;
-
-        document.querySelectorAll('#domainTabs .tab-button').forEach(btn => {
-            btn.classList.remove('active');
-        });
+        document.querySelectorAll('#domainTabs .tab-button').forEach(btn => btn.classList.remove('active'));
         event.target.classList.add('active');
 
         state.domain = domainKey;
-        state.topic = "";
-        state.filter = "";
-        state.currentCategory = "";
+        state.topic = ""; state.filter = ""; state.currentCategory = "";
         state.caches = { categories: [], content: {} };
 
         document.getElementById('topicInput').value = "";
@@ -617,8 +622,7 @@
         document.getElementById('topicDisplay').innerHTML = "";
         document.getElementById('categoryDropdown').innerHTML = '<option>-- Select Category --</option>';
         document.getElementById('lensButtons').classList.add('hidden');
-        document.getElementById('appTitle').innerHTML = 'Context Navigator';
-
+        
         applyDomainProfile();
         switchTier('about');
     }
@@ -635,13 +639,7 @@
         popup.classList.add('active');
 
         try {
-            const prompt = `
-                Topic: "${topicIn}". 
-                Role: ${profile.persona}.
-                Goal: Suggest specific Focus Areas (plural nouns) for a list. 
-                Criteria: ${profile.suggestionLogic}
-                Return JSON: {"items": ["Type 1", "Type 2"]}
-            `;
+            const prompt = `Topic: "${topicIn}". Role: ${profile.persona}. Goal: Suggest specific Focus Areas (plural nouns) for a list. Criteria: ${profile.suggestionLogic}. Return JSON: {"items": ["Type 1", "Type 2"]}`;
             const data = await callAI(prompt);
             const items = parseResilientList(data).slice(0, 7); 
             
@@ -652,12 +650,8 @@
                 chip.textContent = item;
                 chip.onclick = () => {
                     document.getElementById('filterInput').value = item;
-                    list.querySelectorAll('.suggestion-chip').forEach(c => {
-                        c.style.borderColor = 'var(--border)';
-                        c.style.fontWeight = '400';
-                    });
-                    chip.style.borderColor = 'var(--brand)';
-                    chip.style.fontWeight = '700';
+                    list.querySelectorAll('.suggestion-chip').forEach(c => { c.style.borderColor = 'var(--border)'; c.style.fontWeight = '400'; });
+                    chip.style.borderColor = 'var(--brand)'; chip.style.fontWeight = '700';
                 };
                 list.appendChild(chip);
             });
@@ -682,42 +676,25 @@
         if(!rawInput) return alert("Please enter a topic.");
 
         closeSuggestions();
-        btn.disabled = true;
-        btn.innerHTML = '<div class="spinner"></div>';
+        btn.disabled = true; btn.innerHTML = '<div class="spinner"></div>';
         
         state.topic = rawInput;
         state.filter = filterIn.value.trim();
         state.listMode = modeIn.value;
 
         try {
-            const prompt = `
-                Role: ${profile.persona}.
-                Topic: "${state.topic}".
-                ${state.filter ? `Focus Area: "${state.filter}"` : ""}
-                Goal: Define the subject${state.filter ? " specifically regarding the focus area" : ""}.
-                CONSTRAINT: DO NOT return a list. Only return a definition.
-                Also classify the topic type as "Person", "Work" (Book/Art/Song), or "Other".
-                Return raw JSON only: {"title": "Formal Name", "summary": "One compelling sentence.", "type": "Person|Work|Other"}
-            `;
+            const prompt = `Role: ${profile.persona}. Topic: "${state.topic}". ${state.filter ? `Focus Area: "${state.filter}"` : ""} Goal: Define the subject. CONSTRAINT: DO NOT return a list. Only return a definition. Also classify the topic type as "Person", "Work" (Book/Art/Song), or "Other". Return raw JSON only: {"title": "Formal Name", "summary": "One compelling sentence.", "type": "Person|Work|Other"}`;
             
             const data = await callAI(prompt);
             const result = parseAIJSON(data);
-            
             state.entityType = result.type || "Other";
 
             const newLenses = resolveLenses(state.domain, state.entityType);
             applyDomainProfile(newLenses);
 
-            document.getElementById('appTitle').innerHTML = `
-                Context Navigator 
-                <span class="context-breadcrumb">· ${result.title}</span>
-            `;
-
+            document.getElementById('appTitle').innerHTML = `Context Navigator <span class="context-breadcrumb">· ${result.title}</span>`;
             display.classList.remove('hidden');
-            display.innerHTML = `
-                <h2 class="text-2xl font-bold text-[var(--brand)]">${result.title}</h2>
-                <p class="italic text-[var(--text-muted)]">${result.summary}</p>
-            `;
+            display.innerHTML = `<h2 class="text-2xl font-bold text-[var(--brand)]">${result.title}</h2><p class="italic text-[var(--text-muted)]">${result.summary}</p>`;
 
             state.caches.categories = [];
             state.caches.content = {};
@@ -729,56 +706,46 @@
             console.error(e);
             alert("Error connecting to AI. Please try again.");
         } finally {
-            btn.disabled = false;
-            btn.textContent = 'GO';
+            btn.disabled = false; btn.textContent = 'GO';
         }
     }
 
     async function loadCategories() {
         const dropdown = document.getElementById(`categoryDropdown`);
-        dropdown.disabled = true;
-        dropdown.innerHTML = '<option>Loading...</option>';
+        dropdown.disabled = true; dropdown.innerHTML = '<option>Loading...</option>';
 
         let promptContext = `Topic: "${state.topic}"`;
         if(state.filter) promptContext += `, Specific Focus: "${state.filter}"`;
 
-        let instruction = "";
-        switch(state.listMode) {
-            case 'top3': instruction = `List exactly the Top 3 most important ${state.filter || "sub-categories"}. Rank 1-3. Simple JSON list.`; break;
-            case 'core5': instruction = `List exactly the 5 absolute pillars/foundational ${state.filter || "sub-categories"}. No more, no less. Simple JSON list.`; break;
-            case 'top10': instruction = `List exactly the Top 10 most important ${state.filter || "sub-categories"}. Rank 1-10. Simple JSON list.`; break;
-            case 'comprehensive': instruction = `Generate a comprehensive list of ${state.filter || "sub-categories"} (aim for 25-30 items). Simple JSON list.`; break;
-            default: instruction = `List 8-12 most relevant ${state.filter || "sub-categories"}. Simple JSON list.`; break;
-        }
+        let instruction = "List 8-12 most relevant sub-categories.";
+        if(state.listMode === 'top3') instruction = "List exactly the Top 3 most important. Rank 1-3.";
+        if(state.listMode === 'core5') instruction = "List exactly the 5 absolute pillars/foundational items.";
+        if(state.listMode === 'top10') instruction = "List exactly the Top 10 most important. Rank 1-10.";
+        if(state.listMode === 'comprehensive') instruction = "Generate a comprehensive list (aim for 25-30 items).";
 
-        const prompt = `Role: ${domains[state.domain].persona}\n${promptContext}\n${instruction}\nReturn raw JSON: {"items": ["Item 1", "Item 2"]}`;
+        const prompt = `Role: ${domains[state.domain].persona}\n${promptContext}\n${instruction} Simple JSON list.\nReturn raw JSON: {"items": ["Item 1", "Item 2"]}`;
 
         try {
             const data = await callAI(prompt);
             let items = parseResilientList(data);
             if (items.length === 0) throw new Error("No categories found");
-
             if(!state.listMode.startsWith('top') && state.listMode !== 'core5') items.sort();
             state.caches.categories = items;
 
             dropdown.innerHTML = '<option value="">-- Select Category --</option>';
             items.forEach(item => {
                 const opt = document.createElement('option');
-                opt.value = item;
-                opt.textContent = item;
+                opt.value = item; opt.textContent = item;
                 dropdown.appendChild(opt);
             });
 
             const existingHelper = dropdown.parentElement.querySelector('.helper-text');
             if (existingHelper) existingHelper.remove();
-
             const helper = document.createElement('p');
             helper.className = 'helper-text mt-2';
             helper.innerHTML = 'Select to analyze with lenses, or <button class="explore-btn" onclick="drillAsNewTopic()">🔄 Explore selected as new topic</button>';
             dropdown.parentElement.appendChild(helper);
-
         } catch(e) {
-            console.error("Load Categories Error:", e);
             dropdown.innerHTML = '<option>Error loading</option>';
         } finally {
             dropdown.disabled = false;
@@ -788,25 +755,19 @@
     function drillAsNewTopic() {
         const selected = document.getElementById('categoryDropdown').value;
         if(!selected) return alert("Please select a category first.");
-        
         document.getElementById('topicInput').value = selected;
         document.getElementById('filterInput').value = '';
-        
-        const input = document.getElementById('topicInput');
-        input.style.borderColor = 'var(--brand)';
-        setTimeout(() => input.style.borderColor = '', 1000);
-        
         window.scrollTo({top: 0, behavior: 'smooth'});
     }
 
     function switchTier(tier) {
         state.currentTier = tier;
         document.querySelectorAll('.tier-button').forEach(b => {
-            if(b.textContent.toLowerCase().includes(tier)) b.classList.add('active');
-            else b.classList.remove('active');
+            if(b.textContent.toLowerCase().includes(tier)) b.classList.add('active'); else b.classList.remove('active');
         });
         
         document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.getElementById('loadingDistraction').classList.remove('active');
         document.getElementById('category-tier').classList.remove('active');
         
         if(tier === 'about') {
@@ -817,69 +778,58 @@
             if(state.currentCategory) {
                  document.getElementById('lensButtons').classList.remove('hidden');
                  document.getElementById('lensButtons').style.display = 'flex';
+                 // If fetching, show loading; otherwise show active lens content
+                 if(state.isFetching) {
+                     document.getElementById('loadingDistraction').classList.add('active');
+                 } else {
+                     document.getElementById(`${state.activeLensId}Content`).classList.add('active');
+                 }
             }
         }
     }
 
+    // --- NEW LOGIC: INSTANT FETCH ON SELECT ---
     function selectCategory() {
         const val = document.getElementById(`categoryDropdown`).value;
         if(!val) return;
         state.currentCategory = val;
         
-        const newLenses = resolveLenses(state.domain, "Other");
-        applyDomainProfile(newLenses);
+        // 1. Reset Lenses based on type
+        const newLenses = resolveLenses(state.domain, state.entityType);
+        applyDomainProfile(newLenses); // This resets buttons, sets activeLensId to first one
         
         const lensGroup = document.getElementById(`lensButtons`);
         lensGroup.classList.remove('hidden');
         lensGroup.style.display = 'flex'; 
-        
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+
+        // 2. Start the "Distraction" & Fetch
+        startBatchAnalysis();
     }
 
-    // --- REFACTORED: BATCH FETCHING ---
-    async function loadLens(lensId, btnElement) {
-        document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
-        if(btnElement) btnElement.classList.add('active');
+    async function startBatchAnalysis() {
+        state.isFetching = true;
         
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        const contentDiv = document.getElementById(`${lensId}Content`);
-        contentDiv.classList.add('active');
+        // UI: Hide all content, Show Distraction
+        document.querySelectorAll('.dynamic-lens-section').forEach(el => el.classList.remove('active'));
+        const distraction = document.getElementById('loadingDistraction');
+        distraction.classList.add('active');
+        distraction.classList.remove('hidden'); // Ensure visible
+        startDistractionText(); // Start text cycling
 
-        const cacheKey = `${state.currentCategory}-${lensId}`;
-        
-        // 1. Check if WE have this lens cached
-        if(state.caches.content[cacheKey]) {
-            contentDiv.innerHTML = state.caches.content[cacheKey];
-            return;
-        }
-
-        // 2. If not, check if ANY lens for this category is cached (if so, we have partial data, but maybe not this one)
-        // But in our new batch logic, if one is missing, they are likely all missing.
-        // So we trigger the "Batch Fetch" for ALL lenses in the current profile.
-        
-        contentDiv.innerHTML = '<div class="dark-card text-center"><div class="spinner"></div> Analyze all perspectives...</div>';
-        
-        // Get active lenses for current profile
         const activeLenses = resolveLenses(state.domain, state.entityType);
         
-        // Construct Mega-Prompt
+        // Prompt Construction
         const prompt = `
             Role: ${domains[state.domain].persona}
             Topic: ${state.topic}, Sub-Category: ${state.currentCategory}.
             ${state.filter ? `Context: This is part of the "${state.filter}" aspect.` : ""}
-            
             TASK: Provide a detailed analysis for ALL of the following perspectives:
             ${activeLenses.map(l => `- ID "${l.id}": ${l.prompt}`).join('\n')}
-
             FORMATTING RULES:
             Return a JSON object where keys are the IDs ("lens-1", etc.) and values are the content arrays.
             Inside each lens object, provide an array of sections.
             Example Structure:
-            {
-                "lens-1": [ {"header": "Title", "content": ["Para 1", "Para 2"]} ],
-                "lens-2": ...
-            }
+            { "lens-1": [ {"header": "Title", "content": ["Para 1"]} ], "lens-2": ... }
             Do not use Markdown.
         `;
 
@@ -891,40 +841,91 @@
             activeLenses.forEach(l => {
                 const resultSections = batchResult[l.id];
                 const key = `${state.currentCategory}-${l.id}`;
-                
                 if (resultSections) {
-                    // Convert JSON sections to HTML
-                    const html = renderAccordionJSON(resultSections, l.label, l.id);
-                    state.caches.content[key] = html;
+                    state.caches.content[key] = renderAccordionJSON(resultSections, l.label, l.id);
                 } else {
                     state.caches.content[key] = `<div class="dark-card"><h3 class="text-2xl mb-6 text-center text-[var(--brand)]">${l.label}</h3><p>No data returned.</p></div>`;
                 }
             });
 
-            // Now that cache is full, re-render the requested one
-            if(state.caches.content[cacheKey]) {
-                contentDiv.innerHTML = state.caches.content[cacheKey];
-            } else {
-                contentDiv.innerHTML = "Error: Data mismatch.";
-            }
-
         } catch(e) {
-            contentDiv.innerHTML = `<div class="dark-card text-red-400">Error: ${e.message}</div>`;
+            console.error(e);
+            // On error, fill caches with error message so user sees it
+            activeLenses.forEach(l => {
+                state.caches.content[`${state.currentCategory}-${l.id}`] = `<div class="dark-card text-red-400">Error loading analysis: ${e.message}</div>`;
+            });
+        } finally {
+            state.isFetching = false;
+            stopDistractionText();
+            distraction.classList.remove('active');
+            distraction.classList.add('hidden');
+            // Auto-render the currently selected lens (usually the first one)
+            switchLensView(state.activeLensId);
         }
     }
 
-    // New Renderer for structured JSON (replaces text-parser based renderer)
+    // "Switch" just changes visibility now (Data is pre-fetched)
+    function switchLensView(lensId) {
+        state.activeLensId = lensId;
+        
+        // Update Buttons
+        document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+        const btn = document.getElementById(`btn-${lensId}`);
+        if(btn) btn.classList.add('active');
+        
+        // If still fetching, do nothing (Distraction is visible). 
+        // Once fetch finishes, it calls this function again.
+        if(state.isFetching) return;
+
+        // Update Content
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        // Also ensure distraction is hidden
+        document.getElementById('loadingDistraction').classList.remove('active');
+        document.getElementById('loadingDistraction').classList.add('hidden');
+        
+        const contentDiv = document.getElementById(`${lensId}Content`);
+        contentDiv.classList.add('active');
+
+        const cacheKey = `${state.currentCategory}-${lensId}`;
+        if(state.caches.content[cacheKey]) {
+            contentDiv.innerHTML = state.caches.content[cacheKey];
+        } else {
+            // Should rarely happen unless error
+            contentDiv.innerHTML = '<div class="dark-card opacity-50">Content awaiting analysis...</div>';
+        }
+    }
+
+    // --- DISTRACTION UTILS ---
+    let distractionInterval;
+    const phrases = [
+        "ACCESSING ARCHIVES...", "TRIANGULATING DATES...", "CONSULTING SOURCES...", 
+        "SYNTHESIZING DATA...", "DECODING CONTEXT...", "CONNECTING NODES...",
+        "ANALYZING PATTERNS...", "VERIFYING CITATIONS..."
+    ];
+    
+    function startDistractionText() {
+        const el = document.getElementById('distractionText');
+        let idx = 0;
+        el.innerText = phrases[0];
+        clearInterval(distractionInterval);
+        distractionInterval = setInterval(() => {
+            idx = (idx + 1) % phrases.length;
+            el.innerText = phrases[idx];
+        }, 800);
+    }
+    
+    function stopDistractionText() {
+        clearInterval(distractionInterval);
+    }
+
     function renderAccordionJSON(sections, title, lensId) {
         let html = `<div class="dark-card"><h3 class="text-2xl mb-6 text-center text-[var(--brand)]">${title}</h3>`;
-        
-        // Handle case where AI returns simple array of strings instead of objects
         if(Array.isArray(sections) && typeof sections[0] === 'string') {
              html += sections.map(p => `<p class="paragraph-spacing">${p}</p>`).join('');
         } else {
             sections.forEach((sec, idx) => {
                 const uniqueId = `${lensId}-acc-${idx}`;
                 const contentHtml = sec.content.map(txt => `<p class="paragraph-spacing">${txt}</p>`).join('');
-                
                 html += `
                     <div class="accordion-item">
                         <div class="accordion-header" onclick="toggleAccordion('${uniqueId}')">
@@ -960,39 +961,17 @@
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         contents: [{ role: "user", parts: [{ text: promptText }] }],
-                        generationConfig: { 
-                            responseMimeType: "application/json" 
-                        }
+                        generationConfig: { responseMimeType: "application/json" }
                     })
                 }
             );
-
             const data = await response.json();
-
-            // --- THE TRAP: CATCH THE ERROR ---
-            if (data.error) {
-                alert("API ERROR:\n\n" + data.error.message);
-                console.error("❌ FULL ERROR:", data.error);
-                throw new Error(data.error.message);
-            }
-
-            if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
-                console.warn("⚠️ SAFETY BLOCK:", data);
-                throw new Error("The AI refused to answer this topic (Safety Filter).");
-            }
-
+            if (data.error) throw new Error(data.error.message);
+            if (!data.candidates || !data.candidates[0]) throw new Error("Safety Block");
             return data.candidates[0].content.parts[0].text;
-
         } catch (error) {
             console.error("Request Failed:", error);
-            // Return a fallback JSON to keep the app alive
-            return JSON.stringify({ 
-                error: true,
-                title: "Error: " + error.message, 
-                summary: "Check the Alert Box that just popped up for the real reason.", 
-                items: ["Retry"],
-                type: "Other"
-            });
+            return JSON.stringify({ error: true, title: "Error", summary: error.message, items: [], type: "Other" });
         }
     }
 </script>
