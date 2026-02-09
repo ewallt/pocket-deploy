@@ -221,7 +221,7 @@
         
         <header class="text-center mb-8 pr-12">
             <h1 id="appTitle" class="text-4xl md:text-5xl mb-2">Context Navigator</h1>
-            <p class="text-xl italic text-[var(--text-muted)]">Master Edition <span class="text-red-500 font-bold">Build #63a</span></p>
+            <p class="text-xl italic text-[var(--text-muted)]">Master Edition <span class="text-red-500 font-bold">Build #64</span></p>
             
             <button onclick="cycleTheme()" class="theme-gear" title="Switch Theme">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -545,7 +545,7 @@
     }
 
     // --- PARSERS ---
-    function parseGeminiJSON(rawText) {
+    function parseAIJSON(rawText) {
         try {
             let cleanText = rawText.replace(/```json/g, '').replace(/```/g, '');
             const firstBrace = cleanText.indexOf('{');
@@ -642,7 +642,7 @@
                 Criteria: ${profile.suggestionLogic}
                 Return JSON: {"items": ["Type 1", "Type 2"]}
             `;
-            const data = await callGemini(prompt);
+            const data = await callAI(prompt);
             const items = parseResilientList(data).slice(0, 7); 
             
             list.innerHTML = '';
@@ -700,8 +700,8 @@
                 Return raw JSON only: {"title": "Formal Name", "summary": "One compelling sentence.", "type": "Person|Work|Other"}
             `;
             
-            const data = await callGemini(prompt);
-            const result = parseGeminiJSON(data);
+            const data = await callAI(prompt);
+            const result = parseAIJSON(data);
             
             state.entityType = result.type || "Other";
 
@@ -754,7 +754,7 @@
         const prompt = `Role: ${domains[state.domain].persona}\n${promptContext}\n${instruction}\nReturn raw JSON: {"items": ["Item 1", "Item 2"]}`;
 
         try {
-            const data = await callGemini(prompt);
+            const data = await callAI(prompt);
             let items = parseResilientList(data);
             if (items.length === 0) throw new Error("No categories found");
 
@@ -884,8 +884,8 @@
         `;
 
         try {
-            const data = await callGemini(prompt);
-            const batchResult = parseGeminiJSON(data);
+            const data = await callAI(prompt);
+            const batchResult = parseAIJSON(data);
             
             // Distribute results to cache
             activeLenses.forEach(l => {
@@ -950,7 +950,7 @@
         if(!isOpen) { el.classList.add('open'); header.classList.add('active'); }
     }
 
-    async function callGemini(promptText) {
+    async function callAI(promptText) {
         try {
             console.log("📡 Sending request...");
             const response = await fetch(
@@ -961,7 +961,7 @@
                     body: JSON.stringify({
                         contents: [{ role: "user", parts: [{ text: promptText }] }],
                         generationConfig: { 
-                            responseMimeType: "text/plain" 
+                            responseMimeType: "application/json" 
                         }
                     })
                 }
