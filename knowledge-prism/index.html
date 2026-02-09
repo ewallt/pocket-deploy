@@ -221,7 +221,7 @@
         
         <header class="text-center mb-8 pr-12">
             <h1 id="appTitle" class="text-4xl md:text-5xl mb-2">Context Navigator</h1>
-            <p class="text-xl italic text-[var(--text-muted)]">Master Edition <span class="text-red-500 font-bold">Build #61d </span></p>
+            <p class="text-xl italic text-[var(--text-muted)]">Master Edition <span class="text-red-500 font-bold">Build #62</span></p>
             
             <button onclick="cycleTheme()" class="theme-gear" title="Switch Theme">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -316,6 +316,10 @@
     const APP_CONFIG = {
         lockedDomain: null 
     };
+    
+    // --- API CONFIGURATION ---
+    // Update this to point to your deployed Cloudflare Worker
+    const API_URL = "https://openai-proxy.ewalltom.workers.dev";
 
     // --- DOMAIN PROFILES (DYNAMIC LENSES) ---
     const domains = {
@@ -475,6 +479,7 @@
         currentTier: "about",
         currentCategory: "",
         entityType: "Other",
+        // caches.content is a key-value pair of "Category-LensID" -> HTML String
         caches: { categories: [], content: {} }
     };
 
@@ -500,10 +505,11 @@
         const contentArea = document.getElementById('contentArea');
         const activeLenses = overrideLenses || profile.lenses;
 
+        // Clean up DOM for lenses
         btnContainer.innerHTML = ''; 
-        
         document.querySelectorAll('.dynamic-lens-section').forEach(el => el.remove());
 
+        // Rebuild lens buttons and content containers
         activeLenses.forEach(lens => {
             const btn = document.createElement('button');
             btn.className = 'tab-button';
@@ -549,29 +555,6 @@
         } catch (e) {
             return { title: state.topic, summary: "Proceeding with unstructured data.", items: [], type: "Other" };
         }
-    }
-
-    function parseDelimitedText(rawText) {
-        let cleanText = rawText.replace(/\*\*/g, '').replace(/```/g, '');
-        const rawSections = cleanText.split('###').filter(s => s.trim().length > 0);
-        return rawSections.map(sectionText => {
-            let text = sectionText.trim();
-            let splitIndex = text.search(/(\n|\|\|)/);
-            let header = "", rest = "";
-            if (splitIndex === -1) {
-                if (text.length < 50) header = text;
-                else {
-                    splitIndex = text.indexOf('.');
-                    if (splitIndex > -1) { header = text.substring(0, splitIndex + 1); rest = text.substring(splitIndex + 1); }
-                    else { header = "Section"; rest = text; }
-                }
-            } else {
-                header = text.substring(0, splitIndex).trim();
-                rest = text.substring(splitIndex).trim();
-            }
-            const paragraphs = rest.split('||').map(p => p.trim()).filter(p => p.length > 0);
-            return { header: header, content: paragraphs };
-        });
     }
 
     function parseResilientList(rawText) {
@@ -835,6 +818,7 @@
         document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
     }
 
+    // --- REFACTORED: BATCH FETCHING ---
     async function loadLens(lensId, btnElement) {
         document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
         if(btnElement) btnElement.classList.add('active');
@@ -844,65 +828,94 @@
         contentDiv.classList.add('active');
 
         const cacheKey = `${state.currentCategory}-${lensId}`;
+        
+        // 1. Check if WE have this lens cached
         if(state.caches.content[cacheKey]) {
             contentDiv.innerHTML = state.caches.content[cacheKey];
             return;
         }
 
-        contentDiv.innerHTML = '<div class="dark-card text-center"><div class="spinner"></div> Generating Analysis...</div>';
-
-        const currentButton = document.getElementById(`btn-${lensId}`);
-        const lensLabel = currentButton ? currentButton.textContent : "";
+        // 2. If not, check if ANY lens for this category is cached (if so, we have partial data, but maybe not this one)
+        // But in our new batch logic, if one is missing, they are likely all missing.
+        // So we trigger the "Batch Fetch" for ALL lenses in the current profile.
         
-        let lensFocus = "General Context";
-        Object.values(domains).forEach(d => {
-            const found = d.lenses.find(l => l.id === lensId && l.label === lensLabel);
-            if(found) lensFocus = found.prompt;
-        });
-
+        contentDiv.innerHTML = '<div class="dark-card text-center"><div class="spinner"></div> Analyze all perspectives...</div>';
+        
+        // Get active lenses for current profile
+        const activeLenses = resolveLenses(state.domain, state.entityType);
+        
+        // Construct Mega-Prompt
         const prompt = `
             Role: ${domains[state.domain].persona}
             Topic: ${state.topic}, Sub-Category: ${state.currentCategory}.
             ${state.filter ? `Context: This is part of the "${state.filter}" aspect.` : ""}
-            Focus: ${lensFocus}.
             
-            Write 3 distinct sections.
+            TASK: Provide a detailed analysis for ALL of the following perspectives:
+            ${activeLenses.map(l => `- ID "${l.id}": ${l.prompt}`).join('\n')}
+
             FORMATTING RULES:
-            1. Start every Header with "###" followed by the title.
-            2. Separate paragraphs with "||".
-            3. Do not use Markdown (bold/italic).
-            4. Keep it concise.
+            Return a JSON object where keys are the IDs ("lens-1", etc.) and values are the content arrays.
+            Inside each lens object, provide an array of sections.
+            Example Structure:
+            {
+                "lens-1": [ {"header": "Title", "content": ["Para 1", "Para 2"]} ],
+                "lens-2": ...
+            }
+            Do not use Markdown.
         `;
 
         try {
             const data = await callGemini(prompt);
-            const sections = parseDelimitedText(data);
-            const title = document.getElementById(`btn-${lensId}`).textContent;
-            const html = renderAccordion(sections, title, lensId);
-            state.caches.content[cacheKey] = html;
-            contentDiv.innerHTML = html;
+            const batchResult = parseGeminiJSON(data);
+            
+            // Distribute results to cache
+            activeLenses.forEach(l => {
+                const resultSections = batchResult[l.id];
+                const key = `${state.currentCategory}-${l.id}`;
+                
+                if (resultSections) {
+                    // Convert JSON sections to HTML
+                    const html = renderAccordionJSON(resultSections, l.label, l.id);
+                    state.caches.content[key] = html;
+                } else {
+                    state.caches.content[key] = `<div class="dark-card"><h3 class="text-2xl mb-6 text-center text-[var(--brand)]">${l.label}</h3><p>No data returned.</p></div>`;
+                }
+            });
+
+            // Now that cache is full, re-render the requested one
+            if(state.caches.content[cacheKey]) {
+                contentDiv.innerHTML = state.caches.content[cacheKey];
+            } else {
+                contentDiv.innerHTML = "Error: Data mismatch.";
+            }
+
         } catch(e) {
             contentDiv.innerHTML = `<div class="dark-card text-red-400">Error: ${e.message}</div>`;
         }
     }
 
-    function renderAccordion(sections, title, lensId) {
+    // New Renderer for structured JSON (replaces text-parser based renderer)
+    function renderAccordionJSON(sections, title, lensId) {
         let html = `<div class="dark-card"><h3 class="text-2xl mb-6 text-center text-[var(--brand)]">${title}</h3>`;
-        sections.forEach((sec, idx) => {
-            const uniqueId = `${lensId}-acc-${idx}`;
-            let contentHtml = sec.content.length === 0 ? 
-                `<p class="paragraph-spacing italic opacity-60">No detailed text available.</p>` : 
-                sec.content.map(txt => `<p class="paragraph-spacing">${txt}</p>`).join('');
-            
-            html += `
-                <div class="accordion-item">
-                    <div class="accordion-header" onclick="toggleAccordion('${uniqueId}')">
-                        <span class="text-lg">${sec.header}</span>
-                        <span class="text-sm">▼</span>
-                    </div>
-                    <div id="${uniqueId}" class="accordion-content">${contentHtml}</div>
-                </div>`;
-        });
+        
+        // Handle case where AI returns simple array of strings instead of objects
+        if(Array.isArray(sections) && typeof sections[0] === 'string') {
+             html += sections.map(p => `<p class="paragraph-spacing">${p}</p>`).join('');
+        } else {
+            sections.forEach((sec, idx) => {
+                const uniqueId = `${lensId}-acc-${idx}`;
+                const contentHtml = sec.content.map(txt => `<p class="paragraph-spacing">${txt}</p>`).join('');
+                
+                html += `
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion('${uniqueId}')">
+                            <span class="text-lg">${sec.header}</span>
+                            <span class="text-sm">▼</span>
+                        </div>
+                        <div id="${uniqueId}" class="accordion-content">${contentHtml}</div>
+                    </div>`;
+            });
+        }
         html += `</div>`;
         return html;
     }
@@ -922,13 +935,12 @@
         try {
             console.log("📡 Sending request...");
             const response = await fetch(
-                'https://openai-proxy.ewalltom.workers.dev',
+                API_URL,
                 {
                     method: "POST", 
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         contents: [{ role: "user", parts: [{ text: promptText }] }],
-                        // MINIMAL CONFIG: Matches the working diagnostic script exactly
                         generationConfig: { 
                             responseMimeType: "text/plain" 
                         }
@@ -940,25 +952,20 @@
 
             // --- THE TRAP: CATCH THE ERROR ---
             if (data.error) {
-                // ALERT THE EXACT ERROR MESSAGE
-                alert("GOOGLE API ERROR:\n\n" + data.error.message);
+                alert("API ERROR:\n\n" + data.error.message);
                 console.error("❌ FULL ERROR:", data.error);
                 throw new Error(data.error.message);
             }
 
-            // Safety Check for empty content
             if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
                 console.warn("⚠️ SAFETY BLOCK:", data);
-                if(data.promptFeedback) {
-                     alert("SAFETY BLOCK:\n\nReason: " + JSON.stringify(data.promptFeedback));
-                }
                 throw new Error("The AI refused to answer this topic (Safety Filter).");
             }
 
             return data.candidates[0].content.parts[0].text;
 
         } catch (error) {
-            console.error("Gemini Request Failed:", error);
+            console.error("Request Failed:", error);
             // Return a fallback JSON to keep the app alive
             return JSON.stringify({ 
                 error: true,
