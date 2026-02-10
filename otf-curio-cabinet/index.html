@@ -290,7 +290,6 @@
         let displayLabel = "";
 
         if (selectedDomain === "ECLECTIC") {
-            // Shuffle full list and pick 4 distinct ones
             const shuffled = [...SOURCE_ROULETTE].sort(() => 0.5 - Math.random());
             const selection = shuffled.slice(0, 4);
             
@@ -304,12 +303,11 @@
                 
                 CRITICAL: The resulting JSON array must have exactly 4 items.
                 Mix the order so the Fake isn't always last.
-                The JSON object for each fact must include a "category" field matching the source label (e.g., "Space", "History").
+                The JSON object for each fact must include a "category" field matching the source label.
             `;
             loadingTopic.textContent = "Scanning Multiple Archives...";
 
         } else {
-            // Standard Single-Domain Logic
             let pool = SOURCE_ROULETTE.filter(s => s.category === selectedDomain);
             const selection = pool[Math.floor(Math.random() * pool.length)];
             
@@ -386,8 +384,30 @@
             );
 
             const data = await response.json();
-            let facts = JSON.parse(data.candidates[0].content.parts[0].text);
             
+            // --- FIX START: ROBUST PARSING ---
+            let rawText = data.candidates[0].content.parts[0].text;
+            
+            // 1. Clean Markdown (The "Borax" Scrub)
+            rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+            
+            let parsedData = JSON.parse(rawText);
+            let facts = [];
+
+            // 2. Handle Object Wrapping (e.g. { "facts": [...] })
+            if (Array.isArray(parsedData)) {
+                facts = parsedData;
+            } else if (typeof parsedData === 'object' && parsedData !== null) {
+                // Find the first value that is an array
+                const arrayKey = Object.keys(parsedData).find(key => Array.isArray(parsedData[key]));
+                if (arrayKey) {
+                    facts = parsedData[arrayKey];
+                }
+            }
+
+            if (facts.length === 0) throw new Error("AI returned invalid structure");
+            // --- FIX END ---
+
             facts = shuffleArray(facts);
             gameState.cardsData = facts;
             
