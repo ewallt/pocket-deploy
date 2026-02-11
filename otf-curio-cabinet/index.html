@@ -242,7 +242,18 @@
     </div>
 
 <script>
-    
+    // ==========================================
+    // CONFIGURATION
+    // ==========================================
+    const CONFIG = {
+        API_URL: 'https://groq-proxy.ewalltom.workers.dev',
+        // Model Choice: 
+        // - "llama-3.3-70b-versatile" (Default: Fast & Smart)
+        // - "openai/gpt-oss-120b" (Smarter Logic)
+        // - "meta-llama/llama-4-maverick-17b-128e-instruct" (Speed Demon)
+        MODEL_ID: "llama-3.3-70b-versatile" 
+    };
+
     // EXTENDED SOURCE MAP
     const SOURCE_ROULETTE = [
         // SPACE & PHYSICS
@@ -274,25 +285,27 @@
     let gameState = { gameOver: false, cardsData: [] };
 
     async function startGame() {
-        const btn = document.getElementById('btn-play');
-        const selector = document.getElementById('domain-select');
-        const loader = document.getElementById('view-loading');
-        const board = document.getElementById('view-board');
-        const grid = document.getElementById('card-grid');
-        const nextArea = document.getElementById('next-round-area');
-        const scoreDisplay = document.getElementById('score-display');
-        const topicBadge = document.getElementById('topic-badge');
-        const loadingTopic = document.getElementById('loading-topic');
+        // UI Elements
+        const ui = {
+            btn: document.getElementById('btn-play'),
+            selector: document.getElementById('domain-select'),
+            loader: document.getElementById('view-loading'),
+            board: document.getElementById('view-board'),
+            grid: document.getElementById('card-grid'),
+            nextArea: document.getElementById('next-round-area'),
+            scoreDisplay: document.getElementById('score-display'),
+            topicBadge: document.getElementById('topic-badge'),
+            loadingTopic: document.getElementById('loading-topic')
+        };
 
-        // Logic for Eclectic vs Specific
-        const selectedDomain = selector.value;
+        // 1. Determine Prompt Strategy
+        const selectedDomain = ui.selector.value;
         let promptInstructions = "";
         let displayLabel = "";
 
         if (selectedDomain === "ECLECTIC") {
             const shuffled = [...SOURCE_ROULETTE].sort(() => 0.5 - Math.random());
             const selection = shuffled.slice(0, 4);
-            
             displayLabel = "Eclectic Mix";
             promptInstructions = `
                 Generate 4 facts, one for EACH of the following 4 contexts:
@@ -300,129 +313,120 @@
                 2. ${selection[1].promptContext}
                 3. ${selection[2].promptContext}
                 4. ${selection[3].promptContext}
-                
-                CRITICAL: The resulting JSON array must have exactly 4 items.
-                Mix the order so the Fake isn't always last.
-                The JSON object for each fact must include a "category" field matching the source label.
+                CRITICAL: The resulting JSON array must have exactly 4 items. Mix order.
+                Include "category" field matching the source label.
             `;
-            loadingTopic.textContent = "Scanning Multiple Archives...";
-
+            ui.loadingTopic.textContent = "Scanning Multiple Archives...";
         } else {
             let pool = SOURCE_ROULETTE.filter(s => s.category === selectedDomain);
             const selection = pool[Math.floor(Math.random() * pool.length)];
-            
             displayLabel = selection.label;
             promptInstructions = `
                 SOURCE CONTEXT: "${selection.promptContext}"
                 Generate 4 facts suitable for this specific source.
                 The resulting JSON object should use the category "${selection.category}".
             `;
-            loadingTopic.textContent = `Scanning: ${selection.label}`;
+            ui.loadingTopic.textContent = `Scanning: ${selection.label}`;
         }
         
-        topicBadge.textContent = `Collection: ${displayLabel}`;
+        ui.topicBadge.textContent = `Collection: ${displayLabel}`;
 
-        // UI Reset
-        btn.classList.add('hidden');
-        selector.classList.add('hidden'); 
-        scoreDisplay.classList.remove('hidden');
-        nextArea.classList.add('hidden');
-        topicBadge.classList.add('hidden');
-        grid.innerHTML = '';
-        loader.classList.remove('hidden');
-        board.classList.add('hidden');
+        // 2. Set Loading State
+        ui.btn.classList.add('hidden');
+        ui.selector.classList.add('hidden'); 
+        ui.scoreDisplay.classList.remove('hidden');
+        ui.nextArea.classList.add('hidden');
+        ui.topicBadge.classList.add('hidden');
+        ui.grid.innerHTML = '';
+        ui.loader.classList.remove('hidden');
+        ui.board.classList.add('hidden');
         
         gameState.gameOver = false;
         gameState.cardsData = [];
 
         try {
-            const prompt = `
+            // 3. Construct Prompt
+            const systemPrompt = `
                 Role: The Curator of Perspective.
                 Goal: Create a "True or Fake" round.
                 Seed: ${Math.random()}
-                
                 ${promptInstructions}
-                
-                Task Requirements:
+                Task:
                 - 3 MUST be TRUE.
                 - 1 MUST be FAKE (A plausible hallucination).
-                
-                CRITICAL INSTRUCTION FOR "INTERESTING":
-                Look for:
-                1. SCALE & RATIOS (Numbers that feel wrong).
-                2. INVISIBLE SYSTEMS (Hidden mechanics).
-                3. COUNTER-INTUITIVE TIMELINES.
-                4. STRUCTURAL ANOMALIES.
-                
-                NEGATIVE CONSTRAINTS (DO NOT USE):
-                - No "Eiffel Tower grows in summer".
-                - No "Bananas are berries".
-                - No "Octopus has 3 hearts".
-                - No "Napoleon was short/tall".
-                - No "You eat 8 spiders in your sleep".
-                
-                RETURN JSON ONLY:
-                [
-                    {
-                        "text": "Fact text...",
-                        "type": "TRUE",
-                        "category": "Space", 
-                        "explain": "Source: [Site Name]. Brief explanation."
-                    }
-                ]
+                Look for: SCALE, INVISIBLE SYSTEMS, ANOMALIES.
+                Constraints: No "bananas are berries" or common trivia.
+                RETURN JSON ONLY: [{"text": "...", "type": "TRUE", "category": "...", "explain": "..."}]
             `;
 
-            const response = await fetch(
-                'https://groq-proxy.ewalltom.workers.dev',
-                {
-                    method: "POST", headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        contents: [{ role: "user", parts: [{ text: prompt }] }],
-                        generationConfig: { responseMimeType: "application/json" }
-                    })
-                }
-            );
+            // 4. Call AI (Neutralized)
+            const facts = await callAI(systemPrompt);
+
+            // 5. Render
+            const shuffledFacts = shuffleArray(facts);
+            gameState.cardsData = shuffledFacts;
+            renderCards(shuffledFacts);
+
+            ui.loader.classList.add('hidden');
+            ui.board.classList.remove('hidden');
+            ui.topicBadge.classList.remove('hidden');
+
+        } catch (e) {
+            console.error("Game Error:", e);
+            alert("The Curator dropped the artifacts. Please try again.");
+            ui.loader.classList.add('hidden');
+            ui.btn.classList.remove('hidden');
+            ui.selector.classList.remove('hidden');
+        }
+    }
+
+    // --- NEUTRAL AI CALLER ---
+    async function callAI(promptText) {
+        try {
+            const response = await fetch(CONFIG.API_URL, {
+                method: "POST", 
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    // Send Google-format structure (Worker handles translation to Groq)
+                    contents: [{ role: "user", parts: [{ text: promptText }] }],
+                    generationConfig: { responseMimeType: "application/json" },
+                    // Explicitly request the model from CONFIG
+                    model: CONFIG.MODEL_ID
+                })
+            });
 
             const data = await response.json();
             
-            // --- FIX START: ROBUST PARSING ---
-            let rawText = data.candidates[0].content.parts[0].text;
-            
-            // 1. Clean Markdown (The "Borax" Scrub)
-            rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
-            
-            let parsedData = JSON.parse(rawText);
-            let facts = [];
+            if (data.error) throw new Error(data.message || "API Error");
+            if (!data.candidates || !data.candidates[0]) throw new Error("Empty Response");
 
-            // 2. Handle Object Wrapping (e.g. { "facts": [...] })
-            if (Array.isArray(parsedData)) {
-                facts = parsedData;
-            } else if (typeof parsedData === 'object' && parsedData !== null) {
-                // Find the first value that is an array
-                const arrayKey = Object.keys(parsedData).find(key => Array.isArray(parsedData[key]));
-                if (arrayKey) {
-                    facts = parsedData[arrayKey];
-                }
+            const rawText = data.candidates[0].content.parts[0].text;
+            return cleanAndParseJSON(rawText);
+
+        } catch (error) {
+            console.error("AI Request Failed:", error);
+            throw error;
+        }
+    }
+
+    // --- UTILS ---
+    function cleanAndParseJSON(text) {
+        // "Borax" cleaning: remove markdown blocks
+        const cleanText = text.replace(/```json/g, '').replace(/```/g, '').trim();
+        
+        try {
+            const parsed = JSON.parse(cleanText);
+            
+            // Handle unwrapping { "facts": [...] } or direct arrays
+            if (Array.isArray(parsed)) return parsed;
+            if (typeof parsed === 'object' && parsed !== null) {
+                // Find any key containing an array
+                const arrayKey = Object.keys(parsed).find(k => Array.isArray(parsed[k]));
+                if (arrayKey) return parsed[arrayKey];
             }
-
-            if (facts.length === 0) throw new Error("AI returned invalid structure");
-            // --- FIX END ---
-
-            facts = shuffleArray(facts);
-            gameState.cardsData = facts;
-            
-            renderCards(facts);
-
-            loader.classList.add('hidden');
-            board.classList.remove('hidden');
-            topicBadge.classList.remove('hidden');
-
+            throw new Error("Invalid JSON structure");
         } catch (e) {
-            console.error(e);
-            alert("The Curator dropped the artifacts. Please try again.");
-            loader.classList.add('hidden');
-            btn.classList.remove('hidden');
-            selector.classList.remove('hidden');
+            throw new Error("Failed to parse AI response: " + e.message);
         }
     }
 
@@ -434,15 +438,12 @@
             const card = document.createElement('div');
             card.className = 'artifact-card fade-in';
             card.style.animationDelay = `${index * 100}ms`;
-            
-            // Fallback for category if AI misses it
             const cat = fact.category || "General";
             
             card.innerHTML = `
                 <div class="content-wrapper">
                     <span class="category-tag">${cat}</span>
                     <p class="fact-text">"${fact.text}"</p>
-                    
                     <div class="reveal-info">
                         <div class="reveal-text ${fact.type === 'TRUE' ? 'true-badge' : 'fake-badge'}">
                             ${fact.type === 'TRUE' ? '✓ VERIFIED REAL' : '⚠ FORGERY DETECTED'}
@@ -451,7 +452,6 @@
                     </div>
                 </div>
             `;
-
             card.onclick = () => handleCardClick(card, fact, index);
             grid.appendChild(card);
         });
@@ -462,7 +462,6 @@
 
         gameState.gameOver = true;
         const msg = document.getElementById('result-message');
-        
         cardElement.classList.add('user-selected');
 
         if (factData.type === 'FAKE') {
@@ -475,23 +474,17 @@
             cardElement.classList.add('revealed-true');
         }
 
-        const allCards = document.querySelectorAll('.artifact-card');
-        allCards.forEach((c, i) => {
+        // Reveal all
+        document.querySelectorAll('.artifact-card').forEach((c, i) => {
             const data = gameState.cardsData[i];
-            if (data.type === 'FAKE') {
-                c.classList.add('revealed-fake');
-            } else {
-                c.classList.add('revealed-true');
-            }
+            c.classList.add(data.type === 'FAKE' ? 'revealed-fake' : 'revealed-true');
         });
-
         document.getElementById('next-round-area').classList.remove('hidden');
     }
     
     function resetGame() {
         document.getElementById('view-board').classList.add('hidden');
         document.getElementById('next-round-area').classList.add('hidden');
-        
         document.getElementById('btn-play').classList.remove('hidden');
         document.getElementById('domain-select').classList.remove('hidden');
         document.getElementById('score-display').classList.add('hidden');
