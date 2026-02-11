@@ -246,7 +246,6 @@
     // ==========================================
     const CONFIG = {
         API_URL: 'https://groq-proxy.ewalltom.workers.dev',
-        // "openai/gpt-oss-120b" is excellent for trivia logic
         MODEL_ID: "openai/gpt-oss-120b" 
     };
 
@@ -466,6 +465,20 @@
 
             if (questions.length === 0) throw new Error("Could not parse AI response.");
 
+            // --- SHUFFLE LOGIC FIX ---
+            // Shuffle answers immediately so the first option isn't always correct
+            questions.forEach(q => {
+                // 1. Identify the correct answer string
+                const correctString = q.options[q.correctIndex];
+                
+                // 2. Shuffle the options array
+                q.options = shuffleArray(q.options);
+                
+                // 3. Find the new index of the correct answer
+                q.correctIndex = q.options.indexOf(correctString);
+            });
+            // -------------------------
+
             gameState.questions = questions;
             gameState.currentIndex = 0;
             gameState.score = 0;
@@ -481,6 +494,15 @@
             alert(`Error: ${e.message}\n\nPlease try again.`);
             switchView('view-lobby');
         }
+    }
+
+    // Helper to shuffle array
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
     }
 
     function renderQuestion() {
