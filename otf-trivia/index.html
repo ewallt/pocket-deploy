@@ -59,7 +59,6 @@
             padding: 1rem; width: 100%; font-family: inherit; font-size: 1.1rem;
         }
         
-        /* FIX: Add right padding so text doesn't go under the bulb */
         input[type="text"] {
             padding-right: 3.5rem; 
         }
@@ -68,12 +67,11 @@
 
         .input-wrapper { position: relative; margin-bottom: 1.5rem; }
         
-        /* FIX: Pin button to bottom to align with input, unrelated to label height */
         .suggestion-btn {
             position: absolute; 
             right: 8px; 
-            bottom: 4px; /* Aligns with the input field's bottom area */
-            height: 3rem; /* Matches input height roughly */
+            bottom: 4px; 
+            height: 3rem; 
             width: 3rem;
             display: flex; align-items: center; justify-content: center;
             background: none; border: none; color: var(--brand); cursor: pointer;
@@ -153,7 +151,7 @@
     <div class="w-full max-w-2xl">
         <header class="text-center mb-8">
             <h1 class="text-5xl mb-2 text-[var(--brand)]" style="text-shadow: 2px 2px 0 var(--input-bg);">Infinite Trivia</h1>
-            <p class="text-xl italic opacity-80">Powered by Gemini AI</p>
+            <p class="text-xl italic opacity-80">Powered by AI</p>
         </header>
 
         <div id="view-lobby" class="dark-card fade-in">
@@ -243,7 +241,14 @@
     </div>
 
 <script>
-    // --- API & CONFIG ---
+    // ==========================================
+    // CONFIGURATION
+    // ==========================================
+    const CONFIG = {
+        API_URL: 'https://groq-proxy.ewalltom.workers.dev',
+        // "openai/gpt-oss-120b" is excellent for trivia logic
+        MODEL_ID: "openai/gpt-oss-120b" 
+    };
 
     const themes = {
         'explorer': { '--app-bg': '#e8dcc8', '--card-bg': '#1a1815', '--input-bg': '#26231f', '--brand': '#d4a574', '--text-body': '#2c2416', '--text-card': '#faf8f3', '--text-muted': '#665648', '--border': '#5a5041' },
@@ -270,39 +275,63 @@
         }
     }
 
-    // --- API HELPERS ---
-    function parseGeminiJSON(rawText) {
+    // --- AI CALLER ---
+    async function callAI(promptText) {
         try {
-            let cleanText = rawText.replace(/```json/g, '').replace(/```/g, '');
-            const firstBrace = cleanText.indexOf('['); 
-            const lastBrace = cleanText.lastIndexOf(']'); 
-            if (firstBrace !== -1 && lastBrace !== -1) {
-                cleanText = cleanText.substring(firstBrace, lastBrace + 1);
-            }
-            return JSON.parse(cleanText);
-        } catch (e) {
-            console.error("JSON Parse Error", e);
-            return [];
+            const response = await fetch(CONFIG.API_URL, {
+                method: "POST", 
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    contents: [{ role: "user", parts: [{ text: promptText }] }],
+                    generationConfig: { responseMimeType: "text/plain" },
+                    model: CONFIG.MODEL_ID
+                })
+            });
+
+            const data = await response.json();
+            if (data.error) throw new Error(data.message || "API Error");
+            if (!data.candidates || !data.candidates[0]) throw new Error("Empty Response");
+
+            return data.candidates[0].content.parts[0].text;
+        } catch (error) {
+            console.error("AI Request Failed:", error);
+            throw error;
         }
     }
 
-    async function callGemini(promptText) {
-        const response = await fetch(
-            'https://groq-proxy.ewalltom.workers.dev',
-            {
-                method: "POST", headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    contents: [{ role: "user", parts: [{ text: promptText }] }],
-                    generationConfig: { responseMimeType: "text/plain", temperature: 0.7 }
-                })
+    // --- PARSER (HANDLES OBJECTS & ARRAYS) ---
+    function cleanAndParseJSON(text) {
+        // Remove markdown wrappers
+        const cleanText = text.replace(/```json/g, '').replace(/```/g, '').trim();
+        
+        try {
+            const parsed = JSON.parse(cleanText);
+            
+            // Check if it's the structure we want (Object with key, or Array)
+            if (Array.isArray(parsed)) return parsed;
+            
+            if (typeof parsed === 'object' && parsed !== null) {
+                // If the AI wrapped the array in a key like { "questions": [...] }
+                const arrayKey = Object.keys(parsed).find(k => Array.isArray(parsed[k]));
+                if (arrayKey) return parsed[arrayKey];
             }
-        );
-        const data = await response.json();
-        return data.candidates[0].content.parts[0].text;
+            throw new Error("JSON is valid but structure is unexpected.");
+        } catch(e) {
+            // Fallback: Try to find array brackets manually
+            try {
+                const start = cleanText.indexOf('[');
+                const end = cleanText.lastIndexOf(']');
+                if (start !== -1 && end !== -1) {
+                    return JSON.parse(cleanText.substring(start, end + 1));
+                }
+            } catch(e2) {}
+            
+            console.error("Parsing Failed:", text);
+            throw new Error("Could not parse AI response.");
+        }
     }
 
     // --- SUGGESTION LOGIC ---
-    
     function closeAllPopups(e) {
         if (!e.target.closest('.suggestion-popup') && !e.target.closest('.suggestion-btn')) {
             document.querySelectorAll('.suggestion-popup').forEach(el => el.classList.remove('active'));
@@ -313,7 +342,6 @@
         const container = document.getElementById(containerId);
         container.innerHTML = '';
         
-        // Add Header
         const header = document.createElement('div');
         header.className = 'flex justify-between items-center mb-2';
         header.innerHTML = '<span class="text-xs font-bold text-[var(--brand)] uppercase">Suggestions</span>';
@@ -349,27 +377,26 @@
         container.classList.add('active');
 
         try {
-            // PROMPT: Popular/Mainstream Focus + Decade Awareness
+            // PROMPT: REQUEST JSON OBJECT
             const prompt = `
                 Role: Trivia Curator.
-                Context: The user selected the category "${category}" ${decade ? 'in the era: ' + decade : ''}.
-                Task: Suggest 7 sub-topics for a trivia quiz.
+                Context: User selected "${category}" ${decade ? 'in ' + decade : ''}.
+                Task: Suggest 7 sub-topics. 5 Mainstream, 2 Fun.
                 
-                CRITICAL INSTRUCTIONS:
-                1. The first 5 suggestions MUST be "Mainstream" and "Popular" (e.g. Major Awards, Famous People, Best Sellers, Top Grossing).
-                2. The last 2 suggestions can be "Fun Categories", but still accessible.
-                3. If a decade is provided, ensuring all suggestions fit that time period.
-                
-                Return RAW JSON ARRAY of strings only. Example: ["Topic A", "Topic B"]
+                RETURN RAW JSON OBJECT:
+                { "topics": ["Topic A", "Topic B"] }
             `;
             
-            const rawText = await callGemini(prompt);
-            const items = parseGeminiJSON(rawText);
+            const rawText = await callAI(prompt);
+            const data = cleanAndParseJSON(rawText);
+            
+            // Handle both Array or Object return
+            const items = Array.isArray(data) ? data : (data.topics || []);
             
             if(items.length > 0) {
                 renderChips('topicPopup', items, 'topicInput');
             } else {
-                throw new Error("No items parsed");
+                throw new Error("No items found");
             }
         } catch(err) {
             console.error(err);
@@ -413,23 +440,29 @@
         }, 1500);
 
         try {
+            // PROMPT: REQUEST JSON OBJECT
             const prompt = `
                 Generate 5 multiple choice trivia questions about: "${mainSubject}".
                 Difficulty: ${difficulty}.
                 
-                RETURN RAW JSON ARRAY ONLY. Format:
-                [
-                    {
-                        "question": "The question text?",
-                        "options": ["Wrong 1", "Correct Answer", "Wrong 2", "Wrong 3"],
-                        "correctIndex": 1,
-                        "fact": "A 1-sentence interesting fact explaining the answer."
-                    }
-                ]
+                RETURN RAW JSON OBJECT:
+                {
+                    "questions": [
+                        {
+                            "question": "The question text?",
+                            "options": ["Wrong 1", "Correct Answer", "Wrong 2", "Wrong 3"],
+                            "correctIndex": 1,
+                            "fact": "A 1-sentence interesting fact explaining the answer."
+                        }
+                    ]
+                }
             `;
 
-            const rawText = await callGemini(prompt);
-            const questions = parseGeminiJSON(rawText);
+            const rawText = await callAI(prompt);
+            const data = cleanAndParseJSON(rawText);
+            
+            // Normalize data (support Array or Object wrapper)
+            const questions = Array.isArray(data) ? data : (data.questions || []);
 
             if (questions.length === 0) throw new Error("Could not parse AI response.");
 
