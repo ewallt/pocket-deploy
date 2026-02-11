@@ -160,63 +160,62 @@
     </div>
 
 <script>
+    // ==========================================
+    // CONFIGURATION
+    // ==========================================
+    const CONFIG = {
+        API_URL: 'https://groq-proxy.ewalltom.workers.dev',
+        // Options: "llama-3.3-70b-versatile" (Fast) | "openai/gpt-oss-120b" (Smart)
+        MODEL_ID: "openai/gpt-oss-120b" 
+    };
 
     // --- UTILS ---
     function handleEnter(e) { if(e.key === 'Enter') generateDigest(); }
-    
-    function parseGeminiJSON(text) {
-        try {
-            const start = text.indexOf('{');
-            const end = text.lastIndexOf('}');
-            if (start === -1 || end === -1) throw new Error("Invalid JSON wrapper");
-            return JSON.parse(text.substring(start, end + 1));
-        } catch(e) {
-            console.error("Parse error", e);
-            throw e;
-        }
-    }
-
-    function scrollToTop() {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
     // --- CORE LOGIC ---
     async function generateDigest() {
         const input = document.getElementById('dateInput').value.trim();
         if(!input) return alert("Please enter a date.");
 
-        // UI Updates
+        // 1. UI State
         document.getElementById('view-search').classList.add('hidden');
         document.getElementById('view-loading').classList.remove('hidden');
-        
-        // Scroll to top
         scrollToTop();
 
-        // Logic check: Is it a 4-digit Year?
+        // 2. Logic Check
         const isYear = /^\d{4}$/.test(input);
-
-        // Update Headers dynamically
-        if (isYear) {
-            document.getElementById('births-title').textContent = `Born in ${input}`;
-            document.getElementById('timeline-title').textContent = `Events of ${input}`;
-        } else {
-            document.getElementById('births-title').textContent = "Born on this Day";
-            document.getElementById('timeline-title').textContent = "Also on this Date";
-        }
+        updateHeaders(isYear, input);
 
         try {
-            let prompt;
-            
-            if (isYear) {
-                // --- YEAR MODE PROMPT ---
-                prompt = `
+            // 3. Construct Prompt
+            const prompt = constructPrompt(input, isYear);
+
+            // 4. Call AI (Neutralized)
+            const rawText = await callAI(prompt);
+            const data = cleanAndParseJSON(rawText);
+
+            // 5. Render
+            renderPage(input, data);
+
+        } catch(err) {
+            console.error("Chronicle Error:", err);
+            alert("Error constructing the timeline. Please try again.");
+            resetApp();
+        }
+    }
+
+    // --- PROMPT ENGINEERING ---
+    function constructPrompt(input, isYear) {
+        if (isYear) {
+            return `
                 Role: Senior Editor at a History Magazine.
                 Task: Create a "Year in Review" for: ${input}.
                 
                 REQUIREMENTS:
                 1. "leadStory": The SINGLE most defining/historic event that happened in ${input}.
-                2. "births": List the 8 MOST WORLD-FAMOUS, ICONIC global superstars/figures born in ${input}. Prioritize fame over everything else.
-                3. "timeline": List 8 diverse but SIGNIFICANT/FAMOUS events from ${input} (Jan-Dec). Mix Politics, Pop Culture, Tech, and Sports. Ensure they are recognizable stories.
+                2. "births": List the 8 MOST WORLD-FAMOUS, ICONIC global superstars/figures born in ${input}. Prioritize fame.
+                3. "timeline": List 8 diverse but SIGNIFICANT/FAMOUS events from ${input} (Jan-Dec). Mix Politics, Pop Culture, Tech, and Sports.
 
                 RETURN RAW JSON OBJECT:
                 {
@@ -224,16 +223,15 @@
                     "births": [ { "year": "${input}", "name": "Name", "role": "Role" } ],
                     "timeline": [ { "year": "Jan 24", "category": "Tech", "headline": "Macintosh Released", "snippet": "..." } ]
                 }`;
-            } else {
-                // --- DATE MODE PROMPT ---
-                prompt = `
+        } else {
+            return `
                 Role: Senior Editor at a History Magazine.
                 Task: Create a "This Day in History" page for: ${input}.
                 
                 REQUIREMENTS:
                 1. "leadStory": The SINGLE most culturally or politically significant event on this date (any year).
                 2. "births": List the 8 MOST WORLD-FAMOUS, ICONIC global superstars born on ${input} (any year). Prioritize fame.
-                3. "timeline": List 8 events on ${input}. Eclectic mix (Sports, Crime, Culture), but ensure they are SIGNIFICANT. Use "journalistic" headlines.
+                3. "timeline": List 8 events on ${input}. Eclectic mix (Sports, Crime, Culture), but ensure they are SIGNIFICANT.
 
                 RETURN RAW JSON OBJECT:
                 {
@@ -241,29 +239,66 @@
                     "births": [ { "year": "1948", "name": "Name", "role": "Role" } ],
                     "timeline": [ { "year": "1988", "category": "Sports", "headline": "Headline", "snippet": "..." } ]
                 }`;
-            }
+        }
+    }
 
-            const response = await fetch(
-                'https://groq-proxy.ewalltom.workers.dev',
-                {
-                    method: "POST", headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        contents: [{ role: "user", parts: [{ text: prompt }] }],
-                        generationConfig: { responseMimeType: "text/plain" }
-                    })
-                }
-            );
+    // --- NEUTRAL AI CALLER ---
+    async function callAI(promptText) {
+        try {
+            const response = await fetch(CONFIG.API_URL, {
+                method: "POST", 
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    // Send structure for Worker translation
+                    contents: [{ role: "user", parts: [{ text: promptText }] }],
+                    generationConfig: { responseMimeType: "text/plain" },
+                    model: CONFIG.MODEL_ID
+                })
+            });
 
             const data = await response.json();
-            const jsonText = data.candidates[0].content.parts[0].text;
-            const content = parseGeminiJSON(jsonText);
+            if (data.error) throw new Error(data.message || "API Error");
+            if (!data.candidates || !data.candidates[0]) throw new Error("Empty Response");
 
-            renderPage(input, content);
+            return data.candidates[0].content.parts[0].text;
+        } catch (error) {
+            console.error("AI Request Failed:", error);
+            throw error;
+        }
+    }
 
-        } catch(err) {
-            alert("Error constructing the timeline. Please try again.");
-            console.error(err);
-            resetApp();
+    // --- ROBUST PARSING ---
+    function cleanAndParseJSON(text) {
+        // "Borax" cleaning: remove markdown wrappers
+        const cleanText = text.replace(/```json/g, '').replace(/```/g, '').trim();
+        
+        try {
+            // Try direct parse
+            return JSON.parse(cleanText);
+        } catch(e) {
+            // Fallback: Find first { and last }
+            try {
+                const start = cleanText.indexOf('{');
+                const end = cleanText.lastIndexOf('}');
+                if (start !== -1 && end !== -1) {
+                    return JSON.parse(cleanText.substring(start, end + 1));
+                }
+            } catch (e2) {
+                console.error("JSON Parse Failed:", cleanText);
+                throw new Error("Could not parse AI response.");
+            }
+        }
+        throw new Error("Invalid JSON structure.");
+    }
+
+    // --- RENDERING ---
+    function updateHeaders(isYear, input) {
+        if (isYear) {
+            document.getElementById('births-title').textContent = `Born in ${input}`;
+            document.getElementById('timeline-title').textContent = `Events of ${input}`;
+        } else {
+            document.getElementById('births-title').textContent = "Born on this Day";
+            document.getElementById('timeline-title').textContent = "Also on this Date";
         }
     }
 
@@ -312,8 +347,6 @@
 
         document.getElementById('view-loading').classList.add('hidden');
         document.getElementById('view-results').classList.remove('hidden');
-        
-        // Scroll to top
         scrollToTop();
     }
 
