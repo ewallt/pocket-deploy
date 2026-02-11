@@ -11,7 +11,7 @@
         :root {
             /* Theme 1: FLUX (High Contrast) */
             --bg-page: #d1d5db;        
-            --bg-panel: #e5e7eb;       
+            --bg-panel: #e5e7eb;        
             
             --bg-screen: #111827;      /* Dark Slate */
             --text-screen: #22d3ee;    /* Cyan Text */
@@ -331,6 +331,13 @@
     </div>
 
 <script>
+    // ==========================================
+    // CONFIGURATION
+    // ==========================================
+    const CONFIG = {
+        API_URL: 'https://groq-proxy.ewalltom.workers.dev',
+        MODEL_ID: "openai/gpt-oss-120b" 
+    };
 
     const themes = ['', 'theme-neon', 'theme-parchment'];
     let themeIndex = 0;
@@ -366,21 +373,8 @@
                 Example: ["Bread", "Dough", "Clams"]
             `;
 
-            const response = await fetch(
-                'https://groq-proxy.ewalltom.workers.dev',
-                {
-                    method: "POST", headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        contents: [{ role: "user", parts: [{ text: prompt }] }],
-                        generationConfig: { responseMimeType: "application/json" }
-                    })
-                }
-            );
-
-            const data = await response.json();
-            const text = data.candidates[0].content.parts[0].text;
-            const suggestions = JSON.parse(text);
-
+            const rawText = await callAI(prompt);
+            const suggestions = cleanAndParseJSON(rawText);
             renderSuggestions(suggestions);
 
         } catch (e) {
@@ -442,27 +436,54 @@
                 ]
             `;
 
-            const response = await fetch(
-                'https://gemini-proxy.ewalltom.workers.dev',
-                {
-                    method: "POST", headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        contents: [{ role: "user", parts: [{ text: prompt }] }],
-                        generationConfig: { responseMimeType: "application/json" }
-                    })
-                }
-            );
-
-            const data = await response.json();
-            const text = data.candidates[0].content.parts[0].text;
-            const json = JSON.parse(text);
-            
+            const rawText = await callAI(prompt);
+            const json = cleanAndParseJSON(rawText);
             renderTimeline(json);
 
         } catch (e) {
-            console.error(e);
+            console.error("Translation Error:", e);
             alert("Temporal Flux Error. Try again.");
             resetApp();
+        }
+    }
+
+    // --- NEUTRAL AI CALLER ---
+    async function callAI(promptText) {
+        try {
+            const response = await fetch(CONFIG.API_URL, {
+                method: "POST", 
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    contents: [{ role: "user", parts: [{ text: promptText }] }],
+                    generationConfig: { responseMimeType: "application/json" },
+                    model: CONFIG.MODEL_ID
+                })
+            });
+
+            const data = await response.json();
+            if (data.error) throw new Error(data.message || "API Error");
+            if (!data.candidates || !data.candidates[0]) throw new Error("Empty Response");
+
+            return data.candidates[0].content.parts[0].text;
+        } catch (error) {
+            console.error("AI Request Failed:", error);
+            throw error;
+        }
+    }
+
+    // --- ROBUST PARSING ---
+    function cleanAndParseJSON(text) {
+        const cleanText = text.replace(/```json/g, '').replace(/```/g, '').trim();
+        try {
+            return JSON.parse(cleanText);
+        } catch(e) {
+            // Simple fallback for wrapped arrays
+            const start = cleanText.indexOf('[');
+            const end = cleanText.lastIndexOf(']');
+            if (start !== -1 && end !== -1) {
+                return JSON.parse(cleanText.substring(start, end + 1));
+            }
+            throw new Error("Invalid JSON structure");
         }
     }
 
@@ -497,7 +518,6 @@
 
     function resetApp() {
         document.getElementById('phraseInput').value = '';
-        // Don't reset dropdowns so user can keep exploring same category
         document.getElementById('view-results').classList.add('hidden');
         document.getElementById('view-loading').classList.add('hidden');
         document.getElementById('view-input').classList.remove('hidden');
