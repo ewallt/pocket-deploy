@@ -271,58 +271,71 @@
         ];
 
         async function generateImage(prompt, containerId) {
-            const container = document.getElementById(containerId);
+    const container = document.getElementById(containerId);
+    
+    console.log('=== Starting image generation ===');
+    console.log('Prompt:', prompt);
+    console.log('Container ID:', containerId);
+    console.log('Worker URL:', WORKER_URL);
+    
+    const requestBody = {
+        contents: [{ 
+            role: "user", 
+            parts: [{ text: prompt }] 
+        }],
+        generationConfig: { 
+            type: "image",
+            size: "1024x1024"
+        }
+    };
+    
+    console.log('Request body:', JSON.stringify(requestBody, null, 2));
+    
+    try {
+        console.log('About to fetch...');
+        const response = await fetch(WORKER_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestBody)
+        });
+        
+        console.log('Response status:', response.status);
+        console.log('Response ok:', response.ok);
+        
+        const data = await response.json();
+        console.log('Response data:', data);
+        
+        const imageUrl = data.url;
+        console.log('Image URL:', imageUrl);
+        
+        if (imageUrl) {
+            const img = document.createElement('img');
+            img.src = imageUrl;
+            img.alt = "Generated Historical Image";
             
-            try {
-                const response = await fetch(WORKER_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ 
-                            role: "user", 
-                            parts: [{ text: prompt }] 
-                        }],
-                        generationConfig: { 
-                            type: "image",
-                            size: "1024x1024"
-                        }
-                    })
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`API request failed: ${response.status}`);
-                }
-                
-                const data = await response.json();
-                const imageUrl = data.url;
-                
-                if (imageUrl) {
-                    const img = document.createElement('img');
-                    img.src = imageUrl;
-                    img.alt = "Generated Historical Image";
-                    
-                    img.onload = () => {
-                        img.classList.add('loaded');
-                        const loader = container.querySelector('.loader');
-                        if (loader) loader.remove();
-                    };
-                    
-                    img.onerror = () => {
-                        throw new Error('Image failed to load');
-                    };
-                    
-                    container.appendChild(img);
-                } else {
-                    throw new Error('No image URL returned');
-                }
-                
-            } catch (err) {
-                console.error('Image generation error:', err);
+            img.onload = () => {
+                img.classList.add('loaded');
                 const loader = container.querySelector('.loader');
                 if (loader) loader.remove();
-                container.innerHTML += `<div class="error-msg">Image generation failed.<br>${err.message}</div>`;
-            }
+            };
+            
+            img.onerror = () => {
+                throw new Error('Image failed to load');
+            };
+            
+            container.appendChild(img);
+        } else {
+            throw new Error('No image URL returned');
         }
+        
+    } catch (err) {
+        console.error('Full error object:', err);
+        console.error('Image generation error:', err);
+        const loader = container.querySelector('.loader');
+        if (loader) loader.remove();
+        container.innerHTML += `<div class="error-msg">Image generation failed.<br>${err.message}</div>`;
+    }
+}
 
         // Generate all images on page load
         window.addEventListener('DOMContentLoaded', () => {
